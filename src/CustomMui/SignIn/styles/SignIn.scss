@@ -1,0 +1,21 @@
+.login-sign-up-container {
+  div {
+    max-height: calc(100vh - 79.32px - 174.59px);
+    min-height: fit-content;
+    .MuiCard-root {
+      margin: 1em 0px 0px 0px;
+    }
+    .logo-img {
+      // width: 150px;
+      // height: 100px;
+      // object-fit: cover;
+      object-fit: contain;
+    }
+  }
+}
+
+.login-sign-up-container.dark-mode {
+  p.Mui-error {
+    color: $medium-red;
+  }
+}
