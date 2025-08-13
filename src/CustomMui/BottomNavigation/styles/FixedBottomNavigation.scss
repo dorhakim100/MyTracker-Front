@@ -1,0 +1,33 @@
+.fixed-bottom-navigation {
+  .MuiPaper-root {
+    padding: 1em !important;
+  }
+}
+
+.MuiBottomNavigation-root {
+  padding: 0px !important;
+  font-size: 1.2em !important;
+
+  display: grid !important;
+  grid-template-columns: 1fr 1fr 20px 1fr 1fr;
+  grid-template-rows: 1fr;
+
+  button {
+    padding: 0px !important;
+    transition: all 0.2s ease-in-out !important;
+
+    &.Mui-selected {
+      font-weight: 600 !important;
+
+      svg {
+        font-size: 1.5em !important;
+      }
+
+      .MuiBottomNavigationAction-label {
+        font-size: 0.8rem !important;
+      }
+
+      outline: none !important;
+    }
+  }
+}
