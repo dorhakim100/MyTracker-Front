@@ -2,6 +2,30 @@
   .MuiPaper-root {
     padding: 1em !important;
   }
+
+  &.dark-mode {
+    .MuiPaper-root,
+    .MuiBottomNavigation-root,
+    button {
+      background-color: $very-dark-gray;
+    }
+
+    button:not(.Mui-selected),
+    .MuiPaper-root {
+      background-color: $very-dark-gray;
+      color: $light-gray;
+    }
+
+    .MuiFab-circular {
+      background-color: $primary-color !important;
+      color: $white !important;
+      outline: none;
+
+      &:hover {
+        background-color: $primary-color-dark;
+      }
+    }
+  }
 }
 
 .MuiBottomNavigation-root {

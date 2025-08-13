@@ -10,6 +10,8 @@ import Fab from '@mui/material/Fab'
 import AddIcon from '@mui/icons-material/Add'
 
 import { Route } from '../../assets/routes/routes'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../store/store'
 
 export function FixedBottomNavigation(props: {
   routes: Route[]
@@ -24,6 +26,10 @@ export function FixedBottomNavigation(props: {
 
   const navigate = useNavigate()
 
+  const prefs = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.prefs
+  )
+
   const midIndex = Math.floor(props.routes.length / 2)
   const leftRoutes = React.useMemo(
     () => props.routes.slice(0, midIndex),
@@ -35,7 +41,13 @@ export function FixedBottomNavigation(props: {
   )
 
   return (
-    <Box sx={{ pb: 7 }} ref={ref} className='fixed-bottom-navigation'>
+    <Box
+      sx={{ pb: 7 }}
+      ref={ref}
+      className={`fixed-bottom-navigation ${
+        prefs.isDarkMode ? 'dark-mode' : ''
+      }`}
+    >
       <CssBaseline />
 
       <Paper
