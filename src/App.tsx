@@ -4,7 +4,7 @@ import { Routes, Route, useLocation } from 'react-router'
 
 import { routes } from './assets/routes/routes'
 
-import { smoothScroll } from './services/util.service'
+import { smoothScroll, getRoutes } from './services/util.service'
 
 import { AppHeader } from './components/AppHeader/AppHeader'
 import { AppFooter } from './components/AppFooter/AppFooter.tsx'
@@ -22,6 +22,12 @@ function App() {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
+
+  const user = useSelector(
+    (stateSelector: RootState) => stateSelector.userModule.user
+  )
+
+  const filteredRoutes = getRoutes(routes, user)
 
   const location = useLocation()
 
@@ -45,13 +51,13 @@ function App() {
       <main className={`main ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
         <SearchBar />
         <Routes>
-          {routes.map((route, index) => (
+          {filteredRoutes.map((route, index) => (
             <Route key={index} path={route.path} element={<route.element />} />
           ))}
         </Routes>
       </main>
       <AppFooter />
-      <FixedBottomNavigation routes={routes} />
+      <FixedBottomNavigation routes={filteredRoutes} />
     </>
   )
 }

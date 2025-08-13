@@ -5,7 +5,7 @@ import Clock from 'react-clock'
 import 'react-clock/dist/Clock.css'
 import { RootState } from '../../store/store'
 
-export function Home() {
+export function Dashboard() {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )

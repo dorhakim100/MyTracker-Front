@@ -1,9 +1,10 @@
 // routes.ts
 import React from 'react'
 
-import { Home } from '../../pages/Home/Home'
-import { About } from '../../pages/About/About'
-import { Services } from '../../pages/Services/Services'
+import { Dashboard } from '../../pages/Dashboard/Dashboard'
+import { Diary } from '../../pages/Diary/Diary'
+import { Progress } from '../../pages/Progress/Progress'
+import { UserDetails } from '../../pages/UserDetails/UserDetails'
 
 import { SignIn } from '../../CustomMui/SignIn/SignIn.tsx'
 
@@ -14,29 +15,30 @@ export interface Route {
   icon: React.ComponentType
 }
 
-import HomeIcon from '@mui/icons-material/Home'
-import AboutIcon from '@mui/icons-material/Info'
-import ServicesIcon from '@mui/icons-material/Build'
+import DashboardIcon from '@mui/icons-material/Dashboard'
+import FormatListBulletedAddIcon from '@mui/icons-material/FormatListBulletedAdd'
+import InsightsIcon from '@mui/icons-material/Insights'
 import SignInIcon from '@mui/icons-material/Login'
+import UserIcon from '@mui/icons-material/Person'
 
 export const routes: Route[] = [
   {
-    title: 'Home',
+    title: 'Dashboard',
     path: '/',
-    element: Home,
-    icon: HomeIcon,
+    element: Dashboard,
+    icon: DashboardIcon,
   },
   {
-    title: 'About',
-    path: '/about',
-    element: About,
-    icon: AboutIcon,
+    title: 'Diary',
+    path: '/diary',
+    element: Diary,
+    icon: FormatListBulletedAddIcon,
   },
   {
-    title: 'Services',
-    path: '/services',
-    element: Services,
-    icon: ServicesIcon,
+    title: 'Progress',
+    path: '/progress',
+    element: Progress,
+    icon: InsightsIcon,
   },
 
   {
@@ -44,5 +46,12 @@ export const routes: Route[] = [
     path: '/signin',
     element: SignIn,
     icon: SignInIcon,
+  },
+
+  {
+    title: 'User',
+    path: '/user',
+    element: UserDetails,
+    icon: UserIcon,
   },
 ]

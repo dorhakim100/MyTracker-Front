@@ -1,6 +1,7 @@
+import { Route } from '../assets/routes/routes'
+import { User } from '../types/user/User'
 
-
-export function makeId(length:number = 6):string {
+export function makeId(length: number = 6): string {
   var txt = ''
   var possible =
     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
@@ -12,7 +13,7 @@ export function makeId(length:number = 6):string {
   return txt
 }
 
-export function makeLorem(size:number = 100):string {
+export function makeLorem(size: number = 100): string {
   var words = [
     'The sky',
     'above',
@@ -55,7 +56,7 @@ export function makeLorem(size:number = 100):string {
   return txt
 }
 
-export function getRandomIntInclusive(min:number, max:number):number {
+export function getRandomIntInclusive(min: number, max: number): number {
   min = Math.ceil(min)
   max = Math.floor(max)
   return Math.floor(Math.random() * (max - min + 1)) + min //The maximum is inclusive and the minimum is inclusive
@@ -74,16 +75,15 @@ export function debounce<T extends (...args: any[]) => any>(
   func: T,
   timeout: number = 300
 ): (...args: Parameters<T>) => void {
-  let timer: ReturnType<typeof setTimeout>;
+  let timer: ReturnType<typeof setTimeout>
   return function (this: ThisParameterType<T>, ...args: Parameters<T>) {
-    const context = this;
-    clearTimeout(timer);
+    const context = this
+    clearTimeout(timer)
     timer = setTimeout(() => {
-      func.apply(context, args);
-    }, timeout);
-  };
+      func.apply(context, args)
+    }, timeout)
+  }
 }
-
 
 // export function saveToStorage(key, value) {
 //   localStorage.setGame(key, JSON.stringify(value))
@@ -106,17 +106,14 @@ export function debounce<T extends (...args: any[]) => any>(
 //   setFilter({ ...filter, pageIdx: filter.pageIdx + diff })
 // }
 
-export function capitalizeFirstLetter(string:string):string {
+export function capitalizeFirstLetter(string: string): string {
   return string.charAt(0).toUpperCase() + string.slice(1)
 }
 
-export function translateDayToHebrew(day:string):string {
-
+export function translateDayToHebrew(day: string): string {
   interface DaysInHebrew {
     [key: string]: string
-
   }
-
 
   const daysInHebrew: DaysInHebrew = {
     sunday: 'ראשון',
@@ -132,14 +129,14 @@ export function translateDayToHebrew(day:string):string {
   return daysInHebrew[day.toLowerCase()] || 'Invalid day'
 }
 
-export function convertToDate(timeString:string):Date {
+export function convertToDate(timeString: string): Date {
   const [hours, minutes] = timeString.split(':').map(Number) // Split and convert to numbers
   const now = new Date() // Get the current date
   now.setHours(hours, minutes, 0, 0) // Set hours, minutes, and reset seconds and milliseconds
   return now
 }
 
-export function getTodayDayName():string {
+export function getTodayDayName(): string {
   const today = new Date()
   const dayNames = [
     'sunday',
@@ -153,8 +150,17 @@ export function getTodayDayName():string {
   return dayNames[today.getDay()]
 }
 
-export function smoothScroll():void {
+export function smoothScroll(): void {
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
+export function getRoutes(routes: Route[], user: User | null) {
+  let filteredRoutes = routes
+  if (user) {
+    filteredRoutes = filteredRoutes.filter((route) => route.path !== '/signin')
+  } else {
+    filteredRoutes = filteredRoutes.filter((route) => route.path !== '/user')
+  }
 
+  return filteredRoutes
+}

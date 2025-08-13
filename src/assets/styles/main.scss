@@ -11,10 +11,11 @@
 // pages
 @import 'App.scss';
 
-@import '../../pages/Home/styles/Home.scss';
-@import '../../pages/About/styles/About.scss';
-@import '../../pages/Services/styles/Services.scss';
+@import '../../pages/Dashboard/styles/Dashboard.scss';
+@import '../../pages/Diary/styles/Diary.scss';
+@import '../../pages/Progress/styles/Progress.scss';
 @import '../../pages/Login/styles/Login.scss';
+@import '../../pages/UserDetails/styles/UserDetails.scss';
 
 @import '../../components/AppHeader/styles/AppHeader.scss';
 @import '../../components/AppFooter/styles/AppFooter.scss';
