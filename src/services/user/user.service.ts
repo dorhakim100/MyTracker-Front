@@ -148,6 +148,7 @@ function getEmptyUser() {
     password: '',
     fullname: '',
     imgUrl: '',
+    goals: [],
     // isAdmin: false,
   }
 }
@@ -161,6 +162,7 @@ async function _createAdmin() {
 
       password: 'admin123',
       fullname: 'Dor Hakim',
+      goals: [],
       imgUrl:
         'https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_1280.png',
     }

@@ -23,7 +23,10 @@
 @import '../../components/PrefsButton/styles/PrefsButton.scss';
 @import '../../components/SearchBar/styles/SearchBar.scss';
 @import '../../components/ShadowOverlay/styles/ShadowOverlay.scss';
+@import '../../components/CaloriesProgress/styles/CaloriesProgress.scss';
 
 @import '../../CustomMui/SignIn/styles/SignIn.scss';
 
 @import '../../CustomMui/BottomNavigation/styles/FixedBottomNavigation.scss';
+
+@import 'react-circular-progressbar/dist/styles.css';

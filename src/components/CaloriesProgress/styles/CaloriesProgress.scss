@@ -1,0 +1,31 @@
+.calories-progress-card {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+
+  padding: 1rem;
+
+  &.dark {
+    background-color: $darker-gray;
+    color: $white;
+  }
+
+  h6 {
+    justify-self: start;
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+
+  .goal-container {
+    display: flex;
+    align-items: center;
+    // justify-content: space-between;
+  }
+
+  .circular-progress {
+    padding: 0.2rem 1rem;
+    grid-column: 1 /2;
+    grid-row: 2;
+  }
+}
