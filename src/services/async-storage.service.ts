@@ -6,14 +6,14 @@ export const storageService = {
   remove,
 }
 
-function query(entityType:string, delay:number = 500):Promise<any> {
-  var entities = JSON.parse(localStorage.getGame(entityType)) || []
+function query(entityType: string, delay: number = 500): Promise<any> {
+  var entities = JSON.parse(localStorage.getItem(entityType)) || []
   return new Promise((resolve) => setTimeout(() => resolve(entities), delay))
 }
 
-function get(entityType:string, entityId:string):Promise<any> {
+function get(entityType: string, entityId: string): Promise<any> {
   return query(entityType).then((entities) => {
-    const entity = entities.find((entity:any) => entity._id === entityId)
+    const entity = entities.find((entity: any) => entity._id === entityId)
     if (!entity)
       throw new Error(
         `Get failed, cannot find entity with id: ${entityId} in: ${entityType}`
@@ -22,7 +22,7 @@ function get(entityType:string, entityId:string):Promise<any> {
   })
 }
 
-function post(entityType:string, newEntity:any):Promise<any> {
+function post(entityType: string, newEntity: any): Promise<any> {
   newEntity._id = _makeId()
   return query(entityType).then((entities) => {
     entities.push(newEntity)
@@ -31,9 +31,11 @@ function post(entityType:string, newEntity:any):Promise<any> {
   })
 }
 
-function put(entityType:string, updatedEntity:any):Promise<any> {
+function put(entityType: string, updatedEntity: any): Promise<any> {
   return query(entityType).then((entities) => {
-    const idx = entities.findIndex((entity:any) => entity._id === updatedEntity._id)
+    const idx = entities.findIndex(
+      (entity: any) => entity._id === updatedEntity._id
+    )
     if (idx < 0)
       throw new Error(
         `Update failed, cannot find entity with id: ${updatedEntity._id} in: ${entityType}`
@@ -45,9 +47,9 @@ function put(entityType:string, updatedEntity:any):Promise<any> {
   })
 }
 
-function remove(entityType:string, entityId:string):Promise<any> {
+function remove(entityType: string, entityId: string): Promise<any> {
   return query(entityType).then((entities) => {
-    const idx = entities.findIndex((entity:any) => entity._id === entityId)
+    const idx = entities.findIndex((entity: any) => entity._id === entityId)
     if (idx < 0)
       throw new Error(
         `Remove failed, cannot find entity with id: ${entityId} in: ${entityType}`
@@ -59,11 +61,11 @@ function remove(entityType:string, entityId:string):Promise<any> {
 
 // Private functions
 
-function _save(entityType:string, entities:any):void {
-  localStorage.setGame(entityType, JSON.stringify(entities))
+function _save(entityType: string, entities: any): void {
+  localStorage.setItem(entityType, JSON.stringify(entities))
 }
 
-function _makeId(length:number = 5):string {
+function _makeId(length: number = 5): string {
   var text = ''
   var possible =
     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'

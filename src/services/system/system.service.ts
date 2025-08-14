@@ -1,6 +1,6 @@
 import { Prefs } from '../../types/system/Prefs'
 
-const KEY = 'CamJam-prefs'
+const KEY = 'my-tracker-prefs'
 
 export const systemService = {
   getPrefs,

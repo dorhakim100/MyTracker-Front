@@ -1,7 +1,7 @@
-import { userService } from '../../services/user/user.service'
+// import { userService } from '../../services/user/user.service'
 
 import { User } from '../../types/user/User'
-import { UserFilter } from '../../types/userFilter/UserFilter'
+// import { UserFilter } from '../../types/userFilter/UserFilter'
 
 export const SET_USERS = 'SET_USERS'
 export const SET_USER = 'SET_USER'
@@ -14,14 +14,14 @@ export const SET_WATCHED_USER = 'SET_WATCHED_USER'
 export interface UserState {
   users: User[]
   user: User | null
-  filter: UserFilter
+  // filter: UserFilter
   lastRemovedUser?: User
 }
 
 const initialState: UserState = {
   users: [],
   user: null,
-  filter: userService.getDefaultFilter(),
+  // filter: userService.getDefaultFilter(),
 }
 
 export function userReducer(state = initialState, action: any) {
@@ -46,14 +46,14 @@ export function userReducer(state = initialState, action: any) {
       break
     case UPDATE_USER:
       users = state.users.map((user: User) =>
-        user.id === action.user.id ? action.user : user
+        user._id === action.user._id ? action.user : user
       )
       newState = { ...state, users }
       break
 
-    case SET_USER_FILTER:
-      newState = { ...state, filter: action.filter }
-      break
+    // case SET_USER_FILTER:
+    //   newState = { ...state, filter: action.filter }
+    //   break
     default:
   }
   return newState

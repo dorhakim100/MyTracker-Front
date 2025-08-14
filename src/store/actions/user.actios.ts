@@ -6,7 +6,7 @@ import {
   SET_USERS,
   REMOVE_USER,
   SET_WATCHED_USER,
-  SET_USER_FILTER,
+  // SET_USER_FILTER,
 } from '../reducers/user.reducer'
 
 import { UserFilter } from '../../types/userFilter/UserFilter'
@@ -15,7 +15,7 @@ import { User } from '../../types/user/User'
 
 export async function loadUsers(filter: UserFilter) {
   try {
-    store.dispatch({ type: SET_USER_FILTER, filter })
+    // store.dispatch({ type: SET_USER_FILTER, filter })
     const users = await userService.getUsers(filter)
     store.dispatch({ type: SET_USERS, users })
     return users
@@ -103,11 +103,13 @@ export async function updateUser(userToUpdate: User) {
 export async function signup(credentials: UserCred) {
   try {
     await logout()
+    console.log('signup', credentials)
     const user = await userService.signup(credentials)
     store.dispatch({
       type: SET_USER,
       user,
     })
+    console.log('signup', user)
     if (user && credentials.isRemember) return
     // socketService.login(user._id)
     return user
