@@ -218,7 +218,7 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
         /> */}
           <Card variant='outlined'>
             {/* <SitemarkIcon /> */}
-            <img
+            {/* <img
               src={logoSrc}
               alt=''
               style={{
@@ -227,7 +227,7 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
                 // objectFit: 'cover',
               }}
               className='logo-img'
-            />
+            /> */}
             <Typography
               component='h1'
               variant='h4'

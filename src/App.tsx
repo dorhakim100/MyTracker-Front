@@ -7,7 +7,6 @@ import { routes } from './assets/routes/routes'
 import { smoothScroll, getRoutes } from './services/util.service'
 
 import { AppHeader } from './components/AppHeader/AppHeader'
-import { AppFooter } from './components/AppFooter/AppFooter.tsx'
 import { Prefs } from './components/Prefs/Prefs'
 import { PrefsButton } from './components/PrefsButton/PrefsButton.tsx'
 
@@ -45,18 +44,18 @@ function App() {
 
   return (
     <>
-      <AppHeader routes={routes} />
+      <AppHeader routes={filteredRoutes} />
       <Prefs />
       {/* <PrefsButton /> */}
       <main className={`main ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
-        <SearchBar />
+        {/* <SearchBar /> */}
         <Routes>
           {filteredRoutes.map((route, index) => (
             <Route key={index} path={route.path} element={<route.element />} />
           ))}
         </Routes>
       </main>
-      <AppFooter />
+
       <FixedBottomNavigation routes={filteredRoutes} />
     </>
   )
