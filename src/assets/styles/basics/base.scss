@@ -95,5 +95,19 @@ p {
 .dark-mode {
   button {
     color: $white;
+    background-color: $dark-gray;
+  }
+
+  .MuiButton-contained {
+    // color: red;
+    background-color: $dark-gray !important;
+
+    background-image: linear-gradient(
+      to bottom,
+      hsla(220, 3%, 21%, 0.909),
+      hsla(0, 0%, 0%, 0.92)
+    );
+
+    box-shadow: none;
   }
 }
