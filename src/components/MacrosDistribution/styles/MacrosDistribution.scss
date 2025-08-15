@@ -1,0 +1,57 @@
+.macros-distribution-card {
+  padding: 1em;
+  border-radius: 12px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto 1fr;
+  gap: 1.5rem;
+
+  &.dark-mode {
+    background-color: $darker-gray;
+    color: $white;
+  }
+
+  .header {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.macros-distribution-card .donut {
+  --size: 160px;
+  --thickness: 18px;
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  background: conic-gradient(
+    var(--pColor) 0 var(--p),
+    var(--cColor) var(--p) calc(var(--p) + var(--c)),
+    var(--fColor) calc(var(--p) + var(--c)) 100%
+  );
+  display: grid;
+  place-items: center;
+}
+
+.macros-distribution-card .donut .donut-inner {
+  width: calc(var(--size) - var(--thickness));
+  height: calc(var(--size) - var(--thickness));
+  border-radius: 50%;
+  background: var(--donut-inner-bg, $white);
+
+  &.dark-mode {
+    background: var(--donut-inner-bg, $darker-gray);
+  }
+
+  display: grid;
+  place-items: center;
+}
+
+.macros-distribution-card .totals {
+  text-align: center;
+}
+
+.macros-distribution-card .totals .value {
+  font-weight: 700;
+}

@@ -1,3 +1,13 @@
+:root {
+  --macro-protein: #ef476f;
+  --macro-carbs: #06d6a0;
+  --macro-fats: #ffd166;
+
+  --macro-protein-dark: #e24b6e;
+  --macro-carbs-dark: #21c993;
+  --macro-fats-dark: #ffcc66;
+}
+
 // Colors
 $primary-color: #027af2;
 
@@ -27,3 +37,12 @@ $neutral-gray: #f5f5f5;
 $white: #fff;
 
 $header-height: 68px;
+
+// Macro colors (SCSS variables)
+$macro-protein: var(--macro-protein);
+$macro-carbs: var(--macro-carbs);
+$macro-fats: var(--macro-fats);
+
+$macro-protein-dark: var(--macro-protein-dark);
+$macro-carbs-dark: var(--macro-carbs-dark);
+$macro-fats-dark: var(--macro-fats-dark);
