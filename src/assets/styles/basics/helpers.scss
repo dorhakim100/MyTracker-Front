@@ -31,10 +31,10 @@ button {
     justify-self: start;
   }
 
-  background-color: $white !important;
+  background-color: $white;
 
   &.dark-mode {
-    background-color: $darker-gray !important;
+    background-color: $darker-gray;
     color: $white;
   }
 }
