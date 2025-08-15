@@ -8,10 +8,6 @@ interface MacrosDistributionProps {
   protein: number
   carbs: number
   fats: number
-  proteinColor?: string
-  carbsColor?: string
-  fatsColor?: string
-  title?: string
 }
 
 const proteinColor = 'var(--macro-protein)'
@@ -22,7 +18,6 @@ export function MacrosDistribution({
   protein,
   carbs,
   fats,
-  title = 'Macros',
 }: MacrosDistributionProps) {
   const total = Math.max(protein + carbs + fats, 0.0001)
   const pPct = (protein / total) * 100
@@ -49,7 +44,7 @@ export function MacrosDistribution({
         prefs.isDarkMode ? 'dark-mode' : ''
       }`}
     >
-      <Typography variant='h6'>{title}</Typography>
+      <Typography variant='h6'>Distribution</Typography>
 
       <div className='donut' style={donutStyle}>
         <div className={`donut-inner ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
