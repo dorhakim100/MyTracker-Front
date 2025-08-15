@@ -93,9 +93,11 @@ p {
 }
 
 .dark-mode {
+  button:not(.MuiIconButton-root) {
+    background-color: $dark-gray;
+  }
   button {
     color: $white;
-    background-color: $dark-gray;
   }
 
   .MuiButton-contained {

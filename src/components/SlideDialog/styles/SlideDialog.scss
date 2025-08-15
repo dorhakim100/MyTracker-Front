@@ -1,3 +1,10 @@
 .MuiDialog-root {
   top: calc($header-margin + $card-height + 200px) !important;
 }
+
+.slide-dialog {
+  &.dark-mode {
+    background-color: $darker-gray !important;
+    color: $white !important;
+  }
+}
