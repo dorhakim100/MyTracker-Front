@@ -1,4 +1,4 @@
-import { Card, IconButton, Typography } from '@mui/material'
+import { Card, Typography } from '@mui/material'
 import { CircularProgress } from '../CircularProgress/CircularProgress'
 
 import { useSelector } from 'react-redux'
@@ -6,6 +6,7 @@ import { RootState } from '../../store/store'
 import { useState } from 'react'
 
 import { EditIcon } from '../EditIcon/EditIcon'
+import { SlideDialog } from '../SlideDialog/SlideDialog'
 
 import FlagIcon from '@mui/icons-material/Flag'
 
@@ -34,27 +35,44 @@ export function CaloriesProgress({
     setIsPercentage(stateToSet)
     setValueToShow(stateToSet ? current : `${percentageValue}%`)
   }
+  const [openModal, setOpenModal] = useState(false)
 
   const edit = () => {
-    console.log('edit')
+    setOpenModal(true)
+  }
+
+  const onClose = () => {
+    setOpenModal(false)
   }
 
   return (
-    <Card
-      className={`card calories-progress ${prefs.isDarkMode ? 'dark' : ''}`}
-      onClick={onChangeDisplay}
-    >
-      <Typography variant='h6'>{label}</Typography>
-      <EditIcon onClick={edit} />
-      <div className='goal-container'>
-        <div className='banner'>
-          <Typography variant='body1'>
-            {current}/{goal}
-          </Typography>
-          <FlagIcon />
+    <>
+      <Card
+        className={`card calories-progress ${prefs.isDarkMode ? 'dark' : ''}`}
+        onClick={onChangeDisplay}
+      >
+        <Typography variant='h6'>{label}</Typography>
+        <EditIcon onClick={edit} />
+        <div className='goal-container'>
+          <div className='banner'>
+            <Typography variant='body1'>
+              {current}/{goal}
+            </Typography>
+            <FlagIcon />
+          </div>
         </div>
-      </div>
-      <CircularProgress value={percentageValue} text={`${valueToShow}`} />
-    </Card>
+        <CircularProgress value={percentageValue} text={`${valueToShow}`} />
+      </Card>
+      <SlideDialog
+        open={openModal}
+        onClose={onClose}
+        component={<EditComponent />}
+        title='Edit Calories'
+      />
+    </>
   )
+}
+
+function EditComponent() {
+  return <div>EditComponent</div>
 }
