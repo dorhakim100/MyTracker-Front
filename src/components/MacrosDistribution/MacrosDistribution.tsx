@@ -3,6 +3,7 @@ import type { CSSProperties } from 'react'
 import { Macros } from '../Macros/Macros'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
+import { EditIcon } from '../EditIcon/EditIcon'
 
 interface MacrosDistributionProps {
   protein: number
@@ -38,6 +39,10 @@ export function MacrosDistribution({
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
 
+  const edit = () => {
+    console.log('edit')
+  }
+
   return (
     <Card
       className={`card macros-distribution ${
@@ -45,7 +50,7 @@ export function MacrosDistribution({
       }`}
     >
       <Typography variant='h6'>Distribution</Typography>
-
+      <EditIcon onClick={edit} />
       <div className='donut' style={donutStyle}>
         <div className={`donut-inner ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
           <div className='totals'>

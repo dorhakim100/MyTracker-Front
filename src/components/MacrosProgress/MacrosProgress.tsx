@@ -5,6 +5,7 @@ import { Card, Typography } from '@mui/material'
 import { CircularProgress } from '../CircularProgress/CircularProgress'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
+import { EditIcon } from '../EditIcon/EditIcon'
 
 const proteinColor = 'var(--macro-protein)'
 const carbsColor = 'var(--macro-carbs)'
@@ -43,12 +44,16 @@ export function MacrosProgress({ protein, carbs, fats }: MacrosProgressProps) {
     },
   ]
 
+  const edit = () => {
+    console.log('edit')
+  }
+
   return (
     <Card
       className={`card macros-progress ${prefs.isDarkMode ? 'dark-mode' : ''}`}
     >
       <Typography variant='h6'>Macros</Typography>
-
+      <EditIcon onClick={edit} />
       <div className='macros-container'>
         {macros.map((macro) => (
           <div className='macro-container' key={`progress-${macro.name}`}>
