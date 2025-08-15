@@ -3,10 +3,7 @@
   flex-direction: column;
   // gap: 1em;
   position: absolute;
-  top: 4.6em;
-  @media (max-width: 1020px) {
-    top: 4.6em;
-  }
+  top: $header-margin;
 
   // right: -300px;
   left: -300px;
