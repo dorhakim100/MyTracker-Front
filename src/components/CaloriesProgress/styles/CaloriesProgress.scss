@@ -4,6 +4,8 @@
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
 
+  position: relative;
+
   &.dark {
     background-color: $darker-gray;
     color: $white;

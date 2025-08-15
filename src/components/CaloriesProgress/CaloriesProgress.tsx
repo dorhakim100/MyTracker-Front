@@ -1,10 +1,13 @@
-import { Card, Typography } from '@mui/material'
+import { Card, IconButton, Typography } from '@mui/material'
 import { CircularProgress } from '../CircularProgress/CircularProgress'
 
-import FlagIcon from '@mui/icons-material/Flag'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { useState } from 'react'
+
+import { EditIcon } from '../EditIcon/EditIcon'
+
+import FlagIcon from '@mui/icons-material/Flag'
 
 interface CaloriesProgressProps {
   percentageValue: number
@@ -32,12 +35,17 @@ export function CaloriesProgress({
     setValueToShow(stateToSet ? current : `${percentageValue}%`)
   }
 
+  const edit = () => {
+    console.log('edit')
+  }
+
   return (
     <Card
       className={`card calories-progress ${prefs.isDarkMode ? 'dark' : ''}`}
       onClick={onChangeDisplay}
     >
       <Typography variant='h6'>{label}</Typography>
+      <EditIcon onClick={edit} />
       <div className='goal-container'>
         <div className='banner'>
           <Typography variant='body1'>
