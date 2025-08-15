@@ -1,0 +1,22 @@
+.macros-progress {
+  display: grid;
+
+  grid-template-rows: auto 1fr;
+  gap: 1.5rem;
+
+  .macros-container {
+    // align-self: center;
+    display: flex;
+    gap: 1.5rem;
+    place-items: center;
+
+    .macro-container {
+      display: grid;
+      gap: 0.8rem;
+
+      span {
+        font-weight: 700;
+      }
+    }
+  }
+}

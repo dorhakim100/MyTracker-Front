@@ -1,4 +1,8 @@
 :root {
+  --primary-color: #027af2;
+  --primary-color-dark: #0052a3;
+  --primary-color-light: #80bfff;
+
   --macro-protein: #ef476f;
   --macro-carbs: #06d6a0;
   --macro-fats: #ffd166;
@@ -9,10 +13,10 @@
 }
 
 // Colors
-$primary-color: #027af2;
+$primary-color: var(--primary-color);
 
-$primary-color-light: #80bfff;
-$primary-color-dark: #0052a3;
+$primary-color-light: var(--primary-color-light);
+$primary-color-dark: var(--primary-color-dark);
 $primary-color-darker: #262a31;
 
 $secondary-color: #009688;
