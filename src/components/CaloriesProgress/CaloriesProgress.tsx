@@ -4,16 +4,17 @@ import { CircularProgress } from '../CircularProgress/CircularProgress'
 import FlagIcon from '@mui/icons-material/Flag'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
+import { useState } from 'react'
 
 interface CaloriesProgressProps {
-  value: number
+  percentageValue: number
   current: number
   goal: number
   label?: string
 }
 
 export function CaloriesProgress({
-  value,
+  percentageValue,
   current,
   goal,
   label = 'Calories',
@@ -22,18 +23,30 @@ export function CaloriesProgress({
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
 
+  const [valueToShow, setValueToShow] = useState<number | string>(current)
+  const [isPercentage, setIsPercentage] = useState(false)
+
+  const onChangeDisplay = () => {
+    const stateToSet = !isPercentage
+    setIsPercentage(stateToSet)
+    setValueToShow(stateToSet ? current : `${percentageValue}%`)
+  }
+
   return (
     <Card
-      className={`calories-progress-card ${prefs.isDarkMode ? 'dark' : ''}`}
+      className={`card calories-progress ${prefs.isDarkMode ? 'dark' : ''}`}
+      onClick={onChangeDisplay}
     >
       <Typography variant='h6'>{label}</Typography>
       <div className='goal-container'>
-        <Typography variant='body1'>
-          {current}/{goal}
-        </Typography>
-        <FlagIcon />
+        <div className='banner'>
+          <Typography variant='body1'>
+            {current}/{goal}
+          </Typography>
+          <FlagIcon />
+        </div>
       </div>
-      <CircularProgress value={value} text={`${value}%`} />
+      <CircularProgress value={percentageValue} text={`${valueToShow}`} />
     </Card>
   )
 }

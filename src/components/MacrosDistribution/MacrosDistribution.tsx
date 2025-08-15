@@ -45,13 +45,11 @@ export function MacrosDistribution({
 
   return (
     <Card
-      className={`macros-distribution-card ${
+      className={`card macros-distribution ${
         prefs.isDarkMode ? 'dark-mode' : ''
       }`}
     >
-      <div className='header'>
-        <Typography variant='h6'>{title}</Typography>
-      </div>
+      <Typography variant='h6'>{title}</Typography>
 
       <div className='donut' style={donutStyle}>
         <div className={`donut-inner ${prefs.isDarkMode ? 'dark-mode' : ''}`}>

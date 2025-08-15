@@ -6,6 +6,7 @@ import 'swiper/css'
 import 'swiper/css/pagination'
 
 import { CaloriesProgress } from '../CaloriesProgress/CaloriesProgress'
+import { MacrosDistribution } from '../MacrosDistribution/MacrosDistribution'
 
 export function StatsCarousel() {
   return (
@@ -13,18 +14,23 @@ export function StatsCarousel() {
       spaceBetween={30}
       pagination={{ clickable: true }}
       modules={[Pagination]}
-      className='mySwiper'
+      className='stats-carousel'
     >
       <SwiperSlide>
-        <CaloriesProgress value={50} current={1000} goal={2000} />
+        <CaloriesProgress percentageValue={50} current={1000} goal={2000} />
       </SwiperSlide>
 
       <SwiperSlide>
-        <CaloriesProgress value={50} current={1000} goal={2000} />
+        <MacrosDistribution
+          protein={100}
+          carbs={100}
+          fats={100}
+          title='Macros'
+        />
       </SwiperSlide>
 
       <SwiperSlide>
-        <CaloriesProgress value={50} current={1000} goal={2000} />
+        <CaloriesProgress percentageValue={50} current={1000} goal={2000} />
       </SwiperSlide>
     </Swiper>
   )

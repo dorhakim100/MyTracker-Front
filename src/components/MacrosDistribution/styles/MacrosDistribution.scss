@@ -1,25 +1,13 @@
-.macros-distribution-card {
-  padding: 1em;
+.macros-distribution {
   border-radius: 12px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: auto 1fr;
   gap: 1.5rem;
-
-  &.dark-mode {
-    background-color: $darker-gray;
-    color: $white;
-  }
-
-  .header {
-    grid-column: 1 / -1;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
 }
 
-.macros-distribution-card .donut {
+.macros-distribution .donut {
+  align-self: center;
   --size: 160px;
   --thickness: 18px;
   width: var(--size);
@@ -34,7 +22,7 @@
   place-items: center;
 }
 
-.macros-distribution-card .donut .donut-inner {
+.macros-distribution .donut .donut-inner {
   width: calc(var(--size) - var(--thickness));
   height: calc(var(--size) - var(--thickness));
   border-radius: 50%;
@@ -48,10 +36,10 @@
   place-items: center;
 }
 
-.macros-distribution-card .totals {
+.macros-distribution .totals {
   text-align: center;
 }
 
-.macros-distribution-card .totals .value {
+.macros-distribution .totals .value {
   font-weight: 700;
 }

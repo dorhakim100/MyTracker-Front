@@ -1,0 +1,62 @@
+a {
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+button {
+  // border: 0;
+  // background-color: $clr1;
+  // color: whitesmoke;
+  padding: 5px 10px;
+  margin: 5px;
+  cursor: pointer;
+}
+
+* {
+  @include fluid-font(14, 19);
+}
+
+.card {
+  height: $card-height;
+  padding: 1rem;
+
+  h6 {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    justify-self: start;
+  }
+
+  background-color: $white;
+
+  &.dark-mode {
+    background-color: $darker-gray;
+    color: $white;
+  }
+}
+
+.banner {
+  display: grid;
+  grid-auto-flow: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+
+  padding: 8px 12px;
+  border-radius: 8px;
+  background-color: var(--macro-bg, rgba(0, 0, 0, 0.05));
+  width: 100%;
+
+  .label {
+    padding: 2px 4px;
+    border-radius: 6px;
+  }
+}
+
+.dark-mode .banner {
+  --macro-bg: rgba(255, 255, 255, 0.08);
+
+  .label {
+    color: #000;
+  }
+}
