@@ -1,9 +1,11 @@
 .macros-distribution {
   border-radius: 12px;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto 1fr;
-  gap: 1.5rem;
+  grid-template-columns: auto 1fr;
+  // grid-template-rows: auto 1fr;
+  // gap: 1.5rem;
+  gap: 0rem 1rem;
+  // padding: 1rem;
 }
 
 .macros-distribution .donut {

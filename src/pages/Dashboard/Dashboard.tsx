@@ -3,7 +3,7 @@ import { StatsCarousel } from '../../components/StatsCarousel/StatsCarousel'
 
 export function Dashboard() {
   return (
-    <div className='home-container'>
+    <div className='page-container dashboard-container'>
       <TimesContainer />
       <StatsCarousel />
     </div>
