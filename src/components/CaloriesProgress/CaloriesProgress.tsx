@@ -1,4 +1,4 @@
-import { Card, Typography, Box, Stack, Button } from '@mui/material'
+import { Card, Typography, Box } from '@mui/material'
 // import {Slider} from '@mui/material'
 import { CircularProgress } from '../CircularProgress/CircularProgress'
 
@@ -74,81 +74,52 @@ export function CaloriesProgress({
   )
 }
 
-import Slider from 'rc-slider'
-// import CircularSlider from '@fseehawer/react-circular-slider'
 import CircularSlider from 'react-circular-slider-svg'
 
 function EditComponent() {
-  const [calories, setCalories] = useState<number>(2000)
+  const [calories, setCalories] = useState<number>(3000)
 
-  const marks = [
-    { value: 0, label: '0' },
-    { value: 1000, label: '1k' },
-    { value: 2000, label: '2k' },
-    { value: 3000, label: '3k' },
-    { value: 4000, label: '4k' },
-  ]
+  const MIN = 1200
+  const MAX = 5000
+  const STEP = 50
 
-  const handleChange = (value: number) => {
-    const valueToSet = Math.round(value / 50) * 50
+  const color = 'var(--secondary-color)'
+  const arcBackgroundColor = 'var(--secondary-color-background)'
 
-    setCalories(valueToSet)
+  const clampToStep = (value: number) => {
+    const clamped = Math.min(MAX, Math.max(MIN, value))
+    return Math.round(clamped / STEP) * STEP
   }
 
-  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.stopPropagation()
-    e.preventDefault()
-    console.log('clicked')
-    // setCalories(1600)
+  const handleChange = (value: number) => {
+    setCalories(clampToStep(value))
   }
 
   return (
-    <Box sx={{ p: 2 }}>
-      <Box
-        sx={{
-          position: 'relative',
-          // height: 200,
-        }}
-        className='calories-amount-container'
-      >
-        <Typography
-          variant='h3'
-          onClick={handleClick}
-          className='calories-amount'
+    <>
+      <Box sx={{ p: 2 }}>
+        <Box
+          sx={{ position: 'relative' }}
+          className='calories-amount-container'
         >
-          {calories} kcal
-        </Typography>
-        <div className='circular-slider-container'>
-          <CircularSlider
-            size={300}
-            trackWidth={12}
-            minValue={1600}
-            maxValue={4000}
-            startAngle={180} // start at left
-            endAngle={360} // end at right (half circle)
-            handle1={{
-              value: calories,
-              onChange: handleChange,
-            }}
-            arcColor='#009688'
-            arcBackgroundColor='#3A3F47'
-          />
-        </div>
+          <Typography variant='h3' className='calories-amount'>
+            {calories} kcal
+          </Typography>
+          <div className='circular-slider-container'>
+            <CircularSlider
+              size={380}
+              trackWidth={14}
+              minValue={MIN}
+              maxValue={MAX}
+              startAngle={180}
+              endAngle={360}
+              handle1={{ value: calories, onChange: handleChange }}
+              arcColor={color}
+              arcBackgroundColor={arcBackgroundColor}
+            />
+          </div>
+        </Box>
       </Box>
-      {/* <Stack direction='row' spacing={1} justifyContent='center'>
-        <Button
-          variant='outlined'
-          onClick={() => setCalories((v) => Math.max(0, v - 50))}
-        >
-          -50
-        </Button>
-        <Button
-          variant='outlined'
-          onClick={() => setCalories((v) => Math.min(4000, v + 50))}
-        >
-          +50
-        </Button>
-      </Stack> */}
-    </Box>
+    </>
   )
 }

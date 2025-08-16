@@ -100,8 +100,10 @@ p {
     color: $white;
   }
 
+  outline: none;
+  border: none;
+
   .MuiButton-contained {
-    // color: red;
     background-color: $dark-gray !important;
 
     background-image: linear-gradient(

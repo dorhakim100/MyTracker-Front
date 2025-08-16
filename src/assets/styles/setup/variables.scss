@@ -3,6 +3,11 @@
   --primary-color-dark: #0052a3;
   --primary-color-light: #80bfff;
 
+  --secondary-color: #009688;
+  --secondary-color-dark: #00695c;
+  --secondary-color-light: #4db6ac;
+  --secondary-color-background: #3a3f47;
+
   --macro-protein: #ef476f;
   --macro-carbs: #06d6a0;
   --macro-fats: #ffd166;
@@ -19,9 +24,9 @@ $primary-color-light: var(--primary-color-light);
 $primary-color-dark: var(--primary-color-dark);
 $primary-color-darker: #262a31;
 
-$secondary-color: #009688;
-$secondary-color-light: #4db6ac;
-$secondary-color-dark: #00695c;
+$secondary-color: var(--secondary-color);
+$secondary-color-light: var(--secondary-color-light);
+$secondary-color-dark: var(--secondary-color-dark);
 
 // Shades of Red
 $light-red: #f28b82;

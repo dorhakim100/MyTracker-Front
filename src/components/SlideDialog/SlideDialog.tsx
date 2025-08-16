@@ -1,5 +1,4 @@
 import * as React from 'react'
-import Button from '@mui/material/Button'
 import Dialog from '@mui/material/Dialog'
 import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
@@ -38,12 +37,17 @@ export function SlideDialog({
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
 
+  const handleSave = () => {
+    console.log('save')
+    onClose()
+  }
+
   return (
     <React.Fragment>
       <Dialog
         fullScreen
         open={open}
-        onClose={onClose}
+        onClose={handleSave}
         slots={{
           transition: Transition,
         }}
@@ -66,9 +70,9 @@ export function SlideDialog({
             <Typography sx={{ ml: 2, flex: 1 }} variant='h6' component='div'>
               {title}
             </Typography>
-            <Button autoFocus color='inherit' onClick={onClose}>
+            {/* <Button autoFocus color='inherit' onClick={onClose}>
               save
-            </Button>
+            </Button> */}
           </Toolbar>
         </AppBar>
         <div className='slide-dialog-content'>{component}</div>

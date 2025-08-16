@@ -25,6 +25,7 @@
     "react-circular-slider-svg": "^0.4.0",
     "react-clock": "^5.1.0",
     "react-dom": "^19.0.0",
+    "react-mobile-picker": "^1.2.0",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.4.1",
     "redux": "^5.0.1",
