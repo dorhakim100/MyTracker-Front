@@ -3,6 +3,13 @@
   justify-items: center;
   gap: 2em;
 
+  margin: 0.5em 0em;
+
+  .time-container {
+    display: grid;
+    gap: 0.5em;
+  }
+
   .time-date-container {
     display: grid;
     // gap: 0.5em;

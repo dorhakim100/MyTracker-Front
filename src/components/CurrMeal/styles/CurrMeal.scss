@@ -1,0 +1,25 @@
+.curr-meal {
+  display: grid;
+  gap: 12px;
+}
+
+.curr-meal .header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.curr-meal .header .period {
+  opacity: 0.7;
+}
+
+.curr-meal .logged-items {
+  min-height: 80px;
+  display: grid;
+  place-items: center;
+  color: $medium-gray;
+}
+
+.dark-mode .curr-meal .logged-items {
+  color: $light-gray;
+}
