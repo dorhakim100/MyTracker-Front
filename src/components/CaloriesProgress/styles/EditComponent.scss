@@ -1,0 +1,26 @@
+.calories-amount-container {
+  display: grid;
+  justify-items: center;
+  gap: 1em;
+  position: relative;
+
+  .calories-amount {
+    position: absolute;
+    // top: 50%;
+    bottom: 0;
+    z-index: 2;
+  }
+  .circular-slider-container {
+    height: 160px;
+    // width: 150px;
+    overflow: hidden;
+    // transform: rotate(-90deg);
+
+    svg {
+      transform: rotate(-90deg);
+      path {
+      }
+      //   width: 300px;
+    }
+  }
+}
