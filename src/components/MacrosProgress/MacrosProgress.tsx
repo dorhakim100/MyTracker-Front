@@ -95,45 +95,66 @@ import {
 } from '../../services/util.service'
 
 function EditComponent() {
+  interface PickerValue {
+    carbs: number
+    protein: number
+    fats: number
+    [key: string]: number
+  }
+
   const macros = {
     carbs: getArrayOfNumbers(0, 100),
     protein: getArrayOfNumbers(0, 100),
     fats: getArrayOfNumbers(0, 100),
   }
 
-  const [pickerValue, setPickerValue] = useState({
+  const [pickerValue, setPickerValue] = useState<PickerValue>({
     carbs: 0,
     protein: 0,
     fats: 0,
   })
 
+  const macroKeys = Object.keys(macros) as (keyof typeof macros)[]
+
   return (
     <Box className='edit-macros-container'>
       <div className='picker-container'>
-        <Picker value={pickerValue} onChange={setPickerValue} height={150}>
-          {Object.keys(macros).map((name) => (
-            <Picker.Column key={name} name={name}>
-              {macros[name].map((option) => (
-                <Picker.Item key={option} value={option}>
-                  {option}
-                </Picker.Item>
-              ))}
-            </Picker.Column>
-          ))}
+        <Picker
+          value={pickerValue}
+          onChange={(next) => setPickerValue(next as unknown as PickerValue)}
+          height={150}
+        >
+          {macroKeys.map((name) => {
+            const macroName = name as string
+            return (
+              <Picker.Column key={`${macroName}-picker`} name={macroName}>
+                {macros[name].map((option: number) => (
+                  <Picker.Item key={option} value={option}>
+                    {option}
+                  </Picker.Item>
+                ))}
+              </Picker.Column>
+            )
+          })}
         </Picker>
       </div>
 
       <div className='macros-title-container'>
-        {Object.keys(macros).map((name) => (
-          <div className='macro-container'>
-            <div key={`name-${name}`} className={`banner ${name}`}>
-              <span className='title'>{capitalizeFirstLetter(name)}</span>
+        {macroKeys.map((name) => {
+          const macroName = name as string
+          return (
+            <div className='macro-container' key={`name-${macroName}`}>
+              <div className={`banner ${macroName}`}>
+                <span className='title'>
+                  {capitalizeFirstLetter(macroName)}
+                </span>
+              </div>
+              <Typography variant='h6' className='value'>
+                {pickerValue[macroName]}g
+              </Typography>
             </div>
-            <Typography variant='h6' className='value'>
-              {pickerValue[name]}g
-            </Typography>
-          </div>
-        ))}
+          )
+        })}
       </div>
     </Box>
   )
