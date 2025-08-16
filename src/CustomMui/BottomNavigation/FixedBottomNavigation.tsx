@@ -51,7 +51,15 @@ export function FixedBottomNavigation(props: {
       <CssBaseline />
 
       <Paper
-        sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }}
+        sx={{
+          position: 'fixed',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          zIndex: 1000,
+          height: '100px',
+          // paddingBottom: '1.5em',
+        }}
         elevation={3}
       >
         <Box sx={{ position: 'relative' }}>

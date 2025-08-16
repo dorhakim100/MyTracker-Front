@@ -160,12 +160,17 @@ function EditComponent() {
               max={80}
               min={10}
               step={2}
-              handleStyle={
-                {
-                  // borderColor: '#000',
-                  // backgroundColor: '#fff',
-                }
-              }
+              handleStyle={{
+                // borderColor: '#000',
+                // backgroundColor: '#fff',
+                width: '20px',
+                height: '20px',
+                padding: '0px',
+                // marginBottom: '0px',
+                marginTop: '-8px',
+                // marginLeft: '0px',
+                // marginRight: '0px',
+              }}
               // railStyle={{ backgroundColor: '#eee' }}
               trackStyle={{ backgroundColor: macro.color }}
             />

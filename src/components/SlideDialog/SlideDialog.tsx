@@ -48,6 +48,14 @@ export function SlideDialog({
         fullScreen
         open={open}
         onClose={handleSave}
+        sx={{
+          // bottom: 20,
+
+          '& .MuiDialog-paper': {
+            height: '450px',
+            paddingBottom: '1.5em',
+          },
+        }}
         slots={{
           transition: Transition,
         }}

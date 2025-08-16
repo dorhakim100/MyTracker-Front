@@ -19,7 +19,8 @@ button {
 
 .page-container {
   // padding: 1rem 0rem;
-  height: calc(100vh - $header-margin - 110px);
+  height: calc(100vh - $header-margin - 210px);
+  overflow-y: auto;
 }
 
 .card {
