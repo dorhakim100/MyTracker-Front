@@ -164,3 +164,7 @@ export function getRoutes(routes: Route[], user: User | null) {
 
   return filteredRoutes
 }
+
+export function getArrayOfNumbers(min: number, max: number): number[] {
+  return Array.from({ length: max - min + 1 }, (_, i) => min + i)
+}

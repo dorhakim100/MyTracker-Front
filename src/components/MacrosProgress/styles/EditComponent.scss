@@ -1,0 +1,49 @@
+.edit-macros-container {
+  .picker-container {
+    // height: 150px;
+    // overflow: hidden;
+    // margin-bottom: 1em;
+  }
+
+  .macros-title-container {
+    margin-bottom: 1em;
+  }
+
+  .macros-title-container {
+    display: flex;
+    justify-content: space-around;
+    gap: 1em;
+    padding: 0em 1em;
+    // align-items: center;
+    text-align: center;
+
+    .macro-container {
+    }
+
+    .banner {
+      //   width: 160px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .title {
+        // color: $white;
+        font-size: 1.2em;
+        font-weight: 600;
+        color: $black;
+      }
+
+      &.carbs {
+        background-color: $macro-carbs;
+      }
+
+      &.protein {
+        background-color: $macro-protein;
+      }
+
+      &.fats {
+        background-color: $macro-fats;
+      }
+    }
+  }
+}
