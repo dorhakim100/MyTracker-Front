@@ -1,10 +1,10 @@
-import { Card, Typography, Box } from '@mui/material'
+import { Card, Typography, Box, Button } from '@mui/material'
 // import {Slider} from '@mui/material'
 import { CircularProgress } from '../CircularProgress/CircularProgress'
 
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 
 import { EditIcon } from '../EditIcon/EditIcon'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
@@ -74,25 +74,32 @@ export function CaloriesProgress({
   )
 }
 
-import CircularSlider from 'react-circular-slider-svg'
+import { getArrayOfNumbers } from '../../services/util.service'
+import Picker from 'react-mobile-picker'
 
 function EditComponent() {
-  const [calories, setCalories] = useState<number>(3000)
-
   const MIN = 1200
   const MAX = 5000
   const STEP = 50
 
-  const color = 'var(--secondary-color)'
-  const arcBackgroundColor = 'var(--secondary-color-background)'
+  const options = useMemo(
+    () => getArrayOfNumbers(MIN, MAX).filter((n) => n % STEP === 0),
+    []
+  )
 
-  const clampToStep = (value: number) => {
-    const clamped = Math.min(MAX, Math.max(MIN, value))
-    return Math.round(clamped / STEP) * STEP
-  }
+  const [pickerCalories, setPickerCalories] = useState<{ calories: number }>({
+    calories: 3000,
+  })
 
-  const handleChange = (value: number) => {
-    setCalories(clampToStep(value))
+  const onFixed400 = (value: number) => {
+    const valueToSet = pickerCalories.calories + value
+    if (valueToSet > MAX) {
+      setPickerCalories({ calories: MAX })
+    } else if (valueToSet < MIN) {
+      setPickerCalories({ calories: MIN })
+    } else {
+      setPickerCalories({ calories: valueToSet })
+    }
   }
 
   return (
@@ -103,9 +110,60 @@ function EditComponent() {
           className='calories-amount-container'
         >
           <Typography variant='h3' className='calories-amount'>
-            {calories} kcal
+            {pickerCalories.calories} kcal
           </Typography>
-          <div className='circular-slider-container'>
+          <div className='picker-container'>
+            <Picker
+              value={pickerCalories}
+              onChange={(next) =>
+                setPickerCalories(next as unknown as { calories: number })
+              }
+              height={150}
+            >
+              <Picker.Column name='calories'>
+                {options.map((calorie) => (
+                  <Picker.Item key={calorie} value={calorie}>
+                    {({ selected }) => (
+                      <Typography
+                        variant='h5'
+                        sx={{
+                          fontWeight: selected ? 700 : 400,
+                          opacity: selected ? 1 : 0.45,
+
+                          transform: selected ? 'scale(1)' : 'scale(0.8)',
+                          transition: 'all 160ms ease',
+                          position: 'relative',
+                        }}
+                      >
+                        {`${calorie}`}
+                        {/* {selected && <span className='kcal'>kcal</span>} */}
+                      </Typography>
+                    )}
+                  </Picker.Item>
+                ))}
+              </Picker.Column>
+            </Picker>
+            <div className='buttons-container'>
+              <Button
+                onClick={() => onFixed400(-400)}
+                variant='contained'
+                color='primary'
+              >
+                -400
+              </Button>
+              <Button
+                onClick={() => onFixed400(400)}
+                variant='contained'
+                color='primary'
+              >
+                +400
+              </Button>
+            </div>
+          </div>
+          {/* <Typography variant='h3' className='calories-amount'>
+            {calories} kcal
+          </Typography> */}
+          {/* <div className='circular-slider-container'>
             <CircularSlider
               size={380}
               trackWidth={14}
@@ -117,7 +175,7 @@ function EditComponent() {
               arcColor={color}
               arcBackgroundColor={arcBackgroundColor}
             />
-          </div>
+          </div> */}
         </Box>
       </Box>
     </>
