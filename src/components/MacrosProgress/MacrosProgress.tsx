@@ -31,14 +31,14 @@ export function MacrosProgress({ protein, carbs, fats }: MacrosProgressProps) {
 
   const macros = [
     {
-      name: 'Protein',
-      value: protein,
-      color: prefs.isDarkMode ? proteinColorDarkMode : proteinColor,
-    },
-    {
       name: 'Carbs',
       value: carbs,
       color: prefs.isDarkMode ? carbsColorDarkMode : carbsColor,
+    },
+    {
+      name: 'Protein',
+      value: protein,
+      color: prefs.isDarkMode ? proteinColorDarkMode : proteinColor,
     },
     {
       name: 'Fats',
