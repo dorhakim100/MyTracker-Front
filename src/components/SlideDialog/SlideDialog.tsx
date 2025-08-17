@@ -10,6 +10,8 @@ import { TransitionProps } from '@mui/material/transitions'
 
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
+import CircularProgress from '@mui/material/CircularProgress'
+import LinearProgress from '@mui/material/LinearProgress'
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -25,6 +27,7 @@ interface SlideDialogProps {
   onClose: () => void
   component: React.ReactElement
   title?: string
+  onSave: () => void
 }
 
 export function SlideDialog({
@@ -32,14 +35,23 @@ export function SlideDialog({
   onClose,
   component,
   title = 'Edit',
+  onSave,
 }: SlideDialogProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
 
-  const handleSave = () => {
-    console.log('save')
-    onClose()
+  const isLoading = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.isLoading
+  )
+
+  const handleSave = async () => {
+    try {
+      await onSave()
+      onClose()
+    } catch (err) {
+      console.log('err', err)
+    }
   }
 
   return (
@@ -65,6 +77,8 @@ export function SlideDialog({
           },
         }}
       >
+        {/* {isLoading && <LinearProgress />} */}
+
         <AppBar sx={{ position: 'relative' }}>
           <Toolbar>
             <IconButton
@@ -81,6 +95,7 @@ export function SlideDialog({
             {/* <Button autoFocus color='inherit' onClick={onClose}>
               save
             </Button> */}
+            {isLoading && <CircularProgress size={20} color='inherit' />}
           </Toolbar>
         </AppBar>
         <div className='slide-dialog-content'>{component}</div>

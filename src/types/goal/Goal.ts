@@ -6,6 +6,6 @@ export interface Goal {
   title: string
   updatedAt: Date
 
-  //   dailyCalories: number
+  dailyCalories: number
   macros: Macros
 }

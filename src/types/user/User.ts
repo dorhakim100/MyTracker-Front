@@ -9,5 +9,7 @@ export interface User {
   password?: string
   imgUrl?: string
 
+  currGoal: Goal
+
   goals: Goal[]
 }

@@ -1,4 +1,4 @@
-// import { userService } from '../../services/user/user.service'
+import { userService } from '../../services/user/user.service'
 
 import { User } from '../../types/user/User'
 // import { UserFilter } from '../../types/userFilter/UserFilter'
@@ -10,17 +10,20 @@ export const ADD_USER = 'ADD_USER'
 export const UPDATE_USER = 'UPDATE_USER'
 export const SET_USER_FILTER = 'SET_USER_FILTER'
 export const SET_WATCHED_USER = 'SET_WATCHED_USER'
+export const SET_USER_TO_EDIT = 'SET_USER_TO_EDIT'
 
 export interface UserState {
   users: User[]
   user: User | null
+  userToEdit: User | null
   // filter: UserFilter
   lastRemovedUser?: User
 }
 
 const initialState: UserState = {
   users: [],
-  user: null,
+  user: userService.getLoggedinUser(),
+  userToEdit: userService.getLoggedinUser(),
   // filter: userService.getDefaultFilter(),
 }
 
@@ -49,6 +52,9 @@ export function userReducer(state = initialState, action: any) {
         user._id === action.user._id ? action.user : user
       )
       newState = { ...state, users }
+      break
+    case SET_USER_TO_EDIT:
+      newState = { ...state, userToEdit: action.userToEdit }
       break
 
     // case SET_USER_FILTER:

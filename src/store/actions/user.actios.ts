@@ -6,6 +6,7 @@ import {
   SET_USERS,
   REMOVE_USER,
   SET_WATCHED_USER,
+  SET_USER_TO_EDIT,
   // SET_USER_FILTER,
 } from '../reducers/user.reducer'
 
@@ -100,16 +101,23 @@ export async function updateUser(userToUpdate: User) {
   }
 }
 
+export function setUserToEdit(userToEdit: User) {
+  store.dispatch({
+    type: SET_USER_TO_EDIT,
+    userToEdit,
+  })
+}
+
 export async function signup(credentials: UserCred) {
   try {
     await logout()
-    console.log('signup', credentials)
+
     const user = await userService.signup(credentials)
     store.dispatch({
       type: SET_USER,
       user,
     })
-    console.log('signup', user)
+
     if (user && credentials.isRemember) return
     // socketService.login(user._id)
     return user

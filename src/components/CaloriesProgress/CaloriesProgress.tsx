@@ -4,7 +4,9 @@ import { CircularProgress } from '../CircularProgress/CircularProgress'
 
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
+import { updateUser } from '../../store/actions/user.actios'
+import { setIsLoading } from '../../store/actions/system.actions'
 
 import { EditIcon } from '../EditIcon/EditIcon'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
@@ -28,6 +30,14 @@ export function CaloriesProgress({
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
 
+  const user = useSelector(
+    (stateSelector: RootState) => stateSelector.userModule.user
+  )
+
+  const userToEdit = useSelector(
+    (stateSelector: RootState) => stateSelector.userModule.userToEdit
+  )
+
   const [valueToShow, setValueToShow] = useState<number | string>(current)
   const [isPercentage, setIsPercentage] = useState(false)
 
@@ -46,6 +56,19 @@ export function CaloriesProgress({
     setOpenModal(false)
   }
 
+  const onSave = async () => {
+    try {
+      if (!userToEdit) return
+      setIsLoading(true)
+      await updateUser(userToEdit)
+      onClose()
+    } catch (err) {
+      console.log('err', err)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   return (
     <>
       <Card
@@ -57,7 +80,7 @@ export function CaloriesProgress({
         <div className='goal-container'>
           <div className='banner'>
             <Typography variant='body1'>
-              {current}/{goal}
+              {current}/{user?.currGoal?.dailyCalories}
             </Typography>
             <FlagIcon />
           </div>
@@ -69,6 +92,7 @@ export function CaloriesProgress({
         onClose={onClose}
         component={<EditComponent />}
         title='Edit Calories'
+        onSave={onSave}
       />
     </>
   )
@@ -76,6 +100,8 @@ export function CaloriesProgress({
 
 import { getArrayOfNumbers } from '../../services/util.service'
 import Picker from 'react-mobile-picker'
+import { setUserToEdit } from '../../store/actions/user.actios'
+import { User } from '../../types/user/User'
 
 function EditComponent() {
   const MIN = 1200
@@ -87,8 +113,16 @@ function EditComponent() {
     []
   )
 
+  const user = useSelector(
+    (stateSelector: RootState) => stateSelector.userModule.user
+  )
+
+  const userToEdit = useSelector(
+    (stateSelector: RootState) => stateSelector.userModule.userToEdit
+  )
+
   const [pickerCalories, setPickerCalories] = useState<{ calories: number }>({
-    calories: 3000,
+    calories: user?.currGoal?.dailyCalories || 2400,
   })
 
   const onFixed400 = (value: number) => {
@@ -101,6 +135,17 @@ function EditComponent() {
       setPickerCalories({ calories: valueToSet })
     }
   }
+
+  useEffect(() => {
+    const userToUpdate = {
+      ...userToEdit,
+      currGoal: {
+        ...userToEdit?.currGoal,
+        dailyCalories: pickerCalories.calories,
+      },
+    } as User
+    setUserToEdit(userToUpdate)
+  }, [pickerCalories.calories])
 
   return (
     <>

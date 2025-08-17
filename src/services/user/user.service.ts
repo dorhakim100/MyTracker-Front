@@ -3,6 +3,7 @@ import { storageService } from '../async-storage.service'
 import { User } from '../../types/user/User'
 import { UserCred } from '../../types/userCred/UserCred'
 import { UserFilter } from '../../types/userFilter/UserFilter'
+import { makeId } from '../util.service'
 
 const STORAGE_KEY_LOGGEDIN_USER = 'user'
 
@@ -93,8 +94,14 @@ async function signup(userCred: UserCred) {
       userCred.imgUrl =
         'https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_1280.png'
 
-    const user = await storageService.post('user', userCred)
-    console.log('signup', user)
+    const userToSave = {
+      ...userCred,
+      currGoal: getDefaultGoal(),
+      goals: [getDefaultGoal()],
+    }
+
+    const user = await storageService.post('user', userToSave)
+
     return saveLoggedinUser(user)
   } catch (err) {
     // console.log(err)
@@ -130,9 +137,9 @@ function saveLoggedinUser(user: User) {
       _id: user._id,
       fullname: user.fullname,
       imgUrl: user.imgUrl,
-      // isAdmin: user.isAdmin,
+      currGoal: user.currGoal,
+      goals: user.goals,
       email: user.email,
-      // phone: user.phone,
     }
     sessionStorage.setItem(STORAGE_KEY_LOGGEDIN_USER, JSON.stringify(user))
     return user
@@ -149,7 +156,23 @@ function getEmptyUser() {
     fullname: '',
     imgUrl: '',
     goals: [],
+    currGoalId: '',
     // isAdmin: false,
+  }
+}
+
+function getDefaultGoal() {
+  return {
+    _id: 'defaultGoal',
+    isMain: true,
+    updatedAt: new Date(),
+    title: 'My Goal',
+    dailyCalories: 2400,
+    macros: {
+      protein: { gram: 180, percent: 45 },
+      carbs: { gram: 300, percent: 45 },
+      fat: { gram: 53, percent: 10 },
+    },
   }
 }
 
