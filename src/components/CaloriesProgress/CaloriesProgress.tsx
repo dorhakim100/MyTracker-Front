@@ -102,6 +102,7 @@ import { getArrayOfNumbers } from '../../services/util.service'
 import Picker from 'react-mobile-picker'
 import { setUserToEdit } from '../../store/actions/user.actios'
 import { User } from '../../types/user/User'
+import { macrosService } from '../../services/macros/macros.service'
 
 function EditComponent() {
   const MIN = 1200
@@ -137,11 +138,24 @@ function EditComponent() {
   }
 
   useEffect(() => {
+    const currCalories = user?.currGoal?.dailyCalories
+    if (!currCalories) return
+    const diff = currCalories - pickerCalories.calories
+
+    const carbsToEdit = macrosService.calculateCarbCalories(diff)
+    const originalCarbs = user?.currGoal?.macros.carbs
+
+    const newCarbs = originalCarbs + carbsToEdit
+
     const userToUpdate = {
       ...userToEdit,
       currGoal: {
         ...userToEdit?.currGoal,
         dailyCalories: pickerCalories.calories,
+        macros: {
+          ...userToEdit?.currGoal?.macros,
+          carbs: newCarbs,
+        },
       },
     } as User
     setUserToEdit(userToUpdate)
