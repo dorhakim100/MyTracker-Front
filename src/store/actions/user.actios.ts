@@ -45,6 +45,7 @@ export async function login(credentials: UserCred) {
       type: SET_USER,
       user: user,
     })
+    setUserToEdit(user)
     // socketService.login(user._id)
     return user
   } catch (err) {
@@ -117,6 +118,8 @@ export async function signup(credentials: UserCred) {
       type: SET_USER,
       user,
     })
+
+    setUserToEdit(user)
 
     if (user && credentials.isRemember) return
     // socketService.login(user._id)

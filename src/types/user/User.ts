@@ -1,4 +1,5 @@
 import { Goal } from '../goal/Goal'
+import { LoggedToday } from '../loggedToday/LoggedToday'
 
 export interface User {
   _id: string
@@ -10,6 +11,7 @@ export interface User {
   imgUrl?: string
 
   currGoal: Goal
-
   goals: Goal[]
+
+  loggedToday: LoggedToday
 }

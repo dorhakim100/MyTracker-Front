@@ -6,6 +6,11 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { EditIcon } from '../EditIcon/EditIcon'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
+import {
+  calculateProteinCalories,
+  calculateCarbCalories,
+  calculateFatCalories,
+} from '../../services/macros/macros.service'
 
 interface MacrosDistributionProps {
   protein: number
@@ -22,10 +27,14 @@ export function MacrosDistribution({
   carbs,
   fats,
 }: MacrosDistributionProps) {
-  const total = Math.max(protein + carbs + fats, 0.0001)
-  const pPct = (protein / total) * 100
-  const cPct = (carbs / total) * 100
-  const fPct = (fats / total) * 100
+  const proteinCalories = calculateProteinCalories(protein)
+  const carbsCalories = calculateCarbCalories(carbs)
+  const fatsCalories = calculateFatCalories(fats)
+
+  const total = Math.max(proteinCalories + carbsCalories + fatsCalories, 0.0001)
+  const pPct = (proteinCalories / total) * 100
+  const cPct = (carbsCalories / total) * 100
+  const fPct = (fatsCalories / total) * 100
 
   type CSSVars = CSSProperties & Record<string, string | number>
   const donutStyle: CSSVars = {
@@ -62,8 +71,8 @@ export function MacrosDistribution({
         <div className='donut' style={donutStyle}>
           <div className={`donut-inner ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
             <div className='totals'>
-              <div className='value'>{Math.round(total)}g</div>
-              <div className='label'>total</div>
+              <div className='value'>{Math.round(total)}</div>
+              <div className='label'>kcal</div>
             </div>
           </div>
         </div>

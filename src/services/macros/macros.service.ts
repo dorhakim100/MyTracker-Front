@@ -25,6 +25,10 @@ export function calculateCarbCalories(carbsGrams: number): number {
   return Math.round(carbsGrams * CALORIES_PER_GRAM.carbs)
 }
 
+export function calculateCarbsFromCalories(calories: number): number {
+  return Math.round(calories / CALORIES_PER_GRAM.carbs)
+}
+
 export function calculateFatCalories(fatsGrams: number): number {
   return Math.round(fatsGrams * CALORIES_PER_GRAM.fats)
 }
@@ -37,11 +41,4 @@ export function calculateCaloriesFromMacros(
   const fats = calculateFatCalories(macros.fats)
   const total = protein + carbs + fats
   return { protein, carbs, fats, total }
-}
-
-export const macrosService = {
-  calculateProteinCalories,
-  calculateCarbCalories,
-  calculateFatCalories,
-  calculateCaloriesFromMacros,
 }

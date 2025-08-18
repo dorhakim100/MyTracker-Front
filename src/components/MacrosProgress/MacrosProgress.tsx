@@ -16,15 +16,23 @@ const proteinColorDarkMode = 'var(--macro-protein-dark)'
 const carbsColorDarkMode = 'var(--macro-carbs-dark)'
 const fatsColorDarkMode = 'var(--macro-fats-dark)'
 
+interface Macro {
+  percentage: number
+  gram: number
+}
 interface MacrosProgressProps {
-  protein: number
-  carbs: number
-  fats: number
+  protein: Macro
+  carbs: Macro
+  fats: Macro
 }
 
 export function MacrosProgress({ protein, carbs, fats }: MacrosProgressProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
+  )
+
+  const userToEdit = useSelector(
+    (stateSelector: RootState) => stateSelector.userModule.userToEdit
   )
 
   const [openModal, setOpenModal] = useState(false)
@@ -48,12 +56,24 @@ export function MacrosProgress({ protein, carbs, fats }: MacrosProgressProps) {
   ]
 
   const edit = () => {
-    console.log('edit')
     setOpenModal(true)
   }
 
   const onClose = () => {
     setOpenModal(false)
+  }
+
+  const onSave = async () => {
+    try {
+      if (!userToEdit) return
+      setIsLoading(true)
+      await updateUser(userToEdit)
+      onClose()
+    } catch (err) {
+      console.log('err', err)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -69,8 +89,8 @@ export function MacrosProgress({ protein, carbs, fats }: MacrosProgressProps) {
           {macros.map((macro) => (
             <div className='macro-container' key={`progress-${macro.name}`}>
               <CircularProgress
-                value={macro.value}
-                text={`${macro.value}`}
+                value={macro.value.percentage}
+                text={`${macro.value.gram}`}
                 color={macro.color}
               />
               <span>{macro.name}</span>
@@ -83,6 +103,7 @@ export function MacrosProgress({ protein, carbs, fats }: MacrosProgressProps) {
         onClose={onClose}
         component={<EditComponent />}
         title='Edit Macros'
+        onSave={onSave}
       />
     </>
   )
@@ -93,6 +114,8 @@ import {
   capitalizeFirstLetter,
   getArrayOfNumbers,
 } from '../../services/util.service'
+import { setIsLoading } from '../../store/actions/system.actions'
+import { updateUser } from '../../store/actions/user.actios'
 
 function EditComponent() {
   interface PickerValue {

@@ -98,6 +98,7 @@ async function signup(userCred: UserCred) {
       ...userCred,
       currGoal: getDefaultGoal(),
       goals: [getDefaultGoal()],
+      loggedToday: getDefaultLoggedToday(),
     }
 
     const user = await storageService.post('user', userToSave)
@@ -140,6 +141,7 @@ function saveLoggedinUser(user: User) {
       currGoal: user.currGoal,
       goals: user.goals,
       email: user.email,
+      loggedToday: user.loggedToday,
     }
     sessionStorage.setItem(STORAGE_KEY_LOGGEDIN_USER, JSON.stringify(user))
     return user
@@ -157,6 +159,7 @@ function getEmptyUser() {
     imgUrl: '',
     goals: [],
     currGoalId: '',
+    loggedToday: getDefaultLoggedToday(),
     // isAdmin: false,
   }
 }
@@ -169,10 +172,30 @@ function getDefaultGoal() {
     title: 'My Goal',
     dailyCalories: 2400,
     macros: {
-      protein: { gram: 180, percent: 45 },
-      carbs: { gram: 300, percent: 45 },
-      fat: { gram: 53, percent: 10 },
+      protein: 180,
+      carbs: 300,
+      fat: 53,
     },
+  }
+}
+
+function getDefaultLoggedToday() {
+  return {
+    date: new Date().toISOString(),
+    calories: 0,
+    protein: 0,
+    carbs: 0,
+    fat: 0,
+  }
+}
+
+function getRandomLoggedToday() {
+  return {
+    date: new Date().toISOString(),
+    calories: 1772,
+    protein: 145,
+    carbs: 190,
+    fat: 48,
   }
 }
 

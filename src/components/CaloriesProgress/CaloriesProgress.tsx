@@ -14,7 +14,7 @@ import { SlideDialog } from '../SlideDialog/SlideDialog'
 import FlagIcon from '@mui/icons-material/Flag'
 
 interface CaloriesProgressProps {
-  percentageValue: number
+  percentageValue?: number
   current: number
   goal: number
   label?: string
@@ -69,6 +69,12 @@ export function CaloriesProgress({
     }
   }
 
+  function getPercentageValue() {
+    return user?.currGoal?.dailyCalories
+      ? (current / user?.currGoal?.dailyCalories) * 100
+      : 0
+  }
+
   return (
     <>
       <Card
@@ -85,7 +91,10 @@ export function CaloriesProgress({
             <FlagIcon />
           </div>
         </div>
-        <CircularProgress value={percentageValue} text={`${valueToShow}`} />
+        <CircularProgress
+          value={getPercentageValue()}
+          text={`${valueToShow}`}
+        />
       </Card>
       <SlideDialog
         open={openModal}
@@ -102,7 +111,7 @@ import { getArrayOfNumbers } from '../../services/util.service'
 import Picker from 'react-mobile-picker'
 import { setUserToEdit } from '../../store/actions/user.actios'
 import { User } from '../../types/user/User'
-import { macrosService } from '../../services/macros/macros.service'
+import { calculateCarbsFromCalories } from '../../services/macros/macros.service'
 
 function EditComponent() {
   const MIN = 1200
@@ -140,9 +149,9 @@ function EditComponent() {
   useEffect(() => {
     const currCalories = user?.currGoal?.dailyCalories
     if (!currCalories) return
-    const diff = currCalories - pickerCalories.calories
-
-    const carbsToEdit = macrosService.calculateCarbCalories(diff)
+    const diff = (currCalories - pickerCalories.calories) * -1
+    console.log('diff', diff)
+    const carbsToEdit = calculateCarbsFromCalories(diff)
     const originalCarbs = user?.currGoal?.macros.carbs
 
     const newCarbs = originalCarbs + carbsToEdit
@@ -158,6 +167,8 @@ function EditComponent() {
         },
       },
     } as User
+    console.log(userToEdit)
+
     setUserToEdit(userToUpdate)
   }, [pickerCalories.calories])
 
