@@ -8,14 +8,13 @@ import { smoothScroll, getRoutes } from './services/util.service'
 
 import { AppHeader } from './components/AppHeader/AppHeader'
 import { Prefs } from './components/Prefs/Prefs'
-import { PrefsButton } from './components/PrefsButton/PrefsButton.tsx'
+import { UserMsg } from './components/UserMsg/UserMsg'
 
 import { FixedBottomNavigation } from './CustomMui/BottomNavigation/FixedBottomNavigation.tsx'
 
 import { RootState } from './store/store.ts'
 
 import './App.css'
-import { SearchBar } from './components/SearchBar/SearchBar.tsx'
 
 function App() {
   const prefs = useSelector(
@@ -45,6 +44,7 @@ function App() {
   return (
     <>
       <AppHeader routes={filteredRoutes} />
+      <UserMsg />
       <Prefs />
       {/* <PrefsButton /> */}
       <main className={`main ${prefs.isDarkMode ? 'dark-mode' : ''}`}>

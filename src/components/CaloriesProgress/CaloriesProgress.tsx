@@ -61,9 +61,11 @@ export function CaloriesProgress({
       if (!userToEdit) return
       setIsLoading(true)
       await updateUser(userToEdit)
+      showSuccessMsg(messages.success.updateCalories)
       onClose()
     } catch (err) {
       console.log('err', err)
+      showErrorMsg(messages.error.updateCalories)
     } finally {
       setIsLoading(false)
     }
@@ -115,6 +117,8 @@ import {
   calculateCarbsFromCalories,
   roundToNearest50,
 } from '../../services/macros/macros.service'
+import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
+import { messages } from '../../assets/config/messages'
 
 function EditComponent() {
   const MIN = 1200
