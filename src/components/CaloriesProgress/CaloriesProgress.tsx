@@ -88,7 +88,7 @@ export function CaloriesProgress({
         <div className='goal-container'>
           <div className='banner'>
             <Typography variant='body1'>
-              {current}/{user?.currGoal?.dailyCalories}
+              {current}/{roundToNearest50(user?.currGoal?.dailyCalories || 0)}
             </Typography>
             <FlagIcon />
           </div>
@@ -142,7 +142,7 @@ function EditComponent() {
     calories: user?.currGoal?.dailyCalories || 2400,
   })
 
-  const onFixed400 = (value: number) => {
+  const onFixedChange = (value: number) => {
     const valueToSet = pickerCalories.calories + value
     if (valueToSet > MAX) {
       setPickerCalories({ calories: MAX })
@@ -221,14 +221,14 @@ function EditComponent() {
             </Picker>
             <div className='buttons-container'>
               <Button
-                onClick={() => onFixed400(-400)}
+                onClick={() => onFixedChange(-400)}
                 variant='contained'
                 color='primary'
               >
                 -400
               </Button>
               <Button
-                onClick={() => onFixed400(400)}
+                onClick={() => onFixedChange(400)}
                 variant='contained'
                 color='primary'
               >

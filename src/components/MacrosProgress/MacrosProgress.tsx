@@ -120,6 +120,11 @@ import { setUserToEdit, updateUser } from '../../store/actions/user.actios'
 import { User } from '../../types/user/User'
 import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
 import { messages } from '../../assets/config/messages'
+import {
+  calculateCarbCalories,
+  calculateFatCalories,
+  calculateProteinCalories,
+} from '../../services/macros/macros.service'
 
 function EditComponent() {
   interface PickerValue {
@@ -148,10 +153,17 @@ function EditComponent() {
   const macroKeys = Object.keys(macros) as (keyof typeof macros)[]
 
   useEffect(() => {
+    const proteinCalories = calculateProteinCalories(pickerValue.protein)
+    const carbsCalories = calculateCarbCalories(pickerValue.carbs)
+    const fatsCalories = calculateFatCalories(pickerValue.fats)
+
+    const totalCalories = proteinCalories + carbsCalories + fatsCalories
+
     const userToUpdate = {
       ...userToEdit,
       currGoal: {
         ...userToEdit?.currGoal,
+        dailyCalories: totalCalories,
         macros: {
           ...userToEdit?.currGoal?.macros,
           carbs: pickerValue.carbs,
