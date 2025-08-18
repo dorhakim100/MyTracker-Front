@@ -59,6 +59,15 @@
   }
 }
 
+.MuiFab-circular {
+  margin-bottom: 1.5rem !important;
+
+  svg {
+    width: 30px !important;
+    height: 30px !important;
+  }
+}
+
 .MuiSpeedDial-actions:not(.MuiSpeedDial-actionsClosed) {
   transition: all 0.2s ease-in-out !important;
   background-color: $white;
@@ -68,6 +77,13 @@
   border-bottom-right-radius: 15px !important;
   padding: 1rem !important;
   margin-bottom: 0.8rem !important;
+
+  box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+
+  .MuiButtonBase-root {
+    background-color: $primary-color !important;
+    color: $white !important;
+  }
 }
 .MuiSpeedDial-root {
   &.dark-mode {
@@ -81,6 +97,10 @@
   width: 90px !important;
   height: 70px !important;
   border-radius: 10px !important;
+  svg {
+    width: 30px !important;
+    height: 30px !important;
+  }
   // bottom: 2em !important;
   // height: 150px !important;
   // border-radius: 100% !important;

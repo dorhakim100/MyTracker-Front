@@ -48,8 +48,16 @@ export function FixedBottomNavigation(props: {
   )
 
   const speedDialActions = [
-    { icon: <QrCode2Icon />, name: 'Scan' },
-    { icon: <SearchIcon />, name: 'Search' },
+    {
+      icon: <QrCode2Icon />,
+      name: 'Scan',
+      onClick: onScanClick,
+    },
+    {
+      icon: <SearchIcon />,
+      name: 'Search',
+      onClick: onSearchClick,
+    },
   ]
 
   useEffect(() => {
@@ -68,6 +76,14 @@ export function FixedBottomNavigation(props: {
       setValue(index)
     }
   }, [location.pathname, props.routes])
+
+  function onScanClick() {
+    console.log('scan')
+  }
+
+  function onSearchClick() {
+    console.log('search')
+  }
 
   return (
     <Box
@@ -107,7 +123,11 @@ export function FixedBottomNavigation(props: {
             }}
           >
             {speedDialActions.map((action) => (
-              <SpeedDialAction key={action.name} icon={action.icon} />
+              <SpeedDialAction
+                key={action.name}
+                icon={action.icon}
+                onClick={action.onClick}
+              />
             ))}
           </SpeedDial>
 
