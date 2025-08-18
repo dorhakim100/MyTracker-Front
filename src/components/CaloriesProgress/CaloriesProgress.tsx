@@ -111,7 +111,10 @@ import { getArrayOfNumbers } from '../../services/util.service'
 import Picker from 'react-mobile-picker'
 import { setUserToEdit } from '../../store/actions/user.actios'
 import { User } from '../../types/user/User'
-import { calculateCarbsFromCalories } from '../../services/macros/macros.service'
+import {
+  calculateCarbsFromCalories,
+  roundToNearest50,
+} from '../../services/macros/macros.service'
 
 function EditComponent() {
   const MIN = 1200
@@ -150,7 +153,7 @@ function EditComponent() {
     const currCalories = user?.currGoal?.dailyCalories
     if (!currCalories) return
     const diff = (currCalories - pickerCalories.calories) * -1
-    console.log('diff', diff)
+
     const carbsToEdit = calculateCarbsFromCalories(diff)
     const originalCarbs = user?.currGoal?.macros.carbs
 
@@ -160,14 +163,13 @@ function EditComponent() {
       ...userToEdit,
       currGoal: {
         ...userToEdit?.currGoal,
-        dailyCalories: pickerCalories.calories,
+        dailyCalories: roundToNearest50(pickerCalories.calories),
         macros: {
           ...userToEdit?.currGoal?.macros,
           carbs: newCarbs,
         },
       },
     } as User
-    console.log(userToEdit)
 
     setUserToEdit(userToUpdate)
   }, [pickerCalories.calories])

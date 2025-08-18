@@ -10,6 +10,7 @@ import {
   calculateProteinCalories,
   calculateCarbCalories,
   calculateFatCalories,
+  roundToNearest50,
 } from '../../services/macros/macros.service'
 
 interface MacrosDistributionProps {
@@ -71,7 +72,7 @@ export function MacrosDistribution({
         <div className='donut' style={donutStyle}>
           <div className={`donut-inner ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
             <div className='totals'>
-              <div className='value'>{Math.round(total)}</div>
+              <div className='value'>{roundToNearest50(total)}</div>
               <div className='label'>kcal</div>
             </div>
           </div>

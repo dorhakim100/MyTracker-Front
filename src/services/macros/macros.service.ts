@@ -42,3 +42,7 @@ export function calculateCaloriesFromMacros(
   const total = protein + carbs + fats
   return { protein, carbs, fats, total }
 }
+
+export function roundToNearest50(value: number): number {
+  return Math.round(value / 50) * 50
+}
