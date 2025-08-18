@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Box, Card, Typography } from '@mui/material'
 import type { CSSProperties } from 'react'
 import { Macros } from '../Macros/Macros'
@@ -6,11 +6,15 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { EditIcon } from '../EditIcon/EditIcon'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
+import { updateUser } from '../../store/actions/user.actios'
 import {
   calculateProteinCalories,
   calculateCarbCalories,
   calculateFatCalories,
   roundToNearest50,
+  calculateProteinFromCalories,
+  calculateCarbsFromCalories,
+  calculateFatFromCalories,
 } from '../../services/macros/macros.service'
 
 interface MacrosDistributionProps {
@@ -51,6 +55,10 @@ export function MacrosDistribution({
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
 
+  const userToEdit = useSelector(
+    (stateSelector: RootState) => stateSelector.userModule.userToEdit
+  )
+
   const [open, setOpen] = useState(false)
   const onClose = () => {
     setOpen(false)
@@ -58,6 +66,19 @@ export function MacrosDistribution({
 
   const edit = () => {
     setOpen(true)
+  }
+
+  const onSave = async () => {
+    try {
+      if (!userToEdit) return
+      setIsLoading(true)
+      await updateUser(userToEdit)
+      setOpen(false)
+    } catch (err) {
+      console.log(err)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -83,44 +104,92 @@ export function MacrosDistribution({
         open={open}
         onClose={onClose}
         component={<EditComponent />}
+        onSave={onSave}
       />
     </>
   )
 }
 
 import Slider from 'rc-slider'
+import { setIsLoading } from '../../store/actions/system.actions'
+import { setUserToEdit } from '../../store/actions/user.actios'
+import { User } from '../../types/user/User'
 
 function EditComponent() {
-  const [protein, setProtein] = useState(30)
-  const [carbs, setCarbs] = useState(40)
-  const [fat, setFat] = useState(30)
+  const user = useSelector(
+    (stateSelector: RootState) => stateSelector.userModule.user
+  )
 
-  const macros = [
-    {
-      name: 'Protein',
-      value: protein,
-      onChange: (value: number) => handleChange('protein', value),
-      color: proteinColor,
-    },
-    {
-      name: 'Carbs',
-      value: carbs,
-      onChange: (value: number) => handleChange('carbs', value),
-      color: carbsColor,
-    },
-    {
-      name: 'Fat',
-      value: fat,
-      onChange: (value: number) => handleChange('fat', value),
-      color: fatsColor,
-    },
-  ]
+  const userToEdit = useSelector(
+    (stateSelector: RootState) => stateSelector.userModule.userToEdit
+  )
+
+  const [proteinPercentage, setProteinPercentage] = useState(30)
+  const [carbsPercentage, setCarbsPercentage] = useState(40)
+  const [fatPercentage, setFatPercentage] = useState(40)
+
+  useEffect(() => {
+    if (!user) return
+    const proteinUserPercentage = Math.round(
+      (calculateProteinCalories(user?.currGoal?.macros.protein || 0) /
+        (user?.currGoal?.dailyCalories || 0)) *
+        100
+    )
+
+    const carbsUserPercentage = Math.round(
+      (calculateCarbCalories(user?.currGoal?.macros.carbs || 0) /
+        (user?.currGoal?.dailyCalories || 0)) *
+        100
+    )
+
+    const fatUserPercentage = Math.round(
+      (calculateFatCalories(user?.currGoal?.macros.fat || 0) /
+        (user?.currGoal?.dailyCalories || 0)) *
+        100
+    )
+
+    setProteinPercentage(proteinUserPercentage || 30)
+    setCarbsPercentage(carbsUserPercentage || 40)
+    setFatPercentage(fatUserPercentage || 30)
+  }, [user])
+
+  const macros = useMemo(() => {
+    if (!user) return []
+    const proteinCalories =
+      (proteinPercentage / 100) * user?.currGoal.dailyCalories
+    const carbsCalories = (carbsPercentage / 100) * user?.currGoal.dailyCalories
+    const fatCalories = (fatPercentage / 100) * user?.currGoal.dailyCalories
+
+    return [
+      {
+        name: 'Protein',
+        value: proteinPercentage,
+        calories: proteinCalories,
+        onChange: (value: number) => handleChange('protein', value),
+        color: proteinColor,
+      },
+      {
+        name: 'Carbs',
+        value: carbsPercentage,
+        calories: carbsCalories,
+        onChange: (value: number) => handleChange('carbs', value),
+        color: carbsColor,
+      },
+      {
+        name: 'Fat',
+        value: fatPercentage,
+        calories: fatCalories,
+        onChange: (value: number) => handleChange('fat', value),
+        color: fatsColor,
+      },
+    ]
+  }, [proteinPercentage, carbsPercentage, fatPercentage, user])
 
   const handleChange = (macro: 'protein' | 'carbs' | 'fat', value: number) => {
     // Clamp between 0–100
-    let p = protein,
-      c = carbs,
-      f = fat
+    let p = proteinPercentage,
+      c = carbsPercentage,
+      f = fatPercentage
 
     switch (macro) {
       case 'protein':
@@ -146,10 +215,31 @@ function EditComponent() {
       f = Math.round(f * factor)
     }
 
-    setProtein(p)
-    setCarbs(c)
-    setFat(f)
+    setProteinPercentage(p)
+    setCarbsPercentage(c)
+    setFatPercentage(f)
   }
+
+  useEffect(() => {
+    if (!userToEdit) return
+    // not best practice, but macros is
+    // a special case
+
+    const userToUpdate = {
+      ...userToEdit,
+      currGoal: {
+        ...userToEdit?.currGoal,
+        macros: {
+          ...userToEdit?.currGoal?.macros,
+          protein: calculateProteinFromCalories(macros[0].calories),
+          carbs: calculateCarbsFromCalories(macros[1].calories),
+          fat: calculateFatFromCalories(macros[2].calories),
+        },
+      },
+    } as User
+
+    setUserToEdit(userToUpdate)
+  }, [macros])
 
   return (
     <Box>
@@ -162,7 +252,9 @@ function EditComponent() {
             <div className='macro-title'>
               <Typography variant='h6'>{macro.name}</Typography>
               <Typography variant='body1'>{macro.value}%</Typography>
-              <Typography variant='body1'>{macro.value + 400} kcal</Typography>
+              <Typography variant='body1'>
+                ~{roundToNearest50(macro.calories)} kcal
+              </Typography>
             </div>
             <Slider
               value={macro.value}
