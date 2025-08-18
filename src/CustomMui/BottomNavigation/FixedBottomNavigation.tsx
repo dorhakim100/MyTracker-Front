@@ -1,5 +1,5 @@
-import * as React from 'react'
-import { useNavigate } from 'react-router-dom'
+import React, { useEffect } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
 import Box from '@mui/material/Box'
 import CssBaseline from '@mui/material/CssBaseline'
 import BottomNavigation from '@mui/material/BottomNavigation'
@@ -25,6 +25,7 @@ export function FixedBottomNavigation(props: {
   const ref = React.useRef<HTMLDivElement>(null)
 
   const navigate = useNavigate()
+  const location = useLocation()
 
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -39,6 +40,23 @@ export function FixedBottomNavigation(props: {
     () => props.routes.slice(midIndex),
     [props.routes, midIndex]
   )
+
+  useEffect(() => {
+    const index = props.routes.findIndex(
+      (route) => route.path === location.pathname
+    )
+
+    if (index === -1) {
+      setValue(0)
+      return
+    }
+
+    if (index > 1) {
+      setValue(index + 1)
+    } else {
+      setValue(index)
+    }
+  }, [location.pathname, props.routes])
 
   return (
     <Box

@@ -73,9 +73,10 @@ export function MacrosDistribution({
       if (!userToEdit) return
       setIsLoading(true)
       await updateUser(userToEdit)
+      showSuccessMsg(messages.success.updateMacros)
       setOpen(false)
     } catch (err) {
-      console.log(err)
+      showErrorMsg(messages.error.updateMacros)
     } finally {
       setIsLoading(false)
     }
@@ -114,6 +115,8 @@ import Slider from 'rc-slider'
 import { setIsLoading } from '../../store/actions/system.actions'
 import { setUserToEdit } from '../../store/actions/user.actios'
 import { User } from '../../types/user/User'
+import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
+import { messages } from '../../assets/config/messages'
 
 function EditComponent() {
   const user = useSelector(

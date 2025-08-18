@@ -68,9 +68,10 @@ export function MacrosProgress({ protein, carbs, fats }: MacrosProgressProps) {
       if (!userToEdit) return
       setIsLoading(true)
       await updateUser(userToEdit)
+      showSuccessMsg(messages.success.updateMacros)
       onClose()
     } catch (err) {
-      console.log('err', err)
+      showErrorMsg(messages.error.updateMacros)
     } finally {
       setIsLoading(false)
     }
@@ -117,6 +118,8 @@ import {
 import { setIsLoading } from '../../store/actions/system.actions'
 import { setUserToEdit, updateUser } from '../../store/actions/user.actios'
 import { User } from '../../types/user/User'
+import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
+import { messages } from '../../assets/config/messages'
 
 function EditComponent() {
   interface PickerValue {
