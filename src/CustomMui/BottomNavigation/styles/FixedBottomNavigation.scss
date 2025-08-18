@@ -37,6 +37,8 @@
   grid-template-columns: 1fr 1fr 20px 1fr 1fr;
   grid-template-rows: 1fr;
 
+  justify-items: center;
+
   button {
     padding: 0px !important;
     transition: all 0.2s ease-in-out !important;
@@ -55,4 +57,34 @@
       outline: none !important;
     }
   }
+}
+
+.MuiSpeedDial-actions:not(.MuiSpeedDial-actionsClosed) {
+  transition: all 0.2s ease-in-out !important;
+  background-color: $white;
+  border-top-left-radius: 10px !important;
+  border-top-right-radius: 10px !important;
+  border-bottom-left-radius: 15px !important;
+  border-bottom-right-radius: 15px !important;
+  padding: 1rem !important;
+  margin-bottom: 0.8rem !important;
+}
+.MuiSpeedDial-root {
+  &.dark-mode {
+    .MuiSpeedDial-actions:not(.MuiSpeedDial-actionsClosed) {
+      background-color: $very-dark-gray;
+    }
+  }
+}
+.MuiSpeedDialAction-fab {
+  padding: 1rem !important;
+  width: 90px !important;
+  height: 70px !important;
+  border-radius: 10px !important;
+  // bottom: 2em !important;
+  // height: 150px !important;
+  // border-radius: 100% !important;
+  // background-color: $primary-color !important;
+  // color: $white !important;
+  // outline: none !important;
 }

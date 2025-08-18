@@ -5,13 +5,19 @@ import CssBaseline from '@mui/material/CssBaseline'
 import BottomNavigation from '@mui/material/BottomNavigation'
 import BottomNavigationAction from '@mui/material/BottomNavigationAction'
 
+import SpeedDial from '@mui/material/SpeedDial'
+import SearchIcon from '@mui/icons-material/Search'
+
 import Paper from '@mui/material/Paper'
 import Fab from '@mui/material/Fab'
 import AddIcon from '@mui/icons-material/Add'
+import QrCode2Icon from '@mui/icons-material/QrCode2'
 
 import { Route } from '../../assets/routes/routes'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
+import SpeedDialAction from '@mui/material/SpeedDialAction'
+import SpeedDialIcon from '@mui/material/SpeedDialIcon'
 
 export function FixedBottomNavigation(props: {
   routes: Route[]
@@ -40,6 +46,11 @@ export function FixedBottomNavigation(props: {
     () => props.routes.slice(midIndex),
     [props.routes, midIndex]
   )
+
+  const speedDialActions = [
+    { icon: <QrCode2Icon />, name: 'Scan' },
+    { icon: <SearchIcon />, name: 'Search' },
+  ]
 
   useEffect(() => {
     const index = props.routes.findIndex(
@@ -81,21 +92,24 @@ export function FixedBottomNavigation(props: {
         elevation={3}
       >
         <Box sx={{ position: 'relative' }}>
-          <Fab
-            color='primary'
+          <SpeedDial
+            // color='primary'
+            ariaLabel='SpeedDial basic example'
             aria-label={props.centerAction?.ariaLabel || 'center-action'}
-            onClick={props.centerAction?.onClick}
+            icon={<AddIcon />}
+            // onClick={props.centerAction?.onClick}
+            className={`${prefs.isDarkMode ? 'dark-mode' : ''}`}
             sx={{
               position: 'absolute',
-              top: -28,
-              left: 0,
-              right: 0,
-              margin: '0 auto',
-              zIndex: 1,
+              bottom: 16,
+              right: '50%',
+              transform: 'translate(50%, 0)',
             }}
           >
-            {props.centerAction?.icon || <AddIcon />}
-          </Fab>
+            {speedDialActions.map((action) => (
+              <SpeedDialAction key={action.name} icon={action.icon} />
+            ))}
+          </SpeedDial>
 
           <BottomNavigation
             showLabels
