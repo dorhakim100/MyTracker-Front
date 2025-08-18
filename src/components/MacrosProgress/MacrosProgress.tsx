@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { Box, Card, Typography } from '@mui/material'
 
@@ -115,7 +115,8 @@ import {
   getArrayOfNumbers,
 } from '../../services/util.service'
 import { setIsLoading } from '../../store/actions/system.actions'
-import { updateUser } from '../../store/actions/user.actios'
+import { setUserToEdit, updateUser } from '../../store/actions/user.actios'
+import { User } from '../../types/user/User'
 
 function EditComponent() {
   interface PickerValue {
@@ -126,18 +127,39 @@ function EditComponent() {
   }
 
   const macros = {
-    carbs: getArrayOfNumbers(0, 100),
-    protein: getArrayOfNumbers(0, 100),
-    fats: getArrayOfNumbers(0, 100),
+    carbs: getArrayOfNumbers(0, 400),
+    protein: getArrayOfNumbers(0, 300),
+    fats: getArrayOfNumbers(0, 150),
   }
 
+  const userToEdit = useSelector(
+    (stateSelector: RootState) => stateSelector.userModule.userToEdit
+  )
+
   const [pickerValue, setPickerValue] = useState<PickerValue>({
-    carbs: 0,
-    protein: 0,
-    fats: 0,
+    carbs: userToEdit?.currGoal?.macros.carbs || 0,
+    protein: userToEdit?.currGoal?.macros.protein || 0,
+    fats: userToEdit?.currGoal?.macros.fat || 0,
   })
 
   const macroKeys = Object.keys(macros) as (keyof typeof macros)[]
+
+  useEffect(() => {
+    const userToUpdate = {
+      ...userToEdit,
+      currGoal: {
+        ...userToEdit?.currGoal,
+        macros: {
+          ...userToEdit?.currGoal?.macros,
+          carbs: pickerValue.carbs,
+          protein: pickerValue.protein,
+          fat: pickerValue.fats,
+        },
+      },
+    } as User
+
+    setUserToEdit(userToUpdate)
+  }, [pickerValue])
 
   return (
     <Box className='edit-macros-container'>
