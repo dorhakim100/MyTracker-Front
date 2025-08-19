@@ -1,5 +1,10 @@
-.MuiDialog-root {
+.MuiDialog-root.half-dialog {
   top: calc($header-margin + $card-height + 200px) !important;
+}
+
+.MuiDialog-root.full-dialog {
+  top: $header-margin !important;
+  bottom: 0 !important;
 }
 
 .slide-dialog {

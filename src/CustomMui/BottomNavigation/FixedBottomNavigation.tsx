@@ -1,15 +1,16 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import Box from '@mui/material/Box'
 import CssBaseline from '@mui/material/CssBaseline'
 import BottomNavigation from '@mui/material/BottomNavigation'
 import BottomNavigationAction from '@mui/material/BottomNavigationAction'
+import { ItemSearch } from '../../components/ItemSearch/ItemSearch'
+import { SlideDialog } from '../../components/SlideDialog/SlideDialog'
 
 import SpeedDial from '@mui/material/SpeedDial'
 import SearchIcon from '@mui/icons-material/Search'
 
 import Paper from '@mui/material/Paper'
-import Fab from '@mui/material/Fab'
 import AddIcon from '@mui/icons-material/Add'
 import QrCode2Icon from '@mui/icons-material/QrCode2'
 
@@ -17,7 +18,6 @@ import { Route } from '../../assets/routes/routes'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import SpeedDialAction from '@mui/material/SpeedDialAction'
-import SpeedDialIcon from '@mui/material/SpeedDialIcon'
 
 export function FixedBottomNavigation(props: {
   routes: Route[]
@@ -36,6 +36,8 @@ export function FixedBottomNavigation(props: {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
+
+  const [searchModalOpen, setSearchModalOpen] = useState(false)
 
   const midIndex = Math.floor(props.routes.length / 2)
   const leftRoutes = React.useMemo(
@@ -82,93 +84,114 @@ export function FixedBottomNavigation(props: {
   }
 
   function onSearchClick() {
-    console.log('search')
+    setSearchModalOpen(true)
+  }
+
+  function closeSearchModal() {
+    setSearchModalOpen(false)
+  }
+
+  function onSelect(item) {
+    console.log('onSelect', item)
   }
 
   return (
-    <Box
-      sx={{ pb: 7 }}
-      ref={ref}
-      className={`fixed-bottom-navigation ${
-        prefs.isDarkMode ? 'dark-mode' : ''
-      }`}
-    >
-      <CssBaseline />
-
-      <Paper
-        sx={{
-          position: 'fixed',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          zIndex: 1000,
-          height: '100px',
-          // paddingBottom: '1.5em',
-        }}
-        elevation={3}
+    <>
+      <Box
+        sx={{ pb: 7 }}
+        ref={ref}
+        className={`fixed-bottom-navigation ${
+          prefs.isDarkMode ? 'dark-mode' : ''
+        }`}
       >
-        <Box sx={{ position: 'relative' }}>
-          <SpeedDial
-            // color='primary'
-            ariaLabel='SpeedDial basic example'
-            aria-label={props.centerAction?.ariaLabel || 'center-action'}
-            icon={<AddIcon />}
-            // onClick={props.centerAction?.onClick}
-            className={`${prefs.isDarkMode ? 'dark-mode' : ''}`}
-            sx={{
-              position: 'absolute',
-              bottom: 16,
-              right: '50%',
-              transform: 'translate(50%, 0)',
-            }}
-          >
-            {speedDialActions.map((action) => (
-              <SpeedDialAction
-                key={action.name}
-                icon={action.icon}
-                onClick={action.onClick}
-              />
-            ))}
-          </SpeedDial>
+        <CssBaseline />
 
-          <BottomNavigation
-            showLabels
-            value={value}
-            onChange={(event, newValue) => {
-              setValue(newValue)
-            }}
-          >
-            {leftRoutes.map((route) => {
-              return (
-                <BottomNavigationAction
-                  key={route.path}
-                  label={route.title}
-                  icon={<route.icon />}
-                  onClick={() => {
-                    navigate(route.path)
-                  }}
+        <Paper
+          sx={{
+            position: 'fixed',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            zIndex: 1000,
+            height: '100px',
+            // paddingBottom: '1.5em',
+          }}
+          elevation={3}
+        >
+          <Box sx={{ position: 'relative' }}>
+            <SpeedDial
+              // color='primary'
+              ariaLabel='SpeedDial basic example'
+              aria-label={props.centerAction?.ariaLabel || 'center-action'}
+              icon={<AddIcon />}
+              // onClick={props.centerAction?.onClick}
+              className={`${prefs.isDarkMode ? 'dark-mode' : ''}`}
+              sx={{
+                position: 'absolute',
+                bottom: 16,
+                right: '50%',
+                transform: 'translate(50%, 0)',
+              }}
+            >
+              {speedDialActions.map((action) => (
+                <SpeedDialAction
+                  key={action.name}
+                  icon={action.icon}
+                  onClick={action.onClick}
                 />
-              )
-            })}
+              ))}
+            </SpeedDial>
 
-            {/* Spacer to balance layout under the centered FAB */}
-            <BottomNavigationAction sx={{ visibility: 'hidden' }} />
+            <BottomNavigation
+              showLabels
+              value={value}
+              onChange={(event, newValue) => {
+                setValue(newValue)
+              }}
+            >
+              {leftRoutes.map((route) => {
+                return (
+                  <BottomNavigationAction
+                    key={route.path}
+                    label={route.title}
+                    icon={<route.icon />}
+                    onClick={() => {
+                      navigate(route.path)
+                    }}
+                  />
+                )
+              })}
 
-            {rightRoutes.map((route) => {
-              return (
-                <BottomNavigationAction
-                  key={route.path}
-                  label={route.title}
-                  icon={<route.icon />}
-                  onClick={() => {
-                    navigate(route.path)
-                  }}
-                />
-              )
-            })}
-          </BottomNavigation>
-        </Box>
-      </Paper>
-    </Box>
+              {/* Spacer to balance layout under the centered FAB */}
+              <BottomNavigationAction sx={{ visibility: 'hidden' }} />
+
+              {rightRoutes.map((route) => {
+                return (
+                  <BottomNavigationAction
+                    key={route.path}
+                    label={route.title}
+                    icon={<route.icon />}
+                    onClick={() => {
+                      navigate(route.path)
+                    }}
+                  />
+                )
+              })}
+            </BottomNavigation>
+          </Box>
+        </Paper>
+      </Box>
+
+      <SlideDialog
+        open={searchModalOpen}
+        onClose={closeSearchModal}
+        component={
+          <ItemSearch onSelect={onSelect} onClose={closeSearchModal} />
+        }
+        title='Search'
+        onSave={() => {}}
+        type='full'
+      />
+    </>
   )
 }

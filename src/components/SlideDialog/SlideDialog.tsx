@@ -28,6 +28,7 @@ interface SlideDialogProps {
   component: React.ReactElement
   title?: string
   onSave: () => void
+  type?: 'half' | 'full'
 }
 
 export function SlideDialog({
@@ -36,6 +37,7 @@ export function SlideDialog({
   component,
   title = 'Edit',
   onSave,
+  type = 'half',
 }: SlideDialogProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -58,13 +60,14 @@ export function SlideDialog({
     <React.Fragment>
       <Dialog
         fullScreen
+        className={`${type === 'half' ? 'half-dialog' : 'full-dialog'}`}
         open={open}
         onClose={handleSave}
         sx={{
           // bottom: 20,
 
           '& .MuiDialog-paper': {
-            height: '450px',
+            height: type === 'half' ? '450px' : '100%',
             paddingBottom: '1.5em',
           },
         }}
