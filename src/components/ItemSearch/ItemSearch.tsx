@@ -16,15 +16,19 @@ import { useSelector } from 'react-redux'
 import { searchService } from '../../services/search/search-service'
 
 import { RootState } from '../../store/store'
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
-import ToggleButton from '@mui/material/ToggleButton'
+import {
+  CustomToggle,
+  ToggleOption,
+} from '../../CustomMui/CustomToggle/CustomToggle'
 
 export function ItemSearch() {
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
 
   const [query, setQuery] = useState('')
-  const [results, setResults] = useState<any[]>([])
-  const [loading, setLoading] = useState(false)
+  const [results] = useState<
+    readonly { id: string; label: string; subtitle?: string }[]
+  >([])
+  const [loading] = useState(false)
 
   const [source, setSource] = useState('usda')
 
@@ -32,25 +36,19 @@ export function ItemSearch() {
     if (query) {
       searchService.search(query).then((res) => {
         console.log(res)
-        // setResults(res.products)
+        // setResults(...) // normalize here later
       })
     }
   }, [query])
-
-  const onSelect = (item: any) => {
-    console.log('onSelect', item)
-  }
 
   const onClose = () => {
     console.log('onClose')
   }
 
-  const handleSource = (
-    event: React.MouseEvent<HTMLElement>,
-    newSource: string
-  ) => {
-    setSource(newSource)
-  }
+  const toggleOptions: ToggleOption[] = [
+    { value: 'usda', label: 'Food' },
+    { value: 'open-food-facts', label: 'Product' },
+  ]
 
   return (
     <Box className={`item-search ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
@@ -68,29 +66,22 @@ export function ItemSearch() {
                 <SearchIcon />
               </InputAdornment>
             ),
-            endAdornment: onClose ? (
+            endAdornment: (
               <InputAdornment position='end'>
                 <IconButton aria-label='close' onClick={onClose}>
                   <CloseIcon />
                 </IconButton>
               </InputAdornment>
-            ) : undefined,
+            ),
           }}
         />
-        <ToggleButtonGroup
+        <CustomToggle
           value={source}
-          exclusive
-          onChange={handleSource}
-          aria-label='text alignment'
+          options={toggleOptions}
+          onChange={setSource}
           className={`source-toggle ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-        >
-          <ToggleButton value='usda' aria-label='centered'>
-            Food
-          </ToggleButton>
-          <ToggleButton value='open-food-facts' aria-label='left aligned'>
-            Product
-          </ToggleButton>
-        </ToggleButtonGroup>
+          ariaLabel='data source'
+        />
       </Box>
 
       <Box className='results'>
@@ -101,7 +92,7 @@ export function ItemSearch() {
         ) : results.length ? (
           <List>
             {results.map((item) => (
-              <ListItemButton key={item.id} onClick={() => onSelect?.(item)}>
+              <ListItemButton key={item.id}>
                 <ListItemText primary={item.label} secondary={item.subtitle} />
               </ListItemButton>
             ))}

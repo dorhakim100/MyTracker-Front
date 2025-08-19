@@ -69,15 +69,3 @@ button {
     color: #000;
   }
 }
-
-.MuiToggleButtonGroup-root {
-  .MuiToggleButtonGroup-grouped.Mui-selected {
-    color: $primary-color !important;
-    // background-color: $primary-color !important;
-  }
-  &.dark-mode {
-    .MuiToggleButtonGroup-grouped.Mui-selected {
-      background-color: $very-dark-gray !important;
-    }
-  }
-}
