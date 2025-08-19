@@ -1,4 +1,6 @@
 import axios from 'axios'
+import { SearchQuery } from '../../types/searchQuery/SearchQuery'
+import { searchTypes } from '../../assets/config/search-types'
 
 const OPEN_FOOD_FACTS_API_URL = 'https://world.openfoodfacts.org/cgi/search.pl'
 const USDA_API_URL = 'https://api.nal.usda.gov/fdc/v1/foods/search'
@@ -16,12 +18,21 @@ export const searchService = {
   search,
 }
 
-async function search(query: string) {
+async function search(query: SearchQuery) {
   try {
-    const products = await searchOpenFoodFacts(query)
-    const rawProducts = await searchRawUSDA(query)
+    const { txt, source } = query
+    let res
 
-    return [...products, ...rawProducts]
+    switch (source) {
+      case searchTypes.openFoodFacts:
+        res = await searchOpenFoodFacts(txt)
+        break
+      case searchTypes.usda:
+        res = await searchRawUSDA(txt)
+        break
+    }
+
+    return res
   } catch (err) {
     console.error(err)
     throw err

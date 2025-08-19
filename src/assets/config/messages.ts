@@ -6,5 +6,6 @@ export const messages = {
   error: {
     updateCalories: 'Failed to update calories',
     updateMacros: 'Failed to update macros',
+    search: 'Failed to search',
   },
 }
