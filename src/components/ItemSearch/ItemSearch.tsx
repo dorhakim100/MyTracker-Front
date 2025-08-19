@@ -1,6 +1,3 @@
-import { useState } from 'react'
-import { useSelector } from 'react-redux'
-
 import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
@@ -13,6 +10,11 @@ import Typography from '@mui/material/Typography'
 import SearchIcon from '@mui/icons-material/Search'
 import CloseIcon from '@mui/icons-material/Close'
 
+import { useState, useEffect } from 'react'
+import { useSelector } from 'react-redux'
+
+import { searchService } from '../../services/search/search-service'
+
 import { RootState } from '../../store/store'
 
 export function ItemSearch() {
@@ -21,6 +23,15 @@ export function ItemSearch() {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (query) {
+      searchService.search(query).then((res) => {
+        console.log(res)
+        // setResults(res.products)
+      })
+    }
+  }, [query])
 
   const onSelect = (item: any) => {
     console.log('onSelect', item)
