@@ -1,6 +1,4 @@
 import Box from '@mui/material/Box'
-import TextField from '@mui/material/TextField'
-import InputAdornment from '@mui/material/InputAdornment'
 import IconButton from '@mui/material/IconButton'
 import CircularProgress from '@mui/material/CircularProgress'
 import List from '@mui/material/List'
@@ -20,6 +18,7 @@ import {
   CustomToggle,
   ToggleOption,
 } from '../../CustomMui/CustomToggle/CustomToggle'
+import { CustomInput } from '../../CustomMui/CustomInput/CustomInput'
 
 export function ItemSearch() {
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
@@ -52,28 +51,18 @@ export function ItemSearch() {
 
   return (
     <Box className={`item-search ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
-      <Box className='search-bar'>
-        <TextField
-          fullWidth
-          size='medium'
-          autoFocus
-          placeholder='Search items...'
+      <Box className='search-container'>
+        <CustomInput
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position='start'>
-                <SearchIcon />
-              </InputAdornment>
-            ),
-            endAdornment: (
-              <InputAdornment position='end'>
-                <IconButton aria-label='close' onClick={onClose}>
-                  <CloseIcon />
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
+          onChange={setQuery}
+          placeholder='Search items...'
+          startIconFn={() => <SearchIcon />}
+          endIconFn={() => (
+            <IconButton aria-label='close' onClick={onClose}>
+              <CloseIcon />
+            </IconButton>
+          )}
+          autoFocus
         />
         <CustomToggle
           value={source}
