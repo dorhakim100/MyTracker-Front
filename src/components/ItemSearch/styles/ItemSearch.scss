@@ -55,3 +55,10 @@
   place-items: center;
   height: 60vh;
 }
+
+.item-image {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 50%;
+}

@@ -1,10 +1,9 @@
 import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
-import CircularProgress from '@mui/material/CircularProgress'
 import List from '@mui/material/List'
 import ListItemButton from '@mui/material/ListItemButton'
 import ListItemText from '@mui/material/ListItemText'
-import Typography from '@mui/material/Typography'
+import ListItemIcon from '@mui/material/ListItemIcon'
 import SearchIcon from '@mui/icons-material/Search'
 import CloseIcon from '@mui/icons-material/Close'
 
@@ -24,6 +23,8 @@ import { CustomInput } from '../../CustomMui/CustomInput/CustomInput'
 import { showErrorMsg } from '../../services/event-bus.service'
 import { SearchQuery } from '../../types/searchQuery/SearchQuery'
 import { setIsLoading } from '../../store/actions/system.actions'
+
+const DEFAULT_IMAGE = 'https://cdn-icons-png.flaticon.com/512/5235/5235253.png'
 
 export function ItemSearch() {
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
@@ -119,6 +120,14 @@ export function ItemSearch() {
         <List>
           {results.map((item: any) => (
             <ListItemButton key={item?.id}>
+              <ListItemIcon>
+                <img
+                  src={item?.image || DEFAULT_IMAGE}
+                  alt={item?.name}
+                  className='item-image'
+                />
+              </ListItemIcon>
+
               <ListItemText
                 primary={item?.name}
                 secondary={`${item?.macros?.calories} kcal`}

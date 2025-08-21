@@ -31,7 +31,7 @@ async function search(query: SearchQuery) {
         res = await searchRawUSDA(txt)
         break
     }
-
+    console.log(res)
     return res
   } catch (err) {
     console.error(err)
@@ -57,7 +57,18 @@ async function searchOpenFoodFacts(query: string) {
       },
       headers: { 'User-Agent': 'MyTracker/1.0 (you@example.com)' },
     })
-    return data.products || []
+    console.log(data.products[0])
+    return data.products.map((product: any) => ({
+      id: product.code,
+      name: `${product.product_name} - ${product.brands}`,
+      macros: {
+        calories: +product.nutriments['energy-kcal_100g'],
+        protein: +product.nutriments.proteins_100g,
+        carbs: +product.nutriments.carbohydrates_100g,
+        fat: +product.nutriments.fat_100g,
+      },
+      image: product.image_small_url,
+    }))
   } catch (err) {
     // console.error(err)
     throw err
@@ -78,7 +89,7 @@ async function searchRawUSDA(query: string) {
     const { foods } = data
 
     return foods.map((food: any) => ({
-      id: String(food.fdcId),
+      id: food.fdcId + '',
       name: food.description,
       macros: {
         protein: food.foodNutrients.find(
@@ -92,7 +103,8 @@ async function searchRawUSDA(query: string) {
           (nutrient: any) => nutrient.nutrientName === 'Total lipid (fat)'
         )?.value,
         calories: food.foodNutrients.find(
-          (nutrient: any) => nutrient.nutrientName === 'Energy'
+          (nutrient: any) =>
+            nutrient.nutrientName === 'Energy' && nutrient.unitName === 'KCAL'
         )?.value,
       },
     }))
