@@ -15,6 +15,10 @@ export async function loadItems(filterBy: ItemFilter): Promise<Item[]> {
   }
 }
 
+export function setItem(item: Item) {
+  store.dispatch(getCmdSetItem(item))
+}
+
 export async function loadItem(itemId: string): Promise<Item> {
   try {
     const item = await itemService.getById(itemId)

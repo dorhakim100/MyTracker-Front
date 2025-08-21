@@ -5,6 +5,8 @@ import { searchTypes } from '../../assets/config/search-types'
 const OPEN_FOOD_FACTS_API_URL = 'https://world.openfoodfacts.org/cgi/search.pl'
 const USDA_API_URL = 'https://api.nal.usda.gov/fdc/v1/foods/search'
 
+const DEFAULT_IMAGE = 'https://cdn-icons-png.flaticon.com/512/5235/5235253.png'
+
 const USDA_API_KEY = import.meta.env.VITE_USDA_API_KEY
 
 const PAGE = 1
@@ -31,7 +33,7 @@ async function search(query: SearchQuery) {
         res = await searchRawUSDA(txt)
         break
     }
-    console.log(res)
+    // console.log(res)
     return res
   } catch (err) {
     console.error(err)
@@ -71,7 +73,7 @@ async function searchOpenFoodFacts(query: string) {
         carbs: +product.nutriments.carbohydrates_100g,
         fat: +product.nutriments.fat_100g,
       },
-      image: product.image_small_url,
+      image: product.image_small_url || DEFAULT_IMAGE,
     }))
   } catch (err) {
     // console.error(err)
@@ -111,6 +113,7 @@ async function searchRawUSDA(query: string) {
             nutrient.nutrientName === 'Energy' && nutrient.unitName === 'KCAL'
         )?.value,
       },
+      image: DEFAULT_IMAGE,
     }))
   } catch (error) {
     throw error
