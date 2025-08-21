@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { SearchQuery } from '../../types/searchQuery/SearchQuery'
 import { searchTypes } from '../../assets/config/search-types'
+import { calculateCaloriesFromMacros } from '../macros/macros.service'
 
 const OPEN_FOOD_FACTS_API_URL = 'https://world.openfoodfacts.org/cgi/search.pl'
 const USDA_API_URL = 'https://api.nal.usda.gov/fdc/v1/foods/search'
@@ -68,7 +69,12 @@ async function searchOpenFoodFacts(query: string) {
       macros: {
         calories:
           +product.nutriments['energy-kcal_100g'] ||
-          +product.nutriments['energy-kcal'],
+          +product.nutriments['energy-kcal'] ||
+          calculateCaloriesFromMacros({
+            protein: +product.nutriments.proteins_100g || 0,
+            carbs: +product.nutriments.carbohydrates_100g || 0,
+            fats: +product.nutriments.fat_100g || 0,
+          }).total,
         protein: +product.nutriments.proteins_100g,
         carbs: +product.nutriments.carbohydrates_100g,
         fat: +product.nutriments.fat_100g,
@@ -94,27 +100,38 @@ async function searchRawUSDA(query: string) {
 
     const { foods } = data
 
-    return foods.map((food: any) => ({
-      searchId: food.fdcId + '',
-      name: food.description,
-      macros: {
-        protein: food.foodNutrients.find(
-          (nutrient: any) => nutrient.nutrientName === 'Protein'
-        )?.value,
-        carbs: food.foodNutrients.find(
-          (nutrient: any) =>
-            nutrient.nutrientName === 'Carbohydrate, by difference'
-        )?.value,
-        fat: food.foodNutrients.find(
-          (nutrient: any) => nutrient.nutrientName === 'Total lipid (fat)'
-        )?.value,
-        calories: food.foodNutrients.find(
-          (nutrient: any) =>
-            nutrient.nutrientName === 'Energy' && nutrient.unitName === 'KCAL'
-        )?.value,
-      },
-      image: DEFAULT_IMAGE,
-    }))
+    return foods.map((food: any) => {
+      const protein = food.foodNutrients.find(
+        (nutrient: any) => nutrient.nutrientName === 'Protein'
+      )?.value
+
+      const carbs = food.foodNutrients.find(
+        (nutrient: any) =>
+          nutrient.nutrientName === 'Carbohydrate, by difference'
+      )?.value
+
+      const fat = food.foodNutrients.find(
+        (nutrient: any) => nutrient.nutrientName === 'Total lipid (fat)'
+      )?.value
+
+      const calories = calculateCaloriesFromMacros({
+        protein: protein || 0,
+        carbs: carbs || 0,
+        fats: fat || 0,
+      }).total
+
+      return {
+        searchId: food.fdcId + '',
+        name: food.description,
+        macros: {
+          protein: protein || 0,
+          carbs: carbs || 0,
+          fat: fat || 0,
+          calories: calories || 0,
+        },
+        image: DEFAULT_IMAGE,
+      }
+    })
   } catch (error) {
     throw error
   }

@@ -145,6 +145,7 @@ export function ItemSearch() {
         component={<ItemDetails />}
         title='Item'
         onSave={() => {}}
+        type='full'
       />
     </>
   )
