@@ -65,6 +65,7 @@ function getEmptyItem(): Item {
   return {
     _id: makeId(),
     name: '',
+    searchId: '',
     image: '',
     macros: { calories: 0, protein: 0, carbs: 0, fat: 0 },
   }

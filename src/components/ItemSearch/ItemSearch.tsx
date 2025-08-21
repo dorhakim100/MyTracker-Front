@@ -23,6 +23,8 @@ import { CustomInput } from '../../CustomMui/CustomInput/CustomInput'
 import { showErrorMsg } from '../../services/event-bus.service'
 import { SearchQuery } from '../../types/searchQuery/SearchQuery'
 import { setIsLoading } from '../../store/actions/system.actions'
+import { MacrosDistribution } from '../MacrosDistribution/MacrosDistribution'
+import { Macros } from '../Macros/Macros'
 
 const DEFAULT_IMAGE = 'https://cdn-icons-png.flaticon.com/512/5235/5235253.png'
 
@@ -119,7 +121,8 @@ export function ItemSearch() {
       <Box className='results'>
         <List>
           {results.map((item: any) => (
-            <ListItemButton key={item?.id}>
+            <ListItemButton key={item?._id || item?.searchId}>
+              <Macros {...item?.macros} />
               <ListItemIcon>
                 <img
                   src={item?.image || DEFAULT_IMAGE}

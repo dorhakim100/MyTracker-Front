@@ -59,7 +59,7 @@ async function searchOpenFoodFacts(query: string) {
     })
     console.log(data.products[0])
     return data.products.map((product: any) => ({
-      id: product.code,
+      searchId: product.code,
       name: product.brands
         ? `${product.product_name} - ${product.brands}`
         : product.product_name,
@@ -93,7 +93,7 @@ async function searchRawUSDA(query: string) {
     const { foods } = data
 
     return foods.map((food: any) => ({
-      id: food.fdcId + '',
+      searchId: food.fdcId + '',
       name: food.description,
       macros: {
         protein: food.foodNutrients.find(

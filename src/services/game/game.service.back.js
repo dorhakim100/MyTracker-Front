@@ -1,14 +1,14 @@
 import { httpService } from '../http.service'
 import { makeId } from '../util.service'
 
-const KEY = 'game'
+const KEY = 'item'
 
 export const gameService = {
   query,
   getById,
   save,
   remove,
-  getEmptyGame,
+  getEmptyItem,
   getDefaultFilter,
   getMaxPage,
 }
@@ -24,18 +24,18 @@ async function query(
   }
 ) {
   try {
-    const games = await httpService.get(KEY, filterBy)
+    const items = await httpService.get(KEY, filterBy)
 
-    return games
+    return items
   } catch (err) {
     // // console.log(err)
     throw err
   }
 }
 
-async function getById(gameId, filter) {
+async function getById(itemId, filter) {
   try {
-    const res = await httpService.get(`${KEY}/${gameId}`, filter)
+    const res = await httpService.get(`${KEY}/${itemId}`, filter)
     return res
   } catch (err) {
     // // console.log(err)
@@ -43,57 +43,53 @@ async function getById(gameId, filter) {
   }
 }
 
-async function remove(gameId) {
+async function remove(itemId) {
   try {
-    return await httpService.delete(`${KEY}/${gameId}`)
+    return await httpService.delete(`${KEY}/${itemId}`)
   } catch (err) {
     // // console.log(err)
     throw err
   }
 }
-async function save(game) {
+async function save(item) {
   try {
-    var savedGame
-    if (game._id) {
-      savedGame = await httpService.put(`${KEY}/${game._id}`, game)
+    var savedItem
+    if (item._id) {
+      savedItem = await httpService.put(`${KEY}/${item._id}`, item)
     } else {
-      savedGame = await httpService.post(KEY, game)
+      savedItem = await httpService.post(KEY, item)
     }
-    return savedGame
+    return savedItem
   } catch (err) {
     // // console.log(err)
     throw err
   }
 }
 
-function getEmptyGame() {
+function getEmptyItem() {
   return {
     _id: makeId(),
-    price: '',
-    title: { he: '', eng: '' },
-    preview: { he: '', eng: '' },
-    types: [],
-    cover: '',
+    name: '',
+    image: '',
+    macros: { calories: 0, protein: 0, carbs: 0, fat: 0 },
   }
 }
 
 function getDefaultFilter() {
   return {
     txt: '',
-    maxPrice: '',
     sortDir: '',
-    types: [],
     pageIdx: 0,
   }
 }
 
 async function getMaxPage(filterBy) {
-  const PAGE_SIZE = 6
+  const PAGE_SIZE = 20
 
   try {
-    var games = await query({ ...filterBy, isAll: true })
+    var items = await query({ ...filterBy, isAll: true })
 
-    let maxPage = games.length / PAGE_SIZE
+    let maxPage = items.length / PAGE_SIZE
     maxPage = Math.ceil(maxPage)
     return maxPage
   } catch (err) {

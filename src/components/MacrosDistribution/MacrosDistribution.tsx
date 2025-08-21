@@ -91,14 +91,8 @@ export function MacrosDistribution({
       >
         <Typography variant='h6'>Distribution</Typography>
         <EditIcon onClick={edit} />
-        <div className='donut' style={donutStyle}>
-          <div className={`donut-inner ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
-            <div className='totals'>
-              <div className='value'>{roundToNearest50(total)}</div>
-              <div className='label'>kcal</div>
-            </div>
-          </div>
-        </div>
+        <MacrosDonut protein={protein} carbs={carbs} fats={fats} />
+
         <Macros protein={protein} carbs={carbs} fats={fats} />
       </Card>
       <SlideDialog
@@ -117,6 +111,7 @@ import { setUserToEdit } from '../../store/actions/user.actios'
 import { User } from '../../types/user/User'
 import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
 import { messages } from '../../assets/config/messages'
+import { MacrosDonut } from '../MacrosDonut/MacrosDonut'
 
 function EditComponent() {
   const user = useSelector(

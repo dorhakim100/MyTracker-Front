@@ -1,7 +1,8 @@
 .item-search {
   display: grid;
   gap: 12px;
-  height: calc(100vh - $header-margin);
+  align-items: start;
+  min-height: calc(100vh - $header-margin);
 
   &.dark-mode {
     background-color: $darker-gray !important;
@@ -17,6 +18,8 @@
     padding: 1rem;
 
     display: grid;
+    align-items: start;
+    grid-template-rows: repeat(2, auto);
     gap: 1rem;
 
     &.dark-mode {

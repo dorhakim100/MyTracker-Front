@@ -1,8 +1,9 @@
 import { Macros } from '../macros/Macros'
 
 export interface Item {
-  _id: string
+  _id?: string
   name: string
+  searchId?: string
   //   categories: string[]
   image?: string
   macros: Macros
