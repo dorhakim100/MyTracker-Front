@@ -131,6 +131,7 @@ export function ItemSearch() {
               <ListItemText
                 primary={item?.name}
                 secondary={`${item?.macros?.calories} kcal`}
+                className={`${prefs.isDarkMode ? 'dark-mode' : ''}`}
               />
             </ListItemButton>
           ))}

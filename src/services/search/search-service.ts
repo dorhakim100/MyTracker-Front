@@ -60,9 +60,13 @@ async function searchOpenFoodFacts(query: string) {
     console.log(data.products[0])
     return data.products.map((product: any) => ({
       id: product.code,
-      name: `${product.product_name} - ${product.brands}`,
+      name: product.brands
+        ? `${product.product_name} - ${product.brands}`
+        : product.product_name,
       macros: {
-        calories: +product.nutriments['energy-kcal_100g'],
+        calories:
+          +product.nutriments['energy-kcal_100g'] ||
+          +product.nutriments['energy-kcal'],
         protein: +product.nutriments.proteins_100g,
         carbs: +product.nutriments.carbohydrates_100g,
         fat: +product.nutriments.fat_100g,

@@ -69,3 +69,12 @@ button {
     color: #000;
   }
 }
+.MuiListItemText-root {
+  &.dark-mode {
+    .MuiListItemText-secondary {
+      // color: $dark-gray;
+      opacity: 0.8;
+      color: $white;
+    }
+  }
+}

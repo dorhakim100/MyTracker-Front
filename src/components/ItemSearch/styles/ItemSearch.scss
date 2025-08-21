@@ -1,7 +1,7 @@
 .item-search {
   display: grid;
   gap: 12px;
-  height: 100%;
+  height: calc(100vh - $header-margin);
 
   &.dark-mode {
     background-color: $darker-gray !important;
