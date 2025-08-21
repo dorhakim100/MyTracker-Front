@@ -25,6 +25,16 @@ declare module '../services/game/game.service.js' {
   export default value
 }
 
+declare module '../reducers/item.reducer' {
+  const value: any
+  export default value
+}
+
+declare module '../services/item/item.service.js' {
+  const value: any
+  export default value
+}
+
 // declare module '../services/game/game.service.js' {
 // export function gameService(...args: any[]): any;
 // export const gameService: any;
