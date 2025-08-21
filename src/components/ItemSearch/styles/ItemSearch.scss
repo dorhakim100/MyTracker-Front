@@ -10,35 +10,7 @@
   }
 
   .search-item-container {
-    gap: 1em;
-    .macros-image-container {
-      position: relative;
-
-      .item-image-container {
-        position: absolute;
-        top: 0.2em;
-        // left: 0em;
-        right: -0.2em;
-        bottom: 0.2em;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-    }
-
-    .donut {
-      width: 50px;
-      height: 50px;
-
-      .donut-inner {
-        width: 40px;
-        height: 40px;
-
-        .totals {
-          display: none;
-        }
-      }
-    }
+    // moved to CustomList styles
   }
 
   .search-container {
@@ -91,9 +63,4 @@
   height: 60vh;
 }
 
-.item-image {
-  width: 40px;
-  height: 40px;
-  object-fit: cover;
-  border-radius: 50%;
-}
+// moved to CustomList styles

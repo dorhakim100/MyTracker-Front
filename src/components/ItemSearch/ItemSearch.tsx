@@ -1,13 +1,10 @@
 import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
-import List from '@mui/material/List'
-import ListItemButton from '@mui/material/ListItemButton'
-import ListItemText from '@mui/material/ListItemText'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import SearchIcon from '@mui/icons-material/Search'
 import CloseIcon from '@mui/icons-material/Close'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useSelector } from 'react-redux'
 
 import { searchService } from '../../services/search/search-service'
@@ -23,9 +20,9 @@ import { CustomInput } from '../../CustomMui/CustomInput/CustomInput'
 import { showErrorMsg } from '../../services/event-bus.service'
 import { SearchQuery } from '../../types/searchQuery/SearchQuery'
 import { setIsLoading } from '../../store/actions/system.actions'
-import { MacrosDistribution } from '../MacrosDistribution/MacrosDistribution'
-import { Macros } from '../Macros/Macros'
 import { MacrosDonut } from '../MacrosDonut/MacrosDonut'
+import { CustomList } from '../../CustomMui/CustomList/CustomList'
+import { Item } from '../../types/item/Item'
 
 const DEFAULT_IMAGE = 'https://cdn-icons-png.flaticon.com/512/5235/5235253.png'
 
@@ -33,32 +30,21 @@ export function ItemSearch() {
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
 
   const [query, setQuery] = useState('')
-  const [results, setResults] = useState([])
+  const [results, setResults] = useState<Item[]>([])
 
   const [source, setSource] = useState(searchTypes.usda)
 
-  const isLoading = useSelector(
-    (state: RootState) => state.systemModule.isLoading
-  )
+  // const isLoading = useSelector((state: RootState) => state.systemModule.isLoading)
 
   const toggleOptions: ToggleOption[] = [
     { value: searchTypes.usda, label: 'Food' },
     { value: searchTypes.openFoodFacts, label: 'Product' },
   ]
 
-  useEffect(() => {
-    handleSearch()
-  }, [query, source])
-
-  const onClose = () => {
-    console.log('onClose')
-  }
-
-  async function handleSearch() {
+  const handleSearch = useCallback(async () => {
     setIsLoading(true)
     try {
       if (!query) {
-        // showErrorMsg(messages.error.search)
         return
       }
 
@@ -74,11 +60,19 @@ export function ItemSearch() {
 
       const res = await searchService.search(searchQuery)
       setResults(res)
-    } catch (err) {
+    } catch {
       showErrorMsg(messages.error.search)
     } finally {
       setIsLoading(false)
     }
+  }, [query, source])
+
+  useEffect(() => {
+    handleSearch()
+  }, [handleSearch])
+
+  const onClose = () => {
+    console.log('onClose')
   }
 
   //   if (isLoading)
@@ -120,35 +114,31 @@ export function ItemSearch() {
       </Box>
 
       <Box className='results'>
-        <List>
-          {results.map((item: any) => (
-            <ListItemButton
-              key={item?._id || item?.searchId}
-              className='search-item-container'
-            >
-              <div className='macros-image-container'>
-                <MacrosDonut
-                  protein={item?.macros?.protein}
-                  carbs={item?.macros?.carbs}
-                  fats={item?.macros?.fat}
-                />
-                <ListItemIcon className='item-image-container'>
-                  <img
-                    src={item?.image || DEFAULT_IMAGE}
-                    alt={item?.name}
-                    className='item-image'
-                  />
-                </ListItemIcon>
-              </div>
-
-              <ListItemText
-                primary={item?.name}
-                secondary={`${item?.macros?.calories} kcal`}
-                className={`${prefs.isDarkMode ? 'dark-mode' : ''}`}
+        <CustomList<Item>
+          items={results}
+          getKey={(item) => item._id || item.searchId || ''}
+          itemClassName={`search-item-container ${
+            prefs.isDarkMode ? 'dark-mode' : ''
+          }`}
+          renderLeft={(item) => (
+            <div className='left-content macros-image-container'>
+              <MacrosDonut
+                protein={item.macros?.protein}
+                carbs={item.macros?.carbs}
+                fats={item.macros?.fat}
               />
-            </ListItemButton>
-          ))}
-        </List>
+              <ListItemIcon className='item-image-container'>
+                <img
+                  src={item.image || DEFAULT_IMAGE}
+                  alt={item.name}
+                  className='item-image'
+                />
+              </ListItemIcon>
+            </div>
+          )}
+          renderPrimaryText={(item) => item.name}
+          renderSecondaryText={(item) => `${item.macros?.calories} kcal`}
+        />
       </Box>
     </Box>
   )
