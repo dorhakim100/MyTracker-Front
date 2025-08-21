@@ -25,6 +25,7 @@ import { SearchQuery } from '../../types/searchQuery/SearchQuery'
 import { setIsLoading } from '../../store/actions/system.actions'
 import { MacrosDistribution } from '../MacrosDistribution/MacrosDistribution'
 import { Macros } from '../Macros/Macros'
+import { MacrosDonut } from '../MacrosDonut/MacrosDonut'
 
 const DEFAULT_IMAGE = 'https://cdn-icons-png.flaticon.com/512/5235/5235253.png'
 
@@ -121,15 +122,24 @@ export function ItemSearch() {
       <Box className='results'>
         <List>
           {results.map((item: any) => (
-            <ListItemButton key={item?._id || item?.searchId}>
-              <Macros {...item?.macros} />
-              <ListItemIcon>
-                <img
-                  src={item?.image || DEFAULT_IMAGE}
-                  alt={item?.name}
-                  className='item-image'
+            <ListItemButton
+              key={item?._id || item?.searchId}
+              className='search-item-container'
+            >
+              <div className='macros-image-container'>
+                <MacrosDonut
+                  protein={item?.macros?.protein}
+                  carbs={item?.macros?.carbs}
+                  fats={item?.macros?.fat}
                 />
-              </ListItemIcon>
+                <ListItemIcon className='item-image-container'>
+                  <img
+                    src={item?.image || DEFAULT_IMAGE}
+                    alt={item?.name}
+                    className='item-image'
+                  />
+                </ListItemIcon>
+              </div>
 
               <ListItemText
                 primary={item?.name}

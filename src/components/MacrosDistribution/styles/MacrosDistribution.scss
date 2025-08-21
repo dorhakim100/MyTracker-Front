@@ -8,36 +8,6 @@
   // padding: 1rem;
 }
 
-.macros-distribution .donut {
-  align-self: center;
-  --size: 160px;
-  --thickness: 18px;
-  width: var(--size);
-  height: var(--size);
-  border-radius: 50%;
-  background: conic-gradient(
-    var(--pColor) 0 var(--p),
-    var(--cColor) var(--p) calc(var(--p) + var(--c)),
-    var(--fColor) calc(var(--p) + var(--c)) 100%
-  );
-  display: grid;
-  place-items: center;
-}
-
-.macros-distribution .donut .donut-inner {
-  width: calc(var(--size) - var(--thickness));
-  height: calc(var(--size) - var(--thickness));
-  border-radius: 50%;
-  background: var(--donut-inner-bg, $white);
-
-  &.dark-mode {
-    background: var(--donut-inner-bg, $darker-gray);
-  }
-
-  display: grid;
-  place-items: center;
-}
-
 .macros-distribution .totals {
   text-align: center;
 }
