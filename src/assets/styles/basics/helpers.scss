@@ -69,11 +69,45 @@ button {
     color: #000;
   }
 }
-.MuiListItemText-root {
+.MuiListItemText-root,
+.MuiListItemButton-root {
   &.dark-mode {
     .MuiListItemText-secondary {
       // color: $dark-gray;
       opacity: 0.8;
+      color: $white;
+    }
+  }
+}
+
+.MuiFormControl-root {
+  label {
+    font-size: 0.9rem;
+  }
+}
+
+.dark-mode {
+  .MuiFormControl-root {
+    label {
+      color: $white;
+      opacity: 0.8;
+    }
+
+    outline: 1px solid $white;
+    border-radius: 3px;
+    &:has(.Mui-focused) {
+      outline: none !important;
+      border: none;
+      box-shadow: none;
+    }
+
+    .Mui-focused {
+      outline: none;
+      border: none;
+      box-shadow: none;
+    }
+
+    .MuiSvgIcon-root {
       color: $white;
     }
   }

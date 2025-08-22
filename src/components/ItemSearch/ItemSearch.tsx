@@ -26,6 +26,7 @@ import { Item } from '../../types/item/Item'
 import { setItem } from '../../store/actions/item.actions'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { ItemDetails } from '../ItemDetails/ItemDetails'
+import { FavoriteButton } from '../FavoriteButton/FavoriteButton'
 
 export function ItemSearch() {
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
@@ -84,6 +85,10 @@ export function ItemSearch() {
     setIsItemSelected(true)
   }
 
+  const onFavoriteClick = (item: Item) => {
+    console.log('onFavoriteClick', item)
+  }
+
   return (
     <>
       <Box className={`item-search ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
@@ -134,7 +139,9 @@ export function ItemSearch() {
             )}
             renderPrimaryText={(item) => item.name}
             renderSecondaryText={(item) => `${item.macros?.calories} kcal`}
+            renderRight={(item) => <FavoriteButton />}
             onItemClick={onItemClick}
+            onRightClick={onFavoriteClick}
           />
         </Box>
       </Box>

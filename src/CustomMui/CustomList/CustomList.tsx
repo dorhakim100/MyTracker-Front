@@ -10,6 +10,8 @@ export interface CustomListProps<T> {
   renderLeft?: (item: T) => React.ReactNode
   renderPrimaryText?: (item: T) => React.ReactNode
   renderSecondaryText?: (item: T) => React.ReactNode
+  renderRight?: (item: T) => React.ReactNode
+  onRightClick?: (item: T) => void
   onItemClick?: (item: T) => void
   className?: string
   itemClassName?: string
@@ -21,6 +23,8 @@ export function CustomList<T>({
   renderLeft,
   renderPrimaryText,
   renderSecondaryText,
+  renderRight,
+  onRightClick,
   onItemClick,
   className,
   itemClassName,
@@ -49,6 +53,23 @@ export function CustomList<T>({
                   renderSecondaryText ? renderSecondaryText(item) : undefined
                 }
               />
+              {renderRight ? (
+                <div
+                  className='right-content'
+                  onClick={
+                    onRightClick
+                      ? (event) => {
+                          console.log('right click', event)
+                          event.preventDefault()
+                          event.stopPropagation()
+                          // onRightClick(item)
+                        }
+                      : undefined
+                  }
+                >
+                  {renderRight(item)}
+                </div>
+              ) : null}
             </ListItemButton>
           )
         })}

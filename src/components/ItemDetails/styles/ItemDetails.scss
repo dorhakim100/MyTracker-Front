@@ -6,7 +6,7 @@
 
   .header {
     display: grid;
-    grid-template-columns: auto 1fr;
+    grid-template-columns: auto 1fr auto;
     grid-template-rows: repeat(2, 1fr);
     gap: 0.2rem 1rem;
 
@@ -28,6 +28,7 @@
     .title {
       grid-column: 2/3;
       grid-row: 1/2;
+      text-align: start;
       font-size: 1.25rem;
       font-weight: 600;
     }
@@ -37,6 +38,12 @@
       grid-row: 2/3;
       color: var(--muted-foreground, #666);
       font-size: 0.95rem;
+    }
+
+    .favorite-button-container {
+      grid-row: 1/-1;
+      justify-self: end;
+      align-self: start;
     }
   }
 
@@ -48,6 +55,7 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 1rem;
+      justify-items: center;
 
       .macros {
         display: grid;
@@ -67,6 +75,27 @@
               text-align: center;
             }
           }
+        }
+      }
+    }
+  }
+  .selects-container {
+    display: grid;
+
+    .select-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      // gap: 1rem;
+
+      .MuiInputLabel-shrink {
+        padding: 0em 0.5em;
+        background-color: $white;
+      }
+
+      &.dark-mode {
+        .MuiInputLabel-shrink {
+          background-color: $darker-gray;
         }
       }
     }

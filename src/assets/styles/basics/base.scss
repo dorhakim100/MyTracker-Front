@@ -99,7 +99,7 @@ p {
   button:not(.MuiIconButton-root) {
     background-color: $dark-gray;
   }
-  button {
+  button:not(.favorite-button) {
     color: $white;
   }
 
