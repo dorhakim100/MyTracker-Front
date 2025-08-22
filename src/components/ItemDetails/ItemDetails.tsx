@@ -77,20 +77,36 @@ export function ItemDetails() {
     switch (key) {
       case 'servingSize':
         totalMacrosToSet = {
-          calories: Math.round((+value / 100) * item.macros?.calories),
-          protein: Math.round((+value / 100) * item.macros?.protein),
-          carbs: Math.round((+value / 100) * item.macros?.carbs),
-          fat: Math.round((+value / 100) * item.macros?.fat),
+          calories: Math.round(
+            (+value / 100) * item.macros?.calories * editItem.numberOfServings
+          ),
+          protein: Math.round(
+            (+value / 100) * item.macros?.protein * editItem.numberOfServings
+          ),
+          carbs: Math.round(
+            (+value / 100) * item.macros?.carbs * editItem.numberOfServings
+          ),
+          fat: Math.round(
+            (+value / 100) * item.macros?.fat * editItem.numberOfServings
+          ),
         }
 
         break
 
       case 'numberOfServings':
         totalMacrosToSet = {
-          calories: Math.round(+value * item.macros?.calories),
-          protein: Math.round(+value * item.macros?.protein),
-          carbs: Math.round(+value * item.macros?.carbs),
-          fat: Math.round(+value * item.macros?.fat),
+          calories: Math.round(
+            (+value * item.macros?.calories * editItem.servingSize) / 100
+          ),
+          protein: Math.round(
+            (+value * item.macros?.protein * editItem.servingSize) / 100
+          ),
+          carbs: Math.round(
+            (+value * item.macros?.carbs * editItem.servingSize) / 100
+          ),
+          fat: Math.round(
+            (+value * item.macros?.fat * editItem.servingSize) / 100
+          ),
         }
         break
 
