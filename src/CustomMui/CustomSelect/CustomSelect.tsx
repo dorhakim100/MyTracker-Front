@@ -3,6 +3,8 @@ import InputLabel from '@mui/material/InputLabel'
 import MenuItem from '@mui/material/MenuItem'
 import FormControl from '@mui/material/FormControl'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../store/store'
 
 interface CustomSelectProps {
   label: string
@@ -11,6 +13,10 @@ interface CustomSelectProps {
 }
 
 export function CustomSelect({ label, values, extra }: CustomSelectProps) {
+  const prefs = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.prefs
+  )
+
   const [value, setValue] = React.useState('')
 
   const handleChange = (event: SelectChangeEvent) => {
@@ -26,6 +32,11 @@ export function CustomSelect({ label, values, extra }: CustomSelectProps) {
         value={value}
         label={label}
         onChange={handleChange}
+        MenuProps={{
+          PaperProps: {
+            className: prefs.isDarkMode ? 'dark-mode' : '',
+          },
+        }}
       >
         {/* <MenuItem value=''>
           <em>None</em>

@@ -112,3 +112,13 @@ button {
     }
   }
 }
+
+.MuiPaper-root:has(.MuiMenu-list).dark-mode {
+  color: $white;
+  background-color: $dark-gray !important;
+
+  .MuiMenu-list {
+    color: $white;
+    background-color: $dark-gray !important;
+  }
+}
