@@ -56,5 +56,6 @@ export function calculateCaloriesFromMacros(
 }
 
 export function roundToNearest50(value: number): number {
-  return Math.round(value / 50) * 50
+  // return Math.round(value / 50) * 50
+  return Math.round(value)
 }

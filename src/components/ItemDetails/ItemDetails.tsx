@@ -70,10 +70,8 @@ export function ItemDetails() {
   }
 
   const onEditItemChange = (key: string, value: string | number) => {
-    console.log('onEditItemChange', key, value)
-
     let totalMacrosToSet = item.macros
-
+    console.log('onEditItemChange', key, value)
     switch (key) {
       case 'servingSize':
         totalMacrosToSet = {
@@ -256,11 +254,14 @@ function EditComponent({
 }) {
   const [pickerValue, setPickerValue] = useState<{
     numberOfServings: number
+    afterValue: number
   }>({
     numberOfServings: value,
+    afterValue: 0,
   })
 
   const values = getArrayOfNumbers(1, 150)
+  const afterValues = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
 
   const buttons = [
     {
@@ -286,23 +287,52 @@ function EditComponent({
 
   // Keep picker in sync with external value
   useEffect(() => {
-    setPickerValue((prev) => ({ ...prev, numberOfServings: value }))
+    const firstValue = Math.floor(value)
+    const secondValue = Math.round((value - firstValue) * 10) / 10
+
+    setPickerValue((prev) => ({
+      ...prev,
+      numberOfServings: firstValue,
+      afterValue: secondValue,
+    }))
   }, [value])
 
+  //   useEffect(() => {
+  //     const newValue = pickerValue.numberOfServings + pickerValue.afterValue
+  //     console.log('newValue', newValue)
+  //     onChange('numberOfServings', newValue)
+  //   }, [pickerValue.numberOfServings])
   useEffect(() => {
-    onChange('numberOfServings', pickerValue.numberOfServings)
-  }, [pickerValue.numberOfServings])
+    const newValue = pickerValue.numberOfServings + pickerValue.afterValue
+    console.log('newValue', newValue)
+    onChange('numberOfServings', newValue)
+  }, [pickerValue])
+
+  //   useEffect(() => {
+  //     const newValue = pickerValue.numberOfServings + pickerValue.afterValue
+  //     console.log('newValue', newValue)
+  //     onChange('numberOfServings', newValue)
+  //   }, [pickerValue.afterValue])
 
   return (
     <div className='picker-container'>
       <Picker
         value={pickerValue}
         onChange={(next) =>
-          setPickerValue(next as unknown as { numberOfServings: number })
+          setPickerValue(
+            next as unknown as { numberOfServings: number; afterValue: number }
+          )
         }
       >
         <Picker.Column name='numberOfServings'>
           {values.map((number) => (
+            <Picker.Item key={number} value={number}>
+              {number}
+            </Picker.Item>
+          ))}
+        </Picker.Column>
+        <Picker.Column name='afterValue'>
+          {afterValues.map((number) => (
             <Picker.Item key={number} value={number}>
               {number}
             </Picker.Item>
