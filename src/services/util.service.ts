@@ -168,3 +168,15 @@ export function getRoutes(routes: Route[], user: User | null) {
 export function getArrayOfNumbers(min: number, max: number): number[] {
   return Array.from({ length: max - min + 1 }, (_, i) => min + i)
 }
+
+export function getCurrMeal(): string {
+  const now = new Date()
+  const hour = now.getHours()
+  if (hour >= 6 && hour < 12) {
+    return 'Breakfast'
+  } else if (hour >= 12 && hour < 18) {
+    return 'Lunch'
+  } else {
+    return 'Dinner'
+  }
+}

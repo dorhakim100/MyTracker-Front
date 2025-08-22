@@ -8,20 +8,28 @@ import { RootState } from '../../store/store'
 
 interface CustomSelectProps {
   label: string
-  values: any[]
+  values: string[]
   extra?: string
+  value: string
+  onChange: (value: string) => void
 }
 
-export function CustomSelect({ label, values, extra }: CustomSelectProps) {
+export function CustomSelect({
+  label,
+  values,
+  value,
+  extra,
+  onChange,
+}: CustomSelectProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
 
-  const [value, setValue] = React.useState('')
-
   const handleChange = (event: SelectChangeEvent) => {
-    setValue(event.target.value)
+    onChange(event.target.value)
   }
+
+  console.log(value)
 
   return (
     <FormControl sx={{ m: 1, minWidth: 140 }} size='small'>
