@@ -15,6 +15,7 @@ import { FixedBottomNavigation } from './CustomMui/BottomNavigation/FixedBottomN
 import { RootState } from './store/store.ts'
 
 import './App.css'
+import { setRemembered } from './store/actions/user.actios.ts'
 
 function App() {
   const prefs = useSelector(
@@ -40,6 +41,10 @@ function App() {
   useEffect(() => {
     smoothScroll()
   }, [location.pathname])
+
+  useEffect(() => {
+    setRemembered()
+  }, [])
 
   return (
     <>

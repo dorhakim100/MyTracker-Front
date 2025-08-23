@@ -194,30 +194,14 @@ async function getRememberedById(userId: string) {
 }
 
 async function getRememberedUser() {
-  // const sessionStr = sessionStorage.getItem(STORAGE_KEY_LOGGEDIN_USER)
-  // if (!sessionStr) return null
-  // const sessionUser = JSON.parse(sessionStr)
-
   try {
-    // if (sessionUser) {
-    //   const retrievedUser = await getRememberedById(sessionUser._id)
-
-    //   return saveLoggedinUser(retrievedUser)
-    // }
     const prefs = getPrefs()
 
     if (!prefs.user) return
     const userId = prefs.user ? prefs.user : null
     if (userId) {
-      // const cred = {
-      //   username: prefs.user.username,
-      //   password: '',
-      //   isRemembered: true,
-      // }
-      // const user = await login(cred)
-
       const user = await getRememberedById(userId)
-      // const user = await loginToken()
+
       if (user) return saveLoggedinUser(user)
     } else {
       throw new Error('No userId found in prefs')

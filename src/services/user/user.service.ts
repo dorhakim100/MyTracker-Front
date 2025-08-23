@@ -6,6 +6,7 @@ import { UserFilter } from '../../types/userFilter/UserFilter'
 import { makeId } from '../util.service'
 
 const STORAGE_KEY_LOGGEDIN_USER = 'user'
+const STORAGE_KEY_REMEMBERED_USER = 'rememberedUser'
 
 export const userService = {
   login,
@@ -18,6 +19,8 @@ export const userService = {
   getLoggedinUser,
   saveLoggedinUser,
   getEmptyUser,
+  saveRememberedUser,
+  getRememberedUser,
 }
 
 async function getUsers(filter: UserFilter) {
@@ -76,6 +79,10 @@ async function login(userCred: UserCred) {
     const user = users.find((user: User) => user.email === userCred.email)
 
     if (user && userCred.email === user.email) {
+      if (userCred.isRemember) {
+        saveRememberedUser(user)
+      }
+
       return saveLoggedinUser(user)
     } else {
       const err = new Error('User credentials do not match.')
@@ -145,6 +152,35 @@ function saveLoggedinUser(user: User) {
     }
     sessionStorage.setItem(STORAGE_KEY_LOGGEDIN_USER, JSON.stringify(user))
     return user
+  } catch (err) {
+    // console.log(err)
+    throw err
+  }
+}
+
+function saveRememberedUser(user: User) {
+  try {
+    localStorage.setItem(STORAGE_KEY_REMEMBERED_USER, user._id)
+  } catch (err) {
+    // console.log(err)
+    throw err
+  }
+}
+
+async function getRememberedUser() {
+  try {
+    const rememberedId = localStorage.getItem(STORAGE_KEY_REMEMBERED_USER)
+
+    if (!rememberedId) return
+
+    if (rememberedId) {
+      const user = await getById(rememberedId)
+
+      if (user) return saveLoggedinUser(user)
+    } else {
+      throw new Error('No userId found in prefs')
+      return null
+    }
   } catch (err) {
     // console.log(err)
     throw err

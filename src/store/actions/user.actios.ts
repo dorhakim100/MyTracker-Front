@@ -39,6 +39,7 @@ export async function removeUser(userId: string) {
 export async function login(credentials: UserCred) {
   try {
     await logout()
+
     const user = await userService.login(credentials)
 
     store.dispatch({
@@ -159,9 +160,15 @@ export async function loadUser(userId: string) {
   }
 }
 
-export function setRemembered(user: User) {
-  store.dispatch({
-    type: SET_USER,
-    user,
-  })
+export async function setRemembered() {
+  try {
+    const user = await userService.getRememberedUser()
+
+    store.dispatch({
+      type: SET_USER,
+      user,
+    })
+  } catch (err) {
+    throw err
+  }
 }

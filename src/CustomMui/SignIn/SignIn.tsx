@@ -83,9 +83,8 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
     React.useState('')
   const [open, setOpen] = React.useState(false)
   const credientials: any = {}
-  // const handleClickOpen = () => {
-  //   setOpen(true)
-  // }
+
+  const [isRemember, setIsRemember] = React.useState(false)
 
   const handleClose = () => {
     setOpen(false)
@@ -112,9 +111,9 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
       setIsLoading(true)
       let user
       if (isSignup) {
-        user = await signup(credientials)
+        user = await signup({ ...credientials, isRemember })
       } else {
-        user = await login(credientials)
+        user = await login({ ...credientials, isRemember })
       }
 
       if (user) {
@@ -201,7 +200,8 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
   }, [prefs.isDarkMode])
 
   const toggleRememberMe = () => {
-    credientials.isRemember = !credientials.isRemember || false
+    // credientials.isRemember = !credientials.isRemember || false
+    setIsRemember(!isRemember)
   }
 
   return (
