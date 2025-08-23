@@ -106,9 +106,16 @@ async function signup(userCred: UserCred) {
       currGoal: getDefaultGoal(),
       goals: [getDefaultGoal()],
       loggedToday: getDefaultLoggedToday(),
+      favoriteItems: {
+        food: [],
+        product: [],
+      },
     }
 
     const user = await storageService.post('user', userToSave)
+    if (userCred.isRemember) {
+      saveRememberedUser(user)
+    }
 
     return saveLoggedinUser(user)
   } catch (err) {
@@ -149,6 +156,7 @@ function saveLoggedinUser(user: User) {
       goals: user.goals,
       email: user.email,
       loggedToday: user.loggedToday,
+      favoriteItems: user.favoriteItems,
     }
     sessionStorage.setItem(STORAGE_KEY_LOGGEDIN_USER, JSON.stringify(user))
     return user
@@ -196,6 +204,10 @@ function getEmptyUser() {
     goals: [],
     currGoalId: '',
     loggedToday: getDefaultLoggedToday(),
+    favoriteItems: {
+      foods: [],
+      products: [],
+    },
     // isAdmin: false,
   }
 }

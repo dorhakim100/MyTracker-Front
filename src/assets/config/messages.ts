@@ -7,5 +7,6 @@ export const messages = {
     updateCalories: 'Failed to update calories',
     updateMacros: 'Failed to update macros',
     search: 'Failed to search',
+    favorite: 'Failed to add to favorites',
   },
 }

@@ -23,8 +23,13 @@ export const searchService = {
 
 async function search(query: SearchQuery) {
   try {
-    const { txt, source } = query
+    const { txt, source, favoriteItems } = query
     let res
+
+    if (favoriteItems) {
+      // const favoriteFoods = favoriteItems.food || []
+      // const favoriteProducts = favoriteItems.product || []
+    }
 
     switch (source) {
       case searchTypes.openFoodFacts:
@@ -80,6 +85,7 @@ async function searchOpenFoodFacts(query: string) {
         fat: +product.nutriments.fat_100g,
       },
       image: product.image_small_url || DEFAULT_IMAGE,
+      type: 'product',
     }))
   } catch (err) {
     // console.error(err)
@@ -130,6 +136,7 @@ async function searchRawUSDA(query: string) {
           calories: calories || 0,
         },
         image: DEFAULT_IMAGE,
+        type: 'food',
       }
     })
   } catch (error) {

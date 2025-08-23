@@ -3,8 +3,8 @@ import { IconButton } from '@mui/material'
 import FavoriteIcon from '@mui/icons-material/Favorite'
 import { motion } from 'framer-motion'
 
-export function FavoriteButton() {
-  const [liked, setLiked] = useState(false)
+export function FavoriteButton({ isFavorite }: { isFavorite: boolean }) {
+  const [liked, setLiked] = useState(isFavorite)
 
   return (
     <motion.div

@@ -7,4 +7,5 @@ export interface Item {
   //   categories: string[]
   image?: string
   macros: Macros
+  type: 'food' | 'product'
 }

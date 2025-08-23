@@ -59,10 +59,10 @@ export function CustomList<T>({
                   onClick={
                     onRightClick
                       ? (event) => {
-                          console.log('right click', event)
+                          // console.log('right click', event)
                           event.preventDefault()
                           event.stopPropagation()
-                          // onRightClick(item)
+                          onRightClick(item)
                         }
                       : undefined
                   }

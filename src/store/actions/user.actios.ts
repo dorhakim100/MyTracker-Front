@@ -103,6 +103,13 @@ export async function updateUser(userToUpdate: User) {
   }
 }
 
+export function optimisticUpdateUser(userToUpdate: User) {
+  store.dispatch({
+    type: SET_USER,
+    user: userToUpdate,
+  })
+}
+
 export function setUserToEdit(userToEdit: User) {
   store.dispatch({
     type: SET_USER_TO_EDIT,
@@ -121,8 +128,9 @@ export async function signup(credentials: UserCred) {
     })
 
     setUserToEdit(user)
+    return user
 
-    if (user && credentials.isRemember) return
+    // if (user && credentials.isRemember) return
     // socketService.login(user._id)
     return user
   } catch (err) {

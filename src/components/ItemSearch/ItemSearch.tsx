@@ -27,9 +27,12 @@ import { setItem } from '../../store/actions/item.actions'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { ItemDetails } from '../ItemDetails/ItemDetails'
 import { FavoriteButton } from '../FavoriteButton/FavoriteButton'
+import { updateUser } from '../../store/actions/user.actios'
 
 export function ItemSearch() {
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
+
+  const user = useSelector((state: RootState) => state.userModule.user)
 
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<Item[]>([])
@@ -49,6 +52,11 @@ export function ItemSearch() {
     setIsLoading(true)
     try {
       if (!query) {
+        // const res = await searchService.search({
+        //   favoriteItems: user?.favoriteItems,
+        // })
+        // setResults(res)
+        setResults([])
         return
       }
 
@@ -85,8 +93,36 @@ export function ItemSearch() {
     setIsItemSelected(true)
   }
 
-  const onFavoriteClick = (item: Item) => {
-    console.log('onFavoriteClick', item)
+  const onFavoriteClick = async (item: Item) => {
+    try {
+      if (!user) return showErrorMsg(messages.error.favorite)
+      if (!item.searchId) return showErrorMsg(messages.error.favorite)
+
+      const key = item.type === 'food' ? 'food' : 'product'
+      console.log(user)
+
+      let favoriteArray = user.favoriteItems[key] || []
+      console.log(favoriteArray)
+      if (favoriteArray.includes(item.searchId)) {
+        favoriteArray = favoriteArray.filter(
+          (id: string) => id !== item.searchId
+        )
+      } else {
+        favoriteArray.push(item.searchId)
+      }
+
+      const favoriteItems = {
+        ...user.favoriteItems,
+      }
+
+      const userToSave = {
+        ...user,
+        favoriteItems,
+      }
+      await updateUser(userToSave)
+    } catch {
+      showErrorMsg(messages.error.favorite)
+    }
   }
 
   return (
@@ -139,7 +175,15 @@ export function ItemSearch() {
             )}
             renderPrimaryText={(item) => item.name}
             renderSecondaryText={(item) => `${item.macros?.calories} kcal`}
-            renderRight={(item) => <FavoriteButton />}
+            renderRight={(item) => (
+              <FavoriteButton
+                isFavorite={
+                  user?.favoriteItems[item.type]?.includes(
+                    item.searchId || ''
+                  ) || false
+                }
+              />
+            )}
             onItemClick={onItemClick}
             onRightClick={onFavoriteClick}
           />
