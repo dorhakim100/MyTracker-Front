@@ -5,18 +5,25 @@ import { calculateCaloriesFromMacros } from '../macros/macros.service'
 import { Item } from '../../types/item/Item'
 import { User } from '../../types/user/User'
 
+// Querying URLs
 const OPEN_FOOD_FACTS_API_URL = 'https://world.openfoodfacts.org/cgi/search.pl'
 const USDA_API_URL = 'https://api.nal.usda.gov/fdc/v1/foods/search'
+
+// Querying URLs by ID
 const OPEN_FOOD_FACTS_API_URL_BY_ID =
   'https://world.openfoodfacts.org/api/v3/product/'
 const OPEN_FOOD_FACTS_BATCH_URL =
   'https://world.openfoodfacts.org/api/v2/search'
+
+// Querying URLs by IDs
 const USDA_FOODS_URL = 'https://api.nal.usda.gov/fdc/v1/foods'
 
+// Default image
 const DEFAULT_IMAGE = 'https://cdn-icons-png.flaticon.com/512/5235/5235253.png'
 
 const USDA_API_KEY = import.meta.env.VITE_USDA_API_KEY
 
+// Querying parameters Open Food Facts
 const PAGE = 1
 const SIZE = 20
 const FIELDS =
@@ -113,6 +120,9 @@ async function searchById(id: string, source: string) {
   }
 }
 
+/* ====== Open Food Facts API ====== */
+
+// Search for products
 async function searchOpenFoodFacts(query: string) {
   try {
     const { data } = await axios.get(OPEN_FOOD_FACTS_API_URL, {
@@ -186,6 +196,47 @@ async function getProductById(id: string) {
   }
 }
 
+// Get products by array of IDs
+async function getProductsByIds(ids: string[]) {
+  try {
+    if (!ids || !ids.length) return []
+    const { data } = await axios.get(OPEN_FOOD_FACTS_BATCH_URL, {
+      params: {
+        code: ids.join(','),
+        fields: FIELDS,
+      },
+      headers: { 'User-Agent': 'MyTracker/1.0 (you@example.com)' },
+    })
+
+    const products: OFFProduct[] = data.products || []
+
+    return products.map((product: OFFProduct) => {
+      const proteins = +(product.nutriments?.proteins_100g ?? 0)
+      const carbs = +(product.nutriments?.carbohydrates_100g ?? 0)
+      const fats = +(product.nutriments?.fat_100g ?? 0)
+      const calories =
+        +(product.nutriments?.['energy-kcal_100g'] ?? 0) ||
+        +(product.nutriments?.['energy-kcal'] ?? 0) ||
+        calculateCaloriesFromMacros({ protein: proteins, carbs, fats }).total
+
+      return {
+        searchId: product.code,
+        name: product.brands
+          ? `${product.product_name} - ${product.brands}`
+          : product.product_name,
+        macros: { calories, protein: proteins, carbs, fat: fats },
+        image: product.image_small_url || DEFAULT_IMAGE,
+        type: 'product',
+      }
+    })
+  } catch (err) {
+    throw err
+  }
+}
+
+/* ====== USDA API ====== */
+
+// Search for foods
 async function searchRawUSDA(query: string) {
   try {
     const { data } = await axios.get(USDA_API_URL, {
@@ -239,7 +290,9 @@ async function getFoodById(id: string) {
   }
 }
 
+// Get macros from USDA food
 function _getMacrosFromUSDA(food: FDCFood) {
+  // Takes care of both object structures of the USDA API
   const match = (target: string) =>
     food.foodNutrients.find(
       (n: FDCNutrient) => (n.nutrientName || n.nutrient?.name) === target
@@ -264,43 +317,6 @@ function _getMacrosFromUSDA(food: FDCFood) {
     carbs,
     fat: fats,
     calories,
-  }
-}
-
-async function getProductsByIds(ids: string[]) {
-  try {
-    if (!ids || !ids.length) return []
-    const { data } = await axios.get(OPEN_FOOD_FACTS_BATCH_URL, {
-      params: {
-        code: ids.join(','),
-        fields: FIELDS,
-      },
-      headers: { 'User-Agent': 'MyTracker/1.0 (you@example.com)' },
-    })
-
-    const products: OFFProduct[] = data.products || []
-
-    return products.map((product: OFFProduct) => {
-      const proteins = +(product.nutriments?.proteins_100g ?? 0)
-      const carbs = +(product.nutriments?.carbohydrates_100g ?? 0)
-      const fats = +(product.nutriments?.fat_100g ?? 0)
-      const calories =
-        +(product.nutriments?.['energy-kcal_100g'] ?? 0) ||
-        +(product.nutriments?.['energy-kcal'] ?? 0) ||
-        calculateCaloriesFromMacros({ protein: proteins, carbs, fats }).total
-
-      return {
-        searchId: product.code,
-        name: product.brands
-          ? `${product.product_name} - ${product.brands}`
-          : product.product_name,
-        macros: { calories, protein: proteins, carbs, fat: fats },
-        image: product.image_small_url || DEFAULT_IMAGE,
-        type: 'product',
-      }
-    })
-  } catch (err) {
-    throw err
   }
 }
 
@@ -332,6 +348,8 @@ async function getFoodsByIds(ids: string[]) {
     throw err
   }
 }
+
+// Utils functions related to the search service
 
 function isFavorite(item: Item, user: User | null) {
   return (
