@@ -1,4 +1,4 @@
-export interface SearchQuery {
+export interface SearchFilter {
   txt?: string
   source?: 'usda' | 'open-food-facts'
   favoriteItems?: {

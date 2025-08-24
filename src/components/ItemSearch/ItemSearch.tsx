@@ -18,7 +18,6 @@ import {
 } from '../../CustomMui/CustomToggle/CustomToggle'
 import { CustomInput } from '../../CustomMui/CustomInput/CustomInput'
 import { showErrorMsg } from '../../services/event-bus.service'
-import { SearchQuery } from '../../types/searchQuery/SearchQuery'
 import { setIsLoading } from '../../store/actions/system.actions'
 import { MacrosDonut } from '../MacrosDonut/MacrosDonut'
 import { CustomList } from '../../CustomMui/CustomList/CustomList'
@@ -28,6 +27,7 @@ import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { ItemDetails } from '../ItemDetails/ItemDetails'
 import { FavoriteButton } from '../FavoriteButton/FavoriteButton'
 import { updateUser } from '../../store/actions/user.actios'
+import { SearchFilter } from '../../types/searchFilter/SearchFilter'
 
 export function ItemSearch() {
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
@@ -52,11 +52,11 @@ export function ItemSearch() {
     setIsLoading(true)
     try {
       if (!query) {
-        // const res = await searchService.search({
-        //   favoriteItems: user?.favoriteItems,
-        // })
-        // setResults(res)
-        setResults([])
+        const res = await searchService.search({
+          favoriteItems: user?.favoriteItems,
+        })
+        setResults(res)
+        // setResults([])
         return
       }
 
@@ -65,9 +65,10 @@ export function ItemSearch() {
         return
       }
 
-      const searchQuery: SearchQuery = {
+      const searchQuery: SearchFilter = {
         txt: query,
         source: source as 'usda' | 'open-food-facts',
+        favoriteItems: user?.favoriteItems || { food: [], product: [] },
       }
 
       const res = await searchService.search(searchQuery)
