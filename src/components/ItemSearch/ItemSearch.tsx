@@ -178,11 +178,7 @@ export function ItemSearch() {
             renderSecondaryText={(item) => `${item.macros?.calories} kcal`}
             renderRight={(item) => (
               <FavoriteButton
-                isFavorite={
-                  user?.favoriteItems[item.type]?.includes(
-                    item.searchId || ''
-                  ) || false
-                }
+                isFavorite={searchService.isFavorite(item, user) || false}
               />
             )}
             onItemClick={onItemClick}

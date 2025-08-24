@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 
 import { RootState } from '../../store/store'
@@ -9,6 +9,7 @@ import { MacrosDonut } from '../MacrosDonut/MacrosDonut'
 import { FavoriteButton } from '../FavoriteButton/FavoriteButton'
 import { CustomSelect } from '../../CustomMui/CustomSelect/CustomSelect'
 import { getArrayOfNumbers, getCurrMeal } from '../../services/util.service'
+import { searchService } from '../../services/search/search-service'
 import Typography from '@mui/material/Typography'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import Select from '@mui/material/Select'
@@ -47,6 +48,9 @@ export function ItemDetails() {
 
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
+  )
+  const user = useSelector(
+    (stateSelector: RootState) => stateSelector.userModule.user
   )
 
   const [editItem, setEditItem] = useState<EditItem>({
@@ -132,7 +136,9 @@ export function ItemDetails() {
         <div className='title'>{item.name}</div>
         <div className='subtitle'>{item.macros?.calories} kcal for 100g</div>
 
-        <FavoriteButton />
+        <FavoriteButton
+          isFavorite={searchService.isFavorite(item, user) || false}
+        />
       </div>
 
       <div className='content'>

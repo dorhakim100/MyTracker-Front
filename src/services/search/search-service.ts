@@ -2,6 +2,8 @@ import axios from 'axios'
 import { SearchFilter } from '../../types/searchFilter/SearchFilter'
 import { searchTypes } from '../../assets/config/search-types'
 import { calculateCaloriesFromMacros } from '../macros/macros.service'
+import { Item } from '../../types/item/Item'
+import { User } from '../../types/user/User'
 
 const OPEN_FOOD_FACTS_API_URL = 'https://world.openfoodfacts.org/cgi/search.pl'
 const USDA_API_URL = 'https://api.nal.usda.gov/fdc/v1/foods/search'
@@ -27,6 +29,7 @@ export const searchService = {
   searchById,
   getProductsByIds,
   getFoodsByIds,
+  isFavorite,
 }
 
 type OFFProduct = {
@@ -328,4 +331,11 @@ async function getFoodsByIds(ids: string[]) {
   } catch (err) {
     throw err
   }
+}
+
+function isFavorite(item: Item, user: User | null) {
+  return (
+    user?.favoriteItems?.food.includes(item.searchId || '') ||
+    user?.favoriteItems?.product.includes(item.searchId || '')
+  )
 }
