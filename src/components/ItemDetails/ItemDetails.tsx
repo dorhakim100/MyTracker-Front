@@ -127,6 +127,18 @@ export function ItemDetails() {
     }))
   }
 
+  const onAddToMeal = () => {
+    // const newItem = {
+    //   ...item,
+    //   macros: editItem.totalMacros,
+    //   servingSize: editItem.servingSize,
+    //   numberOfServings: editItem.numberOfServings,
+    //   meal: editItem.meal,
+    // }
+
+    console.log(editItem)
+  }
+
   return (
     <div className='item-details'>
       <div className='header'>
@@ -206,6 +218,7 @@ export function ItemDetails() {
         size='large'
         fullWidth
         className='add-to-meal-button'
+        onClick={onAddToMeal}
       >
         <AddIcon sx={{ mr: 1 }} />
         Add to Meal
