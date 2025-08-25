@@ -100,15 +100,16 @@ export function ItemSearch() {
       if (!item.searchId) return showErrorMsg(messages.error.favorite)
 
       const key = item.type === 'food' ? 'food' : 'product'
-      console.log(user)
 
       let favoriteArray = user.favoriteItems[key] || []
-      console.log(favoriteArray)
+
       if (favoriteArray.includes(item.searchId)) {
         favoriteArray = favoriteArray.filter(
           (id: string) => id !== item.searchId
         )
+        await searchService.removeFromCache(item)
       } else {
+        await searchService.addToCache(item)
         favoriteArray.push(item.searchId)
       }
 
@@ -120,6 +121,7 @@ export function ItemSearch() {
         ...user,
         favoriteItems,
       }
+
       await updateUser(userToSave)
     } catch {
       showErrorMsg(messages.error.favorite)

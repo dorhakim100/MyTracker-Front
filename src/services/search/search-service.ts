@@ -30,6 +30,8 @@ export const searchService = {
   getProductsByIds,
   getFoodsByIds,
   isFavorite,
+  addToCache,
+  removeFromCache,
 }
 
 async function search(filter: SearchFilter) {
@@ -39,7 +41,8 @@ async function search(filter: SearchFilter) {
 
     if (!txt && favoriteItems) {
       const cached = await storageService.query(FAVORITE_CACHE, 0)
-      if (cached && cached.length) return cached[0]
+      console.log('cached', cached)
+      if (cached && cached.length) return cached
 
       const favoriteFoods = favoriteItems.food || []
       const favoriteProducts = favoriteItems.product || []
@@ -51,7 +54,10 @@ async function search(filter: SearchFilter) {
 
       const [foods, products] = await Promise.all(promises)
       res = [...foods, ...products]
-      storageService.post(FAVORITE_CACHE, res, true)
+      // console.log('res', res)
+      res.forEach((item) => {
+        addToCache(item)
+      })
       return res
     }
 
@@ -89,6 +95,30 @@ async function searchById(id: string, source: string) {
   } catch (err) {
     throw err
   }
+}
+
+async function addToCache(item: Item) {
+  const cached = await storageService.query(FAVORITE_CACHE, 0)
+  const isInCache = cached.find((i: Item) => i.searchId === item.searchId)
+    ? true
+    : false
+  if (!isInCache) {
+    console.log('adding to cache', item)
+    console.log('cached', cached)
+    await storageService.post(FAVORITE_CACHE, item, true)
+  } else throw new Error('Item already in cache')
+}
+
+async function removeFromCache(item: Item) {
+  if (!item._id) throw new Error('Item not found in cache')
+  const cached = await storageService.query(FAVORITE_CACHE, 0)
+
+  const isInCache = cached.find((i: Item) => i.searchId === item.searchId)
+    ? true
+    : false
+  if (isInCache) {
+    await storageService.remove(FAVORITE_CACHE, item._id, true)
+  } else throw new Error('Item not found in cache')
 }
 
 /* ====== Open Food Facts API ====== */
