@@ -22,7 +22,7 @@ const {
 const { PAGE, SIZE, FIELDS, LC, CC } = openFoodFactsQueryingParams
 const USDA_API_KEY = import.meta.env.VITE_USDA_API_KEY
 
-const ITEM_CACHE = 'item_cache'
+const FAVORITE_CACHE = 'favorite_cache'
 
 export const searchService = {
   search,
@@ -37,9 +37,10 @@ async function search(filter: SearchFilter) {
     const { txt, source, favoriteItems } = filter
     let res
 
-    // if (!txt) return []
-
     if (!txt && favoriteItems) {
+      const cached = await storageService.query(FAVORITE_CACHE, 0)
+      if (cached && cached.length) return cached[0]
+
       const favoriteFoods = favoriteItems.food || []
       const favoriteProducts = favoriteItems.product || []
 
@@ -50,6 +51,7 @@ async function search(filter: SearchFilter) {
 
       const [foods, products] = await Promise.all(promises)
       res = [...foods, ...products]
+      storageService.post(FAVORITE_CACHE, res, true)
       return res
     }
 
@@ -63,9 +65,6 @@ async function search(filter: SearchFilter) {
         res = await searchRawUSDA(safeTxt)
         break
     }
-    console.log(res)
-
-    storageService.post(ITEM_CACHE, res, 0)
 
     return res
   } catch (err) {

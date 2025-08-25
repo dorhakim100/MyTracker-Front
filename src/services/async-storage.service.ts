@@ -33,7 +33,7 @@ function post(
   isCache: boolean = false
 ): Promise<any> {
   const delay = isCache ? 0 : 500
-  newEntity._id = _makeId()
+  newEntity._id = isCache ? newEntity.searchId : _makeId()
   return query(entityType, delay).then((entities) => {
     entities.push(newEntity)
     _save(entityType, entities)
