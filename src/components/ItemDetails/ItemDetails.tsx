@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux'
 
 import { RootState } from '../../store/store'
 import { Item } from '../../types/item/Item'
+import { cache } from '../../assets/config/cache'
 
 import { Macros } from '../Macros/Macros'
 import { MacrosDonut } from '../MacrosDonut/MacrosDonut'
@@ -138,7 +139,42 @@ export function ItemDetails() {
     }
   }
 
-  const onAddToMeal = () => {
+  const onAddToMeal = async () => {
+    try {
+      if (!user) return showErrorMsg(messages.error.favorite)
+      if (!item.searchId) return showErrorMsg(messages.error.favorite)
+
+      const itemToCache = {
+        ...item,
+      }
+      delete itemToCache._id
+
+      await searchService.addToCache(itemToCache, cache.ITEMS_CACHE)
+
+      const newLog = {
+        itemId: item.searchId,
+        meal: editItem.meal,
+        macros: editItem.totalMacros,
+      }
+
+      console.log(newLog)
+      console.log(user)
+
+      const newUser = {
+        ...user,
+        loggedToday: {
+          ...user.loggedToday,
+          logs: [...user.loggedToday.logs, newLog],
+          calories: user.loggedToday.calories + newLog.macros.calories,
+        },
+      }
+      console.log(newUser)
+
+      await updateUser(newUser)
+      showSuccessMsg(messages.success.addedToMeal)
+    } catch {
+      showErrorMsg(messages.error.favorite)
+    }
     // const newItem = {
     //   ...item,
     //   macros: editItem.totalMacros,
@@ -146,8 +182,6 @@ export function ItemDetails() {
     //   numberOfServings: editItem.numberOfServings,
     //   meal: editItem.meal,
     // }
-
-    console.log(editItem)
   }
 
   return (
@@ -276,9 +310,9 @@ function ServingsSelect({
 import Picker from 'react-mobile-picker'
 import Button from '@mui/material/Button'
 import { EditItem } from '../../types/editItem/editItem'
-import { showErrorMsg } from '../../services/event-bus.service'
+import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
 import { messages } from '../../assets/config/messages'
-import { handleFavorite } from '../../store/actions/user.actios'
+import { handleFavorite, updateUser } from '../../store/actions/user.actios'
 
 function EditComponent({
   value,

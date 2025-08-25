@@ -21,9 +21,9 @@ interface CaloriesProgressProps {
 }
 
 export function CaloriesProgress({
-  percentageValue,
+  // percentageValue,
   current,
-  goal,
+  // goal,
   label = 'Calories',
 }: CaloriesProgressProps) {
   const prefs = useSelector(
@@ -38,16 +38,16 @@ export function CaloriesProgress({
     (stateSelector: RootState) => stateSelector.userModule.userToEdit
   )
 
-  const [valueToShow, setValueToShow] = useState<number | string>(current)
-  const [isPercentage, setIsPercentage] = useState(false)
+  // const [valueToShow, setValueToShow] = useState<number | string>(current)
+  // const [isPercentage, setIsPercentage] = useState(false)
 
-  const onChangeDisplay = () => {
-    const stateToSet = !isPercentage
-    setIsPercentage(stateToSet)
-    console.log(percentageValue)
+  // const onChangeDisplay = () => {
+  //   const stateToSet = !isPercentage
+  //   setIsPercentage(stateToSet)
+  //   console.log(percentageValue)
 
-    setValueToShow(stateToSet ? current : `${percentageValue}%`)
-  }
+  //   setValueToShow(stateToSet ? current : `${percentageValue}%`)
+  // }
   const [openModal, setOpenModal] = useState(false)
 
   const edit = () => {
@@ -74,16 +74,17 @@ export function CaloriesProgress({
   }
 
   function getPercentageValue() {
-    return user?.currGoal?.dailyCalories
-      ? (current / user?.currGoal?.dailyCalories) * 100
-      : 0
+    return (current / (user?.currGoal?.dailyCalories || 1)) * 100
+    // return user?.currGoal?.dailyCalories
+    //   ? (current / user?.currGoal?.dailyCalories) * 100
+    //   : 0
   }
 
   return (
     <>
       <Card
         className={`card calories-progress ${prefs.isDarkMode ? 'dark' : ''}`}
-        onClick={onChangeDisplay}
+        // onClick={onChangeDisplay}
       >
         <Typography variant='h6'>{label}</Typography>
         <EditIcon onClick={edit} />
@@ -97,7 +98,8 @@ export function CaloriesProgress({
         </div>
         <CircularProgress
           value={getPercentageValue()}
-          text={`${valueToShow}`}
+          // text={`${valueToShow}`}
+          text={`${current}`}
         />
       </Card>
       <SlideDialog

@@ -2,6 +2,7 @@ export const messages = {
   success: {
     updateCalories: 'Calories updated successfully',
     updateMacros: 'Macros updated successfully',
+    addedToMeal: 'Added to meal successfully',
   },
   error: {
     updateCalories: 'Failed to update calories',

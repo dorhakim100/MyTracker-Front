@@ -15,6 +15,9 @@ import { UserCred } from '../../types/userCred/UserCred'
 import { User } from '../../types/user/User'
 import { searchService } from '../../services/search/search-service'
 import { Item } from '../../types/item/Item'
+import { cache } from '../../assets/config/cache'
+
+const { FAVORITE_CACHE } = cache
 
 export async function loadUsers(filter: UserFilter) {
   try {
@@ -180,9 +183,9 @@ export async function handleFavorite(item: Item, user: User) {
 
     if (favoriteArray.includes(item.searchId)) {
       favoriteArray = favoriteArray.filter((id: string) => id !== item.searchId)
-      await searchService.removeFromCache(item)
+      await searchService.removeFromCache(item, FAVORITE_CACHE)
     } else {
-      await searchService.addToCache(item)
+      await searchService.addToCache(item, FAVORITE_CACHE)
       favoriteArray.push(item.searchId)
     }
 

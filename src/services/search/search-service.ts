@@ -10,7 +10,7 @@ import { openFoodFactsQueryingParams } from '../../assets/config/querying.opp.pa
 import type { OFFProduct } from '../../types/openFoodFacts/OFFProduct'
 import type { FDCFood } from '../../types/usda/FDCFood'
 import type { FDCNutrient } from '../../types/usda/FDCNutrient'
-
+import { cache } from '../../assets/config/cache'
 const {
   OPEN_FOOD_FACTS_API_URL,
   OPEN_FOOD_FACTS_API_URL_BY_ID,
@@ -20,9 +20,8 @@ const {
   DEFAULT_IMAGE,
 } = searchUrls
 const { PAGE, SIZE, FIELDS, LC, CC } = openFoodFactsQueryingParams
+const { FAVORITE_CACHE, ITEMS_CACHE } = cache
 const USDA_API_KEY = import.meta.env.VITE_USDA_API_KEY
-
-const FAVORITE_CACHE = 'favorite_cache'
 
 export const searchService = {
   search,
@@ -41,7 +40,6 @@ async function search(filter: SearchFilter) {
 
     if (!txt && favoriteItems) {
       const cached = await storageService.query(FAVORITE_CACHE, 0)
-      console.log('cached', cached)
       if (cached && cached.length) return cached
 
       const favoriteFoods = favoriteItems.food || []
@@ -56,7 +54,7 @@ async function search(filter: SearchFilter) {
       res = [...foods, ...products]
       // console.log('res', res)
       res.forEach((item) => {
-        addToCache(item)
+        addToCache(item, FAVORITE_CACHE)
       })
       return res
     }
@@ -97,27 +95,27 @@ async function searchById(id: string, source: string) {
   }
 }
 
-async function addToCache(item: Item) {
-  const cached = await storageService.query(FAVORITE_CACHE, 0)
+async function addToCache(item: Item, key: string) {
+  const cached = await storageService.query(key, 0)
   const isInCache = cached.find((i: Item) => i.searchId === item.searchId)
     ? true
     : false
   if (!isInCache) {
-    console.log('adding to cache', item)
-    console.log('cached', cached)
-    await storageService.post(FAVORITE_CACHE, item, true)
-  } else throw new Error('Item already in cache')
+    await storageService.post(key, item, true)
+  } else {
+    // throw new Error('Item already in cache')
+  }
 }
 
-async function removeFromCache(item: Item) {
+async function removeFromCache(item: Item, key: string) {
   if (!item._id) throw new Error('Item not found in cache')
-  const cached = await storageService.query(FAVORITE_CACHE, 0)
+  const cached = await storageService.query(key, 0)
 
   const isInCache = cached.find((i: Item) => i.searchId === item.searchId)
     ? true
     : false
   if (isInCache) {
-    await storageService.remove(FAVORITE_CACHE, item._id, true)
+    await storageService.remove(key, item._id, true)
   } else throw new Error('Item not found in cache')
 }
 

@@ -9,7 +9,6 @@ import 'swiper/css/pagination'
 import { CaloriesProgress } from '../CaloriesProgress/CaloriesProgress'
 import { MacrosDistribution } from '../MacrosDistribution/MacrosDistribution'
 import { MacrosProgress } from '../MacrosProgress/MacrosProgress'
-import { getRandomIntInclusive } from '../../services/util.service'
 import { RootState } from '../../store/store'
 
 export function StatsCarousel() {
@@ -23,38 +22,48 @@ export function StatsCarousel() {
     fats: { percentage: 0, gram: 0 },
   })
 
-  function _getRandomPercentage() {
-    return getRandomIntInclusive(0, 100)
-  }
+  const [calories, setCalories] = useState(user?.loggedToday?.calories || 0)
 
   useEffect(() => {
     if (!user) return
     console.log('user', user)
+    const protein = user?.loggedToday?.logs.reduce(
+      (acc, log) => acc + log.macros.protein,
+      0
+    )
+    const carbs = user?.loggedToday?.logs.reduce(
+      (acc, log) => acc + log.macros.carbs,
+      0
+    )
+    const fats = user?.loggedToday?.logs.reduce(
+      (acc, log) => acc + log.macros.fat,
+      0
+    )
     const macrosToSet = {
       protein: {
-        percentage: getPercentage(
-          user?.loggedToday?.protein,
-          user?.currGoal?.macros.protein
-        ),
+        percentage: getPercentage(protein, user?.currGoal?.macros.protein),
         gram: user?.currGoal?.macros.protein,
       },
       carbs: {
-        percentage: getPercentage(
-          user?.loggedToday?.carbs,
-          user?.currGoal?.macros.carbs
-        ),
+        percentage: getPercentage(carbs, user?.currGoal?.macros.carbs),
         gram: user?.currGoal?.macros.carbs,
       },
       fats: {
-        percentage: getPercentage(
-          user?.loggedToday?.fat,
-          user?.currGoal?.macros.fat
-        ),
+        percentage: getPercentage(fats, user?.currGoal?.macros.fat),
         gram: user?.currGoal?.macros.fat,
       },
     }
     setMacros(macrosToSet)
   }, [user])
+
+  useEffect(() => {
+    console.log('changed')
+    console.log(user?.loggedToday?.calories)
+
+    if (!user?.loggedToday?.calories) return
+    const newCalories = user?.loggedToday?.calories
+    setCalories(newCalories)
+  }, [user?.loggedToday?.calories])
 
   function getPercentage(value: number, goal: number) {
     return (value / goal) * 100
@@ -70,10 +79,8 @@ export function StatsCarousel() {
       >
         <SwiperSlide>
           <CaloriesProgress
-            percentageValue={
-              user.loggedToday?.calories / user.currGoal.dailyCalories
-            }
-            current={user.loggedToday?.calories}
+            percentageValue={calories / user.currGoal.dailyCalories}
+            current={calories}
             goal={user.currGoal?.dailyCalories}
           />
         </SwiperSlide>

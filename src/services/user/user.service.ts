@@ -231,9 +231,7 @@ function getDefaultLoggedToday() {
   return {
     date: new Date().toISOString(),
     calories: 0,
-    protein: 0,
-    carbs: 0,
-    fat: 0,
+    logs: [],
   }
 }
 
