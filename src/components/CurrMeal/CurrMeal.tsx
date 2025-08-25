@@ -1,7 +1,12 @@
-import { Card, Typography } from '@mui/material'
-import { useMemo } from 'react'
+import { Card, IconButton, Typography } from '@mui/material'
+import { useEffect, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
+
+import { CustomList } from '../../CustomMui/CustomList/CustomList'
+import { Log } from '../../types/log/Log'
+import { loadItems } from '../../store/actions/item.actions'
+import DeleteIcon from '@mui/icons-material/Delete'
 
 interface MealPeriod {
   key: 'morning' | 'lunch' | 'evening'
@@ -25,7 +30,68 @@ export function CurrMeal() {
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
 
+  const user = useSelector(
+    (stateSelector: RootState) => stateSelector.userModule.user
+  )
+
+  const cachedItems = useSelector(
+    (stateSelector: RootState) => stateSelector.itemModule.items
+  )
+
   const period = useMemo(() => getCurrentMealPeriod(), [])
+
+  useEffect(() => {
+    loadItems()
+  }, [])
+
+  const renderList = () => {
+    if (!user || !user.loggedToday.logs)
+      return (
+        <div className='logged-items'>
+          <div className='placeholder'>No items logged yet</div>
+        </div>
+      )
+
+    const logs = user.loggedToday.logs
+
+    const getKey = (item: Log) => item.itemId + item.time
+
+    const renderPrimaryText = (item: Log) => {
+      const cachedItem = cachedItems.find((i) => i.searchId === item.itemId)
+      return cachedItem?.name
+    }
+
+    const renderSecondaryText = (item: Log) => {
+      const cachedItem = cachedItems.find((i) => i.searchId === item.itemId)
+      return `${cachedItem?.macros?.calories} kcal`
+    }
+
+    const renderRight = (item: Log) => {
+      const cachedItem = cachedItems.find((i) => i.searchId === item.itemId)
+      // return (
+      //   <MacrosDonut
+      //     protein={cachedItem?.macros?.protein || 0}
+      //     carbs={cachedItem?.macros?.carbs || 0}
+      //     fats={cachedItem?.macros?.fat || 0}
+      //   />
+      // )
+      return (
+        <IconButton>
+          <DeleteIcon />
+        </IconButton>
+      )
+    }
+
+    return (
+      <CustomList
+        items={logs}
+        getKey={getKey}
+        renderPrimaryText={renderPrimaryText}
+        renderSecondaryText={renderSecondaryText}
+        renderRight={renderRight}
+      />
+    )
+  }
 
   return (
     <Card className={`card curr-meal ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
@@ -35,10 +101,7 @@ export function CurrMeal() {
           {period.label} · {period.rangeLabel}
         </Typography>
       </div>
-
-      <div className='logged-items'>
-        <div className='placeholder'>No items logged yet</div>
-      </div>
+      {renderList()}
     </Card>
   )
 }

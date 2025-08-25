@@ -67,6 +67,10 @@ export function ItemDetails() {
     console.log(editItem)
   }, [editItem])
 
+  useEffect(() => {
+    loadItems()
+  }, [])
+
   const closeClock = () => {
     setClockOpen(false)
   }
@@ -155,11 +159,12 @@ export function ItemDetails() {
         itemId: item.searchId,
         meal: editItem.meal,
         macros: editItem.totalMacros,
+        time: Date.now(),
       }
 
       console.log(newLog)
       console.log(user)
-
+      // return
       const newUser = {
         ...user,
         loggedToday: {
@@ -313,6 +318,7 @@ import { EditItem } from '../../types/editItem/editItem'
 import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
 import { messages } from '../../assets/config/messages'
 import { handleFavorite, updateUser } from '../../store/actions/user.actios'
+import { loadItem, loadItems } from '../../store/actions/item.actions'
 
 function EditComponent({
   value,

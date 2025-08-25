@@ -1,14 +1,13 @@
 import { itemService } from '../../services/item/item.service'
 import { store } from '../store'
-import { SET_ITEMS, SET_ITEM, SET_ITEM_FILTER } from '../reducers/item.reducer'
-import { ItemFilter } from '../../types/itemFilter/ItemFilter'
+import { SET_ITEMS, SET_ITEM } from '../reducers/item.reducer'
 import { Item } from '../../types/item/Item'
 
-export async function loadItems(filterBy: ItemFilter): Promise<Item[]> {
+export async function loadItems(): Promise<Item[]> {
   try {
-    const items = await itemService.query(filterBy)
+    const items = await itemService.query()
     store.dispatch(getCmdSetItems(items))
-    store.dispatch({ type: SET_ITEM_FILTER, filter: filterBy })
+    // store.dispatch({ type: SET_ITEM_FILTER, filter: filterBy })
     return items
   } catch (err) {
     throw err

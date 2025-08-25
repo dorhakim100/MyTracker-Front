@@ -3,8 +3,10 @@ import { makeId } from '../util.service'
 
 import { ItemFilter } from '../../types/itemFilter/ItemFilter'
 import { Item } from '../../types/item/Item'
+import { cache } from '../../assets/config/cache'
 
-const STORAGE_KEY = 'item'
+const STORAGE_KEY = cache.ITEMS_CACHE
+
 const PAGE_SIZE = 20
 
 export const itemService = {
@@ -16,28 +18,27 @@ export const itemService = {
   getMaxPage,
 }
 
-async function query(
-  filterBy: ItemFilter = { txt: '', sortDir: 0, pageIdx: 0, isAll: false }
-): Promise<Item[]> {
+async function query(): Promise<Item[]> {
+// filterBy: ItemFilter = { txt: '', sortDir: 0, pageIdx: 0, isAll: false }
   try {
-    let items: Item[] = await storageService.query(STORAGE_KEY)
-    const { txt, sortDir, pageIdx, isAll } = filterBy
+    const items: Item[] = await storageService.query(STORAGE_KEY, 0)
+    // const { txt, sortDir, pageIdx, isAll } = filterBy
 
-    if (isAll) return items
+    // if (isAll) return items
 
-    if (txt) {
-      const regex = new RegExp(txt, 'i')
-      items = items.filter((item: Item) => regex.test(item.name))
-    }
+    // if (txt) {
+    //   const regex = new RegExp(txt, 'i')
+    //   items = items.filter((item: Item) => regex.test(item.name))
+    // }
 
-    if (sortDir) {
-      items.sort((a: Item, b: Item) => a.name.localeCompare(b.name) * sortDir)
-    }
+    // if (sortDir) {
+    //   items.sort((a: Item, b: Item) => a.name.localeCompare(b.name) * sortDir)
+    // }
 
-    if (pageIdx !== undefined) {
-      const startIdx = pageIdx * PAGE_SIZE
-      items = items.slice(startIdx, startIdx + PAGE_SIZE)
-    }
+    // if (pageIdx !== undefined) {
+    //   const startIdx = pageIdx * PAGE_SIZE
+    //   items = items.slice(startIdx, startIdx + PAGE_SIZE)
+    // }
 
     return items
   } catch (err) {
