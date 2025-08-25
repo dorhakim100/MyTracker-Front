@@ -26,7 +26,7 @@ import { setItem } from '../../store/actions/item.actions'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { ItemDetails } from '../ItemDetails/ItemDetails'
 import { FavoriteButton } from '../FavoriteButton/FavoriteButton'
-import { updateUser } from '../../store/actions/user.actios'
+import { handleFavorite, updateUser } from '../../store/actions/user.actios'
 import { SearchFilter } from '../../types/searchFilter/SearchFilter'
 
 export function ItemSearch() {
@@ -99,30 +99,7 @@ export function ItemSearch() {
       if (!user) return showErrorMsg(messages.error.favorite)
       if (!item.searchId) return showErrorMsg(messages.error.favorite)
 
-      const key = item.type === 'food' ? 'food' : 'product'
-
-      let favoriteArray = user.favoriteItems[key] || []
-
-      if (favoriteArray.includes(item.searchId)) {
-        favoriteArray = favoriteArray.filter(
-          (id: string) => id !== item.searchId
-        )
-        await searchService.removeFromCache(item)
-      } else {
-        await searchService.addToCache(item)
-        favoriteArray.push(item.searchId)
-      }
-
-      const favoriteItems = {
-        ...user.favoriteItems,
-      }
-
-      const userToSave = {
-        ...user,
-        favoriteItems,
-      }
-
-      await updateUser(userToSave)
+      await handleFavorite(item, user)
     } catch {
       showErrorMsg(messages.error.favorite)
     }

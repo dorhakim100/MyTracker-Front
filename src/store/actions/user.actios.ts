@@ -13,6 +13,8 @@ import {
 import { UserFilter } from '../../types/userFilter/UserFilter'
 import { UserCred } from '../../types/userCred/UserCred'
 import { User } from '../../types/user/User'
+import { searchService } from '../../services/search/search-service'
+import { Item } from '../../types/item/Item'
 
 export async function loadUsers(filter: UserFilter) {
   try {
@@ -165,6 +167,40 @@ export async function loadUser(userId: string) {
   } catch (err) {
     throw err
     // console.log('Cannot load user', err)
+  }
+}
+
+export async function handleFavorite(item: Item, user: User) {
+  try {
+    if (!item.searchId) throw new Error('Item not found')
+
+    const key = item.type === 'food' ? 'food' : 'product'
+
+    let favoriteArray = user.favoriteItems[key] || []
+
+    if (favoriteArray.includes(item.searchId)) {
+      favoriteArray = favoriteArray.filter((id: string) => id !== item.searchId)
+      await searchService.removeFromCache(item)
+    } else {
+      await searchService.addToCache(item)
+      favoriteArray.push(item.searchId)
+    }
+
+    const favoriteItems = {
+      ...user.favoriteItems,
+    }
+
+    const userToSave = {
+      ...user,
+      favoriteItems: {
+        ...favoriteItems,
+        [key]: favoriteArray,
+      },
+    }
+
+    await updateUser(userToSave)
+  } catch (err) {
+    throw err
   }
 }
 
