@@ -127,6 +127,17 @@ export function ItemDetails() {
     }))
   }
 
+  const onFavoriteClick = async () => {
+    try {
+      if (!user) return showErrorMsg(messages.error.favorite)
+      if (!item.searchId) return showErrorMsg(messages.error.favorite)
+
+      await handleFavorite(item, user)
+    } catch {
+      showErrorMsg(messages.error.favorite)
+    }
+  }
+
   const onAddToMeal = () => {
     // const newItem = {
     //   ...item,
@@ -148,9 +159,11 @@ export function ItemDetails() {
         <div className='title'>{item.name}</div>
         <div className='subtitle'>{item.macros?.calories} kcal for 100g</div>
 
-        <FavoriteButton
-          isFavorite={searchService.isFavorite(item, user) || false}
-        />
+        <div className='favorite-container' onClick={onFavoriteClick}>
+          <FavoriteButton
+            isFavorite={searchService.isFavorite(item, user) || false}
+          />
+        </div>
       </div>
 
       <div className='content'>
@@ -263,6 +276,9 @@ function ServingsSelect({
 import Picker from 'react-mobile-picker'
 import Button from '@mui/material/Button'
 import { EditItem } from '../../types/editItem/editItem'
+import { showErrorMsg } from '../../services/event-bus.service'
+import { messages } from '../../assets/config/messages'
+import { handleFavorite } from '../../store/actions/user.actios'
 
 function EditComponent({
   value,

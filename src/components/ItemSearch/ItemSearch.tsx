@@ -28,6 +28,7 @@ import { ItemDetails } from '../ItemDetails/ItemDetails'
 import { FavoriteButton } from '../FavoriteButton/FavoriteButton'
 import { handleFavorite, updateUser } from '../../store/actions/user.actios'
 import { SearchFilter } from '../../types/searchFilter/SearchFilter'
+import { Typography } from '@mui/material'
 
 export function ItemSearch() {
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
@@ -78,14 +79,14 @@ export function ItemSearch() {
     } finally {
       setIsLoading(false)
     }
-  }, [query, source])
+  }, [query, source, user])
 
   useEffect(() => {
     handleSearch()
   }, [handleSearch])
 
-  const onClose = () => {
-    console.log('onClose')
+  const onClearQuery = () => {
+    setQuery('')
   }
 
   const onItemClick = (item: Item) => {
@@ -105,6 +106,50 @@ export function ItemSearch() {
     }
   }
 
+  const renderList = () => {
+    if (!results.length)
+      return (
+        <Box className='results'>
+          <Typography variant='h6' className='no-results'>
+            No results
+          </Typography>
+        </Box>
+      )
+
+    return (
+      <Box className='results'>
+        <CustomList<Item>
+          items={results}
+          getKey={(item) => item._id || item.searchId || ''}
+          itemClassName={`search-item-container ${
+            prefs.isDarkMode ? 'dark-mode' : ''
+          }`}
+          renderLeft={(item) => (
+            <div className='left-content macros-image-container'>
+              <MacrosDonut
+                protein={item.macros?.protein}
+                carbs={item.macros?.carbs}
+                fats={item.macros?.fat}
+              />
+              <ListItemIcon className='item-image-container'>
+                <img src={item.image} alt={item.name} className='item-image' />
+              </ListItemIcon>
+            </div>
+          )}
+          renderPrimaryText={(item) => item.name}
+          renderSecondaryText={(item) => `${item.macros?.calories} kcal`}
+          renderRight={(item) => (
+            <FavoriteButton
+              isFavorite={searchService.isFavorite(item, user) || false}
+            />
+          )}
+          onItemClick={onItemClick}
+          onRightClick={onFavoriteClick}
+        />
+      </Box>
+    )
+  }
+
   return (
     <>
       <Box className={`item-search ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
@@ -115,7 +160,7 @@ export function ItemSearch() {
             placeholder='Search items...'
             startIconFn={() => <SearchIcon />}
             endIconFn={() => (
-              <IconButton aria-label='close' onClick={onClose}>
+              <IconButton aria-label='close' onClick={onClearQuery}>
                 <CloseIcon />
               </IconButton>
             )}
@@ -130,40 +175,7 @@ export function ItemSearch() {
           />
         </Box>
 
-        <Box className='results'>
-          <CustomList<Item>
-            items={results}
-            getKey={(item) => item._id || item.searchId || ''}
-            itemClassName={`search-item-container ${
-              prefs.isDarkMode ? 'dark-mode' : ''
-            }`}
-            renderLeft={(item) => (
-              <div className='left-content macros-image-container'>
-                <MacrosDonut
-                  protein={item.macros?.protein}
-                  carbs={item.macros?.carbs}
-                  fats={item.macros?.fat}
-                />
-                <ListItemIcon className='item-image-container'>
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    className='item-image'
-                  />
-                </ListItemIcon>
-              </div>
-            )}
-            renderPrimaryText={(item) => item.name}
-            renderSecondaryText={(item) => `${item.macros?.calories} kcal`}
-            renderRight={(item) => (
-              <FavoriteButton
-                isFavorite={searchService.isFavorite(item, user) || false}
-              />
-            )}
-            onItemClick={onItemClick}
-            onRightClick={onFavoriteClick}
-          />
-        </Box>
+        {renderList()}
       </Box>
 
       <SlideDialog
