@@ -4,32 +4,22 @@ import { searchTypes } from '../../assets/config/search-types'
 import { calculateCaloriesFromMacros } from '../macros/macros.service'
 import { Item } from '../../types/item/Item'
 import { User } from '../../types/user/User'
+import { searchUrls } from '../../assets/config/search.urls'
+import { openFoodFactsQueryingParams } from '../../assets/config/querying.opp.params'
+import type { OFFProduct } from '../../types/openFoodFacts/OFFProduct'
+import type { FDCFood } from '../../types/usda/FDCFood'
+import type { FDCNutrient } from '../../types/usda/FDCNutrient'
 
-// Querying URLs
-const OPEN_FOOD_FACTS_API_URL = 'https://world.openfoodfacts.org/cgi/search.pl'
-const USDA_API_URL = 'https://api.nal.usda.gov/fdc/v1/foods/search'
-
-// Querying URLs by ID
-const OPEN_FOOD_FACTS_API_URL_BY_ID =
-  'https://world.openfoodfacts.org/api/v3/product/'
-const OPEN_FOOD_FACTS_BATCH_URL =
-  'https://world.openfoodfacts.org/api/v2/search'
-
-// Querying URLs by IDs
-const USDA_FOODS_URL = 'https://api.nal.usda.gov/fdc/v1/foods'
-
-// Default image
-const DEFAULT_IMAGE = 'https://cdn-icons-png.flaticon.com/512/5235/5235253.png'
-
+const {
+  OPEN_FOOD_FACTS_API_URL,
+  OPEN_FOOD_FACTS_API_URL_BY_ID,
+  OPEN_FOOD_FACTS_BATCH_URL,
+  USDA_API_URL,
+  USDA_FOODS_URL,
+  DEFAULT_IMAGE,
+} = searchUrls
+const { PAGE, SIZE, FIELDS, LC, CC } = openFoodFactsQueryingParams
 const USDA_API_KEY = import.meta.env.VITE_USDA_API_KEY
-
-// Querying parameters Open Food Facts
-const PAGE = 1
-const SIZE = 20
-const FIELDS =
-  'product_name,brands,code,serving_size,nutriments,image_small_url'
-const LC = 'he'
-const CC = 'il'
 
 export const searchService = {
   search,
@@ -37,32 +27,6 @@ export const searchService = {
   getProductsByIds,
   getFoodsByIds,
   isFavorite,
-}
-
-type OFFProduct = {
-  code: string
-  product_name: string
-  brands?: string
-  nutriments: {
-    proteins_100g?: number
-    carbohydrates_100g?: number
-    fat_100g?: number
-    ['energy-kcal_100g']?: number
-    ['energy-kcal']?: number
-  }
-  image_small_url?: string
-}
-
-type FDCNutrient = {
-  nutrientName?: string
-  value?: number
-  amount?: number
-  nutrient?: { name?: string }
-}
-type FDCFood = {
-  fdcId: number
-  description: string
-  foodNutrients: FDCNutrient[]
 }
 
 async function search(filter: SearchFilter) {
@@ -86,12 +50,14 @@ async function search(filter: SearchFilter) {
       return res
     }
 
+    const safeTxt = txt ?? ''
+
     switch (source) {
       case searchTypes.openFoodFacts:
-        res = await searchOpenFoodFacts(txt)
+        res = await searchOpenFoodFacts(safeTxt)
         break
       case searchTypes.usda:
-        res = await searchRawUSDA(txt)
+        res = await searchRawUSDA(safeTxt)
         break
     }
     // console.log(res)
