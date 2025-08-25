@@ -11,8 +11,13 @@ function query(entityType: string, delay: number = 500): Promise<any> {
   return new Promise((resolve) => setTimeout(() => resolve(entities), delay))
 }
 
-function get(entityType: string, entityId: string): Promise<any> {
-  return query(entityType).then((entities) => {
+function get(
+  entityType: string,
+  entityId: string,
+  isCache: boolean = false
+): Promise<any> {
+  const delay = isCache ? 0 : 500
+  return query(entityType, delay).then((entities) => {
     const entity = entities.find((entity: any) => entity._id === entityId)
     if (!entity)
       throw new Error(
@@ -22,17 +27,27 @@ function get(entityType: string, entityId: string): Promise<any> {
   })
 }
 
-function post(entityType: string, newEntity: any): Promise<any> {
+function post(
+  entityType: string,
+  newEntity: any,
+  isCache: boolean = false
+): Promise<any> {
+  const delay = isCache ? 0 : 500
   newEntity._id = _makeId()
-  return query(entityType).then((entities) => {
+  return query(entityType, delay).then((entities) => {
     entities.push(newEntity)
     _save(entityType, entities)
     return newEntity
   })
 }
 
-function put(entityType: string, updatedEntity: any): Promise<any> {
-  return query(entityType).then((entities) => {
+function put(
+  entityType: string,
+  updatedEntity: any,
+  isCache: boolean = false
+): Promise<any> {
+  const delay = isCache ? 0 : 500
+  return query(entityType, delay).then((entities) => {
     const idx = entities.findIndex(
       (entity: any) => entity._id === updatedEntity._id
     )
@@ -47,8 +62,13 @@ function put(entityType: string, updatedEntity: any): Promise<any> {
   })
 }
 
-function remove(entityType: string, entityId: string): Promise<any> {
-  return query(entityType).then((entities) => {
+function remove(
+  entityType: string,
+  entityId: string,
+  isCache: boolean = false
+): Promise<any> {
+  const delay = isCache ? 0 : 500
+  return query(entityType, delay).then((entities) => {
     const idx = entities.findIndex((entity: any) => entity._id === entityId)
     if (idx < 0)
       throw new Error(

@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { storageService } from '../async-storage.service'
 import { SearchFilter } from '../../types/searchFilter/SearchFilter'
 import { searchTypes } from '../../assets/config/search-types'
 import { calculateCaloriesFromMacros } from '../macros/macros.service'
@@ -20,6 +21,8 @@ const {
 } = searchUrls
 const { PAGE, SIZE, FIELDS, LC, CC } = openFoodFactsQueryingParams
 const USDA_API_KEY = import.meta.env.VITE_USDA_API_KEY
+
+const ITEM_CACHE = 'item_cache'
 
 export const searchService = {
   search,
@@ -60,7 +63,10 @@ async function search(filter: SearchFilter) {
         res = await searchRawUSDA(safeTxt)
         break
     }
-    // console.log(res)
+    console.log(res)
+
+    storageService.post(ITEM_CACHE, res, 0)
+
     return res
   } catch (err) {
     console.error(err)
