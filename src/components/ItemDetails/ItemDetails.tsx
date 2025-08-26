@@ -43,7 +43,7 @@ const editOptions = [
 ]
 
 export function ItemDetails() {
-  const item: Item = useSelector(
+  const searchedItem: Item = useSelector(
     (stateSelector: RootState) => stateSelector.itemModule.item
   )
 
@@ -54,11 +54,17 @@ export function ItemDetails() {
     (stateSelector: RootState) => stateSelector.userModule.user
   )
 
+  const editMealItem = useSelector(
+    (stateSelector: RootState) => stateSelector.itemModule.editMealItem
+  )
+
+  const item = editMealItem ? editMealItem : searchedItem
+
   const [editItem, setEditItem] = useState<EditItem>({
     totalMacros: item.macros,
-    servingSize: 100,
-    numberOfServings: 1,
-    meal: getCurrMeal(),
+    servingSize: editMealItem?.servingSize || 100,
+    numberOfServings: editMealItem?.numberOfServings || 1,
+    meal: editMealItem?.meal || getCurrMeal(),
   })
 
   const [clockOpen, setClockOpen] = useState(false)
@@ -79,22 +85,35 @@ export function ItemDetails() {
   }
 
   const onEditItemChange = (key: string, value: string | number) => {
-    let totalMacrosToSet = item.macros
+    // let totalMacrosToSet = item.macros
+    let totalMacrosToSet = searchedItem.macros
     console.log('onEditItemChange', key, value)
     switch (key) {
       case 'servingSize':
         totalMacrosToSet = {
           calories: Math.round(
-            (+value / 100) * item.macros?.calories * editItem.numberOfServings
+            // (+value / 100) * item.macros?.calories * editItem.numberOfServings
+            (+value / 100) *
+              searchedItem.macros?.calories *
+              editItem.numberOfServings
           ),
           protein: Math.round(
-            (+value / 100) * item.macros?.protein * editItem.numberOfServings
+            // (+value / 100) * item.macros?.protein * editItem.numberOfServings
+            (+value / 100) *
+              searchedItem.macros?.protein *
+              editItem.numberOfServings
           ),
           carbs: Math.round(
-            (+value / 100) * item.macros?.carbs * editItem.numberOfServings
+            // (+value / 100) * item.macros?.carbs * editItem.numberOfServings
+            (+value / 100) *
+              searchedItem.macros?.carbs *
+              editItem.numberOfServings
           ),
           fat: Math.round(
-            (+value / 100) * item.macros?.fat * editItem.numberOfServings
+            // (+value / 100) * item.macros?.fat * editItem.numberOfServings
+            (+value / 100) *
+              searchedItem.macros?.fat *
+              editItem.numberOfServings
           ),
         }
 
@@ -103,16 +122,21 @@ export function ItemDetails() {
       case 'numberOfServings':
         totalMacrosToSet = {
           calories: Math.round(
-            (+value * item.macros?.calories * editItem.servingSize) / 100
+            // (+value * item.macros?.calories * editItem.servingSize) / 100
+            (+value * searchedItem.macros?.calories * editItem.servingSize) /
+              100
           ),
           protein: Math.round(
-            (+value * item.macros?.protein * editItem.servingSize) / 100
+            // (+value * item.macros?.protein * editItem.servingSize) / 100
+            (+value * searchedItem.macros?.protein * editItem.servingSize) / 100
           ),
           carbs: Math.round(
-            (+value * item.macros?.carbs * editItem.servingSize) / 100
+            // (+value * item.macros?.carbs * editItem.servingSize) / 100
+            (+value * searchedItem.macros?.carbs * editItem.servingSize) / 100
           ),
           fat: Math.round(
-            (+value * item.macros?.fat * editItem.servingSize) / 100
+            // (+value * item.macros?.fat * editItem.servingSize) / 100
+            (+value * searchedItem.macros?.fat * editItem.servingSize) / 100
           ),
         }
         break
@@ -135,9 +159,9 @@ export function ItemDetails() {
   const onFavoriteClick = async () => {
     try {
       if (!user) return showErrorMsg(messages.error.favorite)
-      if (!item.searchId) return showErrorMsg(messages.error.favorite)
+      if (!searchedItem.searchId) return showErrorMsg(messages.error.favorite)
 
-      await handleFavorite(item, user)
+      await handleFavorite(searchedItem, user)
     } catch {
       showErrorMsg(messages.error.favorite)
     }
@@ -149,7 +173,7 @@ export function ItemDetails() {
       if (!item.searchId) return showErrorMsg(messages.error.favorite)
 
       const itemToCache = {
-        ...item,
+        ...searchedItem,
       }
       delete itemToCache._id
 
@@ -160,6 +184,9 @@ export function ItemDetails() {
         meal: editItem.meal,
         macros: editItem.totalMacros,
         time: Date.now(),
+        servingSize: editItem.servingSize,
+        numberOfServings: editItem.numberOfServings,
+        source: searchedItem.type,
       }
 
       console.log(newLog)
@@ -189,6 +216,48 @@ export function ItemDetails() {
     // }
   }
 
+  async function onEditMeal() {
+    if (!editMealItem) return showErrorMsg(messages.error.editMeal)
+
+    const newMeal = {
+      ...editMealItem,
+      macros: editItem.totalMacros,
+      meal: editItem.meal,
+    }
+    delete newMeal.image
+    delete newMeal.name
+    delete newMeal.searchId
+
+    console.log(newMeal)
+
+    const userLogs = user?.loggedToday.logs
+    if (!userLogs) return showErrorMsg(messages.error.editMeal)
+    const logIndex = userLogs.findIndex((log) => log.time === editMealItem.time)
+    if (logIndex === -1) return showErrorMsg(messages.error.editMeal)
+
+    const newLogs = [...userLogs]
+
+    newLogs[logIndex] = newMeal
+
+    const newCalories = newLogs.reduce(
+      (acc, log) => acc + log.macros.calories,
+      0
+    )
+
+    const newUser = {
+      ...user,
+      loggedToday: {
+        ...user.loggedToday,
+        logs: newLogs,
+        calories: newCalories,
+      },
+    }
+
+    await updateUser(newUser)
+    showSuccessMsg(messages.success.editMeal)
+    // return
+  }
+
   return (
     <div className='item-details'>
       <div className='header'>
@@ -200,7 +269,7 @@ export function ItemDetails() {
 
         <div className='favorite-container' onClick={onFavoriteClick}>
           <FavoriteButton
-            isFavorite={searchService.isFavorite(item, user) || false}
+            isFavorite={searchService.isFavorite(searchedItem, user) || false}
           />
         </div>
       </div>
@@ -270,10 +339,10 @@ export function ItemDetails() {
         size='large'
         fullWidth
         className='add-to-meal-button'
-        onClick={onAddToMeal}
+        onClick={editMealItem ? onEditMeal : onAddToMeal}
       >
-        <AddIcon sx={{ mr: 1 }} />
-        Add to Meal
+        {!editMealItem && <AddIcon sx={{ mr: 1 }} />}
+        {editMealItem ? 'Edit Meal' : 'Add to Meal'}
       </Button>
     </div>
   )
@@ -318,7 +387,7 @@ import { EditItem } from '../../types/editItem/editItem'
 import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
 import { messages } from '../../assets/config/messages'
 import { handleFavorite, updateUser } from '../../store/actions/user.actios'
-import { loadItem, loadItems } from '../../store/actions/item.actions'
+import { loadItems } from '../../store/actions/item.actions'
 
 function EditComponent({
   value,

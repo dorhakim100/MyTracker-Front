@@ -1,12 +1,25 @@
 import { Card, IconButton, Typography } from '@mui/material'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 
 import { CustomList } from '../../CustomMui/CustomList/CustomList'
 import { Log } from '../../types/log/Log'
-import { loadItems } from '../../store/actions/item.actions'
+import {
+  loadItems,
+  setEditMealItem,
+  setItem,
+} from '../../store/actions/item.actions'
 import DeleteIcon from '@mui/icons-material/Delete'
+import { SlideDialog } from '../SlideDialog/SlideDialog'
+
+import { ItemDetails } from '../ItemDetails/ItemDetails'
+import { searchUrls } from '../../assets/config/search.urls'
+import { showErrorMsg } from '../../services/event-bus.service'
+import { messages } from '../../assets/config/messages'
+import { searchService } from '../../services/search/search-service'
+import { searchTypes } from '../../assets/config/search-types'
+import { Item } from '../../types/item/Item'
 
 interface MealPeriod {
   key: 'morning' | 'lunch' | 'evening'
@@ -38,6 +51,12 @@ export function CurrMeal() {
     (stateSelector: RootState) => stateSelector.itemModule.items
   )
 
+  const editMealItem = useSelector(
+    (stateSelector: RootState) => stateSelector.itemModule.editMealItem
+  )
+
+  const [isEditOpen, setIsEditOpen] = useState(false)
+
   const period = useMemo(() => getCurrentMealPeriod(), [])
 
   useEffect(() => {
@@ -62,8 +81,8 @@ export function CurrMeal() {
     }
 
     const renderSecondaryText = (item: Log) => {
-      const cachedItem = cachedItems.find((i) => i.searchId === item.itemId)
-      return `${cachedItem?.macros?.calories} kcal`
+      // const cachedItem = cachedItems.find((i) => i.searchId === item.itemId)
+      return `${item.macros?.calories} kcal`
     }
 
     const renderRight = (item: Log) => {
@@ -82,14 +101,65 @@ export function CurrMeal() {
       )
     }
 
+    const onItemClick = async (mealItem: Log) => {
+      setIsEditOpen(true)
+      let itemToSet
+      try {
+        const cachedItem = cachedItems.find(
+          (i) => i.searchId === mealItem.itemId
+        )
+        if (cachedItem) {
+          mealItem.name = cachedItem.name
+          mealItem.image = cachedItem.image
+          itemToSet = cachedItem
+        } else {
+          const searchedItem = await searchService.searchById(
+            mealItem.itemId,
+            searchTypes.openFoodFacts
+          )
+          mealItem.name = searchedItem?.name || 'Unknown'
+          mealItem.image = searchedItem?.image || searchUrls.DEFAULT_IMAGE
+          itemToSet = searchedItem
+        }
+        mealItem.searchId = mealItem.itemId
+
+        if (!itemToSet) {
+          showErrorMsg(messages.error.editMeal)
+          return
+        }
+
+        setItem(itemToSet as Item)
+
+        setEditMealItem(mealItem)
+      } catch (err) {
+        showErrorMsg(messages.error.editMeal)
+      }
+    }
+
+    const closeEdit = () => {
+      setEditMealItem(null)
+      setIsEditOpen(false)
+    }
+
     return (
-      <CustomList
-        items={logs}
-        getKey={getKey}
-        renderPrimaryText={renderPrimaryText}
-        renderSecondaryText={renderSecondaryText}
-        renderRight={renderRight}
-      />
+      <>
+        <CustomList
+          items={logs}
+          getKey={getKey}
+          renderPrimaryText={renderPrimaryText}
+          renderSecondaryText={renderSecondaryText}
+          renderRight={renderRight}
+          onItemClick={onItemClick}
+        />
+        <SlideDialog
+          open={isEditOpen}
+          onClose={closeEdit}
+          title='Edit Meal'
+          component={<ItemDetails />}
+          onSave={closeEdit}
+          type='full'
+        />
+      </>
     )
   }
 

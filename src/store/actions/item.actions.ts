@@ -1,7 +1,12 @@
 import { itemService } from '../../services/item/item.service'
 import { store } from '../store'
-import { SET_ITEMS, SET_ITEM } from '../reducers/item.reducer'
+import {
+  SET_ITEMS,
+  SET_ITEM,
+  SET_EDIT_MEAL_ITEM,
+} from '../reducers/item.reducer'
 import { Item } from '../../types/item/Item'
+import { Log } from '../../types/log/Log'
 
 export async function loadItems(): Promise<Item[]> {
   try {
@@ -28,10 +33,21 @@ export async function loadItem(itemId: string): Promise<Item> {
   }
 }
 
+export function setEditMealItem(editMealItem: Log | null) {
+  store.dispatch(getCmdSetEditMealItem(editMealItem))
+}
+
 function getCmdSetItems(items: Item[]) {
   return {
     type: SET_ITEMS,
     items,
+  }
+}
+
+function getCmdSetEditMealItem(editMealItem: Log | null) {
+  return {
+    type: SET_EDIT_MEAL_ITEM,
+    editMealItem,
   }
 }
 
