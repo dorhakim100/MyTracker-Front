@@ -15,7 +15,7 @@ import { FixedBottomNavigation } from './CustomMui/BottomNavigation/FixedBottomN
 import { RootState } from './store/store.ts'
 
 import './App.css'
-import { setRemembered } from './store/actions/user.actios.ts'
+import { setRemembered } from './store/actions/user.actions.ts'
 
 function App() {
   const prefs = useSelector(

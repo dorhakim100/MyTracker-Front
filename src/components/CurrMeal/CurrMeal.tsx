@@ -20,7 +20,7 @@ import { messages } from '../../assets/config/messages'
 import { searchService } from '../../services/search/search-service'
 import { searchTypes } from '../../assets/config/search-types'
 import { Item } from '../../types/item/Item'
-import { removeLog } from '../../store/actions/user.actios'
+import { removeLog } from '../../store/actions/user.actions'
 
 import {
   LeadingActions,

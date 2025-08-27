@@ -386,7 +386,7 @@ import Button from '@mui/material/Button'
 import { EditItem } from '../../types/editItem/editItem'
 import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
 import { messages } from '../../assets/config/messages'
-import { handleFavorite, updateUser } from '../../store/actions/user.actios'
+import { handleFavorite, updateUser } from '../../store/actions/user.actions'
 import { loadItems } from '../../store/actions/item.actions'
 
 function EditComponent({

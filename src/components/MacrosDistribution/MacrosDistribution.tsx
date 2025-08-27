@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { EditIcon } from '../EditIcon/EditIcon'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
-import { updateUser } from '../../store/actions/user.actios'
+import { updateUser } from '../../store/actions/user.actions'
 import {
   calculateProteinCalories,
   calculateCarbCalories,
@@ -107,7 +107,7 @@ export function MacrosDistribution({
 
 import Slider from 'rc-slider'
 import { setIsLoading } from '../../store/actions/system.actions'
-import { setUserToEdit } from '../../store/actions/user.actios'
+import { setUserToEdit } from '../../store/actions/user.actions'
 import { User } from '../../types/user/User'
 import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
 import { messages } from '../../assets/config/messages'

@@ -26,7 +26,7 @@ import { setItem } from '../../store/actions/item.actions'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { ItemDetails } from '../ItemDetails/ItemDetails'
 import { FavoriteButton } from '../FavoriteButton/FavoriteButton'
-import { handleFavorite, updateUser } from '../../store/actions/user.actios'
+import { handleFavorite, updateUser } from '../../store/actions/user.actions'
 import { SearchFilter } from '../../types/searchFilter/SearchFilter'
 import { Typography } from '@mui/material'
 

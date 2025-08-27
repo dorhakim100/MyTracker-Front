@@ -5,7 +5,7 @@ import { CircularProgress } from '../CircularProgress/CircularProgress'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { useMemo, useState, useEffect } from 'react'
-import { updateUser } from '../../store/actions/user.actios'
+import { updateUser } from '../../store/actions/user.actions'
 import { setIsLoading } from '../../store/actions/system.actions'
 
 import { EditIcon } from '../EditIcon/EditIcon'
@@ -115,7 +115,7 @@ export function CaloriesProgress({
 
 import { getArrayOfNumbers } from '../../services/util.service'
 import Picker from 'react-mobile-picker'
-import { setUserToEdit } from '../../store/actions/user.actios'
+import { setUserToEdit } from '../../store/actions/user.actions'
 import { User } from '../../types/user/User'
 import {
   calculateCarbsFromCalories,

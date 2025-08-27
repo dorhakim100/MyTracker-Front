@@ -25,7 +25,7 @@ import { RootState } from '../../store/store'
 import logo from '../../../public/logo.png'
 import logoDark from '../../../public/logo-dark.png'
 import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
-import { login, signup } from '../../store/actions/user.actios'
+import { login, signup } from '../../store/actions/user.actions'
 import { setIsLoading } from '../../store/actions/system.actions'
 
 const Card = styled(MuiCard)(({ theme }) => ({

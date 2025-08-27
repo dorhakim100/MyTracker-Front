@@ -116,7 +116,7 @@ import {
   getArrayOfNumbers,
 } from '../../services/util.service'
 import { setIsLoading } from '../../store/actions/system.actions'
-import { setUserToEdit, updateUser } from '../../store/actions/user.actios'
+import { setUserToEdit, updateUser } from '../../store/actions/user.actions'
 import { User } from '../../types/user/User'
 import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
 import { messages } from '../../assets/config/messages'
