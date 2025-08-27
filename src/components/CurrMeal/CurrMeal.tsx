@@ -43,7 +43,7 @@ export function CurrMeal() {
           {period.label} · {period.rangeLabel}
         </Typography>
       </div>
-      <LoggedList />
+      <LoggedList mealPeriod={period.key} />
     </Card>
   )
 }

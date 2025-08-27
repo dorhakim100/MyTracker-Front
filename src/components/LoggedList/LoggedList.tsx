@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { Log } from '../../types/log/Log'
@@ -21,21 +21,31 @@ import { SwipeAction } from 'react-swipeable-list'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { Typography } from '@mui/material'
 
-export function LoggedList() {
+export function LoggedList({
+  mealPeriod,
+}: {
+  mealPeriod?: 'morning' | 'lunch' | 'evening'
+}) {
   const user = useSelector((state: RootState) => state.userModule.user)
   const cachedItems = useSelector((state: RootState) => state.itemModule.items)
   const [isEditOpen, setIsEditOpen] = useState(false)
 
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
 
-  if (!user || !user.loggedToday.logs)
+  const logs = useMemo(() => {
+    if (mealPeriod)
+      return user?.loggedToday.logs.filter(
+        (log) => log.meal.toLocaleLowerCase() === mealPeriod
+      )
+    return user?.loggedToday.logs
+  }, [user, mealPeriod])
+
+  if (!user || !logs?.length)
     return (
       <div className='logged-items'>
         <div className='placeholder'>No items logged yet</div>
       </div>
     )
-
-  const logs = user.loggedToday.logs
 
   const getKey = (item: Log) => item.itemId + item.time
 
