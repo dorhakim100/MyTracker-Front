@@ -1,32 +1,11 @@
-import { Card, IconButton, Typography } from '@mui/material'
-import { useEffect, useMemo, useState } from 'react'
+import { Card, Typography } from '@mui/material'
+import { useEffect, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 
-import { CustomList } from '../../CustomMui/CustomList/CustomList'
-import { Log } from '../../types/log/Log'
-import {
-  loadItems,
-  setEditMealItem,
-  setItem,
-} from '../../store/actions/item.actions'
-import DeleteIcon from '@mui/icons-material/Delete'
-import { SlideDialog } from '../SlideDialog/SlideDialog'
+import { loadItems } from '../../store/actions/item.actions'
 
-import { ItemDetails } from '../ItemDetails/ItemDetails'
-import { searchUrls } from '../../assets/config/search.urls'
-import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
-import { messages } from '../../assets/config/messages'
-import { searchService } from '../../services/search/search-service'
-import { searchTypes } from '../../assets/config/search-types'
-import { Item } from '../../types/item/Item'
-import { removeLog } from '../../store/actions/user.actions'
-
-import {
-  LeadingActions,
-  SwipeAction,
-  TrailingActions,
-} from 'react-swipeable-list'
+import { LoggedList } from '../LoggedList/LoggedList'
 
 interface MealPeriod {
   key: 'morning' | 'lunch' | 'evening'
@@ -50,162 +29,11 @@ export function CurrMeal() {
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
 
-  const user = useSelector(
-    (stateSelector: RootState) => stateSelector.userModule.user
-  )
-
-  const cachedItems = useSelector(
-    (stateSelector: RootState) => stateSelector.itemModule.items
-  )
-
-  const editMealItem = useSelector(
-    (stateSelector: RootState) => stateSelector.itemModule.editMealItem
-  )
-
-  const [isEditOpen, setIsEditOpen] = useState(false)
-
   const period = useMemo(() => getCurrentMealPeriod(), [])
 
   useEffect(() => {
     loadItems()
   }, [])
-
-  const renderList = () => {
-    if (!user || !user.loggedToday.logs)
-      return (
-        <div className='logged-items'>
-          <div className='placeholder'>No items logged yet</div>
-        </div>
-      )
-
-    const logs = user.loggedToday.logs
-
-    const getKey = (item: Log) => item.itemId + item.time
-
-    const renderPrimaryText = (item: Log) => {
-      const cachedItem = cachedItems.find((i) => i.searchId === item.itemId)
-      return cachedItem?.name
-    }
-
-    const renderSecondaryText = (item: Log) => {
-      // const cachedItem = cachedItems.find((i) => i.searchId === item.itemId)
-      return `${item.macros?.calories} kcal`
-    }
-
-    const renderRight = (log: Log) => {
-      // const cachedItem = cachedItems.find((i) => i.searchId === item.itemId)
-
-      // return (
-      //   <MacrosDonut
-      //     protein={cachedItem?.macros?.protein || 0}
-      //     carbs={cachedItem?.macros?.carbs || 0}
-      //     fats={cachedItem?.macros?.fat || 0}
-      //   />
-      // )
-      return (
-        <IconButton>
-          <DeleteIcon />
-        </IconButton>
-      )
-    }
-
-    const onItemClick = async (mealItem: Log) => {
-      setIsEditOpen(true)
-      let itemToSet
-      try {
-        const cachedItem = cachedItems.find(
-          (i) => i.searchId === mealItem.itemId
-        )
-        if (cachedItem) {
-          mealItem.name = cachedItem.name
-          mealItem.image = cachedItem.image
-          itemToSet = cachedItem
-        } else {
-          const searchedItem = await searchService.searchById(
-            mealItem.itemId,
-            searchTypes.openFoodFacts
-          )
-          mealItem.name = searchedItem?.name || 'Unknown'
-          mealItem.image = searchedItem?.image || searchUrls.DEFAULT_IMAGE
-          itemToSet = searchedItem
-        }
-        mealItem.searchId = mealItem.itemId
-
-        if (!itemToSet) {
-          showErrorMsg(messages.error.editMeal)
-          return
-        }
-
-        setItem(itemToSet as Item)
-
-        setEditMealItem(mealItem)
-      } catch (err) {
-        showErrorMsg(messages.error.editMeal)
-      }
-    }
-
-    const onRightClick = async (log: Log) => {
-      try {
-        await removeLog(log, user)
-        showSuccessMsg(messages.success.editMeal)
-      } catch (err) {
-        showErrorMsg(messages.error.editMeal)
-      }
-    }
-
-    const closeEdit = () => {
-      setEditMealItem(null)
-      setIsEditOpen(false)
-    }
-
-    const renderLeftSwipeActions = () => (
-      <SwipeAction onClick={() => console.info('swipe action triggered')}>
-        Action name
-      </SwipeAction>
-    )
-
-    const renderRightSwipeActions = (log: Log) => (
-      <SwipeAction
-        destructive={true} // will remove the item from the list
-        onClick={() => {
-          onRightClick(log)
-        }}
-      >
-        <div className='swipeable-right-action delete'>
-          <DeleteIcon className='delete-icon-button' />
-          <Typography variant='body2'>Delete</Typography>
-        </div>
-      </SwipeAction>
-    )
-
-    return (
-      <>
-        <CustomList
-          items={logs}
-          getKey={getKey}
-          renderPrimaryText={renderPrimaryText}
-          renderSecondaryText={renderSecondaryText}
-          // renderRight={renderRight}
-          onItemClick={onItemClick}
-          // onRightClick={onRightClick}
-          isSwipeable={true}
-          // renderLeftSwipeActions={renderLeftSwipeActions}
-          renderRightSwipeActions={renderRightSwipeActions}
-          itemClassName={`meal-item-container ${
-            prefs.isDarkMode ? 'dark-mode' : ''
-          }`}
-        />
-        <SlideDialog
-          open={isEditOpen}
-          onClose={closeEdit}
-          title='Edit Meal'
-          component={<ItemDetails />}
-          onSave={closeEdit}
-          type='full'
-        />
-      </>
-    )
-  }
 
   return (
     <Card className={`card curr-meal ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
@@ -215,7 +43,7 @@ export function CurrMeal() {
           {period.label} · {period.rangeLabel}
         </Typography>
       </div>
-      {renderList()}
+      <LoggedList />
     </Card>
   )
 }
