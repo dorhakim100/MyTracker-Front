@@ -5,10 +5,10 @@ import ListItemButton from '@mui/material/ListItemButton'
 import ListItemText from '@mui/material/ListItemText'
 
 import {
-  LeadingActions,
   SwipeableList,
   SwipeableListItem,
-  SwipeAction,
+  Type,
+  LeadingActions,
   TrailingActions,
 } from 'react-swipeable-list'
 
@@ -24,6 +24,8 @@ export interface CustomListProps<T> {
   className?: string
   itemClassName?: string
   isSwipeable?: boolean
+  renderRightSwipeActions?: (item: T) => React.ReactNode
+  renderLeftSwipeActions?: (item: T) => React.ReactNode
 }
 
 export function CustomList<T>({
@@ -38,39 +40,31 @@ export function CustomList<T>({
   className,
   itemClassName,
   isSwipeable = false,
+  renderRightSwipeActions,
+  renderLeftSwipeActions,
 }: CustomListProps<T>) {
-  const leadingActions = () => (
-    <LeadingActions>
-      <SwipeAction onClick={() => console.info('swipe action triggered')}>
-        Action name
-      </SwipeAction>
-    </LeadingActions>
-  )
+  const leadingActions = (item: T) =>
+    renderLeftSwipeActions ? (
+      <LeadingActions>{renderLeftSwipeActions(item)}</LeadingActions>
+    ) : null
 
-  const trailingActions = () => (
-    <TrailingActions>
-      <SwipeAction
-        destructive={true}
-        onClick={() => console.info('swipe action triggered')}
-      >
-        Delete
-      </SwipeAction>
-    </TrailingActions>
-  )
-
+  const trailingActions = (item: T) =>
+    renderRightSwipeActions ? (
+      <TrailingActions>{renderRightSwipeActions(item)}</TrailingActions>
+    ) : null
   return (
     <div className={`custom-list ${className ? className : ''}`}>
       <List>
-        <SwipeableList>
+        <SwipeableList type={Type.IOS} fullSwipe={true}>
           {items.map((item, index) => {
             const key = getKey ? getKey(item, index) : index
             return (
               <SwipeableListItem
-                leadingActions={leadingActions()}
-                trailingActions={trailingActions()}
+                leadingActions={isSwipeable && leadingActions(item)}
+                trailingActions={isSwipeable && trailingActions(item)}
                 key={key}
                 scrollStartThreshold={20}
-                fullSwipe={true}
+                threshold={0.25}
                 // fullSwipe={false}
                 blockSwipe={!isSwipeable}
               >

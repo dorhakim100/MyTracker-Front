@@ -1,5 +1,8 @@
 .curr-meal {
   display: grid;
+  grid-template-rows: auto 1fr;
+  // align-items: start;
+
   gap: 12px;
 }
 

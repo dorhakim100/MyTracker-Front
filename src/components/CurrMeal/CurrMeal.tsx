@@ -24,8 +24,6 @@ import { removeLog } from '../../store/actions/user.actios'
 
 import {
   LeadingActions,
-  SwipeableList,
-  SwipeableListItem,
   SwipeAction,
   TrailingActions,
 } from 'react-swipeable-list'
@@ -160,6 +158,26 @@ export function CurrMeal() {
       setIsEditOpen(false)
     }
 
+    const renderLeftSwipeActions = () => (
+      <SwipeAction onClick={() => console.info('swipe action triggered')}>
+        Action name
+      </SwipeAction>
+    )
+
+    const renderRightSwipeActions = (log: Log) => (
+      <SwipeAction
+        destructive={true} // will remove the item from the list
+        onClick={() => {
+          onRightClick(log)
+        }}
+      >
+        <div className='swipeable-right-action delete'>
+          <DeleteIcon className='delete-icon-button' />
+          <Typography variant='body2'>Delete</Typography>
+        </div>
+      </SwipeAction>
+    )
+
     return (
       <>
         <CustomList
@@ -167,9 +185,15 @@ export function CurrMeal() {
           getKey={getKey}
           renderPrimaryText={renderPrimaryText}
           renderSecondaryText={renderSecondaryText}
-          renderRight={renderRight}
+          // renderRight={renderRight}
           onItemClick={onItemClick}
-          onRightClick={onRightClick}
+          // onRightClick={onRightClick}
+          isSwipeable={true}
+          // renderLeftSwipeActions={renderLeftSwipeActions}
+          renderRightSwipeActions={renderRightSwipeActions}
+          itemClassName={`meal-item-container ${
+            prefs.isDarkMode ? 'dark-mode' : ''
+          }`}
         />
         <SlideDialog
           open={isEditOpen}
