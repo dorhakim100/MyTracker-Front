@@ -5,7 +5,10 @@ import { CircularProgress } from '../CircularProgress/CircularProgress'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { useMemo, useState, useEffect } from 'react'
-import { updateUser } from '../../store/actions/user.actions'
+import {
+  optimisticUpdateUser,
+  updateUser,
+} from '../../store/actions/user.actions'
 import { setIsLoading } from '../../store/actions/system.actions'
 
 import { EditIcon } from '../EditIcon/EditIcon'
@@ -60,14 +63,16 @@ export function CaloriesProgress({
 
   const onSave = async () => {
     try {
-      if (!userToEdit) return
+      if (!userToEdit || !user) return
       setIsLoading(true)
+      optimisticUpdateUser(userToEdit)
+      onClose()
       await updateUser(userToEdit)
       showSuccessMsg(messages.success.updateCalories)
-      onClose()
     } catch (err) {
       console.log('err', err)
       showErrorMsg(messages.error.updateCalories)
+      optimisticUpdateUser(user as User)
     } finally {
       setIsLoading(false)
     }
