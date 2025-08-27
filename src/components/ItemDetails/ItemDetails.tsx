@@ -189,9 +189,6 @@ export function ItemDetails() {
         source: searchedItem.type,
       }
 
-      console.log(newLog)
-      console.log(user)
-      // return
       const newUser = {
         ...user,
         loggedToday: {
@@ -200,62 +197,62 @@ export function ItemDetails() {
           calories: user.loggedToday.calories + newLog.macros.calories,
         },
       }
-      console.log(newUser)
 
+      optimisticUpdateUser(newUser)
       await updateUser(newUser)
       showSuccessMsg(messages.success.addedToMeal)
     } catch {
       showErrorMsg(messages.error.favorite)
+      optimisticUpdateUser(user as User)
     }
-    // const newItem = {
-    //   ...item,
-    //   macros: editItem.totalMacros,
-    //   servingSize: editItem.servingSize,
-    //   numberOfServings: editItem.numberOfServings,
-    //   meal: editItem.meal,
-    // }
   }
 
   async function onEditMeal() {
-    if (!editMealItem) return showErrorMsg(messages.error.editMeal)
+    try {
+      if (!editMealItem) return showErrorMsg(messages.error.editMeal)
+      const newMeal = {
+        ...editMealItem,
+        macros: editItem.totalMacros,
+        meal: editItem.meal,
+      }
+      delete newMeal.image
+      delete newMeal.name
+      delete newMeal.searchId
 
-    const newMeal = {
-      ...editMealItem,
-      macros: editItem.totalMacros,
-      meal: editItem.meal,
+      const userLogs = user?.loggedToday.logs
+      if (!userLogs) return showErrorMsg(messages.error.editMeal)
+      const logIndex = userLogs.findIndex(
+        (log) => log.time === editMealItem.time
+      )
+      if (logIndex === -1) return showErrorMsg(messages.error.editMeal)
+
+      const newLogs = [...userLogs]
+
+      newLogs[logIndex] = newMeal
+
+      const newCalories = newLogs.reduce(
+        (acc, log) => acc + log.macros.calories,
+        0
+      )
+
+      const newUser = {
+        ...user,
+        loggedToday: {
+          ...user.loggedToday,
+          logs: newLogs,
+          calories: newCalories,
+        },
+      }
+
+      optimisticUpdateUser(newUser)
+
+      await updateUser(newUser)
+      showSuccessMsg(messages.success.editMeal)
+    } catch (err) {
+      console.log(err)
+      showErrorMsg(messages.error.editMeal)
+      optimisticUpdateUser(user as User)
     }
-    delete newMeal.image
-    delete newMeal.name
-    delete newMeal.searchId
-
-    console.log(newMeal)
-
-    const userLogs = user?.loggedToday.logs
-    if (!userLogs) return showErrorMsg(messages.error.editMeal)
-    const logIndex = userLogs.findIndex((log) => log.time === editMealItem.time)
-    if (logIndex === -1) return showErrorMsg(messages.error.editMeal)
-
-    const newLogs = [...userLogs]
-
-    newLogs[logIndex] = newMeal
-
-    const newCalories = newLogs.reduce(
-      (acc, log) => acc + log.macros.calories,
-      0
-    )
-
-    const newUser = {
-      ...user,
-      loggedToday: {
-        ...user.loggedToday,
-        logs: newLogs,
-        calories: newCalories,
-      },
-    }
-
-    await updateUser(newUser)
-    showSuccessMsg(messages.success.editMeal)
-    // return
   }
 
   return (
@@ -386,8 +383,13 @@ import Button from '@mui/material/Button'
 import { EditItem } from '../../types/editItem/editItem'
 import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
 import { messages } from '../../assets/config/messages'
-import { handleFavorite, updateUser } from '../../store/actions/user.actions'
+import {
+  handleFavorite,
+  optimisticUpdateUser,
+  updateUser,
+} from '../../store/actions/user.actions'
 import { loadItems } from '../../store/actions/item.actions'
+import { User } from '../../types/user/User'
 
 function EditComponent({
   value,

@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Box, Card, Typography } from '@mui/material'
-import type { CSSProperties } from 'react'
 import { Macros } from '../Macros/Macros'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { EditIcon } from '../EditIcon/EditIcon'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
-import { updateUser } from '../../store/actions/user.actions'
+import {
+  optimisticUpdateUser,
+  updateUser,
+} from '../../store/actions/user.actions'
 import {
   calculateProteinCalories,
   calculateCarbCalories,
@@ -32,27 +34,12 @@ export function MacrosDistribution({
   carbs,
   fats,
 }: MacrosDistributionProps) {
-  const proteinCalories = calculateProteinCalories(protein)
-  const carbsCalories = calculateCarbCalories(carbs)
-  const fatsCalories = calculateFatCalories(fats)
-
-  const total = Math.max(proteinCalories + carbsCalories + fatsCalories, 0.0001)
-  const pPct = (proteinCalories / total) * 100
-  const cPct = (carbsCalories / total) * 100
-  const fPct = (fatsCalories / total) * 100
-
-  type CSSVars = CSSProperties & Record<string, string | number>
-  const donutStyle: CSSVars = {
-    '--p': `${pPct}%`,
-    '--c': `${cPct}%`,
-    '--f': `${fPct}%`,
-    '--pColor': proteinColor,
-    '--cColor': carbsColor,
-    '--fColor': fatsColor,
-  }
-
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
+  )
+
+  const user = useSelector(
+    (stateSelector: RootState) => stateSelector.userModule.user
   )
 
   const userToEdit = useSelector(
@@ -70,13 +57,16 @@ export function MacrosDistribution({
 
   const onSave = async () => {
     try {
-      if (!userToEdit) return
+      if (!userToEdit || !user) return
       setIsLoading(true)
+      optimisticUpdateUser(userToEdit)
+      setOpen(false)
       await updateUser(userToEdit)
       showSuccessMsg(messages.success.updateMacros)
-      setOpen(false)
     } catch (err) {
+      console.log(err)
       showErrorMsg(messages.error.updateMacros)
+      optimisticUpdateUser(user as User)
     } finally {
       setIsLoading(false)
     }
