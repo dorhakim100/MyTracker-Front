@@ -4,6 +4,9 @@
   // align-items: start;
 
   gap: 12px;
+  .custom-list {
+    overflow: auto;
+  }
 }
 
 .curr-meal .header {

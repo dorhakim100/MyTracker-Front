@@ -8,7 +8,11 @@ import { searchTypes } from '../../assets/config/search-types'
 import { searchUrls } from '../../assets/config/search.urls'
 import { messages } from '../../assets/config/messages'
 import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
-import { removeLog } from '../../store/actions/user.actions'
+import {
+  optimisticUpdateUser,
+  removeLogAction,
+  updateUser,
+} from '../../store/actions/user.actions'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { ItemDetails } from '../ItemDetails/ItemDetails'
 import { CustomList } from '../../CustomMui/CustomList/CustomList'
@@ -81,11 +85,14 @@ export function LoggedList() {
 
   const onRightClick = async (log: Log) => {
     try {
-      await removeLog(log, user)
+      const newUser = removeLogAction(log, user)
+      optimisticUpdateUser(newUser)
+      await updateUser(newUser)
       showSuccessMsg(messages.success.editMeal)
     } catch (err) {
       console.error(err)
       showErrorMsg(messages.error.editMeal)
+      optimisticUpdateUser(user)
     }
   }
 
