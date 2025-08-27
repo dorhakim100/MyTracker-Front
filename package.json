@@ -28,6 +28,7 @@
     "react-mobile-picker": "^1.2.0",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.4.1",
+    "react-swipeable-list": "^1.10.0",
     "redux": "^5.0.1",
     "swiper": "^11.2.10"
   },

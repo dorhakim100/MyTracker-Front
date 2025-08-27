@@ -60,8 +60,9 @@ export function StatsCarousel() {
     console.log('changed')
     console.log(user?.loggedToday?.calories)
 
-    if (!user?.loggedToday?.calories) return
-    const newCalories = user?.loggedToday?.calories
+    const caloriesToSet = user?.loggedToday?.calories
+    if (!caloriesToSet && caloriesToSet !== 0) return
+    const newCalories = caloriesToSet
     setCalories(newCalories)
   }, [user?.loggedToday?.calories])
 

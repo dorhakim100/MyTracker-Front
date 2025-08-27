@@ -15,11 +15,20 @@ import { SlideDialog } from '../SlideDialog/SlideDialog'
 
 import { ItemDetails } from '../ItemDetails/ItemDetails'
 import { searchUrls } from '../../assets/config/search.urls'
-import { showErrorMsg } from '../../services/event-bus.service'
+import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
 import { messages } from '../../assets/config/messages'
 import { searchService } from '../../services/search/search-service'
 import { searchTypes } from '../../assets/config/search-types'
 import { Item } from '../../types/item/Item'
+import { removeLog } from '../../store/actions/user.actios'
+
+import {
+  LeadingActions,
+  SwipeableList,
+  SwipeableListItem,
+  SwipeAction,
+  TrailingActions,
+} from 'react-swipeable-list'
 
 interface MealPeriod {
   key: 'morning' | 'lunch' | 'evening'
@@ -85,8 +94,9 @@ export function CurrMeal() {
       return `${item.macros?.calories} kcal`
     }
 
-    const renderRight = (item: Log) => {
-      const cachedItem = cachedItems.find((i) => i.searchId === item.itemId)
+    const renderRight = (log: Log) => {
+      // const cachedItem = cachedItems.find((i) => i.searchId === item.itemId)
+
       // return (
       //   <MacrosDonut
       //     protein={cachedItem?.macros?.protein || 0}
@@ -136,6 +146,15 @@ export function CurrMeal() {
       }
     }
 
+    const onRightClick = async (log: Log) => {
+      try {
+        await removeLog(log, user)
+        showSuccessMsg(messages.success.editMeal)
+      } catch (err) {
+        showErrorMsg(messages.error.editMeal)
+      }
+    }
+
     const closeEdit = () => {
       setEditMealItem(null)
       setIsEditOpen(false)
@@ -150,6 +169,7 @@ export function CurrMeal() {
           renderSecondaryText={renderSecondaryText}
           renderRight={renderRight}
           onItemClick={onItemClick}
+          onRightClick={onRightClick}
         />
         <SlideDialog
           open={isEditOpen}

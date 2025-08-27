@@ -16,6 +16,7 @@ import { User } from '../../types/user/User'
 import { searchService } from '../../services/search/search-service'
 import { Item } from '../../types/item/Item'
 import { cache } from '../../assets/config/cache'
+import { Log } from '../../types/log/Log'
 
 const { FAVORITE_CACHE } = cache
 
@@ -207,6 +208,37 @@ export async function handleFavorite(item: Item, user: User) {
   }
 }
 
+export async function removeLog(log: Log, user: User) {
+  try {
+    const logs = user?.loggedToday.logs
+    if (!logs) throw new Error('No logs found')
+
+    const logIdx = logs.findIndex((l) => l.time === log.time)
+    if (logIdx === -1) throw new Error('No log found')
+
+    logs.splice(logIdx, 1)
+
+    const newLogs = [...logs]
+
+    const newCalories = newLogs.reduce(
+      (acc, log) => acc + log.macros.calories,
+      0
+    )
+
+    const newUser = {
+      ...user,
+      loggedToday: {
+        ...user.loggedToday,
+        logs: newLogs,
+        calories: newCalories,
+      },
+    }
+
+    await updateUser(newUser)
+  } catch (err) {
+    throw err
+  }
+}
 export async function setRemembered() {
   try {
     const user = await userService.getRememberedUser()
