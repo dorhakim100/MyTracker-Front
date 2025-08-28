@@ -19,7 +19,9 @@ import { CustomList } from '../../CustomMui/CustomList/CustomList'
 import { setItem, setEditMealItem } from '../../store/actions/item.actions'
 import { SwipeAction } from 'react-swipeable-list'
 import DeleteIcon from '@mui/icons-material/Delete'
-import { Typography } from '@mui/material'
+import { Button, IconButton, Typography } from '@mui/material'
+import AddIcon from '@mui/icons-material/Add'
+import { setIsAddModal } from '../../store/actions/system.actions'
 
 export function LoggedList({
   mealPeriod,
@@ -43,7 +45,23 @@ export function LoggedList({
   if (!user || !logs?.length)
     return (
       <div className='logged-items'>
-        <div className='placeholder'>No items logged yet</div>
+        <div className='placeholder-container'>
+          <div className='placeholder'>No items logged yet</div>
+
+          <Button
+            variant='contained'
+            color='primary'
+            size='small'
+            onClick={(e) => {
+              e.stopPropagation()
+              e.preventDefault()
+              setIsAddModal(true)
+            }}
+          >
+            Add Item
+            <AddIcon />
+          </Button>
+        </div>
       </div>
     )
 

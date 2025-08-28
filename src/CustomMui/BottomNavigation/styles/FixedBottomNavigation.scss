@@ -108,3 +108,40 @@
   // color: $white !important;
   // outline: none !important;
 }
+.speed-dial-container {
+  // position: absolute;
+  // bottom: 16;
+  // right: '50%';
+  // transform: 'translate(50%, 0)';
+  // z-index: -1;
+  .MuiSpeedDial-root {
+    position: absolute;
+    bottom: 21px;
+    right: 50%;
+    transform: translate(50%, 0);
+    z-index: 1000;
+  }
+
+  &.show {
+    height: calc(100vh - 100px);
+    width: 100vw;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.14);
+    // z-index: 1000;
+
+    .MuiSpeedDial-root {
+      position: absolute;
+      bottom: -50px;
+      right: 50%;
+      transform: translate(50%, 0);
+      z-index: 1000;
+    }
+  }
+
+  // display: flex;
+  // justify-content: center;
+  // z-index: 1000;
+}

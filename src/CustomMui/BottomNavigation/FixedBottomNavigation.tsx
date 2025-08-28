@@ -18,6 +18,7 @@ import { Route } from '../../assets/routes/routes'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import SpeedDialAction from '@mui/material/SpeedDialAction'
+import { setIsAddModal } from '../../store/actions/system.actions'
 
 export function FixedBottomNavigation(props: {
   routes: Route[]
@@ -35,6 +36,10 @@ export function FixedBottomNavigation(props: {
 
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
+  )
+
+  const isAddModal = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.isAddModal
   )
 
   const [searchModalOpen, setSearchModalOpen] = useState(false)
@@ -119,28 +124,43 @@ export function FixedBottomNavigation(props: {
           elevation={3}
         >
           <Box sx={{ position: 'relative' }}>
-            <SpeedDial
-              // color='primary'
-              ariaLabel='SpeedDial basic example'
-              aria-label={props.centerAction?.ariaLabel || 'center-action'}
-              icon={<AddIcon />}
-              // onClick={props.centerAction?.onClick}
-              className={`${prefs.isDarkMode ? 'dark-mode' : ''}`}
-              sx={{
-                position: 'absolute',
-                bottom: 16,
-                right: '50%',
-                transform: 'translate(50%, 0)',
+            <div
+              className={`speed-dial-container ${isAddModal ? 'show' : ''}`}
+              onClick={(ev) => {
+                ev.stopPropagation()
+                ev.preventDefault()
+                console.log('click')
+                if (!isAddModal) return
+                setIsAddModal(false)
               }}
             >
-              {speedDialActions.map((action) => (
-                <SpeedDialAction
-                  key={action.name}
-                  icon={action.icon}
-                  onClick={action.onClick}
-                />
-              ))}
-            </SpeedDial>
+              <SpeedDial
+                // color='primary'
+                ariaLabel='SpeedDial basic example'
+                aria-label={props.centerAction?.ariaLabel || 'center-action'}
+                icon={<AddIcon />}
+                onClick={(ev) => {
+                  ev.stopPropagation()
+                  setIsAddModal(!isAddModal)
+                }}
+                open={isAddModal}
+                className={`${prefs.isDarkMode ? 'dark-mode' : ''}`}
+                sx={{
+                  position: 'absolute',
+                  // bottom: -50,
+                  // right: '50%',
+                  // transform: 'translate(50%, 0)',
+                }}
+              >
+                {speedDialActions.map((action) => (
+                  <SpeedDialAction
+                    key={action.name}
+                    icon={action.icon}
+                    onClick={action.onClick}
+                  />
+                ))}
+              </SpeedDial>
+            </div>
 
             <BottomNavigation
               showLabels
