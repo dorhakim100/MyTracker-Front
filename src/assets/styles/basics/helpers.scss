@@ -171,3 +171,10 @@ button {
     height: 0;
   }
 }
+
+// Remove focus outline from buttons
+.MuiButtonBase-root:focus,
+.MuiButtonBase-root:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
