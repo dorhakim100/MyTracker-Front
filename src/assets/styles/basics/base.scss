@@ -110,6 +110,9 @@ p {
   outline: none !important;
   box-shadow: none !important;
   &:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+    border: none !important;
   }
 
   .MuiButton-contained {
