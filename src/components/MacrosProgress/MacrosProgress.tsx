@@ -71,6 +71,7 @@ export function MacrosProgress({ protein, carbs, fats }: MacrosProgressProps) {
       showSuccessMsg(messages.success.updateMacros)
       onClose()
     } catch (err) {
+      console.log(err)
       showErrorMsg(messages.error.updateMacros)
     } finally {
       setIsLoading(false)
@@ -144,6 +145,10 @@ function EditComponent() {
     (stateSelector: RootState) => stateSelector.userModule.userToEdit
   )
 
+  const user = useSelector(
+    (stateSelector: RootState) => stateSelector.userModule.user
+  )
+
   const [pickerValue, setPickerValue] = useState<PickerValue>({
     carbs: userToEdit?.currGoal?.macros.carbs || 0,
     protein: userToEdit?.currGoal?.macros.protein || 0,
@@ -175,6 +180,12 @@ function EditComponent() {
 
     setUserToEdit(userToUpdate)
   }, [pickerValue])
+
+  useEffect(() => {
+    if (!userToEdit) {
+      setUserToEdit(user as User)
+    }
+  }, [user])
 
   return (
     <Box className='edit-macros-container'>

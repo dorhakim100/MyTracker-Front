@@ -8,7 +8,7 @@ import { loadItems } from '../../store/actions/item.actions'
 import { LoggedList } from '../LoggedList/LoggedList'
 
 interface MealPeriod {
-  key: 'morning' | 'lunch' | 'evening'
+  key: 'breakfast' | 'lunch' | 'dinner'
   label: string
   rangeLabel: string
 }
@@ -16,11 +16,11 @@ interface MealPeriod {
 function getCurrentMealPeriod(date: Date = new Date()): MealPeriod {
   const hour = date.getHours()
   if (hour >= 6 && hour < 12) {
-    return { key: 'morning', label: 'Morning', rangeLabel: '06:00–12:00' }
+    return { key: 'breakfast', label: 'Breakfast', rangeLabel: '06:00–12:00' }
   } else if (hour >= 12 && hour < 18) {
     return { key: 'lunch', label: 'Lunch', rangeLabel: '12:00–18:00' }
   } else {
-    return { key: 'evening', label: 'Evening', rangeLabel: '18:00–00:00' }
+    return { key: 'dinner', label: 'Dinner', rangeLabel: '18:00–00:00' }
   }
 }
 

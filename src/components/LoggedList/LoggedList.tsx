@@ -24,7 +24,7 @@ import { Typography } from '@mui/material'
 export function LoggedList({
   mealPeriod,
 }: {
-  mealPeriod?: 'morning' | 'lunch' | 'evening'
+  mealPeriod?: 'breakfast' | 'lunch' | 'dinner'
 }) {
   const user = useSelector((state: RootState) => state.userModule.user)
   const cachedItems = useSelector((state: RootState) => state.itemModule.items)
