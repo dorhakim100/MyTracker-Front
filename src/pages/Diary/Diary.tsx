@@ -8,7 +8,12 @@ import { TimesContainer } from '../../components/TimesContainer/TimesContainer'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 
+import LinearProgress from '@mui/material/LinearProgress'
+import CustomLinearProgress from '../../CustomMui/CustomLinearProgress/CustomLinearProgress'
+
 const proteinColor = 'var(--macro-protein)'
+const carbsColor = 'var(--macro-carbs)'
+const fatsColor = 'var(--macro-fats)'
 
 export function Diary() {
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
@@ -107,6 +112,22 @@ export function Diary() {
           <ArrowForwardIcon />
         </IconButton>
       </div>
+
+      <CustomLinearProgress
+        value={50}
+        color={proteinColor}
+        leftValue={'50'}
+        rightValue={'100'}
+        header='Protein'
+      />
+      <CustomLinearProgress
+        value={70}
+        color={carbsColor}
+        leftValue={'50'}
+        rightValue={'100'}
+        header='Carbs'
+      />
+
       <div className={`meals-container ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
         {meals.map((meal) => {
           const currMeal = meal.period
