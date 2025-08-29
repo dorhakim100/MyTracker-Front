@@ -1,0 +1,30 @@
+.custom-accordion {
+  width: 100%;
+
+  &.dark-mode {
+    .MuiPaper-root.dark-mode {
+      .MuiAccordion-heading {
+        button {
+          background-color: $darker-gray;
+
+          color: $light-gray;
+
+          .MuiAccordionSummary-expandIconWrapper {
+            color: $light-gray;
+          }
+        }
+      }
+    }
+
+    .MuiCollapse-root {
+      background-color: $very-dark-gray;
+      background-color: $darker-gray;
+      //   background-color: $primary-color-darker;
+      color: $light-gray;
+    }
+  }
+}
+
+.accordion-content {
+  width: 100%;
+}

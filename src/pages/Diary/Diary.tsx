@@ -10,6 +10,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 
 import LinearProgress from '@mui/material/LinearProgress'
 import CustomLinearProgress from '../../CustomMui/CustomLinearProgress/CustomLinearProgress'
+import { CustomAccordion } from '../../CustomMui/CustomAccordion/CustomAccordion'
 
 const proteinColor = 'var(--macro-protein)'
 const carbsColor = 'var(--macro-carbs)'
@@ -112,7 +113,18 @@ export function Diary() {
           <ArrowForwardIcon />
         </IconButton>
       </div>
-
+      <CustomAccordion
+        title='Protein'
+        cmp={
+          <CustomLinearProgress
+            value={50}
+            color={proteinColor}
+            leftValue={'50'}
+            rightValue={'100'}
+            header='Protein'
+          />
+        }
+      />
       <CustomLinearProgress
         value={50}
         color={proteinColor}
