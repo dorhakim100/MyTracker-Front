@@ -141,9 +141,12 @@ export function FixedBottomNavigation(props: {
                 }}
                 open={isAddModal}
                 className={`${prefs.isDarkMode ? 'dark-mode' : ''}`}
-                sx={{
-                  position: 'absolute',
-                }}
+                sx={
+                  {
+                    // position: 'absolute',
+                    // opacity: 0,
+                  }
+                }
               >
                 {speedDialActions.map((action) => (
                   <SpeedDialAction

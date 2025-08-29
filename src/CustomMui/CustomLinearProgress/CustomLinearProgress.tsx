@@ -39,7 +39,11 @@ export function CustomLinearProgress({
         }}
       />
       {currentValue && goalValue && (
-        <GoalBanner current={+currentValue} goal={+goalValue} isGram={isGram} />
+        <GoalBanner
+          current={+currentValue}
+          goal={+goalValue}
+          extraValue={isGram ? 'g' : ''}
+        />
       )}
     </div>
   )
