@@ -19,7 +19,7 @@ export const itemService = {
 }
 
 async function query(): Promise<Item[]> {
-// filterBy: ItemFilter = { txt: '', sortDir: 0, pageIdx: 0, isAll: false }
+  // filterBy: ItemFilter = { txt: '', sortDir: 0, pageIdx: 0, isAll: false }
   try {
     const items: Item[] = await storageService.query(STORAGE_KEY, 0)
     // const { txt, sortDir, pageIdx, isAll } = filterBy

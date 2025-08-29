@@ -27,7 +27,7 @@ export interface SystemState {
 const initialState: SystemState = {
   isLoading: false,
   prefs: systemService.getPrefs(),
-  isAddModal: true,
+  isAddModal: false,
   isAccessibility: false,
   isPrefs: false,
 

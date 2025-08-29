@@ -22,7 +22,7 @@ import { setIsLoading } from '../../store/actions/system.actions'
 import { MacrosDonut } from '../MacrosDonut/MacrosDonut'
 import { CustomList } from '../../CustomMui/CustomList/CustomList'
 import { Item } from '../../types/item/Item'
-import { setItem } from '../../store/actions/item.actions'
+import { setItem, setSelectedMeal } from '../../store/actions/item.actions'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { ItemDetails } from '../ItemDetails/ItemDetails'
 import { FavoriteButton } from '../FavoriteButton/FavoriteButton'
@@ -106,6 +106,11 @@ export function ItemSearch() {
     }
   }
 
+  const onCloseItemDetails = () => {
+    setIsItemSelected(false)
+    setSelectedMeal(null)
+  }
+
   const renderList = () => {
     if (!results.length)
       return (
@@ -180,7 +185,7 @@ export function ItemSearch() {
 
       <SlideDialog
         open={isItemSelected}
-        onClose={() => setIsItemSelected(false)}
+        onClose={onCloseItemDetails}
         component={<ItemDetails />}
         title='Item'
         onSave={() => {}}

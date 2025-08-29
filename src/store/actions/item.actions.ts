@@ -4,6 +4,7 @@ import {
   SET_ITEMS,
   SET_ITEM,
   SET_EDIT_MEAL_ITEM,
+  SET_SELECTED_MEAL,
 } from '../reducers/item.reducer'
 import { Item } from '../../types/item/Item'
 import { Log } from '../../types/log/Log'
@@ -37,6 +38,10 @@ export function setEditMealItem(editMealItem: Log | null) {
   store.dispatch(getCmdSetEditMealItem(editMealItem))
 }
 
+export function setSelectedMeal(selectedMeal: string | null) {
+  store.dispatch(getCmdSetSelectedMeal(selectedMeal))
+}
+
 function getCmdSetItems(items: Item[]) {
   return {
     type: SET_ITEMS,
@@ -55,5 +60,12 @@ function getCmdSetItem(item: Item) {
   return {
     type: SET_ITEM,
     item,
+  }
+}
+
+function getCmdSetSelectedMeal(selectedMeal: string | null) {
+  return {
+    type: SET_SELECTED_MEAL,
+    selectedMeal,
   }
 }

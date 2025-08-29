@@ -16,21 +16,30 @@ import {
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { ItemDetails } from '../ItemDetails/ItemDetails'
 import { CustomList } from '../../CustomMui/CustomList/CustomList'
-import { setItem, setEditMealItem } from '../../store/actions/item.actions'
+import {
+  setItem,
+  setEditMealItem,
+  setSelectedMeal,
+} from '../../store/actions/item.actions'
 import { SwipeAction } from 'react-swipeable-list'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { Button, IconButton, Typography } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import { setIsAddModal } from '../../store/actions/system.actions'
+import { itemService } from '../../services/item/item.service'
+import { capitalizeFirstLetter } from '../../services/util.service'
 
 export function LoggedList({
   mealPeriod,
 }: {
-  mealPeriod?: 'breakfast' | 'lunch' | 'dinner'
+  mealPeriod: 'breakfast' | 'lunch' | 'dinner'
 }) {
   const user = useSelector((state: RootState) => state.userModule.user)
   const cachedItems = useSelector((state: RootState) => state.itemModule.items)
   const [isEditOpen, setIsEditOpen] = useState(false)
+  const editMealItem = useSelector(
+    (state: RootState) => state.itemModule.editMealItem
+  )
 
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
 
@@ -56,6 +65,7 @@ export function LoggedList({
               e.stopPropagation()
               e.preventDefault()
               setIsAddModal(true)
+              setSelectedMeal(capitalizeFirstLetter(mealPeriod))
             }}
           >
             Add Item

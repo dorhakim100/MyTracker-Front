@@ -58,13 +58,17 @@ export function ItemDetails() {
     (stateSelector: RootState) => stateSelector.itemModule.editMealItem
   )
 
+  const selectedMeal = useSelector(
+    (stateSelector: RootState) => stateSelector.itemModule.selectedMeal
+  )
+
   const item = editMealItem ? editMealItem : searchedItem
 
   const [editItem, setEditItem] = useState<EditItem>({
     totalMacros: item.macros,
     servingSize: editMealItem?.servingSize || 100,
     numberOfServings: editMealItem?.numberOfServings || 1,
-    meal: editMealItem?.meal || getCurrMeal(),
+    meal: editMealItem?.meal || selectedMeal || getCurrMeal(),
   })
 
   const [clockOpen, setClockOpen] = useState(false)
@@ -197,7 +201,7 @@ export function ItemDetails() {
           calories: user.loggedToday.calories + newLog.macros.calories,
         },
       }
-
+      setSelectedMeal(null)
       optimisticUpdateUser(newUser)
       await updateUser(newUser)
       showSuccessMsg(messages.success.addedToMeal)
@@ -245,7 +249,7 @@ export function ItemDetails() {
       }
 
       optimisticUpdateUser(newUser)
-
+      setSelectedMeal(null)
       await updateUser(newUser)
       showSuccessMsg(messages.success.editMeal)
     } catch (err) {
@@ -388,7 +392,7 @@ import {
   optimisticUpdateUser,
   updateUser,
 } from '../../store/actions/user.actions'
-import { loadItems } from '../../store/actions/item.actions'
+import { loadItems, setSelectedMeal } from '../../store/actions/item.actions'
 import { User } from '../../types/user/User'
 
 function EditComponent({
