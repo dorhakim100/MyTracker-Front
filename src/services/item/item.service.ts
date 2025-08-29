@@ -7,7 +7,7 @@ import { cache } from '../../assets/config/cache'
 
 const STORAGE_KEY = cache.ITEMS_CACHE
 
-const PAGE_SIZE = 20
+// const PAGE_SIZE = 20
 
 export const itemService = {
   query,
@@ -15,7 +15,7 @@ export const itemService = {
   remove,
   getEmptyItem,
   getDefaultFilter,
-  getMaxPage,
+  // getMaxPage,
 }
 
 async function query(): Promise<Item[]> {
@@ -69,6 +69,7 @@ function getEmptyItem(): Item {
     searchId: '',
     image: '',
     macros: { calories: 0, protein: 0, carbs: 0, fat: 0 },
+    type: '',
   }
 }
 
@@ -81,13 +82,13 @@ function getDefaultFilter(): ItemFilter {
   }
 }
 
-async function getMaxPage(filterBy: ItemFilter): Promise<number | undefined> {
-  try {
-    const items = await query({ ...filterBy, isAll: true })
-    let maxPage = items.length / PAGE_SIZE
-    maxPage = Math.ceil(maxPage)
-    return maxPage
-  } catch (err) {
-    // noop
-  }
-}
+// async function getMaxPage(filterBy: ItemFilter): Promise<number | undefined> {
+//   try {
+//     const items = await query({ ...filterBy, isAll: true })
+//     let maxPage = items.length / PAGE_SIZE
+//     maxPage = Math.ceil(maxPage)
+//     return maxPage
+//   } catch (err) {
+//     // noop
+//   }
+// }

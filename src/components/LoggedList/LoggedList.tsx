@@ -23,10 +23,9 @@ import {
 } from '../../store/actions/item.actions'
 import { SwipeAction } from 'react-swipeable-list'
 import DeleteIcon from '@mui/icons-material/Delete'
-import { Button, IconButton, Typography } from '@mui/material'
+import { Button, Typography } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import { setIsAddModal } from '../../store/actions/system.actions'
-import { itemService } from '../../services/item/item.service'
 import { capitalizeFirstLetter } from '../../services/util.service'
 
 export function LoggedList({
@@ -37,9 +36,6 @@ export function LoggedList({
   const user = useSelector((state: RootState) => state.userModule.user)
   const cachedItems = useSelector((state: RootState) => state.itemModule.items)
   const [isEditOpen, setIsEditOpen] = useState(false)
-  const editMealItem = useSelector(
-    (state: RootState) => state.itemModule.editMealItem
-  )
 
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
 

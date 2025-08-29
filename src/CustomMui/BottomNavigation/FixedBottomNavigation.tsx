@@ -96,10 +96,6 @@ export function FixedBottomNavigation(props: {
     setSearchModalOpen(false)
   }
 
-  function onSelect(item) {
-    console.log('onSelect', item)
-  }
-
   return (
     <>
       <Box
@@ -147,9 +143,6 @@ export function FixedBottomNavigation(props: {
                 className={`${prefs.isDarkMode ? 'dark-mode' : ''}`}
                 sx={{
                   position: 'absolute',
-                  // bottom: -50,
-                  // right: '50%',
-                  // transform: 'translate(50%, 0)',
                 }}
               >
                 {speedDialActions.map((action) => (
@@ -205,9 +198,7 @@ export function FixedBottomNavigation(props: {
       <SlideDialog
         open={searchModalOpen}
         onClose={closeSearchModal}
-        component={
-          <ItemSearch onSelect={onSelect} onClose={closeSearchModal} />
-        }
+        component={<ItemSearch />}
         title='Search'
         onSave={() => {}}
         type='full'

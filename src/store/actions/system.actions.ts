@@ -11,13 +11,11 @@ import {
   SET_IS_PREFS,
   SET_IS_MODAL,
   SET_MODAL_MESSAGE,
-  SET_SHOWED_UPDATE_MESSAGE,
+  // SET_SHOWED_UPDATE_MESSAGE,
 } from '../reducers/system.reducer'
 
 export function setIsLoading(stateToSet: boolean) {
-  stateToSet
-    ? store.dispatch({ type: LOADING_START })
-    : store.dispatch({ type: LOADING_DONE })
+  store.dispatch({ type: stateToSet ? LOADING_START : LOADING_DONE })
 }
 
 export function setPrefs(prefsToSet: Prefs) {
@@ -46,5 +44,4 @@ export function setModalMessage(messageToSet: string) {
 
 export function onClosePrefsHeader() {
   setIsPrefs(false)
-  setIsHeader(false)
 }

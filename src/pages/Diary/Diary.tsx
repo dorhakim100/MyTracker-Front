@@ -87,17 +87,19 @@ export function Diary() {
             <ArrowForwardIcon />
           </IconButton>
         </div>
-        <CustomAccordion
-          title='Macros'
-          cmp={
-            <LinearMacrosProgress
-              caloriesProgress={user?.loggedToday.calories}
-              proteinProgress={getPercentageValue('protein', user)}
-              carbsProgress={getPercentageValue('carbs', user)}
-              fatsProgress={getPercentageValue('fat', user)}
-            />
-          }
-        />
+        <div className='macros-accordion-container'>
+          <CustomAccordion
+            title='Macros'
+            cmp={
+              <LinearMacrosProgress
+                caloriesProgress={user?.loggedToday.calories}
+                proteinProgress={getPercentageValue('protein', user)}
+                carbsProgress={getPercentageValue('carbs', user)}
+                fatsProgress={getPercentageValue('fat', user)}
+              />
+            }
+          />
+        </div>
 
         <div
           className={`meals-container ${prefs.isDarkMode ? 'dark-mode' : ''}`}
