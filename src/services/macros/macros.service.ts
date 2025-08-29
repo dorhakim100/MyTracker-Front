@@ -1,3 +1,5 @@
+import { User } from '../../types/user/User'
+
 export interface MacrosInGrams {
   protein: number
   carbs: number
@@ -58,4 +60,43 @@ export function calculateCaloriesFromMacros(
 export function roundToNearest50(value: number): number {
   // return Math.round(value / 50) * 50
   return Math.round(value)
+}
+
+export function getPercentageValue(type = 'calories', user: User | null) {
+  if (user) {
+    let percentage = 0
+    switch (type) {
+      case 'calories':
+        percentage = Math.round(
+          (user.loggedToday.calories / user?.currGoal?.dailyCalories) * 100
+        )
+        break
+      case 'protein':
+        percentage = Math.round(
+          (getMacrosAmount('protein', user) / user?.currGoal?.macros.protein) *
+            100
+        )
+        break
+      case 'carbs':
+        percentage = Math.round(
+          (getMacrosAmount('carbs', user) / user?.currGoal?.macros.carbs) * 100
+        )
+        break
+      case 'fat':
+        percentage = Math.round(
+          (getMacrosAmount('fat', user) / user?.currGoal?.macros.fat) * 100
+        )
+        break
+    }
+    return percentage > 100 ? 100 : percentage
+  }
+  return 0
+}
+
+function getMacrosAmount(macro: 'protein' | 'carbs' | 'fat', user: User) {
+  return user
+    ? Math.round(
+        user.loggedToday.logs.reduce((acc, log) => acc + log.macros[macro], 0)
+      )
+    : 0
 }

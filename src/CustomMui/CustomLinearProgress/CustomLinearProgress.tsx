@@ -4,16 +4,16 @@ import { LinearProgress, Typography } from '@mui/material'
 interface CustomLinearProgressProps {
   value: number
   color?: string
-  leftValue?: string
-  rightValue?: string
+  currentValue?: string
+  goalValue?: string
   header?: string
 }
 
-export default function CustomLinearProgress({
+export function CustomLinearProgress({
   value,
   color = 'black',
-  leftValue,
-  rightValue,
+  currentValue,
+  goalValue,
   header,
 }: CustomLinearProgressProps) {
   return (
@@ -21,7 +21,6 @@ export default function CustomLinearProgress({
       <div className='header-container'>
         <Typography variant='body1'>{header}</Typography>
       </div>
-      {leftValue && <Typography variant='body2'>{leftValue}</Typography>}
       <LinearProgress
         variant='determinate'
         value={value}
@@ -36,7 +35,13 @@ export default function CustomLinearProgress({
           },
         }}
       />
-      {rightValue && <Typography variant='body2'>{rightValue}</Typography>}
+      {currentValue && goalValue && (
+        <div className='value-container'>
+          <Typography variant='body2'>{currentValue}</Typography>
+          <span>/</span>
+          <Typography variant='body2'>{goalValue}</Typography>
+        </div>
+      )}
     </div>
   )
 }
