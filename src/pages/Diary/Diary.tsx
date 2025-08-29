@@ -82,7 +82,7 @@ export function Diary() {
           <IconButton>
             <ArrowBackIcon />
           </IconButton>
-          <TimesContainer />
+          <TimesContainer isClock={false} />
           <IconButton>
             <ArrowForwardIcon />
           </IconButton>

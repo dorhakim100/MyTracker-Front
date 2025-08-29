@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react'
 
-export function TimesContainer() {
+interface TimesContainerProps {
+  isClock?: boolean
+}
+
+export function TimesContainer({ isClock = true }: TimesContainerProps) {
   const [timeString, setTimeString] = useState(
     new Date().toLocaleTimeString('he', {
       hour: '2-digit',
@@ -41,7 +45,7 @@ export function TimesContainer() {
   return (
     <div className='times-container'>
       <div className='time-date-container'>
-        <span className='time'>{timeString}</span>
+        {isClock && <span className='time'>{timeString}</span>}{' '}
         <span className='date'>{dateString}</span>
       </div>
     </div>
