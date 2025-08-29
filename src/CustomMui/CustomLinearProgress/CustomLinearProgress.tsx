@@ -8,6 +8,7 @@ interface CustomLinearProgressProps {
   currentValue?: string
   goalValue?: string
   header?: string
+  isGram?: boolean
 }
 
 export function CustomLinearProgress({
@@ -16,6 +17,7 @@ export function CustomLinearProgress({
   currentValue,
   goalValue,
   header,
+  isGram = false,
 }: CustomLinearProgressProps) {
   return (
     <div className='linear-progress-container'>
@@ -37,7 +39,7 @@ export function CustomLinearProgress({
         }}
       />
       {currentValue && goalValue && (
-        <GoalBanner current={+currentValue} goal={+goalValue} />
+        <GoalBanner current={+currentValue} goal={+goalValue} isGram={isGram} />
       )}
     </div>
   )

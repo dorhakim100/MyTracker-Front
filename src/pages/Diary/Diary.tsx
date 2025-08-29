@@ -78,7 +78,7 @@ export function Diary() {
           prefs.isDarkMode ? 'dark-mode' : ''
         }`}
       >
-        <div className='header'>
+        <div className='header' style={{ padding: '1rem 0' }}>
           <IconButton>
             <ArrowBackIcon />
           </IconButton>

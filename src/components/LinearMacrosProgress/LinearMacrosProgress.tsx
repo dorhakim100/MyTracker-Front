@@ -46,6 +46,7 @@ export function LinearMacrosProgress({
             value={getPercentageValue('protein', user)}
             header='Protein'
             color={proteinColor}
+            isGram={true}
           />
         )}
         {carbsProgress && (
@@ -55,6 +56,7 @@ export function LinearMacrosProgress({
             value={getPercentageValue('carbs', user)}
             header='Carbs'
             color={carbsColor}
+            isGram={true}
           />
         )}
         {fatsProgress && (
@@ -64,6 +66,7 @@ export function LinearMacrosProgress({
             value={getPercentageValue('fat', user)}
             header='Fats'
             color={fatsColor}
+            isGram={true}
           />
         )}
       </div>
