@@ -8,14 +8,14 @@ import {
 } from '../../store/actions/system.actions'
 
 import { DarkModeSwitch } from '../DarkModeSwitch/DarkModeSwitch'
-import { LanguageSwitch } from '../LanguageSwitch/LanguageSwitch'
+// import { LanguageSwitch } from '../LanguageSwitch/LanguageSwitch'
 
 import CloseIcon from '@mui/icons-material/Close'
-import LanguageIcon from '@mui/icons-material/Language'
-import DarkModeIcon from '@mui/icons-material/DarkMode'
-import LightModeIcon from '@mui/icons-material/LightMode'
+// import LanguageIcon from '@mui/icons-material/Language'
+// import DarkModeIcon from '@mui/icons-material/DarkMode'
+// import LightModeIcon from '@mui/icons-material/LightMode'
 
-import { RootState, store } from '../../store/store'
+import { RootState } from '../../store/store'
 import { ShadowOverlay } from '../ShadowOverlay/ShadowOverlay'
 
 export function Prefs() {
@@ -35,12 +35,12 @@ export function Prefs() {
   function onSetPrefs(type: string) {
     let newPrefs
     switch (type) {
-      case 'lang':
-        const newLang = !prefs.isEnglish
-        newPrefs = { ...prefs, isEnglish: newLang }
-        setPrefs(newPrefs)
-        // closePrefsModal()
-        return
+      // case 'lang':
+      //   const newLang = !prefs.isEnglish
+      //   newPrefs = { ...prefs, isEnglish: newLang }
+      //   setPrefs(newPrefs)
+      //   // closePrefsModal()
+      //   return
 
       case 'darkMode':
         const newMode = !prefs.isDarkMode

@@ -13,8 +13,9 @@ import { setIsLoading } from '../../store/actions/system.actions'
 
 import { EditIcon } from '../EditIcon/EditIcon'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
+import { GoalBanner } from '../GoalBanner/GoalBanner'
 
-import FlagIcon from '@mui/icons-material/Flag'
+// import FlagIcon from '@mui/icons-material/Flag'
 
 interface CaloriesProgressProps {
   percentageValue?: number
@@ -94,12 +95,10 @@ export function CaloriesProgress({
         <Typography variant='h6'>{label}</Typography>
         <EditIcon onClick={edit} />
         <div className='goal-container'>
-          <div className='banner'>
-            <Typography variant='body1'>
-              {current}/{roundToNearest50(user?.currGoal?.dailyCalories || 0)}
-            </Typography>
-            <FlagIcon />
-          </div>
+          <GoalBanner
+            current={current}
+            goal={roundToNearest50(user?.currGoal?.dailyCalories || 0)}
+          />
         </div>
         <CircularProgress
           value={getPercentageValue()}
