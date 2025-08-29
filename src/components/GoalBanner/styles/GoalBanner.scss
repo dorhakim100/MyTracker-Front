@@ -1,7 +1,10 @@
 .goal-banner {
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+
+  .value-container {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+  }
 }
-
-

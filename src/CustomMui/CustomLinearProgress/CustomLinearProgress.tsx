@@ -1,5 +1,6 @@
 import React from 'react'
 import { LinearProgress, Typography } from '@mui/material'
+import { GoalBanner } from '../../components/GoalBanner/GoalBanner'
 
 interface CustomLinearProgressProps {
   value: number
@@ -36,11 +37,7 @@ export function CustomLinearProgress({
         }}
       />
       {currentValue && goalValue && (
-        <div className='value-container'>
-          <Typography variant='body2'>{currentValue}</Typography>
-          <span>/</span>
-          <Typography variant='body2'>{goalValue}</Typography>
-        </div>
+        <GoalBanner current={+currentValue} goal={+goalValue} />
       )}
     </div>
   )
