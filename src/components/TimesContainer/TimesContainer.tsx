@@ -2,9 +2,13 @@ import { useEffect, useState } from 'react'
 
 interface TimesContainerProps {
   isClock?: boolean
+  selectedDay?: Date
 }
 
-export function TimesContainer({ isClock = true }: TimesContainerProps) {
+export function TimesContainer({
+  isClock = true,
+  selectedDay = new Date(),
+}: TimesContainerProps) {
   const [timeString, setTimeString] = useState(
     new Date().toLocaleTimeString('he', {
       hour: '2-digit',
@@ -13,7 +17,7 @@ export function TimesContainer({ isClock = true }: TimesContainerProps) {
     })
   )
   const [dateString, setDateString] = useState(
-    new Date().toLocaleDateString('eng', {
+    selectedDay.toLocaleDateString('eng', {
       weekday: 'long',
       day: 'numeric',
       month: 'long',
@@ -30,17 +34,28 @@ export function TimesContainer({ isClock = true }: TimesContainerProps) {
           hour12: false,
         })
       )
-      setDateString(
-        now.toLocaleDateString('eng', {
-          weekday: 'long',
-          day: 'numeric',
-          month: 'long',
-        })
-      )
+
+      // setDateString(
+      //   now.toLocaleDateString('eng', {
+      //     weekday: 'long',
+      //     day: 'numeric',
+      //     month: 'long',
+      //   })
+      // )
     }, 1000)
 
     return () => clearInterval(interval)
   }, [])
+
+  useEffect(() => {
+    setDateString(
+      selectedDay.toLocaleDateString('eng', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+      })
+    )
+  }, [selectedDay])
 
   return (
     <div className='times-container'>

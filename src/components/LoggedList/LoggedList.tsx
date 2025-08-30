@@ -42,10 +42,10 @@ export function LoggedList({
 
   const logs = useMemo(() => {
     if (mealPeriod)
-      return user?.loggedToday.logs.filter(
+      return user?.loggedToday?.logs?.filter(
         (log) => log.meal.toLocaleLowerCase() === mealPeriod
       )
-    return user?.loggedToday.logs
+    return user?.loggedToday?.logs
   }, [user, mealPeriod])
 
   if (!user || !logs?.length)

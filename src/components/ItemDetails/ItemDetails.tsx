@@ -206,7 +206,10 @@ export function ItemDetails() {
         },
       }
       optimisticUpdateUser(newUser)
-      await updateUser(newUser)
+      const savedDay = await dayService.save(newUser.loggedToday)
+      console.log(savedDay)
+
+      // await updateUser(newUser)
       showSuccessMsg(messages.success.addedToMeal)
     } catch {
       showErrorMsg(messages.error.favorite)
@@ -256,7 +259,11 @@ export function ItemDetails() {
       const savedLog = await logService.save(newMeal)
       console.log(savedLog)
 
-      await updateUser(newUser)
+      // await updateUser(newUser)
+
+      const savedDay = await dayService.save(newUser.loggedToday)
+      console.log(savedDay)
+
       showSuccessMsg(messages.success.editMeal)
     } catch (err) {
       console.log(err)
@@ -396,10 +403,10 @@ import { messages } from '../../assets/config/messages'
 import {
   handleFavorite,
   optimisticUpdateUser,
-  updateUser,
 } from '../../store/actions/user.actions'
 import { loadItems, setSelectedMeal } from '../../store/actions/item.actions'
 import { User } from '../../types/user/User'
+import { dayService } from '../../services/day/day.service'
 
 function EditComponent({
   value,

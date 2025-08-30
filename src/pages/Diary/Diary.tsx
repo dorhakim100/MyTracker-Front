@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import { LoggedList } from '../../components/LoggedList/LoggedList'
 import { Box, Divider, IconButton, Typography } from '@mui/material'
 import { useSelector } from 'react-redux'
@@ -15,6 +15,8 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 export function Diary() {
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
   const user = useSelector((state: RootState) => state.userModule.user)
+
+  const [selectedDay, setSelectedDay] = useState(new Date())
 
   const meals = [
     {
@@ -71,6 +73,12 @@ export function Diary() {
     return caloriesToSet
   }
 
+  const onDayChange = (diff: number) => {
+    const newDate = new Date(selectedDay.getTime() + diff * 24 * 60 * 60 * 1000)
+    console.log(newDate)
+    setSelectedDay(newDate)
+  }
+
   if (user)
     return (
       <div
@@ -79,11 +87,11 @@ export function Diary() {
         }`}
       >
         <div className='header' style={{ padding: '1rem 0' }}>
-          <IconButton>
+          <IconButton onClick={() => onDayChange(-1)}>
             <ArrowBackIcon />
           </IconButton>
-          <TimesContainer isClock={false} />
-          <IconButton>
+          <TimesContainer isClock={false} selectedDay={selectedDay} />
+          <IconButton onClick={() => onDayChange(1)}>
             <ArrowForwardIcon />
           </IconButton>
         </div>
