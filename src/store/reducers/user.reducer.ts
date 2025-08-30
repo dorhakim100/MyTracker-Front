@@ -22,12 +22,12 @@ export interface UserState {
 
 const initialState: UserState = {
   users: [],
-  user: userService.getLoggedinUser(),
-  userToEdit: userService.getLoggedinUser(),
+  user: null,
+  userToEdit: null,
   // filter: userService.getDefaultFilter(),
 }
 
-export function userReducer(state = initialState, action: any) {
+export function userReducer(state = initialState, action: any): UserState {
   let newState = state
   let users
   switch (action.type) {

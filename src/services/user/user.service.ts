@@ -1,12 +1,12 @@
-import { storageService } from '../async-storage.service'
-// import { itemService } from '../item/item.service'
+import { httpService } from '../http.service'
+
+const STORAGE_KEY_LOGGEDIN_USER = 'loggedinUser'
+const STORAGE_KEY_REMEMBERED_USER = 'rememberedUser'
+
 import { User } from '../../types/user/User'
 import { UserCred } from '../../types/userCred/UserCred'
 import { UserFilter } from '../../types/userFilter/UserFilter'
-import { makeId } from '../util.service'
-
-const STORAGE_KEY_LOGGEDIN_USER = 'user'
-const STORAGE_KEY_REMEMBERED_USER = 'rememberedUser'
+// import { getPrefs, setPrefs } from '../system/system.service'
 
 export const userService = {
   login,
@@ -17,19 +17,19 @@ export const userService = {
   remove,
   update,
   getLoggedinUser,
+  getDefaultFilter,
   saveLoggedinUser,
   getEmptyUser,
-  saveRememberedUser,
+
   getRememberedUser,
+  // getMaxPage,
 }
 
 async function getUsers(filter: UserFilter) {
   try {
-    const users = await storageService.query('user')
-    return users.map((user: User) => {
-      delete user.password
-      return user
-    })
+    const users = await httpService.get(`user`, filter)
+
+    return users
   } catch (err) {
     // console.log(err)
     throw err
@@ -38,7 +38,8 @@ async function getUsers(filter: UserFilter) {
 
 async function getById(userId: string) {
   try {
-    return await storageService.get('user', userId)
+    const user = await httpService.get(`user/${userId}`, null)
+    return user
   } catch (err) {
     // console.log(err)
     throw err
@@ -47,50 +48,52 @@ async function getById(userId: string) {
 
 async function remove(userId: string) {
   try {
-    return await storageService.remove('user', userId)
+    return await httpService.delete(`user/${userId}`, null)
   } catch (err) {
     // console.log(err)
     throw err
   }
 }
 
-async function update(userToUpdate: User) {
+async function update(user: User) {
   try {
-    const { _id } = userToUpdate
-    const user = await storageService.get('user', _id)
+    const { _id } = user
 
-    const savedUser = await storageService.put('user', userToUpdate)
-
+    const savedUser = await httpService.put(`user/${_id}`, user)
     // When admin updates other user's details, do not update loggedinUser
-    const loggedinUser = getLoggedinUser()
-    if (loggedinUser._id === user._id) saveLoggedinUser(userToUpdate)
+    // console.log(savedUser)
+    // return
 
+    await getLoggedinUser() // Might not work because its defined in the main service???
+    // const loggedinUser = await getLoggedinUser() // Might not work because its defined in the main service???
+
+    // if (loggedinUser.id === user.id) saveLoggedinUser(savedUser)
+
+    delete savedUser.password
     return savedUser
+    // return saveLoggedinUser(savedUser)
   } catch (err) {
-    // console.log(err)
+    console.log(err)
     throw err
   }
 }
 
 async function login(userCred: UserCred) {
   try {
-    const users = await storageService.query('user')
+    const user = await httpService.post('auth/login', userCred)
 
-    const user = users.find((user: User) => user.email === userCred.email)
-
-    if (user && userCred.email === user.email) {
-      if (userCred.isRemember) {
-        saveRememberedUser(user)
-      }
-
-      return saveLoggedinUser(user)
-    } else {
+    if (!user) {
       const err = new Error('User credentials do not match.')
 
       throw err
     }
+    if (userCred.isRemember) {
+      saveRememberedUser(user)
+    }
+
+    return saveLoggedinUser(user)
   } catch (err) {
-    // console.log(err)
+    console.log(err)
     throw err
   }
 }
@@ -101,18 +104,8 @@ async function signup(userCred: UserCred) {
       userCred.imgUrl =
         'https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_1280.png'
 
-    const userToSave = {
-      ...userCred,
-      currGoal: getDefaultGoal(),
-      goals: [getDefaultGoal()],
-      loggedToday: getDefaultLoggedToday(),
-      favoriteItems: {
-        food: [],
-        product: [],
-      },
-    }
+    const user = await httpService.post('auth/signup', userCred)
 
-    const user = await storageService.post('user', userToSave)
     if (userCred.isRemember) {
       saveRememberedUser(user)
     }
@@ -125,27 +118,39 @@ async function signup(userCred: UserCred) {
 }
 
 async function logout() {
+  sessionStorage.removeItem(STORAGE_KEY_LOGGEDIN_USER)
+  localStorage.removeItem(STORAGE_KEY_REMEMBERED_USER)
   try {
-    sessionStorage.removeItem(STORAGE_KEY_LOGGEDIN_USER)
+    return await httpService.post('auth/logout', null)
   } catch (err) {
     // console.log(err)
     throw err
   }
 }
 
-function getLoggedinUser() {
+async function getLoggedinUser(): Promise<User | null> {
   try {
-    const stringUser = sessionStorage.getItem(STORAGE_KEY_LOGGEDIN_USER)
-    if (!stringUser) return null
-    const user = JSON.parse(stringUser)
-    if (!user) return null
-    return user
+    const remembered = await getRememberedUser()
+
+    if (!remembered) {
+      const sessionStr = sessionStorage.getItem(STORAGE_KEY_LOGGEDIN_USER)
+
+      if (!sessionStr) return null
+      const logged = JSON.parse(sessionStr)
+      if (!logged) return null
+
+      const retrieved = await getById(logged._id)
+
+      saveLoggedinUser(retrieved)
+      return retrieved
+    }
+    saveLoggedinUser(remembered)
+    return remembered
   } catch (err) {
     // console.log(err)
     throw err
   }
 }
-
 function saveLoggedinUser(user: User) {
   try {
     user = {
@@ -166,15 +171,31 @@ function saveLoggedinUser(user: User) {
   }
 }
 
-function saveRememberedUser(user: User) {
-  try {
-    localStorage.setItem(STORAGE_KEY_REMEMBERED_USER, user._id)
-  } catch (err) {
-    // console.log(err)
-    throw err
+function getEmptyUser() {
+  return {
+    id: '',
+    password: '',
+    fullname: '',
+    email: '',
+    imgUrl: '',
   }
 }
 
+function getDefaultFilter() {
+  return {
+    txt: '',
+  }
+}
+
+// async function getRememberedById(userId: string) {
+//   try {
+//     const user = await httpService.get(`user/rememberMe/${userId}`, null)
+//     return user
+//   } catch (err) {
+//     // console.log(err)
+//     throw err
+//   }
+// }
 async function getRememberedUser() {
   try {
     const rememberedId = localStorage.getItem(STORAGE_KEY_REMEMBERED_USER)
@@ -195,71 +216,24 @@ async function getRememberedUser() {
   }
 }
 
-function getEmptyUser() {
-  return {
-    email: '',
-    password: '',
-    fullname: '',
-    imgUrl: '',
-    goals: [],
-    currGoalId: '',
-    loggedToday: getDefaultLoggedToday(),
-    favoriteItems: {
-      foods: [],
-      products: [],
-    },
-    // isAdmin: false,
-  }
-}
+// async function getMaxPage(filter: UserFilter) {
+//   const PAGE_SIZE = 6
+//   try {
+//     var maxPage = await getUsers({ ...filter, isAll: true, isMax: true })
 
-function getDefaultGoal() {
-  return {
-    _id: 'defaultGoal',
-    isMain: true,
-    updatedAt: new Date(),
-    title: 'My Goal',
-    dailyCalories: 2400,
-    macros: {
-      protein: 180,
-      carbs: 300,
-      fat: 53,
-    },
-  }
-}
+//     // let maxPage = messages.length / PAGE_SIZE
+//     // maxPage = Math.ceil(maxPage)
 
-function getDefaultLoggedToday() {
-  return {
-    date: new Date().toISOString(),
-    calories: 0,
-    logs: [],
-  }
-}
+//     return maxPage
+//   } catch (err) {
+//     // console.log(err)
+//     throw err
+//   }
+// }
 
-function getRandomLoggedToday() {
-  return {
-    date: new Date().toISOString(),
-    calories: 1772,
-    protein: 145,
-    carbs: 190,
-    fat: 48,
-  }
-}
-
-// To quickly create an admin user, uncomment the next line
-// _createAdmin()
-async function _createAdmin() {
+function saveRememberedUser(user: User) {
   try {
-    const userCred = {
-      email: 'admin@gmail.com',
-
-      password: 'admin123',
-      fullname: 'Dor Hakim',
-      goals: [],
-      imgUrl:
-        'https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_1280.png',
-    }
-
-    const newUser = await storageService.post('user', userCred)
+    localStorage.setItem(STORAGE_KEY_REMEMBERED_USER, user._id)
   } catch (err) {
     // console.log(err)
     throw err

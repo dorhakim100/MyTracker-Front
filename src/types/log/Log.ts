@@ -1,6 +1,7 @@
 import { Macros } from '../macros/Macros'
 
 export interface Log {
+  _id?: string
   itemId: string
   searchId?: string
   meal: string

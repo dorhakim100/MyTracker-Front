@@ -19,6 +19,7 @@ import FormControl from '@mui/material/FormControl'
 import InputLabel from '@mui/material/InputLabel'
 import MenuItem from '@mui/material/MenuItem'
 import AddIcon from '@mui/icons-material/Add'
+import { logService } from '../../services/log/log.service'
 
 const editOptions = [
   {
@@ -191,23 +192,25 @@ export function ItemDetails() {
         servingSize: editItem.servingSize,
         numberOfServings: editItem.numberOfServings,
         source: searchedItem.type,
+        createdBy: user._id,
       }
 
+      setSelectedMeal(null)
+      const savedLog = await logService.save(newLog)
       const newUser = {
         ...user,
         loggedToday: {
           ...user.loggedToday,
-          logs: [...user.loggedToday.logs, newLog],
-          calories: user.loggedToday.calories + newLog.macros.calories,
+          logs: [...user.loggedToday.logs, savedLog],
+          calories: user.loggedToday.calories + savedLog.macros.calories,
         },
       }
-      setSelectedMeal(null)
       optimisticUpdateUser(newUser)
       await updateUser(newUser)
       showSuccessMsg(messages.success.addedToMeal)
     } catch {
       showErrorMsg(messages.error.favorite)
-      optimisticUpdateUser(user as User)
+      // optimisticUpdateUser(user as User)
     }
   }
 
@@ -250,6 +253,9 @@ export function ItemDetails() {
 
       optimisticUpdateUser(newUser)
       setSelectedMeal(null)
+      const savedLog = await logService.save(newMeal)
+      console.log(savedLog)
+
       await updateUser(newUser)
       showSuccessMsg(messages.success.editMeal)
     } catch (err) {

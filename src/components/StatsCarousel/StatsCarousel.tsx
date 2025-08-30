@@ -16,6 +16,8 @@ export function StatsCarousel() {
     (stateSelector: RootState) => stateSelector.userModule.user
   )
 
+  console.log('user', user)
+
   const [macros, setMacros] = useState({
     protein: { percentage: 0, gram: 0 },
     carbs: { percentage: 0, gram: 0 },
@@ -69,6 +71,8 @@ export function StatsCarousel() {
   function getPercentage(value: number, goal: number) {
     return (value / goal) * 100
   }
+
+  if (!user) return null
 
   if (user)
     return (
