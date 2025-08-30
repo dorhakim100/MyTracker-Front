@@ -27,6 +27,7 @@ import { Button, Typography } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import { setIsAddModal } from '../../store/actions/system.actions'
 import { capitalizeFirstLetter } from '../../services/util.service'
+import { logService } from '../../services/log/log.service'
 
 export function LoggedList({
   mealPeriod,
@@ -122,6 +123,7 @@ export function LoggedList({
       const newUser = removeLogAction(log, user)
       optimisticUpdateUser(newUser)
       await updateUser(newUser)
+      await logService.remove(log._id as string)
       showSuccessMsg(messages.success.editMeal)
     } catch (err) {
       console.error(err)
