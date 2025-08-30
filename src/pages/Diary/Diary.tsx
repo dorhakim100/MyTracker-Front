@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import { LoggedList } from '../../components/LoggedList/LoggedList'
 import { Box, Divider, IconButton, Typography } from '@mui/material'
 import { useSelector } from 'react-redux'
@@ -11,12 +11,25 @@ import { CustomAccordion } from '../../CustomMui/CustomAccordion/CustomAccordion
 import { LinearMacrosProgress } from '../../components/LinearMacrosProgress/LinearMacrosProgress'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
+import { dayService } from '../../services/day/day.service'
+import { showErrorMsg } from '../../services/event-bus.service'
+import { messages } from '../../assets/config/messages'
+import { Log } from '../../types/log/Log'
+import { setSelectedDiaryDay } from '../../store/actions/user.actions'
 
 export function Diary() {
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
   const user = useSelector((state: RootState) => state.userModule.user)
+  const selectedDayDiary = useSelector(
+    (state: RootState) => state.userModule.selectedDay
+  )
 
   const [selectedDay, setSelectedDay] = useState(new Date())
+  const [diaryFilter, setDiaryFilter] = useState({
+    userId: user?._id,
+    date: selectedDay.toISOString(),
+  })
+  const [retrievedLogs, setRetrievedLogs] = useState<Log[]>([])
 
   const meals = [
     {
@@ -45,6 +58,29 @@ export function Diary() {
   const totalDinnerCalories = useMemo(() => {
     return getTotalCalories('dinner')
   }, [user])
+
+  useEffect(() => {
+    const handleGetDiary = async () => {
+      try {
+        const diary = await dayService.query(diaryFilter)
+        console.log(diary)
+        setRetrievedLogs(diary.logs)
+        setSelectedDiaryDay(diary)
+      } catch (error) {
+        console.log(error)
+        showErrorMsg(messages.error.getDiary)
+      }
+    }
+    if (!user || !selectedDayDiary) return
+
+    // if (selectedDayDiary?._id !== user?.loggedToday._id) handleGetDiary()
+    handleGetDiary()
+
+    return () => {
+      const loggedToday = user?.loggedToday
+      setSelectedDiaryDay(loggedToday || null)
+    }
+  }, [selectedDay, user])
 
   function getTotalCalories(meal: string) {
     return user
@@ -75,8 +111,12 @@ export function Diary() {
 
   const onDayChange = (diff: number) => {
     const newDate = new Date(selectedDay.getTime() + diff * 24 * 60 * 60 * 1000)
-    console.log(newDate)
+
     setSelectedDay(newDate)
+    setDiaryFilter({
+      userId: user?._id,
+      date: newDate.toISOString(),
+    })
   }
 
   if (user)

@@ -11,5 +11,6 @@ export const messages = {
     search: 'Failed to search',
     favorite: 'Failed to add to favorites',
     editMeal: 'Failed to edit meal',
+    getDiary: 'Failed to get diary',
   },
 }

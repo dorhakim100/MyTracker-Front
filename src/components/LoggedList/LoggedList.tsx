@@ -11,6 +11,7 @@ import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
 import {
   optimisticUpdateUser,
   removeLogAction,
+  setSelectedDiaryDay,
   updateUser,
 } from '../../store/actions/user.actions'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
@@ -28,6 +29,7 @@ import AddIcon from '@mui/icons-material/Add'
 import { setIsAddModal } from '../../store/actions/system.actions'
 import { capitalizeFirstLetter } from '../../services/util.service'
 import { logService } from '../../services/log/log.service'
+import { LoggedToday } from '../../types/loggedToday/LoggedToday'
 
 export function LoggedList({
   mealPeriod,
@@ -38,15 +40,27 @@ export function LoggedList({
   const cachedItems = useSelector((state: RootState) => state.itemModule.items)
   const [isEditOpen, setIsEditOpen] = useState(false)
 
+  const selectedDay = useSelector(
+    (state: RootState) => state.userModule.selectedDay
+  )
+
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
 
   const logs = useMemo(() => {
+    if (selectedDay)
+      return selectedDay?.logs?.filter((log) =>
+        _filterLogsByMealPeriod(log, mealPeriod)
+      )
     if (mealPeriod)
-      return user?.loggedToday?.logs?.filter(
-        (log) => log.meal.toLocaleLowerCase() === mealPeriod
+      return user?.loggedToday?.logs?.filter((log) =>
+        _filterLogsByMealPeriod(log, mealPeriod)
       )
     return user?.loggedToday?.logs
-  }, [user, mealPeriod])
+  }, [user, mealPeriod, selectedDay])
+
+  function _filterLogsByMealPeriod(log: Log, mealPeriod: string) {
+    return log.meal.toLocaleLowerCase() === mealPeriod
+  }
 
   if (!user || !logs?.length)
     return (
@@ -120,9 +134,17 @@ export function LoggedList({
 
   const onRightClick = async (log: Log) => {
     try {
-      const newUser = removeLogAction(log, user)
-      optimisticUpdateUser(newUser)
-      await updateUser(newUser)
+      const newToday = removeLogAction(log, selectedDay as LoggedToday)
+
+      if (newToday._id === user.loggedToday._id) {
+        const newUser = {
+          ...user,
+          loggedToday: newToday,
+        }
+        optimisticUpdateUser(newUser)
+        // await updateUser({newUser})
+      }
+      setSelectedDiaryDay(newToday)
       await logService.remove(log._id as string)
       showSuccessMsg(messages.success.editMeal)
     } catch (err) {

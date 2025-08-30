@@ -14,12 +14,7 @@ export const dayService = {
   // getMaxPage,
 }
 
-async function query(
-  filterBy = {
-    userId: '',
-    date: '',
-  }
-) {
+async function query(filterBy: any) {
   try {
     const items = await httpService.get(KEY, filterBy)
 

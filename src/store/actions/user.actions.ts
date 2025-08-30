@@ -7,6 +7,7 @@ import {
   REMOVE_USER,
   SET_WATCHED_USER,
   SET_USER_TO_EDIT,
+  SET_SELECTED_DAY,
   // SET_USER_FILTER,
 } from '../reducers/user.reducer'
 
@@ -17,6 +18,7 @@ import { searchService } from '../../services/search/search-service'
 import { Item } from '../../types/item/Item'
 import { cache } from '../../assets/config/cache'
 import { Log } from '../../types/log/Log'
+import { LoggedToday } from '../../types/loggedToday/LoggedToday'
 
 const { FAVORITE_CACHE } = cache
 
@@ -52,6 +54,7 @@ export async function login(credentials: UserCred) {
       type: SET_USER,
       user: user,
     })
+    setSelectedDiaryDay(user.loggedToday)
     setUserToEdit(user)
     // socketService.login(user._id)
     return user
@@ -221,8 +224,8 @@ export async function setRemembered() {
   }
 }
 
-export function removeLogAction(log: Log, user: User) {
-  const logs = user?.loggedToday.logs
+export function removeLogAction(log: Log, loggedToday: LoggedToday) {
+  const logs = loggedToday.logs
   if (!logs) throw new Error('No logs found')
 
   const logIdx = logs.findIndex((l) => l.time === log.time)
@@ -234,14 +237,18 @@ export function removeLogAction(log: Log, user: User) {
 
   const newCalories = newLogs.reduce((acc, log) => acc + log.macros.calories, 0)
 
-  const newUser = {
-    ...user,
-    loggedToday: {
-      ...user.loggedToday,
-      logs: newLogs,
-      calories: newCalories,
-    },
+  const newLoggedToday = {
+    ...loggedToday,
+    logs: newLogs,
+    calories: newCalories,
   }
 
-  return newUser
+  return newLoggedToday
+}
+
+export function setSelectedDiaryDay(selectedDay: LoggedToday | null) {
+  store.dispatch({
+    type: SET_SELECTED_DAY,
+    selectedDay,
+  })
 }

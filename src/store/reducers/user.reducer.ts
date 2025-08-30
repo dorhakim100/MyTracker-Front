@@ -1,4 +1,5 @@
 import { userService } from '../../services/user/user.service'
+import { LoggedToday } from '../../types/loggedToday/LoggedToday'
 
 import { User } from '../../types/user/User'
 // import { UserFilter } from '../../types/userFilter/UserFilter'
@@ -11,11 +12,13 @@ export const UPDATE_USER = 'UPDATE_USER'
 export const SET_USER_FILTER = 'SET_USER_FILTER'
 export const SET_WATCHED_USER = 'SET_WATCHED_USER'
 export const SET_USER_TO_EDIT = 'SET_USER_TO_EDIT'
+export const SET_SELECTED_DAY = 'SET_SELECTED_DAY'
 
 export interface UserState {
   users: User[]
   user: User | null
   userToEdit: User | null
+  selectedDay: LoggedToday | null
   // filter: UserFilter
   lastRemovedUser?: User
 }
@@ -24,6 +27,7 @@ const initialState: UserState = {
   users: [],
   user: null,
   userToEdit: null,
+  selectedDay: null,
   // filter: userService.getDefaultFilter(),
 }
 
@@ -56,7 +60,9 @@ export function userReducer(state = initialState, action: any): UserState {
     case SET_USER_TO_EDIT:
       newState = { ...state, userToEdit: action.userToEdit }
       break
-
+    case SET_SELECTED_DAY:
+      newState = { ...state, selectedDay: action.selectedDay }
+      break
     // case SET_USER_FILTER:
     //   newState = { ...state, filter: action.filter }
     //   break
