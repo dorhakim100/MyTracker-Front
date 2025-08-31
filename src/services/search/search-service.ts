@@ -20,7 +20,7 @@ const {
   DEFAULT_IMAGE,
 } = searchUrls
 const { PAGE, SIZE, FIELDS, LC, CC } = openFoodFactsQueryingParams
-const { FAVORITE_CACHE, ITEMS_CACHE } = cache
+const { FAVORITE_CACHE } = cache
 const USDA_API_KEY = import.meta.env.VITE_USDA_API_KEY
 
 export const searchService = {
@@ -54,7 +54,7 @@ async function search(filter: SearchFilter) {
       res = [...foods, ...products]
       // console.log('res', res)
       res.forEach((item) => {
-        addToCache(item, FAVORITE_CACHE)
+        addToCache(item as Item, FAVORITE_CACHE)
       })
       return res
     }

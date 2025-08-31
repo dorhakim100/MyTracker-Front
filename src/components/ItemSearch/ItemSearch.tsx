@@ -4,7 +4,7 @@ import ListItemIcon from '@mui/material/ListItemIcon'
 import SearchIcon from '@mui/icons-material/Search'
 import CloseIcon from '@mui/icons-material/Close'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useSelector } from 'react-redux'
 
 import { searchService } from '../../services/search/search-service'
@@ -29,6 +29,7 @@ import { FavoriteButton } from '../FavoriteButton/FavoriteButton'
 import { handleFavorite } from '../../store/actions/user.actions'
 import { SearchFilter } from '../../types/searchFilter/SearchFilter'
 import { Typography } from '@mui/material'
+import { debounce } from '../../services/util.service'
 
 export function ItemSearch() {
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
@@ -81,16 +82,24 @@ export function ItemSearch() {
     }
   }, [query, source, user])
 
+  const latestHandleSearchRef = useRef(handleSearch)
   useEffect(() => {
-    handleSearch()
+    latestHandleSearchRef.current = handleSearch
   }, [handleSearch])
+
+  const debouncedRunSearch = useRef(
+    debounce(() => latestHandleSearchRef.current(), 300)
+  ).current
+
+  useEffect(() => {
+    debouncedRunSearch()
+  }, [query, source, user, debouncedRunSearch])
 
   const onClearQuery = () => {
     setQuery('')
   }
 
   const onItemClick = (item: Item) => {
-    console.log('onItemClick', item)
     setItem(item)
     setIsItemSelected(true)
   }

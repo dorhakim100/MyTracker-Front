@@ -12,7 +12,6 @@ import {
   optimisticUpdateUser,
   removeLogAction,
   setSelectedDiaryDay,
-  updateUser,
 } from '../../store/actions/user.actions'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { ItemDetails } from '../ItemDetails/ItemDetails'
