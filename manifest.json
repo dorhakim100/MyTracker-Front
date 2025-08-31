@@ -1,13 +1,13 @@
 {
-  "name": "My App",
-  "short_name": "App",
+  "name": "MyTracker",
+  "short_name": "MyTracker",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#000000",
   "icons": [
     {
-      "src": "public/logo.png",
+      "src": "public/logo-square.png",
       "sizes": "192x192",
       "type": "image/png"
     }

@@ -1,4 +1,3 @@
-import { useRef } from 'react'
 import { useSelector } from 'react-redux'
 
 import { setIsPrefs } from '../../store/actions/system.actions'
@@ -12,7 +11,6 @@ export function PrefsButton() {
   const isVisible = useSelector(
     (storeState: RootState) => storeState.systemModule.isPrefs
   )
-  console.log(isVisible)
 
   // const buttonRef = useRef<HTMLButtonElement>(null)
 

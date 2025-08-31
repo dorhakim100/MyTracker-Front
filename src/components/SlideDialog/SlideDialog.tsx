@@ -11,7 +11,6 @@ import { TransitionProps } from '@mui/material/transitions'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import CircularProgress from '@mui/material/CircularProgress'
-import LinearProgress from '@mui/material/LinearProgress'
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {

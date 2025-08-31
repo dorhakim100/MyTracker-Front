@@ -1,4 +1,3 @@
-import React from 'react'
 import { LinearProgress, Typography } from '@mui/material'
 import { GoalBanner } from '../../components/GoalBanner/GoalBanner'
 

@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { LoggedList } from '../../components/LoggedList/LoggedList'
 import { Box, Divider, IconButton, Typography } from '@mui/material'
 import { useSelector } from 'react-redux'

@@ -165,7 +165,7 @@ export function FixedBottomNavigation(props: {
                   <SpeedDialAction
                     key={action.name}
                     icon={action.icon}
-                    onClick={action.onClick}
+                    onClick={action.onClick as any}
                   />
                 ))}
               </SpeedDial>
@@ -174,7 +174,7 @@ export function FixedBottomNavigation(props: {
             <BottomNavigation
               showLabels
               value={value}
-              onChange={(event, newValue) => {
+              onChange={(_, newValue) => {
                 setValue(newValue)
               }}
             >

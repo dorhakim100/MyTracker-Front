@@ -1,45 +1,22 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 
-import { Link, useNavigate } from 'react-router-dom'
-
-import { Route } from '../../assets/routes/routes'
-
 import { RootState } from '../../store/store'
-import {
-  onClosePrefsHeader,
-  setIsHeader,
-  setIsPrefs,
-} from '../../store/actions/system.actions'
-import { DropdownMenu } from '../DropdownMenu/DropdownMenu'
+import { setIsPrefs } from '../../store/actions/system.actions'
 
 import logoRegular from '../../../public/logo.png'
 import logoDark from '../../../public/logo-dark.png'
 import { IconButton } from '@mui/material'
 import SettingsIcon from '@mui/icons-material/Settings'
 
-interface AppHeaderProps {
-  routes: Route[]
-}
-
-export function AppHeader({ routes }: AppHeaderProps) {
-  const navigate = useNavigate()
-
+export function AppHeader() {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
-  )
-
-  const isHeader = useSelector(
-    (stateSelector: RootState) => stateSelector.systemModule.isHeader
   )
 
   const isPrefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.isPrefs
   )
-
-  const navigateToPage = (route: string) => {
-    navigate(route)
-  }
 
   const [logo, setLogo] = useState<string>(logoRegular)
 

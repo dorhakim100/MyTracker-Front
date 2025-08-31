@@ -1,4 +1,3 @@
-import { useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
@@ -39,7 +38,7 @@ export function AppFooter() {
       await navigator.clipboard.writeText(email)
       showSuccessMsg('Email copied')
     } catch (err) {
-      // // console.log(err)
+      console.log(err)
       showErrorMsg(`Couldn't copy email`)
     }
   }
