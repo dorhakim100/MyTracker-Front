@@ -178,12 +178,8 @@ export function ItemDetails() {
 
   const onAddToMeal = async () => {
     try {
-      console.log(user)
-      console.log(item)
-
       if (!user) return showErrorMsg(messages.error.favorite)
       if (!item.searchId) return showErrorMsg(messages.error.favorite)
-      console.log('selectedDay', selectedDay)
       if (!selectedDay) return showErrorMsg(messages.error.favorite)
 
       const itemToCache = {
@@ -206,14 +202,21 @@ export function ItemDetails() {
 
       setSelectedMeal(null)
       const savedLog = await logService.save(newLog)
+      const dayToSave = {
+        ...selectedDay,
+        logs: [...selectedDay.logs, savedLog],
+        calories: selectedDay.calories + savedLog.macros.calories,
+      }
+
+      console.log('selectedDay', selectedDay)
 
       const todayId = user?.loggedToday._id
-
-      // let savedDay
 
       let newToday
 
       if (selectedDay?._id === todayId) {
+        console.log('same')
+
         newToday = {
           ...user.loggedToday,
           logs: [...user.loggedToday.logs, savedLog],
@@ -225,18 +228,11 @@ export function ItemDetails() {
         }
         optimisticUpdateUser(newUser)
         setSelectedDiaryDay(newToday)
-      } else {
-        newToday = {
-          ...selectedDay,
-          logs: [...selectedDay.logs, savedLog],
-          calories: selectedDay.calories + savedLog.macros.calories,
-        }
       }
-      console.log('newToday', newToday)
-      setSelectedDiaryDay(newToday)
 
-      const savedDay = await dayService.save(newToday)
-      console.log(savedDay)
+      await dayService.save(dayToSave as LoggedToday)
+
+      setSelectedDiaryDay(dayToSave as LoggedToday)
 
       // await updateUser(newUser)
       showSuccessMsg(messages.success.addedToMeal)

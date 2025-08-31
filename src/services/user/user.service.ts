@@ -20,7 +20,7 @@ export const userService = {
   getDefaultFilter,
   saveLoggedinUser,
   getEmptyUser,
-
+  getRememberedById,
   getRememberedUser,
   // getMaxPage,
 }
@@ -39,6 +39,15 @@ async function getUsers(filter: UserFilter) {
 async function getById(userId: string) {
   try {
     const user = await httpService.get(`user/${userId}`, null)
+    return user
+  } catch (err) {
+    // console.log(err)
+    throw err
+  }
+}
+async function getRememberedById(userId: string) {
+  try {
+    const user = await httpService.get(`user/remember/${userId}`, null)
     return user
   } catch (err) {
     // console.log(err)
@@ -203,7 +212,7 @@ async function getRememberedUser() {
     if (!rememberedId) return
 
     if (rememberedId) {
-      const user = await getById(rememberedId)
+      const user = await getRememberedById(rememberedId)
 
       if (user) return saveLoggedinUser(user)
     } else {

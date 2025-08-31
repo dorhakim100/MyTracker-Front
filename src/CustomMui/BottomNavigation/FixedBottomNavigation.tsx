@@ -19,6 +19,9 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import SpeedDialAction from '@mui/material/SpeedDialAction'
 import { setIsAddModal } from '../../store/actions/system.actions'
+import { setSelectedDiaryDay } from '../../store/actions/user.actions'
+import { messages } from '../../assets/config/messages'
+import { showErrorMsg } from '../../services/event-bus.service'
 
 export function FixedBottomNavigation(props: {
   routes: Route[]
@@ -40,6 +43,10 @@ export function FixedBottomNavigation(props: {
 
   const isAddModal = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.isAddModal
+  )
+
+  const user = useSelector(
+    (stateSelector: RootState) => stateSelector.userModule.user
   )
 
   const [searchModalOpen, setSearchModalOpen] = useState(false)
@@ -88,7 +95,9 @@ export function FixedBottomNavigation(props: {
     console.log('scan')
   }
 
-  function onSearchClick() {
+  function onSearchClick(ev: React.MouseEvent<HTMLButtonElement>) {
+    ev.stopPropagation()
+    ev.preventDefault()
     setSearchModalOpen(true)
   }
 
@@ -125,7 +134,7 @@ export function FixedBottomNavigation(props: {
               onClick={(ev) => {
                 ev.stopPropagation()
                 ev.preventDefault()
-                console.log('click')
+
                 if (!isAddModal) return
                 setIsAddModal(false)
               }}
@@ -136,8 +145,12 @@ export function FixedBottomNavigation(props: {
                 aria-label={props.centerAction?.ariaLabel || 'center-action'}
                 icon={<AddIcon />}
                 onClick={(ev) => {
+                  if (!user) return showErrorMsg(messages.error.register)
                   ev.stopPropagation()
                   setIsAddModal(!isAddModal)
+                  console.log('clicked')
+
+                  setSelectedDiaryDay(user.loggedToday)
                 }}
                 open={isAddModal}
                 className={`${prefs.isDarkMode ? 'dark-mode' : ''}`}

@@ -30,6 +30,7 @@ import { setIsAddModal } from '../../store/actions/system.actions'
 import { capitalizeFirstLetter } from '../../services/util.service'
 import { logService } from '../../services/log/log.service'
 import { LoggedToday } from '../../types/loggedToday/LoggedToday'
+import { dayService } from '../../services/day/day.service'
 
 export function LoggedList({
   mealPeriod,
@@ -146,6 +147,8 @@ export function LoggedList({
       }
       setSelectedDiaryDay(newToday)
       await logService.remove(log._id as string)
+
+      dayService.save(newToday as LoggedToday)
       showSuccessMsg(messages.success.editMeal)
     } catch (err) {
       console.error(err)

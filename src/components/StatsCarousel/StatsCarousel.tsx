@@ -25,7 +25,7 @@ export function StatsCarousel() {
   const [calories, setCalories] = useState(user?.loggedToday?.calories || 0)
 
   useEffect(() => {
-    if (!user || !user.loggedToday.logs.length) return
+    if (!user || !user?.loggedToday?.logs?.length) return
 
     const protein = user?.loggedToday?.logs.reduce(
       (acc, log) => acc + log.macros.protein,
@@ -58,7 +58,7 @@ export function StatsCarousel() {
 
   useEffect(() => {
     console.log('changed')
-    console.log(user?.loggedToday?.calories)
+    console.log(user)
 
     const caloriesToSet = user?.loggedToday?.calories
     if (!caloriesToSet && caloriesToSet !== 0) return

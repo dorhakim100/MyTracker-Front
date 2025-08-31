@@ -14,7 +14,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import { dayService } from '../../services/day/day.service'
 import { showErrorMsg } from '../../services/event-bus.service'
 import { messages } from '../../assets/config/messages'
-import { Log } from '../../types/log/Log'
+//import { Log } from '../../types/log/Log'
 import { setSelectedDiaryDay } from '../../store/actions/user.actions'
 
 export function Diary() {
@@ -29,7 +29,6 @@ export function Diary() {
     userId: user?._id,
     date: selectedDay.toISOString(),
   })
-  const [retrievedLogs, setRetrievedLogs] = useState<Log[]>([])
 
   const meals = [
     {
@@ -51,20 +50,20 @@ export function Diary() {
 
   const totalBreakfastCalories = useMemo(() => {
     return getTotalCalories('breakfast')
-  }, [user])
+  }, [selectedDayDiary])
   const totalLunchCalories = useMemo(() => {
     return getTotalCalories('lunch')
-  }, [user])
+  }, [selectedDayDiary])
   const totalDinnerCalories = useMemo(() => {
     return getTotalCalories('dinner')
-  }, [user])
+  }, [selectedDayDiary])
 
   useEffect(() => {
     const handleGetDiary = async () => {
       try {
         const diary = await dayService.query(diaryFilter)
         console.log(diary)
-        setRetrievedLogs(diary.logs)
+
         setSelectedDiaryDay(diary)
       } catch (error) {
         console.log(error)
@@ -83,8 +82,8 @@ export function Diary() {
   }, [selectedDay, user])
 
   function getTotalCalories(meal: string) {
-    return user
-      ? user?.loggedToday.logs
+    return selectedDayDiary?.logs?.length
+      ? selectedDayDiary.logs
           .filter((log) => log.meal.toLocaleLowerCase() === meal)
           .reduce((acc, log) => acc + log.macros.calories, 0)
       : 0

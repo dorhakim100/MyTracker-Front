@@ -119,7 +119,7 @@ export function optimisticUpdateUser(userToUpdate: User) {
   })
 }
 
-export function setUserToEdit(userToEdit: User) {
+export function setUserToEdit(userToEdit: User | null) {
   store.dispatch({
     type: SET_USER_TO_EDIT,
     userToEdit,
@@ -155,6 +155,8 @@ export async function logout() {
       type: SET_USER,
       user: null,
     })
+    setSelectedDiaryDay(null)
+    setUserToEdit(null)
 
     // socketService.logout()
   } catch (err) {
