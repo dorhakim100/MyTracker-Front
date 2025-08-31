@@ -208,15 +208,11 @@ export function ItemDetails() {
         calories: selectedDay.calories + savedLog.macros.calories,
       }
 
-      console.log('selectedDay', selectedDay)
-
       const todayId = user?.loggedToday._id
 
       let newToday
 
       if (selectedDay?._id === todayId) {
-        console.log('same')
-
         newToday = {
           ...user.loggedToday,
           logs: [...user.loggedToday.logs, savedLog],
@@ -234,7 +230,6 @@ export function ItemDetails() {
 
       setSelectedDiaryDay(dayToSave as LoggedToday)
 
-      // await updateUser(newUser)
       showSuccessMsg(messages.success.addedToMeal)
     } catch {
       showErrorMsg(messages.error.favorite)
@@ -246,7 +241,7 @@ export function ItemDetails() {
     try {
       if (!editMealItem) return showErrorMsg(messages.error.editMeal)
 
-      const newMeal = {
+      const newLog = {
         ...editMealItem,
         macros: editItem.totalMacros,
         meal: editItem.meal,
@@ -254,9 +249,9 @@ export function ItemDetails() {
         numberOfServings: editItem.numberOfServings,
       }
 
-      delete newMeal.image
-      delete newMeal.name
-      delete newMeal.searchId
+      delete newLog.image
+      delete newLog.name
+      delete newLog.searchId
 
       const userLogs = selectedDay?.logs
 
@@ -267,16 +262,13 @@ export function ItemDetails() {
       if (logIndex === -1) return showErrorMsg(messages.error.editMeal)
 
       const newLogs = [...userLogs]
-      console.log('newLogs', newLogs)
-      newLogs[logIndex] = newMeal
+      newLogs[logIndex] = newLog
 
       const newCalories = newLogs.reduce(
         (acc, log) => acc + log.macros.calories,
         0
       )
 
-      let savedDay
-      console.log('selectedDay', selectedDay)
       if (selectedDay?._id === user?.loggedToday._id) {
         const newUser = {
           ...user,
@@ -289,26 +281,20 @@ export function ItemDetails() {
 
         optimisticUpdateUser(newUser as User)
         setSelectedMeal(null)
-        const savedLog = await logService.save(newMeal)
-        console.log(savedLog)
+        await logService.save(newLog)
 
         setSelectedDiaryDay(newUser.loggedToday as LoggedToday)
-        savedDay = await dayService.save(newUser.loggedToday as LoggedToday)
+        await dayService.save(newUser.loggedToday as LoggedToday)
       } else {
-        console.log('selectedDay', selectedDay)
         const newSelectedDay = {
           ...selectedDay,
           logs: newLogs,
           calories: newCalories,
         }
-        await logService.save(newMeal)
+        await logService.save(newLog)
         setSelectedDiaryDay(newSelectedDay as LoggedToday)
-        savedDay = await dayService.save(newSelectedDay as LoggedToday)
+        await dayService.save(newSelectedDay as LoggedToday)
       }
-
-      // await updateUser(newUser)
-
-      console.log(savedDay)
 
       showSuccessMsg(messages.success.editMeal)
     } catch (err) {
