@@ -178,3 +178,15 @@ button {
   outline: none !important;
   box-shadow: none !important;
 }
+
+.MuiButtonBase-root:not(.MuiIconButton-root):not(
+    .MuiBottomNavigationAction-root
+  ):not(.MuiAccordionSummary-root):not(.MuiListItemButton-root):not(
+    .MuiToggleButtonGroup-grouped
+  ) {
+  background-color: $primary-color !important;
+}
+
+.MuiToolbar-root {
+  background-color: $primary-color;
+}
