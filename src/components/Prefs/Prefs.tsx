@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useSelector } from 'react-redux'
 
 import {
@@ -26,10 +26,6 @@ export function Prefs() {
     (storeState: RootState) => storeState.systemModule.isPrefs
   )
 
-  const isHeader = useSelector(
-    (storeState: RootState) => storeState.systemModule.isHeader
-  )
-
   const [darkMode, setDarkMode] = useState(prefs.isDarkMode)
 
   function onSetPrefs(type: string) {
@@ -42,14 +38,14 @@ export function Prefs() {
       //   // closePrefsModal()
       //   return
 
-      case 'darkMode':
-        const newMode = !prefs.isDarkMode
+      case 'darkMode': {
+        const newMode = !darkMode
         newPrefs = { ...prefs, isDarkMode: newMode }
         setDarkMode(newMode)
         setPrefs(newPrefs)
         // closePrefsModal()
         return
-
+      }
       default:
         break
     }
@@ -58,10 +54,7 @@ export function Prefs() {
   const closePrefsModal = () => setIsPrefs(false)
   return (
     <>
-      <ShadowOverlay
-        isVisble={isHeader || isPrefs}
-        handleClose={onClosePrefsHeader}
-      />
+      <ShadowOverlay isVisble={isPrefs} handleClose={onClosePrefsHeader} />
       <div
         className={`prefs-panel ${isPrefs ? 'visible' : ''} ${
           prefs.isDarkMode ? 'dark-mode' : ''
