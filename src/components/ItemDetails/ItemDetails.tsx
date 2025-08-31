@@ -250,7 +250,10 @@ export function ItemDetails() {
         ...editMealItem,
         macros: editItem.totalMacros,
         meal: editItem.meal,
+        servingSize: editItem.servingSize,
+        numberOfServings: editItem.numberOfServings,
       }
+
       delete newMeal.image
       delete newMeal.name
       delete newMeal.searchId
@@ -298,6 +301,7 @@ export function ItemDetails() {
           logs: newLogs,
           calories: newCalories,
         }
+        await logService.save(newMeal)
         setSelectedDiaryDay(newSelectedDay as LoggedToday)
         savedDay = await dayService.save(newSelectedDay as LoggedToday)
       }
