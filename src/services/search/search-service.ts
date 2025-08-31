@@ -301,9 +301,11 @@ function _getMacrosFromUSDA(food: FDCFood) {
   const carbsEntry = match('Carbohydrate, by difference')
   const fatEntry = match('Total lipid (fat)')
 
-  const protein = (proteinEntry?.value ?? proteinEntry?.amount ?? 0) as number
-  const carbs = (carbsEntry?.value ?? carbsEntry?.amount ?? 0) as number
-  const fats = (fatEntry?.value ?? fatEntry?.amount ?? 0) as number
+  const protein = Math.abs(
+    proteinEntry?.value ?? proteinEntry?.amount ?? 0
+  ) as number
+  const carbs = Math.abs(carbsEntry?.value ?? carbsEntry?.amount ?? 0) as number
+  const fats = Math.abs(fatEntry?.value ?? fatEntry?.amount ?? 0) as number
 
   const calories = calculateCaloriesFromMacros({
     protein,
