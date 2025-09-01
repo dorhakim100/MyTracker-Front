@@ -1,5 +1,3 @@
-import { Prefs } from '../../types/system/Prefs'
-
 const KEY = 'my-tracker-prefs'
 
 export const systemService = {

@@ -2,8 +2,6 @@ import { storageService } from '../async-storage.service'
 // import { itemService } from '../item/item.service'
 import { User } from '../../types/user/User'
 import { UserCred } from '../../types/userCred/UserCred'
-import { UserFilter } from '../../types/userFilter/UserFilter'
-import { makeId } from '../util.service'
 
 const STORAGE_KEY_LOGGEDIN_USER = 'user'
 const STORAGE_KEY_REMEMBERED_USER = 'rememberedUser'
@@ -23,7 +21,7 @@ export const userService = {
   getRememberedUser,
 }
 
-async function getUsers(filter: UserFilter) {
+async function getUsers() {
   try {
     const users = await storageService.query('user')
     return users.map((user: User) => {
@@ -235,33 +233,33 @@ function getDefaultLoggedToday() {
   }
 }
 
-function getRandomLoggedToday() {
-  return {
-    date: new Date().toISOString(),
-    calories: 1772,
-    protein: 145,
-    carbs: 190,
-    fat: 48,
-  }
-}
+// function getRandomLoggedToday() {
+//   return {
+//     date: new Date().toISOString(),
+//     calories: 1772,
+//     protein: 145,
+//     carbs: 190,
+//     fat: 48,
+//   }
+// }
 
 // To quickly create an admin user, uncomment the next line
 // _createAdmin()
-async function _createAdmin() {
-  try {
-    const userCred = {
-      email: 'admin@gmail.com',
+// async function _createAdmin() {
+//   try {
+//     const userCred = {
+//       email: 'admin@gmail.com',
 
-      password: 'admin123',
-      fullname: 'Dor Hakim',
-      goals: [],
-      imgUrl:
-        'https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_1280.png',
-    }
+//       password: 'admin123',
+//       fullname: 'Dor Hakim',
+//       goals: [],
+//       imgUrl:
+//         'https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_1280.png',
+//     }
 
-    const newUser = await storageService.post('user', userCred)
-  } catch (err) {
-    // console.log(err)
-    throw err
-  }
-}
+//     const newUser = await storageService.post('user', userCred)
+//   } catch (err) {
+//     // console.log(err)
+//     throw err
+//   }
+// }

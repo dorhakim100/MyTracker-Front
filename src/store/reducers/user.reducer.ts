@@ -1,4 +1,3 @@
-import { userService } from '../../services/user/user.service'
 import { LoggedToday } from '../../types/loggedToday/LoggedToday'
 
 import { User } from '../../types/user/User'

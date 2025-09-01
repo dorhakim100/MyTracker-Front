@@ -1,5 +1,3 @@
-import React from 'react'
-
 interface ShadowOverlayProps {
   isVisble: boolean
   handleClose: () => void

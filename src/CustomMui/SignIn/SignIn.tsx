@@ -185,7 +185,7 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
 
   const [isSignup, setIsSignup] = React.useState(false)
 
-  const [logoSrc, setLogoSrc] = useState(logo)
+  // const [logoSrc, setLogoSrc] = useState(logo)
 
   const handleSignup = () => {
     setIsSignup(!isSignup)
@@ -194,8 +194,8 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
   useEffect(() => {
     if (prefs.isDarkMode !== undefined) {
       setMode(prefs.isDarkMode ? 'dark' : 'light')
-      setLogoSrc(prefs.isDarkMode ? logoDark : logo)
-      // console.log(mode)
+      // setLogoSrc(prefs.isDarkMode ? logoDark : logo)
+      console.log(mode)
     }
   }, [prefs.isDarkMode])
 
