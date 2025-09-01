@@ -183,10 +183,22 @@ button {
     .MuiBottomNavigationAction-root
   ):not(.MuiAccordionSummary-root):not(.MuiListItemButton-root):not(
     .MuiToggleButtonGroup-grouped
-  ) {
+  ):not(.MuiCheckbox-root):not(.MuiMenuItem-root) {
   background-color: $primary-color !important;
+}
+.MuiCheckbox-root {
+  background-color: transparent;
+  &.Mui-checked {
+    background-color: $primary-color !important;
+  }
 }
 
 .MuiToolbar-root {
   background-color: $primary-color;
+}
+
+input,
+textarea,
+select {
+  font-size: 16px; /* prevents zoom on iOS */
 }

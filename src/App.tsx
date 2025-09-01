@@ -40,6 +40,28 @@ function App() {
 
   useEffect(() => {
     smoothScroll()
+
+    const manifest = document.querySelector<HTMLLinkElement>('#pwa-manifest')
+    if (!manifest) return
+
+    switch (location.pathname) {
+      case '/diary':
+        manifest.href = '/manifest-diary.json'
+        break
+      case '/progress':
+        manifest.href = '/manifest-progress.json'
+        break
+      case '/signin':
+        console.log(location.pathname)
+        manifest.href = '/manifest-signin.json'
+        break
+      case '/user':
+        manifest.href = '/manifest-user.json'
+        break
+      default:
+        manifest.href = '/manifest.json'
+        break
+    }
   }, [location.pathname])
 
   useEffect(() => {
@@ -48,7 +70,7 @@ function App() {
 
   return (
     <>
-      <AppHeader routes={filteredRoutes} />
+      <AppHeader />
       <UserMsg />
       <Prefs />
       {/* <PrefsButton /> */}
