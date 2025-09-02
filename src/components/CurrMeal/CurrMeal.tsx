@@ -29,11 +29,15 @@ export function CurrMeal() {
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
 
+  const user = useSelector(
+    (stateSelector: RootState) => stateSelector.userModule.user
+  )
+
   const period = useMemo(() => getCurrentMealPeriod(), [])
 
   useEffect(() => {
     loadItems()
-  }, [])
+  }, [user])
 
   return (
     <Card className={`card curr-meal ${prefs.isDarkMode ? 'dark-mode' : ''}`}>

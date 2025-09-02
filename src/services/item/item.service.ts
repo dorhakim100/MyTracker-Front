@@ -1,5 +1,6 @@
-import { storageService } from '../async-storage.service'
+// import { storageService } from '../async-storage.service'
 import { makeId } from '../util.service'
+import { indexedDbService } from '../indexeddb.service'
 
 import { ItemFilter } from '../../types/itemFilter/ItemFilter'
 import { Item } from '../../types/item/Item'
@@ -21,7 +22,7 @@ export const itemService = {
 async function query(): Promise<Item[]> {
   // filterBy: ItemFilter = { txt: '', sortDir: 0, pageIdx: 0, isAll: false }
   try {
-    const items: Item[] = await storageService.query(STORAGE_KEY, 0)
+    const items: Item[] = await indexedDbService.query(STORAGE_KEY)
     // const { txt, sortDir, pageIdx, isAll } = filterBy
 
     // if (isAll) return items
@@ -48,7 +49,7 @@ async function query(): Promise<Item[]> {
 
 function getById(itemId: string): Promise<Item> {
   try {
-    return storageService.get(STORAGE_KEY, itemId)
+    return indexedDbService.get(STORAGE_KEY, itemId)
   } catch (error) {
     throw error
   }
@@ -56,7 +57,7 @@ function getById(itemId: string): Promise<Item> {
 
 async function remove(itemId: string) {
   try {
-    await storageService.remove(STORAGE_KEY, itemId)
+    await indexedDbService.remove(STORAGE_KEY, itemId)
   } catch (error) {
     throw error
   }

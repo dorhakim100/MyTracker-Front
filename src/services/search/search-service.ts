@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { storageService } from '../async-storage.service'
+import { indexedDbService } from '../indexeddb.service'
 import { SearchFilter } from '../../types/searchFilter/SearchFilter'
 import { searchTypes } from '../../assets/config/search-types'
 import { calculateCaloriesFromMacros } from '../macros/macros.service'
@@ -36,14 +37,20 @@ export const searchService = {
 async function search(filter: SearchFilter) {
   try {
     const { txt, source, favoriteItems } = filter
-    let res
+    let res = []
 
-    if (!txt && favoriteItems) {
-      const cached = await storageService.query(FAVORITE_CACHE, 0)
+    const { food, product } = favoriteItems || { food: [], product: [] }
+    const isFavoriteItems = food.length > 0 || product.length > 0
+    console.log(txt)
+    console.log(favoriteItems)
+
+    if (!txt && isFavoriteItems) {
+      const cached = await indexedDbService.query(FAVORITE_CACHE, 0)
+      console.log('cached', cached)
       if (cached && cached.length) return cached
 
-      const favoriteFoods = favoriteItems.food || []
-      const favoriteProducts = favoriteItems.product || []
+      const favoriteFoods = food || []
+      const favoriteProducts = product || []
 
       const promises = [
         getFoodsByIds(favoriteFoods),
@@ -60,6 +67,9 @@ async function search(filter: SearchFilter) {
     }
 
     const safeTxt = txt ?? ''
+
+    console.log(safeTxt)
+    console.log(source)
 
     switch (source) {
       case searchTypes.openFoodFacts:
@@ -96,26 +106,26 @@ async function searchById(id: string, source: string) {
 }
 
 async function addToCache(item: Item, key: string) {
-  const cached = await storageService.query(key, 0)
-  const isInCache = cached.find((i: Item) => i.searchId === item.searchId)
-    ? true
-    : false
+  console.log('addToCache', item, key)
+  const cached = await indexedDbService.query(key)
+  console.log('cached', cached)
+
+  const isInCache = cached.find((i: any) => i.searchId === item.searchId)
+
   if (!isInCache) {
-    await storageService.post(key, item, true)
-  } else {
-    // throw new Error('Item already in cache')
+    await indexedDbService.post(key, item)
   }
 }
 
 async function removeFromCache(item: Item, key: string) {
   if (!item._id) throw new Error('Item not found in cache')
-  const cached = await storageService.query(key, 0)
+  const cached = await indexedDbService.query(key, 0)
 
   const isInCache = cached.find((i: Item) => i.searchId === item.searchId)
     ? true
     : false
   if (isInCache) {
-    await storageService.remove(key, item._id, true)
+    await indexedDbService.remove(key, item._id)
   } else throw new Error('Item not found in cache')
 }
 
