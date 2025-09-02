@@ -19,6 +19,7 @@ import { Item } from '../../types/item/Item'
 import { cache } from '../../assets/config/cache'
 import { Log } from '../../types/log/Log'
 import { LoggedToday } from '../../types/loggedToday/LoggedToday'
+import { dayService } from '../../services/day/day.service'
 
 const { FAVORITE_CACHE } = cache
 
@@ -254,4 +255,31 @@ export function setSelectedDiaryDay(selectedDay: LoggedToday | null) {
     type: SET_SELECTED_DAY,
     selectedDay,
   })
+}
+
+export async function handleDiaryDayChange(dateToCheck: string, user: User) {
+  try {
+    const filter = {
+      date: dateToCheck,
+      userId: user._id,
+    }
+
+    if (!user) return
+
+    const diaryDay = user?.loggedToday?.date
+
+    if (diaryDay === dateToCheck) return
+
+    const diaryDayChange = await dayService.query(filter)
+
+    const newUser = {
+      ...user,
+      loggedToday: diaryDayChange,
+    }
+
+    setSelectedDiaryDay(diaryDayChange)
+    optimisticUpdateUser(newUser)
+  } catch (err) {
+    throw err
+  }
 }

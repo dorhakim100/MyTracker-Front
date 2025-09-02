@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { storageService } from '../async-storage.service'
+//import { storageService } from '../async-storage.service'
 import { indexedDbService } from '../indexeddb.service'
 import { SearchFilter } from '../../types/searchFilter/SearchFilter'
 import { searchTypes } from '../../assets/config/search-types'
@@ -110,7 +110,7 @@ async function addToCache(item: Item, key: string) {
   const cached = await indexedDbService.query(key)
   console.log('cached', cached)
 
-  const isInCache = cached.find((i: any) => i.searchId === item.searchId)
+  const isInCache = cached.find((i: Item) => i.searchId === item.searchId)
 
   if (!isInCache) {
     await indexedDbService.post(key, item)
@@ -121,9 +121,8 @@ async function removeFromCache(item: Item, key: string) {
   if (!item._id) throw new Error('Item not found in cache')
   const cached = await indexedDbService.query(key, 0)
 
-  const isInCache = cached.find((i: Item) => i.searchId === item.searchId)
-    ? true
-    : false
+  const isInCache = cached.find((i: any) => i.searchId === item.searchId)
+
   if (isInCache) {
     await indexedDbService.remove(key, item._id)
   } else throw new Error('Item not found in cache')

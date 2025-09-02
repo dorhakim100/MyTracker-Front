@@ -41,9 +41,16 @@ function App() {
   useEffect(() => {
     smoothScroll()
 
+    _handleManifest()
+  }, [location.pathname])
+
+  useEffect(() => {
+    setRemembered()
+  }, [])
+
+  function _handleManifest() {
     const manifest = document.querySelector<HTMLLinkElement>('#pwa-manifest')
     if (!manifest) return
-
     switch (location.pathname) {
       case '/diary':
         manifest.href = '/manifest-diary.json'
@@ -52,7 +59,6 @@ function App() {
         manifest.href = '/manifest-progress.json'
         break
       case '/signin':
-        console.log(location.pathname)
         manifest.href = '/manifest-signin.json'
         break
       case '/user':
@@ -62,11 +68,7 @@ function App() {
         manifest.href = '/manifest.json'
         break
     }
-  }, [location.pathname])
-
-  useEffect(() => {
-    setRemembered()
-  }, [])
+  }
 
   return (
     <>
