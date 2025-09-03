@@ -1,7 +1,10 @@
 import { httpService } from '../http.service'
+import { indexedDbService } from '../indexeddb.service'
 
 const STORAGE_KEY_LOGGEDIN_USER = 'loggedinUser'
 const STORAGE_KEY_REMEMBERED_USER = 'rememberedUser'
+const REMEMBER_STORE = 'remember'
+const REMEMBER_RECORD_ID = STORAGE_KEY_REMEMBERED_USER
 
 import { User } from '../../types/user/User'
 import { UserCred } from '../../types/userCred/UserCred'
@@ -128,7 +131,9 @@ async function signup(userCred: UserCred) {
 
 async function logout() {
   sessionStorage.removeItem(STORAGE_KEY_LOGGEDIN_USER)
-  localStorage.removeItem(STORAGE_KEY_REMEMBERED_USER)
+  try {
+    await indexedDbService.remove(REMEMBER_STORE, REMEMBER_RECORD_ID)
+  } catch {}
   try {
     return await httpService.post('auth/logout', null)
   } catch (err) {
@@ -207,18 +212,35 @@ function getDefaultFilter() {
 // }
 async function getRememberedUser() {
   try {
-    const rememberedId = localStorage.getItem(STORAGE_KEY_REMEMBERED_USER)
+    let rememberedId: string | null = null
+
+    try {
+      const rec = await indexedDbService.get<{ _id?: string; userId?: string }>(
+        REMEMBER_STORE,
+        REMEMBER_RECORD_ID
+      )
+      if (rec && rec.userId) rememberedId = rec.userId
+    } catch {}
+
+    if (!rememberedId) {
+      const ls = localStorage.getItem(STORAGE_KEY_REMEMBERED_USER)
+      if (ls) {
+        rememberedId = ls
+        try {
+          await indexedDbService.put(REMEMBER_STORE, {
+            _id: REMEMBER_RECORD_ID,
+            userId: rememberedId,
+          })
+          localStorage.removeItem(STORAGE_KEY_REMEMBERED_USER)
+        } catch {}
+      }
+    }
 
     if (!rememberedId) return
 
-    if (rememberedId) {
-      const user = await getRememberedById(rememberedId)
-
-      if (user) return saveLoggedinUser(user)
-    } else {
-      throw new Error('No userId found in prefs')
-      return null
-    }
+    const user = await getRememberedById(rememberedId)
+    if (user) return saveLoggedinUser(user)
+    return null
   } catch (err) {
     // console.log(err)
     throw err
@@ -240,9 +262,12 @@ async function getRememberedUser() {
 //   }
 // }
 
-function saveRememberedUser(user: User) {
+async function saveRememberedUser(user: User) {
   try {
-    localStorage.setItem(STORAGE_KEY_REMEMBERED_USER, user._id)
+    await indexedDbService.put(REMEMBER_STORE, {
+      _id: REMEMBER_RECORD_ID,
+      userId: user._id,
+    })
   } catch (err) {
     // console.log(err)
     throw err
