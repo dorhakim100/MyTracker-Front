@@ -24,6 +24,15 @@ export function setPrefs(prefsToSet: Prefs) {
   systemService.setPrefs(prefs)
   store.dispatch({ type: SET_PREFS, prefs })
 }
+
+export async function loadPrefs() {
+  try {
+    const prefs = await systemService.getPrefs()
+    store.dispatch({ type: SET_PREFS, prefs })
+  } catch {
+    // ignore
+  }
+}
 export function setIsPrefs(stateToSet: boolean) {
   store.dispatch({ type: SET_IS_PREFS, isPrefs: stateToSet })
 }

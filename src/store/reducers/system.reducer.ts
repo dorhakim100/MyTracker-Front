@@ -1,6 +1,7 @@
 // import { userService } from '../../services/user/user.service'
-import { systemService } from '../../services/system/system.service.ts'
+
 import { Prefs } from '../../types/system/Prefs.ts'
+import { getDefaultsPrefs } from '../../services/system/system.service.ts'
 
 export const LOADING_START = 'LOADING_START'
 export const LOADING_DONE = 'LOADING_DONE'
@@ -26,7 +27,7 @@ export interface SystemState {
 
 const initialState: SystemState = {
   isLoading: false,
-  prefs: systemService.getPrefs(),
+  prefs: getDefaultsPrefs(),
   isAddModal: false,
   isAccessibility: false,
   isPrefs: false,
@@ -35,6 +36,7 @@ const initialState: SystemState = {
   modalMessage: '',
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function systemReducer(state = initialState, action: any = {}) {
   switch (action.type) {
     case LOADING_START:

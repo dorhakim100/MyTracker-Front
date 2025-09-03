@@ -16,6 +16,7 @@ import { RootState } from './store/store.ts'
 
 import './App.css'
 import { setRemembered } from './store/actions/user.actions.ts'
+import { loadPrefs } from './store/actions/system.actions.ts'
 
 function App() {
   const prefs = useSelector(
@@ -46,6 +47,10 @@ function App() {
 
   useEffect(() => {
     setRemembered()
+  }, [])
+
+  useEffect(() => {
+    loadPrefs()
   }, [])
 
   function _handleManifest() {

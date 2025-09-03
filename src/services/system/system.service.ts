@@ -1,26 +1,73 @@
-const KEY = 'my-tracker-prefs'
+import { indexedDbService } from '../indexeddb.service'
+import type { Prefs } from '../../types/system/Prefs'
+
+const LS_KEY = 'my-tracker-prefs'
+const STORE_NAME = 'prefs'
+const RECORD_ID = 'prefs'
 
 export const systemService = {
   getPrefs,
   setPrefs,
 }
 
-export function getPrefs() {
-  const entityType = KEY
-  let prefs
-  if (!localStorage.getItem(entityType)) {
-    prefs = { isDarkMode: false }
-    localStorage.setItem(entityType, JSON.stringify(prefs))
-  } else {
-    const strStorage = localStorage.getItem(entityType)
-    if (!strStorage) return { isDarkMode: false }
-    prefs = JSON.parse(strStorage)
+export async function getPrefs(): Promise<Prefs> {
+  try {
+    const entity = await indexedDbService.get<Prefs & { _id?: string }>(
+      STORE_NAME,
+      RECORD_ID
+    )
+    if (
+      entity &&
+      (entity.isDarkMode !== undefined || entity.isEnglish !== undefined)
+    ) {
+      return {
+        isDarkMode: !!entity.isDarkMode,
+        isEnglish: entity.isEnglish ?? false,
+      }
+    }
+  } catch {
+    // ignore and try migration or defaults
   }
 
-  return prefs
+  try {
+    const str = localStorage.getItem(LS_KEY)
+    if (str) {
+      const parsed = JSON.parse(str)
+      const migrated: Prefs = {
+        isDarkMode: !!parsed.isDarkMode,
+        isEnglish: parsed.isEnglish ?? false,
+      }
+      await indexedDbService.put(STORE_NAME, { _id: RECORD_ID, ...migrated })
+      localStorage.removeItem(LS_KEY)
+      return migrated
+    }
+  } catch {
+    // ignore
+  }
+
+  try {
+    await indexedDbService.put(STORE_NAME, {
+      _id: RECORD_ID,
+      ...getDefaultsPrefs(),
+    })
+  } catch {
+    // ignore
+  }
+  return getDefaultsPrefs()
 }
 
-export function setPrefs(prefs: { isDarkMode: boolean; user?: string | null }) {
-  const entityType = KEY
-  localStorage.setItem(entityType, JSON.stringify(prefs))
+export async function setPrefs(prefs: Prefs): Promise<void> {
+  const toSave: Prefs & { _id: string } = {
+    _id: RECORD_ID,
+    isDarkMode: !!prefs.isDarkMode,
+    isEnglish: !!prefs.isEnglish,
+  }
+  await indexedDbService.put(STORE_NAME, toSave)
+}
+
+export function getDefaultsPrefs(): Prefs {
+  return {
+    isDarkMode: false,
+    isEnglish: false,
+  }
 }
