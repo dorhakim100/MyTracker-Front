@@ -12,6 +12,8 @@ import type { OFFProduct } from '../../types/openFoodFacts/OFFProduct'
 import type { FDCFood } from '../../types/usda/FDCFood'
 import type { FDCNutrient } from '../../types/usda/FDCNutrient'
 import { cache } from '../../assets/config/cache'
+import { Log } from '../../types/log/Log'
+import { sourceTypes } from '../../assets/config/source.types'
 const {
   OPEN_FOOD_FACTS_API_URL,
   OPEN_FOOD_FACTS_API_URL_BY_ID,
@@ -21,11 +23,12 @@ const {
   DEFAULT_IMAGE,
 } = searchUrls
 const { PAGE, SIZE, FIELDS, LC, CC } = openFoodFactsQueryingParams
-const { FAVORITE_CACHE } = cache
+const { FAVORITE_CACHE, ITEMS_CACHE } = cache
 const USDA_API_KEY = import.meta.env.VITE_USDA_API_KEY
 
 export const searchService = {
   search,
+  searchBulkIds,
   searchById,
   getProductsByIds,
   getFoodsByIds,
@@ -34,6 +37,10 @@ export const searchService = {
   removeFromCache,
 }
 
+await Promise.all(
+  Object.values(cache).map((storeName) => indexedDbService.clear(storeName))
+)
+
 async function search(filter: SearchFilter) {
   try {
     const { txt, source, favoriteItems } = filter
@@ -41,12 +48,10 @@ async function search(filter: SearchFilter) {
 
     const { food, product } = favoriteItems || { food: [], product: [] }
     const isFavoriteItems = food.length > 0 || product.length > 0
-    console.log(txt)
-    console.log(favoriteItems)
 
     if (!txt && isFavoriteItems) {
-      const cached = await indexedDbService.query(FAVORITE_CACHE, 0)
-      console.log('cached', cached)
+      const cached = await indexedDbService.query<Item>(FAVORITE_CACHE, 0)
+
       if (cached && cached.length) return cached
 
       const favoriteFoods = food || []
@@ -59,7 +64,7 @@ async function search(filter: SearchFilter) {
 
       const [foods, products] = await Promise.all(promises)
       res = [...foods, ...products]
-      // console.log('res', res)
+
       res.forEach((item) => {
         addToCache(item as Item, FAVORITE_CACHE)
       })
@@ -67,9 +72,6 @@ async function search(filter: SearchFilter) {
     }
 
     const safeTxt = txt ?? ''
-
-    console.log(safeTxt)
-    console.log(source)
 
     switch (source) {
       case searchTypes.openFoodFacts:
@@ -83,6 +85,31 @@ async function search(filter: SearchFilter) {
     return res
   } catch (err) {
     console.error(err)
+    throw err
+  }
+}
+
+async function searchBulkIds(logs: Log[]) {
+  try {
+    const productsIds = logs
+      .filter((log) => log.source === sourceTypes.product)
+      .map((log) => log.itemId)
+    const foodsIds = logs
+      .filter((log) => log.source === sourceTypes.food)
+      .map((log) => log.itemId)
+
+    if (!productsIds.length && !foodsIds.length) return []
+
+    const promises = [getProductsByIds(productsIds), getFoodsByIds(foodsIds)]
+
+    const [products, foods] = await Promise.all(promises)
+    const res = [...products, ...foods]
+
+    res.forEach(async (item) => {
+      await addToCache(item as Item, ITEMS_CACHE)
+    })
+    return res
+  } catch (err) {
     throw err
   }
 }
@@ -106,12 +133,10 @@ async function searchById(id: string, source: string) {
 }
 
 async function addToCache(item: Item, key: string) {
-  console.log('addToCache', item, key)
-  const cached = await indexedDbService.query(key)
-  console.log('cached', cached)
+  const cached = await indexedDbService.query<Item>(key)
 
   const isInCache = cached.find((i: Item) => i.searchId === item.searchId)
-
+  console.log(`isInCache ${item.searchId}:`, isInCache)
   if (!isInCache) {
     await indexedDbService.post(key, item)
   }
@@ -119,9 +144,9 @@ async function addToCache(item: Item, key: string) {
 
 async function removeFromCache(item: Item, key: string) {
   if (!item._id) throw new Error('Item not found in cache')
-  const cached = await indexedDbService.query(key, 0)
+  const cached = await indexedDbService.query<Item>(key, 0)
 
-  const isInCache = cached.find((i: any) => i.searchId === item.searchId)
+  const isInCache = cached.find((i: Item) => i.searchId === item.searchId)
 
   if (isInCache) {
     await indexedDbService.remove(key, item._id)

@@ -202,3 +202,15 @@ textarea,
 select {
   font-size: 16px; /* prevents zoom on iOS */
 }
+
+.search-item-container.skeleton {
+  padding: 0.5rem 1rem;
+  display: grid;
+  grid-template-columns: 50px 1fr 40px;
+  grid-template-rows: repeat(2, 20px);
+  gap: 1em;
+
+  .MuiSkeleton-root {
+    height: 20px;
+  }
+}

@@ -30,6 +30,9 @@ import { handleFavorite } from '../../store/actions/user.actions'
 import { SearchFilter } from '../../types/searchFilter/SearchFilter'
 import { Typography } from '@mui/material'
 import { debounce } from '../../services/util.service'
+import { Skeleton } from '@mui/material'
+
+const SKELETON_NUMBER = 8
 
 export function ItemSearch() {
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
@@ -123,7 +126,29 @@ export function ItemSearch() {
   }
 
   const renderList = () => {
-    if (!results.length)
+    const hasFavorite =
+      user?.favoriteItems?.food.length === 0 ||
+      user?.favoriteItems?.product.length === 0
+    console.log('hasFavorite', hasFavorite)
+
+    if (true || (!results.length && hasFavorite)) {
+      return (
+        <Box className='results'>
+          {Array.from({ length: SKELETON_NUMBER }).map((_, index) => (
+            <div
+              className='search-item-container skeleton'
+              key={`${index}-skeleton-search-item`}
+            >
+              <Skeleton variant='circular' width={50} height={50} />
+              <div className='text-container'>
+                <Skeleton variant='text' width='100%' height={20} />
+                <Skeleton variant='text' width='25%' height={20} />
+              </div>
+            </div>
+          ))}
+        </Box>
+      )
+    } else if (!results.length && !hasFavorite) {
       return (
         <Box className='results'>
           <Typography variant='h6' className='no-results'>
@@ -131,6 +156,7 @@ export function ItemSearch() {
           </Typography>
         </Box>
       )
+    }
 
     return (
       <Box className='results'>

@@ -24,13 +24,19 @@ export function Dashboard() {
   useEffect(() => {
     if (!user) return
 
-    const interval = setInterval(() => {
-      const dateToCheck = getDateFromISO(new Date().toISOString())
-
-      handleDiaryDayChange(dateToCheck, user)
-    }, CHECK_INTERVAL)
+    const interval = setInterval(checkDiaryDayChange, CHECK_INTERVAL)
     return () => clearInterval(interval)
   }, [user])
+
+  useEffect(() => {
+    checkDiaryDayChange()
+  }, [user])
+
+  function checkDiaryDayChange() {
+    if (!user) return
+    const dateToCheck = getDateFromISO(new Date().toISOString())
+    handleDiaryDayChange(dateToCheck, user)
+  }
 
   return (
     <div className='page-container dashboard-container'>

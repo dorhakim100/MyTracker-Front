@@ -57,9 +57,6 @@ export function StatsCarousel() {
   }, [user])
 
   useEffect(() => {
-    console.log('changed')
-    console.log(user)
-
     const caloriesToSet = user?.loggedToday?.calories
     if (!caloriesToSet && caloriesToSet !== 0) return
     const newCalories = caloriesToSet

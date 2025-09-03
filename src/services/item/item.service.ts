@@ -20,26 +20,8 @@ export const itemService = {
 }
 
 async function query(): Promise<Item[]> {
-  // filterBy: ItemFilter = { txt: '', sortDir: 0, pageIdx: 0, isAll: false }
   try {
     const items: Item[] = await indexedDbService.query(STORAGE_KEY)
-    // const { txt, sortDir, pageIdx, isAll } = filterBy
-
-    // if (isAll) return items
-
-    // if (txt) {
-    //   const regex = new RegExp(txt, 'i')
-    //   items = items.filter((item: Item) => regex.test(item.name))
-    // }
-
-    // if (sortDir) {
-    //   items.sort((a: Item, b: Item) => a.name.localeCompare(b.name) * sortDir)
-    // }
-
-    // if (pageIdx !== undefined) {
-    //   const startIdx = pageIdx * PAGE_SIZE
-    //   items = items.slice(startIdx, startIdx + PAGE_SIZE)
-    // }
 
     return items
   } catch (err) {

@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { Log } from '../../types/log/Log'
@@ -20,6 +20,7 @@ import {
   setItem,
   setEditMealItem,
   setSelectedMeal,
+  loadItems,
 } from '../../store/actions/item.actions'
 import { SwipeAction } from 'react-swipeable-list'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -30,6 +31,8 @@ import { capitalizeFirstLetter } from '../../services/util.service'
 import { logService } from '../../services/log/log.service'
 import { LoggedToday } from '../../types/loggedToday/LoggedToday'
 import { dayService } from '../../services/day/day.service'
+
+import { Skeleton } from '@mui/material'
 
 export function LoggedList({
   mealPeriod,
@@ -58,8 +61,26 @@ export function LoggedList({
     return user?.loggedToday?.logs
   }, [user, mealPeriod, selectedDay])
 
+  useEffect(() => {
+    handleLoadItems()
+  }, [selectedDay])
+
   function _filterLogsByMealPeriod(log: Log, mealPeriod: string) {
     return log.meal.toLocaleLowerCase() === mealPeriod
+  }
+
+  async function handleLoadItems() {
+    try {
+      loadItems() // optimistic update from cache, no need to await
+      if (!logs || !logs.length) return
+      // console.log('logs', logs)
+
+      await searchService.searchBulkIds(logs) // actual update from api
+      await loadItems() // actual update from api
+    } catch (err) {
+      console.error(err)
+      showErrorMsg(messages.error.getDiary)
+    }
   }
 
   if (!user || !logs?.length)
@@ -90,12 +111,18 @@ export function LoggedList({
 
   const renderPrimaryText = (item: Log) => {
     const cachedItem = cachedItems.find((i) => i.searchId === item.itemId)
-    return cachedItem?.name
+    return (
+      cachedItem?.name || <Skeleton variant='text' width='100%' height={20} />
+    )
   }
 
   const renderSecondaryText = (item: Log) => {
-    // const cachedItem = cachedItems.find((i) => i.searchId === item.itemId)
-    return `${item.macros?.calories} kcal`
+    const cachedItem = cachedItems.find((i) => i.searchId === item.itemId)
+    return cachedItem ? (
+      `${cachedItem.macros?.calories} kcal`
+    ) : (
+      <Skeleton variant='text' width='25%' height={20} />
+    )
   }
 
   const onItemClick = async (mealItem: Log) => {
