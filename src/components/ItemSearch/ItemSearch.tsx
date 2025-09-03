@@ -125,37 +125,44 @@ export function ItemSearch() {
     setSelectedMeal(null)
   }
 
+  const renderSkeleton = () => {
+    return (
+      <Box className='results'>
+        {Array.from({ length: SKELETON_NUMBER }).map((_, index) => (
+          <div
+            className='search-item-container skeleton'
+            key={`${index}-skeleton-search-item`}
+          >
+            <Skeleton variant='circular' width={50} height={50} />
+            <div className='text-container'>
+              <Skeleton variant='text' width='100%' height={20} />
+              <Skeleton variant='text' width='25%' height={20} />
+            </div>
+          </div>
+        ))}
+      </Box>
+    )
+  }
+
+  const renderNoResults = () => {
+    return (
+      <Box className='results'>
+        <Typography variant='h6' className='no-results'>
+          No results
+        </Typography>
+      </Box>
+    )
+  }
+
   const renderList = () => {
     const hasFavorite =
       user?.favoriteItems?.food.length === 0 ||
       user?.favoriteItems?.product.length === 0
-    console.log('hasFavorite', hasFavorite)
 
-    if (true || (!results.length && hasFavorite)) {
-      return (
-        <Box className='results'>
-          {Array.from({ length: SKELETON_NUMBER }).map((_, index) => (
-            <div
-              className='search-item-container skeleton'
-              key={`${index}-skeleton-search-item`}
-            >
-              <Skeleton variant='circular' width={50} height={50} />
-              <div className='text-container'>
-                <Skeleton variant='text' width='100%' height={20} />
-                <Skeleton variant='text' width='25%' height={20} />
-              </div>
-            </div>
-          ))}
-        </Box>
-      )
+    if (!results.length && hasFavorite) {
+      return renderSkeleton()
     } else if (!results.length && !hasFavorite) {
-      return (
-        <Box className='results'>
-          <Typography variant='h6' className='no-results'>
-            No results
-          </Typography>
-        </Box>
-      )
+      return renderNoResults()
     }
 
     return (

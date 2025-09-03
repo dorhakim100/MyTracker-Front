@@ -10,6 +10,7 @@ import { CaloriesProgress } from '../CaloriesProgress/CaloriesProgress'
 import { MacrosDistribution } from '../MacrosDistribution/MacrosDistribution'
 import { MacrosProgress } from '../MacrosProgress/MacrosProgress'
 import { RootState } from '../../store/store'
+import { Card, Skeleton } from '@mui/material'
 
 export function StatsCarousel() {
   const user = useSelector(
@@ -67,7 +68,25 @@ export function StatsCarousel() {
     return (value / goal) * 100
   }
 
-  if (!user) return null
+  if (!user)
+    return (
+      <Card className='card calories-progress skeleton'>
+        <Skeleton variant='text' width='50%' height={30} className='title' />
+        <Skeleton
+          variant='circular'
+          width='150px'
+          height='150px'
+          className='circular-progress'
+        />
+
+        <Skeleton
+          variant='rectangular'
+          width='150px'
+          height='40px'
+          className='goal-container'
+        />
+      </Card>
+    )
 
   if (user)
     return (
