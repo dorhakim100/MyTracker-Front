@@ -3,6 +3,7 @@
 
   &.dark-mode {
     .MuiPaper-root.dark-mode {
+      background-color: $darker-gray;
       .MuiAccordion-heading {
         button {
           background-color: $darker-gray;
