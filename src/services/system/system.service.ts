@@ -21,6 +21,6 @@ export function getPrefs() {
 }
 
 export function setPrefs(prefs: { isDarkMode: boolean; user?: string | null }) {
-  const entityType = 'CamJam-prefs'
+  const entityType = KEY
   localStorage.setItem(entityType, JSON.stringify(prefs))
 }

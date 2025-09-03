@@ -30,7 +30,7 @@ import { handleFavorite } from '../../store/actions/user.actions'
 import { SearchFilter } from '../../types/searchFilter/SearchFilter'
 import { Typography } from '@mui/material'
 import { debounce } from '../../services/util.service'
-import { Skeleton } from '@mui/material'
+import { CustomSkeleton } from '../../CustomMui/CustomSkeleton/CustomSkeleton'
 
 const SKELETON_NUMBER = 8
 
@@ -133,10 +133,25 @@ export function ItemSearch() {
             className='search-item-container skeleton'
             key={`${index}-skeleton-search-item`}
           >
-            <Skeleton variant='circular' width={50} height={50} />
+            <CustomSkeleton
+              variant='circular'
+              width={50}
+              height={50}
+              isDarkMode={prefs.isDarkMode}
+            />
             <div className='text-container'>
-              <Skeleton variant='text' width='100%' height={20} />
-              <Skeleton variant='text' width='25%' height={20} />
+              <CustomSkeleton
+                variant='text'
+                width='100%'
+                height={20}
+                isDarkMode={prefs.isDarkMode}
+              />
+              <CustomSkeleton
+                variant='text'
+                width='25%'
+                height={20}
+                isDarkMode={prefs.isDarkMode}
+              />
             </div>
           </div>
         ))}

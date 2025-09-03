@@ -10,7 +10,8 @@ import { CaloriesProgress } from '../CaloriesProgress/CaloriesProgress'
 import { MacrosDistribution } from '../MacrosDistribution/MacrosDistribution'
 import { MacrosProgress } from '../MacrosProgress/MacrosProgress'
 import { RootState } from '../../store/store'
-import { Card, Skeleton } from '@mui/material'
+import { Card } from '@mui/material'
+import { CustomSkeleton } from '../../CustomMui/CustomSkeleton/CustomSkeleton'
 
 export function StatsCarousel() {
   const user = useSelector(
@@ -68,22 +69,38 @@ export function StatsCarousel() {
     return (value / goal) * 100
   }
 
+  const prefs = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.prefs
+  )
+
   if (!user)
     return (
-      <Card className='card calories-progress skeleton'>
-        <Skeleton variant='text' width='50%' height={30} className='title' />
-        <Skeleton
+      <Card
+        className={`card calories-progress skeleton ${
+          prefs.isDarkMode ? 'dark-mode' : ''
+        }`}
+      >
+        <CustomSkeleton
+          variant='text'
+          width='50%'
+          height={30}
+          className='title'
+          isDarkMode={prefs.isDarkMode}
+        />
+        <CustomSkeleton
           variant='circular'
           width='150px'
           height='150px'
           className='circular-progress'
+          isDarkMode={prefs.isDarkMode}
         />
 
-        <Skeleton
+        <CustomSkeleton
           variant='rectangular'
           width='150px'
           height='40px'
           className='goal-container'
+          isDarkMode={prefs.isDarkMode}
         />
       </Card>
     )
