@@ -30,7 +30,7 @@ export function LinearMacrosProgress({
   if (user)
     return (
       <div className='linear-macros-progress'>
-        {caloriesProgress && (
+        {caloriesProgress !== undefined && (
           <CustomLinearProgress
             currentValue={caloriesProgress + ''}
             goalValue={user?.currGoal?.dailyCalories + ''}
@@ -39,7 +39,7 @@ export function LinearMacrosProgress({
             color={caloriesColor}
           />
         )}
-        {proteinProgress && (
+        {proteinProgress !== undefined && (
           <CustomLinearProgress
             currentValue={proteinProgress + ''}
             goalValue={user?.currGoal?.macros.protein + ''}
@@ -49,7 +49,7 @@ export function LinearMacrosProgress({
             isGram={true}
           />
         )}
-        {carbsProgress && (
+        {carbsProgress !== undefined && (
           <CustomLinearProgress
             currentValue={carbsProgress + ''}
             goalValue={user?.currGoal?.macros.carbs + ''}
@@ -59,7 +59,7 @@ export function LinearMacrosProgress({
             isGram={true}
           />
         )}
-        {fatsProgress && (
+        {fatsProgress !== undefined && (
           <CustomLinearProgress
             currentValue={fatsProgress + ''}
             goalValue={user?.currGoal?.macros.fat + ''}

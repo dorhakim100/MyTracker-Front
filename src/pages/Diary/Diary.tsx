@@ -5,7 +5,10 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 
 import { TimesContainer } from '../../components/TimesContainer/TimesContainer'
-import { getPercentageValue } from '../../services/macros/macros.service'
+import {
+  getMacrosAmount,
+  getPercentageValue,
+} from '../../services/macros/macros.service'
 
 import { CustomAccordion } from '../../CustomMui/CustomAccordion/CustomAccordion'
 import { LinearMacrosProgress } from '../../components/LinearMacrosProgress/LinearMacrosProgress'
@@ -140,9 +143,9 @@ export function Diary() {
             cmp={
               <LinearMacrosProgress
                 caloriesProgress={user?.loggedToday.calories}
-                proteinProgress={getPercentageValue('protein', user)}
-                carbsProgress={getPercentageValue('carbs', user)}
-                fatsProgress={getPercentageValue('fat', user)}
+                proteinProgress={getMacrosAmount('protein', user)}
+                carbsProgress={getMacrosAmount('carbs', user)}
+                fatsProgress={getMacrosAmount('fat', user)}
               />
             }
           />

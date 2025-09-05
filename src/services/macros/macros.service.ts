@@ -93,7 +93,10 @@ export function getPercentageValue(type = 'calories', user: User | null) {
   return 0
 }
 
-function getMacrosAmount(macro: 'protein' | 'carbs' | 'fat', user: User) {
+export function getMacrosAmount(
+  macro: 'protein' | 'carbs' | 'fat',
+  user: User
+) {
   return user
     ? Math.round(
         user.loggedToday.logs.reduce((acc, log) => acc + log.macros[macro], 0)
