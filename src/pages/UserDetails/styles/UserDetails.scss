@@ -16,9 +16,39 @@
   }
 
   .color-prefs-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
     // display: flex;
     // align-items: center;
     // justify-content: space-between;
+  }
+
+  .color-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+
+    .color-button {
+      &.css-r75yrr-MuiButtonBase-root-MuiButton-root {
+        min-width: 30px !important;
+      }
+      width: 30px;
+      height: 30px;
+
+      border-radius: 50%;
+
+      .motion-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 50%;
+
+        color: $darker-gray;
+        background-color: $white;
+      }
+    }
   }
 }
 
@@ -57,21 +87,40 @@
 }
 
 /* Generate color circles using attribute selectors */
-.color-button[data-color='#1976d2']::before {
-  background-color: #1976d2;
-}
-.color-button[data-color='#9c27b0']::before {
-  background-color: #9c27b0;
-}
-.color-button[data-color='#2e7d32']::before {
-  background-color: #2e7d32;
-}
-.color-button[data-color='#ed6c02']::before {
-  background-color: #ed6c02;
-}
-.color-button[data-color='#d32f2f']::before {
-  background-color: #d32f2f;
-}
-.color-button[data-color='#00897b']::before {
-  background-color: #00897b;
+.color-button {
+  &.primary {
+    background-color: $primary-color;
+  }
+
+  &.blue {
+    background-color: $picker-color-blue;
+  }
+
+  &.yellow {
+    background-color: $picker-color-yellow;
+  }
+
+  &.red {
+    background-color: $picker-color-red;
+  }
+
+  &.orange {
+    background-color: $picker-color-orange;
+  }
+
+  &.green {
+    background-color: $picker-color-green;
+  }
+
+  &.purple {
+    background-color: $picker-color-purple;
+  }
+
+  &.pink {
+    background-color: $picker-color-pink;
+  }
+
+  &.deepPurple {
+    background-color: $picker-color-deep-purple;
+  }
 }
