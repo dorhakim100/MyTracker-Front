@@ -1,2 +1,77 @@
-.user-details {
+.user-page {
+  padding: 16px;
+  display: grid;
+  gap: 16px;
+}
+
+.card.user-details {
+  height: fit-content;
+  display: grid;
+  gap: 16px;
+
+  .prefs-switch-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .color-prefs-container {
+    // display: flex;
+    // align-items: center;
+    // justify-content: space-between;
+  }
+}
+
+.profile-container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.profile-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profile-info {
+  flex: 1;
+}
+
+.section-title {
+  margin-bottom: 8px;
+}
+
+/* Apply background colors via data attribute */
+.color-button[data-color] {
+  /* default color is handled inline by MUI when variant contained, but we do custom */
+}
+
+.color-button::before {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+
+/* Generate color circles using attribute selectors */
+.color-button[data-color='#1976d2']::before {
+  background-color: #1976d2;
+}
+.color-button[data-color='#9c27b0']::before {
+  background-color: #9c27b0;
+}
+.color-button[data-color='#2e7d32']::before {
+  background-color: #2e7d32;
+}
+.color-button[data-color='#ed6c02']::before {
+  background-color: #ed6c02;
+}
+.color-button[data-color='#d32f2f']::before {
+  background-color: #d32f2f;
+}
+.color-button[data-color='#00897b']::before {
+  background-color: #00897b;
 }

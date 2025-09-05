@@ -16,6 +16,15 @@
   --macro-protein-dark: #e24b6e;
   --macro-carbs-dark: #21c993;
   --macro-fats-dark: #ffcc66;
+
+  --picker-color-blue: #1976d2;
+  --picker-color-yellow: #ffd166;
+  --picker-color-red: #d32f2f;
+  --picker-color-orange: #ed6c02;
+  --picker-color-green: #06d6a0;
+  --picker-color-deep-purple: #6366f1;
+  --picker-color-purple: #9c27b0;
+  --picker-color-pink: #ff69b4;
 }
 
 // Colors
@@ -28,6 +37,15 @@ $primary-color-darker: #262a31;
 $secondary-color: var(--secondary-color);
 $secondary-color-light: var(--secondary-color-light);
 $secondary-color-dark: var(--secondary-color-dark);
+
+$picker-color-blue: var(--picker-color-blue);
+$picker-color-yellow: var(--picker-color-yellow);
+$picker-color-red: var(--picker-color-red);
+$picker-color-orange: var(--picker-color-orange);
+$picker-color-green: var(--picker-color-green);
+$picker-color-deep-purple: var(--picker-color-deep-purple);
+$picker-color-purple: var(--picker-color-purple);
+$picker-color-pink: var(--picker-color-pink);
 
 // Shades of Red
 $light-red: #f28b82;

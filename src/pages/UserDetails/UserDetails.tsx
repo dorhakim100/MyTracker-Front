@@ -1,13 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Divider,
-  Typography,
-} from '@mui/material'
+import { Button, Card, CardContent, Divider, Typography } from '@mui/material'
 import { RootState } from '../../store/store'
 import { logout } from '../../store/actions/user.actions'
 import { setPrefs } from '../../store/actions/system.actions'
@@ -42,90 +35,67 @@ export function UserDetails() {
   }
 
   return (
-    <Box className='user-page' sx={{ p: 2, display: 'grid', gap: 2 }}>
-      <Card variant='outlined'>
-        <CardContent>
-          <Box
-            className='user-profile'
-            sx={{ display: 'flex', alignItems: 'center', gap: 2 }}
-          >
-            <Box
-              component='img'
-              src={user?.imgUrl || '/logo-square.png'}
-              alt='Profile'
-              sx={{ width: 64, height: 64, borderRadius: '50%' }}
-            />
-            <Box sx={{ flex: 1 }}>
-              <Typography variant='h6'>
-                {user?.fullname || 'User Profile'}
-              </Typography>
-              <Typography variant='body2' color='text.secondary'>
-                Manage your account and preferences
-              </Typography>
-            </Box>
-            <Button
-              variant='contained'
-              color='primary'
-              onClick={() => logout()}
-            >
-              Logout
-            </Button>
-          </Box>
-        </CardContent>
+    <div className={`user-page ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
+      <Card
+        variant='outlined'
+        className={`card user-details ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+      >
+        <div className='profile-container'>
+          <img
+            className='profile-avatar'
+            src={user?.imgUrl || '/logo-square.png'}
+            alt='Profile'
+          />
+          <div className='profile-info'>
+            <Typography variant='h5'>
+              {user?.fullname || 'User Profile'}
+            </Typography>
+          </div>
+        </div>
       </Card>
 
-      <Card variant='outlined'>
-        <CardContent>
-          <Typography variant='h6' gutterBottom>
-            Preferences
+      <Card
+        variant='outlined'
+        className={`card user-details ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+      >
+        <Typography variant='h6' className='section-title'>
+          Preferences
+        </Typography>
+
+        <div className='prefs-switch-container'>
+          <Typography variant='body1' className='prefs-label'>
+            Dark mode
           </Typography>
+          <DarkModeSwitch
+            checked={prefs.isDarkMode}
+            onClick={onToggleDarkMode}
+          />
+        </div>
 
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-            <Typography variant='body1' sx={{ minWidth: 140 }}>
-              Dark mode
-            </Typography>
-            <DarkModeSwitch
-              checked={prefs.isDarkMode}
-              onClick={onToggleDarkMode}
-            />
-          </Box>
+        <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
 
-          <Divider sx={{ my: 1 }} />
-
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Typography variant='body1' sx={{ minWidth: 140 }}>
-              Favorite color
-            </Typography>
-            <Box
-              sx={{
-                display: 'flex',
-                gap: 1,
-                alignItems: 'center',
-                flexWrap: 'wrap',
-              }}
-            >
-              {colorChoices.map((color) => (
-                <Button
-                  key={color}
-                  className='color-button'
-                  variant={favoriteColor === color ? 'contained' : 'outlined'}
-                  onClick={() => onChangeFavoriteColor(color)}
-                  sx={{
-                    minWidth: 0,
-                    width: 32,
-                    height: 32,
-                    p: 0,
-                    borderRadius: '50%',
-                    bgcolor: color,
-                    borderColor: color,
-                    '&:hover': { bgcolor: color },
-                  }}
-                />
-              ))}
-            </Box>
-          </Box>
-        </CardContent>
+        <div className='color-prefs-container'>
+          <Typography variant='body1' className='prefs-label'>
+            Favorite color
+          </Typography>
+          <div className='color-options'>
+            {colorChoices.map((color) => (
+              <Button
+                key={color}
+                className={`color-button ${
+                  favoriteColor === color ? 'selected' : ''
+                }`}
+                onClick={() => onChangeFavoriteColor(color)}
+                data-color={color}
+              />
+            ))}
+          </div>
+        </div>
       </Card>
-    </Box>
+
+      <Button variant='contained' color='primary' onClick={() => logout()}>
+        Logout
+      </Button>
+    </div>
   )
 }

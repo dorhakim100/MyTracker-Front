@@ -97,8 +97,9 @@ p {
 
 .dark-mode {
   button:not(.MuiIconButton-root) {
-    background-color: $dark-gray;
+    // background-color: $dark-gray;
   }
+
   button:not(.favorite-button) {
     color: $white;
   }
