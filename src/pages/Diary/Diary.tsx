@@ -5,10 +5,7 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 
 import { TimesContainer } from '../../components/TimesContainer/TimesContainer'
-import {
-  getMacrosAmount,
-  getPercentageValue,
-} from '../../services/macros/macros.service'
+import { getMacrosAmount } from '../../services/macros/macros.service'
 
 import { CustomAccordion } from '../../CustomMui/CustomAccordion/CustomAccordion'
 import { LinearMacrosProgress } from '../../components/LinearMacrosProgress/LinearMacrosProgress'

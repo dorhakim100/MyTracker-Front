@@ -183,7 +183,7 @@ button {
     .MuiBottomNavigationAction-root
   ):not(.MuiAccordionSummary-root):not(.MuiListItemButton-root):not(
     .MuiToggleButtonGroup-grouped
-  ):not(.MuiCheckbox-root):not(.MuiMenuItem-root) {
+  ):not(.MuiCheckbox-root):not(.MuiMenuItem-root):not(.color-button) {
   background-color: $primary-color !important;
 }
 .MuiCheckbox-root {

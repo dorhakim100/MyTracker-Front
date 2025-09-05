@@ -23,6 +23,7 @@ export async function getPrefs(): Promise<Prefs> {
       return {
         isDarkMode: !!entity.isDarkMode,
         isEnglish: entity.isEnglish ?? false,
+        favoriteColor: entity.favoriteColor,
       }
     }
   } catch {
@@ -36,6 +37,7 @@ export async function getPrefs(): Promise<Prefs> {
       const migrated: Prefs = {
         isDarkMode: !!parsed.isDarkMode,
         isEnglish: parsed.isEnglish ?? false,
+        favoriteColor: parsed.favoriteColor,
       }
       await indexedDbService.put(STORE_NAME, { _id: RECORD_ID, ...migrated })
       localStorage.removeItem(LS_KEY)
@@ -61,6 +63,7 @@ export async function setPrefs(prefs: Prefs): Promise<void> {
     _id: RECORD_ID,
     isDarkMode: !!prefs.isDarkMode,
     isEnglish: !!prefs.isEnglish,
+    favoriteColor: prefs.favoriteColor,
   }
   await indexedDbService.put(STORE_NAME, toSave)
 }
@@ -69,5 +72,6 @@ export function getDefaultsPrefs(): Prefs {
   return {
     isDarkMode: false,
     isEnglish: false,
+    favoriteColor: '#1976d2',
   }
 }
