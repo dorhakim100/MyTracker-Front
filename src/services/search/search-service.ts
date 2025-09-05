@@ -37,9 +37,9 @@ export const searchService = {
   removeFromCache,
 }
 
-await Promise.all(
-  Object.values(cache).map((storeName) => indexedDbService.clear(storeName))
-)
+// await Promise.all(
+//   Object.values(cache).map((storeName) => indexedDbService.clear(storeName))
+// )
 
 async function search(filter: SearchFilter) {
   try {
@@ -172,17 +172,18 @@ async function searchOpenFoodFacts(query: string) {
         countries_tags_en: 'Israel',
         sort_by: 'popularity_key',
       },
-      headers: { 'User-Agent': 'MyTracker/1.0 (you@example.com)' },
+      // headers: { 'User-Agent': 'MyTracker/1.0 (you@example.com)' },
     })
 
     return data.products.map((product: OFFProduct) => {
-      const proteins = +(product.nutriments?.proteins_100g ?? 0)
-      const carbs = +(product.nutriments?.carbohydrates_100g ?? 0)
-      const fats = +(product.nutriments?.fat_100g ?? 0)
-      const calories =
+      const proteins = Math.floor(+(product.nutriments?.proteins_100g ?? 0))
+      const carbs = Math.floor(+(product.nutriments?.carbohydrates_100g ?? 0))
+      const fats = Math.floor(+(product.nutriments?.fat_100g ?? 0))
+      const calories = Math.floor(
         +(product.nutriments?.['energy-kcal_100g'] ?? 0) ||
-        +(product.nutriments?.['energy-kcal'] ?? 0) ||
-        calculateCaloriesFromMacros({ protein: proteins, carbs, fats }).total
+          +(product.nutriments?.['energy-kcal'] ?? 0) ||
+          calculateCaloriesFromMacros({ protein: proteins, carbs, fats }).total
+      )
 
       return {
         searchId: product.code,
@@ -238,7 +239,7 @@ async function getProductsByIds(ids: string[]) {
         code: ids.join(','),
         fields: FIELDS,
       },
-      headers: { 'User-Agent': 'MyTracker/1.0 (you@example.com)' },
+      //headers: { 'User-Agent': 'MyTracker/1.0 (you@example.com)' },
     })
 
     const products: OFFProduct[] = data.products || []

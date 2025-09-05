@@ -325,6 +325,7 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
               />
               <ForgotPassword open={open} handleClose={handleClose} />
               <Button
+                className='login-button'
                 type='submit'
                 fullWidth
                 variant='contained'

@@ -215,3 +215,8 @@ select {
     height: 20px;
   }
 }
+
+.MuiFormControl-root {
+  border: none !important;
+  outline: none !important;
+}

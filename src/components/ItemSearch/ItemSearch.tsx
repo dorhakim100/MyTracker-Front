@@ -42,7 +42,7 @@ export function ItemSearch() {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<Item[]>([])
 
-  const [source, setSource] = useState(searchTypes.usda)
+  const [source, setSource] = useState(searchTypes.openFoodFacts)
 
   const [isItemSelected, setIsItemSelected] = useState(false)
 

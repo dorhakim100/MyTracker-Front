@@ -115,15 +115,16 @@ p {
     border: none !important;
   }
 
-  .MuiButton-contained {
+  .MuiButton-contained.login-button {
     // background-color: $dark-gray !important;
 
-    // background-image: linear-gradient(
-    //   to bottom,
-    //   hsla(220, 3%, 21%, 0.909),
-    //   hsla(0, 0%, 0%, 0.92)
-    // );
-
+    background-image: linear-gradient(
+      to bottom,
+      $primary-color,
+      hsla(0, 0%, 0%, 0.92)
+    );
+    outline: none !important;
+    border: none !important;
     box-shadow: none;
   }
 }

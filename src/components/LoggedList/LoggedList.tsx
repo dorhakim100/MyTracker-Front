@@ -126,7 +126,7 @@ export function LoggedList({
   const renderSecondaryText = (item: Log) => {
     const cachedItem = cachedItems.find((i) => i.searchId === item.itemId)
     return cachedItem ? (
-      `${cachedItem.macros?.calories} kcal`
+      `${item.macros?.calories} kcal`
     ) : (
       <CustomSkeleton
         variant='text'
