@@ -2,29 +2,58 @@
   padding: 16px;
   display: grid;
   gap: 16px;
+  .MuiAccordionSummary-root {
+    // padding: 0;
+  }
+
+  .MuiAccordionDetails-root {
+    // padding: 0;
+
+    .accordion-content {
+      display: grid;
+      gap: 1rem;
+    }
+  }
+
+  .profile-container {
+    display: grid;
+    justify-items: center;
+    gap: 0.5rem;
+
+    .profile-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .profile-info {
+      flex: 1;
+    }
+  }
 }
 
 .card.user-details {
   height: fit-content;
   display: grid;
   gap: 16px;
+}
+.prefs-switch-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 
-  .prefs-switch-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
+.color-prefs-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
 
-  .color-prefs-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-
-    // display: flex;
-    // align-items: center;
-    // justify-content: space-between;
-  }
+  // display: flex;
+  // align-items: center;
+  // justify-content: space-between;
 
   .color-options {
+    justify-self: end;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
@@ -50,23 +79,6 @@
       }
     }
   }
-}
-
-.profile-container {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.profile-avatar {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.profile-info {
-  flex: 1;
 }
 
 .section-title {

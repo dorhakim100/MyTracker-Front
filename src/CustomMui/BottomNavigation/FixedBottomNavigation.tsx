@@ -148,7 +148,6 @@ export function FixedBottomNavigation(props: {
                   if (!user) return showErrorMsg(messages.error.register)
                   ev.stopPropagation()
                   setIsAddModal(!isAddModal)
-                  console.log('clicked')
 
                   setSelectedDiaryDay(user.loggedToday)
                 }}

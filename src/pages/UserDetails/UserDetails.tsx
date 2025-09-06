@@ -1,14 +1,14 @@
 import { useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { Button, Card, Divider, IconButton, Typography } from '@mui/material'
+import { Button, Card, Divider, Typography } from '@mui/material'
 import { RootState } from '../../store/store'
 import { logout } from '../../store/actions/user.actions'
 import { setPrefs } from '../../store/actions/system.actions'
 import type { Prefs } from '../../types/system/Prefs'
-import { DarkModeSwitch } from '../../components/DarkModeSwitch/DarkModeSwitch'
-import CheckIcon from '@mui/icons-material/Check'
-
 import { motion } from 'framer-motion'
+import { DarkModeSwitch } from '../../components/DarkModeSwitch/DarkModeSwitch'
+import { CustomAccordion } from '../../CustomMui/CustomAccordion/CustomAccordion'
+import CheckIcon from '@mui/icons-material/Check'
 
 const colors = {
   primary: '--var(--primary-color)',
@@ -29,23 +29,6 @@ export function UserDetails() {
   const user = useSelector(
     (storeState: RootState) => storeState.userModule.user
   )
-  const [favoriteColor, setFavoriteColor] = useState<string>(
-    prefs.favoriteColor || '#1976d2'
-  )
-
-  const colorChoices = useMemo<string[]>(() => Object.keys(colors), [])
-
-  function onToggleDarkMode() {
-    const newPrefs: Prefs = { ...prefs, isDarkMode: !prefs.isDarkMode }
-    setPrefs(newPrefs)
-  }
-
-  function onChangeFavoriteColor(color: string) {
-    console.log('color', color)
-    setFavoriteColor(color)
-    const newPrefs: Prefs = { ...prefs, favoriteColor: color }
-    setPrefs(newPrefs)
-  }
 
   return (
     <div className={`user-page ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
@@ -70,42 +53,8 @@ export function UserDetails() {
       <Card
         variant='outlined'
         className={`card user-details ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-      >
-        <Typography variant='h6' className='section-title'>
-          Preferences
-        </Typography>
-
-        <div className='prefs-switch-container'>
-          <Typography variant='body1' className='prefs-label'>
-            Dark mode
-          </Typography>
-          <DarkModeSwitch
-            checked={prefs.isDarkMode}
-            onClick={onToggleDarkMode}
-          />
-        </div>
-
-        <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
-
-        <div className='color-prefs-container'>
-          <Typography variant='body1' className='prefs-label'>
-            Favorite color
-          </Typography>
-          <div className='color-options'>
-            {colorChoices.map((color) => (
-              <Button
-                key={`${color}-color-button`}
-                className={`color-button ${color} ${
-                  favoriteColor === color ? 'selected' : ''
-                }`}
-                onClick={() => onChangeFavoriteColor(color)}
-              >
-                <ColorMotion color={color} favoriteColor={favoriteColor} />
-              </Button>
-            ))}
-          </div>
-        </div>
-      </Card>
+      ></Card>
+      <CustomAccordion title='Preferences' cmp={<PreferencesCard />} />
 
       <Button
         variant='contained'
@@ -135,5 +84,61 @@ function ColorMotion({
     >
       {color === favoriteColor ? <CheckIcon /> : null}
     </motion.div>
+  )
+}
+
+function PreferencesCard() {
+  const prefs = useSelector(
+    (storeState: RootState) => storeState.systemModule.prefs
+  )
+
+  const [favoriteColor, setFavoriteColor] = useState<string>(
+    prefs.favoriteColor || '#1976d2'
+  )
+
+  const colorChoices = useMemo<string[]>(() => Object.keys(colors), [])
+
+  function onToggleDarkMode() {
+    const newPrefs: Prefs = { ...prefs, isDarkMode: !prefs.isDarkMode }
+    setPrefs(newPrefs)
+  }
+
+  function onChangeFavoriteColor(color: string) {
+    console.log('color', color)
+    setFavoriteColor(color)
+    const newPrefs: Prefs = { ...prefs, favoriteColor: color }
+    setPrefs(newPrefs)
+  }
+
+  return (
+    <>
+      <div className='prefs-switch-container'>
+        <Typography variant='body1' className='prefs-label'>
+          Dark mode
+        </Typography>
+        <DarkModeSwitch checked={prefs.isDarkMode} onClick={onToggleDarkMode} />
+      </div>
+
+      <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
+
+      <div className='color-prefs-container'>
+        <Typography variant='body1' className='prefs-label'>
+          Favorite color
+        </Typography>
+        <div className='color-options'>
+          {colorChoices.map((color) => (
+            <Button
+              key={`${color}-color-button`}
+              className={`color-button ${color} ${
+                favoriteColor === color ? 'selected' : ''
+              }`}
+              onClick={() => onChangeFavoriteColor(color)}
+            >
+              <ColorMotion color={color} favoriteColor={favoriteColor} />
+            </Button>
+          ))}
+        </div>
+      </div>
+    </>
   )
 }

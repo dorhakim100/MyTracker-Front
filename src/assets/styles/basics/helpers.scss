@@ -214,6 +214,8 @@ select {
   outline: none !important;
 }
 
+// Button setup
+
 .MuiButtonBase-root:not(.MuiIconButton-root):not(
     .MuiBottomNavigationAction-root
   ):not(.MuiAccordionSummary-root):not(.MuiListItemButton-root):not(
@@ -271,6 +273,8 @@ select {
     color: $white;
   }
 }
+
+// Bottom Navigation setup
 
 .MuiBottomNavigationAction-root.Mui-selected {
   &.blue {
@@ -428,6 +432,8 @@ select {
     }
   }
 }
+
+// Toggle Button setup
 
 .MuiToggleButtonGroup-root.dark-mode {
   &.blue {
