@@ -17,6 +17,7 @@ import { RootState } from './store/store.ts'
 import './App.css'
 import { setRemembered } from './store/actions/user.actions.ts'
 import { loadPrefs } from './store/actions/system.actions.ts'
+import { SignIn } from './CustomMui/SignIn/SignIn.tsx'
 
 function App() {
   const prefs = useSelector(
@@ -74,6 +75,16 @@ function App() {
         break
     }
   }
+
+  if (!user)
+    return (
+      <main className={`main ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
+        <AppHeader />
+        <div className='page-container login-sign-up-container'>
+          <SignIn />
+        </div>
+      </main>
+    )
 
   return (
     <>

@@ -15,7 +15,7 @@ import MuiCard from '@mui/material/Card'
 import { styled } from '@mui/material/styles'
 import ForgotPassword from './components/ForgotPassword'
 import AppTheme from '../shared-theme/AppTheme'
-import { useColorScheme } from '@mui/material/styles'
+// import { useColorScheme } from '@mui/material/styles'
 import { useSelector } from 'react-redux'
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -123,6 +123,7 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
         showErrorMsg('Login failed. Please check your credentials.')
       }
     } catch (err) {
+      console.log(err)
       showErrorMsg('An error occurred while signing in. Please try again.')
     } finally {
       setIsLoading(false)
@@ -175,7 +176,7 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
     return isValid
   }
 
-  const { mode, setMode } = useColorScheme()
+  // const { mode, setMode } = useColorScheme()
 
   const navigate = useNavigate()
 
@@ -193,7 +194,7 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
 
   useEffect(() => {
     if (prefs.isDarkMode !== undefined) {
-      setMode(prefs.isDarkMode ? 'dark' : 'light')
+      //setMode(prefs.isDarkMode ? 'dark' : 'light')
       // setLogoSrc(prefs.isDarkMode ? logoDark : logo)
     }
   }, [prefs.isDarkMode])

@@ -19,3 +19,55 @@
     color: $medium-red;
   }
 }
+
+.main {
+  .login-sign-up-container {
+    .MuiPaper-root {
+      background-color: $neutral-gray;
+      color: $dark-gray;
+
+      a {
+        color: $picker-color-blue;
+      }
+
+      .MuiInputBase-root,
+      .MuiCheckbox-root {
+        background-color: $white;
+        color: $dark-gray;
+
+        &.Mui-checked {
+          color: $white;
+        }
+      }
+
+      .login-button {
+        color: $white !important;
+        background: $primary-color !important;
+        // background: linear-gradient(
+        //   to bottom,
+        //   $primary-color,
+        //   $primary-color-dark
+        // );
+      }
+    }
+  }
+
+  &.dark-mode {
+    .login-sign-up-container {
+      .MuiPaper-root {
+        background-color: $darker-gray;
+        color: $white;
+      }
+
+      .MuiInputBase-root,
+      .MuiCheckbox-root {
+        background-color: $very-dark-gray;
+        color: $white;
+
+        &.Mui-checked {
+          color: $white;
+        }
+      }
+    }
+  }
+}

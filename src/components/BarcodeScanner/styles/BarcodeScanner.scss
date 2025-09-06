@@ -2,15 +2,33 @@
   position: relative;
   width: 100%;
   height: 100%;
-  background: #000;
+  // background: #000;
   border-radius: 12px;
   overflow: hidden;
+  padding: 1em;
 
   .preview {
     width: 100%;
     height: 100%;
+    width: 360px;
+    height: 270px;
+
     object-fit: cover;
     display: block;
+    border-radius: 12px;
+  }
+
+  .animation-container {
+    position: absolute;
+    top: 1em;
+    bottom: 1em;
+    left: 1em;
+    right: 1em;
+    img {
+      border-radius: 12px;
+      width: 100%;
+      height: 100%;
+    }
   }
 
   // optional: simple overlay box to indicate scanning area
@@ -26,4 +44,12 @@
     border-radius: 8px;
     pointer-events: none;
   }
+}
+
+.searching-animation-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
 }
