@@ -60,10 +60,8 @@ export function ItemSearch() {
         const res = await searchService.search({
           favoriteItems: user?.favoriteItems,
         })
-        console.log('res', res)
 
         setResults(res)
-        // setResults([])
         return
       }
 

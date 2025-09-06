@@ -16,7 +16,7 @@ interface BarcodeScannerProps {
 export function BarcodeScanner({ onClose }: BarcodeScannerProps) {
   const videoRef = useRef<HTMLVideoElement | null>(null)
 
-  const [isItemDetected, setIsItemDetected] = useState(false)
+  //const [isItemDetected, setIsItemDetected] = useState(false)
   const [isItemFound, setIsItemFound] = useState(false)
 
   useEffect(() => {
@@ -57,10 +57,8 @@ export function BarcodeScanner({ onClose }: BarcodeScannerProps) {
 
   async function onDetected(code: string) {
     try {
-      console.log('code', code)
-      setIsItemDetected(true)
+      //setIsItemDetected(true)
       const res = await searchService.getProductsByIds([code])
-      console.log('res', res)
 
       //   setIsItemFound(true)
       if (!res.length) {
@@ -69,7 +67,6 @@ export function BarcodeScanner({ onClose }: BarcodeScannerProps) {
       }
       setItem(res[0] as Item)
       setIsItemFound(true)
-      console.log('res', res)
 
       //onClose()
     } catch (err) {

@@ -48,7 +48,6 @@ export function CaloriesProgress({
   // const onChangeDisplay = () => {
   //   const stateToSet = !isPercentage
   //   setIsPercentage(stateToSet)
-  //   console.log(percentageValue)
 
   //   setValueToShow(stateToSet ? current : `${percentageValue}%`)
   // }

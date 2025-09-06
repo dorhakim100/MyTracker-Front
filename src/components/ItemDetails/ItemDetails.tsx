@@ -79,10 +79,6 @@ export function ItemDetails() {
   const [clockOpen, setClockOpen] = useState(false)
 
   useEffect(() => {
-    // console.log(editMealItem)
-  }, [selectedDay])
-
-  useEffect(() => {
     loadItems()
   }, [])
 
@@ -96,7 +92,6 @@ export function ItemDetails() {
   const onEditItemChange = (key: string, value: string | number) => {
     // let totalMacrosToSet = item.macros
     let totalMacrosToSet = searchedItem.macros
-    console.log('onEditItemChange', key, value)
     switch (key) {
       case 'servingSize':
         totalMacrosToSet = {
@@ -505,7 +500,6 @@ function EditComponent({
   //   }, [pickerValue.numberOfServings])
   useEffect(() => {
     const newValue = pickerValue.numberOfServings + pickerValue.afterValue
-    console.log('newValue', newValue)
     onChange('numberOfServings', newValue)
   }, [pickerValue])
 

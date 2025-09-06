@@ -136,7 +136,6 @@ async function addToCache(item: Item, key: string) {
   const cached = await indexedDbService.query<Item>(key)
 
   const isInCache = cached.find((i: Item) => i.searchId === item.searchId)
-  console.log(`isInCache ${item.searchId}:`, isInCache)
   if (!isInCache) {
     await indexedDbService.post(key, item)
   }

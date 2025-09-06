@@ -207,7 +207,6 @@ export async function handleFavorite(item: Item, user: User) {
         [key]: favoriteArray,
       },
     }
-    console.log(userToSave)
 
     await updateUser(userToSave)
   } catch (err) {

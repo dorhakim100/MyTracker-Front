@@ -111,7 +111,6 @@ function PreferencesCard() {
   }
 
   function onChangeFavoriteColor(color: string) {
-    console.log('color', color)
     setFavoriteColor(color)
     const newPrefs: Prefs = { ...prefs, favoriteColor: color }
     setPrefs(newPrefs)

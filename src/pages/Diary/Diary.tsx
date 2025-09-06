@@ -64,7 +64,6 @@ export function Diary() {
     const handleGetDiary = async () => {
       try {
         const diary = await dayService.query(diaryFilter)
-        console.log(diary)
 
         setSelectedDiaryDay(diary)
       } catch (error) {

@@ -28,8 +28,6 @@ export function CustomSelect({
     onChange(event.target.value)
   }
 
-  console.log(value)
-
   return (
     <FormControl sx={{ m: 1, minWidth: 140 }} size='small'>
       <InputLabel id={`${label}-select-label`}>{label}</InputLabel>

@@ -23,9 +23,7 @@ import { setSelectedDiaryDay } from '../../store/actions/user.actions'
 import { messages } from '../../assets/config/messages'
 import { showErrorMsg } from '../../services/event-bus.service'
 import { BarcodeScanner } from '../../components/BarcodeScanner/BarcodeScanner'
-import { searchService } from '../../services/search/search-service'
 // import { searchTypes } from '../../assets/config/search-types'
-import { Item } from '../../types/item/Item'
 
 type ModalType = 'search' | 'scan'
 
@@ -62,7 +60,6 @@ export function FixedBottomNavigation(props: {
 
   const [searchModalOpen, setSearchModalOpen] = useState(false)
   const [modalType, setModalType] = useState<ModalType>(modalTypes.search)
-  const [scannedItems, setScannedItems] = useState<Item[]>([])
 
   const midIndex = Math.floor(props.routes.length / 2)
   const leftRoutes = React.useMemo(
@@ -112,7 +109,7 @@ export function FixedBottomNavigation(props: {
   function onSearchClick(ev: React.MouseEvent<HTMLButtonElement>) {
     ev.stopPropagation()
     ev.preventDefault()
-    setScannedItems([])
+
     setModalType(modalTypes.search)
     setSearchModalOpen(true)
   }
