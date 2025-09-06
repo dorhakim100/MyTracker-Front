@@ -99,6 +99,7 @@ export function LoggedList({
               setIsAddModal(true)
               setSelectedMeal(capitalizeFirstLetter(mealPeriod))
             }}
+            className={`${prefs.favoriteColor}`}
           >
             Add Item
             <AddIcon />

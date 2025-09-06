@@ -9,7 +9,17 @@ interface CircularProgressProps {
   color?: string
 }
 
-const defaultColor = 'var(--primary-color)'
+const colorMap: Record<string, string> = {
+  primary: 'var(--primary-color)',
+  blue: 'var(--picker-color-blue)',
+  yellow: 'var(--picker-color-yellow)',
+  red: 'var(--picker-color-red)',
+  orange: 'var(--picker-color-orange)',
+  green: 'var(--picker-color-green)',
+  deepPurple: 'var(--picker-color-deep-purple)',
+  purple: 'var(--picker-color-purple)',
+  pink: 'var(--picker-color-pink)',
+}
 
 export function CircularProgress({
   value,
@@ -20,7 +30,7 @@ export function CircularProgress({
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
 
-  const progressColor = color || defaultColor
+  const progressColor = color || colorMap[prefs.favoriteColor]
 
   // if color is provided, use it
   // only if dark mode
@@ -28,9 +38,9 @@ export function CircularProgress({
   // if light mode, use black
   const textColor = color
     ? prefs.isDarkMode
-      ? color || defaultColor
+      ? color || colorMap[prefs.favoriteColor]
       : 'black'
-    : defaultColor
+    : colorMap[prefs.favoriteColor]
 
   return (
     <div className='circular-progress'>

@@ -179,43 +179,6 @@ button {
   box-shadow: none !important;
 }
 
-.MuiButtonBase-root:not(.MuiIconButton-root):not(
-    .MuiBottomNavigationAction-root
-  ):not(.MuiAccordionSummary-root):not(.MuiListItemButton-root):not(
-    .MuiToggleButtonGroup-grouped
-  ):not(.MuiCheckbox-root):not(.MuiMenuItem-root):not(.color-button) {
-  background-color: $primary-color !important;
-
-  &.blue {
-    background-color: $picker-color-blue !important;
-  }
-
-  &.red {
-    background-color: $picker-color-red !important;
-  }
-
-  &.yellow {
-    background-color: $picker-color-yellow !important;
-    color: $black;
-  }
-
-  &.green {
-    background-color: $picker-color-green !important;
-  }
-  &.orange {
-    background-color: $picker-color-orange !important;
-  }
-
-  &.deepPurple {
-    background-color: $picker-color-deep-purple !important;
-  }
-  &.purple {
-    background-color: $picker-color-purple !important;
-  }
-  &.pink {
-    background-color: $picker-color-pink !important;
-  }
-}
 .MuiCheckbox-root {
   background-color: transparent;
   &.Mui-checked {
@@ -249,4 +212,263 @@ select {
 .MuiFormControl-root {
   border: none !important;
   outline: none !important;
+}
+
+.MuiButtonBase-root:not(.MuiIconButton-root):not(
+    .MuiBottomNavigationAction-root
+  ):not(.MuiAccordionSummary-root):not(.MuiListItemButton-root):not(
+    .MuiToggleButtonGroup-grouped
+  ):not(.MuiCheckbox-root):not(.MuiMenuItem-root):not(.color-button):not(
+    .MuiFab-circular
+  ),
+.MuiToolbar-gutters,
+.MuiToolbar-root,
+.MuiFab-root {
+  background-color: $primary-color !important;
+
+  &.primary {
+    background-color: $primary-color !important;
+    color: $white;
+  }
+
+  &.blue {
+    background-color: $picker-color-blue !important;
+    color: $white;
+  }
+
+  &.red {
+    background-color: $picker-color-red !important;
+    color: $white;
+  }
+
+  &.yellow {
+    background-color: $picker-color-yellow !important;
+    color: $black;
+    svg {
+      color: $dark-gray;
+    }
+  }
+
+  &.green {
+    background-color: $picker-color-green !important;
+    color: $dark-gray;
+  }
+  &.orange {
+    background-color: $picker-color-orange !important;
+    color: $white;
+  }
+
+  &.deepPurple {
+    background-color: $picker-color-deep-purple !important;
+    color: $white;
+  }
+  &.purple {
+    background-color: $picker-color-purple !important;
+    color: $white;
+  }
+  &.pink {
+    background-color: $picker-color-pink !important;
+    color: $white;
+  }
+}
+
+.MuiBottomNavigationAction-root.Mui-selected {
+  &.blue {
+    color: $picker-color-blue !important;
+
+    svg {
+      color: $picker-color-blue !important;
+    }
+  }
+
+  &.red {
+    color: $picker-color-red !important;
+
+    svg {
+      color: $picker-color-red !important;
+    }
+  }
+
+  &.yellow {
+    color: $picker-color-yellow !important;
+
+    svg {
+      color: $picker-color-yellow !important;
+    }
+  }
+
+  &.green {
+    color: $picker-color-green !important;
+
+    svg {
+      color: $picker-color-green !important;
+    }
+  }
+
+  &.orange {
+    color: $picker-color-orange !important;
+
+    svg {
+      color: $picker-color-orange !important;
+    }
+  }
+
+  &.deepPurple {
+    color: $picker-color-deep-purple !important;
+
+    svg {
+      color: $picker-color-deep-purple !important;
+    }
+  }
+
+  &.purple {
+    color: $picker-color-purple !important;
+
+    svg {
+      color: $picker-color-purple !important;
+    }
+  }
+
+  &.pink {
+    color: $picker-color-pink !important;
+
+    svg {
+      color: $picker-color-pink !important;
+    }
+  }
+}
+
+.MuiSpeedDial-root {
+  &.primary {
+    .MuiFab-circular {
+      background-color: $primary-color !important;
+    }
+  }
+
+  &.blue {
+    .MuiFab-circular {
+      background-color: $picker-color-blue !important;
+    }
+  }
+  &.red {
+    .MuiFab-circular {
+      background-color: $picker-color-red !important;
+    }
+  }
+  &.yellow {
+    .MuiFab-circular {
+      background-color: $picker-color-yellow !important;
+      color: $dark-gray !important;
+    }
+  }
+  &.green {
+    .MuiFab-circular {
+      background-color: $picker-color-green !important;
+      color: $dark-gray !important;
+    }
+  }
+  &.orange {
+    .MuiFab-circular {
+      background-color: $picker-color-orange !important;
+    }
+  }
+  &.deepPurple {
+    .MuiFab-circular {
+      background-color: $picker-color-deep-purple !important;
+    }
+  }
+  &.purple {
+    .MuiFab-circular {
+      background-color: $picker-color-purple !important;
+    }
+  }
+  &.pink {
+    .MuiFab-circular {
+      background-color: $picker-color-pink !important;
+    }
+  }
+  &.blue {
+    .MuiFab-circular {
+      background-color: $picker-color-blue !important;
+    }
+  }
+  &.red {
+    .MuiFab-circular {
+      background-color: $picker-color-red !important;
+    }
+  }
+  &.yellow {
+    .MuiFab-circular {
+      background-color: $picker-color-yellow !important;
+    }
+  }
+  &.green {
+    .MuiFab-circular {
+      background-color: $picker-color-green !important;
+    }
+  }
+  &.orange {
+    .MuiFab-circular {
+      background-color: $picker-color-orange !important;
+    }
+  }
+  &.deepPurple {
+    .MuiFab-circular {
+      background-color: $picker-color-deep-purple !important;
+    }
+  }
+  &.purple {
+    .MuiFab-circular {
+      background-color: $picker-color-purple !important;
+    }
+  }
+  &.pink {
+    .MuiFab-circular {
+      background-color: $picker-color-pink !important;
+    }
+  }
+}
+
+.MuiToggleButtonGroup-root.dark-mode {
+  &.blue {
+    .MuiToggleButton-root.Mui-selected {
+      color: $picker-color-blue !important;
+    }
+  }
+
+  &.red {
+    .MuiToggleButton-root.Mui-selected {
+      color: $picker-color-red !important;
+    }
+  }
+  &.yellow {
+    .MuiToggleButton-root.Mui-selected {
+      color: $picker-color-yellow !important;
+    }
+  }
+  &.green {
+    .MuiToggleButton-root.Mui-selected {
+      color: $picker-color-green !important;
+    }
+  }
+  &.orange {
+    .MuiToggleButton-root.Mui-selected {
+      color: $picker-color-orange !important;
+    }
+  }
+  &.deepPurple {
+    .MuiToggleButton-root.Mui-selected {
+      color: $picker-color-deep-purple !important;
+    }
+  }
+  &.purple {
+    .MuiToggleButton-root.Mui-selected {
+      color: $picker-color-purple !important;
+    }
+  }
+  &.pink {
+    .MuiToggleButton-root.Mui-selected {
+      color: $picker-color-pink !important;
+    }
+  }
 }

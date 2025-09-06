@@ -153,7 +153,9 @@ export function FixedBottomNavigation(props: {
                   setSelectedDiaryDay(user.loggedToday)
                 }}
                 open={isAddModal}
-                className={`${prefs.isDarkMode ? 'dark-mode' : ''}`}
+                className={`${prefs.isDarkMode ? 'dark-mode' : ''} ${
+                  prefs.favoriteColor
+                }`}
                 sx={
                   {
                     // position: 'absolute',
@@ -166,6 +168,7 @@ export function FixedBottomNavigation(props: {
                     key={action.name}
                     icon={action.icon}
                     onClick={action.onClick as any}
+                    className={`${prefs.favoriteColor}`}
                   />
                 ))}
               </SpeedDial>
@@ -187,6 +190,7 @@ export function FixedBottomNavigation(props: {
                     onClick={() => {
                       navigate(route.path)
                     }}
+                    className={`${prefs.favoriteColor}`}
                   />
                 )
               })}
@@ -203,6 +207,7 @@ export function FixedBottomNavigation(props: {
                     onClick={() => {
                       navigate(route.path)
                     }}
+                    className={`${prefs.favoriteColor}`}
                   />
                 )
               })}

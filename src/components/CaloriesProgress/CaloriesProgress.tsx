@@ -129,6 +129,10 @@ import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
 import { messages } from '../../assets/config/messages'
 
 function EditComponent() {
+  const prefs = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.prefs
+  )
+
   const MIN = 1200
   const MAX = 5000
   const STEP = 50
@@ -232,6 +236,7 @@ function EditComponent() {
                 onClick={() => onFixedChange(-400)}
                 variant='contained'
                 color='primary'
+                className={`${prefs.favoriteColor}`}
               >
                 -400
               </Button>
@@ -239,6 +244,7 @@ function EditComponent() {
                 onClick={() => onFixedChange(400)}
                 variant='contained'
                 color='primary'
+                className={`${prefs.favoriteColor}`}
               >
                 +400
               </Button>

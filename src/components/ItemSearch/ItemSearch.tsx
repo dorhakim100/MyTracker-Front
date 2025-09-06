@@ -234,7 +234,9 @@ export function ItemSearch() {
             value={source}
             options={toggleOptions}
             onChange={setSource}
-            className={`source-toggle ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+            className={`source-toggle ${prefs.isDarkMode ? 'dark-mode' : ''} ${
+              prefs.favoriteColor
+            }`}
             ariaLabel='data source'
           />
         </Box>

@@ -82,7 +82,7 @@ export function SlideDialog({
         {/* {isLoading && <LinearProgress />} */}
 
         <AppBar sx={{ position: 'relative' }}>
-          <Toolbar>
+          <Toolbar className={`${prefs.favoriteColor}`}>
             <IconButton
               edge='start'
               color='inherit'

@@ -384,7 +384,7 @@ export function ItemDetails() {
         color='primary'
         size='large'
         fullWidth
-        className='add-to-meal-button'
+        className={`add-to-meal-button ${prefs.favoriteColor}`}
         onClick={editMealItem ? onEditMeal : onAddToMeal}
       >
         {!editMealItem && <AddIcon sx={{ mr: 1 }} />}
@@ -449,6 +449,10 @@ function EditComponent({
   value: number
   onChange: (key: keyof EditItem, value: number) => void
 }) {
+  const prefs = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.prefs
+  )
+
   const [pickerValue, setPickerValue] = useState<{
     numberOfServings: number
     afterValue: number
@@ -542,6 +546,7 @@ function EditComponent({
             variant='contained'
             key={`${button.value}-button`}
             onClick={() => onButtonClick(button.value)}
+            className={`${prefs.favoriteColor}`}
           >
             {button.value}
           </Button>

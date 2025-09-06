@@ -18,8 +18,8 @@
     }
 
     .MuiFab-circular {
-      background-color: $primary-color !important;
-      color: $white !important;
+      // background-color: $primary-color !important;
+      // color: $white !important;
       outline: none;
 
       &:hover {
@@ -81,7 +81,7 @@
   box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
 
   .MuiButtonBase-root {
-    background-color: $primary-color !important;
+    // background-color: $primary-color !important;
     color: $white !important;
   }
 }
