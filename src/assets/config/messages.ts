@@ -13,5 +13,7 @@ export const messages = {
     editMeal: 'Failed to edit meal',
     getDiary: 'Failed to get diary',
     register: 'Register first',
+    scan: 'Failed to scan',
+    noResults: 'No results found',
   },
 }
