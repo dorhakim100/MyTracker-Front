@@ -17,6 +17,8 @@
     "@mui/icons-material": "^7.0.1",
     "@mui/material": "^7.0.1",
     "@types/react-router-dom": "^5.3.3",
+    "@zxing/browser": "^0.1.5",
+    "@zxing/library": "^0.21.3",
     "axios": "^1.8.4",
     "framer-motion": "^12.6.3",
     "rc-slider": "^11.1.8",

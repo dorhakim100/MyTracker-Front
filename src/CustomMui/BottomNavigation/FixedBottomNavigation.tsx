@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { MouseEventHandler, useEffect, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import Box from '@mui/material/Box'
 import CssBaseline from '@mui/material/CssBaseline'
@@ -22,6 +22,14 @@ import { setIsAddModal } from '../../store/actions/system.actions'
 import { setSelectedDiaryDay } from '../../store/actions/user.actions'
 import { messages } from '../../assets/config/messages'
 import { showErrorMsg } from '../../services/event-bus.service'
+import { BarcodeScanner } from '../../components/BarcodeScanner/BarcodeScanner'
+
+type ModalType = 'search' | 'scan'
+
+const modalTypes = {
+  search: 'search' as ModalType,
+  scan: 'scan' as ModalType,
+}
 
 export function FixedBottomNavigation(props: {
   routes: Route[]
@@ -50,6 +58,7 @@ export function FixedBottomNavigation(props: {
   )
 
   const [searchModalOpen, setSearchModalOpen] = useState(false)
+  const [modalType, setModalType] = useState<ModalType>(modalTypes.search)
 
   const midIndex = Math.floor(props.routes.length / 2)
   const leftRoutes = React.useMemo(
@@ -92,12 +101,18 @@ export function FixedBottomNavigation(props: {
   }, [location.pathname, props.routes])
 
   function onScanClick() {
-    console.log('scan')
+    setModalType(modalTypes.scan)
+    setSearchModalOpen(true)
+  }
+
+  function onScanDetected(code: string) {
+    console.log('code', code)
   }
 
   function onSearchClick(ev: React.MouseEvent<HTMLButtonElement>) {
     ev.stopPropagation()
     ev.preventDefault()
+    setModalType(modalTypes.search)
     setSearchModalOpen(true)
   }
 
@@ -166,7 +181,9 @@ export function FixedBottomNavigation(props: {
                   <SpeedDialAction
                     key={action.name}
                     icon={action.icon}
-                    onClick={action.onClick as any}
+                    onClick={
+                      action.onClick as unknown as MouseEventHandler<HTMLDivElement>
+                    }
                     className={`${prefs.favoriteColor}`}
                   />
                 ))}
@@ -218,8 +235,17 @@ export function FixedBottomNavigation(props: {
       <SlideDialog
         open={searchModalOpen}
         onClose={closeSearchModal}
-        component={<ItemSearch />}
-        title='Search'
+        component={
+          modalType === modalTypes.search ? (
+            <ItemSearch />
+          ) : (
+            <BarcodeScanner
+              onClose={closeSearchModal}
+              onDetected={onScanDetected}
+            />
+          )
+        }
+        title={modalType === modalTypes.search ? 'Search' : 'Scan'}
         onSave={() => {}}
         type='full'
       />
