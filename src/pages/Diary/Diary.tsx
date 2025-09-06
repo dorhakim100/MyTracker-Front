@@ -16,6 +16,7 @@ import { showErrorMsg } from '../../services/event-bus.service'
 import { messages } from '../../assets/config/messages'
 //import { Log } from '../../types/log/Log'
 import { setSelectedDiaryDay } from '../../store/actions/user.actions'
+import { MealPeriod } from '../../types/mealPeriod/MealPeriod'
 
 export function Diary() {
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
@@ -170,9 +171,7 @@ export function Diary() {
                 <Divider
                   className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
                 />
-                <LoggedList
-                  mealPeriod={meal.period as 'breakfast' | 'lunch' | 'dinner'}
-                />
+                <LoggedList mealPeriod={meal.period as MealPeriod} />
                 <Typography variant='body2' className='total-calories'>
                   {`Total: ${caloriesToSet} kcal`}
                 </Typography>

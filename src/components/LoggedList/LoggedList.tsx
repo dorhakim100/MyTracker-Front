@@ -31,14 +31,11 @@ import { capitalizeFirstLetter } from '../../services/util.service'
 import { logService } from '../../services/log/log.service'
 import { LoggedToday } from '../../types/loggedToday/LoggedToday'
 import { dayService } from '../../services/day/day.service'
-
+import { MealPeriod } from '../../types/mealPeriod/MealPeriod'
 import { CustomSkeleton } from '../../CustomMui/CustomSkeleton/CustomSkeleton'
+import { AddItemButton } from '../AddItemButton/AddItemButton'
 
-export function LoggedList({
-  mealPeriod,
-}: {
-  mealPeriod: 'breakfast' | 'lunch' | 'dinner'
-}) {
+export function LoggedList({ mealPeriod }: { mealPeriod: MealPeriod }) {
   const user = useSelector((state: RootState) => state.userModule.user)
   const cachedItems = useSelector((state: RootState) => state.itemModule.items)
   const [isEditOpen, setIsEditOpen] = useState(false)
@@ -88,22 +85,7 @@ export function LoggedList({
       <div className='logged-items'>
         <div className='placeholder-container'>
           <div className='placeholder'>No items logged yet</div>
-
-          <Button
-            variant='contained'
-            color='primary'
-            size='small'
-            onClick={(e) => {
-              e.stopPropagation()
-              e.preventDefault()
-              setIsAddModal(true)
-              setSelectedMeal(capitalizeFirstLetter(mealPeriod))
-            }}
-            className={`${prefs.favoriteColor}`}
-          >
-            Add Item
-            <AddIcon />
-          </Button>
+          <AddItemButton mealPeriod={mealPeriod} />
         </div>
       </div>
     )
