@@ -19,15 +19,12 @@ import { CustomList } from '../../CustomMui/CustomList/CustomList'
 import {
   setItem,
   setEditMealItem,
-  setSelectedMeal,
   loadItems,
 } from '../../store/actions/item.actions'
 import { SwipeAction } from 'react-swipeable-list'
 import DeleteIcon from '@mui/icons-material/Delete'
-import { Button, Typography } from '@mui/material'
-import AddIcon from '@mui/icons-material/Add'
-import { setIsAddModal } from '../../store/actions/system.actions'
-import { capitalizeFirstLetter } from '../../services/util.service'
+import { Typography } from '@mui/material'
+
 import { logService } from '../../services/log/log.service'
 import { LoggedToday } from '../../types/loggedToday/LoggedToday'
 import { dayService } from '../../services/day/day.service'

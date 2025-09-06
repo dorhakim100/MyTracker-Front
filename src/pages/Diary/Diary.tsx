@@ -17,6 +17,7 @@ import { messages } from '../../assets/config/messages'
 //import { Log } from '../../types/log/Log'
 import { setSelectedDiaryDay } from '../../store/actions/user.actions'
 import { MealPeriod } from '../../types/mealPeriod/MealPeriod'
+import { AddItemButton } from '../../components/AddItemButton/AddItemButton'
 
 export function Diary() {
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
@@ -155,6 +156,9 @@ export function Diary() {
           {meals.map((meal) => {
             const currMeal = meal.period
             const caloriesToSet = getMealCalories(currMeal)
+            const hasItems = selectedDayDiary?.logs?.filter(
+              (log) => log.meal.toLocaleLowerCase() === currMeal
+            )
             return (
               <Box
                 className={`diary-meal-container ${
@@ -172,9 +176,14 @@ export function Diary() {
                   className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
                 />
                 <LoggedList mealPeriod={meal.period as MealPeriod} />
-                <Typography variant='body2' className='total-calories'>
-                  {`Total: ${caloriesToSet} kcal`}
-                </Typography>
+                <div className='meal-footer'>
+                  <Typography variant='body2' className='total-calories'>
+                    {`Total: ${caloriesToSet} kcal`}
+                  </Typography>
+                  {hasItems?.length !== 0 && (
+                    <AddItemButton mealPeriod={meal.period as MealPeriod} />
+                  )}
+                </div>
               </Box>
             )
           })}

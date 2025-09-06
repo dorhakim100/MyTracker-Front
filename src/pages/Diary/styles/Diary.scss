@@ -42,6 +42,16 @@
           text-align: end;
         }
       }
+
+      .meal-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .total-calories {
+          // font-weight: 600;
+        }
+      }
     }
   }
 }
