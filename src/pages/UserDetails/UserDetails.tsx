@@ -31,7 +31,11 @@ export function UserDetails() {
   )
 
   return (
-    <div className={`user-page ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
+    <div
+      className={`page-container user-page ${
+        prefs.isDarkMode ? 'dark-mode' : ''
+      }`}
+    >
       <Card
         variant='outlined'
         className={`card user-details ${prefs.isDarkMode ? 'dark-mode' : ''}`}
@@ -49,21 +53,24 @@ export function UserDetails() {
           </div>
         </div>
       </Card>
+      <div className='content-container'>
+        <Card
+          variant='outlined'
+          className={`card user-details ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+        ></Card>
+        <CustomAccordion title='Preferences' cmp={<PreferencesCard />} />
+        <CustomAccordion title='Preferences' cmp={<PreferencesCard />} />
+        <CustomAccordion title='Preferences' cmp={<PreferencesCard />} />
 
-      <Card
-        variant='outlined'
-        className={`card user-details ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-      ></Card>
-      <CustomAccordion title='Preferences' cmp={<PreferencesCard />} />
-
-      <Button
-        variant='contained'
-        color='primary'
-        onClick={() => logout()}
-        className={`${prefs.favoriteColor}`}
-      >
-        Logout
-      </Button>
+        <Button
+          variant='contained'
+          color='primary'
+          onClick={() => logout()}
+          className={`${prefs.favoriteColor}`}
+        >
+          Logout
+        </Button>
+      </div>
     </div>
   )
 }
@@ -133,6 +140,10 @@ function PreferencesCard() {
                 favoriteColor === color ? 'selected' : ''
               }`}
               onClick={() => onChangeFavoriteColor(color)}
+              sx={{
+                minWidth: '30px',
+                minHeight: '30px',
+              }}
             >
               <ColorMotion color={color} favoriteColor={favoriteColor} />
             </Button>

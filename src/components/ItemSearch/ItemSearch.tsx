@@ -162,8 +162,11 @@ export function ItemSearch() {
   const renderNoResults = () => {
     return (
       <Box className='results'>
-        <Typography variant='h6' className='no-results'>
-          No results
+        <Typography
+          variant='h6'
+          className={`no-results ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+        >
+          No results...
         </Typography>
       </Box>
     )
@@ -171,8 +174,8 @@ export function ItemSearch() {
 
   const renderList = () => {
     const hasFavorite =
-      user?.favoriteItems?.food.length === 0 ||
-      user?.favoriteItems?.product.length === 0
+      user?.favoriteItems?.food.length !== 0 ||
+      user?.favoriteItems?.product.length !== 0
 
     if (!results.length && hasFavorite) {
       return renderSkeleton()

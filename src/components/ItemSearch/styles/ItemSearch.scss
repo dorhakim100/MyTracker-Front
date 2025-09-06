@@ -50,6 +50,15 @@
       color: $white;
     }
   }
+
+  .no-results {
+    padding: 0em 1rem;
+    color: $dark-gray;
+
+    &.dark-mode {
+      color: $light-gray;
+    }
+  }
 }
 
 .item-search .results {

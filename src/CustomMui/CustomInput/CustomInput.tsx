@@ -1,6 +1,7 @@
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
 import type { ReactNode } from 'react'
+import { useRef, useEffect } from 'react'
 
 interface CustomInputProps {
   value: string
@@ -19,15 +20,23 @@ export function CustomInput({
   placeholder,
   startIconFn,
   endIconFn,
-  autoFocus = false,
+  // autoFocus = false,
   size = 'medium',
   className,
 }: CustomInputProps) {
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    // inputRef.current?.focus()
+  }, [])
+
   return (
     <TextField
       fullWidth
       size={size}
-      autoFocus={autoFocus}
+      ref={inputRef}
+      // autoFocus={autoFocus}
+      autoFocus={false}
       placeholder={placeholder}
       value={value}
       onChange={(e) => onChange(e.target.value)}

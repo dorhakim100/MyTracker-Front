@@ -342,7 +342,11 @@ select {
   }
 }
 
+// Speed Dial setup
+
 .MuiSpeedDial-root {
+  &.dark-mode {
+  }
   &.primary {
     .MuiFab-circular {
       background-color: $primary-color !important;
