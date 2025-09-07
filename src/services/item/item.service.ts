@@ -16,6 +16,7 @@ export const itemService = {
   remove,
   getEmptyItem,
   getDefaultFilter,
+  isItem,
   // getMaxPage,
 }
 
@@ -43,6 +44,16 @@ async function remove(itemId: string) {
   } catch (error) {
     throw error
   }
+}
+
+function isItem(value: Item | Partial<Item> | null | undefined): value is Item {
+  if (!value) return false
+  const candidate = value as Item
+  const hasName = typeof candidate.name === 'string'
+  const hasMacros =
+    typeof candidate.macros === 'object' && candidate.macros !== null
+  const hasType = typeof candidate.type === 'string'
+  return hasName && hasMacros && hasType
 }
 
 function getEmptyItem(): Item {

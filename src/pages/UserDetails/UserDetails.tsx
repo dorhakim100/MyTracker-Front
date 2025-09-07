@@ -1,14 +1,28 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { Button, Card, Divider, Typography } from '@mui/material'
 import { RootState } from '../../store/store'
-import { logout } from '../../store/actions/user.actions'
+import {
+  handleFavorite,
+  logout,
+  optimisticUpdateUser,
+  updateUser,
+} from '../../store/actions/user.actions'
 import { setPrefs } from '../../store/actions/system.actions'
 import type { Prefs } from '../../types/system/Prefs'
 import { motion } from 'framer-motion'
 import { DarkModeSwitch } from '../../components/DarkModeSwitch/DarkModeSwitch'
 import { CustomAccordion } from '../../CustomMui/CustomAccordion/CustomAccordion'
 import CheckIcon from '@mui/icons-material/Check'
+import { CustomList } from '../../CustomMui/CustomList/CustomList'
+import { SkeletonList } from '../../components/SkeletonList/SkeletonList'
+import { searchService } from '../../services/search/search-service'
+import { FavoriteButton } from '../../components/FavoriteButton/FavoriteButton'
+import { User } from '../../types/user/User'
+import { Item } from '../../types/item/Item'
+import { SlideDialog } from '../../components/SlideDialog/SlideDialog'
+import { ItemDetails } from '../../components/ItemDetails/ItemDetails'
+import { setItem } from '../../store/actions/item.actions'
 
 const colors = {
   primary: '--var(--primary-color)',
@@ -59,8 +73,8 @@ export function UserDetails() {
           className={`card user-details ${prefs.isDarkMode ? 'dark-mode' : ''}`}
         ></Card>
         <CustomAccordion title='Preferences' cmp={<PreferencesCard />} />
-        <CustomAccordion title='Preferences' cmp={<PreferencesCard />} />
-        <CustomAccordion title='Preferences' cmp={<PreferencesCard />} />
+
+        <CustomAccordion title='Favorite Items' cmp={<FavoriteItemsCard />} />
 
         <Button
           variant='contained'
@@ -149,6 +163,85 @@ function PreferencesCard() {
           ))}
         </div>
       </div>
+    </>
+  )
+}
+
+function FavoriteItemsCard() {
+  const user = useSelector(
+    (storeState: RootState) => storeState.userModule.user
+  )
+
+  const [favoriteItems, setFavoriteItems] = useState<Item[]>([])
+  const [isItemSelected, setIsItemSelected] = useState<boolean>(false)
+
+  useEffect(() => {
+    const handleFavoritesSearch = async () => {
+      const res = await searchService.search({
+        favoriteItems: user?.favoriteItems || [],
+      })
+
+      setFavoriteItems(res)
+    }
+
+    handleFavoritesSearch()
+  }, [user])
+
+  const onSelectItem = (item: Item) => {
+    setIsItemSelected(true)
+    setItem(item)
+  }
+
+  const onCloseItemDetails = () => {
+    setIsItemSelected(false)
+  }
+
+  const onReorder = async (newItems: Item[]) => {
+    try {
+      const newFavoriteItems = newItems.map((item) => item.searchId)
+      const newUser = { ...user, favoriteItems: newFavoriteItems }
+      optimisticUpdateUser(newUser as User)
+      await updateUser(newUser as User)
+    } catch (err) {
+      console.error(err)
+      optimisticUpdateUser(user as User)
+    }
+  }
+
+  if (!favoriteItems.length) {
+    return <SkeletonList />
+  }
+
+  return (
+    <>
+      <CustomList
+        items={favoriteItems || []}
+        renderPrimaryText={(item) => item.name}
+        renderLeft={(item) => (
+          <img src={item.image} alt={item.name} className='item-image' />
+        )}
+        renderRight={(item) =>
+          item.searchId ? (
+            <FavoriteButton
+              isFavorite={user?.favoriteItems?.includes(item.searchId) || false}
+            />
+          ) : null
+        }
+        onRightClick={(item) => {
+          handleFavorite(item, user as User)
+        }}
+        onItemClick={onSelectItem}
+        isDragable={true}
+        onReorder={onReorder}
+      />
+      <SlideDialog
+        open={isItemSelected}
+        onClose={onCloseItemDetails}
+        component={<ItemDetails />}
+        title='Item'
+        onSave={() => {}}
+        type='full'
+      />
     </>
   )
 }
