@@ -1,5 +1,4 @@
 import { Box } from '@mui/material'
-import React from 'react'
 import CustomSkeleton from '../../CustomMui/CustomSkeleton/CustomSkeleton'
 import { RootState } from '../../store/store'
 import { useSelector } from 'react-redux'
