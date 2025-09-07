@@ -33,9 +33,8 @@ import {
 } from '../../store/actions/user.actions'
 import { SearchFilter } from '../../types/searchFilter/SearchFilter'
 import { Typography } from '@mui/material'
-import { debounce, getNewDNDArray } from '../../services/util.service'
+import { debounce } from '../../services/util.service'
 import { CustomSkeleton } from '../../CustomMui/CustomSkeleton/CustomSkeleton'
-import { DropResult } from '@hello-pangea/dnd'
 import { User } from '../../types/user/User'
 
 const SKELETON_NUMBER = 8
@@ -49,7 +48,7 @@ export function ItemSearch() {
   const [results, setResults] = useState<Item[]>([])
   const [resultsDragable, setResultsDragable] = useState(false)
 
-  const [source, setSource] = useState(searchTypes.openFoodFacts)
+  const [source, setSource] = useState(searchTypes.usda)
 
   const [isItemSelected, setIsItemSelected] = useState(false)
 
@@ -133,25 +132,12 @@ export function ItemSearch() {
     setSelectedMeal(null)
   }
 
-  const dragEnd = async (result: DropResult) => {
-    if (!result.destination) return
-
-    const {
-      draggableId: itemId,
-      source: { index: originalIndex },
-      destination: { index: newIndex },
-    } = result
-
-    const newArray = getNewDNDArray(
-      user?.favoriteItems || [],
-      newIndex,
-      itemId,
-      originalIndex
-    )
+  const dragEnd = async (newItems: Item[]) => {
+    const newFavoriteItems = newItems.map((item) => item.searchId)
 
     const newUser = {
       ...user,
-      favoriteItems: newArray,
+      favoriteItems: newFavoriteItems,
     }
 
     optimisticUpdateUser(newUser as User)
@@ -254,7 +240,7 @@ export function ItemSearch() {
           onItemClick={onItemClick}
           onRightClick={onFavoriteClick}
           isDragable={resultsDragable}
-          dragEnd={dragEnd}
+          onReorder={dragEnd}
         />
       </Box>
     )

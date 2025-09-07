@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import List from '@mui/material/List'
 import ListItemButton from '@mui/material/ListItemButton'
@@ -20,6 +20,8 @@ import {
   DraggableProvided,
   DragStart,
 } from '@hello-pangea/dnd'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../store/store'
 
 export interface CustomListProps<T> {
   items: T[]
@@ -36,7 +38,7 @@ export interface CustomListProps<T> {
   renderRightSwipeActions?: (item: T) => React.ReactNode
   renderLeftSwipeActions?: (item: T) => React.ReactNode
   isDragable?: boolean
-  dragEnd?: (result: DropResult) => void
+  onReorder?: (next: T[]) => void
   // onDragStart?: (result: DragStart) => void
 }
 
@@ -55,9 +57,14 @@ export function CustomList<T>({
   renderRightSwipeActions,
   renderLeftSwipeActions,
   isDragable = false,
-  dragEnd,
+
+  onReorder,
 }: // onDragStart,
 CustomListProps<T>) {
+  const [reorderedItems, setReorderedItems] = useState<T[]>(items || [])
+
+  const prefs = useSelector((state: RootState) => state.systemModule.prefs)
+
   const leadingActions = (item: T) =>
     renderLeftSwipeActions ? (
       <LeadingActions>{renderLeftSwipeActions(item)}</LeadingActions>
@@ -68,9 +75,18 @@ CustomListProps<T>) {
       <TrailingActions>{renderRightSwipeActions(item)}</TrailingActions>
     ) : null
 
-  const onDragEnd = (result: DropResult) => {
-    if (!dragEnd) return
-    dragEnd(result)
+  // const onDragEnd = (result: DropResult) => {
+  //   if (!dragEnd) return
+  //   dragEnd(result)
+  // }
+
+  const onDragEnd = ({ destination, source }: DropResult) => {
+    if (!destination || destination.index === source.index) return
+    const newItems = [...items]
+    const [moved] = newItems.splice(source.index, 1)
+    newItems.splice(destination.index, 0, moved)
+    setReorderedItems(newItems)
+    onReorder?.(newItems)
   }
 
   const onDragStart = (result: DragStart) => {
@@ -87,12 +103,6 @@ CustomListProps<T>) {
           <span
             {...dragProvided.dragHandleProps}
             className='drag-handle'
-            style={{
-              cursor: 'grab',
-              paddingRight: 8,
-              display: 'flex',
-              alignItems: 'center',
-            }}
             onClick={(e) => e.stopPropagation()}
           >
             ⋮⋮
@@ -134,7 +144,7 @@ CustomListProps<T>) {
           <Droppable droppableId='droppable'>
             {(provided) => (
               <div ref={provided.innerRef} {...provided.droppableProps}>
-                {items.map((item, index) => {
+                {reorderedItems.map((item, index) => {
                   const key = getKey ? getKey(item, index) : index
                   // const draggableId = String(key)
                   const draggableId = key + ''
@@ -146,10 +156,13 @@ CustomListProps<T>) {
                       index={index}
                       isDragDisabled={!isDragable}
                     >
-                      {(dragProvided) => (
+                      {(dragProvided, snapshot) => (
                         <div
                           ref={dragProvided.innerRef}
                           {...dragProvided.draggableProps}
+                          className={`${
+                            snapshot.isDragging ? 'dragging' : ''
+                          } ${prefs.favoriteColor}`}
                         >
                           <SwipeableList type={Type.IOS} fullSwipe={true}>
                             <SwipeableListItem

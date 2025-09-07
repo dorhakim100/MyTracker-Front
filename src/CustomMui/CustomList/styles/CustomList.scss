@@ -30,6 +30,53 @@
       }
     }
   }
+
+  .drag-handle {
+    cursor: grab;
+    padding-right: 8px;
+    display: flex;
+    align-items: center;
+    font-size: 1.3rem;
+    font-weight: 700;
+  }
+
+  .dragging {
+    &.primary {
+      border-bottom: 2px solid $primary-color;
+    }
+
+    &.blue {
+      border-bottom: 2px solid $picker-color-blue;
+    }
+
+    &.red {
+      border-bottom: 2px solid $picker-color-red;
+    }
+
+    &.yellow {
+      border-bottom: 2px solid $picker-color-yellow;
+    }
+
+    &.green {
+      border-bottom: 2px solid $picker-color-green;
+    }
+
+    &.orange {
+      border-bottom: 2px solid $picker-color-orange;
+    }
+
+    &.deepPurple {
+      border-bottom: 2px solid $picker-color-deep-purple;
+    }
+
+    &.purple {
+      border-bottom: 2px solid $picker-color-purple;
+    }
+
+    &.pink {
+      border-bottom: 2px solid $picker-color-pink;
+    }
+  }
 }
 
 .item-image {
