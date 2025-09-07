@@ -184,9 +184,10 @@ export async function handleFavorite(item: Item, user: User) {
   try {
     if (!item.searchId) throw new Error('Item not found')
 
-    const key = item.type === 'food' ? 'food' : 'product'
+    // const key = item.type === 'food' ? 'food' : 'product'
 
-    let favoriteArray = user.favoriteItems[key] || []
+    // let favoriteArray = user.favoriteItems[key] || []
+    let favoriteArray = user.favoriteItems || []
 
     if (favoriteArray.includes(item.searchId)) {
       favoriteArray = favoriteArray.filter((id: string) => id !== item.searchId)
@@ -196,16 +197,21 @@ export async function handleFavorite(item: Item, user: User) {
       favoriteArray.push(item.searchId)
     }
 
-    const favoriteItems = {
-      ...user.favoriteItems,
-    }
+    // const favoriteItems = {
+    //   ...user.favoriteItems,
+    // }
+
+    // const userToSave = {
+    //   ...user,
+    //   favoriteItems: {
+    //     ...favoriteItems,
+    //     [key]: favoriteArray,
+    //   },
+    // }
 
     const userToSave = {
       ...user,
-      favoriteItems: {
-        ...favoriteItems,
-        [key]: favoriteArray,
-      },
+      favoriteItems: [...favoriteArray],
     }
 
     await updateUser(userToSave)
