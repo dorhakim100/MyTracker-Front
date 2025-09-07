@@ -185,3 +185,33 @@ export function getDateFromISO(isoString: string) {
   const date = new Date(isoString)
   return date.toISOString().split('T')[0]
 }
+
+export function getNewDNDArray(
+  originalArray: (string | null)[],
+  newIndex: number,
+  itemId: string,
+  originalIndex: number
+) {
+  const newArray: string[] = []
+
+  // const originalArray: (string | null)[] = user?.favoriteItems || []
+
+  newArray[newIndex] = itemId
+  originalArray.splice(originalIndex, 1, null)
+
+  originalArray.forEach((id, index) => {
+    if (!id) return
+
+    if (index < newIndex) {
+      newArray[index] = id
+    }
+
+    if (index >= newIndex) {
+      newArray[index + 1] = id
+    }
+  })
+
+  const filteredArray = newArray.filter((id) => typeof id === 'string')
+
+  return filteredArray
+}

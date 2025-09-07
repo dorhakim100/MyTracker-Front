@@ -47,7 +47,7 @@ async function search(filter: SearchFilter) {
   try {
     const { txt, source, favoriteItems } = filter
     let res: Item[] = []
-
+    console.log('favoriteItems', favoriteItems)
     // const { food, product } = favoriteItems || { food: [], product: [] }
     // const isFavoriteItems = food.length > 0 || product.length > 0
 

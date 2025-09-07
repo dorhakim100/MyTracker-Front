@@ -26,12 +26,17 @@ import { setItem, setSelectedMeal } from '../../store/actions/item.actions'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { ItemDetails } from '../ItemDetails/ItemDetails'
 import { FavoriteButton } from '../FavoriteButton/FavoriteButton'
-import { handleFavorite } from '../../store/actions/user.actions'
+import {
+  handleFavorite,
+  optimisticUpdateUser,
+  updateUser,
+} from '../../store/actions/user.actions'
 import { SearchFilter } from '../../types/searchFilter/SearchFilter'
 import { Typography } from '@mui/material'
-import { debounce } from '../../services/util.service'
+import { debounce, getNewDNDArray } from '../../services/util.service'
 import { CustomSkeleton } from '../../CustomMui/CustomSkeleton/CustomSkeleton'
 import { DropResult } from '@hello-pangea/dnd'
+import { User } from '../../types/user/User'
 
 const SKELETON_NUMBER = 8
 
@@ -128,22 +133,34 @@ export function ItemSearch() {
     setSelectedMeal(null)
   }
 
-  const dragEnd = (result: DropResult) => {
+  const dragEnd = async (result: DropResult) => {
     if (!result.destination) return
 
     const {
-      draggableId,
+      draggableId: itemId,
       source: { index: originalIndex },
       destination: { index: newIndex },
     } = result
 
-    console.log('originalIndex', originalIndex)
-    console.log('newIndex', newIndex)
-    console.log('draggableId', draggableId)
+    const newArray = getNewDNDArray(
+      user?.favoriteItems || [],
+      newIndex,
+      itemId,
+      originalIndex
+    )
 
-    // const originalFavoriteOrder = user?.favoriteItems?.food.concat(
-    //   user?.favoriteItems?.product
-    // )
+    const newUser = {
+      ...user,
+      favoriteItems: newArray,
+    }
+
+    optimisticUpdateUser(newUser as User)
+    try {
+      await updateUser(newUser as User)
+    } catch (err) {
+      console.error(err)
+      optimisticUpdateUser(user as User)
+    }
   }
 
   const renderSkeleton = () => {
