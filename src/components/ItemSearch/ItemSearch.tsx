@@ -41,6 +41,7 @@ export function ItemSearch() {
 
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<Item[]>([])
+  const [resultsDragable, setResultsDragable] = useState(false)
 
   const [source, setSource] = useState(searchTypes.openFoodFacts)
 
@@ -62,6 +63,7 @@ export function ItemSearch() {
         })
 
         setResults(res)
+        setResultsDragable(true)
         return
       }
 
@@ -77,6 +79,7 @@ export function ItemSearch() {
       }
 
       const res = await searchService.search(searchQuery)
+      setResultsDragable(false)
       setResults(res)
     } catch {
       showErrorMsg(messages.error.search)
@@ -210,6 +213,7 @@ export function ItemSearch() {
           )}
           onItemClick={onItemClick}
           onRightClick={onFavoriteClick}
+          isDragable={resultsDragable}
         />
       </Box>
     )

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 
 import List from '@mui/material/List'
 import ListItemButton from '@mui/material/ListItemButton'
@@ -18,6 +18,7 @@ import {
   Draggable,
   DropResult,
   DraggableProvided,
+  DragStart,
 } from '@hello-pangea/dnd'
 
 export interface CustomListProps<T> {
@@ -53,8 +54,6 @@ export function CustomList<T>({
   renderLeftSwipeActions,
   isDragable = false,
 }: CustomListProps<T>) {
-  const [isSwiping, setIsSwiping] = useState(false)
-
   const leadingActions = (item: T) =>
     renderLeftSwipeActions ? (
       <LeadingActions>{renderLeftSwipeActions(item)}</LeadingActions>
@@ -69,7 +68,7 @@ export function CustomList<T>({
     console.log(result)
   }
 
-  const onDragStart = (result) => {
+  const onDragStart = (result: DragStart) => {
     console.log(result)
   }
 
