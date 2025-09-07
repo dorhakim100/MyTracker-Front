@@ -36,6 +36,8 @@ export interface CustomListProps<T> {
   renderRightSwipeActions?: (item: T) => React.ReactNode
   renderLeftSwipeActions?: (item: T) => React.ReactNode
   isDragable?: boolean
+  dragEnd?: (result: DropResult) => void
+  // onDragStart?: (result: DragStart) => void
 }
 
 export function CustomList<T>({
@@ -53,7 +55,9 @@ export function CustomList<T>({
   renderRightSwipeActions,
   renderLeftSwipeActions,
   isDragable = false,
-}: CustomListProps<T>) {
+  dragEnd,
+}: // onDragStart,
+CustomListProps<T>) {
   const leadingActions = (item: T) =>
     renderLeftSwipeActions ? (
       <LeadingActions>{renderLeftSwipeActions(item)}</LeadingActions>
@@ -65,7 +69,8 @@ export function CustomList<T>({
     ) : null
 
   const onDragEnd = (result: DropResult) => {
-    console.log(result)
+    if (!dragEnd) return
+    dragEnd(result)
   }
 
   const onDragStart = (result: DragStart) => {
@@ -131,7 +136,9 @@ export function CustomList<T>({
               <div ref={provided.innerRef} {...provided.droppableProps}>
                 {items.map((item, index) => {
                   const key = getKey ? getKey(item, index) : index
-                  const draggableId = String(key)
+                  // const draggableId = String(key)
+                  const draggableId = key + ''
+
                   return (
                     <Draggable
                       key={draggableId}

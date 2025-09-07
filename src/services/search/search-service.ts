@@ -37,6 +37,8 @@ export const searchService = {
   removeFromCache,
 }
 
+const LONGEST_FOOD_ID_LENGTH = 10
+
 // await Promise.all(
 //   Object.values(cache).map((storeName) => indexedDbService.clear(storeName))
 // )
@@ -44,18 +46,44 @@ export const searchService = {
 async function search(filter: SearchFilter) {
   try {
     const { txt, source, favoriteItems } = filter
-    let res = []
+    let res: Item[] = []
 
-    const { food, product } = favoriteItems || { food: [], product: [] }
-    const isFavoriteItems = food.length > 0 || product.length > 0
+    // const { food, product } = favoriteItems || { food: [], product: [] }
+    // const isFavoriteItems = food.length > 0 || product.length > 0
 
-    if (!txt && isFavoriteItems) {
+    if (!txt && favoriteItems && favoriteItems.length > 0) {
       const cached = await indexedDbService.query<Item>(FAVORITE_CACHE, 0)
 
-      if (cached && cached.length) return cached
+      // if (cached && cached.length) return cached
 
-      const favoriteFoods = food || []
-      const favoriteProducts = product || []
+      // const favoriteFoods = food || []
+      // const favoriteProducts = product || []
+
+      const favoriteCopy = [...favoriteItems]
+
+      const favoriteFoods =
+        favoriteItems.filter((id) => id.length <= LONGEST_FOOD_ID_LENGTH) || []
+      const favoriteProducts =
+        favoriteItems.filter((id) => id.length >= LONGEST_FOOD_ID_LENGTH) || []
+
+      if (cached && cached.length) {
+        cached.forEach((item: Item) => {
+          const indexToRemove = favoriteCopy.findIndex(
+            (id) => id === item.searchId
+          )
+
+          if (indexToRemove !== -1) {
+            favoriteCopy.splice(indexToRemove, 1)
+            const indexToAdd = favoriteFoods.findIndex(
+              (id) => id === item.searchId
+            )
+            res[indexToAdd] = item
+          }
+        })
+      }
+
+      console.log('favoriteFoods', favoriteFoods)
+      console.log('favoriteProducts', favoriteProducts)
 
       const promises = [
         getFoodsByIds(favoriteFoods),
@@ -63,7 +91,25 @@ async function search(filter: SearchFilter) {
       ]
 
       const [foods, products] = await Promise.all(promises)
-      res = [...foods, ...products]
+      // res = [...foods, ...products]
+
+      foods.forEach((item) => {
+        const originalIndex = favoriteItems.findIndex(
+          (id) => id === item.searchId
+        )
+        if (originalIndex !== -1) {
+          res[originalIndex] = item as Item
+        }
+      })
+      products.forEach((item) => {
+        const originalIndex = favoriteItems.findIndex(
+          (id) => id === item.searchId
+        )
+
+        if (originalIndex !== -1) {
+          res[originalIndex] = item as Item
+        }
+      })
 
       res.forEach((item) => {
         addToCache(item as Item, FAVORITE_CACHE)
@@ -388,7 +434,8 @@ async function getFoodsByIds(ids: string[]) {
 
 function isFavorite(item: Item, user: User | null) {
   return (
-    user?.favoriteItems?.food.includes(item.searchId || '') ||
-    user?.favoriteItems?.product.includes(item.searchId || '')
+    // user?.favoriteItems?.food.includes(item.searchId || '') ||
+    // user?.favoriteItems?.product.includes(item.searchId || '')
+    user?.favoriteItems?.includes(item.searchId || '')
   )
 }

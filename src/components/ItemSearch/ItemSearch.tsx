@@ -31,6 +31,7 @@ import { SearchFilter } from '../../types/searchFilter/SearchFilter'
 import { Typography } from '@mui/material'
 import { debounce } from '../../services/util.service'
 import { CustomSkeleton } from '../../CustomMui/CustomSkeleton/CustomSkeleton'
+import { DropResult } from '@hello-pangea/dnd'
 
 const SKELETON_NUMBER = 8
 
@@ -75,7 +76,8 @@ export function ItemSearch() {
       const searchQuery: SearchFilter = {
         txt: query,
         source: source as 'usda' | 'open-food-facts',
-        favoriteItems: user?.favoriteItems || { food: [], product: [] },
+        // favoriteItems: user?.favoriteItems || { food: [], product: [] },
+        favoriteItems: user?.favoriteItems,
       }
 
       const res = await searchService.search(searchQuery)
@@ -126,6 +128,24 @@ export function ItemSearch() {
     setSelectedMeal(null)
   }
 
+  const dragEnd = (result: DropResult) => {
+    if (!result.destination) return
+
+    const {
+      draggableId,
+      source: { index: originalIndex },
+      destination: { index: newIndex },
+    } = result
+
+    console.log('originalIndex', originalIndex)
+    console.log('newIndex', newIndex)
+    console.log('draggableId', draggableId)
+
+    // const originalFavoriteOrder = user?.favoriteItems?.food.concat(
+    //   user?.favoriteItems?.product
+    // )
+  }
+
   const renderSkeleton = () => {
     return (
       <Box className='results'>
@@ -174,9 +194,11 @@ export function ItemSearch() {
   }
 
   const renderList = () => {
-    const hasFavorite =
-      user?.favoriteItems?.food.length !== 0 ||
-      user?.favoriteItems?.product.length !== 0
+    // const hasFavorite =
+    //   user?.favoriteItems?.food.length !== 0 ||
+    //   user?.favoriteItems?.product.length !== 0
+
+    const hasFavorite = user?.favoriteItems?.length !== 0
 
     if (!results.length && hasFavorite) {
       return renderSkeleton()
@@ -188,7 +210,8 @@ export function ItemSearch() {
       <Box className='results'>
         <CustomList<Item>
           items={results}
-          getKey={(item) => item._id || item.searchId || ''}
+          // getKey={(item) => item._id || item.searchId || ''}
+          getKey={(item) => item.searchId || ''}
           itemClassName={`search-item-container ${
             prefs.isDarkMode ? 'dark-mode' : ''
           }`}
@@ -214,6 +237,7 @@ export function ItemSearch() {
           onItemClick={onItemClick}
           onRightClick={onFavoriteClick}
           isDragable={resultsDragable}
+          dragEnd={dragEnd}
         />
       </Box>
     )

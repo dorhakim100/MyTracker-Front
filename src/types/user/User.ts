@@ -14,8 +14,10 @@ export interface User {
   goals: Goal[]
 
   loggedToday: LoggedToday
-  favoriteItems: {
-    food: string[]
-    product: string[]
-  }
+  // favoriteItems: {
+  //   food: string[]
+  //   product: string[]
+  // }
+
+  favoriteItems: string[]
 }
