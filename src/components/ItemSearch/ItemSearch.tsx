@@ -34,10 +34,9 @@ import {
 import { SearchFilter } from '../../types/searchFilter/SearchFilter'
 import { Typography } from '@mui/material'
 import { debounce } from '../../services/util.service'
-import { CustomSkeleton } from '../../CustomMui/CustomSkeleton/CustomSkeleton'
-import { User } from '../../types/user/User'
 
-const SKELETON_NUMBER = 8
+import { User } from '../../types/user/User'
+import { SkeletonList } from '../SkeletonList/SkeletonList'
 
 export function ItemSearch() {
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
@@ -85,6 +84,7 @@ export function ItemSearch() {
       }
 
       const res = await searchService.search(searchQuery)
+
       setResultsDragable(false)
       setResults(res)
     } catch {
@@ -149,39 +149,39 @@ export function ItemSearch() {
     }
   }
 
-  const renderSkeleton = () => {
-    return (
-      <Box className='results'>
-        {Array.from({ length: SKELETON_NUMBER }).map((_, index) => (
-          <div
-            className='search-item-container skeleton'
-            key={`${index}-skeleton-search-item`}
-          >
-            <CustomSkeleton
-              variant='circular'
-              width={50}
-              height={50}
-              isDarkMode={prefs.isDarkMode}
-            />
-            <div className='text-container'>
-              <CustomSkeleton
-                variant='text'
-                width='100%'
-                height={20}
-                isDarkMode={prefs.isDarkMode}
-              />
-              <CustomSkeleton
-                variant='text'
-                width='25%'
-                height={20}
-                isDarkMode={prefs.isDarkMode}
-              />
-            </div>
-          </div>
-        ))}
-      </Box>
-    )
-  }
+  // const renderSkeleton = () => {
+  //   return (
+  //     <Box className='results'>
+  //       {Array.from({ length: SKELETON_NUMBER }).map((_, index) => (
+  //         <div
+  //           className='search-item-container skeleton'
+  //           key={`${index}-skeleton-search-item`}
+  //         >
+  //           <CustomSkeleton
+  //             variant='circular'
+  //             width={50}
+  //             height={50}
+  //             isDarkMode={prefs.isDarkMode}
+  //           />
+  //           <div className='text-container'>
+  //             <CustomSkeleton
+  //               variant='text'
+  //               width='100%'
+  //               height={20}
+  //               isDarkMode={prefs.isDarkMode}
+  //             />
+  //             <CustomSkeleton
+  //               variant='text'
+  //               width='25%'
+  //               height={20}
+  //               isDarkMode={prefs.isDarkMode}
+  //             />
+  //           </div>
+  //         </div>
+  //       ))}
+  //     </Box>
+  //   )
+  // }
 
   const renderNoResults = () => {
     return (
@@ -204,7 +204,7 @@ export function ItemSearch() {
     const hasFavorite = user?.favoriteItems?.length !== 0
 
     if (!results.length && hasFavorite) {
-      return renderSkeleton()
+      return <SkeletonList />
     } else if (!results.length && !hasFavorite) {
       return renderNoResults()
     }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import List from '@mui/material/List'
 import ListItemButton from '@mui/material/ListItemButton'
@@ -65,6 +65,10 @@ CustomListProps<T>) {
 
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
 
+  useEffect(() => {
+    setReorderedItems([...items])
+  }, [items])
+
   const leadingActions = (item: T) =>
     renderLeftSwipeActions ? (
       <LeadingActions>{renderLeftSwipeActions(item)}</LeadingActions>
@@ -99,15 +103,6 @@ CustomListProps<T>) {
         className={`custom-list-item ${itemClassName ? itemClassName : ''}`}
         onClick={onItemClick ? () => onItemClick(item) : undefined}
       >
-        {isDragable && (
-          <span
-            {...dragProvided.dragHandleProps}
-            className='drag-handle'
-            onClick={(e) => e.stopPropagation()}
-          >
-            ⋮⋮
-          </span>
-        )}
         {renderLeft ? (
           <div className='left-content'>{renderLeft(item)}</div>
         ) : null}
@@ -133,6 +128,15 @@ CustomListProps<T>) {
             {renderRight(item)}
           </div>
         ) : null}
+        {isDragable && (
+          <span
+            {...dragProvided.dragHandleProps}
+            className='drag-handle'
+            onClick={(e) => e.stopPropagation()}
+          >
+            ⋮⋮
+          </span>
+        )}
       </ListItemButton>
     )
   }

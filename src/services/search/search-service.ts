@@ -50,6 +50,7 @@ async function search(filter: SearchFilter) {
     console.log('favoriteItems', favoriteItems)
     // const { food, product } = favoriteItems || { food: [], product: [] }
     // const isFavoriteItems = food.length > 0 || product.length > 0
+    console.log(txt)
 
     if (!txt && favoriteItems && favoriteItems.length > 0) {
       const cached = await indexedDbService.query<Item>(FAVORITE_CACHE, 0)
@@ -127,6 +128,8 @@ async function search(filter: SearchFilter) {
         res = await searchRawUSDA(safeTxt)
         break
     }
+
+    console.log('res', res)
 
     return res
   } catch (err) {
