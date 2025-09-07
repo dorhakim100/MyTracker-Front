@@ -188,14 +188,16 @@ async function addToCache(item: Item, key: string) {
 }
 
 async function removeFromCache(item: Item, key: string) {
-  if (!item._id) throw new Error('Item not found in cache')
+  console.log('removeFromCache', item)
+  const id = item._id || item.searchId
+  if (!id) throw new Error('Item not found in cache')
   const cached = await indexedDbService.query<Item>(key, 0)
 
-  const isInCache = cached.find((i: Item) => i.searchId === item.searchId)
+  const isInCache = cached.find((i: Item) => i.searchId === id)
 
   if (isInCache) {
-    await indexedDbService.remove(key, item._id)
-  } else throw new Error('Item not found in cache')
+    await indexedDbService.remove(key, id)
+  } // else throw new Error('Item not found in cache')
 }
 
 /* ====== Open Food Facts API ====== */

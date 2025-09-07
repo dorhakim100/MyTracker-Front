@@ -216,6 +216,7 @@ export async function handleFavorite(item: Item, user: User) {
 
     await updateUser(userToSave)
   } catch (err) {
+    console.log('err in handleFavorite', err)
     throw err
   }
 }
