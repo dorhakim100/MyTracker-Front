@@ -17,6 +17,7 @@ import {
   Droppable,
   Draggable,
   DropResult,
+  DraggableProvided,
 } from '@hello-pangea/dnd'
 
 export interface CustomListProps<T> {
@@ -33,6 +34,7 @@ export interface CustomListProps<T> {
   isSwipeable?: boolean
   renderRightSwipeActions?: (item: T) => React.ReactNode
   renderLeftSwipeActions?: (item: T) => React.ReactNode
+  isDragable?: boolean
 }
 
 export function CustomList<T>({
@@ -49,6 +51,7 @@ export function CustomList<T>({
   isSwipeable = false,
   renderRightSwipeActions,
   renderLeftSwipeActions,
+  isDragable = false,
 }: CustomListProps<T>) {
   const [isSwiping, setIsSwiping] = useState(false)
 
@@ -70,6 +73,56 @@ export function CustomList<T>({
     console.log(result)
   }
 
+  const renderList = (item: T, dragProvided: DraggableProvided) => {
+    return (
+      <ListItemButton
+        className={`custom-list-item ${itemClassName ? itemClassName : ''}`}
+        onClick={onItemClick ? () => onItemClick(item) : undefined}
+      >
+        {isDragable && (
+          <span
+            {...dragProvided.dragHandleProps}
+            className='drag-handle'
+            style={{
+              cursor: 'grab',
+              paddingRight: 8,
+              display: 'flex',
+              alignItems: 'center',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            ⋮⋮
+          </span>
+        )}
+        {renderLeft ? (
+          <div className='left-content'>{renderLeft(item)}</div>
+        ) : null}
+        <ListItemText
+          primary={renderPrimaryText ? renderPrimaryText(item) : undefined}
+          secondary={
+            renderSecondaryText ? renderSecondaryText(item) : undefined
+          }
+        />
+        {renderRight ? (
+          <div
+            className='right-content'
+            onClick={
+              onRightClick
+                ? (event) => {
+                    event.preventDefault()
+                    event.stopPropagation()
+                    onRightClick(item)
+                  }
+                : undefined
+            }
+          >
+            {renderRight(item)}
+          </div>
+        ) : null}
+      </ListItemButton>
+    )
+  }
+
   return (
     <div className={`custom-list ${className ? className : ''}`}>
       <List>
@@ -85,6 +138,7 @@ export function CustomList<T>({
                       key={draggableId}
                       draggableId={draggableId}
                       index={index}
+                      isDragDisabled={!isDragable}
                     >
                       {(dragProvided) => (
                         <div
@@ -103,63 +157,7 @@ export function CustomList<T>({
                               threshold={0.25}
                               blockSwipe={!isSwipeable}
                             >
-                              <ListItemButton
-                                className={`custom-list-item ${
-                                  itemClassName ? itemClassName : ''
-                                }`}
-                                onClick={
-                                  onItemClick
-                                    ? () => onItemClick(item)
-                                    : undefined
-                                }
-                              >
-                                <span
-                                  {...dragProvided.dragHandleProps}
-                                  className='drag-handle'
-                                  style={{
-                                    cursor: 'grab',
-                                    paddingRight: 8,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                  }}
-                                  onClick={(e) => e.stopPropagation()}
-                                >
-                                  ⋮⋮
-                                </span>
-                                {renderLeft ? (
-                                  <div className='left-content'>
-                                    {renderLeft(item)}
-                                  </div>
-                                ) : null}
-                                <ListItemText
-                                  primary={
-                                    renderPrimaryText
-                                      ? renderPrimaryText(item)
-                                      : undefined
-                                  }
-                                  secondary={
-                                    renderSecondaryText
-                                      ? renderSecondaryText(item)
-                                      : undefined
-                                  }
-                                />
-                                {renderRight ? (
-                                  <div
-                                    className='right-content'
-                                    onClick={
-                                      onRightClick
-                                        ? (event) => {
-                                            event.preventDefault()
-                                            event.stopPropagation()
-                                            onRightClick(item)
-                                          }
-                                        : undefined
-                                    }
-                                  >
-                                    {renderRight(item)}
-                                  </div>
-                                ) : null}
-                              </ListItemButton>
+                              {renderList(item, dragProvided)}
                             </SwipeableListItem>
                           </SwipeableList>
                         </div>
