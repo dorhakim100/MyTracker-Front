@@ -62,6 +62,11 @@ export function roundToNearest50(value: number): number {
   return Math.round(value)
 }
 
+export function roundCaloriesToNearest50(value: number): number {
+  return Math.round(value / 50) * 50
+  return Math.round(value)
+}
+
 export function getPercentageValue(type = 'calories', user: User | null) {
   if (user) {
     let percentage = 0

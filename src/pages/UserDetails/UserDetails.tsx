@@ -23,6 +23,7 @@ import { Item } from '../../types/item/Item'
 import { SlideDialog } from '../../components/SlideDialog/SlideDialog'
 import { ItemDetails } from '../../components/ItemDetails/ItemDetails'
 import { setItem } from '../../store/actions/item.actions'
+import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 
 const colors = {
   primary: '--var(--primary-color)',
@@ -194,7 +195,12 @@ function MealsCard() {
   )
 
   if (!user?.meals.length) {
-    return <SkeletonList />
+    return (
+      <>
+        <CustomButton text='Add Meal' />
+        <SkeletonList />
+      </>
+    )
   }
 
   return (

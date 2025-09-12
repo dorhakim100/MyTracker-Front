@@ -150,9 +150,13 @@ function EditComponent() {
   )
 
   const [pickerValue, setPickerValue] = useState<PickerValue>({
-    carbs: userToEdit?.currGoal?.macros.carbs || 0,
-    protein: userToEdit?.currGoal?.macros.protein || 0,
-    fats: userToEdit?.currGoal?.macros.fat || 0,
+    carbs:
+      userToEdit?.currGoal?.macros.carbs || user?.currGoal?.macros.carbs || 0,
+    protein:
+      userToEdit?.currGoal?.macros.protein ||
+      user?.currGoal?.macros.protein ||
+      0,
+    fats: userToEdit?.currGoal?.macros.fat || user?.currGoal?.macros.fat || 0,
   })
 
   const macroKeys = Object.keys(macros) as (keyof typeof macros)[]
@@ -182,10 +186,23 @@ function EditComponent() {
   }, [pickerValue])
 
   useEffect(() => {
-    if (!userToEdit) {
-      setUserToEdit(user as User)
-    }
+    const userToSet = {
+      ...userToEdit,
+      currGoal: {
+        ...userToEdit?.currGoal,
+        macros: {
+          ...userToEdit?.currGoal?.macros,
+          carbs: pickerValue.carbs,
+          protein: pickerValue.protein,
+          fat: pickerValue.fats,
+        },
+      },
+    } as User
+
+    setUserToEdit(userToSet)
   }, [user])
+
+  console.log(userToEdit)
 
   return (
     <Box className='edit-macros-container'>

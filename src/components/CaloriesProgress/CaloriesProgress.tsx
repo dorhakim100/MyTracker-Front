@@ -1,4 +1,4 @@
-import { Card, Typography, Box, Button } from '@mui/material'
+import { Card, Typography, Box } from '@mui/material'
 // import {Slider} from '@mui/material'
 import { CircularProgress } from '../CircularProgress/CircularProgress'
 
@@ -14,7 +14,8 @@ import { setIsLoading } from '../../store/actions/system.actions'
 import { EditIcon } from '../EditIcon/EditIcon'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { GoalBanner } from '../GoalBanner/GoalBanner'
-
+import RemoveIcon from '@mui/icons-material/Remove'
+import AddIcon from '@mui/icons-material/Add'
 // import FlagIcon from '@mui/icons-material/Flag'
 
 interface CaloriesProgressProps {
@@ -122,10 +123,12 @@ import { setUserToEdit } from '../../store/actions/user.actions'
 import { User } from '../../types/user/User'
 import {
   calculateCarbsFromCalories,
+  roundCaloriesToNearest50,
   roundToNearest50,
 } from '../../services/macros/macros.service'
 import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
 import { messages } from '../../assets/config/messages'
+import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 
 function EditComponent() {
   const prefs = useSelector(
@@ -150,7 +153,7 @@ function EditComponent() {
   )
 
   const [pickerCalories, setPickerCalories] = useState<{ calories: number }>({
-    calories: user?.currGoal?.dailyCalories || 2400,
+    calories: roundCaloriesToNearest50(user?.currGoal?.dailyCalories || 2400),
   })
 
   const onFixedChange = (value: number) => {
@@ -166,6 +169,7 @@ function EditComponent() {
 
   useEffect(() => {
     const currCalories = user?.currGoal?.dailyCalories
+
     if (!currCalories) return
     const diff = (currCalories - pickerCalories.calories) * -1
 
@@ -174,11 +178,13 @@ function EditComponent() {
 
     const newCarbs = originalCarbs + carbsToEdit
 
+    console.log(roundCaloriesToNearest50(pickerCalories.calories))
+
     const userToUpdate = {
       ...userToEdit,
       currGoal: {
         ...userToEdit?.currGoal,
-        dailyCalories: roundToNearest50(pickerCalories.calories),
+        dailyCalories: roundCaloriesToNearest50(pickerCalories.calories),
         macros: {
           ...userToEdit?.currGoal?.macros,
           carbs: newCarbs,
@@ -197,13 +203,14 @@ function EditComponent() {
           className='calories-amount-container'
         >
           <Typography variant='h3' className='calories-amount'>
-            {pickerCalories.calories} kcal
+            {roundCaloriesToNearest50(pickerCalories.calories)} kcal
           </Typography>
           <div className='picker-container'>
             <Picker
               value={pickerCalories}
               onChange={(next) =>
-                setPickerCalories(next as unknown as { calories: number })
+                // setPickerCalories(next as unknown as { calories: number })
+                setPickerCalories({ calories: next.calories as number })
               }
               height={150}
             >
@@ -231,22 +238,18 @@ function EditComponent() {
               </Picker.Column>
             </Picker>
             <div className='buttons-container'>
-              <Button
+              <CustomButton
                 onClick={() => onFixedChange(-400)}
-                variant='contained'
-                color='primary'
+                icon={<RemoveIcon />}
                 className={`${prefs.favoriteColor}`}
-              >
-                -400
-              </Button>
-              <Button
+                text='400'
+              />
+              <CustomButton
                 onClick={() => onFixedChange(400)}
-                variant='contained'
-                color='primary'
+                icon={<AddIcon />}
                 className={`${prefs.favoriteColor}`}
-              >
-                +400
-              </Button>
+                text='400'
+              />
             </div>
           </div>
           {/* <Typography variant='h3' className='calories-amount'>

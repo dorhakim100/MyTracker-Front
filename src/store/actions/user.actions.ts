@@ -56,6 +56,7 @@ export async function login(credentials: UserCred) {
       type: SET_USER,
       user: user,
     })
+
     setSelectedDiaryDay(user.loggedToday)
     setUserToEdit(user)
     // socketService.login(user._id)
