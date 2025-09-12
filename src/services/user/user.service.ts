@@ -183,6 +183,7 @@ function saveLoggedinUser(user: User) {
       email: user.email,
       loggedToday: user.loggedToday,
       favoriteItems: user.favoriteItems,
+      meals: user.meals,
     }
     sessionStorage.setItem(STORAGE_KEY_LOGGEDIN_USER, JSON.stringify(user))
     return user
