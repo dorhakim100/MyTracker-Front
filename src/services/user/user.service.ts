@@ -9,6 +9,8 @@ const REMEMBER_RECORD_ID = STORAGE_KEY_REMEMBERED_USER
 import { User } from '../../types/user/User'
 import { UserCred } from '../../types/userCred/UserCred'
 import { UserFilter } from '../../types/userFilter/UserFilter'
+import { searchService } from '../search/search-service'
+import { setFavoriteItems } from '../../store/actions/item.actions'
 // import { getPrefs, setPrefs } from '../system/system.service'
 
 export const userService = {
@@ -102,6 +104,11 @@ async function login(userCred: UserCred) {
     if (userCred.isRemember) {
       saveRememberedUser(user)
     }
+
+    const favoriteIDs = user.favoriteItems
+    const favoriteItems = await searchService.searchFavoriteItems(favoriteIDs)
+
+    setFavoriteItems(favoriteItems)
 
     return saveLoggedinUser(user)
   } catch (err) {

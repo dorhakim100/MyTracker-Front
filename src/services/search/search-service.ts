@@ -35,6 +35,7 @@ export const searchService = {
   isFavorite,
   addToCache,
   removeFromCache,
+  searchFavoriteItems,
 }
 
 const LONGEST_FOOD_ID_LENGTH = 10
@@ -47,74 +48,11 @@ async function search(filter: SearchFilter) {
   try {
     const { txt, source, favoriteItems } = filter
     let res: Item[] = []
-    console.log('favoriteItems', favoriteItems)
     // const { food, product } = favoriteItems || { food: [], product: [] }
     // const isFavoriteItems = food.length > 0 || product.length > 0
-    console.log(txt)
 
     if (!txt && favoriteItems && favoriteItems.length > 0) {
-      const cached = await indexedDbService.query<Item>(FAVORITE_CACHE, 0)
-
-      // if (cached && cached.length) return cached
-
-      // const favoriteFoods = food || []
-      // const favoriteProducts = product || []
-
-      const favoriteCopy = [...favoriteItems]
-
-      const favoriteFoods =
-        favoriteItems.filter((id) => id.length <= LONGEST_FOOD_ID_LENGTH) || []
-      const favoriteProducts =
-        favoriteItems.filter((id) => id.length >= LONGEST_FOOD_ID_LENGTH) || []
-
-      if (cached && cached.length) {
-        cached.forEach((item: Item) => {
-          const indexToRemove = favoriteCopy.findIndex(
-            (id) => id === item.searchId
-          )
-
-          if (indexToRemove !== -1) {
-            favoriteCopy.splice(indexToRemove, 1)
-            const indexToAdd = favoriteFoods.findIndex(
-              (id) => id === item.searchId
-            )
-            res[indexToAdd] = item
-          }
-        })
-      }
-
-      console.log('favoriteFoods', favoriteFoods)
-      console.log('favoriteProducts', favoriteProducts)
-
-      const promises = [
-        getFoodsByIds(favoriteFoods),
-        getProductsByIds(favoriteProducts),
-      ]
-
-      const [foods, products] = await Promise.all(promises)
-      // res = [...foods, ...products]
-
-      foods.forEach((item) => {
-        const originalIndex = favoriteItems.findIndex(
-          (id) => id === item.searchId
-        )
-        if (originalIndex !== -1) {
-          res[originalIndex] = item as Item
-        }
-      })
-      products.forEach((item) => {
-        const originalIndex = favoriteItems.findIndex(
-          (id) => id === item.searchId
-        )
-
-        if (originalIndex !== -1) {
-          res[originalIndex] = item as Item
-        }
-      })
-
-      res.forEach((item) => {
-        addToCache(item as Item, FAVORITE_CACHE)
-      })
+      res = await searchFavoriteItems(favoriteItems)
       return res
     }
 
@@ -129,11 +67,71 @@ async function search(filter: SearchFilter) {
         break
     }
 
-    console.log('res', res)
-
     return res
   } catch (err) {
     console.error(err)
+    throw err
+  }
+}
+
+async function searchFavoriteItems(favoriteItems: string[]) {
+  try {
+    const res: Item[] = []
+    const cached = await indexedDbService.query<Item>(FAVORITE_CACHE, 0)
+
+    const favoriteCopy = [...favoriteItems]
+
+    const favoriteFoods =
+      favoriteItems.filter((id) => id.length <= LONGEST_FOOD_ID_LENGTH) || []
+    const favoriteProducts =
+      favoriteItems.filter((id) => id.length >= LONGEST_FOOD_ID_LENGTH) || []
+
+    if (cached && cached.length) {
+      cached.forEach((item: Item) => {
+        const indexToRemove = favoriteCopy.findIndex(
+          (id) => id === item.searchId
+        )
+
+        if (indexToRemove !== -1) {
+          favoriteCopy.splice(indexToRemove, 1)
+          const indexToAdd = favoriteFoods.findIndex(
+            (id) => id === item.searchId
+          )
+          res[indexToAdd] = item
+        }
+      })
+    }
+
+    const promises = [
+      getFoodsByIds(favoriteFoods),
+      getProductsByIds(favoriteProducts),
+    ]
+
+    const [foods, products] = await Promise.all(promises)
+
+    foods.forEach((item) => {
+      const originalIndex = favoriteItems.findIndex(
+        (id) => id === item.searchId
+      )
+      if (originalIndex !== -1) {
+        res[originalIndex] = item as Item
+      }
+    })
+    products.forEach((item) => {
+      const originalIndex = favoriteItems.findIndex(
+        (id) => id === item.searchId
+      )
+
+      if (originalIndex !== -1) {
+        res[originalIndex] = item as Item
+      }
+    })
+
+    res.forEach((item) => {
+      addToCache(item as Item, FAVORITE_CACHE)
+    })
+    return res
+  } catch (err) {
     throw err
   }
 }

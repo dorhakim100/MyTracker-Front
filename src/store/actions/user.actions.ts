@@ -20,6 +20,7 @@ import { cache } from '../../assets/config/cache'
 import { Log } from '../../types/log/Log'
 import { LoggedToday } from '../../types/loggedToday/LoggedToday'
 import { dayService } from '../../services/day/day.service'
+import { addFavoriteItem, removeFavoriteItem } from './item.actions'
 
 const { FAVORITE_CACHE } = cache
 
@@ -189,9 +190,11 @@ export async function handleFavorite(item: Item, user: User) {
     if (favoriteArray.includes(item.searchId)) {
       favoriteArray = favoriteArray.filter((id: string) => id !== item.searchId)
       await searchService.removeFromCache(item, FAVORITE_CACHE)
+      removeFavoriteItem(item)
     } else {
       await searchService.addToCache(item, FAVORITE_CACHE)
       favoriteArray.push(item.searchId)
+      addFavoriteItem(item)
     }
 
     const userToSave = {

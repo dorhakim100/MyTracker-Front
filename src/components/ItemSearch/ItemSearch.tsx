@@ -43,6 +43,10 @@ export function ItemSearch() {
 
   const user = useSelector((state: RootState) => state.userModule.user)
 
+  const favoriteItems = useSelector(
+    (state: RootState) => state.itemModule.favoriteItems
+  )
+
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<Item[]>([])
   const [resultsDragable, setResultsDragable] = useState(false)
@@ -62,9 +66,9 @@ export function ItemSearch() {
     setIsLoading(true)
     try {
       if (!query) {
-        const res = await searchService.search({
-          favoriteItems: user?.favoriteItems,
-        })
+        const res = await searchService.searchFavoriteItems(
+          user?.favoriteItems || []
+        )
 
         setResults(res)
         setResultsDragable(true)
@@ -106,6 +110,13 @@ export function ItemSearch() {
   useEffect(() => {
     debouncedRunSearch()
   }, [query, source, user, debouncedRunSearch])
+
+  useEffect(() => {
+    if (!query) {
+      setResults(favoriteItems)
+      setResultsDragable(true)
+    }
+  }, [query, favoriteItems])
 
   const onClearQuery = () => {
     setQuery('')

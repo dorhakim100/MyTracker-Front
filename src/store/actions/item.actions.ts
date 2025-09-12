@@ -5,6 +5,9 @@ import {
   SET_ITEM,
   SET_EDIT_MEAL_ITEM,
   SET_SELECTED_MEAL,
+  SET_FAVORITE_ITEMS,
+  ADD_FAVORITE_ITEM,
+  REMOVE_FAVORITE_ITEM,
 } from '../reducers/item.reducer'
 import { Item } from '../../types/item/Item'
 import { Log } from '../../types/log/Log'
@@ -44,6 +47,18 @@ export function setSelectedMeal(selectedMeal: string | null) {
   store.dispatch(getCmdSetSelectedMeal(selectedMeal))
 }
 
+export function setFavoriteItems(favoriteItems: Item[]) {
+  store.dispatch(getCmdSetFavoriteItems(favoriteItems))
+}
+
+export function addFavoriteItem(favoriteItem: Item) {
+  store.dispatch(getCmdAddFavoriteItem(favoriteItem))
+}
+
+export function removeFavoriteItem(favoriteItem: Item) {
+  store.dispatch(getCmdRemoveFavoriteItem(favoriteItem))
+}
+
 function getCmdSetItems(items: Item[]) {
   return {
     type: SET_ITEMS,
@@ -69,5 +84,26 @@ function getCmdSetSelectedMeal(selectedMeal: string | null) {
   return {
     type: SET_SELECTED_MEAL,
     selectedMeal,
+  }
+}
+
+function getCmdSetFavoriteItems(favoriteItems: Item[]) {
+  return {
+    type: SET_FAVORITE_ITEMS,
+    favoriteItems,
+  }
+}
+
+function getCmdAddFavoriteItem(favoriteItem: Item) {
+  return {
+    type: ADD_FAVORITE_ITEM,
+    favoriteItem,
+  }
+}
+
+function getCmdRemoveFavoriteItem(favoriteItem: Item) {
+  return {
+    type: REMOVE_FAVORITE_ITEM,
+    favoriteItem,
   }
 }
