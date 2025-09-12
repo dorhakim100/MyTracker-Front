@@ -78,14 +78,12 @@ export function UserDetails() {
         <CustomAccordion title='Favorite Items' cmp={<FavoriteItemsCard />} />
         <CustomAccordion title='Preferences' cmp={<PreferencesCard />} />
 
-        <Button
-          variant='contained'
-          color='primary'
+        <CustomButton
+          fullWidth
           onClick={() => logout()}
           className={`${prefs.favoriteColor}`}
-        >
-          Logout
-        </Button>
+          text='Logout'
+        />
       </div>
     </div>
   )

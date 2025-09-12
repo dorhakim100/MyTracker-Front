@@ -374,17 +374,14 @@ export function ItemDetails() {
           ))}
         </div>
       </div>
-      <Button
-        variant='contained'
-        color='primary'
+      <CustomButton
+        text={editMealItem ? 'Edit Meal' : 'Add to Meal'}
+        icon={!editMealItem && <AddIcon sx={{ mr: 1 }} />}
         size='large'
         fullWidth
         className={`add-to-meal-button ${prefs.favoriteColor}`}
         onClick={editMealItem ? onEditMeal : onAddToMeal}
-      >
-        {!editMealItem && <AddIcon sx={{ mr: 1 }} />}
-        {editMealItem ? 'Edit Meal' : 'Add to Meal'}
-      </Button>
+      />
     </div>
   )
 }
@@ -423,7 +420,6 @@ function ServingsSelect({
 }
 
 import Picker from 'react-mobile-picker'
-import Button from '@mui/material/Button'
 import { EditItem } from '../../types/editItem/editItem'
 import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
 import { messages } from '../../assets/config/messages'
@@ -436,6 +432,7 @@ import { loadItems, setSelectedMeal } from '../../store/actions/item.actions'
 import { User } from '../../types/user/User'
 import { dayService } from '../../services/day/day.service'
 import { LoggedToday } from '../../types/loggedToday/LoggedToday'
+import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 
 function EditComponent({
   value,
@@ -536,14 +533,13 @@ function EditComponent({
       </Picker>
       <div className='buttons-container'>
         {buttons.map((button) => (
-          <Button
-            variant='contained'
+          <CustomButton
             key={`${button.value}-button`}
             onClick={() => onButtonClick(button.value)}
             className={`${prefs.favoriteColor}`}
-          >
-            {button.value}
-          </Button>
+            text={button.value.toString()}
+            fullWidth
+          />
         ))}
       </div>
     </div>
