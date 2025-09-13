@@ -16,6 +16,12 @@ import { AnimatePresence, motion } from 'framer-motion'
 
 const stages = ['name', 'items']
 
+const variants = {
+  enter: (dir: number) => ({ x: dir > 0 ? 360 : -360, opacity: 0 }),
+  center: { x: 0, opacity: 1 },
+  exit: (dir: number) => ({ x: dir > 0 ? -360 : 360, opacity: 0 }),
+}
+
 export function EditMeal() {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -69,7 +75,7 @@ export function EditMeal() {
           />
         </div>
       )
-    if (stage === 'items') return <div className='stage-container'>bla</div>
+    if (stage === 'items') return <div className='stage-container'></div>
   }
 
   const renderNavigationFooter = () => {
@@ -108,7 +114,23 @@ export function EditMeal() {
 
   function _getDisabledNavButton(type: 'previous' | 'next') {
     if (type === 'previous' && stage === stages[0]) return true
-    if (type === 'next' && stage === stages[stages.length - 1]) return true
+
+    if (type === 'next') {
+      if (stage === stages[stages.length - 1]) return true
+
+      console.log('stage', stage)
+      switch (stage) {
+        case 'name':
+          if (!editMeal.name) return true
+          break
+        case 'items':
+          if (!editMeal.items.length) return true
+          break
+
+        default:
+          break
+      }
+    }
     return false
   }
 
@@ -124,7 +146,7 @@ export function EditMeal() {
           <motion.div
             key={stage}
             custom={direction}
-            // variants={variants}
+            variants={variants}
             initial='enter'
             animate='center'
             exit='exit'
