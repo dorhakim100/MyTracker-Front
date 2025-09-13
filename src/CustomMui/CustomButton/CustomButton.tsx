@@ -42,10 +42,12 @@ export function CustomButton({
 
   return (
     <MotionWrapper
-      whileTap={{ scale: 0.94 }}
-      whileHover={{ scale: 0.98 }}
+      whileTap={!disabled ? { scale: 0.94 } : undefined}
+      whileHover={!disabled ? { scale: 0.98 } : undefined}
       transition={{ type: 'spring', stiffness: 400, damping: 22 }}
-      className={`custom-button-wrapper ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+      className={`custom-button-wrapper ${
+        prefs.isDarkMode ? 'dark-mode' : ''
+      } ${disabled ? 'disabled' : ''}`}
     >
       {isIcon ? (
         <IconButton

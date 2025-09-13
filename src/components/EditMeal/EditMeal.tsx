@@ -12,6 +12,7 @@ import Stepper from '@mui/material/Stepper'
 import Step from '@mui/material/Step'
 import StepLabel from '@mui/material/StepLabel'
 import { capitalizeFirstLetter } from '../../services/util.service'
+import { AnimatePresence, motion } from 'framer-motion'
 
 const stages = ['name', 'items']
 
@@ -22,6 +23,7 @@ export function EditMeal() {
 
   const [editMeal, setEditMeal] = useState<Meal>(mealService.getEmptyMeal())
   const [stage, setStage] = useState<string>(stages[0])
+  const [direction, setDirection] = useState(1)
 
   const onEditMeal = (key: keyof Meal, value: string | number) => {
     const newEditMeal = { ...editMeal }
@@ -48,6 +50,13 @@ export function EditMeal() {
   useEffect(() => {
     // console.log('editMeal', editMeal)
   }, [editMeal])
+
+  const onChangeStage = (diff: number) => {
+    if (_getDisabledNavButton(diff > 0 ? 'next' : 'previous')) return
+    const next = stages.indexOf(stage) + diff
+    setDirection(diff > 0 ? 1 : -1)
+    setStage(stages[next])
+  }
 
   const renderStageContent = () => {
     if (stage === 'name')
@@ -82,17 +91,25 @@ export function EditMeal() {
         <div className='buttons-container'>
           <CustomButton
             text='Previous'
-            onClick={() => setStage(stages[0])}
+            onClick={() => onChangeStage(-1)}
             fullWidth
+            disabled={_getDisabledNavButton('previous')}
           />
           <CustomButton
             text='Next'
-            onClick={() => setStage(stages[1])}
+            onClick={() => onChangeStage(1)}
             fullWidth
+            disabled={_getDisabledNavButton('next')}
           />
         </div>
       </div>
     )
+  }
+
+  function _getDisabledNavButton(type: 'previous' | 'next') {
+    if (type === 'previous' && stage === stages[0]) return true
+    if (type === 'next' && stage === stages[stages.length - 1]) return true
+    return false
   }
 
   return (
@@ -102,7 +119,21 @@ export function EditMeal() {
       </Typography>
 
       <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
-      <div className='stage-container'>{renderStageContent()}</div>
+      <div className='stage-container'>
+        <AnimatePresence initial={false} custom={direction} mode='wait'>
+          <motion.div
+            key={stage}
+            custom={direction}
+            // variants={variants}
+            initial='enter'
+            animate='center'
+            exit='exit'
+            transition={{ type: 'tween', duration: 0.25 }}
+          >
+            {renderStageContent()}
+          </motion.div>
+        </AnimatePresence>
+      </div>
       {/* <CustomButton text='Save' onClick={onSaveMeal} fullWidth /> */}
 
       {renderNavigationFooter()}
