@@ -1,8 +1,8 @@
 :root {
   // --primary-color: #027af2;
   --primary-color: #009688;
-  --primary-color-dark: #0052a3;
-  --primary-color-light: #80bfff;
+  --primary-color-dark: #00695c;
+  --primary-color-light: #4db6ac;
 
   --secondary-color: #009688;
   --secondary-color-dark: #00695c;
@@ -18,13 +18,28 @@
   --macro-fats-dark: #ffcc66;
 
   --picker-color-blue: #1976d2;
+  --picker-color-blue-dark: #115293;
+
   --picker-color-yellow: #ffd166;
+  --picker-color-yellow-dark: #e6a800;
+
   --picker-color-red: #d32f2f;
+  --picker-color-red-dark: #9a0007;
+
   --picker-color-orange: #ed6c02;
+  --picker-color-orange-dark: #b34700;
+
   --picker-color-green: #06d6a0;
+  --picker-color-green-dark: #049173;
+
   --picker-color-deep-purple: #6366f1;
+  --picker-color-deep-purple-dark: #3f41b5;
+
   --picker-color-purple: #9c27b0;
+  --picker-color-purple-dark: #6d1b7b;
+
   --picker-color-pink: #ff69b4;
+  --picker-color-pink-dark: #c2185b;
 }
 
 // Colors
@@ -39,13 +54,21 @@ $secondary-color-light: var(--secondary-color-light);
 $secondary-color-dark: var(--secondary-color-dark);
 
 $picker-color-blue: var(--picker-color-blue);
+$picker-color-blue-dark: var(--picker-color-blue-dark);
 $picker-color-yellow: var(--picker-color-yellow);
+$picker-color-yellow-dark: var(--picker-color-yellow-dark);
 $picker-color-red: var(--picker-color-red);
+$picker-color-red-dark: var(--picker-color-red-dark);
 $picker-color-orange: var(--picker-color-orange);
+$picker-color-orange-dark: var(--picker-color-orange-dark);
 $picker-color-green: var(--picker-color-green);
+$picker-color-green-dark: var(--picker-color-green-dark);
 $picker-color-deep-purple: var(--picker-color-deep-purple);
+$picker-color-deep-purple-dark: var(--picker-color-deep-purple-dark);
 $picker-color-purple: var(--picker-color-purple);
+$picker-color-purple-dark: var(--picker-color-purple-dark);
 $picker-color-pink: var(--picker-color-pink);
+$picker-color-pink-dark: var(--picker-color-pink-dark);
 
 // Shades of Red
 $light-red: #f28b82;

@@ -214,6 +214,148 @@ select {
   outline: none !important;
 }
 
+.stepper {
+  &.dark-mode {
+    .MuiStepLabel-label {
+      color: $white;
+
+      &.Mui-active {
+        color: $primary-color;
+      }
+    }
+  }
+
+  .MuiStepLabel-iconContainer {
+  }
+  &.primary {
+    .Mui-active {
+      svg {
+        fill: $primary-color !important;
+        color: $white;
+      }
+    }
+    .Mui-completed {
+      svg {
+        fill: $primary-color-dark;
+      }
+    }
+  }
+
+  &.blue {
+    .Mui-active {
+      svg {
+        fill: $picker-color-blue !important;
+        color: $white;
+      }
+    }
+    .Mui-completed {
+      svg {
+        fill: $picker-color-blue-dark;
+      }
+    }
+  }
+
+  &.red {
+    .Mui-active {
+      svg {
+        fill: $picker-color-red !important;
+        color: $white;
+      }
+    }
+    .Mui-completed {
+      svg {
+        fill: $picker-color-red-dark;
+      }
+    }
+  }
+
+  &.yellow {
+    .Mui-active {
+      svg {
+        fill: $picker-color-yellow !important;
+        color: $dark-gray;
+      }
+    }
+
+    .Mui-completed {
+      svg {
+        fill: $picker-color-yellow-dark;
+      }
+    }
+
+    svg {
+      color: $dark-gray;
+    }
+  }
+
+  &.green {
+    .Mui-active {
+      svg {
+        fill: $picker-color-green !important;
+        color: $dark-gray;
+      }
+    }
+    .Mui-completed {
+      svg {
+        fill: $picker-color-green-dark;
+      }
+    }
+  }
+  &.orange {
+    .Mui-active {
+      svg {
+        fill: $picker-color-orange !important;
+        color: $white;
+      }
+    }
+    .Mui-completed {
+      svg {
+        fill: $picker-color-orange-dark;
+      }
+    }
+  }
+
+  &.deepPurple {
+    .Mui-active {
+      svg {
+        fill: $picker-color-deep-purple !important;
+        color: $white;
+      }
+    }
+    .Mui-completed {
+      svg {
+        fill: $picker-color-deep-purple-dark;
+      }
+    }
+  }
+  &.purple {
+    .Mui-active {
+      svg {
+        fill: $picker-color-purple !important;
+        color: $white;
+      }
+    }
+    .Mui-completed {
+      svg {
+        fill: $picker-color-purple-dark;
+      }
+    }
+  }
+  &.pink {
+    .Mui-active {
+      svg {
+        fill: $picker-color-pink !important;
+        color: $white;
+      }
+    }
+    .Mui-completed {
+      svg {
+        fill: $picker-color-pink-dark;
+      }
+    }
+  }
+}
+
 // Button setup
 
 .MuiButtonBase-root:not(.MuiIconButton-root):not(
