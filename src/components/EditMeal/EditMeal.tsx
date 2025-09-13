@@ -124,7 +124,7 @@ export function EditMeal() {
   const [stage, setStage] = useState<string>(stages[0])
   const [direction, setDirection] = useState(1)
 
-  const [isItemSelected, setIsItemSelected] = useState<boolean>(false)
+  const [isOpenModal, setIsOpenModal] = useState<boolean>(false)
 
   const onEditMeal = (key: keyof Meal, value: string | number) => {
     const newEditMeal = { ...editMeal }
@@ -143,10 +143,10 @@ export function EditMeal() {
     setEditMeal(newEditMeal)
   }
 
-  const onSaveMeal = () => {
-    console.log('editMeal', editMeal)
-    // mealService.save(editMeal)
-  }
+  // const onSaveMeal = () => {
+  //   console.log('editMeal', editMeal)
+  //   // mealService.save(editMeal)
+  // }
 
   useEffect(() => {
     // console.log('editMeal', editMeal)
@@ -208,7 +208,7 @@ export function EditMeal() {
             />
           </div>
           <SlideDialog
-            open={isItemSelected}
+            open={isOpenModal}
             onClose={onCloseItemDetails}
             component={<ItemDetails onAddToMealClick={onAddToMealClick} />}
             title='Item'
@@ -263,12 +263,12 @@ export function EditMeal() {
   }
 
   function onSelectItem(item: MealItem) {
-    setIsItemSelected(true)
+    setIsOpenModal(true)
     setItem(item)
   }
 
   function onCloseItemDetails() {
-    setIsItemSelected(false)
+    setIsOpenModal(false)
   }
 
   function onAddToMealClick(item: MealItem) {
@@ -292,7 +292,7 @@ export function EditMeal() {
     }
 
     setEditMeal({ ...editMeal, items: newItems, macros: newMacros })
-    setIsItemSelected(false)
+    setIsOpenModal(false)
   }
 
   function renderDeleteAction(item: MealItem) {
