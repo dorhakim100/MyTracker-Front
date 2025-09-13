@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { Button, Card, Divider, Typography } from '@mui/material'
 import { RootState } from '../../store/store'
@@ -16,7 +16,7 @@ import { CustomAccordion } from '../../CustomMui/CustomAccordion/CustomAccordion
 import CheckIcon from '@mui/icons-material/Check'
 import { CustomList } from '../../CustomMui/CustomList/CustomList'
 import { SkeletonList } from '../../components/SkeletonList/SkeletonList'
-import { searchService } from '../../services/search/search-service'
+// import { searchService } from '../../services/search/search-service'
 import { FavoriteButton } from '../../components/FavoriteButton/FavoriteButton'
 import { User } from '../../types/user/User'
 import { Item } from '../../types/item/Item'
@@ -47,6 +47,7 @@ export function UserDetails() {
     (storeState: RootState) => storeState.userModule.user
   )
 
+  console.log('user', user)
   return (
     <div
       className={`page-container user-page ${
@@ -115,20 +116,23 @@ function FavoriteItemsCard() {
     (storeState: RootState) => storeState.userModule.user
   )
 
-  const [favoriteItems, setFavoriteItems] = useState<Item[]>([])
+  // const [favoriteItems, setFavoriteItems] = useState<Item[]>([])
+  const favoriteItems = useSelector(
+    (storeState: RootState) => storeState.itemModule.favoriteItems
+  )
   const [isItemSelected, setIsItemSelected] = useState<boolean>(false)
 
-  useEffect(() => {
-    const handleFavoritesSearch = async () => {
-      const res = await searchService.search({
-        favoriteItems: user?.favoriteItems || [],
-      })
+  // useEffect(() => {
+  // const handleFavoritesSearch = async () => {
+  //   const res = await searchService.search({
+  //     favoriteItems: user?.favoriteItems || [],
+  //   })
 
-      setFavoriteItems(res)
-    }
+  //   setFavoriteItems(res)
+  // }
 
-    handleFavoritesSearch()
-  }, [user])
+  // handleFavoritesSearch()
+  // }, [user])
 
   const onSelectItem = (item: Item) => {
     setIsItemSelected(true)

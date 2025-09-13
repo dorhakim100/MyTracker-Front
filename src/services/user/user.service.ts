@@ -246,7 +246,12 @@ async function getRememberedUser() {
 
     if (!rememberedId) return
 
-    const user = await getRememberedById(rememberedId)
+    const retrivedUser = await getRememberedById(rememberedId)
+    const favoriteIDs = retrivedUser.favoriteItems
+    const favoriteItems = await searchService.searchFavoriteItems(favoriteIDs)
+
+    setFavoriteItems(favoriteItems)
+    const user = { ...retrivedUser, meals: [] }
     if (user) return saveLoggedinUser(user)
     return null
   } catch (err) {

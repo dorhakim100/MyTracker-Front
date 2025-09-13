@@ -66,11 +66,12 @@ export function ItemSearch() {
     setIsLoading(true)
     try {
       if (!query) {
-        const res = await searchService.searchFavoriteItems(
-          user?.favoriteItems || []
-        )
+        // const res = await searchService.searchFavoriteItems(
+        //   user?.favoriteItems || []
+        // )
 
-        setResults(res)
+        // setResults(res)
+        setResults(favoriteItems)
         setResultsDragable(true)
         return
       }

@@ -50,7 +50,8 @@ export async function login(credentials: UserCred) {
   try {
     await logout()
 
-    const user = await userService.login(credentials)
+    const retrivedUser = await userService.login(credentials)
+    const user = { ...retrivedUser, meals: [] }
 
     store.dispatch({
       type: SET_USER,
