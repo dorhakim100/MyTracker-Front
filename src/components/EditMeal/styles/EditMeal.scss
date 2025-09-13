@@ -1,4 +1,13 @@
 .edit-meal-container {
+  display: grid;
+  // grid-template-rows: auto 1fr;
+
+  align-items: start;
+  text-align: center;
+
+  gap: 1rem;
+  padding: 1rem;
+
   .edit-meal-content {
     padding: 1rem;
   }

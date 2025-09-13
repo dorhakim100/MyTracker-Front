@@ -25,7 +25,7 @@ import { ItemDetails } from '../../components/ItemDetails/ItemDetails'
 import { setItem } from '../../store/actions/item.actions'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import AddIcon from '@mui/icons-material/Add'
-import { EditMeal } from '../EditMeal/EditMeal'
+import { EditMeal } from '../../components/EditMeal/EditMeal'
 
 const colors = {
   primary: '--var(--primary-color)',
