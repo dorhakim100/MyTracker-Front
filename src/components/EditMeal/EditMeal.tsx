@@ -49,6 +49,20 @@ export function EditMeal() {
     // console.log('editMeal', editMeal)
   }, [editMeal])
 
+  const renderStageContent = () => {
+    if (stage === 'name')
+      return (
+        <div className='stage-container'>
+          <CustomInput
+            value={editMeal.name}
+            onChange={(value) => onEditMeal('name', value)}
+            placeholder='Meal Name'
+          />
+        </div>
+      )
+    if (stage === 'items') return <div className='stage-container'>bla</div>
+  }
+
   const renderNavigationFooter = () => {
     return (
       <div className='edit-meal-footer'>
@@ -83,16 +97,12 @@ export function EditMeal() {
 
   return (
     <div className='page-container edit-meal-container'>
-      <Typography variant='h6'>Meal Name</Typography>
+      <Typography variant='h6'>
+        {stage === 'name' ? 'Enter Meal Name' : editMeal.name}
+      </Typography>
 
       <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
-      <div className='stage-container'>
-        <CustomInput
-          value={editMeal.name}
-          onChange={(value) => onEditMeal('name', value)}
-          placeholder='Meal Name'
-        />
-      </div>
+      <div className='stage-container'>{renderStageContent()}</div>
       {/* <CustomButton text='Save' onClick={onSaveMeal} fullWidth /> */}
 
       {renderNavigationFooter()}
