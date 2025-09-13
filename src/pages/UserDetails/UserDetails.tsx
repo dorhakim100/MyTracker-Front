@@ -24,6 +24,8 @@ import { SlideDialog } from '../../components/SlideDialog/SlideDialog'
 import { ItemDetails } from '../../components/ItemDetails/ItemDetails'
 import { setItem } from '../../store/actions/item.actions'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
+import AddIcon from '@mui/icons-material/Add'
+import { EditMeal } from '../EditMeal/EditMeal'
 
 const colors = {
   primary: '--var(--primary-color)',
@@ -192,22 +194,38 @@ function MealsCard() {
     (storeState: RootState) => storeState.userModule.user
   )
 
-  if (!user?.meals.length) {
-    return (
-      <>
-        <CustomButton text='Add Meal' />
-        <SkeletonList />
-      </>
-    )
+  const [isAddMealOpen, setIsAddMealOpen] = useState<boolean>(false)
+
+  const onAddMeal = () => {
+    setIsAddMealOpen(true)
   }
 
   return (
     <>
-      <CustomList
-        items={user.meals}
-        renderPrimaryText={(meal) => meal.name}
-        renderLeft={(meal) => <div>{meal.name}</div>}
-        renderRight={(meal) => <div>{meal.name}</div>}
+      <CustomButton
+        text='Add Meal'
+        icon={<AddIcon />}
+        fullWidth
+        onClick={onAddMeal}
+      />
+      {!user?.meals.length && (
+        <Typography variant='h6'>No meals added yet</Typography>
+      )}
+      {user?.meals && user?.meals.length > 0 && (
+        <CustomList
+          items={user.meals}
+          renderPrimaryText={(meal) => meal.name}
+          renderLeft={(meal) => <div>{meal.name}</div>}
+          renderRight={(meal) => <div>{meal.name}</div>}
+        />
+      )}
+      <SlideDialog
+        open={isAddMealOpen}
+        onClose={() => setIsAddMealOpen(false)}
+        component={<EditMeal />}
+        title='Add Meal'
+        onSave={() => {}}
+        type='full'
       />
     </>
   )
