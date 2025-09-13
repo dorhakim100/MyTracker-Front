@@ -20,30 +20,20 @@ import InputLabel from '@mui/material/InputLabel'
 import MenuItem from '@mui/material/MenuItem'
 import AddIcon from '@mui/icons-material/Add'
 import { logService } from '../../services/log/log.service'
+import { MealItem } from '../../types/mealItem/MealItem'
 
-const editOptions = [
-  {
-    label: 'Serving Size',
-    key: 'servingSize',
-    values: [1, 25, 30, 50, 100, 150],
-    extra: 'gram',
-    type: 'select',
-  },
-  {
-    label: 'Number of Servings',
-    key: 'numberOfServings',
-    values: getArrayOfNumbers(1, 100),
-    type: 'clock',
-  },
-  {
-    label: 'Meal',
-    key: 'meal',
-    values: ['Breakfast', 'Lunch', 'Dinner'],
-    type: 'select',
-  },
-]
+interface ItemDetailsProps {
+  onAddToMealClick?: (item: MealItem) => void
+}
 
-export function ItemDetails() {
+interface EditOption {
+  label: string
+  key: string
+  values: string[] | number[]
+  type: string
+}
+
+export function ItemDetails({ onAddToMealClick }: ItemDetailsProps) {
   const searchedItem: Item = useSelector(
     (stateSelector: RootState) => stateSelector.itemModule.item
   )
@@ -77,6 +67,28 @@ export function ItemDetails() {
   })
 
   const [clockOpen, setClockOpen] = useState(false)
+
+  const editOptions = [
+    {
+      label: 'Serving Size',
+      key: 'servingSize',
+      values: [1, 25, 30, 50, 100, 150],
+      extra: 'gram',
+      type: 'select',
+    },
+    {
+      label: 'Number of Servings',
+      key: 'numberOfServings',
+      values: getArrayOfNumbers(1, 100),
+      type: 'clock',
+    },
+    {
+      label: 'Meal',
+      key: 'meal',
+      values: ['Breakfast', 'Lunch', 'Dinner'],
+      type: 'select',
+    },
+  ]
 
   useEffect(() => {
     loadItems()
@@ -299,6 +311,24 @@ export function ItemDetails() {
     }
   }
 
+  const getOnClick = () => {
+    if (onAddToMealClick) {
+      const itemMealToEdit = {
+        searchId: item.searchId,
+        name: item.name,
+        macros: editItem.totalMacros,
+        image: item.image,
+        servingSize: editItem.servingSize,
+        numberOfServings: editItem.numberOfServings,
+      }
+      return () => onAddToMealClick(itemMealToEdit as MealItem)
+    }
+    if (editMealItem) {
+      return onEditMeal
+    }
+    return onAddToMeal
+  }
+
   return (
     <div className='item-details'>
       <div className='header'>
@@ -332,46 +362,50 @@ export function ItemDetails() {
 
       <div className='edit'>
         <div className='selects-container'>
-          {editOptions.map((option) => (
-            <div
-              className={`select-container ${
-                prefs.isDarkMode ? 'dark-mode' : ''
-              }`}
-              key={option.label}
-            >
-              <Typography variant='h6'>{option.label}</Typography>
-              {option.type === 'select' && (
-                <CustomSelect
-                  label={option.label}
-                  values={option.values.map((value) => value.toString())}
-                  extra={option.extra}
-                  value={editItem[option.key as keyof EditItem].toString()}
-                  onChange={(value) => onEditItemChange(option.key, value)}
-                />
-              )}
-              {option.type === 'clock' && (
-                <>
-                  <ServingsSelect
-                    openClock={openClock}
-                    option={option}
-                    value={editItem.numberOfServings}
+          {editOptions.map((option) => {
+            if (onAddToMealClick && option.key === 'meal') return null
+
+            return (
+              <div
+                className={`select-container ${
+                  prefs.isDarkMode ? 'dark-mode' : ''
+                }`}
+                key={option.label}
+              >
+                <Typography variant='h6'>{option.label}</Typography>
+                {option.type === 'select' && (
+                  <CustomSelect
+                    label={option.label}
+                    values={option.values.map((value) => value.toString())}
+                    extra={option.extra}
+                    value={editItem[option.key as keyof EditItem].toString()}
+                    onChange={(value) => onEditItemChange(option.key, value)}
                   />
-                  <SlideDialog
-                    open={clockOpen}
-                    onClose={closeClock}
-                    component={
-                      <EditComponent
-                        value={editItem.numberOfServings}
-                        onChange={onEditItemChange}
-                      />
-                    }
-                    onSave={() => {}}
-                    title={option.label}
-                  />
-                </>
-              )}
-            </div>
-          ))}
+                )}
+                {option.type === 'clock' && (
+                  <>
+                    <ServingsSelect
+                      openClock={openClock}
+                      option={option}
+                      value={editItem.numberOfServings}
+                    />
+                    <SlideDialog
+                      open={clockOpen}
+                      onClose={closeClock}
+                      component={
+                        <EditComponent
+                          value={editItem.numberOfServings}
+                          onChange={onEditItemChange}
+                        />
+                      }
+                      onSave={() => {}}
+                      title={option.label}
+                    />
+                  </>
+                )}
+              </div>
+            )
+          })}
         </div>
       </div>
       <CustomButton
@@ -380,7 +414,7 @@ export function ItemDetails() {
         size='large'
         fullWidth
         className={`add-to-meal-button ${prefs.favoriteColor}`}
-        onClick={editMealItem ? onEditMeal : onAddToMeal}
+        onClick={getOnClick()}
       />
     </div>
   )
@@ -392,7 +426,7 @@ function ServingsSelect({
   value,
 }: {
   openClock: () => void
-  option: (typeof editOptions)[number]
+  option: EditOption
   value: number
 }) {
   return (

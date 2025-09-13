@@ -17,6 +17,24 @@
     font-size: 0.95rem;
   }
 
+  .stage-container {
+    display: grid;
+    gap: 1rem;
+
+    .edit-meal-list {
+      height: 200px;
+      overflow-y: auto;
+    }
+
+    .edit-meal-macros-distribution {
+      padding: 1rem;
+
+      align-items: center;
+      box-shadow: none;
+      height: fit-content;
+    }
+  }
+
   .edit-meal-footer {
     display: grid;
     gap: 1rem;

@@ -23,6 +23,8 @@ interface MacrosDistributionProps {
   protein: number
   carbs: number
   fats: number
+  hideEditAndHeader?: boolean
+  className?: string
 }
 
 const proteinColor = 'var(--macro-protein)'
@@ -33,6 +35,8 @@ export function MacrosDistribution({
   protein,
   carbs,
   fats,
+  hideEditAndHeader = false,
+  className = '',
 }: MacrosDistributionProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -77,10 +81,12 @@ export function MacrosDistribution({
       <Card
         className={`card macros-distribution ${
           prefs.isDarkMode ? 'dark-mode' : ''
-        }`}
+        } ${className}`}
       >
-        <Typography variant='h6'>Distribution</Typography>
-        <EditIcon onClick={edit} />
+        {!hideEditAndHeader && (
+          <Typography variant='h6'>Distribution</Typography>
+        )}
+        {!hideEditAndHeader && <EditIcon onClick={edit} />}
         <MacrosDonut protein={protein} carbs={carbs} fats={fats} />
 
         <Macros protein={protein} carbs={carbs} fats={fats} />
