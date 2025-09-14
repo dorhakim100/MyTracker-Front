@@ -201,6 +201,7 @@ export function EditMeal() {
               isDragable={true}
               onReorder={onReorder}
               onItemClick={onSelectItem}
+              noResultsMessage={'No items added yet'}
               // renderSecondaryText={(item) =>
               //   `${+item.servingSize * +item.numberOfServings}gr - ${
               //     item.macros?.calories
