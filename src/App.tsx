@@ -16,8 +16,10 @@ import { RootState } from './store/store.ts'
 
 import './App.css'
 import { setRemembered } from './store/actions/user.actions.ts'
+import { setFavoriteItems } from './store/actions/item.actions.ts'
 import { loadPrefs } from './store/actions/system.actions.ts'
 import { SignIn } from './CustomMui/SignIn/SignIn.tsx'
+import { searchService } from './services/search/search-service.ts'
 
 function App() {
   const prefs = useSelector(
@@ -53,6 +55,19 @@ function App() {
   useEffect(() => {
     loadPrefs()
   }, [])
+
+  useEffect(() => {
+    const loadFavoriteItems = async () => {
+      const favoriteIDs = user?.favoriteItems
+      if (!favoriteIDs || !favoriteIDs.length) return
+      const favoriteItems = await searchService.searchFavoriteItems(
+        favoriteIDs || []
+      )
+
+      setFavoriteItems(favoriteItems)
+    }
+    loadFavoriteItems()
+  }, [user])
 
   function _handleManifest() {
     const manifest = document.querySelector<HTMLLinkElement>('#pwa-manifest')

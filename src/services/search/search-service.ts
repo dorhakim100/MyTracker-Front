@@ -94,13 +94,15 @@ async function searchFavoriteItems(favoriteItems: string[]) {
 
         if (indexToRemove !== -1) {
           favoriteCopy.splice(indexToRemove, 1)
-          const indexToAdd = favoriteFoods.findIndex(
+          const indexToAdd = favoriteItems.findIndex(
             (id) => id === item.searchId
           )
           res[indexToAdd] = item
         }
       })
     }
+
+    if (favoriteItems.every((id, idx) => id === res[idx].searchId)) return res
 
     const promises = [
       getFoodsByIds(favoriteFoods),
