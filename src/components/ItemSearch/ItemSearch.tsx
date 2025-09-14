@@ -37,8 +37,13 @@ import { debounce } from '../../services/util.service'
 
 import { User } from '../../types/user/User'
 import { SkeletonList } from '../SkeletonList/SkeletonList'
+import { MealItem } from '../../types/mealItem/MealItem'
 
-export function ItemSearch() {
+interface ItemSearchProps {
+  onAddToMealClick?: (item: MealItem) => void
+}
+
+export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
 
   const user = useSelector((state: RootState) => state.userModule.user)
@@ -291,7 +296,7 @@ export function ItemSearch() {
       <SlideDialog
         open={isItemSelected}
         onClose={onCloseItemDetails}
-        component={<ItemDetails />}
+        component={<ItemDetails onAddToMealClick={onAddToMealClick} />}
         title='Item'
         onSave={() => {}}
         type='full'

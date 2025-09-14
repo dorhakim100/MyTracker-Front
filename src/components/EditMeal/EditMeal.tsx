@@ -24,6 +24,7 @@ import { setItem } from '../../store/actions/item.actions'
 import { ItemDetails } from '../ItemDetails/ItemDetails'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { MacrosDistribution } from '../MacrosDistribution/MacrosDistribution'
+import { ItemSearch } from '../ItemSearch/ItemSearch'
 
 const stages = ['name', 'items']
 
@@ -125,6 +126,7 @@ export function EditMeal() {
   const [direction, setDirection] = useState(1)
 
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false)
+  const [modalType, setModalType] = useState<'search' | 'edit'>('search')
 
   const onEditMeal = (key: keyof Meal, value: string | number) => {
     const newEditMeal = { ...editMeal }
@@ -150,13 +152,19 @@ export function EditMeal() {
 
   useEffect(() => {
     // console.log('editMeal', editMeal)
-  }, [editMeal])
+    calcNewMealMacros(editMeal.items)
+  }, [editMeal.items])
 
   const onChangeStage = (diff: number) => {
     if (_getDisabledNavButton(diff > 0 ? 'next' : 'previous')) return
     const next = stages.indexOf(stage) + diff
     setDirection(diff > 0 ? 1 : -1)
     setStage(stages[next])
+  }
+
+  const onAddItem = () => {
+    setIsOpenModal(true)
+    setModalType('search')
   }
 
   const renderStageContent = () => {
@@ -184,7 +192,7 @@ export function EditMeal() {
               hideEditAndHeader={true}
               className={`edit-meal-macros-distribution`}
             />
-            <CustomButton text='Add Item' fullWidth />
+            <CustomButton text='Add Item' fullWidth onClick={onAddItem} />
             <CustomList
               className='edit-meal-list'
               items={editMeal.items}
@@ -213,7 +221,13 @@ export function EditMeal() {
           <SlideDialog
             open={isOpenModal}
             onClose={onCloseItemDetails}
-            component={<ItemDetails onAddToMealClick={onAddToMealClick} />}
+            component={
+              modalType === 'search' ? (
+                <ItemSearch onAddToMealClick={onAddToMealClick} />
+              ) : (
+                <ItemDetails onAddToMealClick={onAddToMealClick} />
+              )
+            }
             title='Item'
             onSave={() => {}}
             type='full'
@@ -266,8 +280,24 @@ export function EditMeal() {
   }
 
   function onSelectItem(item: MealItem) {
+    const originalMacros = _calcOriginalMacros(item)
     setIsOpenModal(true)
-    setItem(item)
+    setModalType('edit')
+    setItem({ ...item, macros: originalMacros })
+  }
+
+  function _calcOriginalMacros(item: MealItem) {
+    const grams = item.servingSize * item.numberOfServings
+    const calories = (item.macros.calories * 100) / grams
+    const protein = (item.macros.protein * 100) / grams
+    const carbs = (item.macros.carbs * 100) / grams
+    const fat = (item.macros.fat * 100) / grams
+    return {
+      calories: calories,
+      protein: protein,
+      carbs: carbs,
+      fat: fat,
+    }
   }
 
   function onCloseItemDetails() {
@@ -286,7 +316,11 @@ export function EditMeal() {
     } else {
       newItems = [...editMeal.items, item]
     }
+    calcNewMealMacros(newItems)
+    setIsOpenModal(false)
+  }
 
+  function calcNewMealMacros(newItems: MealItem[]) {
     const newMacros = {
       calories: newItems.reduce((acc, item) => acc + item.macros.calories, 0),
       protein: newItems.reduce((acc, item) => acc + item.macros.protein, 0),
@@ -295,7 +329,6 @@ export function EditMeal() {
     }
 
     setEditMeal({ ...editMeal, items: newItems, macros: newMacros })
-    setIsOpenModal(false)
   }
 
   function renderDeleteAction(item: MealItem) {
