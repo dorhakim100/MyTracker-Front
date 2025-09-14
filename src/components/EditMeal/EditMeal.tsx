@@ -168,7 +168,9 @@ export function EditMeal() {
             onChange={(value) => onEditMeal('name', value)}
             placeholder='Meal Name'
           />
-          <Lottie animationData={foodAnimation} loop={false} />
+          <div className='animation-container'>
+            <Lottie animationData={foodAnimation} loop={false} />
+          </div>
         </div>
       )
     if (stage === 'items')
