@@ -23,7 +23,28 @@
     height: 360px;
 
     .card {
-      margin-bottom: 1rem;
+      padding: 0.3rem 1rem !important;
+
+      .donut {
+        height: 140px;
+        width: 140px;
+
+        .donut-inner {
+          height: 120px;
+          width: 120px;
+
+          .totals {
+            .value {
+              font-size: 1.5rem;
+            }
+
+            .label {
+              font-size: 1.2rem;
+            }
+          }
+        }
+      }
+      // margin-bottom: 1rem;
     }
 
     .animation-container {
