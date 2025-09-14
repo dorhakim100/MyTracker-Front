@@ -42,83 +42,83 @@ export function EditMeal() {
     ...mealService.getEmptyMeal(),
     macros: { calories: 3567, protein: 200, carbs: 200, fat: 200 },
     items: [
-      {
-        _id: '12q345',
-        searchId: '12345',
-        image:
-          'https://domf5oio6qrcr.cloudfront.net/medialibrary/8371/bigstock-Hamburger-And-French-Fries-263887.jpg',
-        name: 'Item 1',
-        macros: { calories: 100, protein: 10, carbs: 10, fat: 10 },
-        type: 'food',
-        servingSize: 100,
-        numberOfServings: 1,
-      },
-      {
-        _id: '234v56',
-        searchId: '23456',
-        image:
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYh_GM0PimdSFWCXk0jE-GWGRYGXmno2muj__ddRNSy9gp87R9IMwDY_kWWRbdvrO0Zdc&usqp=CAU',
-        name: 'Item 2',
-        macros: { calories: 62, protein: 5, carbs: 2, fat: 4 },
-        type: 'food',
-        servingSize: 50,
-        numberOfServings: 3,
-      },
-      {
-        _id: '34c567',
-        searchId: '34567',
-        image:
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYh_GM0PimdSFWCXk0jE-GWGRYGXmno2muj__ddRNSy9gp87R9IMwDY_kWWRbdvrO0Zdc&usqp=CAU',
-        name: 'Item 3',
-        macros: { calories: 62, protein: 5, carbs: 2, fat: 4 },
-        type: 'food',
-        servingSize: 50,
-        numberOfServings: 3,
-      },
-      {
-        _id: '456q78',
-        searchId: '45678',
-        image:
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYh_GM0PimdSFWCXk0jE-GWGRYGXmno2muj__ddRNSy9gp87R9IMwDY_kWWRbdvrO0Zdc&usqp=CAU',
-        name: 'Item 4',
-        macros: { calories: 62, protein: 5, carbs: 2, fat: 4 },
-        type: 'food',
-        servingSize: 50,
-        numberOfServings: 3,
-      },
-      {
-        _id: '567e89',
-        searchId: '56789',
-        image:
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYh_GM0PimdSFWCXk0jE-GWGRYGXmno2muj__ddRNSy9gp87R9IMwDY_kWWRbdvrO0Zdc&usqp=CAU',
-        name: 'Item 5',
-        macros: { calories: 62, protein: 5, carbs: 2, fat: 4 },
-        type: 'food',
-        servingSize: 50,
-        numberOfServings: 3,
-      },
-      {
-        _id: '6789s0',
-        searchId: '67890',
-        image:
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYh_GM0PimdSFWCXk0jE-GWGRYGXmno2muj__ddRNSy9gp87R9IMwDY_kWWRbdvrO0Zdc&usqp=CAU',
-        name: 'Item 6',
-        macros: { calories: 62, protein: 5, carbs: 2, fat: 4 },
-        type: 'food',
-        servingSize: 50,
-        numberOfServings: 3,
-      },
-      {
-        _id: '678wf90',
-        searchId: '67890',
-        image:
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYh_GM0PimdSFWCXk0jE-GWGRYGXmno2muj__ddRNSy9gp87R9IMwDY_kWWRbdvrO0Zdc&usqp=CAU',
-        name: 'Item 6',
-        macros: { calories: 62, protein: 5, carbs: 2, fat: 4 },
-        type: 'food',
-        servingSize: 50,
-        numberOfServings: 3,
-      },
+      // {
+      //   _id: '12q345',
+      //   searchId: '12345',
+      //   image:
+      //     'https://domf5oio6qrcr.cloudfront.net/medialibrary/8371/bigstock-Hamburger-And-French-Fries-263887.jpg',
+      //   name: 'Item 1',
+      //   macros: { calories: 100, protein: 10, carbs: 10, fat: 10 },
+      //   type: 'food',
+      //   servingSize: 100,
+      //   numberOfServings: 1,
+      // },
+      // {
+      //   _id: '234v56',
+      //   searchId: '23456',
+      //   image:
+      //     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYh_GM0PimdSFWCXk0jE-GWGRYGXmno2muj__ddRNSy9gp87R9IMwDY_kWWRbdvrO0Zdc&usqp=CAU',
+      //   name: 'Item 2',
+      //   macros: { calories: 62, protein: 5, carbs: 2, fat: 4 },
+      //   type: 'food',
+      //   servingSize: 50,
+      //   numberOfServings: 3,
+      // },
+      // {
+      //   _id: '34c567',
+      //   searchId: '34567',
+      //   image:
+      //     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYh_GM0PimdSFWCXk0jE-GWGRYGXmno2muj__ddRNSy9gp87R9IMwDY_kWWRbdvrO0Zdc&usqp=CAU',
+      //   name: 'Item 3',
+      //   macros: { calories: 62, protein: 5, carbs: 2, fat: 4 },
+      //   type: 'food',
+      //   servingSize: 50,
+      //   numberOfServings: 3,
+      // },
+      // {
+      //   _id: '456q78',
+      //   searchId: '45678',
+      //   image:
+      //     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYh_GM0PimdSFWCXk0jE-GWGRYGXmno2muj__ddRNSy9gp87R9IMwDY_kWWRbdvrO0Zdc&usqp=CAU',
+      //   name: 'Item 4',
+      //   macros: { calories: 62, protein: 5, carbs: 2, fat: 4 },
+      //   type: 'food',
+      //   servingSize: 50,
+      //   numberOfServings: 3,
+      // },
+      // {
+      //   _id: '567e89',
+      //   searchId: '56789',
+      //   image:
+      //     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYh_GM0PimdSFWCXk0jE-GWGRYGXmno2muj__ddRNSy9gp87R9IMwDY_kWWRbdvrO0Zdc&usqp=CAU',
+      //   name: 'Item 5',
+      //   macros: { calories: 62, protein: 5, carbs: 2, fat: 4 },
+      //   type: 'food',
+      //   servingSize: 50,
+      //   numberOfServings: 3,
+      // },
+      // {
+      //   _id: '6789s0',
+      //   searchId: '67890',
+      //   image:
+      //     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYh_GM0PimdSFWCXk0jE-GWGRYGXmno2muj__ddRNSy9gp87R9IMwDY_kWWRbdvrO0Zdc&usqp=CAU',
+      //   name: 'Item 6',
+      //   macros: { calories: 62, protein: 5, carbs: 2, fat: 4 },
+      //   type: 'food',
+      //   servingSize: 50,
+      //   numberOfServings: 3,
+      // },
+      // {
+      //   _id: '678wf90',
+      //   searchId: '67890',
+      //   image:
+      //     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYh_GM0PimdSFWCXk0jE-GWGRYGXmno2muj__ddRNSy9gp87R9IMwDY_kWWRbdvrO0Zdc&usqp=CAU',
+      //   name: 'Item 6',
+      //   macros: { calories: 62, protein: 5, carbs: 2, fat: 4 },
+      //   type: 'food',
+      //   servingSize: 50,
+      //   numberOfServings: 3,
+      // },
     ],
   })
   const [stage, setStage] = useState<string>(stages[0])

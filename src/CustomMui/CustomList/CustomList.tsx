@@ -39,6 +39,7 @@ export interface CustomListProps<T> {
   renderLeftSwipeActions?: (item: T) => React.ReactNode
   isDragable?: boolean
   onReorder?: (next: T[]) => void
+  renderNoResults?: () => React.ReactNode
   // onDragStart?: (result: DragStart) => void
 }
 
@@ -57,6 +58,7 @@ export function CustomList<T>({
   renderRightSwipeActions,
   renderLeftSwipeActions,
   isDragable = false,
+  renderNoResults,
 
   onReorder,
 }: // onDragStart,
@@ -139,6 +141,10 @@ CustomListProps<T>) {
         )}
       </ListItemButton>
     )
+  }
+
+  if (renderNoResults && !reorderedItems.length) {
+    return renderNoResults()
   }
 
   return (
