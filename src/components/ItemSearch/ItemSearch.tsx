@@ -38,6 +38,7 @@ import { debounce } from '../../services/util.service'
 import { User } from '../../types/user/User'
 import { SkeletonList } from '../SkeletonList/SkeletonList'
 import { MealItem } from '../../types/mealItem/MealItem'
+import { itemService } from '../../services/item/item.service'
 
 interface ItemSearchProps {
   onAddToMealClick?: (item: MealItem) => void
@@ -63,6 +64,7 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
   // const isLoading = useSelector((state: RootState) => state.systemModule.isLoading)
 
   const toggleOptions: ToggleOption[] = [
+    { value: searchTypes.meal, label: 'Meals' },
     { value: searchTypes.usda, label: 'Food' },
     { value: searchTypes.openFoodFacts, label: 'Product' },
   ]
@@ -71,18 +73,32 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
     setIsLoading(true)
     try {
       if (!query) {
-        // const res = await searchService.searchFavoriteItems(
-        //   user?.favoriteItems || []
-        // )
+        const meals = user?.meals.map((meal) =>
+          itemService.convertMealToItem(meal)
+        )
 
-        // setResults(res)
-        setResults(favoriteItems)
+        const itemsToShow = favoriteItems.concat(meals || [])
+
+        // setResults(favoriteItems)
+        setResults(itemsToShow)
         setResultsDragable(true)
         return
       }
 
       if (!source) {
         showErrorMsg(messages.error.search)
+        return
+      }
+
+      if (source === searchTypes.meal) {
+        const regex = new RegExp(query, 'i')
+
+        const meals = user?.meals
+          .map((meal) => itemService.convertMealToItem(meal))
+          .filter((meal) => regex.test(meal.name))
+
+        setResults(meals || [])
+        setResultsDragable(true)
         return
       }
 
@@ -166,40 +182,6 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
     }
   }
 
-  // const renderSkeleton = () => {
-  //   return (
-  //     <Box className='results'>
-  //       {Array.from({ length: SKELETON_NUMBER }).map((_, index) => (
-  //         <div
-  //           className='search-item-container skeleton'
-  //           key={`${index}-skeleton-search-item`}
-  //         >
-  //           <CustomSkeleton
-  //             variant='circular'
-  //             width={50}
-  //             height={50}
-  //             isDarkMode={prefs.isDarkMode}
-  //           />
-  //           <div className='text-container'>
-  //             <CustomSkeleton
-  //               variant='text'
-  //               width='100%'
-  //               height={20}
-  //               isDarkMode={prefs.isDarkMode}
-  //             />
-  //             <CustomSkeleton
-  //               variant='text'
-  //               width='25%'
-  //               height={20}
-  //               isDarkMode={prefs.isDarkMode}
-  //             />
-  //           </div>
-  //         </div>
-  //       ))}
-  //     </Box>
-  //   )
-  // }
-
   const renderNoResults = () => {
     return (
       <Box className='results'>
@@ -214,10 +196,6 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
   }
 
   const renderList = () => {
-    // const hasFavorite =
-    //   user?.favoriteItems?.food.length !== 0 ||
-    //   user?.favoriteItems?.product.length !== 0
-
     const hasFavorite = user?.favoriteItems?.length !== 0
 
     if (!results.length && hasFavorite) {
@@ -230,8 +208,7 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
       <Box className='results'>
         <CustomList<Item>
           items={results}
-          // getKey={(item) => item._id || item.searchId || ''}
-          getKey={(item) => item.searchId || ''}
+          getKey={(item) => item.searchId || item._id || ''}
           itemClassName={`search-item-container ${
             prefs.isDarkMode ? 'dark-mode' : ''
           }`}

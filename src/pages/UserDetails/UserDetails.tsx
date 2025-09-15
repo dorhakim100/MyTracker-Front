@@ -26,6 +26,11 @@ import { setItem } from '../../store/actions/item.actions'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import AddIcon from '@mui/icons-material/Add'
 import { EditMeal } from '../../components/EditMeal/EditMeal'
+import { Meal } from '../../types/meal/Meal'
+import { mealService } from '../../services/meal/meal.service'
+import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
+import { messages } from '../../assets/config/messages'
+import { MacrosDonut } from '../../components/MacrosDonut/MacrosDonut'
 
 const colors = {
   primary: '--var(--primary-color)',
@@ -47,7 +52,6 @@ export function UserDetails() {
     (storeState: RootState) => storeState.userModule.user
   )
 
-  console.log('user', user)
   return (
     <div
       className={`page-container user-page ${
@@ -199,9 +203,67 @@ function MealsCard() {
   )
 
   const [isAddMealOpen, setIsAddMealOpen] = useState<boolean>(false)
+  const [selectedMeal, setSelectedMeal] = useState<Meal | null>(null)
 
   const onAddMeal = () => {
     setIsAddMealOpen(true)
+  }
+
+  const saveMeal = async (editMeal: Meal) => {
+    try {
+      let savedMeal: Meal
+      let newUser: User
+
+      if (!editMeal._id) {
+        delete (editMeal as Partial<Meal>)._id
+
+        savedMeal = await mealService.save(editMeal)
+        newUser = {
+          ...(user as User),
+          meals: [...(user?.meals || []), savedMeal],
+        }
+        optimisticUpdateUser(newUser)
+      } else if (
+        user?.meals.findIndex((meal) => meal._id === editMeal._id) !== -1
+      ) {
+        newUser = {
+          ...(user as User),
+          meals: [...(user?.meals || []), editMeal],
+        }
+        optimisticUpdateUser(newUser)
+        savedMeal = await mealService.save(editMeal)
+      } else {
+        savedMeal = await mealService.save(editMeal)
+        newUser = {
+          ...(user as User),
+          meals: [...(user?.meals || []), editMeal],
+        }
+        optimisticUpdateUser(newUser)
+      }
+
+      onCloseMealDetails()
+      showSuccessMsg(messages.success.saveMeal)
+    } catch (err) {
+      console.log('err', err)
+      showErrorMsg(messages.error.saveMeal)
+      const index = user?.meals.findIndex(
+        (meal) => meal._id === editMeal._id
+      ) as number
+      if (index === -1) return
+      user?.meals.splice(index, 1)
+      const originalUser = { ...user, meals: [...(user?.meals || [])] } as User
+      optimisticUpdateUser(originalUser)
+    }
+  }
+
+  const onSelectMeal = (meal: Meal) => {
+    setIsAddMealOpen(true)
+    setSelectedMeal(meal)
+  }
+
+  const onCloseMealDetails = () => {
+    setSelectedMeal(null)
+    setIsAddMealOpen(false)
   }
 
   return (
@@ -219,15 +281,22 @@ function MealsCard() {
         <CustomList
           items={user.meals}
           renderPrimaryText={(meal) => meal.name}
-          renderLeft={(meal) => <div>{meal.name}</div>}
-          renderRight={(meal) => <div>{meal.name}</div>}
+          renderLeft={(meal) => (
+            <MacrosDonut
+              protein={meal.macros.protein}
+              carbs={meal.macros.carbs}
+              fats={meal.macros.fat}
+            />
+          )}
+          renderSecondaryText={(meal) => `${meal.macros.calories} kcal`}
+          onItemClick={onSelectMeal}
         />
       )}
       <SlideDialog
         open={isAddMealOpen}
-        onClose={() => setIsAddMealOpen(false)}
-        component={<EditMeal />}
-        title='Add Meal'
+        onClose={onCloseMealDetails}
+        component={<EditMeal saveMeal={saveMeal} selectedMeal={selectedMeal} />}
+        title={selectedMeal ? 'Edit Meal' : 'Add Meal'}
         onSave={() => {}}
         type='full'
       />

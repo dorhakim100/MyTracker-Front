@@ -5,6 +5,9 @@ import { indexedDbService } from '../indexeddb.service'
 import { ItemFilter } from '../../types/itemFilter/ItemFilter'
 import { Item } from '../../types/item/Item'
 import { cache } from '../../assets/config/cache'
+import { Meal } from '../../types/meal/Meal'
+import { MealItem } from '../../types/mealItem/MealItem'
+import { searchUrls } from '../../assets/config/search.urls'
 
 const STORAGE_KEY = cache.ITEMS_CACHE
 
@@ -17,6 +20,7 @@ export const itemService = {
   getEmptyItem,
   getDefaultFilter,
   isItem,
+  convertMealToItem,
   // getMaxPage,
 }
 
@@ -74,6 +78,18 @@ function getDefaultFilter(): ItemFilter {
     pageIdx: 0,
     isAll: false,
   }
+}
+
+function convertMealToItem(meal: Meal): Item {
+  const mealAsItem: Item & { items: MealItem[] } = {
+    _id: meal._id,
+    name: meal.name,
+    macros: meal.macros,
+    type: 'meal',
+    items: meal.items,
+    image: searchUrls.DEFAULT_IMAGE,
+  }
+  return mealAsItem
 }
 
 // async function getMaxPage(filterBy: ItemFilter): Promise<number | undefined> {

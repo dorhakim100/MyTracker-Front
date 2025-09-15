@@ -3,7 +3,8 @@ export const messages = {
     updateCalories: 'Calories updated successfully',
     updateMacros: 'Macros updated successfully',
     addedToMeal: 'Added to meal successfully',
-    editMeal: 'Meal edited successfully',
+
+    saveMeal: 'Meal saved successfully',
   },
   error: {
     updateCalories: 'Failed to update calories',
@@ -15,5 +16,6 @@ export const messages = {
     register: 'Register first',
     scan: 'Failed to scan',
     noResults: 'No results found',
+    saveMeal: 'Failed to save meal',
   },
 }

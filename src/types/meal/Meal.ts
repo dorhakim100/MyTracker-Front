@@ -6,4 +6,5 @@ export interface Meal {
   name: string
   items: MealItem[]
   macros: Macros
+  createdBy: string
 }

@@ -1,5 +1,4 @@
 import { httpService } from '../http.service'
-import { makeId } from '../util.service'
 import type { Meal } from '../../types/meal/Meal'
 
 const KEY = 'meal'
@@ -38,7 +37,7 @@ async function remove(mealId: string) {
   }
 }
 
-async function save(meal: Meal) {
+async function save(meal: Meal | Partial<Meal>) {
   try {
     let saved: Meal
     if (meal._id) {
@@ -52,9 +51,9 @@ async function save(meal: Meal) {
   }
 }
 
-function getEmptyMeal(): Meal {
+function getEmptyMeal(): Partial<Meal> {
   return {
-    _id: makeId(),
+    _id: '',
     name: '',
     items: [],
     macros: {

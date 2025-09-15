@@ -25,6 +25,7 @@ import { ItemDetails } from '../ItemDetails/ItemDetails'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { MacrosDistribution } from '../MacrosDistribution/MacrosDistribution'
 import { ItemSearch } from '../ItemSearch/ItemSearch'
+import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt'
 
 const stages = ['name', 'items']
 
@@ -34,94 +35,24 @@ const variants = {
   exit: (dir: number) => ({ x: dir > 0 ? -360 : 360, opacity: 0 }),
 }
 
-export function EditMeal() {
+interface EditMealProps {
+  selectedMeal?: Meal | null
+  saveMeal: (meal: Meal) => void
+}
+
+export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
 
-  const [editMeal, setEditMeal] = useState<Meal>({
-    ...mealService.getEmptyMeal(),
-    macros: { calories: 3567, protein: 200, carbs: 200, fat: 200 },
-    items: [
-      // {
-      //   _id: '12q345',
-      //   searchId: '12345',
-      //   image:
-      //     'https://domf5oio6qrcr.cloudfront.net/medialibrary/8371/bigstock-Hamburger-And-French-Fries-263887.jpg',
-      //   name: 'Item 1',
-      //   macros: { calories: 100, protein: 10, carbs: 10, fat: 10 },
-      //   type: 'food',
-      //   servingSize: 100,
-      //   numberOfServings: 1,
-      // },
-      // {
-      //   _id: '234v56',
-      //   searchId: '23456',
-      //   image:
-      //     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYh_GM0PimdSFWCXk0jE-GWGRYGXmno2muj__ddRNSy9gp87R9IMwDY_kWWRbdvrO0Zdc&usqp=CAU',
-      //   name: 'Item 2',
-      //   macros: { calories: 62, protein: 5, carbs: 2, fat: 4 },
-      //   type: 'food',
-      //   servingSize: 50,
-      //   numberOfServings: 3,
-      // },
-      // {
-      //   _id: '34c567',
-      //   searchId: '34567',
-      //   image:
-      //     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYh_GM0PimdSFWCXk0jE-GWGRYGXmno2muj__ddRNSy9gp87R9IMwDY_kWWRbdvrO0Zdc&usqp=CAU',
-      //   name: 'Item 3',
-      //   macros: { calories: 62, protein: 5, carbs: 2, fat: 4 },
-      //   type: 'food',
-      //   servingSize: 50,
-      //   numberOfServings: 3,
-      // },
-      // {
-      //   _id: '456q78',
-      //   searchId: '45678',
-      //   image:
-      //     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYh_GM0PimdSFWCXk0jE-GWGRYGXmno2muj__ddRNSy9gp87R9IMwDY_kWWRbdvrO0Zdc&usqp=CAU',
-      //   name: 'Item 4',
-      //   macros: { calories: 62, protein: 5, carbs: 2, fat: 4 },
-      //   type: 'food',
-      //   servingSize: 50,
-      //   numberOfServings: 3,
-      // },
-      // {
-      //   _id: '567e89',
-      //   searchId: '56789',
-      //   image:
-      //     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYh_GM0PimdSFWCXk0jE-GWGRYGXmno2muj__ddRNSy9gp87R9IMwDY_kWWRbdvrO0Zdc&usqp=CAU',
-      //   name: 'Item 5',
-      //   macros: { calories: 62, protein: 5, carbs: 2, fat: 4 },
-      //   type: 'food',
-      //   servingSize: 50,
-      //   numberOfServings: 3,
-      // },
-      // {
-      //   _id: '6789s0',
-      //   searchId: '67890',
-      //   image:
-      //     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYh_GM0PimdSFWCXk0jE-GWGRYGXmno2muj__ddRNSy9gp87R9IMwDY_kWWRbdvrO0Zdc&usqp=CAU',
-      //   name: 'Item 6',
-      //   macros: { calories: 62, protein: 5, carbs: 2, fat: 4 },
-      //   type: 'food',
-      //   servingSize: 50,
-      //   numberOfServings: 3,
-      // },
-      // {
-      //   _id: '678wf90',
-      //   searchId: '67890',
-      //   image:
-      //     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYh_GM0PimdSFWCXk0jE-GWGRYGXmno2muj__ddRNSy9gp87R9IMwDY_kWWRbdvrO0Zdc&usqp=CAU',
-      //   name: 'Item 6',
-      //   macros: { calories: 62, protein: 5, carbs: 2, fat: 4 },
-      //   type: 'food',
-      //   servingSize: 50,
-      //   numberOfServings: 3,
-      // },
-    ],
-  })
+  const user = useSelector(
+    (stateSelector: RootState) => stateSelector.userModule.user
+  )
+
+  const [editMeal, setEditMeal] = useState<Meal>(
+    selectedMeal ||
+      ({ ...mealService.getEmptyMeal(), createdBy: user?._id } as Meal)
+  )
   const [stage, setStage] = useState<string>(stages[0])
   const [direction, setDirection] = useState(1)
 
@@ -165,6 +96,9 @@ export function EditMeal() {
   const onAddItem = () => {
     setIsOpenModal(true)
     setModalType('search')
+  }
+  const onSaveMeal = () => {
+    saveMeal(editMeal)
   }
 
   const renderStageContent = () => {
@@ -259,12 +193,22 @@ export function EditMeal() {
             fullWidth
             disabled={_getDisabledNavButton('previous')}
           />
-          <CustomButton
-            text='Next'
-            onClick={() => onChangeStage(1)}
-            fullWidth
-            disabled={_getDisabledNavButton('next')}
-          />
+          {stage === stages[stages.length - 1] ? (
+            <CustomButton
+              text='Save'
+              onClick={onSaveMeal}
+              fullWidth
+              icon={<ArrowRightAltIcon />}
+              disabled={editMeal.items.length === 0}
+            />
+          ) : (
+            <CustomButton
+              text='Next'
+              onClick={() => onChangeStage(1)}
+              fullWidth
+              disabled={_getDisabledNavButton('next')}
+            />
+          )}
         </div>
       </div>
     )
@@ -348,7 +292,6 @@ export function EditMeal() {
     if (type === 'next') {
       if (stage === stages[stages.length - 1]) return true
 
-      console.log('stage', stage)
       switch (stage) {
         case 'name':
           if (!editMeal.name) return true
@@ -386,7 +329,6 @@ export function EditMeal() {
           </motion.div>
         </AnimatePresence>
       </div>
-      {/* <CustomButton text='Save' onClick={onSaveMeal} fullWidth /> */}
 
       {renderNavigationFooter()}
     </div>
