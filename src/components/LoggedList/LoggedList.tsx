@@ -167,10 +167,10 @@ export function LoggedList({ mealPeriod }: { mealPeriod: MealPeriod }) {
       await logService.remove(log._id as string)
 
       dayService.save(newToday as LoggedToday)
-      showSuccessMsg(messages.success.editMeal)
+      showSuccessMsg(messages.success.updateCalories)
     } catch (err) {
       console.error(err)
-      showErrorMsg(messages.error.editMeal)
+      showErrorMsg(messages.error.updateCalories)
       optimisticUpdateUser(user)
     }
   }

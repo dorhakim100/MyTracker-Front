@@ -303,10 +303,10 @@ export function ItemDetails({ onAddToMealClick }: ItemDetailsProps) {
         await dayService.save(newSelectedDay as LoggedToday)
       }
 
-      showSuccessMsg(messages.success.editMeal)
+      showSuccessMsg(messages.success.saveMeal)
     } catch (err) {
       console.log(err)
-      showErrorMsg(messages.error.editMeal)
+      showErrorMsg(messages.error.saveMeal)
       optimisticUpdateUser(user as User)
     }
   }
