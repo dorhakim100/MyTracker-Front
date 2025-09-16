@@ -21,6 +21,7 @@ import MenuItem from '@mui/material/MenuItem'
 import AddIcon from '@mui/icons-material/Add'
 import { logService } from '../../services/log/log.service'
 import { MealItem } from '../../types/mealItem/MealItem'
+import { Meal } from '../../types/meal/Meal'
 
 interface ItemDetailsProps {
   onAddToMealClick?: (item: MealItem) => void
@@ -57,7 +58,7 @@ export function ItemDetails({ onAddToMealClick }: ItemDetailsProps) {
     (stateSelector: RootState) => stateSelector.userModule.selectedDay
   )
 
-  const item = editMealItem ? editMealItem : searchedItem
+  const item: Item | Meal | Log = editMealItem ? editMealItem : searchedItem
 
   const [editItem, setEditItem] = useState<EditItem>({
     totalMacros: item.macros,
@@ -183,11 +184,83 @@ export function ItemDetails({ onAddToMealClick }: ItemDetailsProps) {
     }
   }
 
+  function _hasItems(
+    x: Item | Meal | Log
+  ): x is Meal | (Item & { items: MealItem[] }) {
+    return Array.isArray((x as Item & { items: MealItem[] }).items)
+  }
+
   const onAddToMeal = async () => {
     try {
-      if (!user) return showErrorMsg(messages.error.favorite)
-      if (!item.searchId) return showErrorMsg(messages.error.favorite)
-      if (!selectedDay) return showErrorMsg(messages.error.favorite)
+      if (!user || !selectedDay) return showErrorMsg(messages.error.addLog)
+
+      if (!item.searchId && _hasItems(item)) {
+        const LONGEST_FOOD_ID_LENGTH = 10
+
+        const logsToAdd = item.items
+          .map((item: MealItem) => {
+            if (!item.searchId) return null
+            return {
+              itemId: item.searchId,
+              meal: editItem.meal,
+              macros: item.macros,
+              time: Date.now(),
+              servingSize: item.servingSize,
+              numberOfServings: item.numberOfServings,
+              source:
+                item.searchId.length < LONGEST_FOOD_ID_LENGTH
+                  ? searchTypes.usda
+                  : searchTypes.openFoodFacts,
+              createdBy: user._id,
+            }
+          })
+          .filter((log) => log !== null)
+
+        // console.log('logsToAdd', logsToAdd)
+        // return
+
+        if (!logsToAdd.length) return showErrorMsg(messages.error.addLog)
+
+        // setSelectedMeal(null)
+        const logsToSave = logsToAdd.map(async (log: Log) => {
+          return await logService.save(log)
+        })
+        const savedLogs = await Promise.all(logsToSave)
+        const savedLogsCalories = savedLogs.reduce(
+          (acc: number, log) => acc + log.macros.calories,
+          0
+        )
+        const dayToSave = {
+          ...selectedDay,
+          logs: [...selectedDay.logs, ...savedLogs],
+          calories: selectedDay.calories + savedLogsCalories,
+        }
+
+        const todayId = user?.loggedToday._id
+
+        let newToday
+
+        if (selectedDay?._id === todayId) {
+          newToday = {
+            ...user.loggedToday,
+            logs: [...user.loggedToday.logs, ...savedLogs],
+            calories: user.loggedToday.calories + savedLogsCalories,
+          }
+          const newUser = {
+            ...user,
+            loggedToday: newToday,
+          }
+          optimisticUpdateUser(newUser)
+          setSelectedDiaryDay(newToday)
+        }
+
+        await dayService.save(dayToSave as LoggedToday)
+
+        setSelectedDiaryDay(dayToSave as LoggedToday)
+
+        showSuccessMsg(messages.success.addedToMeal)
+        return
+      }
 
       const itemToCache = {
         ...searchedItem,
@@ -208,7 +281,7 @@ export function ItemDetails({ onAddToMealClick }: ItemDetailsProps) {
       }
 
       setSelectedMeal(null)
-      const savedLog = await logService.save(newLog)
+      const savedLog = await logService.save(newLog as Log)
       const dayToSave = {
         ...selectedDay,
         logs: [...selectedDay.logs, savedLog],
@@ -467,6 +540,8 @@ import { User } from '../../types/user/User'
 import { dayService } from '../../services/day/day.service'
 import { LoggedToday } from '../../types/loggedToday/LoggedToday'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
+import { searchTypes } from '../../assets/config/search-types'
+import { Log } from '../../types/log/Log'
 
 function EditComponent({
   value,

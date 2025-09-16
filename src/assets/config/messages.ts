@@ -18,5 +18,6 @@ export const messages = {
     noResults: 'No results found',
     saveMeal: 'Failed to save meal',
     deleteMeal: 'Failed to delete meal',
+    addLog: 'Failed to log',
   },
 }

@@ -77,10 +77,7 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
           itemService.convertMealToItem(meal)
         )
 
-        // console.log('meals', meals)
-        console.log('favoriteItems', favoriteItems)
         const itemsToShow = favoriteItems.concat(meals || [])
-        // setResults(favoriteItems)
         setResults(itemsToShow)
         setResultsDragable(true)
         return

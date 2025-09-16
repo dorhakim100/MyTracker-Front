@@ -1,4 +1,5 @@
 import { Macros } from '../macros/Macros'
+import { MealItem } from '../mealItem/MealItem'
 
 export interface Item {
   _id?: string
@@ -8,4 +9,5 @@ export interface Item {
   image?: string
   macros: Macros
   type: 'food' | 'product' | 'meal' | ''
+  items?: MealItem[] // for meal type
 }

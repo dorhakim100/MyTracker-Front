@@ -429,7 +429,7 @@ async function getFoodsByIds(ids: string[]) {
   try {
     if (!ids || !ids.length) return []
     const filteredIds = ids.filter((id) => id !== '')
-    console.log('filteredIds', filteredIds)
+
     if (filteredIds.length === 0) return []
     const { data } = await axios.get(USDA_FOODS_URL, {
       params: {
