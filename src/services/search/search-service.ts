@@ -98,11 +98,26 @@ async function searchFavoriteItems(favoriteItems: string[]) {
             (id) => id === item.searchId
           )
           res[indexToAdd] = item
+
+          if (favoriteFoods.includes(item.searchId as string)) {
+            favoriteFoods.splice(
+              favoriteFoods.indexOf(item.searchId as string),
+              1,
+              ''
+            )
+          }
+          if (favoriteProducts.includes(item.searchId as string)) {
+            favoriteProducts.splice(
+              favoriteProducts.indexOf(item.searchId as string),
+              1,
+              ''
+            )
+          }
         }
       })
     }
 
-    if (favoriteItems.every((id, idx) => id === res[idx].searchId)) return res
+    if (favoriteItems.every((id, idx) => id === res[idx]?.searchId)) return res
 
     const promises = [
       getFoodsByIds(favoriteFoods),
@@ -284,9 +299,13 @@ async function getProductById(id: string) {
 async function getProductsByIds(ids: string[]) {
   try {
     if (!ids || !ids.length) return []
+    const filteredIds = ids.filter((id) => id !== '')
+
+    if (filteredIds.length === 0) return []
+
     const { data } = await axios.get(OPEN_FOOD_FACTS_BATCH_URL, {
       params: {
-        code: ids.join(','),
+        code: filteredIds.join(','),
         fields: FIELDS,
       },
       //headers: { 'User-Agent': 'MyTracker/1.0 (you@example.com)' },
@@ -409,10 +428,13 @@ function _getMacrosFromUSDA(food: FDCFood) {
 async function getFoodsByIds(ids: string[]) {
   try {
     if (!ids || !ids.length) return []
+    const filteredIds = ids.filter((id) => id !== '')
+    console.log('filteredIds', filteredIds)
+    if (filteredIds.length === 0) return []
     const { data } = await axios.get(USDA_FOODS_URL, {
       params: {
         api_key: USDA_API_KEY,
-        fdcIds: ids.join(','),
+        fdcIds: filteredIds.join(','),
       },
     })
 
