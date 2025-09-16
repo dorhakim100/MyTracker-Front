@@ -17,5 +17,6 @@ export const messages = {
     scan: 'Failed to scan',
     noResults: 'No results found',
     saveMeal: 'Failed to save meal',
+    deleteMeal: 'Failed to delete meal',
   },
 }

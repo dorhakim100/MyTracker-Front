@@ -73,7 +73,11 @@ async function update(user: User) {
   try {
     const { _id } = user
 
-    const savedUser = await httpService.put(`user/${_id}`, user)
+    const mealsIds = user.meals.map((meal) => meal._id)
+    const userToSend = { ...user, mealsIds }
+
+    const savedUser = await httpService.put(`user/${_id}`, userToSend)
+
     // When admin updates other user's details, do not update loggedinUser
     // console.log(savedUser)
     // return

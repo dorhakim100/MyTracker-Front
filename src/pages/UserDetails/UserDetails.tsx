@@ -32,6 +32,8 @@ import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
 import { messages } from '../../assets/config/messages'
 import { MacrosDonut } from '../../components/MacrosDonut/MacrosDonut'
 import { searchUrls } from '../../assets/config/search.urls'
+import { SwipeAction } from 'react-swipeable-list'
+import DeleteIcon from '@mui/icons-material/Delete'
 
 const colors = {
   primary: '--var(--primary-color)',
@@ -276,6 +278,51 @@ function MealsCard() {
     setIsAddMealOpen(false)
   }
 
+  const onReorderMeals = async (newMeals: Meal[]) => {
+    const newUser = { ...user, meals: newMeals } as User
+
+    optimisticUpdateUser(newUser)
+
+    try {
+      await updateUser(newUser)
+    } catch (err) {
+      console.error(err)
+      showErrorMsg(messages.error.saveMeal)
+      optimisticUpdateUser(user as User)
+    }
+  }
+
+  const onDeleteMeal = async (meal: Meal) => {
+    const newMeals = user?.meals.filter((m) => m._id !== meal._id)
+    const newUser = { ...user, meals: newMeals }
+
+    optimisticUpdateUser(newUser as User)
+
+    try {
+      await updateUser(newUser as User)
+    } catch (err) {
+      console.error(err)
+      showErrorMsg(messages.error.deleteMeal)
+      optimisticUpdateUser(user as User)
+    }
+  }
+
+  const renderRightSwipeActions = (meal: Meal) => {
+    return (
+      <SwipeAction
+        destructive={true} // will remove the item from the list
+        onClick={() => {
+          onDeleteMeal(meal)
+        }}
+      >
+        <div className='swipeable-right-action delete'>
+          <DeleteIcon className='delete-icon-button' />
+          <Typography variant='body2'>Delete</Typography>
+        </div>
+      </SwipeAction>
+    )
+  }
+
   return (
     <>
       <CustomButton
@@ -314,6 +361,10 @@ function MealsCard() {
           )}
           renderSecondaryText={(meal) => `${meal.macros.calories} kcal`}
           onItemClick={onSelectMeal}
+          isDragable={true}
+          onReorder={onReorderMeals}
+          isSwipeable={true}
+          renderRightSwipeActions={renderRightSwipeActions}
         />
       )}
       <SlideDialog
