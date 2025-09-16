@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { Button, Card, Divider, Typography } from '@mui/material'
+import { Button, Card, Divider, ListItemIcon, Typography } from '@mui/material'
 import { RootState } from '../../store/store'
 import {
   handleFavorite,
@@ -31,6 +31,7 @@ import { mealService } from '../../services/meal/meal.service'
 import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
 import { messages } from '../../assets/config/messages'
 import { MacrosDonut } from '../../components/MacrosDonut/MacrosDonut'
+import { searchUrls } from '../../assets/config/search.urls'
 
 const colors = {
   primary: '--var(--primary-color)',
@@ -169,7 +170,16 @@ function FavoriteItemsCard() {
         items={favoriteItems || []}
         renderPrimaryText={(item) => item.name}
         renderLeft={(item) => (
-          <img src={item.image} alt={item.name} className='item-image' />
+          <div className='left-content macros-image-container'>
+            <MacrosDonut
+              protein={item.macros?.protein}
+              carbs={item.macros?.carbs}
+              fats={item.macros?.fat}
+            />
+            <ListItemIcon className='item-image-container'>
+              <img src={item.image} alt={item.name} className='item-image' />
+            </ListItemIcon>
+          </div>
         )}
         renderRight={(item) =>
           item.searchId ? (
@@ -282,11 +292,25 @@ function MealsCard() {
           items={user.meals}
           renderPrimaryText={(meal) => meal.name}
           renderLeft={(meal) => (
-            <MacrosDonut
-              protein={meal.macros.protein}
-              carbs={meal.macros.carbs}
-              fats={meal.macros.fat}
-            />
+            // <MacrosDonut
+            //   protein={meal.macros.protein}
+            //   carbs={meal.macros.carbs}
+            //   fats={meal.macros.fat}
+            // />
+            <div className='left-content macros-image-container'>
+              <MacrosDonut
+                protein={meal.macros?.protein}
+                carbs={meal.macros?.carbs}
+                fats={meal.macros?.fat}
+              />
+              <ListItemIcon className='item-image-container'>
+                <img
+                  src={searchUrls.DEFAULT_IMAGE}
+                  alt={meal.name}
+                  className='item-image'
+                />
+              </ListItemIcon>
+            </div>
           )}
           renderSecondaryText={(meal) => `${meal.macros.calories} kcal`}
           onItemClick={onSelectMeal}
