@@ -254,6 +254,7 @@ function MealsCard() {
       }
 
       onCloseMealDetails()
+      await updateUser(newUser)
       showSuccessMsg(messages.success.saveMeal)
     } catch (err) {
       console.log('err', err)
