@@ -353,7 +353,7 @@ function MealsCard() {
               />
               <ListItemIcon className='item-image-container'>
                 <img
-                  src={searchUrls.DEFAULT_IMAGE}
+                  src={meal.items[0].image || searchUrls.DEFAULT_IMAGE}
                   alt={meal.name}
                   className='item-image'
                 />
