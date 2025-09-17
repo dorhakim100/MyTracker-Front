@@ -53,17 +53,21 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
     (state: RootState) => state.itemModule.favoriteItems
   )
 
-  const [query, setQuery] = useState('')
   const [results, setResults] = useState<Item[]>([])
   const [resultsDragable, setResultsDragable] = useState(false)
 
-  const [source, setSource] = useState(searchTypes.usda)
+  // Keep a single filter object for both query and source
+  type UiSearchSource = 'usda' | 'open-food-facts' | 'meal' | 'favorite'
+  const [filter, setFilter] = useState<{ txt: string; source: UiSearchSource }>(
+    { txt: '', source: searchTypes.favorite as UiSearchSource }
+  )
 
   const [isItemSelected, setIsItemSelected] = useState(false)
 
   // const isLoading = useSelector((state: RootState) => state.systemModule.isLoading)
 
   const toggleOptions: ToggleOption[] = [
+    { value: searchTypes.favorite, label: 'My Favorites' },
     { value: searchTypes.meal, label: 'Meals' },
     { value: searchTypes.usda, label: 'Food' },
     { value: searchTypes.openFoodFacts, label: 'Product' },
@@ -72,37 +76,32 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
   const handleSearch = useCallback(async () => {
     setIsLoading(true)
     try {
-      if (!query) {
-        const meals = user?.meals.map((meal) =>
-          itemService.convertMealToItem(meal)
-        )
-
-        const itemsToShow = favoriteItems.concat(meals || [])
-        setResults(itemsToShow)
-        setResultsDragable(true)
-        return
-      }
-
-      if (!source) {
+      if (!filter.source) {
         showErrorMsg(messages.error.search)
         return
       }
 
-      if (source === searchTypes.meal) {
-        const regex = new RegExp(query, 'i')
+      if (filter.source === searchTypes.meal) {
+        const regex = new RegExp(filter.txt, 'i')
 
         const meals = user?.meals
           .map((meal) => itemService.convertMealToItem(meal))
           .filter((meal) => regex.test(meal.name))
 
         setResults(meals || [])
+        setResultsDragable(false)
+        return
+      }
+
+      if (filter.source === searchTypes.favorite || !filter.txt) {
+        setResults(favoriteItems)
         setResultsDragable(true)
         return
       }
 
       const searchQuery: SearchFilter = {
-        txt: query,
-        source: source as 'usda' | 'open-food-facts',
+        txt: filter.txt,
+        source: filter.source as 'usda' | 'open-food-facts',
         // favoriteItems: user?.favoriteItems || { food: [], product: [] },
         favoriteItems: user?.favoriteItems,
       }
@@ -116,7 +115,7 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
     } finally {
       setIsLoading(false)
     }
-  }, [query, source, user])
+  }, [filter, user, favoriteItems])
 
   const latestHandleSearchRef = useRef(handleSearch)
   useEffect(() => {
@@ -129,17 +128,17 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
 
   useEffect(() => {
     debouncedRunSearch()
-  }, [query, source, user, debouncedRunSearch])
+  }, [filter, user, debouncedRunSearch])
 
   useEffect(() => {
-    if (!query) {
+    if (!filter.txt) {
       setResults(favoriteItems)
       setResultsDragable(true)
     }
-  }, [query, favoriteItems])
+  }, [filter.txt, favoriteItems])
 
   const onClearQuery = () => {
-    setQuery('')
+    setFilter((prev) => ({ ...prev, txt: '' }))
   }
 
   const onItemClick = (item: Item) => {
@@ -224,11 +223,13 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
           )}
           renderPrimaryText={(item) => item.name}
           renderSecondaryText={(item) => `${item.macros?.calories} kcal`}
-          renderRight={(item) => (
-            <FavoriteButton
-              isFavorite={searchService.isFavorite(item, user) || false}
-            />
-          )}
+          renderRight={(item) =>
+            item.type !== 'meal' && (
+              <FavoriteButton
+                isFavorite={searchService.isFavorite(item, user) || false}
+              />
+            )
+          }
           onItemClick={onItemClick}
           onRightClick={onFavoriteClick}
           isDragable={resultsDragable}
@@ -243,8 +244,8 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
       <Box className={`item-search ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
         <Box className='search-container'>
           <CustomInput
-            value={query}
-            onChange={setQuery}
+            value={filter.txt}
+            onChange={(val) => setFilter((prev) => ({ ...prev, txt: val }))}
             placeholder='Search items...'
             startIconFn={() => <SearchIcon />}
             endIconFn={() => (
@@ -255,9 +256,11 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
             autoFocus
           />
           <CustomToggle
-            value={source}
+            value={filter.source}
             options={toggleOptions}
-            onChange={setSource}
+            onChange={(val) =>
+              setFilter((prev) => ({ ...prev, source: val as UiSearchSource }))
+            }
             className={`source-toggle ${prefs.isDarkMode ? 'dark-mode' : ''} ${
               prefs.favoriteColor
             }`}
