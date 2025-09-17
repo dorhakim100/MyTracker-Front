@@ -74,6 +74,8 @@ async function update(user: User) {
   try {
     const { _id } = user
 
+    console.log('user', user)
+
     const mealsIds = user.meals.map((meal) => meal._id)
     const userToSend = { ...user, mealsIds }
 

@@ -129,7 +129,9 @@ export function optimisticUpdateUser(userToUpdate: User) {
   })
 }
 
-export function setUserToEdit(userToEdit: User | null) {
+export function setUserToEdit(
+  userToEdit: User | (User & { meals: Meal[] | string[] }) | null
+) {
   store.dispatch({
     type: SET_USER_TO_EDIT,
     userToEdit,
@@ -232,6 +234,8 @@ export async function setRemembered() {
       type: SET_USER,
       user,
     })
+
+    setUserToEdit(user as User & { meals: Meal[] | string[] })
   } catch (err) {
     throw err
   }

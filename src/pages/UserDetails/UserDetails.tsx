@@ -213,6 +213,9 @@ function MealsCard() {
   const user = useSelector(
     (storeState: RootState) => storeState.userModule.user
   )
+  const prefs = useSelector(
+    (storeState: RootState) => storeState.systemModule.prefs
+  )
 
   const [isAddMealOpen, setIsAddMealOpen] = useState<boolean>(false)
   const [selectedMeal, setSelectedMeal] = useState<Meal | null>(null)
@@ -338,6 +341,7 @@ function MealsCard() {
       {user?.meals && user?.meals.length > 0 && (
         <CustomList
           items={user.meals}
+          className={`${prefs.isDarkMode ? 'dark-mode' : ''}`}
           renderPrimaryText={(meal) => meal.name}
           renderLeft={(meal) => (
             // <MacrosDonut
