@@ -21,6 +21,8 @@ import { Log } from '../../types/log/Log'
 import { LoggedToday } from '../../types/loggedToday/LoggedToday'
 import { dayService } from '../../services/day/day.service'
 import { addFavoriteItem, removeFavoriteItem } from './item.actions'
+import { mealService } from '../../services/meal/meal.service'
+import { Meal } from '../../types/meal/Meal'
 
 const { FAVORITE_CACHE } = cache
 
@@ -50,7 +52,12 @@ export async function login(credentials: UserCred) {
   try {
     await logout()
 
-    const user = await userService.login(credentials)
+    const retrived = await userService.login(credentials)
+
+    const user = {
+      ...retrived,
+      meals: retrived.meals.map((meal: Meal) => mealService.modifyMeal(meal)),
+    }
 
     store.dispatch({
       type: SET_USER,
@@ -212,7 +219,14 @@ export async function handleFavorite(item: Item, user: User) {
 
 export async function setRemembered() {
   try {
-    const user = await userService.getRememberedUser()
+    const remembered = await userService.getRememberedUser()
+
+    const user = {
+      ...remembered,
+      meals:
+        remembered?.meals.map((meal: Meal) => mealService.modifyMeal(meal)) ||
+        [],
+    }
 
     store.dispatch({
       type: SET_USER,

@@ -7,4 +7,5 @@ export interface Meal {
   items: MealItem[]
   macros: Macros
   createdBy: string
+  image?: string
 }

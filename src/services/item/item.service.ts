@@ -81,13 +81,14 @@ function getDefaultFilter(): ItemFilter {
 }
 
 function convertMealToItem(meal: Meal): Item {
+  const firstImage = meal.items.find((item) => item.image)?.image
   const mealAsItem: Item & { items: MealItem[] } = {
     _id: meal._id,
     name: meal.name,
     macros: meal.macros,
     type: 'meal',
     items: meal.items,
-    image: searchUrls.DEFAULT_IMAGE,
+    image: firstImage || searchUrls.DEFAULT_IMAGE,
   }
   return mealAsItem
 }
