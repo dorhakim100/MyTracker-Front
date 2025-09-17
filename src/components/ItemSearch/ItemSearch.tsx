@@ -64,7 +64,9 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
 
   const [isItemSelected, setIsItemSelected] = useState(false)
 
-  // const isLoading = useSelector((state: RootState) => state.systemModule.isLoading)
+  const isLoading = useSelector(
+    (state: RootState) => state.systemModule.isLoading
+  )
 
   const toggleOptions: ToggleOption[] = [
     { value: searchTypes.favorite, label: 'My Favorites' },
@@ -80,22 +82,25 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
         showErrorMsg(messages.error.search)
         return
       }
+      const regex = new RegExp(filter.txt, 'i')
 
       if (filter.source === searchTypes.meal) {
-        const regex = new RegExp(filter.txt, 'i')
-
         const meals = user?.meals
           .map((meal) => itemService.convertMealToItem(meal))
           .filter((meal) => regex.test(meal.name))
 
         setResults(meals || [])
         setResultsDragable(false)
+        setIsLoading(false)
         return
       }
 
       if (filter.source === searchTypes.favorite || !filter.txt) {
-        setResults(favoriteItems)
-        setResultsDragable(true)
+        setResults(favoriteItems.filter((item) => regex.test(item.name)))
+
+        if (!filter.txt) setResultsDragable(true)
+        else setResultsDragable(false)
+        setIsLoading(false)
         return
       }
 
@@ -193,11 +198,12 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
   }
 
   const renderList = () => {
-    const hasFavorite = user?.favoriteItems?.length !== 0
+    // const hasFavorite = user?.favoriteItems?.length !== 0
 
-    if (!results.length && hasFavorite) {
+    if (!results.length && isLoading) {
       return <SkeletonList />
-    } else if (!results.length && !hasFavorite) {
+    } else if (!results.length) {
+      // } else if (!results.length && !hasFavorite) {
       return renderNoResults()
     }
 
