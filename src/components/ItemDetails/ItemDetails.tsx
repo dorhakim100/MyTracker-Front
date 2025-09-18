@@ -80,7 +80,7 @@ export function ItemDetails({ onAddToMealClick }: ItemDetailsProps) {
     {
       label: 'Number of Servings',
       key: 'numberOfServings',
-      values: getArrayOfNumbers(1, 100),
+      values: getArrayOfNumbers(0, 100),
       type: 'clock',
     },
     {
@@ -577,7 +577,7 @@ function EditComponent({
     afterValue: 0,
   })
 
-  const values = getArrayOfNumbers(1, 150)
+  const values = getArrayOfNumbers(0, 150)
   const afterValues = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
 
   const buttons = [
@@ -605,7 +605,10 @@ function EditComponent({
   // Keep picker in sync with external value
   useEffect(() => {
     const firstValue = Math.floor(value)
-    const secondValue = Math.round((value - firstValue) * 10) / 10
+    let secondValue = Math.round((value - firstValue) * 10) / 10
+    if (firstValue === 0 && secondValue === 0) {
+      secondValue = 0.1
+    }
 
     setPickerValue((prev) => ({
       ...prev,
