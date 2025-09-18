@@ -25,7 +25,7 @@ export function CustomLinearProgress({
       </div>
       <LinearProgress
         variant='determinate'
-        value={value}
+        value={value > 100 ? 100 : value}
         sx={{
           height: 8,
           borderRadius: 4,

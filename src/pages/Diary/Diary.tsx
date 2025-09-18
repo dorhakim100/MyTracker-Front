@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 
 import { TimesContainer } from '../../components/TimesContainer/TimesContainer'
-import { getMacrosAmount } from '../../services/macros/macros.service'
+import { getMacrosAmountFromDay } from '../../services/macros/macros.service'
 
 import { CustomAccordion } from '../../CustomMui/CustomAccordion/CustomAccordion'
 import { LinearMacrosProgress } from '../../components/LinearMacrosProgress/LinearMacrosProgress'
@@ -119,7 +119,7 @@ export function Diary() {
     })
   }
 
-  if (user)
+  if (user && selectedDayDiary)
     return (
       <div
         className={`diary page-container ${
@@ -140,10 +140,16 @@ export function Diary() {
             title='Macros'
             cmp={
               <LinearMacrosProgress
-                caloriesProgress={user?.loggedToday.calories}
-                proteinProgress={getMacrosAmount('protein', user)}
-                carbsProgress={getMacrosAmount('carbs', user)}
-                fatsProgress={getMacrosAmount('fat', user)}
+                caloriesProgress={selectedDayDiary?.calories || 0}
+                proteinProgress={
+                  getMacrosAmountFromDay(selectedDayDiary, 'protein') as number
+                }
+                carbsProgress={
+                  getMacrosAmountFromDay(selectedDayDiary, 'carbs') as number
+                }
+                fatsProgress={
+                  getMacrosAmountFromDay(selectedDayDiary, 'fat') as number
+                }
               />
             }
           />

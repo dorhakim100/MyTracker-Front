@@ -1,3 +1,4 @@
+import { LoggedToday } from '../../types/loggedToday/LoggedToday'
 import { User } from '../../types/user/User'
 
 export interface MacrosInGrams {
@@ -106,5 +107,13 @@ export function getMacrosAmount(
     ? Math.round(
         user.loggedToday.logs.reduce((acc, log) => acc + log.macros[macro], 0)
       )
+    : 0
+}
+export function getMacrosAmountFromDay(
+  day: LoggedToday,
+  macro: 'protein' | 'carbs' | 'fat'
+) {
+  return day.logs
+    ? day.logs.reduce((acc, log) => acc + log.macros[macro], 0).toFixed(0)
     : 0
 }

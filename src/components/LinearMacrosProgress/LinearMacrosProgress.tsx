@@ -2,7 +2,6 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 
 import { CustomLinearProgress } from '../../CustomMui/CustomLinearProgress/CustomLinearProgress'
-import { getPercentageValue } from '../../services/macros/macros.service'
 
 const caloriesColor = 'var(--primary-color)'
 
@@ -34,7 +33,7 @@ export function LinearMacrosProgress({
           <CustomLinearProgress
             currentValue={caloriesProgress + ''}
             goalValue={user?.currGoal?.dailyCalories + ''}
-            value={getPercentageValue('calories', user)}
+            value={(caloriesProgress / user?.currGoal?.dailyCalories) * 100}
             header='Calories'
             color={caloriesColor}
           />
@@ -43,7 +42,7 @@ export function LinearMacrosProgress({
           <CustomLinearProgress
             currentValue={proteinProgress + ''}
             goalValue={user?.currGoal?.macros.protein + ''}
-            value={getPercentageValue('protein', user)}
+            value={(proteinProgress / user?.currGoal?.macros.protein) * 100}
             header='Protein'
             color={proteinColor}
             isGram={true}
@@ -53,7 +52,7 @@ export function LinearMacrosProgress({
           <CustomLinearProgress
             currentValue={carbsProgress + ''}
             goalValue={user?.currGoal?.macros.carbs + ''}
-            value={getPercentageValue('carbs', user)}
+            value={(carbsProgress / user?.currGoal?.macros.carbs) * 100}
             header='Carbs'
             color={carbsColor}
             isGram={true}
@@ -63,7 +62,7 @@ export function LinearMacrosProgress({
           <CustomLinearProgress
             currentValue={fatsProgress + ''}
             goalValue={user?.currGoal?.macros.fat + ''}
-            value={getPercentageValue('fat', user)}
+            value={(fatsProgress / user?.currGoal?.macros.fat) * 100}
             header='Fats'
             color={fatsColor}
             isGram={true}
