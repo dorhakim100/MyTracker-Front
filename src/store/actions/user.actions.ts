@@ -223,6 +223,8 @@ export async function setRemembered() {
   try {
     const remembered = await userService.getRememberedUser()
 
+    if (!remembered) return
+
     const user = {
       ...remembered,
       meals:

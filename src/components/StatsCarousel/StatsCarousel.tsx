@@ -115,9 +115,11 @@ export function StatsCarousel() {
       >
         <SwiperSlide>
           <CaloriesProgress
-            percentageValue={calories / user.currGoal.dailyCalories}
+            percentageValue={calories / user.currGoal?.dailyCalories}
+            // percentageValue={calories / 2500}
             current={calories}
             goal={user.currGoal?.dailyCalories}
+            // goal={2500}
           />
         </SwiperSlide>
 

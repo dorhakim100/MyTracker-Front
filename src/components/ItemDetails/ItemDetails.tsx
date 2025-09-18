@@ -197,16 +197,24 @@ export function ItemDetails({ onAddToMealClick }: ItemDetailsProps) {
       if (!item.searchId && _hasItems(item)) {
         const LONGEST_FOOD_ID_LENGTH = 10
 
+        const mealNumberOfServings = editItem.numberOfServings
+
         const logsToAdd = item.items
           .map((item: MealItem) => {
             if (!item.searchId) return null
+
             return {
               itemId: item.searchId,
               meal: editItem.meal,
-              macros: item.macros,
+              macros: {
+                calories: item.macros.calories * mealNumberOfServings,
+                protein: item.macros.protein * mealNumberOfServings,
+                carbs: item.macros.carbs * mealNumberOfServings,
+                fat: item.macros.fat * mealNumberOfServings,
+              },
               time: Date.now(),
               servingSize: item.servingSize,
-              numberOfServings: item.numberOfServings,
+              numberOfServings: item.numberOfServings * mealNumberOfServings,
               source:
                 item.searchId.length < LONGEST_FOOD_ID_LENGTH
                   ? searchTypes.usda
@@ -215,9 +223,6 @@ export function ItemDetails({ onAddToMealClick }: ItemDetailsProps) {
             }
           })
           .filter((log) => log !== null)
-
-        // console.log('logsToAdd', logsToAdd)
-        // return
 
         if (!logsToAdd.length) return showErrorMsg(messages.error.addLog)
 
@@ -409,13 +414,17 @@ export function ItemDetails({ onAddToMealClick }: ItemDetailsProps) {
           <img src={item.image} alt={item.name} />
         </div>
         <div className='title'>{item.name}</div>
-        <div className='subtitle'>{item.macros?.calories} kcal for 100g</div>
+        <div className='subtitle'>{`${item.macros?.calories} kcal for ${
+          !_hasItems(item) ? '100g' : 'serving'
+        }`}</div>
 
-        <div className='favorite-container' onClick={onFavoriteClick}>
-          <FavoriteButton
-            isFavorite={searchService.isFavorite(searchedItem, user) || false}
-          />
-        </div>
+        {!_hasItems(item) && (
+          <div className='favorite-container' onClick={onFavoriteClick}>
+            <FavoriteButton
+              isFavorite={searchService.isFavorite(searchedItem, user) || false}
+            />
+          </div>
+        )}
       </div>
 
       <div className='content'>
@@ -438,6 +447,12 @@ export function ItemDetails({ onAddToMealClick }: ItemDetailsProps) {
           {editOptions.map((option) => {
             if (onAddToMealClick && option.key === 'meal') return null
 
+            if (
+              !item.searchId &&
+              _hasItems(item) &&
+              option.key === 'servingSize'
+            )
+              return null
             return (
               <div
                 className={`select-container ${
