@@ -14,7 +14,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import { dayService } from '../../services/day/day.service'
 import { showErrorMsg } from '../../services/event-bus.service'
 import { messages } from '../../assets/config/messages'
-//import { Log } from '../../types/log/Log'
+import { SlideAnimation } from '../../components/SlideAnimation/SlideAnimation'
 import { setSelectedDiaryDay } from '../../store/actions/user.actions'
 import { MealPeriod } from '../../types/mealPeriod/MealPeriod'
 import { AddItemButton } from '../../components/AddItemButton/AddItemButton'
@@ -31,6 +31,8 @@ export function Diary() {
     userId: user?._id,
     date: selectedDay.toISOString(),
   })
+
+  const [direction, setDirection] = useState(1)
 
   const meals = [
     {
@@ -111,7 +113,7 @@ export function Diary() {
 
   const onDayChange = (diff: number) => {
     const newDate = new Date(selectedDay.getTime() + diff * 24 * 60 * 60 * 1000)
-
+    setDirection(diff)
     setSelectedDay(newDate)
     setDiaryFilter({
       userId: user?._id,
@@ -155,44 +157,50 @@ export function Diary() {
           />
         </div>
 
-        <div
-          className={`meals-container ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+        <SlideAnimation
+          motionKey={selectedDayDiary?._id || ''}
+          direction={direction}
+          duration={0.25}
         >
-          {meals.map((meal) => {
-            const currMeal = meal.period
-            const caloriesToSet = getMealCalories(currMeal)
-            const hasItems = selectedDayDiary?.logs?.filter(
-              (log) => log.meal.toLocaleLowerCase() === currMeal
-            )
-            return (
-              <Box
-                className={`diary-meal-container ${
-                  prefs.isDarkMode ? 'dark-mode' : ''
-                }`}
-                key={meal.label}
-              >
-                <div className='header'>
-                  <Typography variant='h6'>{meal.label}</Typography>
-                  <Typography variant='body2' className='period'>
-                    {meal.rangeLabel}
-                  </Typography>
-                </div>
-                <Divider
-                  className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-                />
-                <LoggedList mealPeriod={meal.period as MealPeriod} />
-                <div className='meal-footer'>
-                  <Typography variant='body2' className='total-calories'>
-                    {`Total: ${caloriesToSet} kcal`}
-                  </Typography>
-                  {hasItems?.length !== 0 && (
-                    <AddItemButton mealPeriod={meal.period as MealPeriod} />
-                  )}
-                </div>
-              </Box>
-            )
-          })}
-        </div>
+          <div
+            className={`meals-container ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+          >
+            {meals.map((meal) => {
+              const currMeal = meal.period
+              const caloriesToSet = getMealCalories(currMeal)
+              const hasItems = selectedDayDiary?.logs?.filter(
+                (log) => log.meal.toLocaleLowerCase() === currMeal
+              )
+              return (
+                <Box
+                  className={`diary-meal-container ${
+                    prefs.isDarkMode ? 'dark-mode' : ''
+                  }`}
+                  key={meal.label}
+                >
+                  <div className='header'>
+                    <Typography variant='h6'>{meal.label}</Typography>
+                    <Typography variant='body2' className='period'>
+                      {meal.rangeLabel}
+                    </Typography>
+                  </div>
+                  <Divider
+                    className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+                  />
+                  <LoggedList mealPeriod={meal.period as MealPeriod} />
+                  <div className='meal-footer'>
+                    <Typography variant='body2' className='total-calories'>
+                      {`Total: ${caloriesToSet} kcal`}
+                    </Typography>
+                    {hasItems?.length !== 0 && (
+                      <AddItemButton mealPeriod={meal.period as MealPeriod} />
+                    )}
+                  </div>
+                </Box>
+              )
+            })}
+          </div>
+        </SlideAnimation>
       </div>
     )
 }
