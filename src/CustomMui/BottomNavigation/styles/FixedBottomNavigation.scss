@@ -1,8 +1,7 @@
 .fixed-bottom-navigation {
   .MuiPaper-root {
     padding: 1em !important;
-    will-change: transform;
-    transform: translateZ(0);
+
     z-index: 1100;
   }
   padding-bottom: 1.5em !important;

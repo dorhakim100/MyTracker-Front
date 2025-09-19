@@ -1,8 +1,15 @@
 .user-msg {
   position: fixed;
-  top: 170px;
-  top: 7em;
-  right: 0.2em;
+  // top: 170px;
+  // top: 7em;
+  // right: 0.2em;
+
+  top: 0.5em;
+  right: 0.5em;
+  left: 0.5em;
+
+  margin: 0 auto;
+
   //   right: 50em;
 
   display: flex;
@@ -22,12 +29,21 @@
   min-width: 150px;
 
   opacity: 0;
-  translate: 150%;
   transition: 600ms;
   opacity: 1;
   z-index: 10000;
 
-  //   font-family: assistantBold;
+  translate: 150%; /* start right to the viewport */
+  translate: 0 -150%; /* start above the viewport */
+  width: calc(100vw - 1em) !important;
+
+  .MuiPaper-root {
+    justify-self: center;
+    text-align: start;
+    align-items: center;
+    width: 100vw !important;
+    padding: 0 1em !important;
+  }
 }
 
 .user-msg.visible {
