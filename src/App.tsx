@@ -11,7 +11,7 @@ import { Prefs } from './components/Prefs/Prefs'
 import { UserMsg } from './components/UserMsg/UserMsg'
 
 import { FixedBottomNavigation } from './CustomMui/BottomNavigation/FixedBottomNavigation.tsx'
-
+import { SlideAnimation } from './components/SlideAnimation/SlideAnimation.tsx'
 import { RootState } from './store/store.ts'
 
 import './App.css'
@@ -107,13 +107,24 @@ function App() {
       <UserMsg />
       <Prefs />
       {/* <PrefsButton /> */}
+
       <main className={`main ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
-        {/* <SearchBar /> */}
-        <Routes>
-          {filteredRoutes.map((route, index) => (
-            <Route key={index} path={route.path} element={<route.element />} />
-          ))}
-        </Routes>
+        <SlideAnimation
+          motionKey={location.pathname}
+          direction={1}
+          duration={0.25}
+        >
+          {/* <SearchBar /> */}
+          <Routes>
+            {filteredRoutes.map((route, index) => (
+              <Route
+                key={index}
+                path={route.path}
+                element={<route.element />}
+              />
+            ))}
+          </Routes>
+        </SlideAnimation>
       </main>
 
       <FixedBottomNavigation routes={filteredRoutes} />

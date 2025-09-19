@@ -38,12 +38,14 @@ body {
 }
 
 .main {
-  min-height: 100vh;
+  min-height: calc(100vh - 100px - $header-margin);
 
   margin-top: $header-margin;
+  // margin-bottom: 100px !important;
 
   padding: 0 1em;
   padding-bottom: 1.5em;
+  overflow-x: hidden;
 
   background-color: $neutral-gray;
   color: $dark-gray;

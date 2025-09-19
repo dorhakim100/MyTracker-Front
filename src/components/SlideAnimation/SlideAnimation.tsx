@@ -34,6 +34,12 @@ export function SlideAnimation({
         exit='exit'
         transition={{ type: 'tween', duration }}
         className={className}
+        style={{
+          overflow: 'hidden',
+          willChange: 'transform',
+          position: 'relative',
+          zIndex: 0,
+        }}
       >
         {children}
       </motion.div>
