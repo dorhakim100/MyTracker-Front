@@ -11,7 +11,9 @@ import {
   SET_IS_PREFS,
   SET_IS_MODAL,
   SET_MODAL_MESSAGE,
+  SET_SLIDE_DIRECTION,
   // SET_SHOWED_UPDATE_MESSAGE,
+  SET_NAVIGATE_TO,
 } from '../reducers/system.reducer'
 
 export function setIsLoading(stateToSet: boolean) {
@@ -49,6 +51,13 @@ export function setIsModal(stateToSet: boolean) {
 }
 export function setModalMessage(messageToSet: string) {
   store.dispatch({ type: SET_MODAL_MESSAGE, modalMessage: messageToSet })
+}
+
+export function setSlideDirection(directionToSet: number) {
+  store.dispatch({ type: SET_SLIDE_DIRECTION, slideDirection: directionToSet })
+}
+export function setNavigateTo(navigateToToSet: string) {
+  store.dispatch({ type: SET_NAVIGATE_TO, navigateTo: navigateToToSet })
 }
 
 export function onClosePrefsHeader() {

@@ -30,6 +30,10 @@ function App() {
     (stateSelector: RootState) => stateSelector.userModule.user
   )
 
+  const slideDirection = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.slideDirection
+  )
+
   const filteredRoutes = getRoutes(routes, user)
 
   const location = useLocation()
@@ -111,11 +115,11 @@ function App() {
       <main className={`main ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
         <SlideAnimation
           motionKey={location.pathname}
-          direction={1}
+          direction={slideDirection}
           duration={0.25}
         >
           {/* <SearchBar /> */}
-          <Routes>
+          <Routes location={location} key={location.pathname}>
             {filteredRoutes.map((route, index) => (
               <Route
                 key={index}

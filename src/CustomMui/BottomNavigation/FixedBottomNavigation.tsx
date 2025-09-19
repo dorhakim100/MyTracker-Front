@@ -1,5 +1,5 @@
 import React, { MouseEventHandler, useEffect, useState } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import Box from '@mui/material/Box'
 import CssBaseline from '@mui/material/CssBaseline'
 import BottomNavigation from '@mui/material/BottomNavigation'
@@ -18,7 +18,11 @@ import { Route } from '../../assets/routes/routes'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import SpeedDialAction from '@mui/material/SpeedDialAction'
-import { setIsAddModal } from '../../store/actions/system.actions'
+import {
+  setIsAddModal,
+  setNavigateTo,
+  setSlideDirection,
+} from '../../store/actions/system.actions'
 import { setSelectedDiaryDay } from '../../store/actions/user.actions'
 import { messages } from '../../assets/config/messages'
 import { showErrorMsg } from '../../services/event-bus.service'
@@ -61,6 +65,8 @@ export function FixedBottomNavigation(props: {
   const [searchModalOpen, setSearchModalOpen] = useState(false)
   const [modalType, setModalType] = useState<ModalType>(modalTypes.search)
 
+  const [currIndex, setCurrIndex] = useState(0)
+
   const midIndex = Math.floor(props.routes.length / 2)
   const leftRoutes = React.useMemo(
     () => props.routes.slice(0, midIndex),
@@ -93,6 +99,8 @@ export function FixedBottomNavigation(props: {
       setValue(0)
       return
     }
+
+    setCurrIndex(index)
 
     if (index > 1) {
       setValue(index + 1)
@@ -195,13 +203,16 @@ export function FixedBottomNavigation(props: {
                 setValue(newValue)
               }}
             >
-              {leftRoutes.map((route) => {
+              {leftRoutes.map((route, index) => {
                 return (
                   <BottomNavigationAction
                     key={route.path}
                     label={route.title}
                     icon={<route.icon />}
                     onClick={() => {
+                      setSlideDirection(index < currIndex ? -1 : 1)
+
+                      setNavigateTo(route.path)
                       navigate(route.path)
                     }}
                     className={`${prefs.favoriteColor}`}
@@ -212,13 +223,16 @@ export function FixedBottomNavigation(props: {
               {/* Spacer to balance layout under the centered FAB */}
               <BottomNavigationAction sx={{ visibility: 'hidden' }} />
 
-              {rightRoutes.map((route) => {
+              {rightRoutes.map((route, index) => {
                 return (
                   <BottomNavigationAction
                     key={route.path}
                     label={route.title}
                     icon={<route.icon />}
                     onClick={() => {
+                      setSlideDirection(
+                        index + leftRoutes.length > currIndex ? 1 : -1
+                      )
                       navigate(route.path)
                     }}
                     className={`${prefs.favoriteColor}`}
