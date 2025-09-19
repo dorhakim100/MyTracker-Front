@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
 import { LoggedList } from '../../components/LoggedList/LoggedList'
 import { Box, Divider, IconButton, Typography } from '@mui/material'
 import { useSelector } from 'react-redux'
@@ -18,7 +19,10 @@ import { SlideAnimation } from '../../components/SlideAnimation/SlideAnimation'
 import { setSelectedDiaryDay } from '../../store/actions/user.actions'
 import { MealPeriod } from '../../types/mealPeriod/MealPeriod'
 import { AddItemButton } from '../../components/AddItemButton/AddItemButton'
+import TodayIcon from '@mui/icons-material/Today'
+import { getDateFromISO } from '../../services/util.service'
 
+const DAY_IN_MS = 24 * 60 * 60 * 1000
 export function Diary() {
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
   const user = useSelector((state: RootState) => state.userModule.user)
@@ -27,12 +31,21 @@ export function Diary() {
   )
 
   const [selectedDay, setSelectedDay] = useState(new Date())
+
   const [diaryFilter, setDiaryFilter] = useState({
     userId: user?._id,
     date: selectedDay.toISOString(),
   })
 
+  const location = useLocation()
+
   const [direction, setDirection] = useState(1)
+  const isToday = useMemo(() => {
+    const isToday =
+      selectedDayDiary?.date === getDateFromISO(new Date().toISOString())
+
+    return isToday
+  }, [selectedDayDiary?.date])
 
   const meals = [
     {
@@ -75,14 +88,17 @@ export function Diary() {
     }
     if (!user || !selectedDayDiary) return
 
-    // if (selectedDayDiary?._id !== user?.loggedToday._id) handleGetDiary()
     handleGetDiary()
-
-    return () => {
-      const loggedToday = user?.loggedToday
-      setSelectedDiaryDay(loggedToday || null)
-    }
   }, [selectedDay, user])
+
+  useEffect(() => {
+    const loggedToday = user?.loggedToday
+    setSelectedDiaryDay(loggedToday || null)
+  }, [location.pathname])
+
+  useEffect(() => {
+    console.log(selectedDayDiary?.date)
+  }, [selectedDayDiary?.date])
 
   function getTotalCalories(meal: string) {
     return selectedDayDiary?.logs?.length
@@ -112,12 +128,23 @@ export function Diary() {
   }
 
   const onDayChange = (diff: number) => {
-    const newDate = new Date(selectedDay.getTime() + diff * 24 * 60 * 60 * 1000)
+    const newDate = new Date(selectedDay.getTime() + diff * DAY_IN_MS)
     setDirection(diff)
     setSelectedDay(newDate)
     setDiaryFilter({
       userId: user?._id,
       date: newDate.toISOString(),
+    })
+  }
+
+  const onTodayClick = () => {
+    const today = new Date()
+    const dir = today.getTime() - selectedDay.getTime() > 0 ? 1 : -1
+    setDirection(dir)
+    setSelectedDay(today)
+    setDiaryFilter({
+      userId: user?._id,
+      date: new Date().toISOString(),
     })
   }
 
@@ -132,7 +159,16 @@ export function Diary() {
           <IconButton onClick={() => onDayChange(-1)}>
             <ArrowBackIcon />
           </IconButton>
-          <TimesContainer isClock={false} selectedDay={selectedDay} />
+          <div
+            className={`time-controls-container ${
+              isToday ? `today ${prefs.favoriteColor}` : ''
+            }`}
+          >
+            <TimesContainer isClock={false} selectedDay={selectedDay} />
+            <IconButton onClick={onTodayClick} disabled={isToday}>
+              <TodayIcon />
+            </IconButton>
+          </div>
           <IconButton onClick={() => onDayChange(1)}>
             <ArrowForwardIcon />
           </IconButton>

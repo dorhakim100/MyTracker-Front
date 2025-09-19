@@ -1,9 +1,23 @@
 .diary {
   .header:first-child {
     // padding: 1rem 0;
-    display: flex;
-    justify-content: space-between;
+    // display: flex;
+
+    // justify-content: space-between;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
     align-items: end;
+    gap: 1rem;
+
+    .time-controls-container {
+      display: grid;
+      grid-template-columns: 40px 1fr 40px;
+      align-items: center;
+
+      .times-container {
+        grid-column: 2/3;
+      }
+    }
 
     .circular-progress {
       width: 100px;
@@ -53,5 +67,34 @@
         }
       }
     }
+  }
+}
+.time-controls-container.today {
+  font-weight: 600;
+  border-bottom: 2px solid transparent;
+
+  &.primary {
+    border-bottom: 2px solid $primary-color;
+  }
+  &.blue {
+    color: $picker-color-blue;
+  }
+  &.red {
+    color: $picker-color-red;
+  }
+  &.green {
+    color: $picker-color-green;
+  }
+  &.orange {
+    color: $picker-color-orange;
+  }
+  &.deepPurple {
+    color: $picker-color-deep-purple;
+  }
+  &.purple {
+    color: $picker-color-purple;
+  }
+  &.pink {
+    color: $picker-color-pink;
   }
 }

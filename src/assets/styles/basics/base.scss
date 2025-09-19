@@ -107,6 +107,10 @@ p {
 
   button:not(.favorite-button) {
     color: $white;
+
+    &.Mui-disabled {
+      color: $medium-gray;
+    }
   }
 
   outline: none;
