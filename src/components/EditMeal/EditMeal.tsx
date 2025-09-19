@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { CustomInput } from '../../CustomMui/CustomInput/CustomInput'
 import { Meal } from '../../types/meal/Meal'
@@ -12,7 +12,7 @@ import Stepper from '@mui/material/Stepper'
 import Step from '@mui/material/Step'
 import StepLabel from '@mui/material/StepLabel'
 import { capitalizeFirstLetter } from '../../services/util.service'
-import { AnimatePresence, motion } from 'framer-motion'
+
 import Lottie from 'lottie-react'
 
 import foodAnimation from '../../../public/food-animation.json'
@@ -29,11 +29,7 @@ import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt'
 
 const stages = ['name', 'items']
 
-const variants = {
-  enter: (dir: number) => ({ x: dir > 0 ? 360 : -360, opacity: 0 }),
-  center: { x: 0, opacity: 1 },
-  exit: (dir: number) => ({ x: dir > 0 ? -360 : 360, opacity: 0 }),
-}
+import { SlideAnimation } from '../SlideAnimation/SlideAnimation'
 
 interface EditMealProps {
   selectedMeal?: Meal | null
@@ -81,10 +77,21 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
   //   // mealService.save(editMeal)
   // }
 
+  const calcNewMealMacros = useCallback((newItems: MealItem[]) => {
+    const newMacros = {
+      calories: newItems.reduce((acc, item) => acc + item.macros.calories, 0),
+      protein: newItems.reduce((acc, item) => acc + item.macros.protein, 0),
+      carbs: newItems.reduce((acc, item) => acc + item.macros.carbs, 0),
+      fat: newItems.reduce((acc, item) => acc + item.macros.fat, 0),
+    }
+
+    setEditMeal((prev) => ({ ...prev, items: newItems, macros: newMacros }))
+  }, [])
+
   useEffect(() => {
     // console.log('editMeal', editMeal)
     calcNewMealMacros(editMeal.items)
-  }, [editMeal.items])
+  }, [editMeal.items, calcNewMealMacros])
 
   const onChangeStage = (diff: number) => {
     if (_getDisabledNavButton(diff > 0 ? 'next' : 'previous')) return
@@ -264,17 +271,6 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
     setIsOpenModal(false)
   }
 
-  function calcNewMealMacros(newItems: MealItem[]) {
-    const newMacros = {
-      calories: newItems.reduce((acc, item) => acc + item.macros.calories, 0),
-      protein: newItems.reduce((acc, item) => acc + item.macros.protein, 0),
-      carbs: newItems.reduce((acc, item) => acc + item.macros.carbs, 0),
-      fat: newItems.reduce((acc, item) => acc + item.macros.fat, 0),
-    }
-
-    setEditMeal({ ...editMeal, items: newItems, macros: newMacros })
-  }
-
   function renderDeleteAction(item: MealItem) {
     return (
       <SwipeAction destructive={true} onClick={() => onDeleteItem(item)}>
@@ -315,19 +311,9 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
 
       <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
       <div className='stage-container'>
-        <AnimatePresence initial={false} custom={direction} mode='wait'>
-          <motion.div
-            key={stage}
-            custom={direction}
-            variants={variants}
-            initial='enter'
-            animate='center'
-            exit='exit'
-            transition={{ type: 'tween', duration: 0.25 }}
-          >
-            {renderStageContent()}
-          </motion.div>
-        </AnimatePresence>
+        <SlideAnimation motionKey={stage} direction={direction} duration={0.25}>
+          {renderStageContent()}
+        </SlideAnimation>
       </div>
 
       {renderNavigationFooter()}
