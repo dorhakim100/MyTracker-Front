@@ -22,6 +22,10 @@ body {
   -ms-overflow-style: none !important; /* Internet Explorer and Edge */
   &::-webkit-scrollbar {
     display: none !important; /* Chrome, Safari */
+    width: 0 !important;
+    height: 0 !important;
+    background-color: transparent !important;
+    z-index: -10;
   }
 
   width: 100%;
@@ -32,12 +36,16 @@ body {
   height: 100vh;
   overflow: hidden;
 
-  background-color: $neutral-gray;
+  // background-color: $neutral-gray;
+
+  background-color: $light-gray !important;
   color: $dark-gray;
+
   transition: color 0.3s, background-color 0.3s;
 
   &.dark-mode {
-    background-color: $dark-gray;
+    // background-color: $dark-gray;
+    background-color: $primary-color-darker !important;
     color: $neutral-gray;
   }
   // font-family: regularAssistant;
