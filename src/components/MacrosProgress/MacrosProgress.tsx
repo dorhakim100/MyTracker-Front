@@ -92,7 +92,7 @@ export function MacrosProgress({ protein, carbs, fats }: MacrosProgressProps) {
             <div className='macro-container' key={`progress-${macro.name}`}>
               <CircularProgress
                 value={macro.value.percentage}
-                text={`${macro.value.gram}`}
+                text={`${macro.value.gram.toFixed(0)}`}
                 color={macro.color}
               />
               <span>{macro.name}</span>
