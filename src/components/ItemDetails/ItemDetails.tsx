@@ -433,6 +433,7 @@ export function ItemDetails({ onAddToMealClick }: ItemDetailsProps) {
             protein={editItem.totalMacros?.protein}
             carbs={editItem.totalMacros?.carbs}
             fats={editItem.totalMacros?.fat}
+            calories={editItem.totalMacros?.calories}
           />
           <Macros
             protein={editItem.totalMacros?.protein}

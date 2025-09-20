@@ -165,13 +165,6 @@ button {
   }
 }
 
-.page-container {
-  &::-webkit-scrollbar {
-    width: 0;
-    height: 0;
-  }
-}
-
 // Remove focus outline from buttons
 .MuiButtonBase-root:focus,
 .MuiButtonBase-root:focus-visible {

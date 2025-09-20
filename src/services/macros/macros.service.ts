@@ -23,28 +23,34 @@ const CALORIES_PER_GRAM = {
 // from grams to calories
 
 export function calculateProteinCalories(proteinGrams: number): number {
+  return Math.abs(proteinGrams * CALORIES_PER_GRAM.protein)
   return Math.abs(Math.round(proteinGrams * CALORIES_PER_GRAM.protein))
 }
 
 export function calculateCarbCalories(carbsGrams: number): number {
+  return Math.abs(carbsGrams * CALORIES_PER_GRAM.carbs)
   return Math.abs(Math.round(carbsGrams * CALORIES_PER_GRAM.carbs))
 }
 
 export function calculateFatCalories(fatsGrams: number): number {
+  return Math.abs(fatsGrams * CALORIES_PER_GRAM.fats)
   return Math.abs(Math.round(fatsGrams * CALORIES_PER_GRAM.fats))
 }
 
 // from calories to grams
 
 export function calculateProteinFromCalories(calories: number): number {
+  return Math.abs(calories / CALORIES_PER_GRAM.protein)
   return Math.abs(Math.round(calories / CALORIES_PER_GRAM.protein))
 }
 
 export function calculateCarbsFromCalories(calories: number): number {
+  return Math.abs(calories / CALORIES_PER_GRAM.carbs)
   return Math.abs(Math.round(calories / CALORIES_PER_GRAM.carbs))
 }
 
 export function calculateFatFromCalories(calories: number): number {
+  return Math.abs(calories / CALORIES_PER_GRAM.fats)
   return Math.abs(Math.round(calories / CALORIES_PER_GRAM.fats))
 }
 
