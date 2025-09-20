@@ -40,6 +40,14 @@ import { SkeletonList } from '../SkeletonList/SkeletonList'
 import { MealItem } from '../../types/mealItem/MealItem'
 import { itemService } from '../../services/item/item.service'
 
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
+import DinnerDiningIcon from '@mui/icons-material/DinnerDining'
+import EggIcon from '@mui/icons-material/Egg'
+import FastfoodIcon from '@mui/icons-material/Fastfood'
+import Lottie from 'lottie-react'
+import searchLight from '../../../public/searching.json'
+import searchDark from '../../../public/searching-dark.json'
+
 interface ItemSearchProps {
   onAddToMealClick?: (item: MealItem) => void
 }
@@ -69,10 +77,18 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
   )
 
   const toggleOptions: ToggleOption[] = [
-    { value: searchTypes.favorite, label: 'My Favorites' },
-    { value: searchTypes.meal, label: 'Meals' },
-    { value: searchTypes.usda, label: 'Food' },
-    { value: searchTypes.openFoodFacts, label: 'Product' },
+    {
+      value: searchTypes.favorite,
+      label: 'Favorites',
+      icon: <FavoriteBorderIcon />,
+    },
+    { value: searchTypes.meal, label: 'Meals', icon: <DinnerDiningIcon /> },
+    { value: searchTypes.usda, label: 'Food', icon: <EggIcon /> },
+    {
+      value: searchTypes.openFoodFacts,
+      label: 'Product',
+      icon: <FastfoodIcon />,
+    },
   ]
 
   const handleSearch = useCallback(async () => {
@@ -95,11 +111,23 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
         return
       }
 
-      if (filter.source === searchTypes.favorite || !filter.txt) {
+      if (filter.source === searchTypes.favorite) {
         setResults(favoriteItems.filter((item) => regex.test(item.name)))
 
         if (!filter.txt) setResultsDragable(true)
         else setResultsDragable(false)
+
+        setIsLoading(false)
+        return
+      }
+      if (filter.source === searchTypes.favorite || !filter.txt) {
+        // setResults(favoriteItems.filter((item) => regex.test(item.name)))
+
+        // if (!filter.txt) setResultsDragable(true)
+        // else setResultsDragable(false)
+
+        setResults([])
+        setResultsDragable(false)
         setIsLoading(false)
         return
       }
@@ -197,14 +225,30 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
     )
   }
 
+  const renderSearchFirst = () => {
+    return (
+      <Box className='results'>
+        <Lottie
+          animationData={prefs.isDarkMode ? searchDark : searchLight}
+          loop={true}
+        />
+        <Typography variant='h6' className='search-first'>
+          Search for an item first...
+        </Typography>
+      </Box>
+    )
+  }
+
   const renderList = () => {
     // const hasFavorite = user?.favoriteItems?.length !== 0
 
     if (!results.length && isLoading) {
       return <SkeletonList />
-    } else if (!results.length) {
+    } else if (!results.length && filter.txt) {
       // } else if (!results.length && !hasFavorite) {
       return renderNoResults()
+    } else if (!results.length && !filter.txt) {
+      return renderSearchFirst()
     }
 
     return (

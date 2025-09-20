@@ -5,6 +5,7 @@ export interface ToggleOption {
   value: string
   label: string
   ariaLabel?: string
+  icon?: React.ReactNode
 }
 
 interface CustomToggleProps {
@@ -32,7 +33,7 @@ export function CustomToggle({
         if (newValue !== null) onChange(newValue)
       }}
       aria-label={ariaLabel}
-      className={className}
+      className={`custom-toggle no-scroll ${className}`}
     >
       {options.map((opt) => (
         <ToggleButton
@@ -40,6 +41,7 @@ export function CustomToggle({
           value={opt.value}
           aria-label={opt.ariaLabel || opt.value}
         >
+          {opt.icon}
           {opt.label}
         </ToggleButton>
       ))}

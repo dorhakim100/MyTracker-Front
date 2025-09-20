@@ -162,3 +162,16 @@ p {
     box-shadow: none;
   }
 }
+
+.no-scroll {
+  // Hide scrollbar
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* Internet Explorer and Edge */
+  &::-webkit-scrollbar {
+    display: none !important; /* Chrome, Safari */
+    width: 0 !important;
+    height: 0 !important;
+    background-color: transparent !important;
+    z-index: -10;
+  }
+}
