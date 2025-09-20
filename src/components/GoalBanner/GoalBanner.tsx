@@ -2,8 +2,8 @@ import { Typography } from '@mui/material'
 import FlagIcon from '@mui/icons-material/Flag'
 
 interface GoalBannerProps {
-  current: number
-  goal: number
+  current: number | string
+  goal: number | string
   extraValue?: string
 }
 

@@ -39,8 +39,8 @@ export function CustomLinearProgress({
       />
       {currentValue && goalValue && (
         <GoalBanner
-          current={+currentValue}
-          goal={+goalValue}
+          current={(+currentValue).toFixed(0)}
+          goal={(+goalValue).toFixed(0)}
           extraValue={isGram ? 'g' : ''}
         />
       )}
