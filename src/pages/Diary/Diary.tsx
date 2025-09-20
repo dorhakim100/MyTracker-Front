@@ -51,17 +51,17 @@ export function Diary() {
     {
       label: 'Breakfast',
       period: 'breakfast',
-      rangeLabel: '06:00–12:00',
+      rangeLabel: '06:00 – 12:00',
     },
     {
       label: 'Lunch',
       period: 'lunch',
-      rangeLabel: '12:00–18:00',
+      rangeLabel: '12:00 – 18:00',
     },
     {
       label: 'Dinner',
       period: 'dinner',
-      rangeLabel: '18:00–00:00',
+      rangeLabel: '18:00 – 00:00',
     },
   ]
 
