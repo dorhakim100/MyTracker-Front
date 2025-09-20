@@ -272,7 +272,9 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
             </div>
           )}
           renderPrimaryText={(item) => item.name}
-          renderSecondaryText={(item) => `${item.macros?.calories} kcal`}
+          renderSecondaryText={(item) =>
+            `${(item.macros?.calories || 0).toFixed(0)} kcal`
+          }
           renderRight={(item) =>
             item.type !== 'meal' && (
               <FavoriteButton
