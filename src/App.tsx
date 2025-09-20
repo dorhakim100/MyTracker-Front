@@ -12,7 +12,7 @@ import { UserMsg } from './components/UserMsg/UserMsg'
 
 import { FixedBottomNavigation } from './CustomMui/BottomNavigation/FixedBottomNavigation.tsx'
 import { SlideAnimation } from './components/SlideAnimation/SlideAnimation.tsx'
-import { ScreenLoader } from './components/ScreenLoader/ScreenLoader'
+
 import { RootState } from './store/store.ts'
 
 import './App.css'
@@ -25,10 +25,6 @@ import { searchService } from './services/search/search-service.ts'
 function App() {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
-  )
-
-  const isLoading = useSelector(
-    (stateSelector: RootState) => stateSelector.systemModule.isLoading
   )
 
   const user = useSelector(
@@ -98,11 +94,6 @@ function App() {
         manifest.href = '/manifest.json'
         break
     }
-  }
-
-  return <ScreenLoader />
-  if (isLoading) {
-    return <ScreenLoader />
   }
 
   if (!user)

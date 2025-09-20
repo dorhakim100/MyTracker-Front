@@ -27,6 +27,7 @@ import { RootState } from '../../store/store'
 import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
 import { login, signup } from '../../store/actions/user.actions'
 import { setIsLoading } from '../../store/actions/system.actions'
+import { ScreenLoader } from '../../components/ScreenLoader/ScreenLoader'
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -85,6 +86,10 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
   const credientials: any = {}
 
   const [isRemember, setIsRemember] = React.useState(false)
+
+  const isLoading = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.isLoading
+  )
 
   const handleClose = () => {
     setOpen(false)
@@ -202,6 +207,10 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
   const toggleRememberMe = () => {
     // credientials.isRemember = !credientials.isRemember || false
     setIsRemember(!isRemember)
+  }
+
+  if (isLoading) {
+    return <ScreenLoader />
   }
 
   return (
