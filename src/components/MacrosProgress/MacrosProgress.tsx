@@ -202,8 +202,6 @@ function EditComponent() {
     setUserToEdit(userToSet)
   }, [user])
 
-  console.log(userToEdit)
-
   return (
     <Box className='edit-macros-container'>
       <div className='picker-container'>

@@ -40,10 +40,8 @@ import { SkeletonList } from '../SkeletonList/SkeletonList'
 import { MealItem } from '../../types/mealItem/MealItem'
 import { itemService } from '../../services/item/item.service'
 
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
 import DinnerDiningIcon from '@mui/icons-material/DinnerDining'
-import EggIcon from '@mui/icons-material/Egg'
-import FastfoodIcon from '@mui/icons-material/Fastfood'
+
 import Lottie from 'lottie-react'
 import searchLight from '../../../public/searching.json'
 import searchDark from '../../../public/searching-dark.json'
@@ -65,9 +63,9 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
   const [resultsDragable, setResultsDragable] = useState(false)
 
   // Keep a single filter object for both query and source
-  type UiSearchSource = 'usda' | 'open-food-facts' | 'meal' | 'favorite'
+  type UiSearchSource = 'search' | 'meal'
   const [filter, setFilter] = useState<{ txt: string; source: UiSearchSource }>(
-    { txt: '', source: searchTypes.favorite as UiSearchSource }
+    { txt: '', source: searchTypes.search as UiSearchSource }
   )
 
   const [isItemSelected, setIsItemSelected] = useState(false)
@@ -78,17 +76,11 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
 
   const toggleOptions: ToggleOption[] = [
     {
-      value: searchTypes.favorite,
-      label: 'Favorites',
-      icon: <FavoriteBorderIcon />,
+      value: searchTypes.search,
+      label: 'Food',
+      icon: <SearchIcon />,
     },
-    { value: searchTypes.meal, label: 'Meals', icon: <DinnerDiningIcon /> },
-    { value: searchTypes.usda, label: 'Food', icon: <EggIcon /> },
-    {
-      value: searchTypes.openFoodFacts,
-      label: 'Product',
-      icon: <FastfoodIcon />,
-    },
+    { value: searchTypes.meal, label: 'My Meals', icon: <DinnerDiningIcon /> },
   ]
 
   const handleSearch = useCallback(async () => {
@@ -111,35 +103,22 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
         return
       }
 
-      if (filter.source === searchTypes.favorite) {
-        setResults(favoriteItems.filter((item) => regex.test(item.name)))
+      setResults(favoriteItems.filter((item) => regex.test(item.name)))
 
-        if (!filter.txt) setResultsDragable(true)
-        else setResultsDragable(false)
-
+      if (!filter.txt) {
+        setResultsDragable(true)
         setIsLoading(false)
         return
       }
-      if (filter.source === searchTypes.favorite || !filter.txt) {
-        // setResults(favoriteItems.filter((item) => regex.test(item.name)))
-
-        // if (!filter.txt) setResultsDragable(true)
-        // else setResultsDragable(false)
-
-        setResults([])
-        setResultsDragable(false)
-        setIsLoading(false)
-        return
-      }
+      setResultsDragable(false)
+      setIsLoading(true)
 
       const searchQuery: SearchFilter = {
         txt: filter.txt,
-        source: filter.source as 'usda' | 'open-food-facts',
-        // favoriteItems: user?.favoriteItems || { food: [], product: [] },
         favoriteItems: user?.favoriteItems,
       }
 
-      const res = await searchService.search(searchQuery, user as User)
+      const res = await searchService.search(searchQuery)
 
       setResultsDragable(false)
       setResults(res)
@@ -287,6 +266,7 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
           isDragable={resultsDragable}
           onReorder={dragEnd}
         />
+        {isLoading && <SkeletonList />}
       </Box>
     )
   }

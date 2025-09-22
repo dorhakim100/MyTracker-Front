@@ -97,7 +97,7 @@ export function Diary() {
   }, [location.pathname])
 
   useEffect(() => {
-    console.log(selectedDayDiary?.date)
+    // console.log(selectedDayDiary?.date)
   }, [selectedDayDiary?.date])
 
   function getTotalCalories(meal: string) {
