@@ -523,27 +523,3 @@ function computeRelevanceScore(
 
   return score
 }
-
-// --- Fallback helpers when all scores are zero ---
-function diceBigramSim(a: string, b: string) {
-  const bigrams = (t: string) => {
-    const n = normalizeText(t)
-    const arr: string[] = []
-    for (let i = 0; i < n.length - 1; i++) arr.push(n.slice(i, i + 2))
-    return arr
-  }
-  const A = bigrams(a)
-  const B = bigrams(b)
-  if (!A.length || !B.length) return 0
-  let inter = 0
-  const counts = new Map<string, number>()
-  for (const g of A) counts.set(g, (counts.get(g) || 0) + 1)
-  for (const g of B) {
-    const c = counts.get(g) || 0
-    if (c > 0) {
-      inter++
-      counts.set(g, c - 1)
-    }
-  }
-  return (2 * inter) / (A.length + B.length)
-}
