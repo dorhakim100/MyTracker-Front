@@ -53,7 +53,7 @@ export function MacrosDonut({
     <div className='donut' style={donutStyle}>
       <div className={`donut-inner ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
         <div className='totals'>
-          <div className='value'>{total}</div>
+          <div className='value'>{total.toFixed(0)}</div>
           <div className='label'>kcal</div>
         </div>
       </div>

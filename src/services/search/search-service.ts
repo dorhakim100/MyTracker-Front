@@ -36,6 +36,7 @@ export const searchService = {
   addToCache,
   removeFromCache,
   searchFavoriteItems,
+  handleResSorting,
 }
 
 const LONGEST_FOOD_ID_LENGTH = 10
@@ -70,17 +71,25 @@ async function search(filter: SearchFilter) {
 
     res = [...openFoodFacts, ...usda]
 
-    res.sort(
-      (a, b) =>
-        computeRelevanceScore(safeTxt, b, favoriteItems) -
-        computeRelevanceScore(safeTxt, a, favoriteItems)
-    )
+    res = handleResSorting(res, safeTxt, favoriteItems)
 
     return res
   } catch (err) {
     console.error(err)
     throw err
   }
+}
+
+function handleResSorting(
+  res: Item[],
+  txt: string,
+  favoriteItems: string[] = []
+) {
+  return res.sort(
+    (a, b) =>
+      computeRelevanceScore(txt, b, favoriteItems) -
+      computeRelevanceScore(txt, a, favoriteItems)
+  )
 }
 
 async function searchFavoriteItems(favoriteItems: string[]) {
@@ -249,26 +258,31 @@ async function searchOpenFoodFacts(query: string) {
       // headers: { 'User-Agent': 'MyTracker/1.0 (you@example.com)' },
     })
 
-    return data.products.map((product: OFFProduct) => {
-      const proteins = Math.floor(+(product.nutriments?.proteins_100g ?? 0))
-      const carbs = Math.floor(+(product.nutriments?.carbohydrates_100g ?? 0))
-      const fats = Math.floor(+(product.nutriments?.fat_100g ?? 0))
-      const calories = Math.floor(
-        +(product.nutriments?.['energy-kcal_100g'] ?? 0) ||
-          +(product.nutriments?.['energy-kcal'] ?? 0) ||
-          calculateCaloriesFromMacros({ protein: proteins, carbs, fats }).total
-      )
+    return data.products
+      .map((product: OFFProduct) => {
+        const proteins = Math.floor(+(product.nutriments?.proteins_100g ?? 0))
+        const carbs = Math.floor(+(product.nutriments?.carbohydrates_100g ?? 0))
+        const fats = Math.floor(+(product.nutriments?.fat_100g ?? 0))
+        const calories = Math.floor(
+          +(product.nutriments?.['energy-kcal_100g'] ?? 0) ||
+            +(product.nutriments?.['energy-kcal'] ?? 0) ||
+            calculateCaloriesFromMacros({ protein: proteins, carbs, fats })
+              .total
+        )
 
-      return {
-        searchId: product.code,
-        name: product.brands
-          ? `${product.product_name} - ${product.brands}`
-          : product.product_name,
-        macros: { calories, protein: proteins, carbs, fat: fats },
-        image: product.image_small_url || DEFAULT_IMAGE,
-        type: 'product',
-      }
-    })
+        if (!product.nutriments?.['energy-kcal_100g']) return null
+
+        return {
+          searchId: product.code,
+          name: product.brands
+            ? `${product.product_name} - ${product.brands}`
+            : product.product_name,
+          macros: { calories, protein: proteins, carbs, fat: fats },
+          image: product.image_small_url || DEFAULT_IMAGE,
+          type: 'product',
+        }
+      })
+      .filter((product: OFFProduct) => product !== null)
   } catch (err) {
     // console.error(err)
     throw err

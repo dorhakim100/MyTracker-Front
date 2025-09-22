@@ -414,9 +414,9 @@ export function ItemDetails({ onAddToMealClick }: ItemDetailsProps) {
           <img src={item.image} alt={item.name} />
         </div>
         <div className='title'>{item.name}</div>
-        <div className='subtitle'>{`${item.macros?.calories} kcal for ${
-          !_hasItems(item) ? '100g' : 'serving'
-        }`}</div>
+        <div className='subtitle'>{`${(+item.macros?.calories).toFixed(
+          0
+        )} kcal for ${!_hasItems(item) ? '100g' : 'serving'}`}</div>
 
         {!_hasItems(item) && (
           <div className='favorite-container' onClick={onFavoriteClick}>
