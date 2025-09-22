@@ -139,7 +139,7 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
         favoriteItems: user?.favoriteItems,
       }
 
-      const res = await searchService.search(searchQuery)
+      const res = await searchService.search(searchQuery, user as User)
 
       setResultsDragable(false)
       setResults(res)

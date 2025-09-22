@@ -46,7 +46,7 @@ const LONGEST_FOOD_ID_LENGTH = 10
 
 async function search(filter: SearchFilter) {
   try {
-    const { txt, source, favoriteItems } = filter
+    const { txt, favoriteItems } = filter
     let res: Item[] = []
     // const { food, product } = favoriteItems || { food: [], product: [] }
     // const isFavoriteItems = food.length > 0 || product.length > 0
@@ -58,14 +58,23 @@ async function search(filter: SearchFilter) {
 
     const safeTxt = txt ?? ''
 
-    switch (source) {
-      case searchTypes.openFoodFacts:
-        res = await searchOpenFoodFacts(safeTxt)
-        break
-      case searchTypes.usda:
-        res = await searchRawUSDA(safeTxt)
-        break
-    }
+    // Fetch both sources in parallel, tolerate failures
+    const [offRes, usdaRes] = await Promise.allSettled([
+      searchOpenFoodFacts(safeTxt),
+      searchRawUSDA(safeTxt),
+    ])
+
+    const openFoodFacts: Item[] =
+      offRes.status === 'fulfilled' ? offRes.value : []
+    const usda: Item[] = usdaRes.status === 'fulfilled' ? usdaRes.value : []
+
+    res = [...openFoodFacts, ...usda]
+
+    res.sort(
+      (a, b) =>
+        computeRelevanceScore(safeTxt, b, favoriteItems) -
+        computeRelevanceScore(safeTxt, a, favoriteItems)
+    )
 
     return res
   } catch (err) {
@@ -465,4 +474,100 @@ function isFavorite(item: Item, user: User | null) {
     // user?.favoriteItems?.product.includes(item.searchId || '')
     user?.favoriteItems?.includes(item.searchId || '')
   )
+}
+
+function normalizeText(s: string) {
+  return s
+    .toLowerCase()
+    .normalize('NFKD')
+    .replace(/[^\w\s]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+function getTokens(s: string) {
+  return normalizeText(s).split(' ').filter(Boolean)
+}
+function computeRelevanceScore(
+  query: string,
+  item: Item,
+  favoriteIds?: string[]
+) {
+  const q = normalizeText(query)
+  const name = normalizeText(item.name || '')
+  if (!q || !name) return 0
+
+  let score = 0
+  if (name === q) score += 100
+  if (name.startsWith(q)) score += 50
+
+  const qTokens = getTokens(q)
+  const nTokens = getTokens(name)
+  const overlap = qTokens.filter((t) => nTokens.includes(t)).length
+  score += Math.floor((overlap / Math.max(qTokens.length, 1)) * 40) // up to +40
+
+  if (favoriteIds?.includes(item.searchId || '')) score += 20
+
+  return score
+}
+
+// --- Fallback helpers when all scores are zero ---
+function diceBigramSim(a: string, b: string) {
+  const bigrams = (t: string) => {
+    const n = normalizeText(t)
+    const arr: string[] = []
+    for (let i = 0; i < n.length - 1; i++) arr.push(n.slice(i, i + 2))
+    return arr
+  }
+  const A = bigrams(a)
+  const B = bigrams(b)
+  if (!A.length || !B.length) return 0
+  let inter = 0
+  const counts = new Map<string, number>()
+  for (const g of A) counts.set(g, (counts.get(g) || 0) + 1)
+  for (const g of B) {
+    const c = counts.get(g) || 0
+    if (c > 0) {
+      inter++
+      counts.set(g, c - 1)
+    }
+  }
+  return (2 * inter) / (A.length + B.length)
+}
+
+function buildFallbackKey(
+  query: string,
+  item: Item,
+  sourcePriority: number,
+  originalIndex: number,
+  favoriteIds?: string[]
+) {
+  const q = normalizeText(query)
+  const name = normalizeText(item.name || '')
+  const idx = name.indexOf(q)
+  const containsBoost = idx === -1 ? 0 : 1 / (1 + idx)
+  const dice = diceBigramSim(q, name)
+  const favoriteBoost = favoriteIds?.includes(item.searchId || '') ? 1 : 0
+  const hasImage = item.image && !item.image.includes('DEFAULT_IMAGE') ? 1 : 0
+  const nameLen = name.length
+
+  return [
+    favoriteBoost, // higher better
+    containsBoost, // higher better
+    dice, // higher better
+    hasImage, // higher better
+    -nameLen, // shorter better
+    -sourcePriority, // lower priority value better
+    -originalIndex, // earlier better
+  ] as const
+}
+
+function compareFallback(
+  a: readonly [number, number, number, number, number, number, number],
+  b: readonly [number, number, number, number, number, number, number]
+) {
+  for (let i = 0; i < a.length; i++) {
+    const diff = b[i] - a[i]
+    if (diff !== 0) return diff
+  }
+  return 0
 }
