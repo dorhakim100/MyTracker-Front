@@ -138,7 +138,10 @@ export function BmrCard() {
         {options.map((option) => {
           if (option.type === 'select')
             return (
-              <div className={`select-container ${option.className}`}>
+              <div
+                className={`select-container ${option.className}`}
+                key={`${option.key}-${option.label}`}
+              >
                 <CustomSelect
                   label={option.label}
                   values={option.values as string[]}
@@ -146,7 +149,6 @@ export function BmrCard() {
                   onChange={(val) =>
                     onChange(option.key as keyof BmrFormState, val)
                   }
-                  key={option.key}
                   extra={option.extra}
                 />
               </div>
@@ -154,7 +156,10 @@ export function BmrCard() {
 
           if (option.type === 'toggle')
             return (
-              <div className={`toggle-container ${option.className}`}>
+              <div
+                className={`toggle-container ${option.className}`}
+                key={`${option.key}-${option.label}`}
+              >
                 <Typography variant='body1'>{option.label}</Typography>
                 <CustomToggle
                   value={form[option.key as keyof BmrFormState]}
@@ -162,7 +167,6 @@ export function BmrCard() {
                   onChange={(val) =>
                     onChange(option.key as keyof BmrFormState, val)
                   }
-                  key={option.key}
                 />
               </div>
             )
