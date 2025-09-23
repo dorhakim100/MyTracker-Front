@@ -1,18 +1,39 @@
-.card.bmr-card {
+.bmr-card {
   height: fit-content;
   display: grid;
-  gap: 16px;
+  gap: 1rem;
+  // grid-template-columns: repeat(2, 1fr);
 
-  .bmr-form-grid {
+  .bmr-form-container {
     display: grid;
-    gap: 12px;
-  }
+    gap: 1rem 0.5rem;
+    justify-items: start;
+    grid-template-columns: repeat(2, 1fr);
 
-  .form-row {
-    display: grid;
-    gap: 6px;
-  }
+    .select-container,
+    .toggle-container {
+      // justify-self: start;
+      display: grid;
 
+      gap: 0.5rem;
+      grid-column: 1/-1;
+
+      &.full-width {
+        grid-column: 1/-1;
+        width: 100%;
+      }
+
+      &.first-column {
+        grid-column: 1/2;
+        justify-self: start;
+      }
+
+      &.second-column {
+        grid-column: 2/3;
+        justify-self: end;
+      }
+    }
+  }
   .gender-toggle {
     width: 100%;
   }
@@ -21,6 +42,11 @@
     display: flex;
     align-items: baseline;
     justify-content: space-between;
+  }
+
+  .bmr-result-grid {
+    display: grid;
+    gap: 0.5rem;
   }
 
   .bmr-value {

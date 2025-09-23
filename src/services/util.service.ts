@@ -165,8 +165,13 @@ export function getRoutes(routes: Route[], user: User | null) {
   return filteredRoutes
 }
 
-export function getArrayOfNumbers(min: number, max: number): number[] {
-  return Array.from({ length: max - min + 1 }, (_, i) => min + i)
+export function getArrayOfNumbers(
+  min: number,
+  max: number,
+  isString: boolean = false
+): number[] | string[] {
+  const array = Array.from({ length: max - min + 1 }, (_, i) => min + i)
+  return isString ? array.map((num) => num + '') : array
 }
 
 export function getCurrMeal(): string {

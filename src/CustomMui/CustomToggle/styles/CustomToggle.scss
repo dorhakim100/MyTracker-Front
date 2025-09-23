@@ -19,4 +19,58 @@
     gap: 0.5rem;
     font-size: 0.8rem;
   }
+
+  &.primary {
+    .MuiToggleButtonGroup-grouped.Mui-selected {
+      color: $primary-color !important;
+    }
+  }
+
+  &.blue {
+    .MuiToggleButtonGroup-grouped.Mui-selected {
+      color: $picker-color-blue !important;
+    }
+  }
+
+  &.red {
+    .MuiToggleButtonGroup-grouped.Mui-selected {
+      color: $picker-color-red !important;
+    }
+  }
+
+  &.yellow {
+    .MuiToggleButtonGroup-grouped.Mui-selected {
+      color: $picker-color-yellow !important;
+    }
+  }
+
+  &.green {
+    .MuiToggleButtonGroup-grouped.Mui-selected {
+      color: $picker-color-green !important;
+    }
+  }
+
+  &.orange {
+    .MuiToggleButtonGroup-grouped.Mui-selected {
+      color: $picker-color-orange !important;
+    }
+  }
+
+  &.deepPurple {
+    .MuiToggleButtonGroup-grouped.Mui-selected {
+      color: $picker-color-deep-purple !important;
+    }
+  }
+
+  &.purple {
+    .MuiToggleButtonGroup-grouped.Mui-selected {
+      color: $picker-color-purple !important;
+    }
+  }
+
+  &.pink {
+    .MuiToggleButtonGroup-grouped.Mui-selected {
+      color: $picker-color-pink !important;
+    }
+  }
 }

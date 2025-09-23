@@ -81,11 +81,13 @@ export function UserDetails() {
         </div>
       </Card>
       <div className='content-container'>
-        <WeightCard />
-        <BmrCard />
+        {/* <WeightCard /> */}
+        {/* <BmrCard /> */}
 
         <CustomAccordion title='Meals' cmp={<MealsCard />} />
         <CustomAccordion title='Favorite Items' cmp={<FavoriteItemsCard />} />
+
+        <CustomAccordion title='BMR Calculator' cmp={<BmrCard />} />
         <CustomAccordion title='Preferences' cmp={<PreferencesCard />} />
 
         <CustomButton

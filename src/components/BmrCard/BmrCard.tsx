@@ -1,48 +1,120 @@
 import { useMemo, useState } from 'react'
-import { Card, Divider, Typography } from '@mui/material'
+import { Divider, Typography } from '@mui/material'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
-import { CustomInput } from '../../CustomMui/CustomInput/CustomInput'
 import { CustomToggle } from '../../CustomMui/CustomToggle/CustomToggle'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import type { ToggleOption } from '../../CustomMui/CustomToggle/CustomToggle'
-import { bmrService, type Gender } from '../../services/bmr/bmr.service'
+import {
+  bmrService,
+  type Gender,
+  type ActivityLevel,
+} from '../../services/bmr/bmr.service'
+import { BmrFormState } from '../../types/bmrForm/BmrForm'
+import { CustomSelect } from '../../CustomMui/CustomSelect/CustomSelect'
+import { getArrayOfNumbers } from '../../services/util.service'
 
-interface BmrFormState {
-  ageYears: string
-  gender: Gender
-  heightCm: string
-  weightKg: string
-}
+import MaleIcon from '@mui/icons-material/Male'
+import FemaleIcon from '@mui/icons-material/Female'
 
 const genderOptions: ToggleOption[] = [
-  { value: 'male', label: 'Male' },
-  { value: 'female', label: 'Female' },
+  { value: 'male', label: 'Male', icon: <MaleIcon /> },
+  { value: 'female', label: 'Female', icon: <FemaleIcon /> },
 ]
+
+const activityOptions: ToggleOption[] = [
+  { value: 'bmr', label: 'BMR' },
+  { value: 'sedentary', label: 'None' },
+  { value: 'light', label: '1-3 / wk' },
+  { value: 'moderate', label: '4-5 / wk' },
+  { value: 'daily', label: 'Daily' },
+  //   { value: 'very_intense', label: 'Intense job' },
+]
+
+interface Options {
+  label: string
+  values: ToggleOption[] | string[]
+  onChange: (val: string) => void
+  type: 'toggle' | 'select'
+  key: keyof BmrFormState
+  extra?: string
+  className?: string
+}
 
 export function BmrCard() {
   const prefs = useSelector(
     (storeState: RootState) => storeState.systemModule.prefs
   )
 
-  const [form, setForm] = useState<BmrFormState>({
-    ageYears: '',
-    gender: 'male',
-    heightCm: '',
-    weightKg: '',
-  })
+  const [form, setForm] = useState<BmrFormState>(
+    bmrService.getDefaultFormState()
+  )
 
   const bmr = useMemo(() => {
-    const age = Number(form.ageYears)
-    const height = Number(form.heightCm)
-    const weight = Number(form.weightKg)
+    const age = +form.ageYears
+    const height = +form.heightCm
+    const weight = +form.weightKg
     return bmrService.calculate({
-      ageYears: Number.isFinite(age) ? age : 0,
+      ageYears: age,
       gender: form.gender,
-      heightCm: Number.isFinite(height) ? height : 0,
-      weightKg: Number.isFinite(weight) ? weight : 0,
+      heightCm: height,
+      weightKg: weight,
     })
   }, [form])
+
+  //   const activityBuffer = useMemo(() => {
+  //     return bmrService.calculateActivityBuffer(bmr, form.activity)
+  //   }, [bmr, form.activity])
+
+  const tdee = useMemo(() => {
+    return bmrService.calculateTDEE(bmr, form.activity)
+  }, [bmr, form.activity])
+
+  const options: Options[] = [
+    {
+      label: 'Gender',
+      values: genderOptions,
+      onChange: (val: string) => onChange('gender', val as Gender),
+      type: 'toggle',
+      className: 'full-width',
+
+      key: 'gender',
+    },
+    {
+      label: 'Age',
+      onChange: (val: string) => onChange('ageYears', val),
+      values: getArrayOfNumbers(1, 100, true) as string[],
+      type: 'select',
+      key: 'ageYears',
+      className: 'first-column',
+    },
+    {
+      label: 'Height',
+      onChange: (val: string) => onChange('heightCm', val),
+      values: getArrayOfNumbers(100, 250, true) as string[],
+      type: 'select',
+      key: 'heightCm',
+      extra: 'cm',
+      className: 'second-column',
+    },
+    {
+      label: 'Weight',
+      onChange: (val: string) => onChange('weightKg', val),
+      values: getArrayOfNumbers(30, 250, true) as string[],
+      type: 'select',
+      key: 'weightKg',
+      extra: 'kg',
+      className: 'full-width',
+    },
+    {
+      label: 'Activity',
+      values: activityOptions,
+      onChange: (val: string) => onChange('activity', val as ActivityLevel),
+      type: 'toggle',
+      key: 'activity',
+      className: 'full-width',
+    },
+  ]
 
   function onChange<K extends keyof BmrFormState>(
     key: K,
@@ -52,72 +124,75 @@ export function BmrCard() {
   }
 
   function onReset() {
-    setForm({ ageYears: '', gender: 'male', heightCm: '', weightKg: '' })
+    setForm(bmrService.getDefaultFormState())
   }
 
   return (
-    <Card
-      variant='outlined'
-      className={`card bmr-card ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+    <div
+      //   variant='outlined'
+      className={`bmr-card ${prefs.isDarkMode ? 'dark-mode' : ''}`}
     >
-      <Typography variant='h6'>BMR Calculator</Typography>
+      {/* <Typography variant='h6'>BMR Calculator</Typography> */}
 
-      <div className='bmr-form-grid'>
-        <div className='form-row'>
-          <Typography variant='body2'>Gender</Typography>
-          <CustomToggle
-            value={form.gender}
-            options={genderOptions}
-            onChange={(val) => onChange('gender', val as Gender)}
-            className='gender-toggle'
-          />
-        </div>
+      <div className='bmr-form-container'>
+        {options.map((option) => {
+          if (option.type === 'select')
+            return (
+              <div className={`select-container ${option.className}`}>
+                <CustomSelect
+                  label={option.label}
+                  values={option.values as string[]}
+                  value={form[option.key as keyof BmrFormState]}
+                  onChange={(val) =>
+                    onChange(option.key as keyof BmrFormState, val)
+                  }
+                  key={option.key}
+                  extra={option.extra}
+                />
+              </div>
+            )
 
-        <div className='form-row'>
-          <Typography variant='body2'>Age</Typography>
-          <CustomInput
-            value={form.ageYears}
-            onChange={(val) => onChange('ageYears', val.replace(/[^0-9]/g, ''))}
-            placeholder='Years'
-            size='small'
-          />
-        </div>
-
-        <div className='form-row'>
-          <Typography variant='body2'>Height</Typography>
-          <CustomInput
-            value={form.heightCm}
-            onChange={(val) =>
-              onChange('heightCm', val.replace(/[^0-9.]/g, ''))
-            }
-            placeholder='cm'
-            size='small'
-          />
-        </div>
-
-        <div className='form-row'>
-          <Typography variant='body2'>Weight</Typography>
-          <CustomInput
-            value={form.weightKg}
-            onChange={(val) =>
-              onChange('weightKg', val.replace(/[^0-9.]/g, ''))
-            }
-            placeholder='kg'
-            size='small'
-          />
-        </div>
+          if (option.type === 'toggle')
+            return (
+              <div className={`toggle-container ${option.className}`}>
+                <Typography variant='body1'>{option.label}</Typography>
+                <CustomToggle
+                  value={form[option.key as keyof BmrFormState]}
+                  options={option.values as ToggleOption[]}
+                  onChange={(val) =>
+                    onChange(option.key as keyof BmrFormState, val)
+                  }
+                  key={option.key}
+                />
+              </div>
+            )
+        })}
       </div>
 
       <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
 
-      <div className='bmr-result-row'>
-        <Typography variant='body1'>BMR</Typography>
-        <Typography variant='h5' className='bmr-value'>
-          {bmr ? `${bmr} kcal/day` : '--'}
-        </Typography>
+      <div className='bmr-result-grid'>
+        <div className='bmr-result-row'>
+          <Typography variant='body1'>BMR</Typography>
+          <Typography variant='h6' className='bmr-value'>
+            {bmr ? `${bmr} kcal` : '--'}
+          </Typography>
+        </div>
+        {/* <div className='bmr-result-row'>
+          <Typography variant='body1'>Activity buffer</Typography>
+          <Typography variant='h6' className='bmr-value'>
+            {bmr ? `+${activityBuffer} kcal` : '--'}
+          </Typography>
+        </div> */}
+        <div className='bmr-result-row total'>
+          <Typography variant='body1'>Daily calories</Typography>
+          <Typography variant='h5' className='bmr-value'>
+            {bmr ? `${tdee} kcal` : '--'}
+          </Typography>
+        </div>
       </div>
 
       <CustomButton text='Reset' onClick={onReset} fullWidth />
-    </Card>
+    </div>
   )
 }
