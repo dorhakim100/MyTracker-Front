@@ -34,6 +34,8 @@ import { MacrosDonut } from '../../components/MacrosDonut/MacrosDonut'
 import { searchUrls } from '../../assets/config/search.urls'
 import { SwipeAction } from 'react-swipeable-list'
 import DeleteIcon from '@mui/icons-material/Delete'
+import { WeightCard } from '../../components/WeightCard/WeightCard'
+import { BmrCard } from '../../components/BmrCard/BmrCard'
 
 const colors = {
   primary: '--var(--primary-color)',
@@ -79,10 +81,8 @@ export function UserDetails() {
         </div>
       </Card>
       <div className='content-container'>
-        <Card
-          variant='outlined'
-          className={`card user-details ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-        ></Card>
+        <WeightCard />
+        <BmrCard />
 
         <CustomAccordion title='Meals' cmp={<MealsCard />} />
         <CustomAccordion title='Favorite Items' cmp={<FavoriteItemsCard />} />

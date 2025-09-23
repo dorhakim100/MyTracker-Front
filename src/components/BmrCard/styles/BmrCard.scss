@@ -1,0 +1,29 @@
+.card.bmr-card {
+  height: fit-content;
+  display: grid;
+  gap: 16px;
+
+  .bmr-form-grid {
+    display: grid;
+    gap: 12px;
+  }
+
+  .form-row {
+    display: grid;
+    gap: 6px;
+  }
+
+  .gender-toggle {
+    width: 100%;
+  }
+
+  .bmr-result-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+
+  .bmr-value {
+    font-weight: 600;
+  }
+}
