@@ -81,8 +81,7 @@ export function UserDetails() {
         </div>
       </Card>
       <div className='content-container'>
-        {/* <WeightCard /> */}
-        {/* <BmrCard /> */}
+        <WeightCard />
 
         <CustomAccordion title='Meals' cmp={<MealsCard />} />
         <CustomAccordion title='Favorite Items' cmp={<FavoriteItemsCard />} />

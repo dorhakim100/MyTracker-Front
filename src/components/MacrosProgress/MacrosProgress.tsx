@@ -115,6 +115,7 @@ import Picker from 'react-mobile-picker'
 import {
   capitalizeFirstLetter,
   getArrayOfNumbers,
+  getFixedNumber,
 } from '../../services/util.service'
 import { setIsLoading } from '../../store/actions/system.actions'
 import { setUserToEdit, updateUser } from '../../store/actions/user.actions'
@@ -150,16 +151,26 @@ function EditComponent() {
   )
 
   const [pickerValue, setPickerValue] = useState<PickerValue>({
-    carbs:
-      userToEdit?.currGoal?.macros.carbs || user?.currGoal?.macros.carbs || 0,
-    protein:
+    carbs: getFixedNumber(
+      userToEdit?.currGoal?.macros.carbs || user?.currGoal?.macros.carbs || 0
+    ),
+    protein: getFixedNumber(
       userToEdit?.currGoal?.macros.protein ||
-      user?.currGoal?.macros.protein ||
-      0,
-    fats: userToEdit?.currGoal?.macros.fat || user?.currGoal?.macros.fat || 0,
+        user?.currGoal?.macros.protein ||
+        0
+    ),
+    fats: getFixedNumber(
+      userToEdit?.currGoal?.macros.fat || user?.currGoal?.macros.fat || 0
+    ),
   })
 
   const macroKeys = Object.keys(macros) as (keyof typeof macros)[]
+
+  useEffect(() => {
+    pickerValue.protein = +pickerValue.protein.toFixed(0)
+    pickerValue.carbs = +pickerValue.carbs.toFixed(0)
+    pickerValue.fats = +pickerValue.fats.toFixed(0)
+  }, [userToEdit, user])
 
   useEffect(() => {
     const proteinCalories = calculateProteinCalories(pickerValue.protein)
@@ -214,11 +225,21 @@ function EditComponent() {
             const macroName = name as string
             return (
               <Picker.Column key={`${macroName}-picker`} name={macroName}>
-                {macros[name].map((option: number) => (
-                  <Picker.Item key={option} value={option}>
-                    {option}
-                  </Picker.Item>
-                ))}
+                {macros[name].map((option: number | string) => {
+                  if (typeof option === 'string') {
+                    option = +option
+                  }
+
+                  return (
+                    <Picker.Item
+                      key={`${option.toFixed(0)}-${macroName}`}
+                      value={option}
+                    >
+                      {/* {option.toFixed(0)} */}
+                      {option}
+                    </Picker.Item>
+                  )
+                })}
               </Picker.Column>
             )
           })}
@@ -236,7 +257,7 @@ function EditComponent() {
                 </span>
               </div>
               <Typography variant='h6' className='value'>
-                {pickerValue[macroName]}g
+                {pickerValue[macroName].toFixed(0)}g
               </Typography>
             </div>
           )

@@ -220,3 +220,7 @@ export function getNewDNDArray(
 
   return filteredArray
 }
+
+export function getFixedNumber(number: number): number {
+  return +number.toFixed(0)
+}
