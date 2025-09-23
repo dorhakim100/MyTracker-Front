@@ -140,7 +140,8 @@ function EditComponent() {
   const STEP = 50
 
   const options = useMemo(
-    () => getArrayOfNumbers(MIN, MAX).filter((n) => n % STEP === 0),
+    () =>
+      (getArrayOfNumbers(MIN, MAX) as number[]).filter((n) => n % STEP === 0),
     []
   )
 
