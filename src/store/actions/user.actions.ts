@@ -92,6 +92,13 @@ async function _loginWithGuest() {
       password: 'Guest',
       email: 'Guest@guest.com',
       isGuest: true,
+      details: {
+        fullname: 'Guest',
+        birthdate: 951955200000,
+        height: 170,
+        imgUrl:
+          'https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_1280.png',
+      },
     }
     const user = await userService.signup(credentials)
 

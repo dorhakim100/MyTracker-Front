@@ -123,9 +123,7 @@ async function login(userCred: UserCred) {
   }
 }
 
-async function signup(
-  userCred: UserCred & { birthdate: number; height: number; imgUrl: string }
-) {
+async function signup(userCred: UserCred) {
   try {
     const DEFAULT_IMG_URL =
       'https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_1280.png'
@@ -134,8 +132,8 @@ async function signup(
 
     const userDetails: UserDetails = {
       fullname: userCred.fullname || '',
-      birthdate: userCred.birthdate || DEFAULT_BIRTHDATE,
-      height: userCred.height || DEFAULT_HEIGHT,
+      birthdate: DEFAULT_BIRTHDATE,
+      height: DEFAULT_HEIGHT,
       imgUrl: userCred.imgUrl || DEFAULT_IMG_URL,
     }
 

@@ -116,9 +116,7 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
     //   ...base,
     //   fullname,
     //   // These fields are not currently part of User type, keep as extension
-    //   // @ts-expect-error - transient fields until backend supports them
     //   age: age ? +age : undefined,
-    //   // @ts-expect-error - transient fields until backend supports them
     //   height: height ? +height : undefined,
     //   imgUrl,
     // }
