@@ -141,7 +141,7 @@ export function WeightCard() {
           <CustomDatePicker
             value={selectedDay?.date}
             onChange={onChangeDate}
-            className={prefs.favoriteColor}
+            className={`${prefs.favoriteColor}`}
           />
         </div>
         <Typography variant='body2' className='date-text'>
@@ -151,7 +151,11 @@ export function WeightCard() {
         <div className='weight-container'>{renderWeight()}</div>
 
         <div className='update-weight-button-container'>
-          <CustomButton text='Update Weight' onClick={onOpenModal} />
+          <CustomButton
+            text='Update Weight'
+            onClick={onOpenModal}
+            className={`${prefs.favoriteColor}`}
+          />
         </div>
       </Card>
       <SlideDialog

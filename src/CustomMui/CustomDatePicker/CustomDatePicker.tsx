@@ -61,6 +61,7 @@ export function CustomDatePicker({
         open={open}
         onClose={onClose}
         slotProps={{ textField: { style: { display: 'none' } } }}
+        className={`${className || ''}`}
       />
     </LocalizationProvider>
   )

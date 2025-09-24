@@ -8,3 +8,15 @@
     padding: 8px 12px;
   }
 }
+
+.dark-mode {
+  .MuiDialog-paper {
+    background-color: $darker-gray;
+    color: $white;
+
+    .MuiPickersToolbar-title,
+    .MuiDayCalendar-weekDayLabel {
+      color: $primary-color;
+    }
+  }
+}
