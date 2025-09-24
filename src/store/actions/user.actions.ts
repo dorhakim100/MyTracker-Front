@@ -23,6 +23,7 @@ import { dayService } from '../../services/day/day.service'
 import { addFavoriteItem, removeFavoriteItem } from './item.actions'
 import { mealService } from '../../services/meal/meal.service'
 import { Meal } from '../../types/meal/Meal'
+import { Gender } from '../../services/bmr/bmr.service'
 
 const { FAVORITE_CACHE } = cache
 
@@ -96,7 +97,7 @@ async function _loginWithGuest() {
         fullname: 'Guest',
         birthdate: 951955200000,
         height: 170,
-        gender: 'male',
+        gender: 'male' as Gender,
         imgUrl:
           'https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_1280.png',
       },

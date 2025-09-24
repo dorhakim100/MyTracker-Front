@@ -23,5 +23,6 @@ export const messages = {
     addLog: 'Failed to log',
     updateWeight: 'Failed to update weight',
     updateUser: 'Failed to update user',
+    uploadImg: 'Failed to upload image',
   },
 }

@@ -3,8 +3,8 @@ export const uploadService = {
 }
 
 async function uploadImg(ev: any): Promise<any> {
-  const CLOUD_NAME = 'dnxi70mfs'
-  const UPLOAD_PRESET = 'SportClub'
+  const CLOUD_NAME = 'dpsnczn5n'
+  const UPLOAD_PRESET = 'MyTracker'
   const UPLOAD_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`
 
   const formData = new FormData()

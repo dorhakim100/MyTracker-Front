@@ -104,7 +104,7 @@ export function UserDetails() {
           <EditIcon onClick={onOpenEditUser} />
           <div className='profile-container'>
             <img
-              className='profile-avatar'
+              className='profile-avatar  box-shadow white-outline'
               src={user?.details?.imgUrl || '/logo-square.png'}
               alt='Profile'
             />

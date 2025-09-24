@@ -11,6 +11,7 @@ import { UserCred } from '../../types/userCred/UserCred'
 import { UserFilter } from '../../types/userFilter/UserFilter'
 import { searchService } from '../search/search-service'
 import { setFavoriteItems } from '../../store/actions/item.actions'
+import { Gender } from '../bmr/bmr.service'
 // import { getPrefs, setPrefs } from '../system/system.service'
 
 export const userService = {
@@ -134,7 +135,7 @@ async function signup(userCred: UserCred) {
       fullname: userCred.fullname || '',
       birthdate: DEFAULT_BIRTHDATE,
       height: DEFAULT_HEIGHT,
-      gender: userCred.details.gender || 'male',
+      gender: userCred.details.gender || ('male' as Gender),
       imgUrl: userCred.imgUrl || DEFAULT_IMG_URL,
     }
 

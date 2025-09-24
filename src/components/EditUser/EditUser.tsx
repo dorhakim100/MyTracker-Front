@@ -18,6 +18,7 @@ import { getArrayOfNumbers } from '../../services/util.service'
 import { CustomToggle } from '../../CustomMui/CustomToggle/CustomToggle'
 import { genderOptions } from '../helpers/GenderOptions'
 import { Gender } from '../../services/bmr/bmr.service'
+import { setIsLoading } from '../../store/actions/system.actions'
 interface EditUserProps {
   selectedUser?: User | null
   onSave: (user: User) => void
@@ -35,6 +36,9 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
   )
   const user = useSelector(
     (stateSelector: RootState) => stateSelector.userModule.user
+  )
+  const isLoading = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.isLoading
   )
 
   // Local form model keeping only editable fields; merged on save
@@ -56,7 +60,6 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
   const [imgUrl, setImgUrl] = useState<string>(
     selectedUser?.details?.imgUrl || user?.details?.imgUrl || DEFAULT_IMG_URL
   )
-  const [isUploading, setIsUploading] = useState<boolean>(false)
 
   const inputs = [
     {
@@ -110,13 +113,16 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
   async function onPickImg(ev: React.ChangeEvent<HTMLInputElement>) {
     try {
       if (!ev.target.files || !ev.target.files.length) return
-      setIsUploading(true)
+
+      setIsLoading(true)
       const res = await uploadService.uploadImg(ev)
+      console.log('res', res)
       if (res && res.secure_url) setImgUrl(res.secure_url)
     } catch (err) {
+      showErrorMsg(messages.error.uploadImg)
       console.log(err)
     } finally {
-      setIsUploading(false)
+      setIsLoading(false)
     }
   }
 
@@ -152,7 +158,7 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
             return (
               <>
                 <div className='avatar-field' key={`${input.key}-edit-user`}>
-                  <div className='image-preview'>
+                  <div className='image-preview box-shadow white-outline'>
                     {input.value ? (
                       <img src={input.value as string} alt='avatar' />
                     ) : (
@@ -165,7 +171,7 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
                     }`}
                   >
                     <input type='file' accept='image/*' onChange={onPickImg} />
-                    {isUploading ? 'Uploading...' : 'Upload Image'}
+                    {isLoading ? 'Uploading...' : 'Upload Image'}
                   </label>
                 </div>
                 <Divider
