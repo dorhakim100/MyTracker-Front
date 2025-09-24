@@ -108,6 +108,7 @@ async function signup(userCred: UserCred) {
         food: [],
         product: [],
       },
+      weightLogs: [],
     }
 
     const user = await storageService.post('user', userToSave)
@@ -156,6 +157,7 @@ function saveLoggedinUser(user: User) {
       loggedToday: user.loggedToday,
       favoriteItems: user.favoriteItems,
       meals: user.meals,
+      weights: user.weights,
     }
     sessionStorage.setItem(STORAGE_KEY_LOGGEDIN_USER, JSON.stringify(user))
     return user
@@ -207,6 +209,7 @@ function getEmptyUser() {
       foods: [],
       products: [],
     },
+    weightLogs: [],
     // isAdmin: false,
   }
 }

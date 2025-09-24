@@ -1,28 +1,66 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import { Card, Typography } from '@mui/material'
 import { RootState } from '../../store/store'
 import { useSelector } from 'react-redux'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
+import {
+  optimisticUpdateUser,
+  updateUser,
+} from '../../store/actions/user.actions'
+import { User } from '../../types/user/User'
+import { showSuccessMsg, showErrorMsg } from '../../services/event-bus.service'
+import { messages } from '../../assets/config/messages'
 
 export function WeightCard() {
   const prefs = useSelector(
     (storeState: RootState) => storeState.systemModule.prefs
   )
 
-  //   const user = useSelector(
-  //     (storeState: RootState) => storeState.userModule.user
-  //   )
+  const user = useSelector(
+    (storeState: RootState) => storeState.userModule.user
+  )
 
   const [open, setOpen] = useState(false)
   const [weightToAdd, setWeightToAdd] = useState(50.5)
+
+  // const isToday = useMemo(() => {
+  //   const lastLogTime = user?.weights[0].createdAt
+
+  //   if (!lastLogTime) return false
+
+  //   const lastLogIso = getDateFromISO(lastLogTime)
+
+  //   const todayIso = getDateFromISO(new Date().toISOString())
+
+  //   return lastLogIso === todayIso
+  // }, [user?.weights])
 
   const onClose = () => {
     setOpen(false)
   }
 
-  const onSave = (value: number) => {
+  const onSave = async (value: number) => {
+    if (!user) return showErrorMsg(messages.error.updateWeight)
     setWeightToAdd(value)
+    try {
+      const weightToSave = {
+        kg: value,
+        userId: user?._id,
+      }
+      const userToUpdate = {
+        ...user,
+        weights: [weightToSave, ...user.weights],
+      }
+      optimisticUpdateUser(userToUpdate as User)
+      const savedWeight = await weightService.save(weightToSave)
+      userToUpdate.weights[0] = savedWeight
+      await updateUser(userToUpdate as User)
+      showSuccessMsg(messages.success.updateWeight)
+    } catch (err) {
+      console.log('err', err)
+      showErrorMsg(messages.error.updateWeight)
+    }
     onClose()
   }
 
@@ -36,7 +74,16 @@ export function WeightCard() {
         variant='outlined'
         className={`card weight-card ${prefs.isDarkMode ? 'dark-mode' : ''}`}
       >
-        <Typography variant='h6'>Weight: {weightToAdd} kg</Typography>
+        {/* {
+          <Typography variant='body2'>
+            {new Date().toLocaleDateString('he')}
+          </Typography>
+        } */}
+        {
+          <Typography variant='h6'>
+            Weight: {user?.weights[0]?.kg || 0} kg
+          </Typography>
+        }
 
         <CustomButton text='Update Weight' onClick={onOpenModal} />
       </Card>
@@ -53,7 +100,9 @@ export function WeightCard() {
 
 import Picker from 'react-mobile-picker'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
-import { getArrayOfNumbers } from '../../services/util.service'
+import { getArrayOfNumbers, getDateFromISO } from '../../services/util.service'
+import { weightService } from '../../services/weight/weight.service'
+
 interface EditComponentProps {
   value: number
   onChange: (value: number) => void
