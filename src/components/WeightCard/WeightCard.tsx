@@ -59,7 +59,8 @@ export function WeightCard() {
         date: selectedDate,
         userId: user?._id,
       })
-      const loggedWeight = today.weight?.kg || DEFAULT_WEIGHT
+      const loggedWeight =
+        today.weight?.kg || user?.weights[0].kg || DEFAULT_WEIGHT
       setWeightToAdd(loggedWeight)
       setSelectedDiaryDay(today)
     }
@@ -143,7 +144,7 @@ export function WeightCard() {
       </Typography>
     ) : (
       <Typography variant='body1' className='weight-text'>
-        Not logged that day
+        Haven't logged that day...
       </Typography>
     )
   }

@@ -6,7 +6,7 @@ const STORAGE_KEY_REMEMBERED_USER = 'rememberedUser'
 const REMEMBER_STORE = 'remember'
 const REMEMBER_RECORD_ID = STORAGE_KEY_REMEMBERED_USER
 
-import { User } from '../../types/user/User'
+import { User, UserDetails } from '../../types/user/User'
 import { UserCred } from '../../types/userCred/UserCred'
 import { UserFilter } from '../../types/userFilter/UserFilter'
 import { searchService } from '../search/search-service'
@@ -123,11 +123,23 @@ async function login(userCred: UserCred) {
   }
 }
 
-async function signup(userCred: UserCred) {
+async function signup(
+  userCred: UserCred & { birthdate: number; height: number; imgUrl: string }
+) {
   try {
-    if (!userCred.imgUrl)
-      userCred.imgUrl =
-        'https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_1280.png'
+    const DEFAULT_IMG_URL =
+      'https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_1280.png'
+    const DEFAULT_BIRTHDATE = 951955200000
+    const DEFAULT_HEIGHT = 170
+
+    const userDetails: UserDetails = {
+      fullname: userCred.fullname || '',
+      birthdate: userCred.birthdate || DEFAULT_BIRTHDATE,
+      height: userCred.height || DEFAULT_HEIGHT,
+      imgUrl: userCred.imgUrl || DEFAULT_IMG_URL,
+    }
+
+    userCred.details = userDetails
 
     const user = await httpService.post('auth/signup', userCred)
 
@@ -182,8 +194,7 @@ function saveLoggedinUser(user: User) {
   try {
     user = {
       _id: user._id,
-      fullname: user.fullname,
-      imgUrl: user.imgUrl,
+      details: user.details,
       currGoal: user.currGoal,
       goals: user.goals,
       email: user.email,

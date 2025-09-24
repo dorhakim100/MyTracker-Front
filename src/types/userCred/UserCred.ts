@@ -1,3 +1,5 @@
+import { UserDetails } from '../user/User'
+
 export interface UserCred {
   email: string
 
@@ -7,4 +9,6 @@ export interface UserCred {
   imgUrl?: string
   isRemember?: boolean
   isGuest?: boolean
+
+  details: UserDetails
 }

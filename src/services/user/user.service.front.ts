@@ -149,8 +149,7 @@ function saveLoggedinUser(user: User) {
   try {
     user = {
       _id: user._id,
-      fullname: user.fullname,
-      imgUrl: user.imgUrl,
+      details: user.details,
       currGoal: user.currGoal,
       goals: user.goals,
       email: user.email,

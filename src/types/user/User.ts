@@ -6,11 +6,10 @@ import { Weight } from '../weight/Weight'
 export interface User {
   _id: string
 
-  fullname: string
+  details: UserDetails
 
   email: string
   password?: string
-  imgUrl?: string
 
   currGoal: Goal
   goals: Goal[]
@@ -21,4 +20,11 @@ export interface User {
   meals: Meal[]
 
   weights: Weight[]
+}
+
+export interface UserDetails {
+  fullname: string
+  birthdate: number
+  height: number
+  imgUrl: string
 }

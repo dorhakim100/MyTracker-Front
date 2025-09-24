@@ -70,6 +70,7 @@ export function UserDetails() {
   }
 
   const onSaveEditUser = (user: User) => {
+    // to do: actually save the user
     optimisticUpdateUser(user)
   }
 
@@ -88,14 +89,20 @@ export function UserDetails() {
           <div className='profile-container'>
             <img
               className='profile-avatar'
-              src={user?.imgUrl || '/logo-square.png'}
+              src={user?.details?.imgUrl || '/logo-square.png'}
               alt='Profile'
             />
             <div className='profile-info'>
               <Typography variant='h5'>
-                {user?.fullname || 'User Profile'}
+                {user?.details?.fullname || 'User Profile'}
               </Typography>
             </div>
+            <Typography variant='body1'>
+              {user?.details?.height || 0} cm
+            </Typography>
+            <Typography variant='body1'>
+              {new Date(user?.details?.birthdate || 0).toLocaleDateString('he')}
+            </Typography>
           </div>
         </Card>
         <div className='content-container'>
