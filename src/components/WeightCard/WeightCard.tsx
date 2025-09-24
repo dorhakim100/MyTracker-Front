@@ -89,12 +89,21 @@ export function WeightCard() {
     setOpen(true)
   }
 
+  const onChangeDate = (date: string) => {
+    console.log('date', date)
+  }
+
   return (
     <>
       <Card
         variant='outlined'
         className={`card weight-card ${prefs.isDarkMode ? 'dark-mode' : ''}`}
       >
+        <CustomDatePicker
+          value={selectedDay?.date}
+          onChange={onChangeDate}
+          className={prefs.favoriteColor}
+        />
         {
           <Typography variant='body2'>
             {new Date().toLocaleDateString('he')}
@@ -124,6 +133,7 @@ import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { getArrayOfNumbers, getDateFromISO } from '../../services/util.service'
 import { weightService } from '../../services/weight/weight.service'
 import { dayService } from '../../services/day/day.service'
+import { CustomDatePicker } from '../../CustomMui/CustomDatePicker/CustomDatePicker'
 
 interface EditComponentProps {
   value: number

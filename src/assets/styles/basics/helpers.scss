@@ -357,11 +357,14 @@ select {
     .MuiToggleButtonGroup-grouped
   ):not(.MuiCheckbox-root):not(.MuiMenuItem-root):not(.color-button):not(
     .MuiFab-circular
-  ),
+  ):not(.MuiPickersDay-root),
 .MuiToolbar-gutters,
 .MuiToolbar-root,
-.MuiFab-root {
+.MuiFab-root,
+.MuiPickersDay-root.Mui-selected,
+.custom-date-picker-button {
   background-color: $primary-color !important;
+  color: $white;
 
   &.primary {
     background-color: $primary-color !important;
