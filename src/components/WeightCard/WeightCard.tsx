@@ -28,6 +28,15 @@ export function WeightCard() {
     (storeState: RootState) => storeState.userModule.selectedDay
   )
 
+  const [selectedDate, setSelectedDate] = useState(
+    getDateFromISO(new Date().toISOString())
+  )
+
+  const heDate = useMemo(() => {
+    const date = new Date(selectedDate)
+    return date.toLocaleDateString('he')
+  }, [selectedDate])
+
   // const isToday = useMemo(() => {
   //   const lastLogTime = user?.weights[0].createdAt
 
@@ -45,17 +54,17 @@ export function WeightCard() {
     //   setWeightToAdd(selectedDay.weight.kg)
     // }
 
-    const getToday = async () => {
+    const getDay = async () => {
       const today = await dayService.query({
-        date: getDateFromISO(new Date().toISOString()),
+        date: selectedDate,
         userId: user?._id,
       })
       console.log('today', today)
       // setWeightToAdd(today.weight.kg)
     }
 
-    getToday()
-  }, [])
+    getDay()
+  }, [selectedDate, user])
 
   const onClose = () => {
     setOpen(false)
@@ -90,7 +99,7 @@ export function WeightCard() {
   }
 
   const onChangeDate = (date: string) => {
-    console.log('date', date)
+    setSelectedDate(date)
   }
 
   return (
@@ -104,11 +113,7 @@ export function WeightCard() {
           onChange={onChangeDate}
           className={prefs.favoriteColor}
         />
-        {
-          <Typography variant='body2'>
-            {new Date().toLocaleDateString('he')}
-          </Typography>
-        }
+        {<Typography variant='body2'>{heDate}</Typography>}
         {
           <Typography variant='h6'>
             Weight: {selectedDay?.weight?.kg || user?.weights[0]?.kg || 0} kg
