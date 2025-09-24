@@ -24,6 +24,10 @@ export function WeightCard() {
   const [open, setOpen] = useState(false)
   const [weightToAdd, setWeightToAdd] = useState(50.5)
 
+  const selectedDay = useSelector(
+    (storeState: RootState) => storeState.userModule.selectedDay
+  )
+
   // const isToday = useMemo(() => {
   //   const lastLogTime = user?.weights[0].createdAt
 
@@ -35,6 +39,23 @@ export function WeightCard() {
 
   //   return lastLogIso === todayIso
   // }, [user?.weights])
+
+  useEffect(() => {
+    // if (selectedDay?.weight) {
+    //   setWeightToAdd(selectedDay.weight.kg)
+    // }
+
+    const getToday = async () => {
+      const today = await dayService.query({
+        date: getDateFromISO(new Date().toISOString()),
+        userId: user?._id,
+      })
+      console.log('today', today)
+      // setWeightToAdd(today.weight.kg)
+    }
+
+    getToday()
+  }, [])
 
   const onClose = () => {
     setOpen(false)
@@ -74,14 +95,14 @@ export function WeightCard() {
         variant='outlined'
         className={`card weight-card ${prefs.isDarkMode ? 'dark-mode' : ''}`}
       >
-        {/* {
+        {
           <Typography variant='body2'>
             {new Date().toLocaleDateString('he')}
           </Typography>
-        } */}
+        }
         {
           <Typography variant='h6'>
-            Weight: {user?.weights[0]?.kg || 0} kg
+            Weight: {selectedDay?.weight?.kg || user?.weights[0]?.kg || 0} kg
           </Typography>
         }
 
@@ -102,6 +123,7 @@ import Picker from 'react-mobile-picker'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { getArrayOfNumbers, getDateFromISO } from '../../services/util.service'
 import { weightService } from '../../services/weight/weight.service'
+import { dayService } from '../../services/day/day.service'
 
 interface EditComponentProps {
   value: number
