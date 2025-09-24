@@ -134,6 +134,7 @@ async function signup(userCred: UserCred) {
       fullname: userCred.fullname || '',
       birthdate: DEFAULT_BIRTHDATE,
       height: DEFAULT_HEIGHT,
+      gender: userCred.details.gender || 'male',
       imgUrl: userCred.imgUrl || DEFAULT_IMG_URL,
     }
 

@@ -1,3 +1,4 @@
+import { Gender } from '../../services/bmr/bmr.service'
 import { Goal } from '../goal/Goal'
 import { LoggedToday } from '../loggedToday/LoggedToday'
 import { Meal } from '../meal/Meal'
@@ -26,5 +27,6 @@ export interface UserDetails {
   fullname: string
   birthdate: number
   height: number
+  gender: Gender
   imgUrl: string
 }

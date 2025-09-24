@@ -69,9 +69,17 @@ export function UserDetails() {
     setIsEditUserOpen(false)
   }
 
-  const onSaveEditUser = (user: User) => {
-    // to do: actually save the user
+  const onSaveEditUser = async (user: User) => {
     optimisticUpdateUser(user)
+    onCloseEditUser()
+    try {
+      await updateUser(user)
+      showSuccessMsg(messages.success.updateUser)
+    } catch (err) {
+      console.log('err', err)
+      showErrorMsg(messages.error.updateUser)
+      optimisticUpdateUser(user as User)
+    }
   }
 
   return (

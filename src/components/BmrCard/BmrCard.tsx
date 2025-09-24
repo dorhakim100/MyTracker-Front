@@ -13,14 +13,7 @@ import {
 import { BmrFormState } from '../../types/bmrForm/BmrForm'
 import { CustomSelect } from '../../CustomMui/CustomSelect/CustomSelect'
 import { getArrayOfNumbers } from '../../services/util.service'
-
-import MaleIcon from '@mui/icons-material/Male'
-import FemaleIcon from '@mui/icons-material/Female'
-
-const genderOptions: ToggleOption[] = [
-  { value: 'male', label: 'Male', icon: <MaleIcon /> },
-  { value: 'female', label: 'Female', icon: <FemaleIcon /> },
-]
+import { genderOptions } from '../helpers/GenderOptions'
 
 const activityOptions: ToggleOption[] = [
   { value: 'bmr', label: 'BMR' },
@@ -42,6 +35,9 @@ interface Options {
 }
 
 const DEFAULT_WEIGHT = 70
+const DEFAULT_GENDER = 'male'
+const DEFAULT_AGE = 25
+const DEFAULT_HEIGHT = 170
 
 export function BmrCard() {
   const prefs = useSelector(
@@ -52,9 +48,19 @@ export function BmrCard() {
     (storeState: RootState) => storeState.userModule.user
   )
 
+  const calculatedAge = useMemo(() => {
+    return user?.details?.birthdate
+      ? new Date().getFullYear() -
+          new Date(user.details.birthdate).getFullYear()
+      : DEFAULT_AGE
+  }, [user?.details?.birthdate])
+
   const [form, setForm] = useState<BmrFormState>({
     ...bmrService.getDefaultFormState(),
     weightKg: Math.round(user?.weights[0].kg || DEFAULT_WEIGHT) + '',
+    gender: user?.details?.gender || DEFAULT_GENDER,
+    ageYears: calculatedAge + '',
+    heightCm: (user?.details?.height || DEFAULT_HEIGHT) + '',
   })
 
   const bmr = useMemo(() => {

@@ -15,7 +15,9 @@ import { showErrorMsg } from '../../services/event-bus.service'
 import { CustomDatePicker } from '../../CustomMui/CustomDatePicker/CustomDatePicker'
 import { CustomSelect } from '../../CustomMui/CustomSelect/CustomSelect'
 import { getArrayOfNumbers } from '../../services/util.service'
-
+import { CustomToggle } from '../../CustomMui/CustomToggle/CustomToggle'
+import { genderOptions } from '../helpers/GenderOptions'
+import { Gender } from '../../services/bmr/bmr.service'
 interface EditUserProps {
   selectedUser?: User | null
   onSave: (user: User) => void
@@ -25,6 +27,7 @@ const DEFAULT_BIRTHDATE = 951955200000
 const DEFAULT_HEIGHT = 170
 const DEFAULT_IMG_URL =
   'https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_1280.png'
+const DEFAULT_GENDER = 'male'
 
 export function EditUser({ selectedUser, onSave }: EditUserProps) {
   const prefs = useSelector(
@@ -46,6 +49,9 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
 
   const [height, setHeight] = useState<number>(
     selectedUser?.details?.height || user?.details?.height || DEFAULT_HEIGHT
+  )
+  const [gender, setGender] = useState<string>(
+    selectedUser?.details?.gender || user?.details?.gender || DEFAULT_GENDER
   )
   const [imgUrl, setImgUrl] = useState<string>(
     selectedUser?.details?.imgUrl || user?.details?.imgUrl || DEFAULT_IMG_URL
@@ -86,6 +92,15 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
       value: height,
       onChange: (value: string) => setHeight(+value),
     },
+    {
+      label: 'Gender',
+      type: 'toggle',
+      key: 'gender',
+      options: genderOptions,
+      className: 'field',
+      value: gender,
+      onChange: (value: string) => setGender(value),
+    },
   ]
 
   const isoDate = useMemo(() => {
@@ -110,18 +125,19 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
 
     const base: User = selectedUser || (user as User)
 
-    console.log('base', base)
+    const merged: User = {
+      ...base,
+      details: {
+        ...base.details,
+        fullname,
+        birthdate,
+        height,
+        gender: gender as Gender,
+        imgUrl,
+      },
+    }
 
-    // const merged: User = {
-    //   ...base,
-    //   fullname,
-    //   // These fields are not currently part of User type, keep as extension
-    //   age: age ? +age : undefined,
-    //   height: height ? +height : undefined,
-    //   imgUrl,
-    // }
-
-    onSave(base)
+    onSave(merged)
   }
 
   function setIsoDate(isoDate: string) {
@@ -191,6 +207,15 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
                   className='field'
                 />
               </div>
+            )
+          if (input.type === 'toggle' && input.options)
+            return (
+              <CustomToggle
+                key={`${input.key}-edit-user`}
+                options={input.options}
+                value={input.value as string}
+                onChange={input.onChange}
+              />
             )
         })}
       </div>
