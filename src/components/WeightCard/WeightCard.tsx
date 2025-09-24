@@ -12,6 +12,7 @@ import { User } from '../../types/user/User'
 import { showSuccessMsg, showErrorMsg } from '../../services/event-bus.service'
 import { messages } from '../../assets/config/messages'
 import { setSelectedDiaryDay } from '../../store/actions/user.actions'
+import { Weight } from '../../types/weight/Weight'
 
 const DEFAULT_WEIGHT = 60
 
@@ -76,20 +77,36 @@ export function WeightCard() {
     try {
       const dateToSave = new Date(selectedDate).setMilliseconds(0)
 
-      const weightToSave = {
+      const weightToSave: Weight | Partial<Weight> = {
         kg: value,
         userId: user?._id,
         createdAt: dateToSave,
       }
 
-      const newWeights = [...user.weights, weightToSave]
-      newWeights.sort(
-        (a, b) =>
-          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      let userToUpdate
+
+      const existingWeightIdx = user?.weights.findIndex(
+        (weight) => weight.createdAt === dateToSave
       )
-      const userToUpdate = {
-        ...user,
-        weights: newWeights,
+      if (existingWeightIdx !== -1) {
+        user.weights[existingWeightIdx].kg = value
+
+        userToUpdate = {
+          ...user,
+          weights: [...user.weights],
+        }
+        weightToSave._id = user.weights[existingWeightIdx]._id
+      } else {
+        const newWeights = [...user.weights, weightToSave]
+        newWeights.sort(
+          (a, b) =>
+            new Date(a.createdAt + '').getTime() -
+            new Date(b.createdAt + '').getTime()
+        )
+        userToUpdate = {
+          ...user,
+          weights: newWeights,
+        }
       }
       optimisticUpdateUser(userToUpdate as User)
       const savedWeight = await weightService.save(weightToSave)
@@ -210,9 +227,6 @@ function EditComponent({ value, onChange }: EditComponentProps) {
 
   return (
     <div className='picker-container'>
-      <Typography variant='h6'>
-        {pickerWeight.firstValue}.{pickerWeight.secondValue} kg
-      </Typography>
       <Picker
         value={pickerWeight}
         onChange={(next) =>
