@@ -76,6 +76,14 @@ export function UserDetails() {
 
   return (
     <>
+      <SlideDialog
+        open={isEditUserOpen}
+        onClose={onCloseEditUser}
+        component={<EditUser onSave={onSaveEditUser} />}
+        title='Edit User'
+        onSave={() => onSaveEditUser(user as User)}
+        type='full'
+      />
       <div
         className={`page-container user-page ${
           prefs.isDarkMode ? 'dark-mode' : ''
@@ -122,15 +130,6 @@ export function UserDetails() {
           />
         </div>
       </div>
-
-      <SlideDialog
-        open={isEditUserOpen}
-        onClose={onCloseEditUser}
-        component={<EditUser onSave={onSaveEditUser} />}
-        title='Edit User'
-        onSave={() => onSaveEditUser(user as User)}
-        type='full'
-      />
     </>
   )
 }
@@ -206,6 +205,7 @@ function FavoriteItemsCard() {
     <>
       <CustomList
         items={favoriteItems || []}
+        dragOffsetY={-64}
         renderPrimaryText={(item) => item.name}
         renderLeft={(item) => (
           <div className='left-content macros-image-container'>
@@ -377,6 +377,7 @@ function MealsCard() {
       {user?.meals && user?.meals.length > 0 && (
         <CustomList
           items={user.meals}
+          dragOffsetY={-64}
           className={`${prefs.isDarkMode ? 'dark-mode' : ''}`}
           renderPrimaryText={(meal) => meal.name}
           renderLeft={(meal) => (

@@ -41,6 +41,8 @@ export interface CustomListProps<T> {
   onReorder?: (next: T[]) => void
   noResultsMessage?: string
   // onDragStart?: (result: DragStart) => void
+  /** Optional vertical offset to apply to the dragging clone (in px). Can be negative. */
+  dragOffsetY?: number
 }
 
 export function CustomList<T>({
@@ -61,6 +63,7 @@ export function CustomList<T>({
   noResultsMessage,
 
   onReorder,
+  dragOffsetY = 0,
 }: // onDragStart,
 CustomListProps<T>) {
   const [reorderedItems, setReorderedItems] = useState<T[]>(items || [])
@@ -172,31 +175,49 @@ CustomListProps<T>) {
                       index={index}
                       isDragDisabled={!isDragable}
                     >
-                      {(dragProvided, snapshot) => (
-                        <div
-                          ref={dragProvided.innerRef}
-                          {...dragProvided.draggableProps}
-                          className={`${
-                            snapshot.isDragging ? 'dragging' : ''
-                          } ${prefs.favoriteColor}`}
-                        >
-                          <SwipeableList type={Type.IOS} fullSwipe={true}>
-                            <SwipeableListItem
-                              leadingActions={
-                                isSwipeable && leadingActions(item)
-                              }
-                              trailingActions={
-                                isSwipeable && trailingActions(item)
-                              }
-                              scrollStartThreshold={20}
-                              threshold={0.25}
-                              blockSwipe={!isSwipeable}
-                            >
-                              {renderList(item, dragProvided)}
-                            </SwipeableListItem>
-                          </SwipeableList>
-                        </div>
-                      )}
+                      {(dragProvided, snapshot) => {
+                        // Quick fix for dragging offset
+
+                        const baseStyle =
+                          dragProvided.draggableProps.style || {}
+                        const style: React.CSSProperties = { ...baseStyle }
+                        if (snapshot.isDragging && dragOffsetY) {
+                          const currentTransform = style.transform as
+                            | string
+                            | undefined
+                          const extra = ` translateY(${dragOffsetY}px)`
+                          style.transform = currentTransform
+                            ? `${currentTransform}${extra}`
+                            : `translateY(${dragOffsetY}px)`
+                        }
+
+                        return (
+                          <div
+                            ref={dragProvided.innerRef}
+                            {...dragProvided.draggableProps}
+                            style={style}
+                            className={`${
+                              snapshot.isDragging ? 'dragging' : ''
+                            } ${prefs.favoriteColor}`}
+                          >
+                            <SwipeableList type={Type.IOS} fullSwipe={true}>
+                              <SwipeableListItem
+                                leadingActions={
+                                  isSwipeable && leadingActions(item)
+                                }
+                                trailingActions={
+                                  isSwipeable && trailingActions(item)
+                                }
+                                scrollStartThreshold={20}
+                                threshold={0.25}
+                                blockSwipe={!isSwipeable}
+                              >
+                                {renderList(item, dragProvided)}
+                              </SwipeableListItem>
+                            </SwipeableList>
+                          </div>
+                        )
+                      }}
                     </Draggable>
                   )
                 })}
