@@ -21,6 +21,7 @@ import { MealPeriod } from '../../types/mealPeriod/MealPeriod'
 import { AddItemButton } from '../../components/AddItemButton/AddItemButton'
 import TodayIcon from '@mui/icons-material/Today'
 import { getDateFromISO } from '../../services/util.service'
+import { CustomDatePicker } from '../../CustomMui/CustomDatePicker/CustomDatePicker'
 
 const DAY_IN_MS = 24 * 60 * 60 * 1000
 export function Diary() {
@@ -148,6 +149,14 @@ export function Diary() {
     })
   }
 
+  const onDateChange = (date: string) => {
+    setSelectedDay(new Date(date))
+    setDiaryFilter({
+      userId: user?._id,
+      date: date,
+    })
+  }
+
   if (user && selectedDayDiary)
     return (
       <div
@@ -162,12 +171,17 @@ export function Diary() {
           <div
             className={`time-controls-container ${
               isToday ? `today ${prefs.favoriteColor}` : ''
-            }`}
+            } ${prefs.isDarkMode ? 'dark-mode' : ''}`}
           >
-            <TimesContainer isClock={false} selectedDay={selectedDay} />
-            <IconButton onClick={onTodayClick} disabled={isToday}>
+            {/* <IconButton onClick={onTodayClick} disabled={isToday}>
               <TodayIcon />
-            </IconButton>
+            </IconButton> */}
+            <TimesContainer isClock={false} selectedDay={selectedDay} />
+            <CustomDatePicker
+              value={selectedDayDiary?.date}
+              onChange={onDateChange}
+              // className={`${prefs.favoriteColor}`}
+            />
           </div>
           <IconButton onClick={() => onDayChange(1)}>
             <ArrowForwardIcon />

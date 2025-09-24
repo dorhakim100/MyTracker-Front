@@ -7,7 +7,7 @@
     display: grid;
     grid-template-columns: auto 1fr auto;
     align-items: end;
-    gap: 1rem;
+    gap: 0.4rem;
 
     .time-controls-container {
       display: grid;
@@ -16,6 +16,17 @@
 
       .times-container {
         grid-column: 2/3;
+      }
+
+      .custom-date-picker-button {
+        background-color: transparent !important;
+        color: $dark-gray;
+      }
+
+      .dark-mode {
+        .custom-date-picker-button {
+          color: $white;
+        }
       }
     }
 

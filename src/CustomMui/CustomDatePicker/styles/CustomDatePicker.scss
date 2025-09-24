@@ -19,4 +19,8 @@
       color: $primary-color;
     }
   }
+
+  .MuiPickersDay-today {
+    border-color: $white !important;
+  }
 }
