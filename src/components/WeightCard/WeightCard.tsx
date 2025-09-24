@@ -11,6 +11,9 @@ import {
 import { User } from '../../types/user/User'
 import { showSuccessMsg, showErrorMsg } from '../../services/event-bus.service'
 import { messages } from '../../assets/config/messages'
+import { setSelectedDiaryDay } from '../../store/actions/user.actions'
+
+const DEFAULT_WEIGHT = 60
 
 export function WeightCard() {
   const prefs = useSelector(
@@ -22,7 +25,7 @@ export function WeightCard() {
   )
 
   const [open, setOpen] = useState(false)
-  const [weightToAdd, setWeightToAdd] = useState(50.5)
+  const [weightToAdd, setWeightToAdd] = useState(DEFAULT_WEIGHT)
 
   const selectedDay = useSelector(
     (storeState: RootState) => storeState.userModule.selectedDay
@@ -50,17 +53,14 @@ export function WeightCard() {
   // }, [user?.weights])
 
   useEffect(() => {
-    // if (selectedDay?.weight) {
-    //   setWeightToAdd(selectedDay.weight.kg)
-    // }
-
     const getDay = async () => {
       const today = await dayService.query({
         date: selectedDate,
         userId: user?._id,
       })
-      console.log('today', today)
-      // setWeightToAdd(today.weight.kg)
+      const loggedWeight = today.weight?.kg || DEFAULT_WEIGHT
+      setWeightToAdd(loggedWeight)
+      setSelectedDiaryDay(today)
     }
 
     getDay()
@@ -74,17 +74,31 @@ export function WeightCard() {
     if (!user) return showErrorMsg(messages.error.updateWeight)
     setWeightToAdd(value)
     try {
+      const dateToSave = new Date(selectedDate).setMilliseconds(0)
+
       const weightToSave = {
         kg: value,
         userId: user?._id,
+        createdAt: dateToSave,
       }
+
+      const newWeights = [...user.weights, weightToSave]
+      newWeights.sort(
+        (a, b) =>
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      )
       const userToUpdate = {
         ...user,
-        weights: [weightToSave, ...user.weights],
+        weights: newWeights,
       }
       optimisticUpdateUser(userToUpdate as User)
       const savedWeight = await weightService.save(weightToSave)
-      userToUpdate.weights[0] = savedWeight
+
+      const index = userToUpdate.weights.findIndex(
+        (weight) => weight.createdAt === dateToSave
+      )
+      userToUpdate.weights[index] = savedWeight
+
       await updateUser(userToUpdate as User)
       showSuccessMsg(messages.success.updateWeight)
     } catch (err) {
@@ -102,25 +116,43 @@ export function WeightCard() {
     setSelectedDate(date)
   }
 
+  const renderWeight = () => {
+    const weight = selectedDay?.weight?.kg
+
+    return weight ? (
+      <Typography variant='body1' className='weight-text'>
+        {weight}
+        <span className='weight-text-kg'>kg</span>
+      </Typography>
+    ) : (
+      <Typography variant='body1' className='weight-text'>
+        Not logged that day
+      </Typography>
+    )
+  }
+
   return (
     <>
       <Card
         variant='outlined'
         className={`card weight-card ${prefs.isDarkMode ? 'dark-mode' : ''}`}
       >
-        <CustomDatePicker
-          value={selectedDay?.date}
-          onChange={onChangeDate}
-          className={prefs.favoriteColor}
-        />
-        {<Typography variant='body2'>{heDate}</Typography>}
-        {
-          <Typography variant='h6'>
-            Weight: {selectedDay?.weight?.kg || user?.weights[0]?.kg || 0} kg
-          </Typography>
-        }
+        <div className='date-picker-container'>
+          <CustomDatePicker
+            value={selectedDay?.date}
+            onChange={onChangeDate}
+            className={prefs.favoriteColor}
+          />
+        </div>
+        <Typography variant='body2' className='date-text'>
+          Date: {heDate}
+        </Typography>
 
-        <CustomButton text='Update Weight' onClick={onOpenModal} />
+        <div className='weight-container'>{renderWeight()}</div>
+
+        <div className='update-weight-button-container'>
+          <CustomButton text='Update Weight' onClick={onOpenModal} />
+        </div>
       </Card>
       <SlideDialog
         open={open}

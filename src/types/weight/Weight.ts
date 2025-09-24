@@ -1,7 +1,7 @@
 export interface Weight {
   _id?: string
   userId: string
-  createdAt: string // ISO date string
+  createdAt: number
   kg: number
   note?: string
 }

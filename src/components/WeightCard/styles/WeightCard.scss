@@ -1,5 +1,43 @@
 .card.weight-card {
   height: fit-content;
   display: grid;
-  gap: 16px;
+  grid-template-columns: repeat(2, 1fr);
+  align-items: center;
+  justify-items: center;
+  gap: 1rem;
+
+  .date-text {
+    grid-column: 1 / 2;
+    grid-row: 1;
+    font-size: 1rem;
+  }
+
+  .date-picker-container {
+    grid-column: 2/3;
+  }
+
+  .weight-container {
+    text-align: center;
+    grid-column: 1 / -1;
+    grid-row: 2;
+
+    .weight-text {
+      font-size: 1.3rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.2rem;
+
+      .weight-text-kg {
+        font-weight: 400;
+        align-self: end;
+      }
+    }
+  }
+
+  .update-weight-button-container {
+    grid-column: 1 / -1;
+    // grid-row: 2;
+  }
 }
