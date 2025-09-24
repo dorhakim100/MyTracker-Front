@@ -41,14 +41,21 @@ interface Options {
   className?: string
 }
 
+const DEFAULT_WEIGHT = 70
+
 export function BmrCard() {
   const prefs = useSelector(
     (storeState: RootState) => storeState.systemModule.prefs
   )
 
-  const [form, setForm] = useState<BmrFormState>(
-    bmrService.getDefaultFormState()
+  const user = useSelector(
+    (storeState: RootState) => storeState.userModule.user
   )
+
+  const [form, setForm] = useState<BmrFormState>({
+    ...bmrService.getDefaultFormState(),
+    weightKg: Math.round(user?.weights[0].kg || DEFAULT_WEIGHT) + '',
+  })
 
   const bmr = useMemo(() => {
     const age = +form.ageYears

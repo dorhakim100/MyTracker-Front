@@ -52,7 +52,7 @@ function getEmpty(partials?: Partial<Weight>): Weight {
   const nowIso = new Date().toISOString()
   return {
     userId: '',
-    createdAt: nowIso,
+    createdAt: new Date(nowIso).getTime(),
     kg: 0,
     note: '',
     ...partials,

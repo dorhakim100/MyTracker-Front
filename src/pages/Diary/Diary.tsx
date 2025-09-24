@@ -19,7 +19,7 @@ import { SlideAnimation } from '../../components/SlideAnimation/SlideAnimation'
 import { setSelectedDiaryDay } from '../../store/actions/user.actions'
 import { MealPeriod } from '../../types/mealPeriod/MealPeriod'
 import { AddItemButton } from '../../components/AddItemButton/AddItemButton'
-import TodayIcon from '@mui/icons-material/Today'
+
 import { getDateFromISO } from '../../services/util.service'
 import { CustomDatePicker } from '../../CustomMui/CustomDatePicker/CustomDatePicker'
 
@@ -138,16 +138,16 @@ export function Diary() {
     })
   }
 
-  const onTodayClick = () => {
-    const today = new Date()
-    const dir = today.getTime() - selectedDay.getTime() > 0 ? 1 : -1
-    setDirection(dir)
-    setSelectedDay(today)
-    setDiaryFilter({
-      userId: user?._id,
-      date: new Date().toISOString(),
-    })
-  }
+  // const onTodayClick = () => {
+  //   const today = new Date()
+  //   const dir = today.getTime() - selectedDay.getTime() > 0 ? 1 : -1
+  //   setDirection(dir)
+  //   setSelectedDay(today)
+  //   setDiaryFilter({
+  //     userId: user?._id,
+  //     date: new Date().toISOString(),
+  //   })
+  // }
 
   const onDateChange = (date: string) => {
     setSelectedDay(new Date(date))
