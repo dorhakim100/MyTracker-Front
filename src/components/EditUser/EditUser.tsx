@@ -130,26 +130,32 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
 
   return (
     <div className='edit-user-container'>
-      <Typography variant='h6'>Edit User</Typography>
-      <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
-
       <div className='form-grid'>
         {inputs.map((input) => {
           if (input.type === 'image')
             return (
-              <div className='avatar-field' key={`${input.key}-edit-user`}>
-                <div className='image-preview'>
-                  {input.value ? (
-                    <img src={input.value as string} alt='avatar' />
-                  ) : (
-                    <div className='placeholder'>No image</div>
-                  )}
+              <>
+                <div className='avatar-field' key={`${input.key}-edit-user`}>
+                  <div className='image-preview'>
+                    {input.value ? (
+                      <img src={input.value as string} alt='avatar' />
+                    ) : (
+                      <div className='placeholder'>No image</div>
+                    )}
+                  </div>
+                  <label
+                    className={`upload-button ${
+                      prefs.isDarkMode ? 'dark-mode' : ''
+                    }`}
+                  >
+                    <input type='file' accept='image/*' onChange={onPickImg} />
+                    {isUploading ? 'Uploading...' : 'Upload Image'}
+                  </label>
                 </div>
-                <label className='upload-button'>
-                  <input type='file' accept='image/*' onChange={onPickImg} />
-                  {isUploading ? 'Uploading...' : 'Upload Image'}
-                </label>
-              </div>
+                <Divider
+                  className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+                />
+              </>
             )
           if (input.type === 'text')
             return (
@@ -189,7 +195,7 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
         })}
       </div>
 
-      <div className='buttons-row'>
+      <div className='save-button-container'>
         <CustomButton text='Save' onClick={handleSave} fullWidth />
       </div>
     </div>

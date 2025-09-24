@@ -1,20 +1,29 @@
 .edit-user-container {
-  padding: 16px;
+  padding: 1rem;
+
+  input,
+  .MuiSelect-select {
+    font-size: 1.2rem !important;
+  }
 
   .form-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 12px;
+    gap: 0.8rem;
   }
 
   .avatar-field {
-    display: flex;
+    display: grid;
+
+    // grid-template-columns: auto 1fr;
     align-items: center;
-    gap: 12px;
+    justify-items: center;
+    // justify-content: space-between;
+    gap: 0.8rem;
 
     .image-preview {
-      width: 64px;
-      height: 64px;
+      width: 6rem;
+      height: 6rem;
       border-radius: 50%;
       overflow: hidden;
       background: #f0f0f0;
@@ -28,7 +37,7 @@
         object-fit: cover;
       }
       .placeholder {
-        font-size: 12px;
+        font-size: 0.8rem;
         color: #666;
       }
     }
@@ -37,10 +46,14 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 6px 12px;
+      padding: 0.4rem 0.8rem;
       background: #e0e0e0;
       border-radius: 8px;
       cursor: pointer;
+
+      &.dark-mode {
+        background: $very-dark-gray;
+      }
 
       input[type='file'] {
         display: none;
@@ -48,7 +61,24 @@
     }
   }
 
-  .buttons-row {
-    margin-top: 16px;
+  .date-container {
+    display: grid;
+    grid-auto-flow: column;
+    align-items: center;
+    justify-content: space-between;
+    p {
+      font-size: 1.2rem;
+    }
+  }
+
+  .MuiFormControl-root {
+    margin: 0.5rem 0;
+  }
+
+  .save-button-container {
+    width: 100%;
+    display: grid;
+    justify-items: end;
+    margin-top: 1rem;
   }
 }

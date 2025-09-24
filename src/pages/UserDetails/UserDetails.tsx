@@ -394,7 +394,11 @@ function MealsCard() {
               />
               <ListItemIcon className='item-image-container'>
                 <img
-                  src={meal.image || searchUrls.DEFAULT_IMAGE}
+                  src={
+                    meal.image ||
+                    meal.items.find((item) => item.image)?.image ||
+                    searchUrls.DEFAULT_IMAGE
+                  }
                   alt={meal.name}
                   className='item-image'
                 />
