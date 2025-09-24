@@ -36,6 +36,8 @@ import { SwipeAction } from 'react-swipeable-list'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { WeightCard } from '../../components/WeightCard/WeightCard'
 import { BmrCard } from '../../components/BmrCard/BmrCard'
+import { EditIcon } from '../../components/EditIcon/EditIcon'
+import { EditUser } from '../../components/EditUser/EditUser'
 
 const colors = {
   primary: '--var(--primary-color)',
@@ -57,46 +59,72 @@ export function UserDetails() {
     (storeState: RootState) => storeState.userModule.user
   )
 
+  const [isEditUserOpen, setIsEditUserOpen] = useState<boolean>(false)
+
+  const onOpenEditUser = () => {
+    setIsEditUserOpen(true)
+  }
+
+  const onCloseEditUser = () => {
+    setIsEditUserOpen(false)
+  }
+
+  const onSaveEditUser = (user: User) => {
+    optimisticUpdateUser(user)
+  }
+
   return (
-    <div
-      className={`page-container user-page ${
-        prefs.isDarkMode ? 'dark-mode' : ''
-      }`}
-    >
-      <Card
-        variant='outlined'
-        className={`card user-details ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+    <>
+      <div
+        className={`page-container user-page ${
+          prefs.isDarkMode ? 'dark-mode' : ''
+        }`}
       >
-        <div className='profile-container'>
-          <img
-            className='profile-avatar'
-            src={user?.imgUrl || '/logo-square.png'}
-            alt='Profile'
-          />
-          <div className='profile-info'>
-            <Typography variant='h5'>
-              {user?.fullname || 'User Profile'}
-            </Typography>
+        <Card
+          variant='outlined'
+          className={`card user-details ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+        >
+          <EditIcon onClick={onOpenEditUser} />
+          <div className='profile-container'>
+            <img
+              className='profile-avatar'
+              src={user?.imgUrl || '/logo-square.png'}
+              alt='Profile'
+            />
+            <div className='profile-info'>
+              <Typography variant='h5'>
+                {user?.fullname || 'User Profile'}
+              </Typography>
+            </div>
           </div>
+        </Card>
+        <div className='content-container'>
+          <WeightCard />
+
+          <CustomAccordion title='Meals' cmp={<MealsCard />} />
+          <CustomAccordion title='Favorite Items' cmp={<FavoriteItemsCard />} />
+
+          <CustomAccordion title='BMR Calculator' cmp={<BmrCard />} />
+          <CustomAccordion title='Preferences' cmp={<PreferencesCard />} />
+
+          <CustomButton
+            fullWidth
+            onClick={() => logout()}
+            className={`${prefs.favoriteColor}`}
+            text='Logout'
+          />
         </div>
-      </Card>
-      <div className='content-container'>
-        <WeightCard />
-
-        <CustomAccordion title='Meals' cmp={<MealsCard />} />
-        <CustomAccordion title='Favorite Items' cmp={<FavoriteItemsCard />} />
-
-        <CustomAccordion title='BMR Calculator' cmp={<BmrCard />} />
-        <CustomAccordion title='Preferences' cmp={<PreferencesCard />} />
-
-        <CustomButton
-          fullWidth
-          onClick={() => logout()}
-          className={`${prefs.favoriteColor}`}
-          text='Logout'
-        />
       </div>
-    </div>
+
+      <SlideDialog
+        open={isEditUserOpen}
+        onClose={onCloseEditUser}
+        component={<EditUser onSave={onSaveEditUser} />}
+        title='Edit User'
+        onSave={() => onSaveEditUser(user as User)}
+        type='full'
+      />
+    </>
   )
 }
 
