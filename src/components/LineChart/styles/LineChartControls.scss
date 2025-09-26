@@ -2,11 +2,12 @@
   display: flex;
   justify-content: flex-end;
   align-items: center;
+  gap: 0.5rem;
 }
 
 .line-chart-controls .controls-row {
   display: flex;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .line-chart-controls .control-btn {
@@ -21,7 +22,7 @@
 }
 
 .line-chart-controls .control-btn.active {
-  background: rgba(99, 102, 241, 0.12);
-  border-color: rgb(99, 102, 241);
-  color: rgb(55, 65, 81);
+  // background: rgba(99, 102, 241, 0.12);
+  // border-color: rgb(99, 102, 241);
+  // color: rgb(55, 65, 81);
 }

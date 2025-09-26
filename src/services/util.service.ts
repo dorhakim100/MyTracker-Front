@@ -241,3 +241,14 @@ export function getMonthNames(): string[] {
     'Dec',
   ]
 }
+
+export function getDaysInMonth(date: Date = new Date()): number[] {
+  const year = date.getFullYear()
+  const month = date.getMonth()
+  const daysInMonth = new Date(year, month + 1, 0).getDate()
+  return Array.from({ length: daysInMonth }, (_, idx) => idx + 1)
+}
+
+export function getDaysOfMonth(date: Date): string[] {
+  return getDaysInMonth(date).map((day) => day + '')
+}

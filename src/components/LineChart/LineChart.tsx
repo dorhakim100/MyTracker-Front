@@ -25,11 +25,12 @@ interface LineChartProps {
     labels: string[]
     datasets: {
       label: string
-      data: number[]
+      data: (number | null)[]
       borderColor: string
       tension: number
     }[]
   }
+  spanGaps?: boolean | number
 }
 
 const defaultData = {
@@ -44,8 +45,25 @@ const defaultData = {
   ],
 }
 
-export function LineChart({ data = defaultData }: LineChartProps) {
-  const options = { responsive: true, plugins: { legend: { display: false } } }
+export function LineChart({
+  data = defaultData,
+  spanGaps = false,
+}: LineChartProps) {
+  const options = {
+    responsive: true,
+    spanGaps,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        filter: (ctx: any) => ctx.raw != null,
+      },
+    },
+    elements: {
+      point: {
+        radius: (ctx: any) => (ctx.raw == null ? 0 : 3),
+      },
+    },
+  }
 
-  return <Line data={data} options={options} />
+  return <Line data={data as any} options={options as any} />
 }
