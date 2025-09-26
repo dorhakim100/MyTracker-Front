@@ -154,7 +154,7 @@ export function WeightChart({ className = '' }: WeightChartProps) {
         <h3 className='title'>Weight</h3>
       </div>
       <div className='chart-wrapper'>
-        <LineChart data={data} />
+        <LineChart data={data} interpolateGaps={true} />
       </div>
       <LineChartControls value={range} onChange={setRange} />
     </div>
