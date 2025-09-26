@@ -1,3 +1,9 @@
+import { LineChart } from '../../components/LineChart/LineChart'
+
 export function Progress() {
-  return <h2>Progress</h2>
+  return (
+    <div className='page-container'>
+      <LineChart />
+    </div>
+  )
 }

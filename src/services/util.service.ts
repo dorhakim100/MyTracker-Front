@@ -224,3 +224,20 @@ export function getNewDNDArray(
 export function getFixedNumber(number: number): number {
   return +number.toFixed(0)
 }
+
+export function getMonthNames(): string[] {
+  return [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ]
+}
