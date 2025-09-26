@@ -1,5 +1,11 @@
 import { Line } from 'react-chartjs-2'
 import { useMemo } from 'react'
+import type {
+  ChartData,
+  ChartOptions,
+  ScriptableContext,
+  TooltipItem,
+} from 'chart.js'
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -76,31 +82,45 @@ export function LineChart({
     return result
   }
 
-  const processedData = useMemo(() => {
-    if (!interpolateGaps) return data
-    return {
-      ...data,
+  const processedData = useMemo<
+    ChartData<'line', (number | null)[], string>
+  >(() => {
+    const base: ChartData<'line', (number | null)[], string> = {
+      labels: data.labels,
       datasets: data.datasets.map((ds) => ({
+        label: ds.label,
+        data: ds.data,
+        borderColor: ds.borderColor,
+        tension: ds.tension,
+      })),
+    }
+
+    if (!interpolateGaps) return base
+
+    return {
+      ...base,
+      datasets: base.datasets.map((ds) => ({
         ...ds,
         data: interpolateSeries(ds.data),
       })),
     }
   }, [data, interpolateGaps])
-  const options = {
+
+  const options: ChartOptions<'line'> = {
     responsive: true,
     spanGaps,
     plugins: {
       legend: { display: false },
       tooltip: {
-        filter: (ctx: any) => ctx.raw != null,
+        filter: (ctx: TooltipItem<'line'>) => ctx.raw != null,
       },
     },
     elements: {
       point: {
-        radius: (ctx: any) => (ctx.raw == null ? 0 : 0.3),
+        radius: (ctx: ScriptableContext<'line'>) => (ctx.raw == null ? 0 : 0.3),
       },
     },
   }
 
-  return <Line data={(processedData ?? data) as any} options={options as any} />
+  return <Line data={processedData} options={options} />
 }
