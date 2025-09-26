@@ -97,7 +97,7 @@ export function LineChart({
     },
     elements: {
       point: {
-        radius: (ctx: any) => (ctx.raw == null ? 0 : 3),
+        radius: (ctx: any) => (ctx.raw == null ? 0 : 0.3),
       },
     },
   }

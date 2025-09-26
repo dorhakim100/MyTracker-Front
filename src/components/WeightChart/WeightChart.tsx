@@ -4,7 +4,7 @@ import {
   LineChartControls,
   LineChartRangeKey,
 } from '../LineChart/LineChartControls'
-import { getDaysInMonth, getMonthNames } from '../../services/util.service'
+
 import { colors } from '../../assets/config/colors'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
@@ -16,14 +16,6 @@ interface WeightChartProps {
 }
 
 const now = new Date()
-
-const periodMap = {
-  '1M': new Date(now.setMonth(now.getMonth() - 1)).getTime(),
-  '3M': new Date(now.setMonth(now.getMonth() - 3)).getTime(),
-  '6M': new Date(now.setMonth(now.getMonth() - 6)).getTime(),
-  '1Y': new Date(now.setFullYear(now.getFullYear() - 1)).getTime(),
-  // ALL: 0,
-}
 
 export function WeightChart({ className = '' }: WeightChartProps) {
   const prefs = useSelector(
@@ -39,13 +31,7 @@ export function WeightChart({ className = '' }: WeightChartProps) {
   const [weights, setWeights] = useState<Weight[]>([])
 
   const data = useMemo(() => {
-    const period = periodMap[range as keyof typeof periodMap]
-
-    const filteredWeights = weights.filter(
-      (weight) => weight.createdAt >= period
-    )
-
-    const series = prepareSeries(range, filteredWeights)
+    const series = prepareSeries(range, weights)
     const labelsToShow = series?.labels
     const kgs = series?.data ?? []
 
@@ -77,75 +63,49 @@ export function WeightChart({ className = '' }: WeightChartProps) {
   function prepareSeries(range: LineChartRangeKey, weights: Weight[]) {
     const sorted = [...weights].sort((a, b) => a.createdAt - b.createdAt)
 
-    if (range === '1M') {
-      const d = new Date()
-      const days = getDaysInMonth(d) // [1..N]
-      const map = new Map<number, number>() // day -> kg (last-of-day)
-      for (const w of sorted) {
-        const dt = new Date(w.createdAt)
-        if (
-          dt.getMonth() === d.getMonth() &&
-          dt.getFullYear() === d.getFullYear()
-        ) {
-          map.set(dt.getDate(), w.kg)
-        }
-      }
-      return {
-        labels: days.map(String),
-        data: days.map((day) => map.get(day) ?? null),
-      }
-    }
+    const startOfDay = (d: Date) =>
+      new Date(d.getFullYear(), d.getMonth(), d.getDate())
+    const today = startOfDay(new Date())
 
-    const monthMap = new Map<string, number>()
+    const pad = (n: number) => (n < 10 ? `0${n}` : `${n}`)
+    const dayKey = (d: Date) =>
+      `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
+
+    const dayToLabel = (d: Date) => `${d.getDate()}/${d.getMonth() + 1}`
+
+    const lastOfDayMap = new Map<string, number>()
     for (const w of sorted) {
-      const d = new Date(w.createdAt)
-      const key = `${d.getFullYear()}-${d.getMonth()}`
-      monthMap.set(key, w.kg)
+      const d = startOfDay(new Date(w.createdAt))
+      lastOfDayMap.set(dayKey(d), w.kg)
     }
 
-    const monthNames = getMonthNames()
-    const buildMonthBuckets = (start: Date, count: number) => {
-      const labels: string[] = []
-      const data: (number | null)[] = []
-      for (let i = 0; i < count; i++) {
-        const d = new Date(start.getFullYear(), start.getMonth() + i, 1)
-        const key = `${d.getFullYear()}-${d.getMonth()}`
-        labels.push(monthNames[d.getMonth()])
-        data.push(monthMap.get(key) ?? null)
-      }
-      return { labels, data }
-    }
-
-    if (range === '3M') {
-      const today = new Date()
-      const start = new Date(today.getFullYear(), today.getMonth() - 2, 1)
-      return buildMonthBuckets(start, 3)
-    }
-
-    if (range === '6M') {
-      const today = new Date()
-      const start = new Date(today.getFullYear(), today.getMonth() - 5, 1)
-      return buildMonthBuckets(start, 6)
-    }
-
-    if (range === '1Y') {
-      const today = new Date()
-      const start = new Date(today.getFullYear(), today.getMonth() - 11, 1)
-      return buildMonthBuckets(start, 12)
-    }
-
+    let start: Date
     if (range === 'ALL') {
       if (sorted.length === 0) return { labels: [], data: [] }
-      const first = new Date(sorted[0].createdAt)
-      const today = new Date()
-      const monthsDiff =
-        (today.getFullYear() - first.getFullYear()) * 12 +
-        (today.getMonth() - first.getMonth())
-      const start = new Date(first.getFullYear(), first.getMonth(), 1)
-      return buildMonthBuckets(start, monthsDiff + 1)
+      start = startOfDay(new Date(sorted[0].createdAt))
+    } else {
+      const daysMap: Record<'1M' | '3M' | '6M' | '1Y', number> = {
+        '1M': 30,
+        '3M': 90,
+        '6M': 180,
+        '1Y': 365,
+      }
+      const count = daysMap[range as '1M' | '3M' | '6M' | '1Y']
+      start = new Date(today)
+      start.setDate(start.getDate() - (count - 1))
     }
 
-    return { labels: [], data: [] }
+    const labels: string[] = []
+    const data: (number | null)[] = []
+    const cursor = new Date(start)
+    while (cursor <= today) {
+      const key = dayKey(cursor)
+      labels.push(dayToLabel(cursor))
+      data.push(lastOfDayMap.get(key) ?? null)
+      cursor.setDate(cursor.getDate() + 1)
+    }
+
+    return { labels, data }
   }
 
   return (
@@ -154,7 +114,7 @@ export function WeightChart({ className = '' }: WeightChartProps) {
         <h3 className='title'>Weight</h3>
       </div>
       <div className='chart-wrapper'>
-        <LineChart data={data} interpolateGaps={true} />
+        <LineChart data={data} interpolateGaps={true} spanGaps={true} />
       </div>
       <LineChartControls value={range} onChange={setRange} />
     </div>
