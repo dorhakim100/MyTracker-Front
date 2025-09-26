@@ -2,11 +2,11 @@ import { Route } from '../assets/routes/routes'
 import { User } from '../types/user/User'
 
 export function makeId(length: number = 6): string {
-  var txt = ''
-  var possible =
+  let txt = ''
+  const possible =
     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
 
-  for (var i = 0; i < length; i++) {
+  for (let i = 0; i < length; i++) {
     txt += possible.charAt(Math.floor(Math.random() * possible.length))
   }
 
@@ -14,7 +14,7 @@ export function makeId(length: number = 6): string {
 }
 
 export function makeLorem(size: number = 100): string {
-  var words = [
+  const words = [
     'The sky',
     'above',
     'the port',
@@ -48,7 +48,7 @@ export function makeLorem(size: number = 100): string {
     'to',
     'burn',
   ]
-  var txt = ''
+  let txt = ''
   while (size > 0) {
     size--
     txt += words[Math.floor(Math.random() * words.length)] + ' '

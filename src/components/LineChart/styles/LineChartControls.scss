@@ -1,0 +1,27 @@
+.line-chart-controls {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.line-chart-controls .controls-row {
+  display: flex;
+  gap: 8px;
+}
+
+.line-chart-controls .control-btn {
+  appearance: none;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: #fff;
+  color: inherit;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.line-chart-controls .control-btn.active {
+  background: rgba(99, 102, 241, 0.12);
+  border-color: rgb(99, 102, 241);
+  color: rgb(55, 65, 81);
+}

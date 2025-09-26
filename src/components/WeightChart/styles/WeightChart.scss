@@ -1,0 +1,21 @@
+.weight-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.weight-chart .header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.weight-chart .title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.weight-chart .chart-wrapper {
+  width: 100%;
+}

@@ -1,9 +1,9 @@
-import { LineChart } from '../../components/LineChart/LineChart'
+import { WeightChart } from '../../components/WeightChart/WeightChart'
 
 export function Progress() {
   return (
     <div className='page-container'>
-      <LineChart />
+      <WeightChart />
     </div>
   )
 }
