@@ -33,6 +33,7 @@ export function LineChartControls({
               prefs.favoriteColor
             }`}
             onClick={() => onChange(key)}
+            disabled={value === key}
           />
         ))}
       </div>

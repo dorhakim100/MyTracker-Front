@@ -82,7 +82,9 @@ export function CustomButton({
           aria-label={ariaLabel || (typeof text === 'string' ? text : 'button')}
           onClick={onClick}
           disabled={disabled}
-          className={`custom-button ${className || ''}`}
+          className={`custom-button ${className || ''} ${
+            disabled ? 'disabled' : ''
+          }`}
         >
           {text}
           {icon && icon}

@@ -15,7 +15,7 @@ interface WeightChartProps {
   className?: string
 }
 
-const now = new Date()
+const LABEL = 'Weight'
 
 export function WeightChart({ className = '' }: WeightChartProps) {
   const prefs = useSelector(
@@ -39,7 +39,7 @@ export function WeightChart({ className = '' }: WeightChartProps) {
       labels: labelsToShow,
       datasets: [
         {
-          label: 'Weight',
+          label: LABEL,
           data: kgs,
           borderColor:
             colors[prefs.favoriteColor as keyof typeof colors] ||
@@ -111,7 +111,7 @@ export function WeightChart({ className = '' }: WeightChartProps) {
   return (
     <div className={`weight-chart ${className}`.trim()}>
       <div className='header'>
-        <h3 className='title'>Weight</h3>
+        <h3 className='title'>{LABEL}</h3>
       </div>
       <div className='chart-wrapper'>
         <LineChart data={data} interpolateGaps={true} spanGaps={true} />

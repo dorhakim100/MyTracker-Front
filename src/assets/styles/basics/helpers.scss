@@ -369,16 +369,28 @@ select {
   &.primary {
     background-color: $primary-color !important;
     color: $white;
+
+    &.disabled {
+      background-color: $primary-color-dark !important;
+    }
   }
 
   &.blue {
     background-color: $picker-color-blue !important;
     color: $white;
+
+    &.disabled {
+      background-color: $picker-color-blue-dark !important;
+    }
   }
 
   &.red {
     background-color: $picker-color-red !important;
     color: $white;
+
+    &.disabled {
+      background-color: $picker-color-red-dark !important;
+    }
   }
 
   &.yellow {
@@ -387,28 +399,52 @@ select {
     svg {
       color: $dark-gray;
     }
+
+    &.disabled {
+      background-color: $picker-color-yellow-dark !important;
+    }
   }
 
   &.green {
     background-color: $picker-color-green !important;
     color: $dark-gray;
+
+    &.disabled {
+      background-color: $picker-color-green-dark !important;
+    }
   }
   &.orange {
     background-color: $picker-color-orange !important;
     color: $white;
+
+    &.disabled {
+      background-color: $picker-color-orange-dark !important;
+    }
   }
 
   &.deepPurple {
     background-color: $picker-color-deep-purple !important;
     color: $white;
+
+    &.disabled {
+      background-color: $picker-color-deep-purple-dark !important;
+    }
   }
   &.purple {
     background-color: $picker-color-purple !important;
     color: $white;
+
+    &.disabled {
+      background-color: $picker-color-purple-dark !important;
+    }
   }
   &.pink {
     background-color: $picker-color-pink !important;
     color: $white;
+
+    &.disabled {
+      background-color: $picker-color-pink-dark !important;
+    }
   }
 }
 
