@@ -2,6 +2,7 @@ import { Line } from 'react-chartjs-2'
 import { useMemo, useRef } from 'react'
 import type {
   ChartData,
+  ChartDataset,
   ChartOptions,
   ScriptableContext,
   TooltipItem,
@@ -39,6 +40,9 @@ interface LineChartProps {
   }
   spanGaps?: boolean | number
   interpolateGaps?: boolean
+  baseline?: number
+  baselineColor?: string
+  baselineLabel?: string
   onLineClick?: (index: number, estimatedValue: number) => void
 }
 
@@ -58,6 +62,9 @@ export function LineChart({
   data = defaultData,
   spanGaps = false,
   interpolateGaps = false,
+  baseline,
+  baselineColor = 'rgba(0,0,0,0.35)',
+  baselineLabel = 'Baseline',
   onLineClick,
 }: LineChartProps) {
   const interpolateSeries = (series: (number | null)[]): (number | null)[] => {
@@ -89,14 +96,29 @@ export function LineChart({
   const processedData = useMemo<
     ChartData<'line', (number | null)[], string>
   >(() => {
-    const base: ChartData<'line', (number | null)[], string> = {
-      labels: data.labels,
-      datasets: data.datasets.map((ds) => ({
+    const baseDatasets: ChartDataset<'line', (number | null)[]>[] =
+      data.datasets.map((ds) => ({
         label: ds.label,
         data: ds.data,
         borderColor: ds.borderColor,
         tension: ds.tension,
-      })),
+      }))
+
+    if (typeof baseline === 'number' && data.labels?.length) {
+      baseDatasets.push({
+        label: baselineLabel,
+        data: Array.from({ length: data.labels.length }, () => baseline),
+        borderColor: baselineColor,
+        tension: 0,
+        borderDash: [6, 4],
+        pointRadius: 0,
+        hoverRadius: 0,
+      })
+    }
+
+    const base: ChartData<'line', (number | null)[], string> = {
+      labels: data.labels,
+      datasets: baseDatasets,
     }
 
     if (!interpolateGaps) return base
@@ -108,7 +130,7 @@ export function LineChart({
         data: interpolateSeries(ds.data),
       })),
     }
-  }, [data, interpolateGaps])
+  }, [data, interpolateGaps, baseline, baselineColor, baselineLabel])
 
   const options: ChartOptions<'line'> = {
     responsive: true,

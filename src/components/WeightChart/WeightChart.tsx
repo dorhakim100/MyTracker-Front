@@ -163,6 +163,7 @@ export function WeightChart({ className = '' }: WeightChartProps) {
           interpolateGaps={true}
           spanGaps={true}
           onLineClick={handleLineClick}
+          baseline={80}
         />
       </div>
       <LineChartControls value={range} onChange={setRange} />
