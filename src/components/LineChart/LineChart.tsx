@@ -39,7 +39,7 @@ interface LineChartProps {
   }
   spanGaps?: boolean | number
   interpolateGaps?: boolean
-  onLineClick?: (index: number) => void
+  onLineClick?: (index: number, estimatedValue: number) => void
 }
 
 const defaultData = {
@@ -137,8 +137,13 @@ export function LineChart({
       true
     )
     if (elements.length) {
-      // setClickedIndex(elements[0].index)
-      onLineClick?.(elements[0].index)
+      const { datasetIndex, index } = elements[0]
+      const ds = chart.data.datasets[datasetIndex]
+      const estimatedValue = (ds.data as (number | null)[])[index]
+      onLineClick?.(
+        index,
+        typeof estimatedValue === 'number' ? estimatedValue : 0
+      )
     }
   }
 

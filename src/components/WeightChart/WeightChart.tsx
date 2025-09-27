@@ -13,13 +13,19 @@ import { Weight } from '../../types/weight/Weight'
 
 import { TimesContainer } from '../TimesContainer/TimesContainer'
 import { getFullDate } from '../../services/util.service'
+import { Typography } from '@mui/material'
 
 interface WeightChartProps {
   className?: string
 }
 
+interface Stats {
+  selectedDate: Date
+  selectedWeight: number | string
+  isEstimated: boolean
+}
+
 const LABEL = 'Weight'
-const NOT_LOGGED = 'Not logged'
 
 export function WeightChart({ className = '' }: WeightChartProps) {
   const prefs = useSelector(
@@ -34,8 +40,11 @@ export function WeightChart({ className = '' }: WeightChartProps) {
 
   const [weights, setWeights] = useState<Weight[]>([])
 
-  const [selectedDate, setSelectedDate] = useState(new Date())
-  const [selectedWeight, setSelectedWeight] = useState<number | string>(0)
+  const [stats, setStats] = useState<Stats>({
+    selectedDate: new Date(),
+    selectedWeight: 0,
+    isEstimated: false,
+  })
 
   const data = useMemo(() => {
     const series = prepareSeries(range, weights)
@@ -63,7 +72,11 @@ export function WeightChart({ className = '' }: WeightChartProps) {
         userId: user?._id,
       })
       setWeights(weights)
-      setSelectedWeight(weights[0].kg)
+      setStats({
+        selectedDate: new Date(),
+        selectedWeight: weights[0].kg,
+        isEstimated: false,
+      })
     }
     fetchWeights()
   }, [user?._id])
@@ -116,28 +129,33 @@ export function WeightChart({ className = '' }: WeightChartProps) {
     return { labels, data }
   }
 
-  const handleLineClick = (index: number) => {
-    console.log('index', index)
-    // const weight = weights[index]
+  const handleLineClick = (index: number, estimatedValue: number) => {
+    estimatedValue = +estimatedValue.toFixed(1)
+
     const weight = data.datasets[0].data[index]
 
-    setSelectedWeight(weight ?? NOT_LOGGED)
-    const date = data.labels[index]
-
-    console.log(getFullDate(date))
-
-    setSelectedDate(getFullDate(date))
+    setStats({
+      selectedDate: getFullDate(data.labels[index]),
+      selectedWeight: weight ?? estimatedValue,
+      isEstimated: weight ? false : true,
+    })
   }
 
   return (
     <div className={`weight-chart ${className}`}>
       <div className='header'>
-        {/* <h3 className='title'>{LABEL}</h3> */}
-        <h3 className='title'>
-          {selectedWeight}{' '}
-          {selectedWeight !== NOT_LOGGED && <span className='kg'>kg</span>}
-        </h3>
-        <TimesContainer selectedDay={selectedDate} isClock={false} />
+        <div className='weight-container'>
+          <h3 className='title'>
+            {stats.selectedWeight}{' '}
+            {stats.selectedWeight && <span className='kg'>kg</span>}
+          </h3>
+
+          {stats.isEstimated && (
+            <Typography variant='caption'>Estimated</Typography>
+          )}
+        </div>
+
+        <TimesContainer selectedDay={stats.selectedDate} isClock={false} />
       </div>
       <div className='chart-container'>
         <LineChart
