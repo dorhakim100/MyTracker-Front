@@ -1,6 +1,10 @@
 .custom-accordion {
   width: 100%;
 
+  .accordion-icon {
+    margin-right: 0.8rem;
+  }
+
   &.dark-mode {
     .MuiPaper-root.dark-mode {
       background-color: $darker-gray;

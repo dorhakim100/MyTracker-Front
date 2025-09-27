@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { Button, Card, Divider, ListItemIcon, Typography } from '@mui/material'
+import { Button, Divider, ListItemIcon, Typography } from '@mui/material'
 import { RootState } from '../../store/store'
 import {
   handleFavorite,
@@ -16,6 +16,7 @@ import { CustomAccordion } from '../../CustomMui/CustomAccordion/CustomAccordion
 import CheckIcon from '@mui/icons-material/Check'
 import { CustomList } from '../../CustomMui/CustomList/CustomList'
 import { SkeletonList } from '../../components/SkeletonList/SkeletonList'
+import { ProfileCard } from '../../components/ProfileCard/ProfileCard'
 // import { searchService } from '../../services/search/search-service'
 import { FavoriteButton } from '../../components/FavoriteButton/FavoriteButton'
 import { User } from '../../types/user/User'
@@ -36,8 +37,10 @@ import { SwipeAction } from 'react-swipeable-list'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { WeightCard } from '../../components/WeightCard/WeightCard'
 import { BmrCard } from '../../components/BmrCard/BmrCard'
-import { EditIcon } from '../../components/EditIcon/EditIcon'
-import { EditUser } from '../../components/EditUser/EditUser'
+import RestaurantMenuIcon from '@mui/icons-material/RestaurantMenu'
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
+import CalculateIcon from '@mui/icons-material/Calculate'
+import SettingsIcon from '@mui/icons-material/Settings'
 
 const colors = {
   primary: '--var(--primary-color)',
@@ -59,76 +62,53 @@ export function UserDetails() {
     (storeState: RootState) => storeState.userModule.user
   )
 
-  const [isEditUserOpen, setIsEditUserOpen] = useState<boolean>(false)
-
-  const onOpenEditUser = () => {
-    setIsEditUserOpen(true)
-  }
-
-  const onCloseEditUser = () => {
-    setIsEditUserOpen(false)
-  }
-
-  const onSaveEditUser = async (user: User) => {
-    optimisticUpdateUser(user)
-    onCloseEditUser()
-    try {
-      await updateUser(user)
-      showSuccessMsg(messages.success.updateUser)
-    } catch (err) {
-      console.log('err', err)
-      showErrorMsg(messages.error.updateUser)
-      optimisticUpdateUser(user as User)
-    }
-  }
+  const acrodions = [
+    {
+      title: 'Meals',
+      cmp: <MealsCard />,
+      icon: <RestaurantMenuIcon />,
+      key: 'meals',
+    },
+    {
+      title: 'Favorite Items',
+      cmp: <FavoriteItemsCard />,
+      icon: <FavoriteBorderIcon />,
+      key: 'favorite-items',
+    },
+    {
+      title: 'BMR Calculator',
+      cmp: <BmrCard />,
+      icon: <CalculateIcon />,
+      key: 'bmr-calculator',
+    },
+    {
+      title: 'Preferences',
+      cmp: <PreferencesCard />,
+      icon: <SettingsIcon />,
+      key: 'preferences',
+    },
+  ]
 
   return (
     <>
-      <SlideDialog
-        open={isEditUserOpen}
-        onClose={onCloseEditUser}
-        component={<EditUser onSave={onSaveEditUser} />}
-        title='Edit User'
-        onSave={() => onSaveEditUser(user as User)}
-        type='full'
-      />
       <div
         className={`page-container user-page ${
           prefs.isDarkMode ? 'dark-mode' : ''
         }`}
       >
-        <Card
-          variant='outlined'
-          className={`card user-details ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-        >
-          <EditIcon onClick={onOpenEditUser} />
-          <div className='profile-container'>
-            <img
-              className='profile-avatar  box-shadow white-outline'
-              src={user?.details?.imgUrl || '/logo-square.png'}
-              alt='Profile'
-            />
-            <div className='profile-info'>
-              <Typography variant='h5'>
-                {user?.details?.fullname || 'User Profile'}
-              </Typography>
-            </div>
-            <Typography variant='body1'>
-              {user?.details?.height || 0} cm
-            </Typography>
-            <Typography variant='body1'>
-              {new Date(user?.details?.birthdate || 0).toLocaleDateString('he')}
-            </Typography>
-          </div>
-        </Card>
+        <ProfileCard />
+
         <div className='content-container'>
           <WeightCard />
 
-          <CustomAccordion title='Meals' cmp={<MealsCard />} />
-          <CustomAccordion title='Favorite Items' cmp={<FavoriteItemsCard />} />
-
-          <CustomAccordion title='BMR Calculator' cmp={<BmrCard />} />
-          <CustomAccordion title='Preferences' cmp={<PreferencesCard />} />
+          {acrodions.map((accordion) => (
+            <CustomAccordion
+              key={`${accordion.key}-accordion`}
+              title={accordion.title}
+              cmp={accordion.cmp}
+              icon={accordion.icon}
+            />
+          ))}
 
           <CustomButton
             fullWidth
@@ -171,18 +151,6 @@ function FavoriteItemsCard() {
     (storeState: RootState) => storeState.itemModule.favoriteItems
   )
   const [isItemSelected, setIsItemSelected] = useState<boolean>(false)
-
-  // useEffect(() => {
-  // const handleFavoritesSearch = async () => {
-  //   const res = await searchService.search({
-  //     favoriteItems: user?.favoriteItems || [],
-  //   })
-
-  //   setFavoriteItems(res)
-  // }
-
-  // handleFavoritesSearch()
-  // }, [user])
 
   const onSelectItem = (item: Item) => {
     setIsItemSelected(true)

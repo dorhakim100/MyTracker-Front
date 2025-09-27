@@ -19,23 +19,6 @@
   .user-details {
     margin-top: 1rem;
   }
-
-  .profile-container {
-    display: grid;
-    justify-items: center;
-    gap: 0.5rem;
-
-    .profile-avatar {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      object-fit: cover;
-    }
-
-    .profile-info {
-      flex: 1;
-    }
-  }
 }
 
 .content-container {

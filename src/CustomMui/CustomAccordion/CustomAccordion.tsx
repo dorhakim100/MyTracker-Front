@@ -16,6 +16,7 @@ export interface CustomAccordionProps {
   defaultExpanded?: boolean
   disableGutters?: boolean
   square?: boolean
+  icon?: React.ReactNode
 }
 
 export function CustomAccordion({
@@ -25,6 +26,7 @@ export function CustomAccordion({
   defaultExpanded,
   disableGutters,
   square,
+  icon,
 }: CustomAccordionProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -49,6 +51,7 @@ export function CustomAccordion({
           aria-controls={`${summaryId}-content`}
           id={`${summaryId}-header`}
         >
+          <span className='accordion-icon'>{icon}</span>
           {typeof title === 'string' ? <Typography>{title}</Typography> : title}
         </AccordionSummary>
         <AccordionDetails>

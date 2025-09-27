@@ -14,6 +14,7 @@ import { Weight } from '../../types/weight/Weight'
 import { TimesContainer } from '../TimesContainer/TimesContainer'
 import { getFullDate } from '../../services/util.service'
 import { Typography } from '@mui/material'
+import { WeightCard } from '../WeightCard/WeightCard'
 
 interface WeightChartProps {
   className?: string
@@ -182,6 +183,7 @@ export function WeightChart({ className = '' }: WeightChartProps) {
         />
       </div>
       <LineChartControls value={range} onChange={setRange} />
+      <WeightCard />
     </div>
   )
 }
