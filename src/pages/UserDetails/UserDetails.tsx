@@ -58,9 +58,6 @@ export function UserDetails() {
   const prefs = useSelector(
     (storeState: RootState) => storeState.systemModule.prefs
   )
-  const user = useSelector(
-    (storeState: RootState) => storeState.userModule.user
-  )
 
   const acrodions = [
     {
@@ -146,7 +143,6 @@ function FavoriteItemsCard() {
     (storeState: RootState) => storeState.userModule.user
   )
 
-  // const [favoriteItems, setFavoriteItems] = useState<Item[]>([])
   const favoriteItems = useSelector(
     (storeState: RootState) => storeState.itemModule.favoriteItems
   )
@@ -357,11 +353,6 @@ function MealsCard() {
           className={`${prefs.isDarkMode ? 'dark-mode' : ''}`}
           renderPrimaryText={(meal) => meal.name}
           renderLeft={(meal) => (
-            // <MacrosDonut
-            //   protein={meal.macros.protein}
-            //   carbs={meal.macros.carbs}
-            //   fats={meal.macros.fat}
-            // />
             <div className='left-content macros-image-container'>
               <MacrosDonut
                 protein={meal.macros?.protein}

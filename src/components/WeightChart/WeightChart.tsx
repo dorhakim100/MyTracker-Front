@@ -13,9 +13,13 @@ import { Weight } from '../../types/weight/Weight'
 
 import { TimesContainer } from '../TimesContainer/TimesContainer'
 import { getFullDate } from '../../services/util.service'
-import { Typography } from '@mui/material'
+import { Card, Typography } from '@mui/material'
 import { WeightCard } from '../WeightCard/WeightCard'
 
+import ScaleIcon from '@mui/icons-material/Scale'
+import FlagIcon from '@mui/icons-material/Flag'
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
+import CircleIcon from '@mui/icons-material/Circle'
 interface WeightChartProps {
   className?: string
 }
@@ -24,6 +28,7 @@ interface Stats {
   selectedDate: Date
   selectedWeight: number | string
   message: string
+  isGoal: boolean
 }
 
 const LABEL = 'Weight'
@@ -46,6 +51,7 @@ export function WeightChart({ className = '' }: WeightChartProps) {
     selectedDate: new Date(),
     selectedWeight: 0,
     message: '',
+    isGoal: false,
   })
 
   const data = useMemo(() => {
@@ -78,6 +84,7 @@ export function WeightChart({ className = '' }: WeightChartProps) {
         selectedDate: new Date(),
         selectedWeight: weights[0].kg,
         message: '',
+        isGoal: false,
       })
     }
     fetchWeights()
@@ -152,36 +159,48 @@ export function WeightChart({ className = '' }: WeightChartProps) {
       selectedDate: getFullDate(data.labels[index]),
       selectedWeight: weight ?? estimatedValue,
       message: messageToSet || '',
+      isGoal: isBaseline || false,
     })
   }
 
   return (
     <div className={`weight-chart ${className}`}>
-      <div className='header'>
-        <div className='weight-container'>
-          <h3 className='title'>
-            {stats.selectedWeight}{' '}
-            {stats.selectedWeight && <span className='kg'>kg</span>}
-          </h3>
+      <Card
+        variant='outlined'
+        className={`card weight   ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+      >
+        <div className='header'>
+          <div className='weight-container'>
+            <h3 className='title'>
+              {stats.isGoal ? <FlagIcon /> : <ScaleIcon />}
+              {stats.selectedWeight}
+              {stats.selectedWeight && <span className='kg'>kg</span>}
+            </h3>
 
-          {stats.message && (
-            <Typography variant='caption'>{stats.message}</Typography>
-          )}
+            {stats.message && (
+              <Typography variant='caption' className='message'>
+                <CircleIcon />
+                {stats.message}
+              </Typography>
+            )}
+          </div>
+          <div className='date-container'>
+            <CalendarTodayIcon />
+            <TimesContainer selectedDay={stats.selectedDate} isClock={false} />
+          </div>
         </div>
-
-        <TimesContainer selectedDay={stats.selectedDate} isClock={false} />
-      </div>
-      <div className='chart-container'>
-        <LineChart
-          data={data}
-          interpolateGaps={true}
-          spanGaps={true}
-          onLineClick={handleLineClick}
-          baseline={GOAL_WEIGHT}
-          baselineLabel='Goal weight'
-          isDarkMode={prefs.isDarkMode}
-        />
-      </div>
+        <div className='chart-container'>
+          <LineChart
+            data={data}
+            interpolateGaps={true}
+            spanGaps={true}
+            onLineClick={handleLineClick}
+            baseline={GOAL_WEIGHT}
+            baselineLabel='Goal weight'
+            isDarkMode={prefs.isDarkMode}
+          />
+        </div>
+      </Card>
       <LineChartControls value={range} onChange={setRange} />
       <WeightCard />
     </div>
