@@ -43,6 +43,7 @@ interface LineChartProps {
   baseline?: number
   baselineColor?: string
   baselineLabel?: string
+  isDarkMode?: boolean
   onLineClick?: (
     index: number,
     estimatedValue: number,
@@ -62,15 +63,30 @@ const defaultData = {
   ],
 }
 
+const DARK_MODE_WHITE = '#fff'
+const LIGHT_MODE_GRAY = 'rgba(0,0,0,0.35)'
+
 export function LineChart({
   data = defaultData,
   spanGaps = false,
   interpolateGaps = false,
   baseline,
-  baselineColor = 'rgba(0,0,0,0.35)',
+  isDarkMode = false,
   baselineLabel = 'Baseline',
   onLineClick,
 }: LineChartProps) {
+  const lightenColor = (hex: string, amount: number) => {
+    if (!hex || !hex.startsWith('#')) return hex
+    const num = parseInt(hex.slice(1), 16)
+    let r = (num >> 16) & 0xff
+    let g = (num >> 8) & 0xff
+    let b = num & 0xff
+    r = Math.min(255, Math.round(r + (255 - r) * amount))
+    g = Math.min(255, Math.round(g + (255 - g) * amount))
+    b = Math.min(255, Math.round(b + (255 - b) * amount))
+    const toHex = (v: number) => v.toString(16).padStart(2, '0')
+    return `#${toHex(r)}${toHex(g)}${toHex(b)}`
+  }
   const interpolateSeries = (series: (number | null)[]): (number | null)[] => {
     if (!interpolateGaps) return series
     const result = [...series]
@@ -104,15 +120,18 @@ export function LineChart({
       data.datasets.map((ds) => ({
         label: ds.label,
         data: ds.data,
-        borderColor: ds.borderColor,
+        borderColor: isDarkMode
+          ? lightenColor(ds.borderColor, 0.25)
+          : ds.borderColor,
         tension: ds.tension,
+        borderWidth: isDarkMode ? 2 : undefined,
       }))
 
     if (typeof baseline === 'number' && data.labels?.length) {
       baseDatasets.push({
         label: baselineLabel,
         data: Array.from({ length: data.labels.length }, () => baseline),
-        borderColor: baselineColor,
+        borderColor: isDarkMode ? DARK_MODE_WHITE : LIGHT_MODE_GRAY,
         tension: 0,
         borderDash: [6, 4],
         pointRadius: 0,
@@ -134,7 +153,7 @@ export function LineChart({
         data: interpolateSeries(ds.data),
       })),
     }
-  }, [data, interpolateGaps, baseline, baselineColor, baselineLabel])
+  }, [data, interpolateGaps, baseline, isDarkMode, baselineLabel])
 
   const options: ChartOptions<'line'> = {
     responsive: true,
@@ -143,11 +162,24 @@ export function LineChart({
       legend: { display: false },
       tooltip: {
         filter: (ctx: TooltipItem<'line'>) => ctx.raw != null,
+        titleColor: isDarkMode ? DARK_MODE_WHITE : undefined,
+        bodyColor: isDarkMode ? DARK_MODE_WHITE : undefined,
+        backgroundColor: isDarkMode ? 'rgba(0,0,0,0.8)' : undefined,
       },
     },
     elements: {
       point: {
         radius: (ctx: ScriptableContext<'line'>) => (ctx.raw == null ? 0 : 0.3),
+      },
+    },
+    scales: {
+      x: {
+        ticks: { color: isDarkMode ? DARK_MODE_WHITE : undefined },
+        grid: { color: isDarkMode ? 'rgba(255,255,255,0.08)' : undefined },
+      },
+      y: {
+        ticks: { color: isDarkMode ? DARK_MODE_WHITE : undefined },
+        grid: { color: isDarkMode ? 'rgba(255,255,255,0.08)' : undefined },
       },
     },
   }

@@ -177,6 +177,8 @@ export function WeightChart({ className = '' }: WeightChartProps) {
           spanGaps={true}
           onLineClick={handleLineClick}
           baseline={GOAL_WEIGHT}
+          baselineLabel='Goal weight'
+          isDarkMode={prefs.isDarkMode}
         />
       </div>
       <LineChartControls value={range} onChange={setRange} />

@@ -22,7 +22,7 @@
     grid-row: 2;
 
     .weight-text {
-      font-size: 1.3rem;
+      font-size: 1.8rem;
       font-weight: 600;
       display: flex;
       align-items: center;
@@ -30,6 +30,7 @@
       gap: 0.2rem;
 
       .weight-text-kg {
+        font-size: 1.2rem;
         font-weight: 400;
         align-self: end;
       }
