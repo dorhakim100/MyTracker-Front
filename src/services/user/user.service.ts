@@ -12,9 +12,9 @@ import { UserFilter } from '../../types/userFilter/UserFilter'
 import { searchService } from '../search/search-service'
 import { setFavoriteItems } from '../../store/actions/item.actions'
 import { Gender } from '../bmr/bmr.service'
-import { MealItem } from '../../types/mealItem/MealItem'
-import { Meal } from '../../types/meal/Meal'
-import { searchTypes } from '../../assets/config/search-types'
+// import { MealItem } from '../../types/mealItem/MealItem'
+// import { Meal } from '../../types/meal/Meal'
+// import { searchTypes } from '../../assets/config/search-types'
 // import { getPrefs, setPrefs } from '../system/system.service'
 
 export const userService = {
@@ -120,18 +120,18 @@ async function login(userCred: UserCred) {
 
     setFavoriteItems(favoriteItems)
 
-    const LONGEST_FOOD_ID_LENGTH = 10
+    // const LONGEST_FOOD_ID_LENGTH = 10
 
-    user.meals.forEach((meal: Meal) => {
-      meal.items.forEach((item: MealItem) => {
-        if (!item.searchId) return
-        const source =
-          item.searchId.length < LONGEST_FOOD_ID_LENGTH
-            ? searchTypes.usda
-            : searchTypes.openFoodFacts
-        searchService.searchById(item.searchId, source)
-      })
-    })
+    // user.meals.forEach((meal: Meal) => {
+    //   meal.items.forEach((item: MealItem) => {
+    //     if (!item.searchId) return
+    //     const source =
+    //       item.searchId.length < LONGEST_FOOD_ID_LENGTH
+    //         ? searchTypes.usda
+    //         : searchTypes.openFoodFacts
+    //     searchService.searchById(item.searchId, source)
+    //   })
+    // })
 
     return saveLoggedinUser(user)
   } catch (err) {

@@ -62,6 +62,10 @@ export function FixedBottomNavigation(props: {
     (stateSelector: RootState) => stateSelector.userModule.user
   )
 
+  const selectedDay = useSelector(
+    (stateSelector: RootState) => stateSelector.userModule.selectedDay
+  )
+
   const [searchModalOpen, setSearchModalOpen] = useState(false)
   const [modalType, setModalType] = useState<ModalType>(modalTypes.search)
 
@@ -170,7 +174,10 @@ export function FixedBottomNavigation(props: {
                   ev.stopPropagation()
                   setIsAddModal(!isAddModal)
 
-                  setSelectedDiaryDay(user.loggedToday)
+                  setSelectedDiaryDay({
+                    ...user.loggedToday,
+                    weight: selectedDay?.weight,
+                  })
                 }}
                 open={isAddModal}
                 className={`${prefs.isDarkMode ? 'dark-mode' : ''} ${

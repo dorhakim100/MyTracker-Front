@@ -73,7 +73,7 @@ export function LoggedList({ mealPeriod }: { mealPeriod: MealPeriod }) {
       await loadItems() // actual update from api
     } catch (err) {
       console.error(err)
-      showErrorMsg(messages.error.getDiary)
+      // showErrorMsg(messages.error.getItem)
     }
   }
 

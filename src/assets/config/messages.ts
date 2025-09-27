@@ -15,6 +15,7 @@ export const messages = {
     favorite: 'Failed to add to favorites',
     editMeal: 'Failed to edit meal',
     getDiary: 'Failed to get diary',
+    getItem: 'Failed to get item',
     register: 'Register first',
     scan: 'Failed to scan',
     noResults: 'No results found',
