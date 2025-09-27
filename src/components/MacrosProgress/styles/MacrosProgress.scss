@@ -17,6 +17,40 @@
       span {
         font-weight: 700;
       }
+
+      .goal-banner {
+        gap: 0.2rem;
+
+        .value-container {
+          p,
+          span {
+            font-size: 13px;
+          }
+        }
+
+        svg {
+          width: 1rem;
+          height: 1rem;
+        }
+      }
+
+      &.protein {
+        .goal-banner {
+          border-bottom: 3px solid $macro-protein;
+        }
+      }
+
+      &.carbs {
+        .goal-banner {
+          border-bottom: 3px solid $macro-carbs;
+        }
+      }
+
+      &.fats {
+        .goal-banner {
+          border-bottom: 3px solid $macro-fats;
+        }
+      }
     }
   }
 }

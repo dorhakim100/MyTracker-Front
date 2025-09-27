@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { EditIcon } from '../EditIcon/EditIcon'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
+import { GoalBanner } from '../GoalBanner/GoalBanner'
 
 const proteinColor = 'var(--macro-protein)'
 const carbsColor = 'var(--macro-carbs)'
@@ -89,13 +90,23 @@ export function MacrosProgress({ protein, carbs, fats }: MacrosProgressProps) {
         <EditIcon onClick={edit} />
         <div className='macros-container'>
           {macros.map((macro) => (
-            <div className='macro-container' key={`progress-${macro.name}`}>
+            <div
+              className={`macro-container ${macro.name.toLowerCase()}`}
+              key={`progress-${macro.name}`}
+            >
               <CircularProgress
                 value={macro.value.percentage}
                 text={`${macro.value.gram.toFixed(0)}`}
                 color={macro.color}
               />
               <span>{macro.name}</span>
+              <GoalBanner
+                current={(
+                  (macro.value.percentage / 100) *
+                  macro.value.gram
+                ).toFixed(0)}
+                goal={macro.value.gram.toFixed(0)}
+              />
             </div>
           ))}
         </div>

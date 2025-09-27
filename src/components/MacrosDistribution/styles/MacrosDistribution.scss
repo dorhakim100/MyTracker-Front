@@ -10,8 +10,12 @@
 
 .macros-distribution .totals {
   text-align: center;
-}
+  .value {
+    font-weight: 700;
+    font-size: 1.8rem;
+  }
 
-.macros-distribution .totals .value {
-  font-weight: 700;
+  .label {
+    font-size: 1.2rem;
+  }
 }
