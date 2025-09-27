@@ -10,6 +10,8 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { weightService } from '../../services/weight/weight.service'
 import { Weight } from '../../types/weight/Weight'
+import { getDateFromISO } from '../../services/util.service'
+import { TimesContainer } from '../TimesContainer/TimesContainer'
 
 interface WeightChartProps {
   className?: string
@@ -26,9 +28,11 @@ export function WeightChart({ className = '' }: WeightChartProps) {
     (stateSelector: RootState) => stateSelector.userModule.user
   )
 
-  const [range, setRange] = useState<LineChartRangeKey>('3M')
+  const [range, setRange] = useState<LineChartRangeKey>('1M')
 
   const [weights, setWeights] = useState<Weight[]>([])
+
+  const [selectedDate, setSelectedDate] = useState(new Date())
 
   const data = useMemo(() => {
     const series = prepareSeries(range, weights)
@@ -49,6 +53,11 @@ export function WeightChart({ className = '' }: WeightChartProps) {
       ],
     }
   }, [range, weights])
+
+  const weightsForSelectedDate = useMemo(() => {
+    return '94.2'
+    // return weights.filter((w) => getDateFromISO(w.createdAt) === selectedDate)
+  }, [weights, selectedDate])
 
   useEffect(() => {
     const fetchWeights = async () => {
@@ -109,11 +118,15 @@ export function WeightChart({ className = '' }: WeightChartProps) {
   }
 
   return (
-    <div className={`weight-chart ${className}`.trim()}>
+    <div className={`weight-chart ${className}`}>
       <div className='header'>
-        <h3 className='title'>{LABEL}</h3>
+        {/* <h3 className='title'>{LABEL}</h3> */}
+        <h3 className='title'>
+          {weightsForSelectedDate} <span className='kg'>kg</span>
+        </h3>
+        <TimesContainer selectedDay={selectedDate} isClock={false} />
       </div>
-      <div className='chart-wrapper'>
+      <div className='chart-container'>
         <LineChart data={data} interpolateGaps={true} spanGaps={true} />
       </div>
       <LineChartControls value={range} onChange={setRange} />

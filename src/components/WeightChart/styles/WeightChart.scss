@@ -1,21 +1,33 @@
 .weight-chart {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
+  margin-top: 1rem;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 0.8rem;
 
-.weight-chart .header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
+  .header {
+    display: grid;
 
-.weight-chart .title {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 600;
-}
+    align-items: center;
+    justify-items: start;
 
-.weight-chart .chart-wrapper {
-  width: 100%;
+    gap: 0.5rem;
+
+    .title {
+      margin: 0;
+      font-size: 2rem;
+      font-weight: 600;
+
+      .kg {
+        font-size: 1.5rem;
+        font-weight: 400;
+      }
+    }
+  }
+
+  .chart-container {
+    canvas {
+      width: 90vw !important;
+      height: calc(90vw * 0.5) !important;
+    }
+  }
 }
