@@ -252,3 +252,9 @@ export function getDaysInMonth(date: Date = new Date()): number[] {
 export function getDaysOfMonth(date: Date): string[] {
   return getDaysInMonth(date).map((day) => day + '')
 }
+
+export function getFullDate(stringDate: string) {
+  const year = new Date().getFullYear()
+  const [day, month] = stringDate.split('/')
+  return new Date(year, +month - 1, +day)
+}

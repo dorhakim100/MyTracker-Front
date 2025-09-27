@@ -1,5 +1,5 @@
 import { Line } from 'react-chartjs-2'
-import { useMemo } from 'react'
+import { useMemo, useRef } from 'react'
 import type {
   ChartData,
   ChartOptions,
@@ -39,6 +39,7 @@ interface LineChartProps {
   }
   spanGaps?: boolean | number
   interpolateGaps?: boolean
+  onLineClick?: (index: number) => void
 }
 
 const defaultData = {
@@ -57,6 +58,7 @@ export function LineChart({
   data = defaultData,
   spanGaps = false,
   interpolateGaps = false,
+  onLineClick,
 }: LineChartProps) {
   const interpolateSeries = (series: (number | null)[]): (number | null)[] => {
     if (!interpolateGaps) return series
@@ -81,7 +83,9 @@ export function LineChart({
     }
     return result
   }
+  const chartRef = useRef<ChartJS<'line'>>(null)
 
+  // const [clickedIndex, setClickedIndex] = useState<number | null>(null)
   const processedData = useMemo<
     ChartData<'line', (number | null)[], string>
   >(() => {
@@ -122,5 +126,28 @@ export function LineChart({
     },
   }
 
-  return <Line data={processedData} options={options} />
+  const handleClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    const chart = chartRef.current
+
+    if (!chart) return
+    const elements = chart.getElementsAtEventForMode(
+      e.nativeEvent as unknown as Event,
+      'nearest',
+      { intersect: false },
+      true
+    )
+    if (elements.length) {
+      // setClickedIndex(elements[0].index)
+      onLineClick?.(elements[0].index)
+    }
+  }
+
+  return (
+    <Line
+      data={processedData}
+      options={options}
+      onClick={handleClick}
+      ref={chartRef}
+    />
+  )
 }

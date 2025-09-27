@@ -10,14 +10,16 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { weightService } from '../../services/weight/weight.service'
 import { Weight } from '../../types/weight/Weight'
-import { getDateFromISO } from '../../services/util.service'
+
 import { TimesContainer } from '../TimesContainer/TimesContainer'
+import { getFullDate } from '../../services/util.service'
 
 interface WeightChartProps {
   className?: string
 }
 
 const LABEL = 'Weight'
+const NOT_LOGGED = 'Not logged'
 
 export function WeightChart({ className = '' }: WeightChartProps) {
   const prefs = useSelector(
@@ -33,6 +35,7 @@ export function WeightChart({ className = '' }: WeightChartProps) {
   const [weights, setWeights] = useState<Weight[]>([])
 
   const [selectedDate, setSelectedDate] = useState(new Date())
+  const [selectedWeight, setSelectedWeight] = useState<number | string>(0)
 
   const data = useMemo(() => {
     const series = prepareSeries(range, weights)
@@ -54,17 +57,13 @@ export function WeightChart({ className = '' }: WeightChartProps) {
     }
   }, [range, weights])
 
-  const weightsForSelectedDate = useMemo(() => {
-    return '94.2'
-    // return weights.filter((w) => getDateFromISO(w.createdAt) === selectedDate)
-  }, [weights, selectedDate])
-
   useEffect(() => {
     const fetchWeights = async () => {
       const weights = await weightService.query({
         userId: user?._id,
       })
       setWeights(weights)
+      setSelectedWeight(weights[0].kg)
     }
     fetchWeights()
   }, [user?._id])
@@ -117,17 +116,36 @@ export function WeightChart({ className = '' }: WeightChartProps) {
     return { labels, data }
   }
 
+  const handleLineClick = (index: number) => {
+    console.log('index', index)
+    // const weight = weights[index]
+    const weight = data.datasets[0].data[index]
+
+    setSelectedWeight(weight ?? NOT_LOGGED)
+    const date = data.labels[index]
+
+    console.log(getFullDate(date))
+
+    setSelectedDate(getFullDate(date))
+  }
+
   return (
     <div className={`weight-chart ${className}`}>
       <div className='header'>
         {/* <h3 className='title'>{LABEL}</h3> */}
         <h3 className='title'>
-          {weightsForSelectedDate} <span className='kg'>kg</span>
+          {selectedWeight}{' '}
+          {selectedWeight !== NOT_LOGGED && <span className='kg'>kg</span>}
         </h3>
         <TimesContainer selectedDay={selectedDate} isClock={false} />
       </div>
       <div className='chart-container'>
-        <LineChart data={data} interpolateGaps={true} spanGaps={true} />
+        <LineChart
+          data={data}
+          interpolateGaps={true}
+          spanGaps={true}
+          onLineClick={handleLineClick}
+        />
       </div>
       <LineChartControls value={range} onChange={setRange} />
     </div>
