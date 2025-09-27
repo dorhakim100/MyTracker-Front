@@ -205,7 +205,12 @@ async function searchById(id: string, source: string) {
         break
       case searchTypes.usda:
         res = await getFoodById(id)
+
         break
+    }
+
+    if (res) {
+      await addToCache(res as Item, ITEMS_CACHE)
     }
 
     return res

@@ -59,6 +59,11 @@ export function UserDetails() {
     (storeState: RootState) => storeState.systemModule.prefs
   )
 
+  const user = useSelector(
+    (storeState: RootState) => storeState.userModule.user
+  )
+  console.log('user', user)
+
   const acrodions = [
     {
       title: 'Meals',
