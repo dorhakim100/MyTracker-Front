@@ -22,10 +22,11 @@ interface WeightChartProps {
 interface Stats {
   selectedDate: Date
   selectedWeight: number | string
-  isEstimated: boolean
+  message: string
 }
 
 const LABEL = 'Weight'
+const GOAL_WEIGHT = 94
 
 export function WeightChart({ className = '' }: WeightChartProps) {
   const prefs = useSelector(
@@ -43,7 +44,7 @@ export function WeightChart({ className = '' }: WeightChartProps) {
   const [stats, setStats] = useState<Stats>({
     selectedDate: new Date(),
     selectedWeight: 0,
-    isEstimated: false,
+    message: '',
   })
 
   const data = useMemo(() => {
@@ -75,7 +76,7 @@ export function WeightChart({ className = '' }: WeightChartProps) {
       setStats({
         selectedDate: new Date(),
         selectedWeight: weights[0].kg,
-        isEstimated: false,
+        message: '',
       })
     }
     fetchWeights()
@@ -129,15 +130,27 @@ export function WeightChart({ className = '' }: WeightChartProps) {
     return { labels, data }
   }
 
-  const handleLineClick = (index: number, estimatedValue: number) => {
+  const handleLineClick = (
+    index: number,
+    estimatedValue: number,
+    isBaseline?: boolean
+  ) => {
     estimatedValue = +estimatedValue.toFixed(1)
 
-    const weight = data.datasets[0].data[index]
+    let weight = data.datasets[0].data[index]
+    let messageToSet = ''
+
+    if (isBaseline) {
+      messageToSet = 'Goal weight'
+      weight = GOAL_WEIGHT
+    } else if (!weight && estimatedValue) {
+      messageToSet = 'Estimated weight'
+    }
 
     setStats({
       selectedDate: getFullDate(data.labels[index]),
       selectedWeight: weight ?? estimatedValue,
-      isEstimated: weight ? false : true,
+      message: messageToSet || '',
     })
   }
 
@@ -150,8 +163,8 @@ export function WeightChart({ className = '' }: WeightChartProps) {
             {stats.selectedWeight && <span className='kg'>kg</span>}
           </h3>
 
-          {stats.isEstimated && (
-            <Typography variant='caption'>Estimated</Typography>
+          {stats.message && (
+            <Typography variant='caption'>{stats.message}</Typography>
           )}
         </div>
 
@@ -163,7 +176,7 @@ export function WeightChart({ className = '' }: WeightChartProps) {
           interpolateGaps={true}
           spanGaps={true}
           onLineClick={handleLineClick}
-          baseline={80}
+          baseline={GOAL_WEIGHT}
         />
       </div>
       <LineChartControls value={range} onChange={setRange} />

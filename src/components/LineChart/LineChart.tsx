@@ -43,7 +43,11 @@ interface LineChartProps {
   baseline?: number
   baselineColor?: string
   baselineLabel?: string
-  onLineClick?: (index: number, estimatedValue: number) => void
+  onLineClick?: (
+    index: number,
+    estimatedValue: number,
+    isBaseline?: boolean
+  ) => void
 }
 
 const defaultData = {
@@ -112,7 +116,7 @@ export function LineChart({
         tension: 0,
         borderDash: [6, 4],
         pointRadius: 0,
-        hoverRadius: 0,
+        // hoverRadius: 0,
       })
     }
 
@@ -162,9 +166,12 @@ export function LineChart({
       const { datasetIndex, index } = elements[0]
       const ds = chart.data.datasets[datasetIndex]
       const estimatedValue = (ds.data as (number | null)[])[index]
+      const isBaseline = ds.label === baselineLabel
+      console.log('isBaseline', isBaseline)
       onLineClick?.(
         index,
-        typeof estimatedValue === 'number' ? estimatedValue : 0
+        typeof estimatedValue === 'number' ? estimatedValue : 0,
+        isBaseline
       )
     }
   }
