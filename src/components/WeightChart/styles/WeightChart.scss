@@ -6,11 +6,11 @@
 
   .header {
     display: grid;
-
     align-items: center;
     justify-items: start;
-
     gap: 0.5rem;
+
+    padding: 0 0.5rem;
 
     .weight-container {
       display: flex;
