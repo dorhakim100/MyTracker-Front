@@ -19,6 +19,10 @@ import { SlideAnimation } from '../../components/SlideAnimation/SlideAnimation'
 import { setSelectedDiaryDay } from '../../store/actions/user.actions'
 import { MealPeriod } from '../../types/mealPeriod/MealPeriod'
 import { AddItemButton } from '../../components/AddItemButton/AddItemButton'
+import DonutLargeIcon from '@mui/icons-material/DonutLarge'
+import WbTwilightIcon from '@mui/icons-material/WbTwilight'
+import LightModeIcon from '@mui/icons-material/LightMode'
+import BedtimeIcon from '@mui/icons-material/Bedtime'
 
 import { getDateFromISO } from '../../services/util.service'
 import { CustomDatePicker } from '../../CustomMui/CustomDatePicker/CustomDatePicker'
@@ -53,16 +57,19 @@ export function Diary() {
       label: 'Breakfast',
       period: 'breakfast',
       rangeLabel: '06:00 – 12:00',
+      icon: <WbTwilightIcon />,
     },
     {
       label: 'Lunch',
       period: 'lunch',
       rangeLabel: '12:00 – 18:00',
+      icon: <LightModeIcon />,
     },
     {
       label: 'Dinner',
       period: 'dinner',
       rangeLabel: '18:00 – 00:00',
+      icon: <BedtimeIcon />,
     },
   ]
 
@@ -204,6 +211,7 @@ export function Diary() {
                 }
               />
             }
+            icon={<DonutLargeIcon />}
           />
         </div>
 
@@ -229,7 +237,10 @@ export function Diary() {
                   key={meal.label}
                 >
                   <div className='header'>
-                    <Typography variant='h6'>{meal.label}</Typography>
+                    <div className='label-container'>
+                      {meal.icon}
+                      <Typography variant='h6'>{meal.label}</Typography>
+                    </div>
                     <Typography variant='body2' className='period'>
                       {meal.rangeLabel}
                     </Typography>

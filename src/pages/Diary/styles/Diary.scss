@@ -9,6 +9,12 @@
     align-items: end;
     gap: 0.4rem;
 
+    .label-container {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
     .time-controls-container {
       display: grid;
       grid-template-columns: 40px 1fr 40px;

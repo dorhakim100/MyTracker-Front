@@ -261,7 +261,7 @@ export function FixedBottomNavigation(props: {
             <BarcodeScanner onClose={closeSearchModal} />
           )
         }
-        title={modalType === modalTypes.search ? 'Search' : 'Scan'}
+        title={modalType === modalTypes.search ? 'Search Food' : 'Scan'}
         onSave={() => {}}
         type={modalType === modalTypes.search ? 'full' : 'half'}
       />
