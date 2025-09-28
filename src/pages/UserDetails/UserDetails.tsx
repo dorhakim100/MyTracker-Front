@@ -348,7 +348,7 @@ function MealsCard() {
         fullWidth
         onClick={onAddMeal}
       />
-      {!user?.meals.length && (
+      {!user?.meals?.length && (
         <Typography variant='h6'>No meals added yet</Typography>
       )}
       {user?.meals && user?.meals.length > 0 && (

@@ -65,9 +65,8 @@ export function LoggedList({ mealPeriod }: { mealPeriod: MealPeriod }) {
 
   async function handleLoadItems() {
     try {
-      loadItems() // optimistic update from cache, no need to await
+      // loadItems() // optimistic update from cache, no need to await
       if (!logs || !logs.length) return
-      // console.log('logs', logs)
 
       await searchService.searchBulkIds(logs) // actual update from api
       await loadItems() // actual update from api
