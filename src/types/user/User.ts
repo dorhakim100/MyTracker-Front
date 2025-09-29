@@ -20,7 +20,8 @@ export interface User {
   favoriteItems: string[]
   meals: Meal[]
 
-  weights: Weight[]
+  weights?: Weight[]
+  lastWeight?: Weight
 }
 
 export interface UserDetails {

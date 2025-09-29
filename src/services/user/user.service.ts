@@ -79,8 +79,8 @@ async function update(user: User) {
     const { _id } = user
 
     const mealsIds = user.meals.map((meal) => meal._id)
-    const weightsIds = user.weights.map((weight) => weight._id)
-    const userToSend = { ...user, mealsIds, weightsIds }
+    // const weightsIds = user.weights.map((weight) => weight._id)
+    const userToSend = { ...user, mealsIds }
 
     const savedUser = await httpService.put(`user/${_id}`, userToSend)
 
@@ -217,7 +217,8 @@ function saveLoggedinUser(user: User) {
       loggedToday: user.loggedToday,
       favoriteItems: user.favoriteItems ?? [],
       meals: user.meals ?? [],
-      weights: user.weights ?? [],
+      lastWeight: user.lastWeight,
+      // weights: user.weights ?? [],
     }
     sessionStorage.setItem(STORAGE_KEY_LOGGEDIN_USER, JSON.stringify(user))
     return user

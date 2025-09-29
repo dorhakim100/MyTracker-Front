@@ -95,14 +95,12 @@ export function WeightChart({ className = '' }: WeightChartProps) {
       }
       fromDate.setDate(fromDate.getDate() - limit)
       toDate.setDate(toDate.getDate() + 1)
-      console.log('fromDate', fromDate.toISOString())
-      console.log('toDate', toDate.toISOString())
+
       const weights = await weightService.query({
         userId: user?._id,
         fromDate: fromDate.toISOString(),
         toDate: toDate.toISOString(),
       })
-      console.log('weights', weights)
 
       setWeights(weights)
       setStats({

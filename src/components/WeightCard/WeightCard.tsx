@@ -4,11 +4,7 @@ import { Card, Typography } from '@mui/material'
 import { RootState } from '../../store/store'
 import { useSelector } from 'react-redux'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
-import {
-  optimisticUpdateUser,
-  updateUser,
-} from '../../store/actions/user.actions'
-import { User } from '../../types/user/User'
+
 import { showSuccessMsg, showErrorMsg } from '../../services/event-bus.service'
 import { messages } from '../../assets/config/messages'
 import { setSelectedDiaryDay } from '../../store/actions/user.actions'
@@ -60,7 +56,7 @@ export function WeightCard() {
         userId: user?._id,
       })
       const loggedWeight =
-        today.weight?.kg || user?.weights[0].kg || DEFAULT_WEIGHT
+        today.weight?.kg || user?.lastWeight?.kg || DEFAULT_WEIGHT
       setWeightToAdd(loggedWeight)
       setSelectedDiaryDay(today)
     }
@@ -84,40 +80,12 @@ export function WeightCard() {
         createdAt: dateToSave,
       }
 
-      let userToUpdate
-
-      const existingWeightIdx = user?.weights.findIndex(
-        (weight) => weight.createdAt === dateToSave
-      )
-      if (existingWeightIdx !== -1) {
-        user.weights[existingWeightIdx].kg = value
-
-        userToUpdate = {
-          ...user,
-          weights: [...user.weights],
-        }
-        weightToSave._id = user.weights[existingWeightIdx]._id
-      } else {
-        const newWeights = [...user.weights, weightToSave]
-        newWeights.sort(
-          (a, b) =>
-            new Date(a.createdAt + '').getTime() -
-            new Date(b.createdAt + '').getTime()
-        )
-        userToUpdate = {
-          ...user,
-          weights: newWeights,
-        }
-      }
-      optimisticUpdateUser(userToUpdate as User)
       const savedWeight = await weightService.save(weightToSave)
+      setSelectedDiaryDay({
+        ...selectedDay,
+        weight: savedWeight,
+      } as LoggedToday)
 
-      const index = userToUpdate.weights.findIndex(
-        (weight) => weight.createdAt === dateToSave
-      )
-      userToUpdate.weights[index] = savedWeight
-
-      await updateUser(userToUpdate as User)
       showSuccessMsg(messages.success.updateWeight)
     } catch (err) {
       console.log('err', err)
@@ -193,6 +161,7 @@ import { getArrayOfNumbers, getDateFromISO } from '../../services/util.service'
 import { weightService } from '../../services/weight/weight.service'
 import { dayService } from '../../services/day/day.service'
 import { CustomDatePicker } from '../../CustomMui/CustomDatePicker/CustomDatePicker'
+import { LoggedToday } from '../../types/loggedToday/LoggedToday'
 
 interface EditComponentProps {
   value: number

@@ -57,7 +57,7 @@ export function BmrCard() {
 
   const [form, setForm] = useState<BmrFormState>({
     ...bmrService.getDefaultFormState(),
-    weightKg: Math.round(user?.weights[0]?.kg || DEFAULT_WEIGHT) + '',
+    weightKg: Math.round(user?.lastWeight?.kg || DEFAULT_WEIGHT) + '',
     gender: user?.details?.gender || DEFAULT_GENDER,
     ageYears: calculatedAge + '',
     heightCm: (user?.details?.height || DEFAULT_HEIGHT) + '',
