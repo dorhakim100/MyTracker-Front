@@ -72,13 +72,38 @@ export function WeightChart({ className = '' }: WeightChartProps) {
         },
       ],
     }
-  }, [range, weights])
+  }, [weights])
 
   useEffect(() => {
     const fetchWeights = async () => {
+      const fromDate = new Date()
+      const toDate = new Date()
+      let limit = 0
+      switch (range) {
+        case '1M':
+          limit = 30
+          break
+        case '3M':
+          limit = 90
+          break
+        case '6M':
+          limit = 180
+          break
+        case '1Y':
+          limit = 365
+          break
+      }
+      fromDate.setDate(fromDate.getDate() - limit)
+      toDate.setDate(toDate.getDate() + 1)
+      console.log('fromDate', fromDate.toISOString())
+      console.log('toDate', toDate.toISOString())
       const weights = await weightService.query({
         userId: user?._id,
+        fromDate: fromDate.toISOString(),
+        toDate: toDate.toISOString(),
       })
+      console.log('weights', weights)
+
       setWeights(weights)
       setStats({
         selectedDate: new Date(),
@@ -88,7 +113,7 @@ export function WeightChart({ className = '' }: WeightChartProps) {
       })
     }
     fetchWeights()
-  }, [user?._id])
+  }, [user?._id, range])
 
   function prepareSeries(range: LineChartRangeKey, weights: Weight[]) {
     const sorted = [...weights].sort((a, b) => a.createdAt - b.createdAt)
