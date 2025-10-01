@@ -1,0 +1,20 @@
+.custom-stepper {
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  gap: 0.5rem;
+
+  .custom-stepper-stage {
+    min-height: 180px;
+  }
+
+  .custom-stepper-footer {
+    display: grid;
+    gap: 0.5rem;
+
+    .buttons-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+    }
+  }
+}
