@@ -21,6 +21,8 @@
     // justify-content: space-between;
     gap: 0.8rem;
 
+    margin-bottom: 0.8rem;
+
     .image-preview {
       width: 6rem;
       height: 6rem;
@@ -78,7 +80,7 @@
   .save-button-container {
     width: 100%;
     display: grid;
-    justify-items: end;
+    // justify-items: end;
     margin-top: 1rem;
   }
 }

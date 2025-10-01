@@ -156,8 +156,11 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
         {inputs.map((input) => {
           if (input.type === 'image')
             return (
-              <>
-                <div className='avatar-field' key={`${input.key}-edit-user`}>
+              <div
+                key={`${input.key}-edit-user`}
+                className='avatar-field-container'
+              >
+                <div className='avatar-field'>
                   <div className='image-preview box-shadow white-outline'>
                     {input.value ? (
                       <img src={input.value as string} alt='avatar' />
@@ -177,7 +180,7 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
                 <Divider
                   className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
                 />
-              </>
+              </div>
             )
           if (input.type === 'text')
             return (

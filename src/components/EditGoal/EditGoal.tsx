@@ -1,4 +1,4 @@
-import { useMemo, useState, useRef, useCallback } from 'react'
+import { useMemo, useState, useRef } from 'react'
 import { useSelector } from 'react-redux'
 import { Goal } from '../../types/goal/Goal'
 import CustomStepper from '../../CustomMui/CustomStepper/CustomStepper'
@@ -20,7 +20,6 @@ import lossAnimation from '../../../public/loss-weight.json'
 import maintainAnimation from '../../../public/maintain-weight.json'
 import gainAnimation from '../../../public/gain-weight.json'
 import { SlideAnimation } from '../SlideAnimation/SlideAnimation'
-import { se } from 'date-fns/locale'
 
 interface EditGoalProps {
   selectedGoal?: Goal | null
