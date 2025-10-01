@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { Goal } from '../../types/goal/Goal'
 import CustomStepper from '../../CustomMui/CustomStepper/CustomStepper'
@@ -44,21 +44,16 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
   )
   const [activeStage, setActiveStage] = useState<string>(stages[0])
   const [direction, setDirection] = useState(1)
-  const [targetAnimation, setTargetAnimation] = useState('')
   const [selectedTarget, setSelectedTarget] = useState<string>('')
 
-  useEffect(() => {
+  const targetAnimation = useMemo(() => {
     switch (selectedTarget) {
       case 'lose':
-        setTargetAnimation(lossAnimation)
-        break
-
+        return lossAnimation
       case 'gain':
-        setTargetAnimation(gainAnimation)
-        break
+        return gainAnimation
       default:
-        setTargetAnimation(maintainAnimation)
-        break
+        return maintainAnimation
     }
   }, [selectedTarget])
 
@@ -180,6 +175,7 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
         title={getStageTitle}
         direction={direction}
         getIsNextDisabled={getIsNextDisabled}
+        onFinish={() => saveGoal(editGoal)}
       />
     </div>
   )
