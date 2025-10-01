@@ -225,7 +225,7 @@ export function WeightChart({ className = '' }: WeightChartProps) {
         </div>
       </Card>
       <LineChartControls value={range} onChange={setRange} />
-      <WeightCard />
+      {/* <WeightCard /> */}
     </div>
   )
 }
