@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Divider, Typography } from '@mui/material'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
@@ -73,11 +73,21 @@ export function BmrCard() {
       heightCm: height,
       weightKg: weight,
     })
-  }, [form])
+  }, [form, user])
 
   //   const activityBuffer = useMemo(() => {
   //     return bmrService.calculateActivityBuffer(bmr, form.activity)
   //   }, [bmr, form.activity])
+
+  useEffect(() => {
+    if (user && user.lastWeight)
+      setForm({
+        ...form,
+        gender: user.details.gender,
+        heightCm: user.details.height + '',
+        weightKg: Math.round(user.lastWeight.kg) + '',
+      })
+  }, [user])
 
   const tdee = useMemo(() => {
     return bmrService.calculateTDEE(bmr, form.activity)

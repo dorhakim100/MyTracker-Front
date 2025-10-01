@@ -7,7 +7,10 @@ import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 
 import { showSuccessMsg, showErrorMsg } from '../../services/event-bus.service'
 import { messages } from '../../assets/config/messages'
-import { setSelectedDiaryDay } from '../../store/actions/user.actions'
+import {
+  optimisticUpdateUser,
+  setSelectedDiaryDay,
+} from '../../store/actions/user.actions'
 import { Weight } from '../../types/weight/Weight'
 
 const DEFAULT_WEIGHT = 60
@@ -80,7 +83,19 @@ export function WeightCard() {
         createdAt: dateToSave,
       }
 
+      if (selectedDay?.weight?._id) {
+        weightToSave._id = selectedDay.weight._id
+      }
+
       const savedWeight = await weightService.save(weightToSave)
+
+      const todayIso = getDateFromISO(new Date().toISOString())
+      console.log('todayIso', todayIso)
+      console.log('selectedDay?.date', selectedDay?.date)
+      if (selectedDay?.date === todayIso) {
+        optimisticUpdateUser({ ...user, lastWeight: savedWeight })
+      }
+
       setSelectedDiaryDay({
         ...selectedDay,
         weight: savedWeight,
