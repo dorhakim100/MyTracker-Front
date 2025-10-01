@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useRef, useCallback } from 'react'
 import { useSelector } from 'react-redux'
 import { Goal } from '../../types/goal/Goal'
 import CustomStepper from '../../CustomMui/CustomStepper/CustomStepper'
@@ -19,6 +19,8 @@ import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import lossAnimation from '../../../public/loss-weight.json'
 import maintainAnimation from '../../../public/maintain-weight.json'
 import gainAnimation from '../../../public/gain-weight.json'
+import { SlideAnimation } from '../SlideAnimation/SlideAnimation'
+import { se } from 'date-fns/locale'
 
 interface EditGoalProps {
   selectedGoal?: Goal | null
@@ -44,7 +46,9 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
   )
   const [activeStage, setActiveStage] = useState<string>(stages[0])
   const [direction, setDirection] = useState(1)
-  const [selectedTarget, setSelectedTarget] = useState<string>('')
+  const [selectedTarget, setSelectedTarget] = useState<string>('maintain')
+
+  const prevAnimation = useRef<string>(selectedTarget)
 
   const targetAnimation = useMemo(() => {
     switch (selectedTarget) {
@@ -55,6 +59,25 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
       default:
         return maintainAnimation
     }
+  }, [selectedTarget])
+
+  const targetAnimationDirection = useMemo(() => {
+    let direction = 0
+    switch (selectedTarget) {
+      case 'lose':
+        direction = -1
+        break
+      case 'gain':
+        direction = 1
+        break
+      case 'maintain':
+        direction = prevAnimation.current === 'lose' ? 1 : -1
+        break
+      default:
+        direction = 1
+    }
+    prevAnimation.current = selectedTarget
+    return direction
   }, [selectedTarget])
 
   const targets = [
@@ -139,7 +162,13 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
           })}
         </div>
         <div className='animation-container'>
-          <Lottie animationData={targetAnimation} loop={true} />
+          <SlideAnimation
+            motionKey={selectedTarget}
+            direction={targetAnimationDirection}
+            duration={0.25}
+          >
+            <Lottie animationData={targetAnimation} loop={true} />
+          </SlideAnimation>
         </div>
       </div>
     )
