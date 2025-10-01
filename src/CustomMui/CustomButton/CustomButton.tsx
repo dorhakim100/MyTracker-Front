@@ -83,8 +83,8 @@ export function CustomButton({
           onClick={onClick}
           disabled={disabled}
           className={`custom-button ${className || ''} ${
-            disabled ? 'disabled' : ''
-          }`}
+            prefs.favoriteColor || ''
+          } ${disabled ? 'disabled' : ''}`}
         >
           {text}
           {icon && icon}
