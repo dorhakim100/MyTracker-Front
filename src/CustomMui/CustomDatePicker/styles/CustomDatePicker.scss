@@ -24,3 +24,114 @@
     border-color: $white !important;
   }
 }
+
+body {
+  &.primary {
+    .MuiPickersDay-root.Mui-selected,
+    .css-r75yrr-MuiButtonBase-root-MuiButton-root {
+      background-color: $primary-color !important;
+      color: $white;
+    }
+
+    .MuiDayCalendar-weekDayLabel,
+    .MuiPickersToolbar-title {
+      color: $primary-color !important;
+    }
+  }
+  &.blue {
+    .MuiPickersDay-root.Mui-selected,
+    .css-r75yrr-MuiButtonBase-root-MuiButton-root {
+      background-color: $picker-color-blue !important;
+      color: $white;
+    }
+
+    .MuiDayCalendar-weekDayLabel,
+    .MuiPickersToolbar-title {
+      color: $picker-color-blue !important;
+    }
+  }
+  &.red {
+    .MuiPickersDay-root.Mui-selected,
+    .css-r75yrr-MuiButtonBase-root-MuiButton-root {
+      background-color: $picker-color-red !important;
+      color: $white;
+    }
+
+    .MuiDayCalendar-weekDayLabel,
+    .MuiPickersToolbar-title {
+      color: $picker-color-red !important;
+    }
+  }
+  &.yellow {
+    .MuiPickersDay-root.Mui-selected,
+    .css-r75yrr-MuiButtonBase-root-MuiButton-root {
+      background-color: $picker-color-yellow !important;
+      color: $white;
+    }
+
+    .MuiDayCalendar-weekDayLabel,
+    .MuiPickersToolbar-title {
+      color: $picker-color-yellow !important;
+    }
+  }
+  &.green {
+    .MuiPickersDay-root.Mui-selected,
+    .css-r75yrr-MuiButtonBase-root-MuiButton-root {
+      background-color: $picker-color-green !important;
+      color: $white;
+    }
+
+    .MuiDayCalendar-weekDayLabel,
+    .MuiPickersToolbar-title {
+      color: $picker-color-green !important;
+    }
+  }
+  &.orange {
+    .MuiPickersDay-root.Mui-selected,
+    .css-r75yrr-MuiButtonBase-root-MuiButton-root {
+      background-color: $picker-color-orange !important;
+      color: $white;
+    }
+
+    .MuiDayCalendar-weekDayLabel,
+    .MuiPickersToolbar-title {
+      color: $picker-color-orange !important;
+    }
+  }
+  &.deepPurple {
+    .MuiPickersDay-root.Mui-selected,
+    .css-r75yrr-MuiButtonBase-root-MuiButton-root {
+      background-color: $picker-color-deep-purple !important;
+      color: $white;
+    }
+
+    .MuiDayCalendar-weekDayLabel,
+    .MuiPickersToolbar-title {
+      color: $picker-color-deep-purple !important;
+    }
+  }
+  &.purple {
+    .MuiPickersDay-root.Mui-selected,
+    .css-r75yrr-MuiButtonBase-root-MuiButton-root {
+      background-color: $picker-color-purple !important;
+      color: $white;
+    }
+
+    .MuiDayCalendar-weekDayLabel,
+    .MuiPickersToolbar-title {
+      color: $picker-color-purple !important;
+    }
+  }
+  &.pink {
+    .MuiPickersDay-root.Mui-selected,
+    .css-r75yrr-MuiButtonBase-root-MuiButton-root {
+      background-color: $picker-color-pink !important;
+      color: $white;
+    }
+
+    .MuiDayCalendar-weekDayLabel,
+    .MuiPickersToolbar-title {
+      color: $picker-color-pink !important;
+    }
+  }
+}

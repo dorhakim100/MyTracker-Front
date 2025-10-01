@@ -45,6 +45,7 @@ function App() {
     } else {
       document.body.classList.remove('dark-mode')
     }
+    document.body.classList.add(prefs.favoriteColor || '')
   }, [prefs])
 
   useEffect(() => {

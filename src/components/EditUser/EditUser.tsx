@@ -210,7 +210,7 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
                 <CustomDatePicker
                   value={isoDate}
                   onChange={setIsoDate}
-                  className='field'
+                  className={`field ${prefs.favoriteColor}`}
                 />
               </div>
             )

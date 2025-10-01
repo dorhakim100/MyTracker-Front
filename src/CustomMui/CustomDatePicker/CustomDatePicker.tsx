@@ -49,6 +49,7 @@ export function CustomDatePicker({
         onClick={onOpen}
         className={`custom-date-picker-button ${className || ''}`}
       />
+
       <MobileDatePicker
         value={dateValue}
         onChange={(newDate: Date | null) => {
