@@ -1,6 +1,7 @@
 .custom-list {
   &.dark-mode {
-    .MuiListItemText-secondary {
+    .MuiListItemText-secondary,
+    .MuiTypography-body2 {
       // color: $dark-gray;
       opacity: 0.7;
       color: $white;

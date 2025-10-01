@@ -36,11 +36,13 @@ import { searchUrls } from '../../assets/config/search.urls'
 import { SwipeAction } from 'react-swipeable-list'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { WeightCard } from '../../components/WeightCard/WeightCard'
+import { GoalsCard } from '../../components/GoalsCard/GoalsCard'
 import { BmrCard } from '../../components/BmrCard/BmrCard'
 import RestaurantMenuIcon from '@mui/icons-material/RestaurantMenu'
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
 import CalculateIcon from '@mui/icons-material/Calculate'
 import SettingsIcon from '@mui/icons-material/Settings'
+import ModeStandbyIcon from '@mui/icons-material/ModeStandby'
 
 const colors = {
   primary: '--var(--primary-color)',
@@ -70,6 +72,12 @@ export function UserDetails() {
       cmp: <MealsCard />,
       icon: <RestaurantMenuIcon />,
       key: 'meals',
+    },
+    {
+      title: 'Goals',
+      cmp: <GoalsCard />,
+      icon: <ModeStandbyIcon />,
+      key: 'goals',
     },
     {
       title: 'Favorite Items',
