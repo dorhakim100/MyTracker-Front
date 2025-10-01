@@ -32,6 +32,13 @@ body {
     }
   }
 
+  &:has(.MuiDialog-root) {
+    .page-container,
+    .main {
+      overflow: hidden !important;
+    }
+  }
+
   overflow: hidden;
 
   width: 100%;
