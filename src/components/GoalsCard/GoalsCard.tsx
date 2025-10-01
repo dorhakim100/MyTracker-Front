@@ -5,6 +5,8 @@ import { MacrosDonut } from '../MacrosDonut/MacrosDonut'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import Typography from '@mui/material/Typography'
 import { getDateFromISO } from '../../services/util.service'
+import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
+import AddIcon from '@mui/icons-material/Add'
 
 const DEFAULT_GOAL_TITLE = 'Loss weight'
 
@@ -21,6 +23,12 @@ export function GoalsCard() {
 
   return (
     <div className='goals-card'>
+      <CustomButton
+        text='Add Goal'
+        icon={<AddIcon />}
+        onClick={() => {}}
+        fullWidth
+      />
       <CustomList
         items={user.goals}
         renderPrimaryText={(goal) => goal.title}
