@@ -7,11 +7,6 @@ import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import { RootState } from '../../store/store'
 
 import Typography from '@mui/material/Typography'
-import Divider from '@mui/material/Divider'
-import Stepper from '@mui/material/Stepper'
-import Step from '@mui/material/Step'
-import StepLabel from '@mui/material/StepLabel'
-import { capitalizeFirstLetter } from '../../services/util.service'
 
 import Lottie from 'lottie-react'
 
@@ -25,11 +20,10 @@ import { ItemDetails } from '../ItemDetails/ItemDetails'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { MacrosDistribution } from '../MacrosDistribution/MacrosDistribution'
 import { ItemSearch } from '../ItemSearch/ItemSearch'
-import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt'
+
+import { CustomStepper } from '../../CustomMui/CustomStepper/CustomStepper'
 
 const stages = ['name', 'items']
-
-import { SlideAnimation } from '../SlideAnimation/SlideAnimation'
 
 interface EditMealProps {
   selectedMeal?: Meal | null
@@ -37,14 +31,12 @@ interface EditMealProps {
 }
 
 export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
-  const prefs = useSelector(
-    (stateSelector: RootState) => stateSelector.systemModule.prefs
-  )
-
   const user = useSelector(
     (stateSelector: RootState) => stateSelector.userModule.user
   )
-
+  const prefs = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.prefs
+  )
   const [editMeal, setEditMeal] = useState<Meal>(
     selectedMeal ||
       ({ ...mealService.getEmptyMeal(), createdBy: user?._id } as Meal)
@@ -72,11 +64,6 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
     setEditMeal(newEditMeal)
   }
 
-  // const onSaveMeal = () => {
-  //   console.log('editMeal', editMeal)
-  //   // mealService.save(editMeal)
-  // }
-
   const calcNewMealMacros = useCallback((newItems: MealItem[]) => {
     const newMacros = {
       calories: newItems.reduce((acc, item) => acc + item.macros.calories, 0),
@@ -89,22 +76,20 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
   }, [])
 
   useEffect(() => {
-    // console.log('editMeal', editMeal)
     calcNewMealMacros(editMeal.items)
   }, [editMeal.items, calcNewMealMacros])
 
-  const onChangeStage = (diff: number) => {
+  const onStageChange = (targetStage: string, diff: number) => {
     if (_getDisabledNavButton(diff > 0 ? 'next' : 'previous')) return
-    const next = stages.indexOf(stage) + diff
     setDirection(diff > 0 ? 1 : -1)
-    setStage(stages[next])
+    setStage(targetStage)
   }
 
   const onAddItem = () => {
     setIsOpenModal(true)
     setModalType('search')
   }
-  const onSaveMeal = () => {
+  const onFinish = () => {
     saveMeal(editMeal)
   }
 
@@ -135,7 +120,9 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
             />
             <CustomButton text='Add Item' fullWidth onClick={onAddItem} />
             <CustomList
-              className='edit-meal-list'
+              className={`edit-meal-list ${
+                prefs.isDarkMode ? 'dark-mode' : ''
+              }`}
               items={editMeal.items}
               renderPrimaryText={(item) => item.name}
               renderLeft={(item) => (
@@ -175,50 +162,6 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
           />
         </>
       )
-  }
-
-  const renderNavigationFooter = () => {
-    return (
-      <div className='edit-meal-footer'>
-        <Stepper
-          activeStep={stages.indexOf(stage)}
-          alternativeLabel
-          className={`stepper ${prefs.isDarkMode ? 'dark-mode' : ''} ${
-            prefs.favoriteColor
-          }`}
-        >
-          {stages.map((stage) => (
-            <Step key={stage}>
-              <StepLabel>{capitalizeFirstLetter(stage)}</StepLabel>
-            </Step>
-          ))}
-        </Stepper>
-        <div className='buttons-container'>
-          <CustomButton
-            text='Previous'
-            onClick={() => onChangeStage(-1)}
-            fullWidth
-            disabled={_getDisabledNavButton('previous')}
-          />
-          {stage === stages[stages.length - 1] ? (
-            <CustomButton
-              text='Save'
-              onClick={onSaveMeal}
-              fullWidth
-              icon={<ArrowRightAltIcon />}
-              disabled={editMeal.items.length === 0}
-            />
-          ) : (
-            <CustomButton
-              text='Next'
-              onClick={() => onChangeStage(1)}
-              fullWidth
-              disabled={_getDisabledNavButton('next')}
-            />
-          )}
-        </div>
-      </div>
-    )
   }
 
   const onDeleteItem = (item: MealItem) => {
@@ -305,18 +248,15 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
 
   return (
     <div className='page-container edit-meal-container'>
-      <Typography variant='h6'>
-        {stage === 'name' ? 'Enter Meal Name' : editMeal.name}
-      </Typography>
-
-      <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
-      <div className='stage-container'>
-        <SlideAnimation motionKey={stage} direction={direction} duration={0.25}>
-          {renderStageContent()}
-        </SlideAnimation>
-      </div>
-
-      {renderNavigationFooter()}
+      <CustomStepper
+        stages={stages}
+        activeStage={stage}
+        onStageChange={onStageChange}
+        renderStage={renderStageContent}
+        direction={direction}
+        onFinish={onFinish}
+        finishText='Save'
+      />
     </div>
   )
 }

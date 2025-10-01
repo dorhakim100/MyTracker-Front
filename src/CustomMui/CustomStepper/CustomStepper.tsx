@@ -10,6 +10,7 @@ import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt'
 import { RootState } from '../../store/store'
 import { capitalizeFirstLetter } from '../../services/util.service'
 import { CustomButton } from '../CustomButton/CustomButton'
+import { SlideAnimation } from '../../components/SlideAnimation/SlideAnimation'
 
 interface CustomStepperProps<TStage extends string = string> {
   stages: TStage[]
@@ -25,6 +26,7 @@ interface CustomStepperProps<TStage extends string = string> {
   previousText?: string
   nextText?: string
   footerClassName?: string
+  direction?: number
 }
 
 export function CustomStepper<TStage extends string = string>({
@@ -41,6 +43,7 @@ export function CustomStepper<TStage extends string = string>({
   previousText = 'Previous',
   nextText = 'Next',
   footerClassName,
+  direction = 1,
 }: CustomStepperProps<TStage>) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -83,7 +86,15 @@ export function CustomStepper<TStage extends string = string>({
 
       <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
 
-      <div className='custom-stepper-stage'>{renderStage(activeStage)}</div>
+      <div className='custom-stepper-stage'>
+        <SlideAnimation
+          motionKey={activeStage}
+          direction={direction}
+          duration={0.25}
+        >
+          {renderStage(activeStage)}
+        </SlideAnimation>
+      </div>
 
       <div className={`custom-stepper-footer ${footerClassName || ''}`}>
         <Stepper
