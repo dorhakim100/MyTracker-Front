@@ -258,6 +258,12 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
     }
   }
 
+  const getIsNextDisabled = (stage: string) => {
+    if (stage === 'name') return !editMeal.name
+    if (stage === 'items') return !editMeal.items.length
+    return false
+  }
+
   return (
     <div className='page-container edit-meal-container'>
       <CustomStepper
@@ -269,6 +275,7 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
         onFinish={onFinish}
         finishText='Save'
         title={getStageTitle}
+        getIsNextDisabled={getIsNextDisabled}
       />
     </div>
   )

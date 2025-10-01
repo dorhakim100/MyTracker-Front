@@ -53,7 +53,7 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
         <CustomInput
           value={editGoal.title}
           onChange={(value) => setEditGoal({ ...editGoal, title: value })}
-          placeholder='Goal Title'
+          placeholder='Enter goal title...'
         />
         <div className='animation-container'>
           <Lottie animationData={goalAnimation} loop={false} />
@@ -75,6 +75,13 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
     }
   }
 
+  const getIsNextDisabled = (stage: string) => {
+    if (stage === 'title') return !editGoal.title
+    if (stage === 'target') return !editGoal.dailyCalories
+    if (stage === 'macros') return !editGoal.macros
+    return false
+  }
+
   return (
     <div className='edit-goal-container'>
       <CustomStepper
@@ -84,6 +91,7 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
         renderStage={renderStage}
         title={getStageTitle}
         direction={direction}
+        getIsNextDisabled={getIsNextDisabled}
       />
     </div>
   )
