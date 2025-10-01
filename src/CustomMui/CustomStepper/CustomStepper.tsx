@@ -82,7 +82,7 @@ export function CustomStepper<TStage extends string = string>({
 
   return (
     <div className={`custom-stepper ${className || ''}`}>
-      {resolvedTitle && <Typography variant='h6'>{resolvedTitle}</Typography>}
+      {resolvedTitle && <Typography variant='h5'>{resolvedTitle}</Typography>}
 
       <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
 

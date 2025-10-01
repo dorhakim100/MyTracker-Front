@@ -22,6 +22,7 @@ import { MacrosDistribution } from '../MacrosDistribution/MacrosDistribution'
 import { ItemSearch } from '../ItemSearch/ItemSearch'
 
 import { CustomStepper } from '../../CustomMui/CustomStepper/CustomStepper'
+import { capitalizeFirstLetter } from '../../services/util.service'
 
 const stages = ['name', 'items']
 
@@ -246,6 +247,17 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
     return false
   }
 
+  const getStageTitle = (stage: string) => {
+    switch (stage) {
+      case 'name':
+        return 'Meal Name'
+      case 'items':
+        return editMeal.name
+      default:
+        return capitalizeFirstLetter(stage)
+    }
+  }
+
   return (
     <div className='page-container edit-meal-container'>
       <CustomStepper
@@ -256,6 +268,7 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
         direction={direction}
         onFinish={onFinish}
         finishText='Save'
+        title={getStageTitle}
       />
     </div>
   )
