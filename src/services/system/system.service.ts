@@ -72,6 +72,6 @@ export function getDefaultsPrefs(): Prefs {
   return {
     isDarkMode: false,
     isEnglish: false,
-    favoriteColor: '#1976d2',
+    favoriteColor: 'primary',
   }
 }
