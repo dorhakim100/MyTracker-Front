@@ -1,4 +1,5 @@
 import { BmrFormState } from '../../types/bmrForm/BmrForm'
+import { User } from '../../types/user/User'
 
 export type Gender = 'male' | 'female'
 
@@ -8,6 +9,9 @@ export interface BmrInput {
   heightCm: number
   weightKg: number
 }
+
+const DEFAULT_ACTIVITY_LEVEL = 'sedentary'
+const DEFAULT_WEIGHT = 70
 
 export type ActivityLevel =
   | 'bmr'
@@ -22,6 +26,22 @@ export const bmrService = {
   calculateActivityBuffer,
   calculateTDEE,
   getDefaultFormState,
+  getBmrByUser,
+}
+
+function getBmrByUser(user: User | null) {
+  if (user)
+    return (
+      getActivityFactor(DEFAULT_ACTIVITY_LEVEL) *
+      calculateBMRMifflinStJeor({
+        ageYears:
+          new Date().getFullYear() -
+          new Date(user.details.birthdate).getFullYear(),
+        gender: user.details.gender,
+        heightCm: user.details.height,
+        weightKg: user.lastWeight?.kg || DEFAULT_WEIGHT,
+      })
+    )
 }
 
 function isFiniteNumber(value: unknown): value is number {

@@ -688,3 +688,9 @@ select {
     }
   }
 }
+
+.dark-mode {
+  .MuiChip-label {
+    color: $white;
+  }
+}

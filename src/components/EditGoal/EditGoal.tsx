@@ -1,10 +1,24 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
 import { Goal } from '../../types/goal/Goal'
 import CustomStepper from '../../CustomMui/CustomStepper/CustomStepper'
 import { CustomInput } from '../../CustomMui/CustomInput/CustomInput'
 import Lottie from 'lottie-react'
 import goalAnimation from '../../../public/goal-animation.json'
 import { capitalizeFirstLetter } from '../../services/util.service'
+import { goalService } from '../../services/goal/goal.service'
+
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward'
+import BalanceIcon from '@mui/icons-material/Balance'
+
+import { RootState } from '../../store/store'
+import { bmrService } from '../../services/bmr/bmr.service'
+import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
+
+import lossAnimation from '../../../public/loss-weight.json'
+import maintainAnimation from '../../../public/maintain-weight.json'
+import gainAnimation from '../../../public/gain-weight.json'
 
 interface EditGoalProps {
   selectedGoal?: Goal | null
@@ -13,23 +27,63 @@ interface EditGoalProps {
 
 const stages = ['title', 'target', 'macros']
 
-export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
-  const [editGoal, setEditGoal] = useState<Goal>({
-    _id: selectedGoal?._id || '',
-    isMain: selectedGoal?.isMain || false,
-    dailyCalories: selectedGoal?.dailyCalories || 0,
-    title: selectedGoal?.title || '',
-    updatedAt: selectedGoal?.updatedAt || new Date(),
-    macros: {
-      calories: selectedGoal?.macros?.calories || 0,
-      protein: selectedGoal?.macros?.protein || 0,
-      carbs: selectedGoal?.macros?.carbs || 0,
-      fat: selectedGoal?.macros?.fat || 0,
-    },
-  })
+const DEFAULT_CALORIES = 2400
 
+const CALORIES_DIFF = 500
+
+export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
+  const user = useSelector(
+    (stateSelector: RootState) => stateSelector.userModule.user
+  )
+
+  const [editGoal, setEditGoal] = useState<Goal>(
+    selectedGoal || {
+      ...goalService.getEmptyGoal(),
+      dailyCalories: bmrService.getBmrByUser(user) || DEFAULT_CALORIES,
+    }
+  )
   const [activeStage, setActiveStage] = useState<string>(stages[0])
   const [direction, setDirection] = useState(1)
+  const [targetAnimation, setTargetAnimation] = useState('')
+  const [selectedTarget, setSelectedTarget] = useState<string>('')
+
+  useEffect(() => {
+    switch (selectedTarget) {
+      case 'lose':
+        setTargetAnimation(lossAnimation)
+        break
+
+      case 'gain':
+        setTargetAnimation(gainAnimation)
+        break
+      default:
+        setTargetAnimation(maintainAnimation)
+        break
+    }
+  }, [selectedTarget])
+
+  const targets = [
+    {
+      label: 'Lose',
+      icon: <ArrowDownwardIcon />,
+      suggestedCalories:
+        (bmrService.getBmrByUser(user) || DEFAULT_CALORIES) - CALORIES_DIFF,
+      key: 'lose',
+    },
+    {
+      label: 'Maintain',
+      icon: <BalanceIcon />,
+      suggestedCalories: bmrService.getBmrByUser(user) || DEFAULT_CALORIES,
+      key: 'maintain',
+    },
+    {
+      label: 'Gain',
+      icon: <ArrowUpwardIcon />,
+      suggestedCalories:
+        (bmrService.getBmrByUser(user) || DEFAULT_CALORIES) + CALORIES_DIFF,
+      key: 'gain',
+    },
+  ]
 
   const onStageChange = (targetStage: string, diff: number) => {
     setActiveStage(targetStage)
@@ -41,7 +95,7 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
       case 'title':
         return _renderTitleStage()
       case 'target':
-        return <span>Target</span>
+        return _renderTargetStage()
       case 'macros':
         return <span>Macros</span>
     }
@@ -62,12 +116,46 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
     )
   }
 
+  function _renderTargetStage() {
+    return (
+      <div className='stage-container'>
+        <div className='targets-container'>
+          {targets.map((target) => {
+            return (
+              <CustomButton
+                text={target.label}
+                key={target.key}
+                onClick={() => {
+                  setSelectedTarget(target.key)
+                  setEditGoal({
+                    ...editGoal,
+                    dailyCalories: target.suggestedCalories,
+                  })
+                }}
+                icon={target.icon}
+                className={`target-button ${
+                  editGoal.dailyCalories === target.suggestedCalories
+                    ? 'selected'
+                    : ''
+                }`}
+                disabled={editGoal.dailyCalories === target.suggestedCalories}
+              />
+            )
+          })}
+        </div>
+        <div className='animation-container'>
+          <Lottie animationData={targetAnimation} loop={true} />
+        </div>
+      </div>
+    )
+  }
+
   const getStageTitle = (stage: string) => {
     switch (stage) {
       case 'title':
         return 'Goal Title'
       case 'target':
-        return 'Target Calories'
+        return 'Target Weight'
       case 'macros':
         return 'Macros Distribution'
       default:
@@ -83,7 +171,7 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
   }
 
   return (
-    <div className='edit-goal-container'>
+    <div className='page-container edit-goal-container'>
       <CustomStepper
         stages={stages}
         activeStage={activeStage}

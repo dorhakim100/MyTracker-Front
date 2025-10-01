@@ -11,4 +11,21 @@
     width: 300px;
     height: 300px;
   }
+
+  .targets-container {
+    // display: grid;
+    // grid-auto-flow: column;
+    // display: flex;
+    // flex-direction: row;
+    // flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 1rem;
+    margin: 1rem 0;
+
+    .target-button {
+      //   width: 100%;
+      border-radius: 25px;
+    }
+  }
 }

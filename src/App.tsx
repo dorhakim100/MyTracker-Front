@@ -22,6 +22,18 @@ import { loadPrefs } from './store/actions/system.actions.ts'
 import { SignIn } from './CustomMui/SignIn/SignIn.tsx'
 import { searchService } from './services/search/search-service.ts'
 
+const colors = [
+  'primary',
+  'blue',
+  'red',
+  'yellow',
+  'green',
+  'orange',
+  'deepPurple',
+  'purple',
+  'pink',
+]
+
 function App() {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -45,6 +57,7 @@ function App() {
     } else {
       document.body.classList.remove('dark-mode')
     }
+    document.body.classList.remove(...colors)
     document.body.classList.add(prefs.favoriteColor || '')
   }, [prefs])
 
