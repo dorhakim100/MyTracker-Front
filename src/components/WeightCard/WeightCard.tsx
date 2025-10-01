@@ -13,6 +13,8 @@ import {
 } from '../../store/actions/user.actions'
 import { Weight } from '../../types/weight/Weight'
 
+import scaleAnimation from '../../../public/scale.json'
+
 const DEFAULT_WEIGHT = 60
 
 export function WeightCard() {
@@ -150,7 +152,9 @@ export function WeightCard() {
         </Typography>
 
         <div className='weight-container'>{renderWeight()}</div>
-
+        <div className='animation-container'>
+          <Lottie animationData={scaleAnimation} loop={true} />
+        </div>
         <div className='update-weight-button-container'>
           <CustomButton
             text='Update Weight'
@@ -177,6 +181,7 @@ import { weightService } from '../../services/weight/weight.service'
 import { dayService } from '../../services/day/day.service'
 import { CustomDatePicker } from '../../CustomMui/CustomDatePicker/CustomDatePicker'
 import { LoggedToday } from '../../types/loggedToday/LoggedToday'
+import Lottie from 'lottie-react'
 
 interface EditComponentProps {
   value: number
