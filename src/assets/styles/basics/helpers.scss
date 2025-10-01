@@ -450,7 +450,8 @@ select {
 
 // Bottom Navigation setup
 
-.MuiBottomNavigationAction-root.Mui-selected {
+.MuiBottomNavigationAction-root.Mui-selected,
+.MuiTypography-h3 {
   &.blue {
     color: $picker-color-blue !important;
 
@@ -663,4 +664,27 @@ select {
 
 .white-outline {
   outline: 1px solid $white;
+}
+
+// fontWeight: selected ? 700 : 400,
+// opacity: selected ? 1 : 0.45,
+
+// transform: selected ? 'scale(1)' : 'scale(0.8)',
+// transition: 'all 160ms ease',
+// position: 'relative',
+
+.picker-container {
+  h5 {
+    font-weight: 400;
+    opacity: 0.45;
+    transform: scale(0.8);
+    transition: all 160ms ease;
+    position: relative;
+
+    &.selected {
+      font-weight: 700;
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
 }

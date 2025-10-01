@@ -558,6 +558,7 @@ import { LoggedToday } from '../../types/loggedToday/LoggedToday'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import { searchTypes } from '../../assets/config/search-types'
 import { Log } from '../../types/log/Log'
+import { Divider } from '@mui/material'
 
 function EditComponent({
   value,
@@ -647,14 +648,33 @@ function EditComponent({
         <Picker.Column name='numberOfServings'>
           {values.map((number) => (
             <Picker.Item key={number} value={number}>
-              {number}
+              {({ selected }) => (
+                <Typography
+                  variant='h5'
+                  className={`${selected ? 'selected' : ''}`}
+                >
+                  {number}
+                </Typography>
+              )}
             </Picker.Item>
           ))}
         </Picker.Column>
+        <Divider
+          orientation='vertical'
+          flexItem
+          className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+        />
         <Picker.Column name='afterValue'>
           {afterValues.map((number) => (
             <Picker.Item key={number} value={number}>
-              {number}
+              {({ selected }) => (
+                <Typography
+                  variant='h5'
+                  className={`${selected ? 'selected' : ''}`}
+                >
+                  {number}
+                </Typography>
+              )}
             </Picker.Item>
           ))}
         </Picker.Column>

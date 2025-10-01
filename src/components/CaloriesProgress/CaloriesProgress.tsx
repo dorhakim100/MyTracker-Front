@@ -179,8 +179,6 @@ function EditComponent() {
 
     const newCarbs = originalCarbs + carbsToEdit
 
-    console.log(roundCaloriesToNearest50(pickerCalories.calories))
-
     const userToUpdate = {
       ...userToEdit,
       currGoal: {
@@ -203,7 +201,10 @@ function EditComponent() {
           sx={{ position: 'relative' }}
           className='calories-amount-container'
         >
-          <Typography variant='h3' className='calories-amount'>
+          <Typography
+            variant='h3'
+            className={`calories-amount ${prefs.favoriteColor || ''}`}
+          >
             {roundCaloriesToNearest50(pickerCalories.calories)} kcal
           </Typography>
           <div className='picker-container'>
@@ -221,14 +222,7 @@ function EditComponent() {
                     {({ selected }) => (
                       <Typography
                         variant='h5'
-                        sx={{
-                          fontWeight: selected ? 700 : 400,
-                          opacity: selected ? 1 : 0.45,
-
-                          transform: selected ? 'scale(1)' : 'scale(0.8)',
-                          transition: 'all 160ms ease',
-                          position: 'relative',
-                        }}
+                        className={`${selected ? 'selected' : ''}`}
                       >
                         {`${calorie}`}
                         {/* {selected && <span className='kcal'>kcal</span>} */}

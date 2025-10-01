@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 
-import { Card, Typography } from '@mui/material'
+import { Card, Divider, Typography } from '@mui/material'
 import { RootState } from '../../store/store'
 import { useSelector } from 'react-redux'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
@@ -184,6 +184,10 @@ interface EditComponentProps {
 }
 
 function EditComponent({ value, onChange }: EditComponentProps) {
+  const prefs = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.prefs
+  )
+
   const [pickerWeight, setPickerWeight] = useState<{
     firstValue: number
     secondValue: number
@@ -224,14 +228,33 @@ function EditComponent({ value, onChange }: EditComponentProps) {
         <Picker.Column name='firstValue'>
           {getArrayOfNumbers(30, 150).map((number) => (
             <Picker.Item key={number} value={number}>
-              {number}
+              {({ selected }) => (
+                <Typography
+                  variant='h5'
+                  className={`${selected ? 'selected' : ''}`}
+                >
+                  {number}
+                </Typography>
+              )}
             </Picker.Item>
           ))}
         </Picker.Column>
+        <Divider
+          orientation='vertical'
+          flexItem
+          className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+        />
         <Picker.Column name='secondValue'>
           {getArrayOfNumbers(0, 9).map((number) => (
             <Picker.Item key={number} value={number}>
-              {number}
+              {({ selected }) => (
+                <Typography
+                  variant='h5'
+                  className={`${selected ? 'selected' : ''}`}
+                >
+                  {number}
+                </Typography>
+              )}
             </Picker.Item>
           ))}
         </Picker.Column>

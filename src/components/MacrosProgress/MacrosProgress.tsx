@@ -247,7 +247,15 @@ function EditComponent() {
                       value={option}
                     >
                       {/* {option.toFixed(0)} */}
-                      {option}
+                      {({ selected }) => (
+                        <Typography
+                          variant='h5'
+                          className={`${selected ? 'selected' : ''}`}
+                        >
+                          {option}
+                        </Typography>
+                      )}
+                      {/* {option} */}
                     </Picker.Item>
                   )
                 })}
