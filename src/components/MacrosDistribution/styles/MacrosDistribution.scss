@@ -8,6 +8,22 @@
   // padding: 1rem;
 }
 
+.donut {
+  .donut-inner {
+    .totals {
+      .value {
+        font-size: 2rem;
+        font-weight: 700;
+      }
+
+      .label {
+        font-size: 1.2rem;
+        text-align: center;
+      }
+    }
+  }
+}
+
 .macros-distribution .totals {
   text-align: center;
   .value {

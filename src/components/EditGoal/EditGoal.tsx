@@ -20,7 +20,14 @@ import lossAnimation from '../../../public/loss-weight.json'
 import maintainAnimation from '../../../public/maintain-weight.json'
 import gainAnimation from '../../../public/gain-weight.json'
 import { SlideAnimation } from '../SlideAnimation/SlideAnimation'
-import { StatsCarousel } from '../StatsCarousel/StatsCarousel'
+
+import { CaloriesEdit } from '../CaloriesProgress/CaloriesEdit'
+import { EditMacros } from '../MacrosProgress/EditMacros'
+import { MacrosDistributionEdit } from '../MacrosDistribution/MacrosDistributionEdit'
+import { SlideDialog } from '../SlideDialog/SlideDialog'
+
+import { MacrosDonut } from '../MacrosDonut/MacrosDonut'
+import { Macros } from '../Macros/Macros'
 
 interface EditGoalProps {
   selectedGoal?: Goal | null
@@ -47,6 +54,11 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
   const [activeStage, setActiveStage] = useState<string>(stages[0])
   const [direction, setDirection] = useState(1)
   const [selectedTarget, setSelectedTarget] = useState<string>('maintain')
+
+  const [editGoalOpen, setEditGoalOpen] = useState(false)
+  const [editModalType, setEditModalType] = useState<
+    'calories' | 'macros' | 'distribution'
+  >('calories')
 
   const prevAnimation = useRef<string>(selectedTarget)
 
@@ -175,7 +187,69 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
   }
 
   function _renderMacrosStage() {
-    return <div className='stage-container'></div>
+    return (
+      <>
+        <div className='stage-container macros-stage-container'>
+          <MacrosDonut
+            protein={editGoal.macros?.protein || 0}
+            carbs={editGoal.macros?.carbs || 0}
+            fats={editGoal.macros?.fat || 0}
+          />
+          <Macros
+            protein={editGoal.macros?.protein || 0}
+            carbs={editGoal.macros?.carbs || 0}
+            fats={editGoal.macros?.fat || 0}
+          />
+          <div className='buttons-container'>
+            <CustomButton text='Edit Calories' onClick={onCaloriesOpenClick} />
+            <CustomButton text='Edit Macros' onClick={onMacrosOpenClick} />
+            <CustomButton
+              text='Edit Macros Distribution'
+              onClick={onDistributionOpenClick}
+            />
+          </div>
+        </div>
+        <SlideDialog
+          open={editGoalOpen}
+          onClose={onCloseEditGoal}
+          component={getModalTypeComponent()}
+          title='Edit Calories'
+          onSave={() => {}}
+        />
+      </>
+    )
+  }
+
+  function onCaloriesOpenClick() {
+    setEditGoalOpen(true)
+    setEditModalType('calories')
+  }
+
+  function getModalTypeComponent() {
+    switch (editModalType) {
+      case 'calories':
+        return <CaloriesEdit />
+      case 'macros':
+        return <EditMacros />
+      case 'distribution':
+        return <MacrosDistributionEdit />
+      default:
+        return <CaloriesEdit />
+    }
+  }
+
+  const onCloseEditGoal = () => {
+    setEditGoalOpen(false)
+  }
+
+  function onMacrosOpenClick() {
+    setEditGoalOpen(true)
+    setEditModalType('macros')
+  }
+
+  function onDistributionOpenClick() {
+    setEditGoalOpen(true)
+    setEditModalType('distribution')
   }
 
   const getStageTitle = (stage: string) => {
