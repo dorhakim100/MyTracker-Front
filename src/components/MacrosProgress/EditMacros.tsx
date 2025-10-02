@@ -1,0 +1,164 @@
+import Picker from 'react-mobile-picker'
+import {
+  capitalizeFirstLetter,
+  getArrayOfNumbers,
+  getFixedNumber,
+} from '../../services/util.service'
+import { setUserToEdit } from '../../store/actions/user.actions'
+import { User } from '../../types/user/User'
+import {
+  calculateCarbCalories,
+  calculateFatCalories,
+  calculateProteinCalories,
+} from '../../services/macros/macros.service'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../store/store'
+import { useEffect, useState } from 'react'
+import { Box, Typography } from '@mui/material'
+
+export function EditMacros() {
+  interface PickerValue {
+    carbs: number
+    protein: number
+    fats: number
+    [key: string]: number
+  }
+
+  const macros = {
+    carbs: getArrayOfNumbers(0, 400),
+    protein: getArrayOfNumbers(0, 300),
+    fats: getArrayOfNumbers(0, 150),
+  }
+
+  const userToEdit = useSelector(
+    (stateSelector: RootState) => stateSelector.userModule.userToEdit
+  )
+
+  const user = useSelector(
+    (stateSelector: RootState) => stateSelector.userModule.user
+  )
+
+  const [pickerValue, setPickerValue] = useState<PickerValue>({
+    carbs: getFixedNumber(
+      userToEdit?.currGoal?.macros.carbs || user?.currGoal?.macros.carbs || 0
+    ),
+    protein: getFixedNumber(
+      userToEdit?.currGoal?.macros.protein ||
+        user?.currGoal?.macros.protein ||
+        0
+    ),
+    fats: getFixedNumber(
+      userToEdit?.currGoal?.macros.fat || user?.currGoal?.macros.fat || 0
+    ),
+  })
+
+  const macroKeys = Object.keys(macros) as (keyof typeof macros)[]
+
+  useEffect(() => {
+    pickerValue.protein = +pickerValue.protein.toFixed(0)
+    pickerValue.carbs = +pickerValue.carbs.toFixed(0)
+    pickerValue.fats = +pickerValue.fats.toFixed(0)
+  }, [userToEdit, user])
+
+  useEffect(() => {
+    const proteinCalories = calculateProteinCalories(pickerValue.protein)
+    const carbsCalories = calculateCarbCalories(pickerValue.carbs)
+    const fatsCalories = calculateFatCalories(pickerValue.fats)
+
+    const totalCalories = proteinCalories + carbsCalories + fatsCalories
+
+    const userToUpdate = {
+      ...userToEdit,
+      currGoal: {
+        ...userToEdit?.currGoal,
+        dailyCalories: totalCalories,
+        macros: {
+          ...userToEdit?.currGoal?.macros,
+          carbs: pickerValue.carbs,
+          protein: pickerValue.protein,
+          fat: pickerValue.fats,
+        },
+      },
+    } as User
+
+    setUserToEdit(userToUpdate)
+  }, [pickerValue])
+
+  useEffect(() => {
+    const userToSet = {
+      ...userToEdit,
+      currGoal: {
+        ...userToEdit?.currGoal,
+        macros: {
+          ...userToEdit?.currGoal?.macros,
+          carbs: pickerValue.carbs,
+          protein: pickerValue.protein,
+          fat: pickerValue.fats,
+        },
+      },
+    } as User
+
+    setUserToEdit(userToSet)
+  }, [user])
+
+  return (
+    <Box className='edit-macros-container'>
+      <div className='picker-container'>
+        <Picker
+          value={pickerValue}
+          onChange={(next) => setPickerValue(next as unknown as PickerValue)}
+          height={150}
+        >
+          {macroKeys.map((name) => {
+            const macroName = name as string
+            return (
+              <Picker.Column key={`${macroName}-picker`} name={macroName}>
+                {macros[name].map((option: number | string) => {
+                  if (typeof option === 'string') {
+                    option = +option
+                  }
+
+                  return (
+                    <Picker.Item
+                      key={`${option.toFixed(0)}-${macroName}`}
+                      value={option}
+                    >
+                      {/* {option.toFixed(0)} */}
+                      {({ selected }) => (
+                        <Typography
+                          variant='h5'
+                          className={`${selected ? 'selected' : ''}`}
+                        >
+                          {option}
+                        </Typography>
+                      )}
+                      {/* {option} */}
+                    </Picker.Item>
+                  )
+                })}
+              </Picker.Column>
+            )
+          })}
+        </Picker>
+      </div>
+
+      <div className='macros-title-container'>
+        {macroKeys.map((name) => {
+          const macroName = name as string
+          return (
+            <div className='macro-container' key={`name-${macroName}`}>
+              <div className={`banner ${macroName}`}>
+                <span className='title'>
+                  {capitalizeFirstLetter(macroName)}
+                </span>
+              </div>
+              <Typography variant='h6' className='value'>
+                {pickerValue[macroName].toFixed(0)}g
+              </Typography>
+            </div>
+          )
+        })}
+      </div>
+    </Box>
+  )
+}
