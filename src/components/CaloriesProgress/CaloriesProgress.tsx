@@ -1,21 +1,25 @@
-import { Card, Typography, Box } from '@mui/material'
+import { Card, Typography } from '@mui/material'
 // import {Slider} from '@mui/material'
 import { CircularProgress } from '../CircularProgress/CircularProgress'
 
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
-import { useMemo, useState, useEffect } from 'react'
+import { useState } from 'react'
 import {
   optimisticUpdateUser,
   updateUser,
 } from '../../store/actions/user.actions'
 import { setIsLoading } from '../../store/actions/system.actions'
+import { showSuccessMsg } from '../../services/event-bus.service'
+import { showErrorMsg } from '../../services/event-bus.service'
+import { messages } from '../../assets/config/messages'
+import { CaloriesEdit } from './CaloriesEdit'
 
 import { EditIcon } from '../EditIcon/EditIcon'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { GoalBanner } from '../GoalBanner/GoalBanner'
-import RemoveIcon from '@mui/icons-material/Remove'
-import AddIcon from '@mui/icons-material/Add'
+import { User } from '../../types/user/User'
+import { roundToNearest50 } from '../../services/macros/macros.service'
 // import FlagIcon from '@mui/icons-material/Flag'
 
 interface CaloriesProgressProps {
@@ -109,162 +113,10 @@ export function CaloriesProgress({
       <SlideDialog
         open={openModal}
         onClose={onClose}
-        component={<EditComponent />}
+        component={<CaloriesEdit />}
         title='Edit Calories'
         onSave={onSave}
       />
-    </>
-  )
-}
-
-import { getArrayOfNumbers } from '../../services/util.service'
-import Picker from 'react-mobile-picker'
-import { setUserToEdit } from '../../store/actions/user.actions'
-import { User } from '../../types/user/User'
-import {
-  calculateCarbsFromCalories,
-  roundCaloriesToNearest50,
-  roundToNearest50,
-} from '../../services/macros/macros.service'
-import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
-import { messages } from '../../assets/config/messages'
-import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
-
-function EditComponent() {
-  const prefs = useSelector(
-    (stateSelector: RootState) => stateSelector.systemModule.prefs
-  )
-
-  const MIN = 1200
-  const MAX = 5000
-  const STEP = 50
-
-  const options = useMemo(
-    () =>
-      (getArrayOfNumbers(MIN, MAX) as number[]).filter((n) => n % STEP === 0),
-    []
-  )
-
-  const user = useSelector(
-    (stateSelector: RootState) => stateSelector.userModule.user
-  )
-
-  const userToEdit = useSelector(
-    (stateSelector: RootState) => stateSelector.userModule.userToEdit
-  )
-
-  const [pickerCalories, setPickerCalories] = useState<{ calories: number }>({
-    calories: roundCaloriesToNearest50(user?.currGoal?.dailyCalories || 2400),
-  })
-
-  const onFixedChange = (value: number) => {
-    const valueToSet = pickerCalories.calories + value
-    if (valueToSet > MAX) {
-      setPickerCalories({ calories: MAX })
-    } else if (valueToSet < MIN) {
-      setPickerCalories({ calories: MIN })
-    } else {
-      setPickerCalories({ calories: valueToSet })
-    }
-  }
-
-  useEffect(() => {
-    const currCalories = user?.currGoal?.dailyCalories
-
-    if (!currCalories) return
-    const diff = (currCalories - pickerCalories.calories) * -1
-
-    const carbsToEdit = calculateCarbsFromCalories(diff)
-    const originalCarbs = user?.currGoal?.macros.carbs
-
-    const newCarbs = originalCarbs + carbsToEdit
-
-    const userToUpdate = {
-      ...userToEdit,
-      currGoal: {
-        ...userToEdit?.currGoal,
-        dailyCalories: roundCaloriesToNearest50(pickerCalories.calories),
-        macros: {
-          ...userToEdit?.currGoal?.macros,
-          carbs: newCarbs,
-        },
-      },
-    } as User
-
-    setUserToEdit(userToUpdate)
-  }, [pickerCalories.calories])
-
-  return (
-    <>
-      <Box sx={{ p: 2 }}>
-        <Box
-          sx={{ position: 'relative' }}
-          className='calories-amount-container'
-        >
-          <Typography
-            variant='h3'
-            className={`calories-amount ${prefs.favoriteColor || ''}`}
-          >
-            {roundCaloriesToNearest50(pickerCalories.calories)} kcal
-          </Typography>
-          <div className='picker-container'>
-            <Picker
-              value={pickerCalories}
-              onChange={(next) =>
-                // setPickerCalories(next as unknown as { calories: number })
-                setPickerCalories({ calories: next.calories as number })
-              }
-              height={150}
-            >
-              <Picker.Column name='calories'>
-                {options.map((calorie) => (
-                  <Picker.Item key={calorie} value={calorie}>
-                    {({ selected }) => (
-                      <Typography
-                        variant='h5'
-                        className={`${selected ? 'selected' : ''}`}
-                      >
-                        {`${calorie}`}
-                        {/* {selected && <span className='kcal'>kcal</span>} */}
-                      </Typography>
-                    )}
-                  </Picker.Item>
-                ))}
-              </Picker.Column>
-            </Picker>
-            <div className='buttons-container'>
-              <CustomButton
-                onClick={() => onFixedChange(-400)}
-                icon={<RemoveIcon />}
-                className={`${prefs.favoriteColor}`}
-                text='400'
-              />
-              <CustomButton
-                onClick={() => onFixedChange(400)}
-                icon={<AddIcon />}
-                className={`${prefs.favoriteColor}`}
-                text='400'
-              />
-            </div>
-          </div>
-          {/* <Typography variant='h3' className='calories-amount'>
-            {calories} kcal
-          </Typography> */}
-          {/* <div className='circular-slider-container'>
-            <CircularSlider
-              size={380}
-              trackWidth={14}
-              minValue={MIN}
-              maxValue={MAX}
-              startAngle={180}
-              endAngle={360}
-              handle1={{ value: calories, onChange: handleChange }}
-              arcColor={color}
-              arcBackgroundColor={arcBackgroundColor}
-            />
-          </div> */}
-        </Box>
-      </Box>
     </>
   )
 }

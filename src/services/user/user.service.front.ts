@@ -216,7 +216,7 @@ function getEmptyUser() {
 function getDefaultGoal() {
   return {
     _id: 'defaultGoal',
-    isMain: true,
+    isSelected: true,
     updatedAt: new Date(),
     title: 'My Goal',
     dailyCalories: 2400,

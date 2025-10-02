@@ -20,6 +20,7 @@ import lossAnimation from '../../../public/loss-weight.json'
 import maintainAnimation from '../../../public/maintain-weight.json'
 import gainAnimation from '../../../public/gain-weight.json'
 import { SlideAnimation } from '../SlideAnimation/SlideAnimation'
+import { StatsCarousel } from '../StatsCarousel/StatsCarousel'
 
 interface EditGoalProps {
   selectedGoal?: Goal | null
@@ -37,7 +38,7 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
     (stateSelector: RootState) => stateSelector.userModule.user
   )
 
-  const [editGoal, setEditGoal] = useState<Goal>(
+  const [editGoal, setEditGoal] = useState(
     selectedGoal || {
       ...goalService.getEmptyGoal(),
       dailyCalories: bmrService.getBmrByUser(user) || DEFAULT_CALORIES,
@@ -114,7 +115,7 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
       case 'target':
         return _renderTargetStage()
       case 'macros':
-        return <span>Macros</span>
+        return _renderMacrosStage()
     }
   }
 
@@ -171,6 +172,10 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
         </div>
       </div>
     )
+  }
+
+  function _renderMacrosStage() {
+    return <div className='stage-container'></div>
   }
 
   const getStageTitle = (stage: string) => {

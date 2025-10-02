@@ -64,11 +64,14 @@ async function save(goal: Goal) {
 function getEmptyGoal() {
   return {
     _id: '',
-    isMain: false,
+    isSelected: false,
     title: '',
     updatedAt: new Date(),
-    dailyCalories: 0,
-    macros: { calories: 0, protein: 0, carbs: 0, fat: 0 },
+    dailyCalories: 2400,
+    macros: { protein: 180, carbs: 300, fat: 53 },
+    startDate: new Date(),
+    endDate: new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000), // 30 days
+    target: 'lose',
   }
 }
 
