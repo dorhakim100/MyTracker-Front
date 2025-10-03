@@ -71,7 +71,7 @@ function getEmptyGoal() {
     macros: { protein: 180, carbs: 300, fat: 53 },
     startDate: new Date(),
     endDate: new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000), // 30 days
-    target: 'lose',
+    target: 'maintain',
   }
 }
 

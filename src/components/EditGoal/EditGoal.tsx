@@ -99,12 +99,14 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
       suggestedCalories:
         (bmrService.getBmrByUser(user) || DEFAULT_CALORIES) - CALORIES_DIFF,
       key: 'lose',
+      onClick: () => _onTargetClick('lose'),
     },
     {
       label: 'Maintain',
       icon: <BalanceIcon />,
       suggestedCalories: bmrService.getBmrByUser(user) || DEFAULT_CALORIES,
       key: 'maintain',
+      onClick: () => _onTargetClick('maintain'),
     },
     {
       label: 'Gain',
@@ -112,8 +114,19 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
       suggestedCalories:
         (bmrService.getBmrByUser(user) || DEFAULT_CALORIES) + CALORIES_DIFF,
       key: 'gain',
+      onClick: () => _onTargetClick('gain'),
     },
   ]
+
+  function _onTargetClick(target: 'lose' | 'maintain' | 'gain') {
+    setSelectedTarget(target)
+    setEditGoal({
+      ...editGoal,
+      dailyCalories:
+        targets.find((t) => t.key === target)?.suggestedCalories || 0,
+      target: target,
+    })
+  }
 
   const onStageChange = (targetStage: string, diff: number) => {
     setActiveStage(targetStage)
@@ -155,13 +168,7 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
               <CustomButton
                 text={target.label}
                 key={target.key}
-                onClick={() => {
-                  setSelectedTarget(target.key)
-                  setEditGoal({
-                    ...editGoal,
-                    dailyCalories: target.suggestedCalories,
-                  })
-                }}
+                onClick={target.onClick}
                 icon={target.icon}
                 className={`target-button ${
                   editGoal.dailyCalories === target.suggestedCalories
