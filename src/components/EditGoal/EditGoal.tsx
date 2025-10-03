@@ -56,7 +56,9 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
   )
   const [activeStage, setActiveStage] = useState<string>(stages[0])
   const [direction, setDirection] = useState(1)
-  const [selectedTarget, setSelectedTarget] = useState<string>('maintain')
+  const [selectedTarget, setSelectedTarget] = useState<string>(
+    editGoal.target || 'maintain'
+  )
 
   const [editGoalOpen, setEditGoalOpen] = useState(false)
   const [editModalType, setEditModalType] = useState<
@@ -207,7 +209,7 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
                     ? 'selected'
                     : ''
                 }`}
-                disabled={editGoal.dailyCalories === target.suggestedCalories}
+                disabled={editGoal.target === target.key}
               />
             )
           })}
