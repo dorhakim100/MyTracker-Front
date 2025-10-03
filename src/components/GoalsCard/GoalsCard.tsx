@@ -11,6 +11,7 @@ import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import AddIcon from '@mui/icons-material/Add'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { Goal } from '../../types/goal/Goal'
+import { Checkbox } from '@mui/material'
 
 const DEFAULT_GOAL_TITLE = 'Loss weight'
 
@@ -49,6 +50,10 @@ export function GoalsCard() {
     openModal()
   }
 
+  const onActivateGoal = (goal: Goal) => {
+    console.log('onActivateGoal', goal)
+  }
+
   if (!user || !user.goals) return <div>GoalsCard</div>
 
   return (
@@ -71,14 +76,24 @@ export function GoalsCard() {
             />
           )}
           renderSecondaryText={(goal) =>
-            `${DEFAULT_GOAL_TITLE} - ${goal.dailyCalories} kcal`
+            `${DEFAULT_GOAL_TITLE} - ${goal.targetWeight || 80} kg - ${
+              goal.dailyCalories
+            } kcal`
           }
           renderRight={(goal) => (
-            <ListItemIcon>
-              <Typography variant='body2'>
-                {getDateFromISO(new Date().toISOString())}
-              </Typography>
-            </ListItemIcon>
+            // <ListItemIcon>
+            //   <Typography variant='body2'>
+            //     {getDateFromISO(new Date().toISOString())}
+            //   </Typography>
+            // </ListItemIcon>
+            <Checkbox
+              className={`${prefs.favoriteColor}`}
+              checked={goal.isSelected}
+              onClick={(ev) => {
+                ev.stopPropagation()
+                onActivateGoal(goal)
+              }}
+            />
           )}
           onItemClick={onSelectGoal}
           className={`${prefs.isDarkMode ? 'dark-mode' : ''}`}

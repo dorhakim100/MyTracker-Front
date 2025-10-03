@@ -172,10 +172,71 @@ button {
   box-shadow: none !important;
 }
 
+.dark-mode {
+  .css-1v4ozrc-MuiButtonBase-root-MuiCheckbox-root {
+    color: $white !important;
+  }
+}
+
 .MuiCheckbox-root {
   background-color: transparent;
-  &.Mui-checked {
+  &.Mui-checked:not(.MuiCheckbox-root) {
     background-color: $primary-color !important;
+  }
+
+  &.Mui-checked.MuiCheckbox-root {
+    &.primary {
+      svg {
+        fill: $primary-color !important;
+      }
+    }
+    &.blue {
+      svg {
+        fill: $picker-color-blue !important;
+      }
+    }
+
+    &.red {
+      svg {
+        fill: $picker-color-red !important;
+      }
+    }
+
+    &.green {
+      svg {
+        fill: $picker-color-green !important;
+      }
+    }
+
+    &.orange {
+      svg {
+        fill: $picker-color-orange !important;
+      }
+    }
+
+    &.deepPurple {
+      svg {
+        fill: $picker-color-deep-purple !important;
+      }
+    }
+
+    &.purple {
+      svg {
+        fill: $picker-color-purple !important;
+      }
+    }
+
+    &.yellow {
+      svg {
+        fill: $picker-color-yellow !important;
+      }
+    }
+
+    &.pink {
+      svg {
+        fill: $picker-color-pink !important;
+      }
+    }
   }
 }
 
