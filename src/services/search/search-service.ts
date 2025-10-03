@@ -229,7 +229,6 @@ async function addToCache(item: Item, key: string) {
 }
 
 async function removeFromCache(item: Item, key: string) {
-  console.log('removeFromCache', item)
   const id = item._id || item.searchId
   if (!id) throw new Error('Item not found in cache')
   const cached = await indexedDbService.query<Item>(key, 0)

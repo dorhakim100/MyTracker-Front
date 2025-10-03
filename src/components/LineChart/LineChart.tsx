@@ -199,7 +199,7 @@ export function LineChart({
       const ds = chart.data.datasets[datasetIndex]
       const estimatedValue = (ds.data as (number | null)[])[index]
       const isBaseline = ds.label === baselineLabel
-      console.log('isBaseline', isBaseline)
+
       onLineClick?.(
         index,
         typeof estimatedValue === 'number' ? estimatedValue : 0,

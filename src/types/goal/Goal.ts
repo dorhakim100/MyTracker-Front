@@ -4,12 +4,13 @@ export interface Goal {
   _id: string
   isSelected: boolean
   title: string
-  updatedAt: Date
+  updatedAt: number
 
   dailyCalories: number
   macros: Macros | Partial<Macros>
-  startDate: Date
-  endDate: Date
+
+  startDate: number
+  endDate: number
 
   target: 'lose' | 'maintain' | 'gain'
 }

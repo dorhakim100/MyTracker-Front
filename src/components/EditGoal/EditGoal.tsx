@@ -1,5 +1,5 @@
 import { useMemo, useState, useRef } from 'react'
-import { useEffect } from 'react'
+// import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { Goal } from '../../types/goal/Goal'
 import CustomStepper from '../../CustomMui/CustomStepper/CustomStepper'
@@ -31,12 +31,20 @@ import { MacrosDonut } from '../MacrosDonut/MacrosDonut'
 import { Macros } from '../Macros/Macros'
 import { calculateCarbsFromCalories } from '../../services/macros/macros.service'
 
+import EditIcon from '@mui/icons-material/Edit'
+import { Divider, Typography } from '@mui/material'
+
+import dateAnimation from '../../../public/date-animation.json'
+import { CustomDatePicker } from '../../CustomMui/CustomDatePicker/CustomDatePicker'
+import { getDateFromISO } from '../../services/util.service'
+import { israelLocaleStringObject } from '../../assets/config/times'
+
 interface EditGoalProps {
   selectedGoal?: Goal | null
   saveGoal: (goal: Goal) => void
 }
 
-const stages = ['title', 'target', 'macros']
+const stages = ['title', 'target', 'macros', 'dates']
 
 const DEFAULT_CALORIES = 2400
 
@@ -45,6 +53,9 @@ const CALORIES_DIFF = 500
 export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
   const user = useSelector(
     (stateSelector: RootState) => stateSelector.userModule.user
+  )
+  const prefs = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
 
   const [editGoal, setEditGoal] = useState<Goal | Partial<Goal>>(
@@ -124,10 +135,26 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
       onClick: () => _onTargetClick('gain'),
     },
   ]
-
-  useEffect(() => {
-    console.log('editGoal', editGoal)
-  }, [editGoal])
+  const editButtons = [
+    {
+      label: 'Calories',
+      onClick: () => onCaloriesOpenClick(),
+      icon: <EditIcon />,
+      key: 'calories-edit-goal',
+    },
+    {
+      label: 'Grams',
+      onClick: () => onMacrosOpenClick(),
+      icon: <EditIcon />,
+      key: 'macros-edit-goal',
+    },
+    {
+      label: 'Percentages',
+      onClick: () => onDistributionOpenClick(),
+      icon: <EditIcon />,
+      key: 'distribution-edit-goal',
+    },
+  ]
 
   function _onTargetClick(target: 'lose' | 'maintain' | 'gain') {
     const macros = editGoal.macros
@@ -175,6 +202,8 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
         return _renderTargetStage()
       case 'macros':
         return _renderMacrosStage()
+      case 'dates':
+        return _renderDatesStage()
     }
   }
 
@@ -241,13 +270,22 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
             carbs={editGoal.macros?.carbs || 0}
             fats={editGoal.macros?.fat || 0}
           />
-          <div className='buttons-container'>
-            <CustomButton text='Edit Calories' onClick={onCaloriesOpenClick} />
-            <CustomButton text='Edit Macros' onClick={onMacrosOpenClick} />
-            <CustomButton
-              text='Edit Macros Distribution'
-              onClick={onDistributionOpenClick}
+          <div className='edit-header-container'>
+            <Typography variant='h5'>Edit Macros</Typography>
+            <EditIcon />
+            <Divider
+              className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
             />
+          </div>
+          <div className='buttons-container'>
+            {editButtons.map((button) => (
+              <CustomButton
+                text={button.label}
+                onClick={button.onClick}
+                // icon={button.icon}
+                key={button.key}
+              />
+            ))}
           </div>
         </div>
         <SlideDialog
@@ -258,6 +296,61 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
           onSave={getModalOnSave()}
         />
       </>
+    )
+  }
+
+  function _renderDatesStage() {
+    const newDateStart = new Date(editGoal.startDate as number)
+    const newDateEnd = new Date(editGoal.endDate as number)
+
+    const startDateToShow = newDateStart.toLocaleString(
+      'he',
+      israelLocaleStringObject
+    )
+    const endDateToShow = newDateEnd.toLocaleString(
+      'he',
+      israelLocaleStringObject
+    )
+
+    const startDate = getDateFromISO(newDateStart.toISOString())
+
+    const endDate = getDateFromISO(newDateEnd.toISOString())
+
+    return (
+      <div className='stage-container'>
+        <div className='edit-header-container'>
+          <div className='date-picker-container'>
+            <Typography variant='h6'>Start Date:</Typography>
+
+            <Typography variant='h6'>{startDateToShow}</Typography>
+            <CustomDatePicker
+              value={startDate}
+              onChange={(date) =>
+                setEditGoal({
+                  ...editGoal,
+                  startDate: new Date(date).getTime(),
+                })
+              }
+              className={`${prefs.favoriteColor}`}
+            />
+          </div>
+          <div className='date-picker-container'>
+            <Typography variant='h6'>End Date:</Typography>
+
+            <Typography variant='h6'>{endDateToShow}</Typography>
+            <CustomDatePicker
+              value={endDate}
+              onChange={(date) =>
+                setEditGoal({ ...editGoal, endDate: new Date(date).getTime() })
+              }
+              className={`${prefs.favoriteColor}`}
+            />
+          </div>
+        </div>
+        <div className='animation-container date'>
+          <Lottie animationData={dateAnimation} loop={true} />
+        </div>
+      </div>
     )
   }
 
@@ -345,7 +438,7 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
         title={getStageTitle}
         direction={direction}
         getIsNextDisabled={getIsNextDisabled}
-        onFinish={() => saveGoal(editGoal)}
+        onFinish={() => saveGoal(editGoal as Goal)}
       />
     </div>
   )

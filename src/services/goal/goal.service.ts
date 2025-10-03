@@ -66,11 +66,13 @@ function getEmptyGoal() {
     _id: '',
     isSelected: false,
     title: '',
-    updatedAt: new Date(),
+    updatedAt: new Date().getTime(),
     dailyCalories: 2400,
     macros: { protein: 180, carbs: 300, fat: 53 },
-    startDate: new Date(),
-    endDate: new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000), // 30 days
+    startDate: new Date().getTime(),
+    endDate: new Date(
+      new Date().getTime() + 30 * 24 * 60 * 60 * 1000
+    ).getTime(), // 30 days
     target: 'maintain',
   }
 }
