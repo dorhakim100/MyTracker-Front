@@ -65,6 +65,8 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
 
   const prevTarget = useRef<string>(selectedTarget)
 
+  const goalRef = useRef<Goal | Partial<Goal>>(editGoal)
+
   const targetAnimation = useMemo(() => {
     switch (selectedTarget) {
       case 'lose':
@@ -251,7 +253,7 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
           onClose={onCloseEditGoal}
           component={getModalTypeComponent()}
           title='Edit Calories'
-          onSave={() => {}}
+          onSave={getModalOnSave()}
         />
       </>
     )
@@ -269,9 +271,22 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
       case 'macros':
         return <EditMacros />
       case 'distribution':
-        return <MacrosDistributionEdit />
+        return (
+          <MacrosDistributionEdit goalToEdit={editGoal} goalRef={goalRef} />
+        )
       default:
         return <CaloriesEdit />
+    }
+  }
+
+  function getModalOnSave() {
+    switch (editModalType) {
+      case 'distribution':
+        return () => {
+          setEditGoal({ ...goalRef.current })
+        }
+      default:
+        return () => {}
     }
   }
 

@@ -17,8 +17,17 @@ import { proteinColor, carbsColor, fatsColor } from './MacrosDistribution'
 import { Box, Typography } from '@mui/material'
 
 import { roundToNearest50 } from '../../services/macros/macros.service'
+import { Goal } from '../../types/goal/Goal'
 
-export function MacrosDistributionEdit() {
+interface MacrosDistributionEditProps {
+  goalToEdit?: Goal | Partial<Goal>
+  goalRef?: React.RefObject<Goal | Partial<Goal>>
+}
+
+export function MacrosDistributionEdit({
+  goalToEdit,
+  goalRef,
+}: MacrosDistributionEditProps) {
   const user = useSelector(
     (stateSelector: RootState) => stateSelector.userModule.user
   )
@@ -33,35 +42,46 @@ export function MacrosDistributionEdit() {
 
   useEffect(() => {
     if (!user) return
+    const currCalories =
+      goalToEdit?.dailyCalories || user?.currGoal?.dailyCalories
+
     const proteinUserPercentage = Math.round(
-      (calculateProteinCalories(user?.currGoal?.macros.protein || 0) /
-        (user?.currGoal?.dailyCalories || 0)) *
+      (calculateProteinCalories(
+        goalToEdit?.macros?.protein || user?.currGoal?.macros.protein || 0
+      ) /
+        (currCalories || 0)) *
         100
     )
 
     const carbsUserPercentage = Math.round(
-      (calculateCarbCalories(user?.currGoal?.macros.carbs || 0) /
-        (user?.currGoal?.dailyCalories || 0)) *
+      (calculateCarbCalories(
+        goalToEdit?.macros?.carbs || user?.currGoal?.macros.carbs || 0
+      ) /
+        (currCalories || 0)) *
         100
     )
 
     const fatUserPercentage = Math.round(
-      (calculateFatCalories(user?.currGoal?.macros.fat || 0) /
-        (user?.currGoal?.dailyCalories || 0)) *
+      (calculateFatCalories(
+        goalToEdit?.macros?.fat || user?.currGoal?.macros.fat || 0
+      ) /
+        (currCalories || 0)) *
         100
     )
 
     setProteinPercentage(proteinUserPercentage || 30)
     setCarbsPercentage(carbsUserPercentage || 40)
     setFatPercentage(fatUserPercentage || 30)
-  }, [user])
+  }, [user, goalToEdit])
 
   const macros = useMemo(() => {
-    if (!user) return []
-    const proteinCalories =
-      (proteinPercentage / 100) * user?.currGoal.dailyCalories
-    const carbsCalories = (carbsPercentage / 100) * user?.currGoal.dailyCalories
-    const fatCalories = (fatPercentage / 100) * user?.currGoal.dailyCalories
+    if (!goalToEdit && !user) return []
+    const dailyCalories =
+      goalToEdit?.dailyCalories || user?.currGoal.dailyCalories
+    if (!dailyCalories) return []
+    const proteinCalories = (proteinPercentage / 100) * dailyCalories
+    const carbsCalories = (carbsPercentage / 100) * dailyCalories
+    const fatCalories = (fatPercentage / 100) * dailyCalories
 
     return [
       {
@@ -124,23 +144,50 @@ export function MacrosDistributionEdit() {
   }
 
   useEffect(() => {
-    if (!userToEdit) return
+    if (!goalToEdit && !userToEdit) return
     // not best practice, but macros is
     // a special case
-    const caloriesToSet = macros.reduce((acc, macro) => acc + macro.calories, 0)
+    const caloriesToSet =
+      goalToEdit?.dailyCalories || user?.currGoal?.dailyCalories
+
+    const proteinToSet = calculateProteinFromCalories(macros[0].calories)
+    const carbsToSet = calculateCarbsFromCalories(macros[1].calories)
+    const fatToSet = calculateFatFromCalories(macros[2].calories)
+
+    const goalToSet = goalToEdit
+      ? {
+          ...goalToEdit,
+          dailyCalories: caloriesToSet,
+          macros: {
+            ...goalToEdit?.macros,
+            protein: proteinToSet,
+            carbs: carbsToSet,
+            fat: fatToSet,
+          },
+        }
+      : {
+          ...userToEdit?.currGoal,
+          dailyCalories: caloriesToSet,
+          macros: {
+            ...userToEdit?.currGoal?.macros,
+            protein: proteinToSet,
+            carbs: carbsToSet,
+            fat: fatToSet,
+          },
+        }
+
+    if (goalToEdit && goalRef) {
+      //   return () => {
+      //     setEditGoal(goalToSet as Goal)
+      //   }
+
+      goalRef.current = goalToSet as Goal
+      return
+    }
 
     const userToUpdate = {
       ...userToEdit,
-      currGoal: {
-        ...userToEdit?.currGoal,
-        dailyCalories: caloriesToSet,
-        macros: {
-          ...userToEdit?.currGoal?.macros,
-          protein: calculateProteinFromCalories(macros[0].calories),
-          carbs: calculateCarbsFromCalories(macros[1].calories),
-          fat: calculateFatFromCalories(macros[2].calories),
-        },
-      },
+      currGoal: goalToSet,
     } as User
 
     setUserToEdit(userToUpdate)

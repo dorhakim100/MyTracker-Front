@@ -65,9 +65,9 @@ export function GoalsCard() {
           renderPrimaryText={(goal) => goal.title}
           renderLeft={(goal) => (
             <MacrosDonut
-              protein={goal.macros?.protein}
-              carbs={goal.macros?.carbs}
-              fats={goal.macros?.fat}
+              protein={goal.macros?.protein || 0}
+              carbs={goal.macros?.carbs || 0}
+              fats={goal.macros?.fat || 0}
             />
           )}
           renderSecondaryText={(goal) =>
