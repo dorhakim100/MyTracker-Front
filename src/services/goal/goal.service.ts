@@ -74,6 +74,7 @@ function getEmptyGoal() {
       new Date().getTime() + 30 * 24 * 60 * 60 * 1000
     ).getTime(), // 30 days
     target: 'maintain',
+    targetWeight: 80,
   }
 }
 

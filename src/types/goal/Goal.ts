@@ -13,4 +13,5 @@ export interface Goal {
   endDate: number
 
   target: 'lose' | 'maintain' | 'gain'
+  targetWeight: number
 }

@@ -1,5 +1,5 @@
 import { useMemo, useState, useRef } from 'react'
-// import { useEffect } from 'react'
+
 import { useSelector } from 'react-redux'
 import { Goal } from '../../types/goal/Goal'
 import CustomStepper from '../../CustomMui/CustomStepper/CustomStepper'
@@ -39,12 +39,14 @@ import { CustomDatePicker } from '../../CustomMui/CustomDatePicker/CustomDatePic
 import { getDateFromISO } from '../../services/util.service'
 import { israelLocaleStringObject } from '../../assets/config/times'
 
+import { WeightEdit } from '../WeightCard/WeightEdit'
+
 interface EditGoalProps {
   selectedGoal?: Goal | null
   saveGoal: (goal: Goal) => void
 }
 
-const stages = ['title', 'target', 'macros', 'dates']
+const stages = ['title', 'target', 'macros', 'weight', 'dates']
 
 const DEFAULT_CALORIES = 2400
 
@@ -63,6 +65,7 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
       ({
         ...goalService.getEmptyGoal(),
         dailyCalories: bmrService.getBmrByUser(user) || DEFAULT_CALORIES,
+        targetWeight: user?.lastWeight?.kg || 80,
       } as Goal)
   )
   const [activeStage, setActiveStage] = useState<string>(stages[0])
@@ -200,6 +203,8 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
         return _renderTitleStage()
       case 'target':
         return _renderTargetStage()
+      case 'weight':
+        return _renderWeightStage()
       case 'macros':
         return _renderMacrosStage()
       case 'dates':
@@ -207,6 +212,84 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
     }
   }
 
+  function onCaloriesOpenClick() {
+    setEditGoalOpen(true)
+    setEditModalType('calories')
+  }
+
+  function getModalTypeComponent() {
+    switch (editModalType) {
+      case 'calories':
+        return <CaloriesEdit goalToEdit={editGoal} goalRef={goalRef} />
+      case 'macros':
+        return <EditMacros goalToEdit={editGoal} goalRef={goalRef} />
+      case 'distribution':
+        return (
+          <MacrosDistributionEdit goalToEdit={editGoal} goalRef={goalRef} />
+        )
+      default:
+        return <CaloriesEdit />
+    }
+  }
+
+  function getModalOnSave() {
+    switch (editModalType) {
+      case 'calories':
+        return () => {
+          setEditGoal({ ...goalRef.current })
+        }
+      case 'macros':
+        return () => {
+          setEditGoal({ ...goalRef.current })
+        }
+      case 'distribution':
+        return () => {
+          setEditGoal({ ...goalRef.current })
+        }
+
+      default:
+        return () => {}
+    }
+  }
+
+  const onCloseEditGoal = () => {
+    setEditGoalOpen(false)
+  }
+
+  function onMacrosOpenClick() {
+    setEditGoalOpen(true)
+    setEditModalType('macros')
+  }
+
+  function onDistributionOpenClick() {
+    setEditGoalOpen(true)
+    setEditModalType('distribution')
+  }
+
+  const getStageTitle = (stage: string) => {
+    switch (stage) {
+      case 'title':
+        return 'Goal Title'
+      case 'target':
+        return 'Target'
+      case 'macros':
+        return 'Macros Distribution'
+      case 'weight':
+        return 'Target Weight'
+      case 'dates':
+        return 'Goal Dates'
+      default:
+        return capitalizeFirstLetter(stage)
+    }
+  }
+
+  const getIsNextDisabled = (stage: string) => {
+    if (stage === 'title') return !editGoal.title
+    if (stage === 'target') return !editGoal.dailyCalories
+    if (stage === 'macros') return !editGoal.macros
+    return false
+  }
+  // Stages rendering
   function _renderTitleStage() {
     return (
       <div className='stage-container'>
@@ -252,6 +335,20 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
             <Lottie animationData={targetAnimation} loop={true} />
           </SlideAnimation>
         </div>
+      </div>
+    )
+  }
+
+  function _renderWeightStage() {
+    return (
+      <div className='stage-container'>
+        <WeightEdit
+          value={editGoal.targetWeight || 0}
+          onChange={(value) =>
+            setEditGoal({ ...editGoal, targetWeight: value })
+          }
+          isHideSaveButton={true}
+        />
       </div>
     )
   }
@@ -353,81 +450,6 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
       </div>
     )
   }
-
-  function onCaloriesOpenClick() {
-    setEditGoalOpen(true)
-    setEditModalType('calories')
-  }
-
-  function getModalTypeComponent() {
-    switch (editModalType) {
-      case 'calories':
-        return <CaloriesEdit goalToEdit={editGoal} goalRef={goalRef} />
-      case 'macros':
-        return <EditMacros goalToEdit={editGoal} goalRef={goalRef} />
-      case 'distribution':
-        return (
-          <MacrosDistributionEdit goalToEdit={editGoal} goalRef={goalRef} />
-        )
-      default:
-        return <CaloriesEdit />
-    }
-  }
-
-  function getModalOnSave() {
-    switch (editModalType) {
-      case 'calories':
-        return () => {
-          setEditGoal({ ...goalRef.current })
-        }
-      case 'macros':
-        return () => {
-          setEditGoal({ ...goalRef.current })
-        }
-      case 'distribution':
-        return () => {
-          setEditGoal({ ...goalRef.current })
-        }
-
-      default:
-        return () => {}
-    }
-  }
-
-  const onCloseEditGoal = () => {
-    setEditGoalOpen(false)
-  }
-
-  function onMacrosOpenClick() {
-    setEditGoalOpen(true)
-    setEditModalType('macros')
-  }
-
-  function onDistributionOpenClick() {
-    setEditGoalOpen(true)
-    setEditModalType('distribution')
-  }
-
-  const getStageTitle = (stage: string) => {
-    switch (stage) {
-      case 'title':
-        return 'Goal Title'
-      case 'target':
-        return 'Target Weight'
-      case 'macros':
-        return 'Macros Distribution'
-      default:
-        return capitalizeFirstLetter(stage)
-    }
-  }
-
-  const getIsNextDisabled = (stage: string) => {
-    if (stage === 'title') return !editGoal.title
-    if (stage === 'target') return !editGoal.dailyCalories
-    if (stage === 'macros') return !editGoal.macros
-    return false
-  }
-
   return (
     <div className='page-container edit-goal-container'>
       <CustomStepper

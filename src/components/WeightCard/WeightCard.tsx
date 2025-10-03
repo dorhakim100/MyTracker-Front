@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 
-import { Card, Divider, Typography } from '@mui/material'
+import { Card, Typography } from '@mui/material'
 import { RootState } from '../../store/store'
 import { useSelector } from 'react-redux'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
@@ -14,6 +14,14 @@ import {
 import { Weight } from '../../types/weight/Weight'
 
 import scaleAnimation from '../../../public/scale.json'
+import { SlideDialog } from '../SlideDialog/SlideDialog'
+import { WeightEdit } from './WeightEdit'
+import { dayService } from '../../services/day/day.service'
+import { getDateFromISO } from '../../services/util.service'
+import { weightService } from '../../services/weight/weight.service'
+import { LoggedToday } from '../../types/loggedToday/LoggedToday'
+import { CustomDatePicker } from '../../CustomMui/CustomDatePicker/CustomDatePicker'
+import Lottie from 'lottie-react'
 
 const DEFAULT_WEIGHT = 60
 
@@ -165,105 +173,10 @@ export function WeightCard() {
       <SlideDialog
         open={open}
         onClose={onClose}
-        component={<EditComponent value={weightToAdd} onChange={onSave} />}
+        component={<WeightEdit value={weightToAdd} onChange={onSave} />}
         onSave={() => onSave(weightToAdd)}
         title='Update Weight'
       />
     </>
-  )
-}
-
-import Picker from 'react-mobile-picker'
-import { SlideDialog } from '../SlideDialog/SlideDialog'
-import { getArrayOfNumbers, getDateFromISO } from '../../services/util.service'
-import { weightService } from '../../services/weight/weight.service'
-import { dayService } from '../../services/day/day.service'
-import { CustomDatePicker } from '../../CustomMui/CustomDatePicker/CustomDatePicker'
-import { LoggedToday } from '../../types/loggedToday/LoggedToday'
-import Lottie from 'lottie-react'
-
-interface EditComponentProps {
-  value: number
-  onChange: (value: number) => void
-}
-
-function EditComponent({ value, onChange }: EditComponentProps) {
-  const prefs = useSelector(
-    (stateSelector: RootState) => stateSelector.systemModule.prefs
-  )
-
-  const [pickerWeight, setPickerWeight] = useState<{
-    firstValue: number
-    secondValue: number
-  }>({
-    firstValue: value,
-    secondValue: 0,
-  })
-
-  useEffect(() => {
-    const firstValue = Math.floor(value)
-    let secondValue = Math.round((value - firstValue) * 10)
-
-    if (firstValue === 0 && secondValue === 0) {
-      secondValue = 0.1
-    }
-
-    setPickerWeight({
-      firstValue: firstValue,
-      secondValue: secondValue,
-    })
-  }, [])
-
-  const onUpdateClick = () => {
-    onChange(pickerWeight.firstValue + pickerWeight.secondValue / 10)
-  }
-
-  return (
-    <div className='picker-container'>
-      <Picker
-        value={pickerWeight}
-        onChange={(next) =>
-          setPickerWeight({
-            firstValue: next.firstValue,
-            secondValue: next.secondValue,
-          })
-        }
-      >
-        <Picker.Column name='firstValue'>
-          {getArrayOfNumbers(30, 150).map((number) => (
-            <Picker.Item key={number} value={number}>
-              {({ selected }) => (
-                <Typography
-                  variant='h5'
-                  className={`${selected ? 'selected' : ''}`}
-                >
-                  {number}
-                </Typography>
-              )}
-            </Picker.Item>
-          ))}
-        </Picker.Column>
-        <Divider
-          orientation='vertical'
-          flexItem
-          className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-        />
-        <Picker.Column name='secondValue'>
-          {getArrayOfNumbers(0, 9).map((number) => (
-            <Picker.Item key={number} value={number}>
-              {({ selected }) => (
-                <Typography
-                  variant='h5'
-                  className={`${selected ? 'selected' : ''}`}
-                >
-                  {number}
-                </Typography>
-              )}
-            </Picker.Item>
-          ))}
-        </Picker.Column>
-      </Picker>
-      <CustomButton text='Save' onClick={onUpdateClick} />
-    </div>
   )
 }
