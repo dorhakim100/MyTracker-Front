@@ -111,7 +111,7 @@ export function EditMacros({ goalToEdit, goalRef }: EditMacrosProps) {
     } as User
 
     setUserToEdit(userToUpdate)
-  }, [pickerValue, goalToEdit])
+  }, [pickerValue])
 
   useEffect(() => {
     const userToSet = {

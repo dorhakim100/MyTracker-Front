@@ -17,10 +17,10 @@ import { Goal } from '../../types/goal/Goal'
 
 interface CaloriesEditProps {
   goalToEdit?: Goal | Partial<Goal>
-  setEditGoal?: (goal: Goal) => void
+  goalRef?: React.RefObject<Goal | Partial<Goal>>
 }
 
-export function CaloriesEdit({ goalToEdit, setEditGoal }: CaloriesEditProps) {
+export function CaloriesEdit({ goalToEdit, goalRef }: CaloriesEditProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
@@ -76,15 +76,15 @@ export function CaloriesEdit({ goalToEdit, setEditGoal }: CaloriesEditProps) {
       goalToEdit?.macros?.carbs || user?.currGoal?.macros.carbs || 0
 
     const newCarbs = originalCarbs + carbsToEdit
-    if (goalToEdit && setEditGoal) {
-      setEditGoal({
+    if (goalToEdit && goalRef) {
+      goalRef.current = {
         ...goalToEdit,
         dailyCalories: pickerCalories.calories,
         macros: {
           ...goalToEdit?.macros,
           carbs: newCarbs,
         },
-      } as Goal)
+      } as Goal
       return
     }
 
