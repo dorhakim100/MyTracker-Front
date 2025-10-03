@@ -269,7 +269,7 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
       case 'calories':
         return <CaloriesEdit goalToEdit={editGoal} setEditGoal={setEditGoal} />
       case 'macros':
-        return <EditMacros />
+        return <EditMacros goalToEdit={editGoal} goalRef={goalRef} />
       case 'distribution':
         return (
           <MacrosDistributionEdit goalToEdit={editGoal} goalRef={goalRef} />
@@ -282,6 +282,11 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
   function getModalOnSave() {
     switch (editModalType) {
       case 'distribution':
+        return () => {
+          setEditGoal({ ...goalRef.current })
+        }
+
+      case 'macros':
         return () => {
           setEditGoal({ ...goalRef.current })
         }

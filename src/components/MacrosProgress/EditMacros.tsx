@@ -15,8 +15,14 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { useEffect, useState } from 'react'
 import { Box, Typography } from '@mui/material'
+import { Goal } from '../../types/goal/Goal'
 
-export function EditMacros() {
+interface EditMacrosProps {
+  goalToEdit?: Goal | Partial<Goal>
+  goalRef?: React.RefObject<Goal | Partial<Goal>>
+}
+
+export function EditMacros({ goalToEdit, goalRef }: EditMacrosProps) {
   interface PickerValue {
     carbs: number
     protein: number
@@ -40,15 +46,22 @@ export function EditMacros() {
 
   const [pickerValue, setPickerValue] = useState<PickerValue>({
     carbs: getFixedNumber(
-      userToEdit?.currGoal?.macros.carbs || user?.currGoal?.macros.carbs || 0
+      goalToEdit?.macros?.carbs ||
+        userToEdit?.currGoal?.macros.carbs ||
+        user?.currGoal?.macros.carbs ||
+        0
     ),
     protein: getFixedNumber(
-      userToEdit?.currGoal?.macros.protein ||
+      goalToEdit?.macros?.protein ||
+        userToEdit?.currGoal?.macros.protein ||
         user?.currGoal?.macros.protein ||
         0
     ),
     fats: getFixedNumber(
-      userToEdit?.currGoal?.macros.fat || user?.currGoal?.macros.fat || 0
+      goalToEdit?.macros?.fat ||
+        userToEdit?.currGoal?.macros.fat ||
+        user?.currGoal?.macros.fat ||
+        0
     ),
   })
 
@@ -58,7 +71,7 @@ export function EditMacros() {
     pickerValue.protein = +pickerValue.protein.toFixed(0)
     pickerValue.carbs = +pickerValue.carbs.toFixed(0)
     pickerValue.fats = +pickerValue.fats.toFixed(0)
-  }, [userToEdit, user])
+  }, [userToEdit, user, goalToEdit])
 
   useEffect(() => {
     const proteinCalories = calculateProteinCalories(pickerValue.protein)
@@ -66,6 +79,22 @@ export function EditMacros() {
     const fatsCalories = calculateFatCalories(pickerValue.fats)
 
     const totalCalories = proteinCalories + carbsCalories + fatsCalories
+
+    const goalToUpdate = {
+      ...goalToEdit,
+      dailyCalories: totalCalories,
+      macros: {
+        ...goalToEdit?.macros,
+        carbs: pickerValue.carbs,
+        protein: pickerValue.protein,
+        fat: pickerValue.fats,
+      },
+    } as Goal
+
+    if (goalToEdit && goalRef) {
+      goalRef.current = goalToUpdate as Goal
+      return
+    }
 
     const userToUpdate = {
       ...userToEdit,
@@ -82,7 +111,7 @@ export function EditMacros() {
     } as User
 
     setUserToEdit(userToUpdate)
-  }, [pickerValue])
+  }, [pickerValue, goalToEdit])
 
   useEffect(() => {
     const userToSet = {
