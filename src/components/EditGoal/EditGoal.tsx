@@ -1,4 +1,5 @@
 import { useMemo, useState, useRef } from 'react'
+import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { Goal } from '../../types/goal/Goal'
 import CustomStepper from '../../CustomMui/CustomStepper/CustomStepper'
@@ -28,6 +29,7 @@ import { SlideDialog } from '../SlideDialog/SlideDialog'
 
 import { MacrosDonut } from '../MacrosDonut/MacrosDonut'
 import { Macros } from '../Macros/Macros'
+import { calculateCarbsFromCalories } from '../../services/macros/macros.service'
 
 interface EditGoalProps {
   selectedGoal?: Goal | null
@@ -45,11 +47,12 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
     (stateSelector: RootState) => stateSelector.userModule.user
   )
 
-  const [editGoal, setEditGoal] = useState(
-    selectedGoal || {
-      ...goalService.getEmptyGoal(),
-      dailyCalories: bmrService.getBmrByUser(user) || DEFAULT_CALORIES,
-    }
+  const [editGoal, setEditGoal] = useState<Goal | Partial<Goal>>(
+    selectedGoal ||
+      ({
+        ...goalService.getEmptyGoal(),
+        dailyCalories: bmrService.getBmrByUser(user) || DEFAULT_CALORIES,
+      } as Goal)
   )
   const [activeStage, setActiveStage] = useState<string>(stages[0])
   const [direction, setDirection] = useState(1)
@@ -60,7 +63,7 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
     'calories' | 'macros' | 'distribution'
   >('calories')
 
-  const prevAnimation = useRef<string>(selectedTarget)
+  const prevTarget = useRef<string>(selectedTarget)
 
   const targetAnimation = useMemo(() => {
     switch (selectedTarget) {
@@ -83,12 +86,12 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
         direction = 1
         break
       case 'maintain':
-        direction = prevAnimation.current === 'lose' ? 1 : -1
+        direction = prevTarget.current === 'lose' ? 1 : -1
         break
       default:
         direction = 1
     }
-    prevAnimation.current = selectedTarget
+    prevTarget.current = selectedTarget
     return direction
   }, [selectedTarget])
 
@@ -118,12 +121,39 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
     },
   ]
 
+  useEffect(() => {
+    console.log('editGoal', editGoal)
+  }, [editGoal])
+
   function _onTargetClick(target: 'lose' | 'maintain' | 'gain') {
+    const macros = editGoal.macros
     setSelectedTarget(target)
+    let carbsDiff = 0
+
+    carbsDiff = calculateCarbsFromCalories(CALORIES_DIFF)
+
+    if (target === 'lose' && prevTarget.current === 'maintain') {
+      carbsDiff *= -1
+    }
+
+    if (target === 'maintain' && prevTarget.current === 'gain') {
+      carbsDiff *= -1
+    }
+
+    if (target === 'gain' && prevTarget.current === 'lose') {
+      carbsDiff *= 2
+    } else if (target === 'lose' && prevTarget.current === 'gain') {
+      carbsDiff *= -2
+    }
+
     setEditGoal({
       ...editGoal,
       dailyCalories:
         targets.find((t) => t.key === target)?.suggestedCalories || 0,
+      macros: {
+        ...editGoal.macros,
+        carbs: (macros?.carbs || 0) + carbsDiff,
+      },
       target: target,
     })
   }
@@ -148,7 +178,7 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
     return (
       <div className='stage-container'>
         <CustomInput
-          value={editGoal.title}
+          value={editGoal.title || ''}
           onChange={(value) => setEditGoal({ ...editGoal, title: value })}
           placeholder='Enter goal title...'
         />
@@ -235,7 +265,7 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
   function getModalTypeComponent() {
     switch (editModalType) {
       case 'calories':
-        return <CaloriesEdit />
+        return <CaloriesEdit goalToEdit={editGoal} setEditGoal={setEditGoal} />
       case 'macros':
         return <EditMacros />
       case 'distribution':

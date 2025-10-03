@@ -13,8 +13,14 @@ import { useEffect, useMemo, useState } from 'react'
 import { Box, Typography } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import RemoveIcon from '@mui/icons-material/Remove'
+import { Goal } from '../../types/goal/Goal'
 
-export function CaloriesEdit() {
+interface CaloriesEditProps {
+  goalToEdit?: Goal | Partial<Goal>
+  setEditGoal?: (goal: Goal) => void
+}
+
+export function CaloriesEdit({ goalToEdit, setEditGoal }: CaloriesEditProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
@@ -38,7 +44,9 @@ export function CaloriesEdit() {
   )
 
   const [pickerCalories, setPickerCalories] = useState<{ calories: number }>({
-    calories: roundCaloriesToNearest50(user?.currGoal?.dailyCalories || 2400),
+    calories: roundCaloriesToNearest50(
+      goalToEdit?.dailyCalories || user?.currGoal?.dailyCalories || 2400
+    ),
   })
 
   const onFixedChange = (value: number) => {
@@ -53,15 +61,32 @@ export function CaloriesEdit() {
   }
 
   useEffect(() => {
-    const currCalories = user?.currGoal?.dailyCalories
+    const currCalories =
+      goalToEdit?.dailyCalories || user?.currGoal?.dailyCalories
 
     if (!currCalories) return
     const diff = (currCalories - pickerCalories.calories) * -1
 
-    const carbsToEdit = calculateCarbsFromCalories(diff)
-    const originalCarbs = user?.currGoal?.macros.carbs || 0
+    let carbsToEdit = calculateCarbsFromCalories(diff)
+
+    if (diff < 0) {
+      carbsToEdit *= -1
+    }
+    const originalCarbs =
+      goalToEdit?.macros?.carbs || user?.currGoal?.macros.carbs || 0
 
     const newCarbs = originalCarbs + carbsToEdit
+    if (goalToEdit && setEditGoal) {
+      setEditGoal({
+        ...goalToEdit,
+        dailyCalories: pickerCalories.calories,
+        macros: {
+          ...goalToEdit?.macros,
+          carbs: newCarbs,
+        },
+      } as Goal)
+      return
+    }
 
     const userToUpdate = {
       ...userToEdit,
