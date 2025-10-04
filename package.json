@@ -25,6 +25,7 @@
     "chart.js": "^4.5.0",
     "date-fns": "^4.1.0",
     "framer-motion": "^12.6.3",
+    "lightweight-charts": "^5.0.9",
     "lottie-react": "^2.4.1",
     "prop-types": "^15.8.1",
     "rc-slider": "^11.1.8",
