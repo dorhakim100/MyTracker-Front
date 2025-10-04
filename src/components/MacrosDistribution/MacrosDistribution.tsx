@@ -16,6 +16,7 @@ import { User } from '../../types/user/User'
 import { setIsLoading } from '../../store/actions/system.actions'
 import { MacrosDistributionEdit } from './MacrosDistributionEdit'
 import { MacrosDonut } from '../MacrosDonut/MacrosDonut'
+import { goalService } from '../../services/goal/goal.service'
 
 interface MacrosDistributionProps {
   protein: number
@@ -62,8 +63,9 @@ export function MacrosDistribution({
       if (!userToEdit || !user) return
       setIsLoading(true)
       optimisticUpdateUser(userToEdit)
-      setOpen(false)
-      await updateUser(userToEdit)
+      onClose()
+      const savedGoal = await goalService.save({ ...userToEdit.currGoal })
+      await updateUser({ ...userToEdit, currGoal: savedGoal })
       showSuccessMsg(messages.success.updateMacros)
     } catch (err) {
       console.log(err)

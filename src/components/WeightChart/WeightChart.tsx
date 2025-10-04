@@ -172,7 +172,7 @@ export function WeightChart({ className = '' }: WeightChartProps) {
 
     if (isBaseline) {
       messageToSet = 'Goal weight'
-      weight = GOAL_WEIGHT
+      weight = user?.currGoal.targetWeight || GOAL_WEIGHT
     } else if (!weight && estimatedValue) {
       messageToSet = 'Estimated weight'
     }

@@ -13,7 +13,11 @@ import { showSuccessMsg } from '../../services/event-bus.service'
 import { messages } from '../../assets/config/messages'
 import { showErrorMsg } from '../../services/event-bus.service'
 import { setIsLoading } from '../../store/actions/system.actions'
-import { updateUser } from '../../store/actions/user.actions'
+import {
+  optimisticUpdateUser,
+  updateUser,
+} from '../../store/actions/user.actions'
+import { goalService } from '../../services/goal/goal.service'
 
 const proteinColor = 'var(--macro-protein)'
 const carbsColor = 'var(--macro-carbs)'
@@ -74,9 +78,11 @@ export function MacrosProgress({ protein, carbs, fats }: MacrosProgressProps) {
     try {
       if (!userToEdit) return
       setIsLoading(true)
-      await updateUser(userToEdit)
-      showSuccessMsg(messages.success.updateMacros)
+      optimisticUpdateUser(userToEdit)
       onClose()
+      const savedGoal = await goalService.save({ ...userToEdit.currGoal })
+      await updateUser({ ...userToEdit, currGoal: savedGoal })
+      showSuccessMsg(messages.success.updateMacros)
     } catch (err) {
       console.log(err)
       showErrorMsg(messages.error.updateMacros)

@@ -32,7 +32,8 @@ body {
     }
   }
 
-  &:has(.MuiDialog-root) {
+  &:has(.MuiDialog-root),
+  &:has(.MuiDialog-container) {
     .page-container,
     .main {
       overflow: hidden !important;

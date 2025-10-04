@@ -20,6 +20,7 @@ import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { GoalBanner } from '../GoalBanner/GoalBanner'
 import { User } from '../../types/user/User'
 import { roundToNearest50 } from '../../services/macros/macros.service'
+import { goalService } from '../../services/goal/goal.service'
 // import FlagIcon from '@mui/icons-material/Flag'
 
 interface CaloriesProgressProps {
@@ -72,7 +73,8 @@ export function CaloriesProgress({
       setIsLoading(true)
       optimisticUpdateUser(userToEdit)
       onClose()
-      await updateUser(userToEdit)
+      const savedGoal = await goalService.save({ ...userToEdit.currGoal })
+      await updateUser({ ...userToEdit, currGoal: savedGoal })
       showSuccessMsg(messages.success.updateCalories)
     } catch (err) {
       console.log('err', err)
