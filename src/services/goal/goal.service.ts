@@ -8,8 +8,10 @@ export const goalService = {
   getById,
   save,
   remove,
+  selectGoal,
   getEmptyGoal,
   getDefaultFilter,
+  getDefault30DaysGoal,
   // getMaxPage,
 }
 
@@ -61,6 +63,14 @@ async function save(goal: Goal) {
   }
 }
 
+async function selectGoal(goalId: string, userId: string) {
+  try {
+    return await httpService.put(`${KEY}/select`, { goalId, userId })
+  } catch (err) {
+    throw err
+  }
+}
+
 function getEmptyGoal() {
   return {
     _id: '',
@@ -70,12 +80,14 @@ function getEmptyGoal() {
     dailyCalories: 2400,
     macros: { protein: 180, carbs: 300, fat: 53 },
     startDate: new Date().getTime(),
-    endDate: new Date(
-      new Date().getTime() + 30 * 24 * 60 * 60 * 1000
-    ).getTime(), // 30 days
+    endDate: getDefault30DaysGoal(),
     target: 'maintain',
     targetWeight: 80,
   }
+}
+
+function getDefault30DaysGoal() {
+  return new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000).getTime() // 30 days
 }
 
 function getDefaultFilter() {

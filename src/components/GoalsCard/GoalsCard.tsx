@@ -12,6 +12,14 @@ import AddIcon from '@mui/icons-material/Add'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { Goal } from '../../types/goal/Goal'
 import { Checkbox } from '@mui/material'
+import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
+import { messages } from '../../assets/config/messages'
+import { goalService } from '../../services/goal/goal.service'
+import {
+  optimisticUpdateUser,
+  updateUser,
+} from '../../store/actions/user.actions'
+import { User } from '../../types/user/User'
 
 const DEFAULT_GOAL_TITLE = 'Loss weight'
 
@@ -35,9 +43,26 @@ export function GoalsCard() {
   const openModal = () => {
     setIsAddGoalOpen(true)
   }
+  console.log('user', user)
+  const saveGoal = async (goal: Goal) => {
+    try {
+      if (!user) return showErrorMsg(messages.error.saveGoal)
 
-  const saveGoal = (goal: Goal) => {
-    console.log('saveGoal', goal)
+      goal.userId = user._id
+
+      const savedGoal = await goalService.save(goal)
+      const newUser = {
+        ...user,
+        goals: [savedGoal, ...(user?.goals || [])],
+      }
+      optimisticUpdateUser(newUser)
+      onCloseGoalDetails()
+      await updateUser(newUser)
+      showSuccessMsg(messages.success.saveGoal)
+    } catch (err) {
+      console.log('err', err)
+      showErrorMsg(messages.error.saveGoal)
+    }
   }
 
   const onAddGoal = () => {
@@ -50,8 +75,26 @@ export function GoalsCard() {
     openModal()
   }
 
-  const onActivateGoal = (goal: Goal) => {
-    console.log('onActivateGoal', goal)
+  const onActivateGoal = async (goal: Goal) => {
+    if (!user) return showErrorMsg(messages.error.saveGoal)
+    const newUser = {
+      ...user,
+      currGoal: goal,
+      goals: user.goals.map((g) =>
+        g._id === goal._id
+          ? { ...g, isSelected: true }
+          : { ...g, isSelected: false }
+      ),
+    }
+    optimisticUpdateUser(newUser as User)
+    try {
+      await goalService.selectGoal(goal._id, user._id)
+      showSuccessMsg(messages.success.saveGoal)
+    } catch (err) {
+      console.log('err', err)
+      showErrorMsg(messages.error.saveGoal)
+      optimisticUpdateUser(user as User)
+    }
   }
 
   if (!user || !user.goals) return <div>GoalsCard</div>
@@ -91,6 +134,7 @@ export function GoalsCard() {
               checked={goal.isSelected}
               onClick={(ev) => {
                 ev.stopPropagation()
+                if (goal.isSelected) return
                 onActivateGoal(goal)
               }}
             />

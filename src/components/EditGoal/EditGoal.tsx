@@ -32,7 +32,7 @@ import { Macros } from '../Macros/Macros'
 import { calculateCarbsFromCalories } from '../../services/macros/macros.service'
 
 import EditIcon from '@mui/icons-material/Edit'
-import { Divider, Typography } from '@mui/material'
+import { Checkbox, Divider, Typography } from '@mui/material'
 
 import dateAnimation from '../../../public/date-animation.json'
 import { CustomDatePicker } from '../../CustomMui/CustomDatePicker/CustomDatePicker'
@@ -404,20 +404,23 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
       'he',
       israelLocaleStringObject
     )
-    const endDateToShow = newDateEnd.toLocaleString(
-      'he',
-      israelLocaleStringObject
-    )
-
+    let endDateToShow
     const startDate = getDateFromISO(newDateStart.toISOString())
 
-    const endDate = getDateFromISO(newDateEnd.toISOString())
+    let endDate
+
+    if (editGoal.endDate !== undefined) {
+      endDateToShow = newDateEnd.toLocaleString('he', israelLocaleStringObject)
+      endDate = getDateFromISO(newDateEnd.toISOString())
+    }
 
     return (
       <div className='stage-container'>
         <div className='edit-header-container'>
           <div className='date-picker-container'>
-            <Typography variant='h6'>Start Date:</Typography>
+            <label htmlFor='start-date' className='start-date-label'>
+              Start Date:
+            </label>
 
             <Typography variant='h6'>{startDateToShow}</Typography>
             <CustomDatePicker
@@ -431,17 +434,44 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
               className={`${prefs.favoriteColor}`}
             />
           </div>
-          <div className='date-picker-container'>
-            <Typography variant='h6'>End Date:</Typography>
+          <div
+            className={`date-picker-container ${
+              editGoal.endDate !== undefined ? '' : 'disabled'
+            } ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+          >
+            <Checkbox
+              className={`${prefs.favoriteColor}`}
+              checked={editGoal.endDate !== undefined}
+              onChange={(event) =>
+                setEditGoal({
+                  ...editGoal,
+                  endDate: event.target.checked
+                    ? goalService.getDefault30DaysGoal()
+                    : undefined,
+                })
+              }
+              id='end-date'
+            />
+            <label htmlFor='end-date' className='end-date-label'>
+              End Date:
+            </label>
+            {/* <Typography variant='h6'  >
+              End Date:
+            </Typography> */}
 
             <Typography variant='h6'>{endDateToShow}</Typography>
-            <CustomDatePicker
-              value={endDate}
-              onChange={(date) =>
-                setEditGoal({ ...editGoal, endDate: new Date(date).getTime() })
-              }
-              className={`${prefs.favoriteColor}`}
-            />
+            {editGoal.endDate !== undefined && (
+              <CustomDatePicker
+                value={endDate}
+                onChange={(date) =>
+                  setEditGoal({
+                    ...editGoal,
+                    endDate: new Date(date).getTime(),
+                  })
+                }
+                className={`${prefs.favoriteColor}`}
+              />
+            )}
           </div>
         </div>
         <div className='animation-container date'>
