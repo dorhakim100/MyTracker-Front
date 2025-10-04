@@ -25,6 +25,7 @@ import { Meal } from '../../types/meal/Meal'
 
 interface ItemDetailsProps {
   onAddToMealClick?: (item: MealItem) => void
+  noEdit?: boolean
 }
 
 interface EditOption {
@@ -34,7 +35,10 @@ interface EditOption {
   type: string
 }
 
-export function ItemDetails({ onAddToMealClick }: ItemDetailsProps) {
+export function ItemDetails({
+  onAddToMealClick,
+  noEdit = false,
+}: ItemDetailsProps) {
   const searchedItem: Item = useSelector(
     (stateSelector: RootState) => stateSelector.itemModule.item
   )
@@ -408,7 +412,7 @@ export function ItemDetails({ onAddToMealClick }: ItemDetailsProps) {
   }
 
   return (
-    <div className='item-details'>
+    <div className={`item-details ${noEdit ? 'no-edit' : ''}`}>
       <div className='header'>
         <div className='image'>
           <img src={item.image} alt={item.name} />
@@ -418,7 +422,7 @@ export function ItemDetails({ onAddToMealClick }: ItemDetailsProps) {
           0
         )} kcal for ${!_hasItems(item) ? '100g' : 'serving'}`}</div>
 
-        {!_hasItems(item) && (
+        {!noEdit && !_hasItems(item) && (
           <div className='favorite-container' onClick={onFavoriteClick}>
             <FavoriteButton
               isFavorite={searchService.isFavorite(searchedItem, user) || false}
@@ -445,66 +449,69 @@ export function ItemDetails({ onAddToMealClick }: ItemDetailsProps) {
 
       <div className='edit'>
         <div className='selects-container'>
-          {editOptions.map((option) => {
-            if (onAddToMealClick && option.key === 'meal') return null
+          {!noEdit &&
+            editOptions.map((option) => {
+              if (onAddToMealClick && option.key === 'meal') return null
 
-            if (
-              !item.searchId &&
-              _hasItems(item) &&
-              option.key === 'servingSize'
-            )
-              return null
-            return (
-              <div
-                className={`select-container ${
-                  prefs.isDarkMode ? 'dark-mode' : ''
-                }`}
-                key={option.label}
-              >
-                <Typography variant='h6'>{option.label}</Typography>
-                {option.type === 'select' && (
-                  <CustomSelect
-                    label={option.label}
-                    values={option.values.map((value) => value.toString())}
-                    extra={option.extra}
-                    value={editItem[option.key as keyof EditItem].toString()}
-                    onChange={(value) => onEditItemChange(option.key, value)}
-                  />
-                )}
-                {option.type === 'clock' && (
-                  <>
-                    <ServingsSelect
-                      openClock={openClock}
-                      option={option}
-                      value={editItem.numberOfServings}
+              if (
+                !item.searchId &&
+                _hasItems(item) &&
+                option.key === 'servingSize'
+              )
+                return null
+              return (
+                <div
+                  className={`select-container ${
+                    prefs.isDarkMode ? 'dark-mode' : ''
+                  }`}
+                  key={option.label}
+                >
+                  <Typography variant='h6'>{option.label}</Typography>
+                  {option.type === 'select' && (
+                    <CustomSelect
+                      label={option.label}
+                      values={option.values.map((value) => value.toString())}
+                      extra={option.extra}
+                      value={editItem[option.key as keyof EditItem].toString()}
+                      onChange={(value) => onEditItemChange(option.key, value)}
                     />
-                    <SlideDialog
-                      open={clockOpen}
-                      onClose={closeClock}
-                      component={
-                        <EditComponent
-                          value={editItem.numberOfServings}
-                          onChange={onEditItemChange}
-                        />
-                      }
-                      onSave={() => {}}
-                      title={option.label}
-                    />
-                  </>
-                )}
-              </div>
-            )
-          })}
+                  )}
+                  {option.type === 'clock' && (
+                    <>
+                      <ServingsSelect
+                        openClock={openClock}
+                        option={option}
+                        value={editItem.numberOfServings}
+                      />
+                      <SlideDialog
+                        open={clockOpen}
+                        onClose={closeClock}
+                        component={
+                          <EditComponent
+                            value={editItem.numberOfServings}
+                            onChange={onEditItemChange}
+                          />
+                        }
+                        onSave={() => {}}
+                        title={option.label}
+                      />
+                    </>
+                  )}
+                </div>
+              )
+            })}
         </div>
       </div>
-      <CustomButton
-        text={editMealItem ? 'Edit Meal' : 'Add to Meal'}
-        icon={!editMealItem && <AddIcon sx={{ mr: 1 }} />}
-        size='large'
-        fullWidth
-        className={`add-to-meal-button ${prefs.favoriteColor}`}
-        onClick={getOnClick()}
-      />
+      {!noEdit && (
+        <CustomButton
+          text={editMealItem ? 'Edit Meal' : 'Add to Meal'}
+          icon={!editMealItem && <AddIcon sx={{ mr: 1 }} />}
+          size='large'
+          fullWidth
+          className={`add-to-meal-button ${prefs.favoriteColor}`}
+          onClick={getOnClick()}
+        />
+      )}
     </div>
   )
 }

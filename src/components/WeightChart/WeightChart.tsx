@@ -21,6 +21,7 @@ import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
 import CircleIcon from '@mui/icons-material/Circle'
 interface WeightChartProps {
   className?: string
+  setSelectedDate?: (date: Date) => void
 }
 
 interface Stats {
@@ -33,7 +34,10 @@ interface Stats {
 const LABEL = 'Weight'
 const GOAL_WEIGHT = 94
 
-export function WeightChart({ className = '' }: WeightChartProps) {
+export function WeightChart({
+  className = '',
+  setSelectedDate,
+}: WeightChartProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
@@ -196,6 +200,7 @@ export function WeightChart({ className = '' }: WeightChartProps) {
       message: messageToSet || '',
       isGoal: isBaseline || false,
     })
+    setSelectedDate?.(getFullDate(data.labels[index]))
   }
 
   return (

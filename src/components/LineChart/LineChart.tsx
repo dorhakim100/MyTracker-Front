@@ -218,6 +218,7 @@ export default function LineChart({
     const native = e.nativeEvent as MouseEvent
     const rect = (e.target as HTMLCanvasElement).getBoundingClientRect()
     const px = native.clientX - rect.left
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const xScale: any = (chart as any).scales?.x
     if (!xScale) return
 
@@ -243,11 +244,12 @@ export default function LineChart({
     const rect = (evt.target as HTMLCanvasElement).getBoundingClientRect()
     const px = touch.clientX - rect.left
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const xScale: any = (chart as any).scales?.x
     if (!xScale) return
 
     const v = xScale.getValueForPixel(px)
-    let idx =
+    const idx =
       typeof v === 'number' ? Math.round(v) : data.labels.indexOf(v as string)
     if (idx < 0 || idx >= data.labels.length) return
 
@@ -265,6 +267,8 @@ export default function LineChart({
       afterDatasetsDraw: (chart: ChartJS<'line'>) => {
         if (clickedIndex == null) return
         const { ctx, chartArea } = chart
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const xScale: any = (chart as any).scales?.x
         if (!xScale) return
 

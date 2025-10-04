@@ -48,6 +48,12 @@
     }
   }
 
+  &.no-edit {
+    .header {
+      grid-template-rows: repeat(2, auto);
+    }
+  }
+
   .content {
     display: grid;
     gap: 1rem;

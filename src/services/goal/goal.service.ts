@@ -29,7 +29,7 @@ async function query(
     throw err
   }
 }
-
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function getById(goalId: string, filter: any) {
   try {
     const res = await httpService.get(`${KEY}/${goalId}`, filter)
