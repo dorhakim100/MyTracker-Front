@@ -8,7 +8,7 @@ export interface Weight {
 
 export interface WeightFilter {
   userId?: string
-  fromDate?: string // ISO date string
-  toDate?: string // ISO date string
+  fromDate?: string | null // ISO date string
+  toDate?: string | null // ISO date string
   limit?: number
 }

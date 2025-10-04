@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { LineChart } from '../LineChart/LineChart'
+import LineChart from '../LineChart/LineChart'
 import {
   LineChartControls,
   LineChartRangeKey,
@@ -75,8 +75,8 @@ export function WeightChart({ className = '' }: WeightChartProps) {
 
   useEffect(() => {
     const fetchWeights = async () => {
-      const fromDate = new Date()
-      const toDate = new Date()
+      let fromDate
+      let toDate
       let limit = 0
       switch (range) {
         case '1M':
@@ -91,14 +91,24 @@ export function WeightChart({ className = '' }: WeightChartProps) {
         case '1Y':
           limit = 365
           break
+        case 'ALL':
+          limit = 0
+          break
       }
-      fromDate.setDate(fromDate.getDate() - limit)
-      toDate.setDate(toDate.getDate() + 1)
+      if (range !== 'ALL') {
+        fromDate = new Date()
+        toDate = new Date()
+        fromDate.setDate(fromDate.getDate() - limit)
+        toDate.setDate(toDate.getDate() + 1)
+      } else {
+        fromDate = null
+        toDate = null
+      }
 
       const weights = await weightService.query({
         userId: user?._id,
-        fromDate: fromDate.toISOString(),
-        toDate: toDate.toISOString(),
+        fromDate: fromDate ? fromDate.toISOString() : null,
+        toDate: toDate ? toDate.toISOString() : null,
       })
 
       setWeights(weights)
@@ -168,6 +178,7 @@ export function WeightChart({ className = '' }: WeightChartProps) {
     estimatedValue = +estimatedValue.toFixed(1)
 
     let weight = data.datasets[0].data[index]
+
     let messageToSet = ''
 
     if (isBaseline) {
@@ -175,6 +186,8 @@ export function WeightChart({ className = '' }: WeightChartProps) {
       weight = user?.currGoal.targetWeight || GOAL_WEIGHT
     } else if (!weight && estimatedValue) {
       messageToSet = 'Estimated weight'
+    } else if (!weight && !estimatedValue) {
+      messageToSet = 'No weight logged'
     }
 
     setStats({

@@ -1,5 +1,6 @@
+// LineChart.tsx
 import { Line } from 'react-chartjs-2'
-import { useMemo, useRef } from 'react'
+import { useMemo, useRef, useState, useCallback, useEffect } from 'react'
 import type {
   ChartData,
   ChartDataset,
@@ -17,7 +18,7 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js'
-import { getMonthNames } from '../../services/util.service'
+
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -28,12 +29,14 @@ ChartJS.register(
   Legend
 )
 
-interface LineChartProps {
+type SeriesValue = number | null
+
+export interface LineChartProps {
   data: {
     labels: string[]
     datasets: {
       label: string
-      data: (number | null)[]
+      data: SeriesValue[]
       borderColor: string
       tension: number
     }[]
@@ -41,7 +44,7 @@ interface LineChartProps {
   spanGaps?: boolean | number
   interpolateGaps?: boolean
   baseline?: number
-  baselineColor?: string
+  baselineColor?: string // kept for compatibility (not needed if using darkMode colors)
   baselineLabel?: string
   isDarkMode?: boolean
   onLineClick?: (
@@ -51,30 +54,21 @@ interface LineChartProps {
   ) => void
 }
 
-const defaultData = {
-  labels: getMonthNames(),
-  datasets: [
-    {
-      label: 'Weight',
-      data: [82, 81.5, 80.7, 80],
-      borderColor: 'blue',
-      tension: 0.3,
-    },
-  ],
-}
-
 const DARK_MODE_WHITE = '#fff'
 const LIGHT_MODE_GRAY = 'rgba(0,0,0,0.35)'
 
-export function LineChart({
-  data = defaultData,
+export default function LineChart({
+  data,
   spanGaps = false,
   interpolateGaps = false,
   baseline,
-  isDarkMode = false,
   baselineLabel = 'Baseline',
+  isDarkMode = false,
   onLineClick,
 }: LineChartProps) {
+  const chartRef = useRef<ChartJS<'line'>>(null)
+  const [clickedIndex, setClickedIndex] = useState<number | null>(null)
+
   const lightenColor = (hex: string, amount: number) => {
     if (!hex || !hex.startsWith('#')) return hex
     const num = parseInt(hex.slice(1), 16)
@@ -87,36 +81,37 @@ export function LineChart({
     const toHex = (v: number) => v.toString(16).padStart(2, '0')
     return `#${toHex(r)}${toHex(g)}${toHex(b)}`
   }
-  const interpolateSeries = (series: (number | null)[]): (number | null)[] => {
-    if (!interpolateGaps) return series
-    const result = [...series]
-    const definedIndices: number[] = []
-    for (let i = 0; i < result.length; i++) {
-      if (result[i] != null) definedIndices.push(i)
-    }
-    if (definedIndices.length < 2) return result
 
-    for (let k = 0; k < definedIndices.length - 1; k++) {
-      const startIdx = definedIndices[k]
-      const endIdx = definedIndices[k + 1]
-      const startVal = result[startIdx] as number
-      const endVal = result[endIdx] as number
-      const gap = endIdx - startIdx
-      if (gap <= 1) continue
-      const step = (endVal - startVal) / gap
-      for (let i = startIdx + 1; i < endIdx; i++) {
-        result[i] = startVal + step * (i - startIdx)
+  const interpolateSeries = useCallback(
+    (series: SeriesValue[]): SeriesValue[] => {
+      if (!interpolateGaps) return series
+      const result = [...series]
+      const definedIndices: number[] = []
+      for (let i = 0; i < result.length; i++)
+        if (result[i] != null) definedIndices.push(i)
+      if (definedIndices.length < 2) return result
+
+      for (let k = 0; k < definedIndices.length - 1; k++) {
+        const startIdx = definedIndices[k]
+        const endIdx = definedIndices[k + 1]
+        const startVal = result[startIdx] as number
+        const endVal = result[endIdx] as number
+        const gap = endIdx - startIdx
+        if (gap <= 1) continue
+        const step = (endVal - startVal) / gap
+        for (let i = startIdx + 1; i < endIdx; i++) {
+          result[i] = startVal + step * (i - startIdx)
+        }
       }
-    }
-    return result
-  }
-  const chartRef = useRef<ChartJS<'line'>>(null)
+      return result
+    },
+    [interpolateGaps]
+  )
 
-  // const [clickedIndex, setClickedIndex] = useState<number | null>(null)
   const processedData = useMemo<
-    ChartData<'line', (number | null)[], string>
+    ChartData<'line', SeriesValue[], string>
   >(() => {
-    const baseDatasets: ChartDataset<'line', (number | null)[]>[] =
+    const baseDatasets: ChartDataset<'line', SeriesValue[]>[] =
       data.datasets.map((ds) => ({
         label: ds.label,
         data: ds.data,
@@ -125,6 +120,7 @@ export function LineChart({
           : ds.borderColor,
         tension: ds.tension,
         borderWidth: isDarkMode ? 2 : undefined,
+        pointRadius: 0.3,
       }))
 
     if (typeof baseline === 'number' && data.labels?.length) {
@@ -135,17 +131,15 @@ export function LineChart({
         tension: 0,
         borderDash: [6, 4],
         pointRadius: 0,
-        // hoverRadius: 0,
       })
     }
 
-    const base: ChartData<'line', (number | null)[], string> = {
+    const base: ChartData<'line', SeriesValue[], string> = {
       labels: data.labels,
       datasets: baseDatasets,
     }
 
     if (!interpolateGaps) return base
-
     return {
       ...base,
       datasets: base.datasets.map((ds) => ({
@@ -153,11 +147,19 @@ export function LineChart({
         data: interpolateSeries(ds.data),
       })),
     }
-  }, [data, interpolateGaps, baseline, isDarkMode, baselineLabel])
+  }, [
+    data,
+    interpolateGaps,
+    baseline,
+    baselineLabel,
+    isDarkMode,
+    interpolateSeries,
+  ])
 
   const options: ChartOptions<'line'> = {
     responsive: true,
     spanGaps,
+    interaction: { mode: 'index', intersect: false, axis: 'x' },
     plugins: {
       legend: { display: false },
       tooltip: {
@@ -170,6 +172,8 @@ export function LineChart({
     elements: {
       point: {
         radius: (ctx: ScriptableContext<'line'>) => (ctx.raw == null ? 0 : 0.3),
+        hitRadius: 12,
+        hoverRadius: 4,
       },
     },
     scales: {
@@ -184,10 +188,12 @@ export function LineChart({
     },
   }
 
-  const handleClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  // Click handler (mouse)
+  const handleClick: React.MouseEventHandler<HTMLCanvasElement> = (e) => {
     const chart = chartRef.current
-
     if (!chart) return
+
+    // Try hit-test first
     const elements = chart.getElementsAtEventForMode(
       e.nativeEvent as unknown as Event,
       'nearest',
@@ -197,23 +203,111 @@ export function LineChart({
     if (elements.length) {
       const { datasetIndex, index } = elements[0]
       const ds = chart.data.datasets[datasetIndex]
-      const estimatedValue = (ds.data as (number | null)[])[index]
-      const isBaseline = ds.label === baselineLabel
-
+      const estimatedValue = (ds.data as SeriesValue[])[index]
+      const isBaselineHit = ds.label === baselineLabel
+      setClickedIndex(index)
       onLineClick?.(
         index,
         typeof estimatedValue === 'number' ? estimatedValue : 0,
-        isBaseline
+        isBaselineHit
       )
+      return
     }
+
+    // Fallback: map pixel → x-value → index
+    const native = e.nativeEvent as MouseEvent
+    const rect = (e.target as HTMLCanvasElement).getBoundingClientRect()
+    const px = native.clientX - rect.left
+    const xScale: any = (chart as any).scales?.x
+    if (!xScale) return
+
+    const v = xScale.getValueForPixel(px)
+    let idx =
+      typeof v === 'number' ? Math.round(v) : data.labels.indexOf(v as string)
+    if (idx < 0) return
+    if (idx >= data.labels.length) idx = data.labels.length - 1
+    setClickedIndex(idx)
+
+    const firstDs = chart.data.datasets[0]
+    const val = (firstDs?.data as SeriesValue[] | undefined)?.[idx]
+    onLineClick?.(idx, typeof val === 'number' ? val : 0, false)
   }
+
+  // Touch-drag support
+  const handleTouchMove: React.TouchEventHandler<HTMLCanvasElement> = (evt) => {
+    const chart = chartRef.current
+    if (!chart) return
+    const touch = evt.touches[0]
+    if (!touch) return
+
+    const rect = (evt.target as HTMLCanvasElement).getBoundingClientRect()
+    const px = touch.clientX - rect.left
+
+    const xScale: any = (chart as any).scales?.x
+    if (!xScale) return
+
+    const v = xScale.getValueForPixel(px)
+    let idx =
+      typeof v === 'number' ? Math.round(v) : data.labels.indexOf(v as string)
+    if (idx < 0 || idx >= data.labels.length) return
+
+    setClickedIndex(idx)
+
+    const firstDs = chart.data.datasets[0]
+    const val = (firstDs?.data as SeriesValue[] | undefined)?.[idx]
+    onLineClick?.(idx, typeof val === 'number' ? val : 0, false)
+  }
+
+  // Guideline plugin (vertical line)
+  const guidelinePlugin = useMemo(
+    () => ({
+      id: 'vertical-guideline',
+      afterDatasetsDraw: (chart: ChartJS<'line'>) => {
+        if (clickedIndex == null) return
+        const { ctx, chartArea } = chart
+        const xScale: any = (chart as any).scales?.x
+        if (!xScale) return
+
+        const labelOrIndex =
+          Array.isArray(chart.data.labels) &&
+          chart.data.labels[clickedIndex] != null
+            ? chart.data.labels[clickedIndex]
+            : clickedIndex
+
+        const x = xScale.getPixelForValue(labelOrIndex)
+        if (x == null) return
+
+        ctx.save()
+        ctx.beginPath()
+        ctx.setLineDash([6, 4])
+        ctx.lineWidth = 2
+        ctx.strokeStyle = isDarkMode
+          ? 'rgba(255,255,255,0.85)'
+          : 'rgba(0,0,0,0.75)'
+        ctx.moveTo(x, chartArea.top)
+        ctx.lineTo(x, chartArea.bottom)
+        ctx.stroke()
+        ctx.restore()
+      },
+    }),
+    [clickedIndex, isDarkMode]
+  )
+
+  // Redraw after index/color change so the line appears immediately
+  useEffect(() => {
+    const chart = chartRef.current
+    if (!chart) return
+    chart.update('none')
+  }, [clickedIndex, isDarkMode])
 
   return (
     <Line
       data={processedData}
       options={options}
       onClick={handleClick}
+      onTouchMove={handleTouchMove}
       ref={chartRef}
+      plugins={[guidelinePlugin]}
     />
   )
 }
