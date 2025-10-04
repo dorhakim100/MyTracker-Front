@@ -33,8 +33,6 @@ import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
 import { messages } from '../../assets/config/messages'
 import { MacrosDonut } from '../../components/MacrosDonut/MacrosDonut'
 import { searchUrls } from '../../assets/config/search.urls'
-import { SwipeAction } from 'react-swipeable-list'
-import DeleteIcon from '@mui/icons-material/Delete'
 import { WeightCard } from '../../components/WeightCard/WeightCard'
 import { GoalsCard } from '../../components/GoalsCard/GoalsCard'
 import { BmrCard } from '../../components/BmrCard/BmrCard'
@@ -43,6 +41,7 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
 import CalculateIcon from '@mui/icons-material/Calculate'
 import SettingsIcon from '@mui/icons-material/Settings'
 import ModeStandbyIcon from '@mui/icons-material/ModeStandby'
+import { DeleteAction } from '../../components/DeleteAction/DeleteAction'
 
 const colors = {
   primary: '--var(--primary-color)',
@@ -331,22 +330,6 @@ function MealsCard() {
     }
   }
 
-  const renderRightSwipeActions = (meal: Meal) => {
-    return (
-      <SwipeAction
-        destructive={true} // will remove the item from the list
-        onClick={() => {
-          onDeleteMeal(meal)
-        }}
-      >
-        <div className='swipeable-right-action delete'>
-          <DeleteIcon className='delete-icon-button' />
-          <Typography variant='body2'>Delete</Typography>
-        </div>
-      </SwipeAction>
-    )
-  }
-
   return (
     <>
       <CustomButton
@@ -389,7 +372,9 @@ function MealsCard() {
           isDragable={true}
           onReorder={onReorderMeals}
           isSwipeable={true}
-          renderRightSwipeActions={renderRightSwipeActions}
+          renderRightSwipeActions={(meal) => (
+            <DeleteAction item={meal} onDeleteItem={onDeleteMeal} />
+          )}
         />
       )}
       <SlideDialog

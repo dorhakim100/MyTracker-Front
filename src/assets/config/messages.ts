@@ -8,6 +8,7 @@ export const messages = {
     updateWeight: 'Weight updated successfully',
     updateUser: 'User updated successfully',
     saveGoal: 'Goal saved successfully',
+    deleteGoal: 'Goal deleted successfully',
   },
   error: {
     updateCalories: 'Failed to update calories',
@@ -27,5 +28,6 @@ export const messages = {
     updateUser: 'Failed to update user',
     uploadImg: 'Failed to upload image',
     saveGoal: 'Failed to save goal',
+    deleteGoal: 'Failed to delete goal',
   },
 }

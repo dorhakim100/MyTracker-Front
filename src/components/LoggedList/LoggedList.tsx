@@ -21,9 +21,6 @@ import {
   setEditMealItem,
   loadItems,
 } from '../../store/actions/item.actions'
-import { SwipeAction } from 'react-swipeable-list'
-import DeleteIcon from '@mui/icons-material/Delete'
-import { Typography } from '@mui/material'
 
 import { logService } from '../../services/log/log.service'
 import { LoggedToday } from '../../types/loggedToday/LoggedToday'
@@ -31,6 +28,7 @@ import { dayService } from '../../services/day/day.service'
 import { MealPeriod } from '../../types/mealPeriod/MealPeriod'
 import { CustomSkeleton } from '../../CustomMui/CustomSkeleton/CustomSkeleton'
 import { AddItemButton } from '../AddItemButton/AddItemButton'
+import { DeleteAction } from '../DeleteAction/DeleteAction'
 
 export function LoggedList({ mealPeriod }: { mealPeriod: MealPeriod }) {
   const user = useSelector((state: RootState) => state.userModule.user)
@@ -150,7 +148,7 @@ export function LoggedList({ mealPeriod }: { mealPeriod: MealPeriod }) {
     }
   }
 
-  const onRightClick = async (log: Log) => {
+  const onDeleteLog = async (log: Log) => {
     try {
       const newToday = removeLogAction(log, selectedDay as LoggedToday)
 
@@ -185,20 +183,6 @@ export function LoggedList({ mealPeriod }: { mealPeriod: MealPeriod }) {
   //     </SwipeAction>
   //   )
 
-  const renderRightSwipeActions = (log: Log) => (
-    <SwipeAction
-      destructive={true} // will remove the item from the list
-      onClick={() => {
-        onRightClick(log)
-      }}
-    >
-      <div className='swipeable-right-action delete'>
-        <DeleteIcon className='delete-icon-button' />
-        <Typography variant='body2'>Delete</Typography>
-      </div>
-    </SwipeAction>
-  )
-
   return (
     <>
       <CustomList
@@ -208,10 +192,11 @@ export function LoggedList({ mealPeriod }: { mealPeriod: MealPeriod }) {
         renderSecondaryText={renderSecondaryText}
         // renderRight={renderRight}
         onItemClick={onItemClick}
-        // onRightClick={onRightClick}
         isSwipeable={true}
         // renderLeftSwipeActions={renderLeftSwipeActions}
-        renderRightSwipeActions={renderRightSwipeActions}
+        renderRightSwipeActions={(item) => (
+          <DeleteAction item={item} onDeleteItem={onDeleteLog} />
+        )}
         itemClassName={`meal-item-container ${
           prefs.isDarkMode ? 'dark-mode' : ''
         }`}

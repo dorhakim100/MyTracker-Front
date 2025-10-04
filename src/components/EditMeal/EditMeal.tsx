@@ -23,6 +23,7 @@ import { ItemSearch } from '../ItemSearch/ItemSearch'
 
 import { CustomStepper } from '../../CustomMui/CustomStepper/CustomStepper'
 import { capitalizeFirstLetter } from '../../services/util.service'
+import { DeleteAction } from '../DeleteAction/DeleteAction'
 
 const stages = ['name', 'items']
 
@@ -134,7 +135,9 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
               }
               getKey={(item) => item._id || item.searchId || ''}
               isSwipeable={true}
-              renderRightSwipeActions={(item) => renderDeleteAction(item)}
+              renderRightSwipeActions={(item) => (
+                <DeleteAction item={item} onDeleteItem={onDeleteItem} />
+              )}
               isDragable={true}
               onReorder={onReorder}
               onItemClick={onSelectItem}

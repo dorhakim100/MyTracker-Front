@@ -21,6 +21,8 @@ import {
 } from '../../store/actions/user.actions'
 import { User } from '../../types/user/User'
 
+import { DeleteAction } from '../DeleteAction/DeleteAction'
+
 const DEFAULT_GOAL_TITLE = 'Loss weight'
 
 export function GoalsCard() {
@@ -97,6 +99,20 @@ export function GoalsCard() {
     }
   }
 
+  const onDeleteGoal = async (goal: Goal) => {
+    const newGoals = user?.goals.filter((g) => g._id !== goal._id)
+    const newUser = { ...user, goals: newGoals }
+    optimisticUpdateUser(newUser as User)
+    try {
+      await goalService.remove(goal._id)
+      showSuccessMsg(messages.success.deleteGoal)
+    } catch (err) {
+      console.log('err', err)
+      showErrorMsg(messages.error.deleteGoal)
+      optimisticUpdateUser(user as User)
+    }
+  }
+
   if (!user || !user.goals) return <div>GoalsCard</div>
 
   return (
@@ -141,6 +157,10 @@ export function GoalsCard() {
           )}
           onItemClick={onSelectGoal}
           className={`${prefs.isDarkMode ? 'dark-mode' : ''}`}
+          isSwipeable={true}
+          renderRightSwipeActions={(goal) => (
+            <DeleteAction item={goal} onDeleteItem={onDeleteGoal} />
+          )}
         />
       </div>
       <SlideDialog
