@@ -16,11 +16,12 @@ import { SlideAnimation } from './components/SlideAnimation/SlideAnimation.tsx'
 import { RootState } from './store/store.ts'
 
 import './App.css'
-import { setRemembered } from './store/actions/user.actions.ts'
+import { handleFirstGoal, setRemembered } from './store/actions/user.actions.ts'
 import { setFavoriteItems } from './store/actions/item.actions.ts'
 import { loadPrefs } from './store/actions/system.actions.ts'
 import { SignIn } from './CustomMui/SignIn/SignIn.tsx'
 import { searchService } from './services/search/search-service.ts'
+import { EditGoal } from './components/EditGoal/EditGoal.tsx'
 
 const colors = [
   'primary',
@@ -119,6 +120,17 @@ function App() {
         </div>
       </main>
     )
+
+  if (!user.currGoal || !user.goals.length) {
+    return (
+      <main className={`main ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
+        <AppHeader />
+        <div className=''>
+          <EditGoal saveGoal={(goal) => handleFirstGoal(goal, user)} />
+        </div>
+      </main>
+    )
+  }
 
   return (
     <>

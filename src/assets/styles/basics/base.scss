@@ -185,7 +185,7 @@ body {
 
 .main {
   min-height: 100vh;
-  min-height: calc(100vh - 100px - $header-margin);
+  height: calc(100vh - 100px - $header-margin);
 
   margin-top: $header-margin;
   // margin-bottom: 100px !important;

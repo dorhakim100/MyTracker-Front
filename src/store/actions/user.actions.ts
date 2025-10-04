@@ -24,6 +24,8 @@ import { addFavoriteItem, removeFavoriteItem } from './item.actions'
 import { mealService } from '../../services/meal/meal.service'
 import { Meal } from '../../types/meal/Meal'
 import { Gender } from '../../services/bmr/bmr.service'
+import { Goal } from '../../types/goal/Goal'
+import { goalService } from '../../services/goal/goal.service'
 
 const { FAVORITE_CACHE } = cache
 
@@ -307,5 +309,23 @@ export async function handleDiaryDayChange(dateToCheck: string, user: User) {
     optimisticUpdateUser(newUser)
   } catch (err) {
     throw err
+  }
+}
+
+export async function handleFirstGoal(goal: Goal, user: User) {
+  try {
+    goal.userId = user._id
+
+    const savedGoal = await goalService.save(goal)
+
+    const newUser = {
+      ...user,
+      goals: [savedGoal],
+    }
+    optimisticUpdateUser(newUser)
+
+    await updateUser(newUser)
+  } catch (err) {
+    console.log('err', err)
   }
 }
