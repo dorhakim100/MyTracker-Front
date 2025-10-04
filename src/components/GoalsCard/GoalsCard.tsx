@@ -54,9 +54,19 @@ export function GoalsCard() {
       goal.userId = user._id
 
       const savedGoal = await goalService.save(goal)
+      let newGoals = []
+
+      const existingIndex = user.goals.findIndex((g) => g._id === savedGoal._id)
+
+      if (existingIndex !== -1) {
+        newGoals = user.goals.splice(existingIndex, 1, savedGoal)
+      } else {
+        newGoals = [savedGoal, ...user.goals]
+      }
+
       const newUser = {
         ...user,
-        goals: [savedGoal, ...(user?.goals || [])],
+        goals: newGoals,
       }
       optimisticUpdateUser(newUser)
       onCloseGoalDetails()
