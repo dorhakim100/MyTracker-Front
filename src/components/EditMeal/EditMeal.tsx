@@ -218,17 +218,6 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
     setIsOpenModal(false)
   }
 
-  function renderDeleteAction(item: MealItem) {
-    return (
-      <SwipeAction destructive={true} onClick={() => onDeleteItem(item)}>
-        <div className='swipeable-right-action delete'>
-          <DeleteIcon className='delete-icon-button' />
-          <Typography variant='body2'>Delete</Typography>
-        </div>
-      </SwipeAction>
-    )
-  }
-
   function _getDisabledNavButton(type: 'previous' | 'next') {
     if (type === 'previous' && stage === stages[0]) return true
 

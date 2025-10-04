@@ -34,7 +34,7 @@ export interface CustomListProps<T> {
   onItemClick?: (item: T) => void
   className?: string
   itemClassName?: string
-  isSwipeable?: boolean
+  isSwipeable?: boolean | ((item: T) => boolean)
   renderRightSwipeActions?: (item: T) => React.ReactNode
   renderLeftSwipeActions?: (item: T) => React.ReactNode
   isDragable?: boolean
@@ -210,7 +210,11 @@ CustomListProps<T>) {
                                 }
                                 scrollStartThreshold={20}
                                 threshold={0.25}
-                                blockSwipe={!isSwipeable}
+                                blockSwipe={
+                                  typeof isSwipeable === 'function'
+                                    ? !isSwipeable(item)
+                                    : !isSwipeable
+                                }
                               >
                                 {renderList(item, dragProvided)}
                               </SwipeableListItem>

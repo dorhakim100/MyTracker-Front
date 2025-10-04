@@ -30,6 +30,7 @@ const initialState: UserState = {
   // filter: userService.getDefaultFilter(),
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function userReducer(state = initialState, action: any): UserState {
   let newState = state
   let users

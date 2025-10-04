@@ -4,9 +4,9 @@ import { RootState } from '../../store/store'
 import { CustomList } from '../../CustomMui/CustomList/CustomList'
 import { MacrosDonut } from '../MacrosDonut/MacrosDonut'
 import { EditGoal } from '../EditGoal/EditGoal'
-import ListItemIcon from '@mui/material/ListItemIcon'
-import Typography from '@mui/material/Typography'
-import { getDateFromISO } from '../../services/util.service'
+// import ListItemIcon from '@mui/material/ListItemIcon'
+// import Typography from '@mui/material/Typography'
+// import { getDateFromISO } from '../../services/util.service'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import AddIcon from '@mui/icons-material/Add'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
@@ -22,6 +22,7 @@ import {
 import { User } from '../../types/user/User'
 
 import { DeleteAction } from '../DeleteAction/DeleteAction'
+// import { userService } from '../../services/user/user.service'
 
 const DEFAULT_GOAL_TITLE = 'Loss weight'
 
@@ -45,7 +46,7 @@ export function GoalsCard() {
   const openModal = () => {
     setIsAddGoalOpen(true)
   }
-  console.log('user', user)
+
   const saveGoal = async (goal: Goal) => {
     try {
       if (!user) return showErrorMsg(messages.error.saveGoal)
@@ -88,9 +89,10 @@ export function GoalsCard() {
           : { ...g, isSelected: false }
       ),
     }
-    optimisticUpdateUser(newUser as User)
+    optimisticUpdateUser(newUser)
     try {
       await goalService.selectGoal(goal._id, user._id)
+
       showSuccessMsg(messages.success.saveGoal)
     } catch (err) {
       console.log('err', err)
@@ -100,11 +102,27 @@ export function GoalsCard() {
   }
 
   const onDeleteGoal = async (goal: Goal) => {
-    const newGoals = user?.goals.filter((g) => g._id !== goal._id)
-    const newUser = { ...user, goals: newGoals }
-    optimisticUpdateUser(newUser as User)
+    if (!user || goal.isSelected) return showErrorMsg(messages.error.deleteGoal)
+    // const newGoals = user.goals.filter((g) => g._id !== goal._id)
+    // console.log('newGoals', newGoals)
+    // const goalIdx = user.goals.findIndex((g) => g._id === goal._id)
+    // const newGoals = [...user.goals]
+    // newGoals.splice(goalIdx, 1)
+    // const newUser = { ...user, goals: newGoals }
+    // const newUser = {
+    //   ...user,
+    //   goals: user.goals.filter((g) => g._id !== goal._id),
+    // }
+    // optimisticUpdateUser(newUser)
     try {
       await goalService.remove(goal._id)
+      const newUser = {
+        ...user,
+        goals: user.goals.filter((g) => g._id !== goal._id),
+      }
+      await updateUser(newUser)
+      // await userService.update(newUser)
+
       showSuccessMsg(messages.success.deleteGoal)
     } catch (err) {
       console.log('err', err)
@@ -126,6 +144,7 @@ export function GoalsCard() {
         />
         <CustomList
           items={user.goals}
+          getKey={(goal) => goal._id}
           renderPrimaryText={(goal) => goal.title}
           renderLeft={(goal) => (
             <MacrosDonut
@@ -157,7 +176,8 @@ export function GoalsCard() {
           )}
           onItemClick={onSelectGoal}
           className={`${prefs.isDarkMode ? 'dark-mode' : ''}`}
-          isSwipeable={true}
+          isSwipeable={(goal) => !goal.isSelected}
+          // isSwipeable={true}
           renderRightSwipeActions={(goal) => (
             <DeleteAction item={goal} onDeleteItem={onDeleteGoal} />
           )}

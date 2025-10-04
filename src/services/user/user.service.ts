@@ -81,7 +81,17 @@ async function update(user: User) {
     const mealsIds = user.meals.map((meal) => meal._id)
     const goalsIds = user.goals.map((goal) => goal._id)
     // const weightsIds = user.weights.map((weight) => weight._id)
-    const userToSend = { ...user, mealsIds, goalsIds }
+    const userToSend = {
+      _id: user._id,
+      details: user.details,
+      email: user.email,
+      favoriteItems: user.favoriteItems,
+      lastWeight: user.lastWeight,
+      loggedToday: user.loggedToday,
+
+      mealsIds,
+      goalsIds,
+    }
 
     const savedUser = await httpService.put(`user/${_id}`, userToSend)
 

@@ -8,11 +8,26 @@ type Item<T> = T & { _id?: string }
 interface DeleteActionProps<T> {
   item: Item<T>
   onDeleteItem: (item: Item<T>) => void
+  trailing?: boolean
+  leading?: boolean
+  main?: boolean
 }
 
-export function DeleteAction<T>({ item, onDeleteItem }: DeleteActionProps<T>) {
+export function DeleteAction<T>({
+  item,
+  onDeleteItem,
+  trailing,
+  leading,
+  main,
+}: DeleteActionProps<T>) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const extraProps = { trailing, leading, main } as any
   return (
-    <SwipeAction destructive={true} onClick={() => onDeleteItem(item)}>
+    <SwipeAction
+      destructive={true}
+      onClick={() => onDeleteItem(item)}
+      {...extraProps}
+    >
       <div className='swipeable-right-action delete'>
         <DeleteIcon className='delete-icon-button' />
         <Typography variant='body2'>Delete</Typography>

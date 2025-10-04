@@ -119,6 +119,7 @@ async function _loginWithGuest() {
 export async function updateUser(userToUpdate: User) {
   try {
     const saved = await userService.update(userToUpdate)
+    console.log('saved', saved)
     store.dispatch({
       type: SET_USER,
       user: saved,
@@ -256,14 +257,15 @@ export function removeLogAction(log: Log, loggedToday: LoggedToday) {
   const logs = loggedToday.logs
   if (!logs) throw new Error('No logs found')
 
-  const logIdx = logs.findIndex((l) => l.time === log.time)
-  if (logIdx === -1) throw new Error('No log found')
+  const isSameLog = (l: Log) =>
+    (log._id && l._id === log._id) ||
+    (l.itemId === log.itemId && l.time === log.time && l.meal === log.meal)
 
-  logs.splice(logIdx, 1)
+  const newLogs = logs.filter((l) => !isSameLog(l))
 
-  const newLogs = [...logs]
+  if (newLogs.length === logs.length) throw new Error('No log found')
 
-  const newCalories = newLogs.reduce((acc, log) => acc + log.macros.calories, 0)
+  const newCalories = newLogs.reduce((acc, lg) => acc + lg.macros.calories, 0)
 
   const newLoggedToday = {
     ...loggedToday,
