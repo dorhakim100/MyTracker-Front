@@ -187,6 +187,8 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
       macros: {
         ...editGoal.macros,
         carbs: (macros?.carbs || 0) + carbsDiff,
+        protein: macros?.protein || 0,
+        fat: macros?.fat || 0,
       },
       target: target,
     })

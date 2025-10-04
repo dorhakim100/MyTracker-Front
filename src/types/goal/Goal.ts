@@ -8,7 +8,9 @@ export interface Goal {
   updatedAt: number
 
   dailyCalories: number
-  macros: Macros | Partial<Macros>
+  macros:
+    | Macros
+    | (Partial<Macros> & { protein: number; carbs: number; fat: number })
 
   startDate: number
   endDate: number | undefined

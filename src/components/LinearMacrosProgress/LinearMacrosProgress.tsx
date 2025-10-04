@@ -42,7 +42,7 @@ export function LinearMacrosProgress({
           <CustomLinearProgress
             currentValue={proteinProgress + ''}
             goalValue={user?.currGoal?.macros.protein + ''}
-            value={(proteinProgress / user?.currGoal?.macros.protein) * 100}
+            value={(proteinProgress / user.currGoal.macros.protein) * 100}
             header='Protein'
             color={proteinColor}
             isGram={true}

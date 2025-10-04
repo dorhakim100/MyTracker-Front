@@ -14,7 +14,6 @@ import { Weight } from '../../types/weight/Weight'
 import { TimesContainer } from '../TimesContainer/TimesContainer'
 import { getFullDate } from '../../services/util.service'
 import { Card, Typography } from '@mui/material'
-import { WeightCard } from '../WeightCard/WeightCard'
 
 import ScaleIcon from '@mui/icons-material/Scale'
 import FlagIcon from '@mui/icons-material/Flag'
@@ -218,7 +217,7 @@ export function WeightChart({ className = '' }: WeightChartProps) {
             interpolateGaps={true}
             spanGaps={true}
             onLineClick={handleLineClick}
-            baseline={GOAL_WEIGHT}
+            baseline={user?.currGoal?.targetWeight}
             baselineLabel='Goal weight'
             isDarkMode={prefs.isDarkMode}
           />

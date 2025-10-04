@@ -6,14 +6,11 @@ import { mealService } from '../../services/meal/meal.service'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import { RootState } from '../../store/store'
 
-import Typography from '@mui/material/Typography'
-
 import Lottie from 'lottie-react'
 
 import foodAnimation from '../../../public/food-animation.json'
 import { CustomList } from '../../CustomMui/CustomList/CustomList'
-import { SwipeAction } from 'react-swipeable-list'
-import DeleteIcon from '@mui/icons-material/Delete'
+
 import { MealItem } from '../../types/mealItem/MealItem'
 import { setItem } from '../../store/actions/item.actions'
 import { ItemDetails } from '../ItemDetails/ItemDetails'

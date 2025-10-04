@@ -113,17 +113,7 @@ export function GoalsCard() {
 
   const onDeleteGoal = async (goal: Goal) => {
     if (!user || goal.isSelected) return showErrorMsg(messages.error.deleteGoal)
-    // const newGoals = user.goals.filter((g) => g._id !== goal._id)
-    // console.log('newGoals', newGoals)
-    // const goalIdx = user.goals.findIndex((g) => g._id === goal._id)
-    // const newGoals = [...user.goals]
-    // newGoals.splice(goalIdx, 1)
-    // const newUser = { ...user, goals: newGoals }
-    // const newUser = {
-    //   ...user,
-    //   goals: user.goals.filter((g) => g._id !== goal._id),
-    // }
-    // optimisticUpdateUser(newUser)
+
     try {
       await goalService.remove(goal._id)
       const newUser = {
@@ -131,7 +121,6 @@ export function GoalsCard() {
         goals: user.goals.filter((g) => g._id !== goal._id),
       }
       await updateUser(newUser)
-      // await userService.update(newUser)
 
       showSuccessMsg(messages.success.deleteGoal)
     } catch (err) {
