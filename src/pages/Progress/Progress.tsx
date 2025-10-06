@@ -1,7 +1,9 @@
 import { Card, Divider, ListItemIcon, Typography } from '@mui/material'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { WeightChart } from '../../components/WeightChart/WeightChart'
+
+import { debounce } from '../../services/util.service'
 
 import { getDateFromISO } from '../../services/util.service'
 import { dayService } from '../../services/day/day.service'
@@ -39,16 +41,7 @@ export function Progress() {
     return getDateFromISO(date.toISOString())
   }, [selectedDate])
 
-  useEffect(() => {
-    // getLoggedToday()
-    handleLoadItems()
-  }, [computedSelectedDate])
-
-  const closeEdit = () => {
-    setIsEditOpen(false)
-    setEditMealItem(null)
-  }
-  async function getLoggedToday() {
+  const getLoggedToday = useCallback(async () => {
     try {
       const loggedToday = await dayService.query({
         date: computedSelectedDate,
@@ -61,9 +54,9 @@ export function Progress() {
       console.error(err)
       showErrorMsg(messages.error.getDiary)
     }
-  }
+  }, [computedSelectedDate, user?._id])
 
-  async function handleLoadItems() {
+  const handleLoadItems = useCallback(async () => {
     try {
       // loadItems() // optimistic update from cache, no need to await
       const res = await getLoggedToday()
@@ -75,6 +68,21 @@ export function Progress() {
       console.error(err)
       // showErrorMsg(messages.error.getItem)
     }
+  }, [getLoggedToday])
+
+  const debouncedLoadItems = useMemo(
+    () => debounce(handleLoadItems, 300),
+    [handleLoadItems]
+  )
+
+  useEffect(() => {
+    debouncedLoadItems()
+    return () => debouncedLoadItems.clear?.()
+  }, [debouncedLoadItems])
+
+  const closeEdit = () => {
+    setIsEditOpen(false)
+    setEditMealItem(null)
   }
 
   const onItemClick = (item: Log) => {

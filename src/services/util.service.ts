@@ -1,5 +1,6 @@
 import { Route } from '../assets/routes/routes'
 import { User } from '../types/user/User'
+import debounceLib from 'debounce'
 
 export function makeId(length: number = 6): string {
   let txt = ''
@@ -71,18 +72,14 @@ export function randomPastTime() {
   return Date.now() - pastTime
 }
 
-export function debounce<T extends (...args: any[]) => any>(
+export function debounce<T extends (...args: unknown[]) => unknown>(
   func: T,
   timeout: number = 300
-): (...args: Parameters<T>) => void {
-  let timer: ReturnType<typeof setTimeout>
-  return function (this: ThisParameterType<T>, ...args: Parameters<T>) {
-    const context = this
-    clearTimeout(timer)
-    timer = setTimeout(() => {
-      func.apply(context, args)
-    }, timeout)
-  }
+): ((...args: Parameters<T>) => void) & { clear?: () => void } {
+  // Delegate to the external debounce library while preserving useful typing
+  return debounceLib(func as (...args: Parameters<T>) => void, timeout) as ((
+    ...args: Parameters<T>
+  ) => void) & { clear?: () => void }
 }
 
 // export function saveToStorage(key, value) {
