@@ -29,7 +29,12 @@ import { SlideDialog } from '../SlideDialog/SlideDialog'
 
 import { MacrosDonut } from '../MacrosDonut/MacrosDonut'
 import { Macros } from '../Macros/Macros'
-import { calculateCarbsFromCalories } from '../../services/macros/macros.service'
+import {
+  calculateCarbCalories,
+  calculateCarbsFromCalories,
+  calculateFatCalories,
+  calculateProteinCalories,
+} from '../../services/macros/macros.service'
 
 import EditIcon from '@mui/icons-material/Edit'
 import { Checkbox, Divider, Typography } from '@mui/material'
@@ -41,6 +46,7 @@ import { israelLocaleStringObject } from '../../assets/config/times'
 
 import { WeightEdit } from '../WeightCard/WeightEdit'
 
+import { Macros as MacrosType } from '../../types/macros/Macros'
 interface EditGoalProps {
   selectedGoal?: Goal | null
   saveGoal: (goal: Goal) => void
@@ -160,11 +166,17 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
   ]
 
   useEffect(() => {
-    console.log(editGoal)
-  }, [editGoal])
+    if (!editGoal.macros) return
+    const totalCalories = getTotalCalories(editGoal.macros)
+    setEditGoal({
+      ...editGoal,
+      dailyCalories: totalCalories,
+    })
+  }, [editGoal.macros])
 
   function _onTargetClick(target: 'lose' | 'maintain' | 'gain') {
     const macros = editGoal.macros
+    if (!macros) return
     setSelectedTarget(target)
     let carbsDiff = 0
 
@@ -184,10 +196,13 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
       carbsDiff *= -2
     }
 
+    const totalCalories = getTotalCalories(macros)
+
     setEditGoal({
       ...editGoal,
-      dailyCalories:
-        targets.find((t) => t.key === target)?.suggestedCalories || 0,
+      // dailyCalories:
+      //   targets.find((t) => t.key === target)?.suggestedCalories || 0,
+      dailyCalories: totalCalories,
       macros: {
         ...editGoal.macros,
         carbs: (macros?.carbs || 0) + carbsDiff,
@@ -196,6 +211,13 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
       },
       target: target,
     })
+  }
+
+  function getTotalCalories(macros: Partial<MacrosType>) {
+    const proteinCalories = calculateProteinCalories(macros?.protein || 0)
+    const carbsCalories = calculateCarbCalories(macros.carbs || 0)
+    const fatCalories = calculateFatCalories(macros.fat || 0)
+    return proteinCalories + carbsCalories + fatCalories
   }
 
   const onStageChange = (targetStage: string, diff: number) => {
@@ -234,7 +256,7 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
           <MacrosDistributionEdit goalToEdit={editGoal} goalRef={goalRef} />
         )
       default:
-        return <CaloriesEdit />
+        return <CaloriesEdit goalToEdit={editGoal} goalRef={goalRef} />
     }
   }
 
