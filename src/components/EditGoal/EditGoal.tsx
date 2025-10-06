@@ -1,4 +1,4 @@
-import { useMemo, useState, useRef } from 'react'
+import { useMemo, useState, useRef, useEffect } from 'react'
 
 import { useSelector } from 'react-redux'
 import { Goal } from '../../types/goal/Goal'
@@ -158,6 +158,10 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
       key: 'distribution-edit-goal',
     },
   ]
+
+  useEffect(() => {
+    console.log(editGoal)
+  }, [editGoal])
 
   function _onTargetClick(target: 'lose' | 'maintain' | 'gain') {
     const macros = editGoal.macros

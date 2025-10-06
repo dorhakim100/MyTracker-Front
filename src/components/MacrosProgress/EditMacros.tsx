@@ -22,6 +22,10 @@ interface EditMacrosProps {
   goalRef?: React.RefObject<Goal | Partial<Goal>>
 }
 
+const CARBS_LIMIT = 800
+const PROTEIN_LIMIT = 350
+const FATS_LIMIT = 200
+
 export function EditMacros({ goalToEdit, goalRef }: EditMacrosProps) {
   interface PickerValue {
     carbs: number
@@ -31,9 +35,9 @@ export function EditMacros({ goalToEdit, goalRef }: EditMacrosProps) {
   }
 
   const macros = {
-    carbs: getArrayOfNumbers(0, 400),
-    protein: getArrayOfNumbers(0, 300),
-    fats: getArrayOfNumbers(0, 150),
+    carbs: getArrayOfNumbers(0, CARBS_LIMIT),
+    protein: getArrayOfNumbers(0, PROTEIN_LIMIT),
+    fats: getArrayOfNumbers(0, FATS_LIMIT),
   }
 
   const userToEdit = useSelector(

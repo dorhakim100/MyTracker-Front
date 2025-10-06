@@ -1,5 +1,11 @@
+.page-container {
+  &.progress-container {
+    overflow-y: hidden !important;
+  }
+}
+
 .progress-container {
-  overflow-y: hidden;
+  overflow-y: hidden !important;
   display: grid;
   gap: 1rem;
 

@@ -84,7 +84,10 @@ export function Progress() {
 
   return (
     <>
-      <div className='page-container progress-container'>
+      <div
+        className='page-container progress-container'
+        style={{ overflowY: 'hidden' }}
+      >
         <WeightChart setSelectedDate={setSelectedDate} />
 
         <LogsList loggedToday={loggedToday} onItemClick={onItemClick} />
