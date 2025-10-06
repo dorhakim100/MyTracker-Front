@@ -19,8 +19,10 @@ export function CustomDatePicker({
   className,
 }: CustomDatePickerProps) {
   const [open, setOpen] = useState(false)
-  const [localIso, setLocalIso] = useState<string>(
-    () => value || new Date().toISOString().split('T')[0]
+
+  const localIso = useMemo(
+    () => value || new Date().toISOString().split('T')[0],
+    [value]
   )
 
   const dateValue = useMemo(() => new Date(localIso), [localIso])
@@ -55,7 +57,7 @@ export function CustomDatePicker({
         onChange={(newDate: Date | null) => {
           if (!newDate) return
           const iso = toIsoDateOnly(newDate)
-          setLocalIso(iso)
+
           onChange(iso)
           onClose()
         }}

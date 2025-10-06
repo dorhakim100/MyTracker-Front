@@ -141,7 +141,7 @@ export function Diary() {
     setSelectedDay(newDate)
     setDiaryFilter({
       userId: user?._id,
-      date: newDate.toISOString(),
+      date: newDate?.toISOString(),
     })
   }
 
@@ -157,6 +157,8 @@ export function Diary() {
   // }
 
   const onDateChange = (date: string) => {
+    console.log('date', date)
+
     setSelectedDay(new Date(date))
     setDiaryFilter({
       userId: user?._id,
@@ -185,7 +187,7 @@ export function Diary() {
             </IconButton> */}
             <TimesContainer isClock={false} selectedDay={selectedDay} />
             <CustomDatePicker
-              value={selectedDayDiary?.date}
+              value={selectedDayDiary.date}
               onChange={onDateChange}
               // className={`${prefs.favoriteColor}`}
             />
