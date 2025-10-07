@@ -389,12 +389,16 @@ export function ItemDetails({
         servingSize: editItem.servingSize,
         numberOfServings: editItem.numberOfServings,
 
-        name: isCustomLog ? editItem.name : editMealItem.name,
+        name:
+          isCustomLog || (item as Log).source === searchTypes.custom
+            ? editItem.name
+            : editMealItem.name,
       }
 
       delete newLog.image
-      delete newLog.name
       delete newLog.searchId
+      if (!isCustomLog && (item as Log).source !== searchTypes.custom)
+        delete newLog.name
 
       const userLogs = selectedDay?.logs
 
