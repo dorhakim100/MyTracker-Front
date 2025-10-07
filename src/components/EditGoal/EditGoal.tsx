@@ -175,6 +175,32 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
     })
   }, [editGoal.macros])
 
+  useEffect(() => {
+    const proteinCalories = calculateProteinCalories(
+      editGoal.macros?.protein || 0
+    )
+    const carbsCalories = calculateCarbCalories(editGoal.macros?.carbs || 0)
+    const fatCalories = calculateFatCalories(editGoal.macros?.fat || 0)
+
+    const calculatedCalories = proteinCalories + carbsCalories + fatCalories
+
+    const diff = maintainUserBmr - calculatedCalories
+
+    let carbsDiff = 0
+    carbsDiff = calculateCarbsFromCalories(diff)
+
+    setEditGoal({
+      ...editGoal,
+      dailyCalories: maintainUserBmr,
+      macros: {
+        ...editGoal.macros,
+        carbs: (editGoal.macros?.carbs || 0) + carbsDiff,
+        protein: editGoal.macros?.protein || 0,
+        fat: editGoal.macros?.fat || 0,
+      },
+    })
+  }, [maintainUserBmr])
+
   function _onTargetClick(target: 'lose' | 'maintain' | 'gain') {
     const macros = editGoal.macros
     if (!macros) return
