@@ -74,6 +74,7 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
         targetWeight: user?.lastWeight?.kg || 80,
       } as Goal)
   )
+
   const [activeStage, setActiveStage] = useState<string>(stages[0])
   const [direction, setDirection] = useState(1)
   const [selectedTarget, setSelectedTarget] = useState<string>(
@@ -88,7 +89,9 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
   const prevTarget = useRef<string>(selectedTarget)
 
   const goalRef = useRef<Goal | Partial<Goal>>(editGoal)
-
+  const maintainUserBmr = useMemo(() => {
+    return bmrService.getBmrByUser(user) || DEFAULT_CALORIES
+  }, [user])
   const targetAnimation = useMemo(() => {
     switch (selectedTarget) {
       case 'lose':
@@ -123,23 +126,21 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
     {
       label: 'Lose',
       icon: <ArrowDownwardIcon />,
-      suggestedCalories:
-        (bmrService.getBmrByUser(user) || DEFAULT_CALORIES) - CALORIES_DIFF,
+      suggestedCalories: maintainUserBmr - CALORIES_DIFF,
       key: 'lose',
       onClick: () => _onTargetClick('lose'),
     },
     {
       label: 'Maintain',
       icon: <BalanceIcon />,
-      suggestedCalories: bmrService.getBmrByUser(user) || DEFAULT_CALORIES,
+      suggestedCalories: maintainUserBmr,
       key: 'maintain',
       onClick: () => _onTargetClick('maintain'),
     },
     {
       label: 'Gain',
       icon: <ArrowUpwardIcon />,
-      suggestedCalories:
-        (bmrService.getBmrByUser(user) || DEFAULT_CALORIES) + CALORIES_DIFF,
+      suggestedCalories: maintainUserBmr + CALORIES_DIFF,
       key: 'gain',
       onClick: () => _onTargetClick('gain'),
     },

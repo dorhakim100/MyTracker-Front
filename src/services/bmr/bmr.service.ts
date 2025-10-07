@@ -30,9 +30,9 @@ export const bmrService = {
 }
 
 function getBmrByUser(user: User | null) {
-  if (user)
-    return (
-      getActivityFactor(DEFAULT_ACTIVITY_LEVEL) *
+  if (user) {
+    const calories =
+      getActivityFactor(user.details.activity || DEFAULT_ACTIVITY_LEVEL) *
       calculateBMRMifflinStJeor({
         ageYears:
           new Date().getFullYear() -
@@ -41,7 +41,10 @@ function getBmrByUser(user: User | null) {
         heightCm: user.details.height,
         weightKg: user.lastWeight?.kg || DEFAULT_WEIGHT,
       })
-    )
+
+    return calories
+  }
+  return 0
 }
 
 function isFiniteNumber(value: unknown): value is number {

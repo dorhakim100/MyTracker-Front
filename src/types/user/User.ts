@@ -1,4 +1,4 @@
-import { Gender } from '../../services/bmr/bmr.service'
+import { ActivityLevel, Gender } from '../../services/bmr/bmr.service'
 import { Goal } from '../goal/Goal'
 import { LoggedToday } from '../loggedToday/LoggedToday'
 import { Meal } from '../meal/Meal'
@@ -30,4 +30,5 @@ export interface UserDetails {
   height: number
   gender: Gender
   imgUrl: string
+  activity: ActivityLevel
 }

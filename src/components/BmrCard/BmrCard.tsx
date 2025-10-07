@@ -15,8 +15,8 @@ import { CustomSelect } from '../../CustomMui/CustomSelect/CustomSelect'
 import { getArrayOfNumbers } from '../../services/util.service'
 import { genderOptions } from '../helpers/GenderOptions'
 
-const activityOptions: ToggleOption[] = [
-  { value: 'bmr', label: 'BMR' },
+export const activityOptions: ToggleOption[] = [
+  // { value: 'bmr', label: 'BMR' },
   { value: 'sedentary', label: 'None' },
   { value: 'light', label: '1-3 / wk' },
   { value: 'moderate', label: '4-5 / wk' },
@@ -38,6 +38,7 @@ const DEFAULT_WEIGHT = 70
 const DEFAULT_GENDER = 'male'
 const DEFAULT_AGE = 25
 const DEFAULT_HEIGHT = 170
+const DEFAULT_ACTIVITY_LEVEL = 'sedentary'
 
 export function BmrCard() {
   const prefs = useSelector(
@@ -61,6 +62,7 @@ export function BmrCard() {
     gender: user?.details?.gender || DEFAULT_GENDER,
     ageYears: calculatedAge + '',
     heightCm: (user?.details?.height || DEFAULT_HEIGHT) + '',
+    activity: user?.details?.activity || DEFAULT_ACTIVITY_LEVEL,
   })
 
   const bmr = useMemo(() => {
@@ -86,6 +88,7 @@ export function BmrCard() {
         gender: user.details.gender,
         heightCm: user.details.height + '',
         weightKg: Math.round(user.lastWeight.kg) + '',
+        activity: user.details.activity,
       })
   }, [user])
 
@@ -212,7 +215,7 @@ export function BmrCard() {
           </Typography>
         </div> */}
         <div className='bmr-result-row total'>
-          <Typography variant='body1'>Daily calories</Typography>
+          <Typography variant='body1'>Daily calories burned</Typography>
           <Typography variant='h5' className='bmr-value'>
             {bmr ? `${tdee} kcal` : '--'}
           </Typography>

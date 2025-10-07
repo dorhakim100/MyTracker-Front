@@ -17,8 +17,10 @@ import { CustomSelect } from '../../CustomMui/CustomSelect/CustomSelect'
 import { getArrayOfNumbers } from '../../services/util.service'
 import { CustomToggle } from '../../CustomMui/CustomToggle/CustomToggle'
 import { genderOptions } from '../helpers/GenderOptions'
-import { Gender } from '../../services/bmr/bmr.service'
+import { ActivityLevel, Gender } from '../../services/bmr/bmr.service'
 import { setIsLoading } from '../../store/actions/system.actions'
+import { activityOptions } from '../BmrCard/BmrCard'
+
 interface EditUserProps {
   selectedUser?: User | null
   onSave: (user: User) => void
@@ -29,6 +31,7 @@ const DEFAULT_HEIGHT = 170
 const DEFAULT_IMG_URL =
   'https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_1280.png'
 const DEFAULT_GENDER = 'male'
+const DEFAULT_ACTIVITY_LEVEL = 'sedentary'
 
 export function EditUser({ selectedUser, onSave }: EditUserProps) {
   const prefs = useSelector(
@@ -59,6 +62,11 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
   )
   const [imgUrl, setImgUrl] = useState<string>(
     selectedUser?.details?.imgUrl || user?.details?.imgUrl || DEFAULT_IMG_URL
+  )
+  const [activity, setActivity] = useState(
+    selectedUser?.details?.activity ||
+      user?.details?.activity ||
+      DEFAULT_ACTIVITY_LEVEL
   )
 
   const inputs = [
@@ -104,6 +112,16 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
       value: gender,
       onChange: (value: string) => setGender(value),
     },
+    {
+      label: 'Activity',
+      options: activityOptions,
+      onChange: (val: string) => setActivity(val as ActivityLevel),
+      type: 'toggle',
+      key: 'activity',
+      className: 'full-width',
+      value: activity,
+      extraLabel: 'Activity level',
+    },
   ]
 
   const isoDate = useMemo(() => {
@@ -140,6 +158,7 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
         height,
         gender: gender as Gender,
         imgUrl,
+        activity,
       },
     }
 
@@ -219,12 +238,17 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
             )
           if (input.type === 'toggle' && input.options)
             return (
-              <CustomToggle
-                key={`${input.key}-edit-user`}
-                options={input.options}
-                value={input.value as string}
-                onChange={input.onChange}
-              />
+              <>
+                {input.extraLabel && (
+                  <Typography variant='h6'>{input.extraLabel}</Typography>
+                )}
+                <CustomToggle
+                  key={`${input.key}-edit-user`}
+                  options={input.options}
+                  value={input.value as string}
+                  onChange={input.onChange}
+                />
+              </>
             )
         })}
       </div>

@@ -23,7 +23,7 @@ import { dayService } from '../../services/day/day.service'
 import { addFavoriteItem, removeFavoriteItem } from './item.actions'
 import { mealService } from '../../services/meal/meal.service'
 import { Meal } from '../../types/meal/Meal'
-import { Gender } from '../../services/bmr/bmr.service'
+import { ActivityLevel, Gender } from '../../services/bmr/bmr.service'
 import { Goal } from '../../types/goal/Goal'
 import { goalService } from '../../services/goal/goal.service'
 import { setIsFirstLoading } from './system.actions'
@@ -103,6 +103,7 @@ async function _loginWithGuest() {
         gender: 'male' as Gender,
         imgUrl:
           'https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_1280.png',
+        activity: 'sedentary' as ActivityLevel,
       },
     }
     const user = await userService.signup(credentials)
