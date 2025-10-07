@@ -82,6 +82,7 @@ export function ItemDetails({
     servingSize: editMealItem?.servingSize || 100,
     numberOfServings: editMealItem?.numberOfServings || 1,
     meal: editMealItem?.meal || selectedMeal || getCurrMeal(),
+    name: isCustomLog ? '' : editMealItem?.name || searchedItem.name,
   })
 
   const [clockOpen, setClockOpen] = useState(false)
@@ -188,6 +189,13 @@ export function ItemDetails({
           [key]: value as string,
         }))
         return
+
+      case 'name':
+        setEditItem((prev) => ({
+          ...prev,
+          [key]: value as string,
+        }))
+        return
     }
 
     setEditItem((prev) => ({
@@ -256,10 +264,16 @@ export function ItemDetails({
               servingSize: item.servingSize,
               numberOfServings: item.numberOfServings * mealNumberOfServings,
               source:
-                item.searchId.length < LONGEST_FOOD_ID_LENGTH
+                isCustomLog || item.source === searchTypes.custom
+                  ? searchTypes.custom
+                  : item.searchId.length < LONGEST_FOOD_ID_LENGTH
                   ? searchTypes.usda
                   : searchTypes.openFoodFacts,
               createdBy: user._id,
+              name:
+                isCustomLog || item.source === searchTypes.custom
+                  ? editItem.name
+                  : '',
             }
           })
           .filter((log) => log !== null)
@@ -324,6 +338,7 @@ export function ItemDetails({
         numberOfServings: editItem.numberOfServings,
         source: isCustomLog ? searchTypes.custom : searchedItem.type,
         createdBy: user._id,
+        name: isCustomLog ? editItem.name : '',
       }
 
       setSelectedMeal(null)
@@ -373,6 +388,8 @@ export function ItemDetails({
         meal: editItem.meal,
         servingSize: editItem.servingSize,
         numberOfServings: editItem.numberOfServings,
+
+        name: isCustomLog ? editItem.name : editMealItem.name,
       }
 
       delete newLog.image
@@ -433,13 +450,15 @@ export function ItemDetails({
   const getOnClick = () => {
     if (onAddToMealClick) {
       const itemMealToEdit = {
-        searchId: item.searchId,
-        name: item.name,
+        searchId: isCustomLog ? '' : item.searchId,
+        name: isCustomLog ? editItem.name : item.name || editItem.name,
         macros: editItem.totalMacros,
         image: item.image,
         servingSize: editItem.servingSize,
         numberOfServings: editItem.numberOfServings,
+        source: isCustomLog ? searchTypes.custom : null,
       }
+
       return () => onAddToMealClick(itemMealToEdit as MealItem)
     }
     if (editMealItem) {
@@ -461,7 +480,7 @@ export function ItemDetails({
         isCustomLog ? 'custom-log' : ''
       }`}
     >
-      {!isCustomLog && (item as Log).source !== searchTypes.custom && (
+      {(!isCustomLog && (item as Log).source !== searchTypes.custom && (
         <div className='header'>
           <div className='image'>
             {item.image && <img src={item.image} alt={item.name} />}
@@ -481,6 +500,12 @@ export function ItemDetails({
             </div>
           )}
         </div>
+      )) || (
+        <CustomInput
+          value={editItem.name || ''}
+          onChange={(value) => onEditItemChange('name', value)}
+          placeholder='Name'
+        />
       )}
 
       <div className='content'>
@@ -524,7 +549,9 @@ export function ItemDetails({
                       label={option.label}
                       values={option.values.map((value) => value.toString())}
                       extra={option.extra}
-                      value={editItem[option.key as keyof EditItem].toString()}
+                      value={
+                        editItem[option.key as keyof EditItem]?.toString() || ''
+                      }
                       onChange={(value) => onEditItemChange(option.key, value)}
                     />
                   )}
@@ -649,6 +676,7 @@ import { calculateProteinCalories } from '../../services/macros/macros.service'
 import { calculateCarbCalories } from '../../services/macros/macros.service'
 import { calculateFatCalories } from '../../services/macros/macros.service'
 import EditIcon from '@mui/icons-material/Edit'
+import { CustomInput } from '../../CustomMui/CustomInput/CustomInput'
 
 function EditComponent({
   value,

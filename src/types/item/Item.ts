@@ -8,6 +8,6 @@ export interface Item {
   //   categories: string[]
   image?: string
   macros: Macros
-  type: 'food' | 'product' | 'meal' | ''
+  type: 'food' | 'product' | 'meal' | 'custom' | ''
   items?: MealItem[] // for meal type
 }

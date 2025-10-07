@@ -150,6 +150,7 @@ function LogsList({
         items={loggedToday.logs}
         getKey={(item) => item._id + ''}
         renderPrimaryText={(i) => {
+          if (i.name) return i.name
           if (i.source === searchTypes.custom) return 'Custom Log'
           return (
             cachedItems.find((item) => item.searchId === i.itemId)?.name || (

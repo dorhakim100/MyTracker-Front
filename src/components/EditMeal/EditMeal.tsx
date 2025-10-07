@@ -19,8 +19,10 @@ import { MacrosDistribution } from '../MacrosDistribution/MacrosDistribution'
 import { ItemSearch } from '../ItemSearch/ItemSearch'
 
 import { CustomStepper } from '../../CustomMui/CustomStepper/CustomStepper'
-import { capitalizeFirstLetter } from '../../services/util.service'
+import { capitalizeFirstLetter, makeId } from '../../services/util.service'
 import { DeleteAction } from '../DeleteAction/DeleteAction'
+import { searchUrls } from '../../assets/config/search.urls'
+import { searchTypes } from '../../assets/config/search-types'
 
 const stages = ['name', 'items']
 
@@ -91,7 +93,7 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
   const onFinish = () => {
     saveMeal(editMeal)
   }
-
+  console.log(editMeal)
   const renderStageContent = () => {
     if (stage === 'name')
       return (
@@ -123,13 +125,23 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
                 prefs.isDarkMode ? 'dark-mode' : ''
               }`}
               items={editMeal.items}
-              renderPrimaryText={(item) => item.name}
+              renderPrimaryText={(item) => {
+                if (item.source === searchTypes.custom && !item.name)
+                  return 'Custom Item'
+                return item.name
+              }}
               renderLeft={(item) => (
-                <img className='item-image' src={item.image} alt={item.name} />
+                <img
+                  className='item-image'
+                  src={item.image || searchUrls.DEFAULT_IMAGE}
+                  alt={item.name}
+                />
               )}
-              renderSecondaryText={(item) =>
-                `${+item.servingSize * +item.numberOfServings}gr`
-              }
+              renderSecondaryText={(item) => {
+                if (item.source === searchTypes.custom)
+                  return `${item.macros?.calories} kcal`
+                return `${+item.servingSize * +item.numberOfServings}gr`
+              }}
               getKey={(item) => item._id || item.searchId || ''}
               isSwipeable={true}
               renderRightSwipeActions={(item) => (
@@ -209,8 +221,13 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
       newItems = [...editMeal.items]
       newItems[hasIndex] = item
     } else {
+      if (item.searchId === '') {
+        item.searchId = makeId()
+        item.source = searchTypes.custom
+      }
       newItems = [...editMeal.items, item]
     }
+
     calcNewMealMacros(newItems)
     setIsOpenModal(false)
   }

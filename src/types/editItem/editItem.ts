@@ -5,4 +5,5 @@ export interface EditItem {
   servingSize: number
   numberOfServings: number
   meal: string
+  name?: string
 }

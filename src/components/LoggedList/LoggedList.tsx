@@ -61,6 +61,8 @@ export function LoggedList({ mealPeriod }: { mealPeriod: MealPeriod }) {
     return log.meal.toLocaleLowerCase() === mealPeriod
   }
 
+  console.log(logs)
+
   async function handleLoadItems() {
     try {
       // loadItems() // optimistic update from cache, no need to await
@@ -87,6 +89,7 @@ export function LoggedList({ mealPeriod }: { mealPeriod: MealPeriod }) {
   const getKey = (item: Log) => item.itemId + item.time
 
   const renderPrimaryText = (item: Log) => {
+    if (item.name) return item.name
     if (item.source === searchTypes.custom) return 'Custom Log'
     const cachedItem = cachedItems.find((i) => i.searchId === item.itemId)
     return (
