@@ -648,7 +648,7 @@ import { EditMacros } from '../MacrosProgress/EditMacros'
 import { calculateProteinCalories } from '../../services/macros/macros.service'
 import { calculateCarbCalories } from '../../services/macros/macros.service'
 import { calculateFatCalories } from '../../services/macros/macros.service'
-import { EditIcon } from '../EditIcon/EditIcon'
+import EditIcon from '@mui/icons-material/Edit'
 
 function EditComponent({
   value,

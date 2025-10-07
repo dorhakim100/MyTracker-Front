@@ -1,6 +1,7 @@
 .barcode-scanner-container {
   display: grid;
-  gap: 1em;
+  gap: 1.5em;
+  padding: 1em;
 }
 
 .barcode-scanner {
@@ -10,7 +11,6 @@
   // background: #000;
   border-radius: 12px;
   overflow: hidden;
-  padding: 1em;
 
   .preview {
     width: 100%;
