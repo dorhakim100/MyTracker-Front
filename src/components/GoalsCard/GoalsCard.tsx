@@ -22,9 +22,14 @@ import {
 import { User } from '../../types/user/User'
 
 import { DeleteAction } from '../DeleteAction/DeleteAction'
+import { capitalizeFirstLetter } from '../../services/util.service'
 // import { userService } from '../../services/user/user.service'
 
-const DEFAULT_GOAL_TITLE = 'Loss weight'
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward'
+
+import BalanceIcon from '@mui/icons-material/Balance'
+
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
 
 export function GoalsCard() {
   const user = useSelector(
@@ -130,6 +135,12 @@ export function GoalsCard() {
     }
   }
 
+  const getTargetIcon = (target: string) => {
+    if (target === 'lose') return <ArrowDownwardIcon />
+    if (target === 'maintain') return <BalanceIcon />
+    if (target === 'gain') return <ArrowUpwardIcon />
+  }
+
   if (!user || !user.goals) return <div>GoalsCard</div>
 
   return (
@@ -146,16 +157,19 @@ export function GoalsCard() {
           getKey={(goal) => goal._id}
           renderPrimaryText={(goal) => goal.title}
           renderLeft={(goal) => (
-            <MacrosDonut
-              protein={goal.macros?.protein || 0}
-              carbs={goal.macros?.carbs || 0}
-              fats={goal.macros?.fat || 0}
-            />
+            <div className='goal-left'>
+              {getTargetIcon(goal.target)}
+              <MacrosDonut
+                protein={goal.macros?.protein || 0}
+                carbs={goal.macros?.carbs || 0}
+                fats={goal.macros?.fat || 0}
+              />
+            </div>
           )}
           renderSecondaryText={(goal) =>
-            `${DEFAULT_GOAL_TITLE} - ${goal.targetWeight || 80} kg - ${
-              goal.dailyCalories
-            } kcal`
+            `${capitalizeFirstLetter(goal.target)} - ${
+              goal.targetWeight || 80
+            } kg - ${goal.dailyCalories} kcal`
           }
           renderRight={(goal) => (
             // <ListItemIcon>

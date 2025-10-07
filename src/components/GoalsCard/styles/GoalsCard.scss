@@ -1,4 +1,27 @@
 .goals-card {
   display: grid;
   gap: 1rem;
+
+  .MuiTypography-body1 {
+    font-weight: 600;
+  }
+
+  .goal-left {
+    position: relative;
+    svg {
+      position: absolute;
+
+      left: 0;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      margin: auto;
+      width: 2rem;
+      height: 2rem;
+    }
+
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
 }
