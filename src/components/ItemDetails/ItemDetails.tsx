@@ -456,7 +456,11 @@ export function ItemDetails({
   }
 
   return (
-    <div className={`item-details ${noEdit ? 'no-edit' : ''}`}>
+    <div
+      className={`item-details ${noEdit ? 'no-edit' : ''} ${
+        isCustomLog ? 'custom-log' : ''
+      }`}
+    >
       {!isCustomLog && (item as Log).source !== searchTypes.custom && (
         <div className='header'>
           <div className='image'>
@@ -547,7 +551,11 @@ export function ItemDetails({
                   )}
                   {option.type === 'macros' && (
                     <>
-                      <CustomButton text='Edit Macros' onClick={openMacros} />
+                      <CustomButton
+                        text='Edit Macros'
+                        onClick={openMacros}
+                        icon={<EditIcon />}
+                      />
                       <SlideDialog
                         open={macrosOpen}
                         onClose={closeMacros}
@@ -640,6 +648,7 @@ import { EditMacros } from '../MacrosProgress/EditMacros'
 import { calculateProteinCalories } from '../../services/macros/macros.service'
 import { calculateCarbCalories } from '../../services/macros/macros.service'
 import { calculateFatCalories } from '../../services/macros/macros.service'
+import { EditIcon } from '../EditIcon/EditIcon'
 
 function EditComponent({
   value,

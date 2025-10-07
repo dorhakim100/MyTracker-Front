@@ -18,6 +18,7 @@ import { Box, Typography } from '@mui/material'
 import { Goal } from '../../types/goal/Goal'
 import { Macros as MacrosType } from '../../types/macros/Macros'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
+import AddIcon from '@mui/icons-material/Add'
 
 interface EditMacrosProps {
   goalToEdit?: Goal | Partial<Goal>
@@ -34,9 +35,18 @@ const PROTEIN_LIMIT = 350
 const FATS_LIMIT = 200
 
 const macrosAddButtons = {
-  carbs: 35,
-  protein: 20,
-  fats: 10,
+  carbs: {
+    value: 35,
+    limit: CARBS_LIMIT,
+  },
+  protein: {
+    value: 20,
+    limit: PROTEIN_LIMIT,
+  },
+  fats: {
+    value: 10,
+    limit: FATS_LIMIT,
+  },
 }
 
 interface PickerValue {
@@ -198,7 +208,6 @@ export function EditMacros({
                           {option}
                         </Typography>
                       )}
-                      {/* {option} */}
                     </Picker.Item>
                   )
                 })}
@@ -211,6 +220,19 @@ export function EditMacros({
       <div className='macros-title-container'>
         {macroKeys.map((name) => {
           const macroName = name as string
+
+          const getButtonDisabled = () => {
+            return (
+              pickerValue[macroName] +
+                macrosAddButtons[macroName as keyof typeof macrosAddButtons]
+                  .value >
+              macrosAddButtons[macroName as keyof typeof macrosAddButtons].limit
+            )
+          }
+
+          const buttonValue =
+            macrosAddButtons[macroName as keyof typeof macrosAddButtons].value
+
           return (
             <div className='macro-container' key={`name-${macroName}`}>
               <div className={`banner ${macroName}`}>
@@ -222,17 +244,14 @@ export function EditMacros({
                 {pickerValue[macroName].toFixed(0)}g
               </Typography>
               <CustomButton
-                text={`+${
-                  macrosAddButtons[macroName as keyof typeof macrosAddButtons]
-                }`}
+                text={`${buttonValue}`}
+                icon={<AddIcon />}
+                isIconReverse
+                disabled={getButtonDisabled()}
                 onClick={() =>
                   setPickerValue({
                     ...pickerValue,
-                    [macroName]:
-                      pickerValue[macroName] +
-                      macrosAddButtons[
-                        macroName as keyof typeof macrosAddButtons
-                      ],
+                    [macroName]: pickerValue[macroName] + buttonValue,
                   })
                 }
               />

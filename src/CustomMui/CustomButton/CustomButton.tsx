@@ -17,6 +17,7 @@ interface CustomButtonProps {
   size?: 'small' | 'medium' | 'large'
   fullWidth?: boolean
   sx?: SxProps<Theme>
+  isIconReverse?: boolean
 }
 
 export function CustomButton({
@@ -31,6 +32,7 @@ export function CustomButton({
   size = 'medium',
   fullWidth = false,
   sx,
+  isIconReverse = false,
 }: CustomButtonProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -86,8 +88,9 @@ export function CustomButton({
             prefs.favoriteColor || ''
           } ${disabled ? 'disabled' : ''}`}
         >
+          {icon && isIconReverse && icon}
           {text}
-          {icon && icon}
+          {icon && !isIconReverse && icon}
         </Button>
       )}
     </MotionWrapper>
