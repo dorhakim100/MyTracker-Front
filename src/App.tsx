@@ -22,6 +22,7 @@ import { loadPrefs } from './store/actions/system.actions.ts'
 import { SignIn } from './CustomMui/SignIn/SignIn.tsx'
 import { searchService } from './services/search/search-service.ts'
 import { EditGoal } from './components/EditGoal/EditGoal.tsx'
+import { ScreenLoader } from './components/ScreenLoader/ScreenLoader.tsx'
 
 const colors = [
   'primary',
@@ -46,6 +47,10 @@ function App() {
 
   const slideDirection = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.slideDirection
+  )
+
+  const isFirstLoading = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.isFirstLoading
   )
 
   const filteredRoutes = getRoutes(routes, user)
@@ -110,6 +115,8 @@ function App() {
         break
     }
   }
+
+  if (isFirstLoading) return <ScreenLoader />
 
   if (!user)
     return (

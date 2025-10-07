@@ -26,6 +26,7 @@ import { Meal } from '../../types/meal/Meal'
 import { Gender } from '../../services/bmr/bmr.service'
 import { Goal } from '../../types/goal/Goal'
 import { goalService } from '../../services/goal/goal.service'
+import { setIsFirstLoading } from './system.actions'
 
 const { FAVORITE_CACHE } = cache
 
@@ -233,6 +234,7 @@ export async function handleFavorite(item: Item, user: User) {
 
 export async function setRemembered() {
   try {
+    setIsFirstLoading(true)
     const remembered = await userService.getRememberedUser()
 
     if (!remembered) return
@@ -252,6 +254,8 @@ export async function setRemembered() {
     setUserToEdit(user as User & { meals: Meal[] | string[] })
   } catch (err) {
     throw err
+  } finally {
+    setIsFirstLoading(false)
   }
 }
 

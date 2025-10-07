@@ -14,6 +14,7 @@ import {
   SET_SLIDE_DIRECTION,
   // SET_SHOWED_UPDATE_MESSAGE,
   SET_NAVIGATE_TO,
+  SET_IS_FIRST_LOADING,
 } from '../reducers/system.reducer'
 
 export function setIsLoading(stateToSet: boolean) {
@@ -59,7 +60,12 @@ export function setSlideDirection(directionToSet: number) {
 export function setNavigateTo(navigateToToSet: string) {
   store.dispatch({ type: SET_NAVIGATE_TO, navigateTo: navigateToToSet })
 }
-
+export function setIsFirstLoading(isFirstLoadingToSet: boolean) {
+  store.dispatch({
+    type: SET_IS_FIRST_LOADING,
+    isFirstLoading: isFirstLoadingToSet,
+  })
+}
 export function onClosePrefsHeader() {
   setIsPrefs(false)
 }

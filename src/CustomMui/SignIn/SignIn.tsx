@@ -83,6 +83,7 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
   const [validatePasswordMessage, setValidatePasswordMessage] =
     React.useState('')
   const [open, setOpen] = React.useState(false)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const credientials: any = {}
 
   const [isRemember, setIsRemember] = React.useState(false)

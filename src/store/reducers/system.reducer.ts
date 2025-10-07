@@ -5,6 +5,7 @@ import { getDefaultsPrefs } from '../../services/system/system.service.ts'
 
 export const LOADING_START = 'LOADING_START'
 export const LOADING_DONE = 'LOADING_DONE'
+export const SET_IS_FIRST_LOADING = 'SET_IS_FIRST_LOADING'
 export const SET_IS_HEADER = 'SET_IS_HEADER'
 export const SET_IS_ACCESSIBILITY = 'SET_IS_ACCESSIBILITY'
 export const SET_IS_PREFS = 'SET_IS_PREFS'
@@ -21,7 +22,7 @@ export interface SystemState {
   prefs: Prefs
   isAddModal: boolean
   isAccessibility: boolean
-
+  isFirstLoading: boolean
   isPrefs: boolean
   isModal: boolean
   modalMessage: string
@@ -35,7 +36,7 @@ const initialState: SystemState = {
   isAddModal: false,
   isAccessibility: false,
   isPrefs: false,
-
+  isFirstLoading: false,
   isModal: false,
   modalMessage: '',
   slideDirection: 1,
@@ -51,6 +52,8 @@ export function systemReducer(state = initialState, action: any = {}) {
       return { ...state, isLoading: false }
     case SET_IS_ACCESSIBILITY:
       return { ...state, isAccessibility: action.isAccessibility }
+    case SET_IS_FIRST_LOADING:
+      return { ...state, isFirstLoading: action.isFirstLoading }
     case SET_IS_ADD_MODAL:
       return { ...state, isAddModal: action.isAddModal }
     case SET_IS_PREFS:
