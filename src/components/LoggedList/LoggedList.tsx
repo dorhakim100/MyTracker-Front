@@ -87,6 +87,7 @@ export function LoggedList({ mealPeriod }: { mealPeriod: MealPeriod }) {
   const getKey = (item: Log) => item.itemId + item.time
 
   const renderPrimaryText = (item: Log) => {
+    if (item.source === searchTypes.custom) return 'Custom Log'
     const cachedItem = cachedItems.find((i) => i.searchId === item.itemId)
     return (
       cachedItem?.name || (
@@ -101,6 +102,8 @@ export function LoggedList({ mealPeriod }: { mealPeriod: MealPeriod }) {
   }
 
   const renderSecondaryText = (item: Log) => {
+    if (item.source === searchTypes.custom)
+      return `${item.macros?.calories} kcal`
     const cachedItem = cachedItems.find((i) => i.searchId === item.itemId)
     return cachedItem ? (
       `${item.macros?.calories} kcal`

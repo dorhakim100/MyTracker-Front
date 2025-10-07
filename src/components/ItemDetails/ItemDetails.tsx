@@ -23,21 +23,34 @@ import { logService } from '../../services/log/log.service'
 import { MealItem } from '../../types/mealItem/MealItem'
 import { Meal } from '../../types/meal/Meal'
 
+import { Macros as MacrosType } from '../../types/macros/Macros'
+
 interface ItemDetailsProps {
   onAddToMealClick?: (item: MealItem) => void
   noEdit?: boolean
+  isCustomLog?: boolean
 }
 
 interface EditOption {
   label: string
   key: string
-  values: string[] | number[]
-  type: string
+  values?: string[] | number[]
+  type?: string
+  extra?: string
+}
+
+const MEAL_INPUT = {
+  label: 'Meal',
+  key: 'meal',
+  values: ['Breakfast', 'Lunch', 'Dinner'],
+  type: 'select',
+  extra: '',
 }
 
 export function ItemDetails({
   onAddToMealClick,
   noEdit = false,
+  isCustomLog = false,
 }: ItemDetailsProps) {
   const searchedItem: Item = useSelector(
     (stateSelector: RootState) => stateSelector.itemModule.item
@@ -65,35 +78,43 @@ export function ItemDetails({
   const item: Item | Meal | Log = editMealItem ? editMealItem : searchedItem
 
   const [editItem, setEditItem] = useState<EditItem>({
-    totalMacros: item.macros,
+    totalMacros: isCustomLog ? _getDefaultMacros() : item.macros,
     servingSize: editMealItem?.servingSize || 100,
     numberOfServings: editMealItem?.numberOfServings || 1,
     meal: editMealItem?.meal || selectedMeal || getCurrMeal(),
   })
 
   const [clockOpen, setClockOpen] = useState(false)
+  const [macrosOpen, setMacrosOpen] = useState(false)
 
-  const editOptions = [
-    {
-      label: 'Serving Size',
-      key: 'servingSize',
-      values: [1, 25, 30, 50, 100, 150],
-      extra: 'gram',
-      type: 'select',
-    },
-    {
-      label: 'Number of Servings',
-      key: 'numberOfServings',
-      values: getArrayOfNumbers(0, 100),
-      type: 'clock',
-    },
-    {
-      label: 'Meal',
-      key: 'meal',
-      values: ['Breakfast', 'Lunch', 'Dinner'],
-      type: 'select',
-    },
-  ]
+  const editOptions = !isCustomLog
+    ? [
+        {
+          label: 'Serving Size',
+          key: 'servingSize',
+          values: [1, 25, 30, 50, 100, 150],
+          extra: 'gram',
+          type: 'select',
+        },
+        {
+          label: 'Number of Servings',
+          key: 'numberOfServings',
+          values: getArrayOfNumbers(0, 100),
+          type: 'clock',
+        },
+        MEAL_INPUT,
+      ]
+    : [
+        {
+          label: 'Custom Log Macros',
+          key: 'custom-log-macros',
+
+          type: 'macros',
+          extra: '',
+          values: [],
+        },
+        MEAL_INPUT,
+      ]
 
   useEffect(() => {
     loadItems()
@@ -106,32 +127,34 @@ export function ItemDetails({
     setClockOpen(true)
   }
 
+  const closeMacros = () => {
+    setMacrosOpen(false)
+  }
+  const openMacros = () => {
+    setMacrosOpen(true)
+  }
+
   const onEditItemChange = (key: string, value: string | number) => {
-    // let totalMacrosToSet = item.macros
     let totalMacrosToSet = searchedItem.macros
     switch (key) {
       case 'servingSize':
         totalMacrosToSet = {
           calories: Math.round(
-            // (+value / 100) * item.macros?.calories * editItem.numberOfServings
             (+value / 100) *
               searchedItem.macros?.calories *
               editItem.numberOfServings
           ),
           protein: Math.round(
-            // (+value / 100) * item.macros?.protein * editItem.numberOfServings
             (+value / 100) *
               searchedItem.macros?.protein *
               editItem.numberOfServings
           ),
           carbs: Math.round(
-            // (+value / 100) * item.macros?.carbs * editItem.numberOfServings
             (+value / 100) *
               searchedItem.macros?.carbs *
               editItem.numberOfServings
           ),
           fat: Math.round(
-            // (+value / 100) * item.macros?.fat * editItem.numberOfServings
             (+value / 100) *
               searchedItem.macros?.fat *
               editItem.numberOfServings
@@ -143,20 +166,16 @@ export function ItemDetails({
       case 'numberOfServings':
         totalMacrosToSet = {
           calories: Math.round(
-            // (+value * item.macros?.calories * editItem.servingSize) / 100
             (+value * searchedItem.macros?.calories * editItem.servingSize) /
               100
           ),
           protein: Math.round(
-            // (+value * item.macros?.protein * editItem.servingSize) / 100
             (+value * searchedItem.macros?.protein * editItem.servingSize) / 100
           ),
           carbs: Math.round(
-            // (+value * item.macros?.carbs * editItem.servingSize) / 100
             (+value * searchedItem.macros?.carbs * editItem.servingSize) / 100
           ),
           fat: Math.round(
-            // (+value * item.macros?.fat * editItem.servingSize) / 100
             (+value * searchedItem.macros?.fat * editItem.servingSize) / 100
           ),
         }
@@ -185,6 +204,22 @@ export function ItemDetails({
       await handleFavorite(searchedItem, user)
     } catch {
       showErrorMsg(messages.error.favorite)
+    }
+  }
+
+  function _getDefaultMacros() {
+    const protein = 15
+    const carbs = 20
+    const fats = 5
+    const calories =
+      calculateProteinCalories(protein) +
+      calculateCarbCalories(carbs) +
+      calculateFatCalories(fats)
+    return {
+      calories,
+      protein,
+      carbs,
+      fat: fats,
     }
   }
 
@@ -276,16 +311,17 @@ export function ItemDetails({
       }
       delete itemToCache._id
 
-      await searchService.addToCache(itemToCache, cache.ITEMS_CACHE)
+      if (!isCustomLog)
+        await searchService.addToCache(itemToCache, cache.ITEMS_CACHE)
 
       const newLog = {
-        itemId: item.searchId,
+        itemId: isCustomLog ? '' : item.searchId,
         meal: editItem.meal,
         macros: editItem.totalMacros,
         time: Date.now(),
         servingSize: editItem.servingSize,
         numberOfServings: editItem.numberOfServings,
-        source: searchedItem.type,
+        source: isCustomLog ? searchTypes.custom : searchedItem.type,
         createdBy: user._id,
       }
 
@@ -321,7 +357,7 @@ export function ItemDetails({
 
       showSuccessMsg(messages.success.addedToMeal)
     } catch {
-      showErrorMsg(messages.error.favorite)
+      showErrorMsg(messages.error.addLog)
       // optimisticUpdateUser(user as User)
     }
   }
@@ -411,25 +447,36 @@ export function ItemDetails({
     return onAddToMeal
   }
 
+  const onEditCustomLog = (macros: MacrosType) => {
+    setEditItem((prev) => ({
+      ...prev,
+      totalMacros: macros,
+    }))
+  }
+
   return (
     <div className={`item-details ${noEdit ? 'no-edit' : ''}`}>
-      <div className='header'>
-        <div className='image'>
-          <img src={item.image} alt={item.name} />
-        </div>
-        <div className='title'>{item.name}</div>
-        <div className='subtitle'>{`${(+item.macros?.calories).toFixed(
-          0
-        )} kcal for ${!_hasItems(item) ? '100g' : 'serving'}`}</div>
-
-        {!noEdit && !_hasItems(item) && (
-          <div className='favorite-container' onClick={onFavoriteClick}>
-            <FavoriteButton
-              isFavorite={searchService.isFavorite(searchedItem, user) || false}
-            />
+      {!isCustomLog && (
+        <div className='header'>
+          <div className='image'>
+            {item.image && <img src={item.image} alt={item.name} />}
           </div>
-        )}
-      </div>
+          <div className='title'>{item.name}</div>
+          <div className='subtitle'>{`${(+item.macros?.calories).toFixed(
+            0
+          )} kcal for ${!_hasItems(item) ? '100g' : 'serving'}`}</div>
+
+          {!noEdit && !_hasItems(item) && (
+            <div className='favorite-container' onClick={onFavoriteClick}>
+              <FavoriteButton
+                isFavorite={
+                  searchService.isFavorite(searchedItem, user) || false
+                }
+              />
+            </div>
+          )}
+        </div>
+      )}
 
       <div className='content'>
         <div className='macros-container'>
@@ -494,6 +541,25 @@ export function ItemDetails({
                         }
                         onSave={() => {}}
                         title={option.label}
+                      />
+                    </>
+                  )}
+                  {option.type === 'macros' && (
+                    <>
+                      <CustomButton text='Edit Macros' onClick={openMacros} />
+                      <SlideDialog
+                        open={macrosOpen}
+                        onClose={closeMacros}
+                        component={
+                          <EditMacros
+                            isCustomLog={isCustomLog}
+                            protein={editItem.totalMacros?.protein || 0}
+                            carbs={editItem.totalMacros?.carbs || 0}
+                            fats={editItem.totalMacros?.fat || 0}
+                            editCustomLog={onEditCustomLog}
+                          />
+                        }
+                        onSave={() => {}}
                       />
                     </>
                   )}
@@ -566,6 +632,10 @@ import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import { searchTypes } from '../../assets/config/search-types'
 import { Log } from '../../types/log/Log'
 import { Divider } from '@mui/material'
+import { EditMacros } from '../MacrosProgress/EditMacros'
+import { calculateProteinCalories } from '../../services/macros/macros.service'
+import { calculateCarbCalories } from '../../services/macros/macros.service'
+import { calculateFatCalories } from '../../services/macros/macros.service'
 
 function EditComponent({
   value,

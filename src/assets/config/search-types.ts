@@ -3,4 +3,5 @@ export const searchTypes = {
   usda: 'usda',
   meal: 'meal',
   search: 'search',
+  custom: 'custom',
 }

@@ -23,6 +23,8 @@ import { Log } from '../../types/log/Log'
 import CustomSkeleton from '../../CustomMui/CustomSkeleton/CustomSkeleton'
 import { SkeletonList } from '../../components/SkeletonList/SkeletonList'
 import { MacrosDonut } from '../../components/MacrosDonut/MacrosDonut'
+import { searchTypes } from '../../assets/config/search-types'
+import { searchUrls } from '../../assets/config/search.urls'
 
 const ONE_DAY = 24 * 60 * 60 * 1000
 
@@ -147,30 +149,37 @@ function LogsList({
       <CustomList
         items={loggedToday.logs}
         getKey={(item) => item._id + ''}
-        renderPrimaryText={(i) =>
-          cachedItems.find((item) => item.searchId === i.itemId)?.name || (
-            <CustomSkeleton
-              variant='text'
-              width='100%'
-              height={20}
-              isDarkMode={prefs.isDarkMode}
-            />
+        renderPrimaryText={(i) => {
+          if (i.source === searchTypes.custom) return 'Custom Log'
+          return (
+            cachedItems.find((item) => item.searchId === i.itemId)?.name || (
+              <CustomSkeleton
+                variant='text'
+                width='100%'
+                height={20}
+                isDarkMode={prefs.isDarkMode}
+              />
+            )
           )
-        }
-        renderSecondaryText={(i) =>
-          i.macros?.calories + ' kcal' || (
-            <CustomSkeleton
-              variant='text'
-              width='25%'
-              height={20}
-              isDarkMode={prefs.isDarkMode}
-            />
+        }}
+        renderSecondaryText={(i) => {
+          if (i.source === searchTypes.custom)
+            return `${i.macros?.calories} kcal`
+          return (
+            i.macros?.calories + ' kcal' || (
+              <CustomSkeleton
+                variant='text'
+                width='25%'
+                height={20}
+                isDarkMode={prefs.isDarkMode}
+              />
+            )
           )
-        }
+        }}
         renderLeft={(i) => {
-          const img = cachedItems.find(
-            (item) => item.searchId === i.itemId
-          )?.image
+          const img =
+            cachedItems.find((item) => item.searchId === i.itemId)?.image ||
+            searchUrls.DEFAULT_IMAGE
           return img ? (
             <>
               <ListItemIcon className='item-image-container'>

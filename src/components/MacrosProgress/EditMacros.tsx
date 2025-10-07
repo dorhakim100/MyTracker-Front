@@ -16,17 +16,31 @@ import { RootState } from '../../store/store'
 import { useEffect, useState } from 'react'
 import { Box, Typography } from '@mui/material'
 import { Goal } from '../../types/goal/Goal'
+import { Macros as MacrosType } from '../../types/macros/Macros'
 
 interface EditMacrosProps {
   goalToEdit?: Goal | Partial<Goal>
   goalRef?: React.RefObject<Goal | Partial<Goal>>
+  isCustomLog?: boolean
+  protein?: number
+  carbs?: number
+  fats?: number
+  editCustomLog?: (macros: MacrosType) => void
 }
 
 const CARBS_LIMIT = 800
 const PROTEIN_LIMIT = 350
 const FATS_LIMIT = 200
 
-export function EditMacros({ goalToEdit, goalRef }: EditMacrosProps) {
+export function EditMacros({
+  goalToEdit,
+  goalRef,
+  isCustomLog = false,
+  protein,
+  carbs,
+  fats,
+  editCustomLog,
+}: EditMacrosProps) {
   interface PickerValue {
     carbs: number
     protein: number
@@ -47,22 +61,26 @@ export function EditMacros({ goalToEdit, goalRef }: EditMacrosProps) {
   const user = useSelector(
     (stateSelector: RootState) => stateSelector.userModule.user
   )
-
+  console.log('isCustomLog', isCustomLog)
+  console.log('carbs', carbs)
   const [pickerValue, setPickerValue] = useState<PickerValue>({
     carbs: getFixedNumber(
-      goalToEdit?.macros?.carbs ||
+      (isCustomLog && carbs) ||
+        goalToEdit?.macros?.carbs ||
         userToEdit?.currGoal?.macros.carbs ||
         user?.currGoal?.macros.carbs ||
         0
     ),
     protein: getFixedNumber(
-      goalToEdit?.macros?.protein ||
+      (isCustomLog && protein) ||
+        goalToEdit?.macros?.protein ||
         userToEdit?.currGoal?.macros.protein ||
         user?.currGoal?.macros.protein ||
         0
     ),
     fats: getFixedNumber(
-      goalToEdit?.macros?.fat ||
+      (isCustomLog && fats) ||
+        goalToEdit?.macros?.fat ||
         userToEdit?.currGoal?.macros.fat ||
         user?.currGoal?.macros.fat ||
         0
@@ -83,6 +101,17 @@ export function EditMacros({ goalToEdit, goalRef }: EditMacrosProps) {
     const fatsCalories = calculateFatCalories(pickerValue.fats)
 
     const totalCalories = proteinCalories + carbsCalories + fatsCalories
+
+    if (isCustomLog) {
+      editCustomLog?.({
+        calories: totalCalories,
+        carbs: pickerValue.carbs,
+        protein: pickerValue.protein,
+        fat: pickerValue.fats,
+      })
+
+      return
+    }
 
     const goalToUpdate = {
       ...goalToEdit,

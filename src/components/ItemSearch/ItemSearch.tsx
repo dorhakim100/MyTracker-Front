@@ -45,6 +45,8 @@ import DinnerDiningIcon from '@mui/icons-material/DinnerDining'
 import Lottie from 'lottie-react'
 import searchLight from '../../../public/searching.json'
 import searchDark from '../../../public/searching-dark.json'
+import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
+import AddIcon from '@mui/icons-material/Add'
 
 interface ItemSearchProps {
   onAddToMealClick?: (item: MealItem) => void
@@ -69,6 +71,7 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
   )
 
   const [isItemSelected, setIsItemSelected] = useState(false)
+  const [isCustomLog, setIsCustomLog] = useState(false)
 
   const isLoading = useSelector(
     (state: RootState) => state.systemModule.isLoading
@@ -156,6 +159,7 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
   const onItemClick = (item: Item) => {
     setItem(item)
     setIsItemSelected(true)
+    setIsCustomLog(false)
   }
 
   const onFavoriteClick = async (item: Item) => {
@@ -172,6 +176,12 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
   const onCloseItemDetails = () => {
     setIsItemSelected(false)
     setSelectedMeal(null)
+    setIsCustomLog(false)
+  }
+
+  const onCustomLog = () => {
+    setIsCustomLog(true)
+    setIsItemSelected(true)
   }
 
   const dragEnd = async (newItems: Item[]) => {
@@ -275,18 +285,20 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
     <>
       <Box className={`item-search ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
         <Box className='search-container'>
-          <CustomInput
-            value={filter.txt}
-            onChange={(val) => setFilter((prev) => ({ ...prev, txt: val }))}
-            placeholder='Search items...'
-            startIconFn={() => <SearchIcon />}
-            endIconFn={() => (
-              <IconButton aria-label='close' onClick={onClearQuery}>
-                <CloseIcon />
-              </IconButton>
-            )}
-            autoFocus
-          />
+          <div className='input-container'>
+            <CustomInput
+              value={filter.txt}
+              onChange={(val) => setFilter((prev) => ({ ...prev, txt: val }))}
+              placeholder='Search items...'
+              startIconFn={() => <SearchIcon />}
+              endIconFn={() => (
+                <IconButton aria-label='close' onClick={onClearQuery}>
+                  <CloseIcon />
+                </IconButton>
+              )}
+              autoFocus
+            />
+          </div>
           <CustomToggle
             value={filter.source}
             options={toggleOptions}
@@ -298,6 +310,12 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
             }`}
             ariaLabel='data source'
           />
+          <CustomButton
+            onClick={onCustomLog}
+            text='Custom'
+            icon={<AddIcon />}
+            className='custom-add-button'
+          />
         </Box>
 
         {renderList()}
@@ -306,8 +324,13 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
       <SlideDialog
         open={isItemSelected}
         onClose={onCloseItemDetails}
-        component={<ItemDetails onAddToMealClick={onAddToMealClick} />}
-        title='Item'
+        component={
+          <ItemDetails
+            onAddToMealClick={onAddToMealClick}
+            isCustomLog={isCustomLog}
+          />
+        }
+        title={isCustomLog ? 'Custom Log' : 'Item'}
         onSave={() => {}}
         type='full'
       />
