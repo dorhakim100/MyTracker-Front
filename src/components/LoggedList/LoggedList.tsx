@@ -120,6 +120,12 @@ export function LoggedList({ mealPeriod }: { mealPeriod: MealPeriod }) {
   const onItemClick = async (mealItem: Log) => {
     setIsEditOpen(true)
     let itemToSet
+
+    if (mealItem.source === searchTypes.custom) {
+      setEditMealItem(mealItem)
+      return
+    }
+
     try {
       const cachedItem = cachedItems.find((i) => i.searchId === mealItem.itemId)
       if (cachedItem) {

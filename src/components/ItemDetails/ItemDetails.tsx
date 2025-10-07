@@ -87,34 +87,35 @@ export function ItemDetails({
   const [clockOpen, setClockOpen] = useState(false)
   const [macrosOpen, setMacrosOpen] = useState(false)
 
-  const editOptions = !isCustomLog
-    ? [
-        {
-          label: 'Serving Size',
-          key: 'servingSize',
-          values: [1, 25, 30, 50, 100, 150],
-          extra: 'gram',
-          type: 'select',
-        },
-        {
-          label: 'Number of Servings',
-          key: 'numberOfServings',
-          values: getArrayOfNumbers(0, 100),
-          type: 'clock',
-        },
-        MEAL_INPUT,
-      ]
-    : [
-        {
-          label: 'Custom Log Macros',
-          key: 'custom-log-macros',
+  const editOptions =
+    !isCustomLog && (item as Log).source !== searchTypes.custom
+      ? [
+          {
+            label: 'Serving Size',
+            key: 'servingSize',
+            values: [1, 25, 30, 50, 100, 150],
+            extra: 'gram',
+            type: 'select',
+          },
+          {
+            label: 'Number of Servings',
+            key: 'numberOfServings',
+            values: getArrayOfNumbers(0, 100),
+            type: 'clock',
+          },
+          MEAL_INPUT,
+        ]
+      : [
+          {
+            label: 'Custom Log Macros',
+            key: 'custom-log-macros',
 
-          type: 'macros',
-          extra: '',
-          values: [],
-        },
-        MEAL_INPUT,
-      ]
+            type: 'macros',
+            extra: '',
+            values: [],
+          },
+          MEAL_INPUT,
+        ]
 
   useEffect(() => {
     loadItems()
@@ -456,7 +457,7 @@ export function ItemDetails({
 
   return (
     <div className={`item-details ${noEdit ? 'no-edit' : ''}`}>
-      {!isCustomLog && (
+      {!isCustomLog && (item as Log).source !== searchTypes.custom && (
         <div className='header'>
           <div className='image'>
             {item.image && <img src={item.image} alt={item.name} />}
@@ -552,7 +553,10 @@ export function ItemDetails({
                         onClose={closeMacros}
                         component={
                           <EditMacros
-                            isCustomLog={isCustomLog}
+                            isCustomLog={
+                              isCustomLog ||
+                              (item as Log).source === searchTypes.custom
+                            }
                             protein={editItem.totalMacros?.protein || 0}
                             carbs={editItem.totalMacros?.carbs || 0}
                             fats={editItem.totalMacros?.fat || 0}

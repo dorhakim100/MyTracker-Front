@@ -1,11 +1,12 @@
 .edit-macros-container {
-  margin: 0 auto;
-  padding-top: 1em;
+  display: grid;
+  gap: 0.8rem;
+  width: 100%;
+  padding: 0 1rem;
+
+  justify-self: center;
 
   .picker-container {
-    // height: 150px;
-    // overflow: hidden;
-    // margin-bottom: 1em;
   }
 
   .macros-title-container {
@@ -21,6 +22,9 @@
     text-align: center;
 
     .macro-container {
+      display: grid;
+      gap: 0.8rem;
+      justify-items: center;
     }
 
     .banner {

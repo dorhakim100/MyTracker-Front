@@ -195,7 +195,7 @@ export function MacrosDistributionEdit({
 
   return (
     <Box>
-      <div className='edit-macros-container'>
+      <div className='edit-macros-container distribution'>
         {macros.map((macro) => (
           <div
             className='macro-container'

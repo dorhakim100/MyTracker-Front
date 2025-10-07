@@ -66,7 +66,7 @@ export function SlideDialog({
           // bottom: 20,
 
           '& .MuiDialog-paper': {
-            height: type === 'half' ? '450px' : '100%',
+            height: type === 'half' ? '600px' : '100%',
             paddingBottom: '1.5em',
           },
         }}

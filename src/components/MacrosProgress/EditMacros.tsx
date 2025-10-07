@@ -17,6 +17,7 @@ import { useEffect, useState } from 'react'
 import { Box, Typography } from '@mui/material'
 import { Goal } from '../../types/goal/Goal'
 import { Macros as MacrosType } from '../../types/macros/Macros'
+import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 
 interface EditMacrosProps {
   goalToEdit?: Goal | Partial<Goal>
@@ -32,6 +33,18 @@ const CARBS_LIMIT = 800
 const PROTEIN_LIMIT = 350
 const FATS_LIMIT = 200
 
+const macrosAddButtons = {
+  carbs: 35,
+  protein: 20,
+  fats: 10,
+}
+
+interface PickerValue {
+  carbs: number
+  protein: number
+  fats: number
+  [key: string]: number
+}
 export function EditMacros({
   goalToEdit,
   goalRef,
@@ -41,13 +54,6 @@ export function EditMacros({
   fats,
   editCustomLog,
 }: EditMacrosProps) {
-  interface PickerValue {
-    carbs: number
-    protein: number
-    fats: number
-    [key: string]: number
-  }
-
   const macros = {
     carbs: getArrayOfNumbers(0, CARBS_LIMIT),
     protein: getArrayOfNumbers(0, PROTEIN_LIMIT),
@@ -61,8 +67,7 @@ export function EditMacros({
   const user = useSelector(
     (stateSelector: RootState) => stateSelector.userModule.user
   )
-  console.log('isCustomLog', isCustomLog)
-  console.log('carbs', carbs)
+
   const [pickerValue, setPickerValue] = useState<PickerValue>({
     carbs: getFixedNumber(
       (isCustomLog && carbs) ||
@@ -185,7 +190,6 @@ export function EditMacros({
                       key={`${option.toFixed(0)}-${macroName}`}
                       value={option}
                     >
-                      {/* {option.toFixed(0)} */}
                       {({ selected }) => (
                         <Typography
                           variant='h5'
@@ -217,6 +221,21 @@ export function EditMacros({
               <Typography variant='h6' className='value'>
                 {pickerValue[macroName].toFixed(0)}g
               </Typography>
+              <CustomButton
+                text={`+${
+                  macrosAddButtons[macroName as keyof typeof macrosAddButtons]
+                }`}
+                onClick={() =>
+                  setPickerValue({
+                    ...pickerValue,
+                    [macroName]:
+                      pickerValue[macroName] +
+                      macrosAddButtons[
+                        macroName as keyof typeof macrosAddButtons
+                      ],
+                  })
+                }
+              />
             </div>
           )
         })}
