@@ -15,6 +15,8 @@ import Lottie from 'lottie-react'
 import searchingAnimation from '../../../public/searching.json'
 import searchingAnimationDark from '../../../public/searching-dark.json'
 import scanAnimation from '../../../public/scanning.gif'
+import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
+import AddIcon from '@mui/icons-material/Add'
 
 interface BarcodeScannerProps {
   onClose: () => void
@@ -29,6 +31,8 @@ export function BarcodeScanner({ onClose }: BarcodeScannerProps) {
 
   const [isItemDetected, setIsItemDetected] = useState(false)
   const [isItemFound, setIsItemFound] = useState(false)
+
+  const [isCustomLog, setIsCustomLog] = useState(false)
 
   useEffect(() => {
     const hints = new Map<DecodeHintType, unknown>()
@@ -90,20 +94,32 @@ export function BarcodeScanner({ onClose }: BarcodeScannerProps) {
     }
   }
 
+  const onCustomLog = () => {
+    setIsCustomLog(true)
+  }
+
   return (
     <>
       {!isItemDetected && (
-        <div className='barcode-scanner'>
-          <video
-            ref={videoRef}
-            autoPlay
-            playsInline
-            muted
-            className='preview'
-          />
-          <div className='animation-container'>
-            <img src={scanAnimation} alt='scanner' />
+        <div className='barcode-scanner-container'>
+          <div className='barcode-scanner'>
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              muted
+              className='preview'
+            />
+            <div className='animation-container'>
+              <img src={scanAnimation} alt='scanner' />
+            </div>
           </div>
+          <CustomButton
+            text='Custom Log'
+            onClick={onCustomLog}
+            icon={<AddIcon />}
+            fullWidth
+          />
         </div>
       )}
       {isItemDetected && (
@@ -119,10 +135,10 @@ export function BarcodeScanner({ onClose }: BarcodeScannerProps) {
         </div>
       )}
       <SlideDialog
-        open={isItemFound}
+        open={isCustomLog || isItemFound}
         onClose={onClose}
-        component={<ItemDetails />}
-        title='Item'
+        component={<ItemDetails isCustomLog={isCustomLog} />}
+        title={isCustomLog ? 'Custom Log' : 'Barcode Scanned'}
         onSave={() => {}}
         type='full'
       />

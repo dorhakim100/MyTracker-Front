@@ -1,3 +1,8 @@
+.barcode-scanner-container {
+  display: grid;
+  gap: 1em;
+}
+
 .barcode-scanner {
   position: relative;
   width: 100%;
