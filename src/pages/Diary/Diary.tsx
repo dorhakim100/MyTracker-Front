@@ -157,8 +157,6 @@ export function Diary() {
   // }
 
   const onDateChange = (date: string) => {
-    console.log('date', date)
-
     setSelectedDay(new Date(date))
     setDiaryFilter({
       userId: user?._id,

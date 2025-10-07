@@ -61,8 +61,6 @@ export function LoggedList({ mealPeriod }: { mealPeriod: MealPeriod }) {
     return log.meal.toLocaleLowerCase() === mealPeriod
   }
 
-  console.log(logs)
-
   async function handleLoadItems() {
     try {
       // loadItems() // optimistic update from cache, no need to await

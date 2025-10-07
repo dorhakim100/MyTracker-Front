@@ -93,7 +93,7 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
   const onFinish = () => {
     saveMeal(editMeal)
   }
-  console.log(editMeal)
+
   const renderStageContent = () => {
     if (stage === 'name')
       return (

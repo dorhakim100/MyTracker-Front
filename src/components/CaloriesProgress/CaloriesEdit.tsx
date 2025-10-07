@@ -62,7 +62,6 @@ export function CaloriesEdit({ goalToEdit, goalRef }: CaloriesEditProps) {
 
   useEffect(() => {
     if (goalRef && goalRef.current) {
-      console.log('goalRef.current', goalRef.current)
       setPickerCalories({ calories: goalRef.current.dailyCalories as number })
     }
   }, [])

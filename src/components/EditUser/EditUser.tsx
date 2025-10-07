@@ -134,7 +134,7 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
 
       setIsLoading(true)
       const res = await uploadService.uploadImg(ev)
-      console.log('res', res)
+
       if (res && res.secure_url) setImgUrl(res.secure_url)
     } catch (err) {
       showErrorMsg(messages.error.uploadImg)
