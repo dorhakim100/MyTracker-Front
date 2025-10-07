@@ -164,6 +164,7 @@ async function signup(userCred: UserCred) {
       height: DEFAULT_HEIGHT,
       gender: userCred?.details?.gender || ('male' as Gender),
       imgUrl: userCred.imgUrl || DEFAULT_IMG_URL,
+      activity: 'sedentary',
     }
 
     userCred.details = userDetails
