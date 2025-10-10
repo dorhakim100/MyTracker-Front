@@ -99,6 +99,8 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     event.stopPropagation()
+
+
     const isValid = validateInputs()
     if (!isValid) {
       showErrorMsg('Please fill in all required fields correctly.')

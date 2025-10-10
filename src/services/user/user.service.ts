@@ -126,7 +126,7 @@ async function login(userCred: UserCred) {
       saveRememberedUser(user)
     }
 
-    const favoriteIDs = user.favoriteItems
+    const favoriteIDs = user.favoriteItems || []
     const favoriteItems = await searchService.searchFavoriteItems(favoriteIDs)
 
     setFavoriteItems(favoriteItems)

@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { Capacitor, CapacitorHttp } from '@capacitor/core'
 //import { storageService } from '../async-storage.service'
 import { indexedDbService } from '../indexeddb.service'
 import { SearchFilter } from '../../types/searchFilter/SearchFilter'
@@ -40,6 +41,44 @@ export const searchService = {
 }
 
 const LONGEST_FOOD_ID_LENGTH = 10
+
+type HttpParams = Record<string, string | number | boolean | null | undefined>
+
+function toCapacitorParams(
+  params?: HttpParams
+): Record<string, string | string[]> | undefined {
+  if (!params) return undefined
+  const out: Record<string, string> = {}
+  Object.entries(params).forEach(([key, value]) => {
+    if (value === undefined || value === null) return
+    out[key] = String(value)
+  })
+  return out
+}
+
+async function httpGet<T>(url: string, params?: HttpParams) {
+  const isNative = Capacitor.getPlatform() !== 'web'
+  const hasNativeHttp = Capacitor.isPluginAvailable('CapacitorHttp')
+  if (isNative && hasNativeHttp) {
+    try {
+      const res = await CapacitorHttp.get({
+        url,
+        params: toCapacitorParams(params),
+        headers: { Accept: 'application/json, text/plain, */*' },
+      })
+      return res.data as T
+    } catch {
+      // fall through to axios
+    }
+  }
+  try {
+    const { data } = await axios.get<T>(url, { params, timeout: 15000 })
+    return data
+  } catch (err) {
+    // rethrow so callers can decide how to handle
+    throw err
+  }
+}
 
 // await Promise.all(
 //   Object.values(cache).map((storeName) => indexedDbService.clear(storeName))
@@ -243,23 +282,21 @@ async function removeFromCache(item: Item, key: string) {
 /* ====== Open Food Facts API ====== */
 
 // Search for products
+type OffListResponse = { products: OFFProduct[] }
 async function searchOpenFoodFacts(query: string) {
   try {
-    const { data } = await axios.get(OPEN_FOOD_FACTS_API_URL, {
-      params: {
-        search_terms: query,
-        search_simple: 1,
-        action: 'process',
-        json: 1,
-        page: PAGE,
-        page_size: SIZE,
-        fields: FIELDS,
-        lc: LC,
-        cc: CC,
-        countries_tags_en: 'Israel',
-        sort_by: 'popularity_key',
-      },
-      // headers: { 'User-Agent': 'MyTracker/1.0 (you@example.com)' },
+    const data = await httpGet<OffListResponse>(OPEN_FOOD_FACTS_API_URL, {
+      search_terms: query,
+      search_simple: 1,
+      action: 'process',
+      json: 1,
+      page: PAGE,
+      page_size: SIZE,
+      fields: FIELDS,
+      lc: LC,
+      cc: CC,
+      countries_tags_en: 'Israel',
+      sort_by: 'popularity_key',
     })
 
     return data.products
@@ -276,7 +313,7 @@ async function searchOpenFoodFacts(query: string) {
 
         if (!product.nutriments?.['energy-kcal_100g']) return null
 
-        return {
+        const item: Item = {
           searchId: product.code,
           name: product.brands
             ? `${product.product_name} - ${product.brands}`
@@ -285,17 +322,19 @@ async function searchOpenFoodFacts(query: string) {
           image: product.image_small_url || DEFAULT_IMAGE,
           type: 'product',
         }
+        return item
       })
-      .filter((product: OFFProduct) => product !== null)
-  } catch (err) {
-    // console.error(err)
-    throw err
+      .filter((product): product is Item => product !== null)
+  } catch {
+    // Return empty on failure to avoid UI loader loops
+    return [] as unknown as Item[]
   }
 }
 
+type OffByIdResponse = { product: OFFProduct }
 async function getProductById(id: string) {
   try {
-    const { data } = await axios.get(
+    const data = await httpGet<OffByIdResponse>(
       `${OPEN_FOOD_FACTS_API_URL_BY_ID}${id}.json`
     )
     const product: OFFProduct = data.product
@@ -317,12 +356,13 @@ async function getProductById(id: string) {
       image: product.image_small_url || DEFAULT_IMAGE,
       type: 'product',
     }
-  } catch (err) {
-    throw err
+  } catch {
+    return null as unknown as Item
   }
 }
 
 // Get products by array of IDs
+type OffBatchResponse = { products: OFFProduct[] }
 async function getProductsByIds(ids: string[]) {
   try {
     if (!ids || !ids.length) return []
@@ -330,17 +370,14 @@ async function getProductsByIds(ids: string[]) {
 
     if (filteredIds.length === 0) return []
 
-    const { data } = await axios.get(OPEN_FOOD_FACTS_BATCH_URL, {
-      params: {
-        code: filteredIds.join(','),
-        fields: FIELDS,
-      },
-      //headers: { 'User-Agent': 'MyTracker/1.0 (you@example.com)' },
+    const data = await httpGet<OffBatchResponse>(OPEN_FOOD_FACTS_BATCH_URL, {
+      code: filteredIds.join(','),
+      fields: FIELDS,
     })
 
     const products: OFFProduct[] = data.products || []
 
-    return products.map((product: OFFProduct) => {
+    return products.map((product: OFFProduct): Item => {
       const proteins = +(product.nutriments?.proteins_100g ?? 0)
       const carbs = +(product.nutriments?.carbohydrates_100g ?? 0)
       const fats = +(product.nutriments?.fat_100g ?? 0)
@@ -359,28 +396,27 @@ async function getProductsByIds(ids: string[]) {
         type: 'product',
       }
     })
-  } catch (err) {
-    throw err
+  } catch {
+    return [] as unknown as Item[]
   }
 }
 
 /* ====== USDA API ====== */
 
 // Search for foods
+type UsdaSearchResponse = { foods: FDCFood[] }
 async function searchRawUSDA(query: string) {
   try {
-    const { data } = await axios.get(USDA_API_URL, {
-      params: {
-        api_key: USDA_API_KEY,
-        query,
-        pageSize: 10,
-        dataType: 'Foundation,SR Legacy',
-      },
+    const data = await httpGet<UsdaSearchResponse>(USDA_API_URL, {
+      api_key: USDA_API_KEY,
+      query,
+      pageSize: 10,
+      dataType: 'Foundation,SR Legacy',
     })
 
     const { foods } = data
 
-    return foods.map((food: FDCFood) => {
+    return foods.map((food: FDCFood): Item => {
       const macros = _getMacrosFromUSDA(food)
 
       return {
@@ -391,18 +427,17 @@ async function searchRawUSDA(query: string) {
         type: 'food',
       }
     })
-  } catch (error) {
-    throw error
+  } catch {
+    return [] as unknown as Item[]
   }
 }
 
+type UsdaFoodsResponse = { foods: FDCFood[] } | FDCFood[]
 async function getFoodById(id: string) {
   try {
-    const { data } = await axios.get(USDA_FOODS_URL, {
-      params: {
-        api_key: USDA_API_KEY,
-        fdcIds: id,
-      },
+    const data = await httpGet<UsdaFoodsResponse>(USDA_FOODS_URL, {
+      api_key: USDA_API_KEY,
+      fdcIds: id,
     })
     const food: FDCFood = Array.isArray(data) ? data[0] : data.foods[0]
 
@@ -415,8 +450,8 @@ async function getFoodById(id: string) {
       image: DEFAULT_IMAGE,
       type: 'food',
     }
-  } catch (err) {
-    throw err
+  } catch {
+    return null as unknown as Item
   }
 }
 
@@ -458,11 +493,9 @@ async function getFoodsByIds(ids: string[]) {
     const filteredIds = ids.filter((id) => id !== '')
 
     if (filteredIds.length === 0) return []
-    const { data } = await axios.get(USDA_FOODS_URL, {
-      params: {
-        api_key: USDA_API_KEY,
-        fdcIds: filteredIds.join(','),
-      },
+    const data = await httpGet<UsdaFoodsResponse>(USDA_FOODS_URL, {
+      api_key: USDA_API_KEY,
+      fdcIds: filteredIds.join(','),
     })
 
     const foods: FDCFood[] = Array.isArray(data)
@@ -479,8 +512,8 @@ async function getFoodsByIds(ids: string[]) {
         type: 'food',
       }
     })
-  } catch (err) {
-    throw err
+  } catch {
+    return [] as unknown as Item[]
   }
 }
 

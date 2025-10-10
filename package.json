@@ -6,10 +6,21 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:cap": "tsc -b && vite build --mode capacitor",
+    "cap:init": "npx --yes @capacitor/cli init MyTracker com.mytracker.app --web-dir=dist",
+    "cap:sync": "npx --yes @capacitor/cli sync",
+    "cap:copy": "npx --yes @capacitor/cli copy",
+    "cap:open:ios": "npx --yes @capacitor/cli open ios",
+    "cap:open:android": "npx --yes @capacitor/cli open android",
+    "cap:add:ios": "npx --yes @capacitor/cli add ios",
+    "cap:add:android": "npx --yes @capacitor/cli add android",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@capacitor/android": "^7.4.3",
+    "@capacitor/core": "^7.4.3",
+    "@capacitor/ios": "^7.4.3",
     "@chakra-ui/react": "^2.10.7",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
@@ -24,6 +35,7 @@
     "axios": "^1.8.4",
     "chart.js": "^4.5.0",
     "date-fns": "^4.1.0",
+    "debounce": "^2.2.0",
     "framer-motion": "^12.6.3",
     "lightweight-charts": "^5.0.9",
     "lottie-react": "^2.4.1",
@@ -58,5 +70,8 @@
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.24.1",
     "vite": "^6.2.0"
+  },
+  "capacitor": {
+    "webDir": "dist"
   }
 }
