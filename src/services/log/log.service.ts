@@ -30,6 +30,7 @@ async function query(
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function getById(logId: string, filter: any) {
   try {
     const res = await httpService.get(`${KEY}/${logId}`, filter)

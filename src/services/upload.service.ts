@@ -2,6 +2,7 @@ export const uploadService = {
   uploadImg,
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function uploadImg(ev: any): Promise<any> {
   const CLOUD_NAME = 'dpsnczn5n'
   const UPLOAD_PRESET = 'MyTracker'

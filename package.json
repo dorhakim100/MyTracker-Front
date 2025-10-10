@@ -24,6 +24,7 @@
     "axios": "^1.8.4",
     "chart.js": "^4.5.0",
     "date-fns": "^4.1.0",
+    "debounce": "^2.2.0",
     "framer-motion": "^12.6.3",
     "lightweight-charts": "^5.0.9",
     "lottie-react": "^2.4.1",
