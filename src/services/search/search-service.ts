@@ -14,6 +14,7 @@ import type { FDCNutrient } from '../../types/usda/FDCNutrient'
 import { cache } from '../../assets/config/cache'
 import { Log } from '../../types/log/Log'
 import { sourceTypes } from '../../assets/config/source.types'
+import { translateService } from '../translate/translate.service'
 const {
   OPEN_FOOD_FACTS_API_URL,
   OPEN_FOOD_FACTS_API_URL_BY_ID,
@@ -59,17 +60,39 @@ async function search(filter: SearchFilter) {
 
     const safeTxt = txt ?? ''
 
+    const isEnglishWord = translateService.isEnglishWord(safeTxt)
+    let translatedTxt = ''
+
+    if (!isEnglishWord) {
+      translatedTxt = await translateService.translate(safeTxt)
+    }
+
     // Fetch both sources in parallel, tolerate failures
-    const [offRes, usdaRes] = await Promise.allSettled([
-      searchOpenFoodFacts(safeTxt),
-      searchRawUSDA(safeTxt),
-    ])
+    const [offRes, usdaRes, offResTranslated, usdaResTranslated] =
+      await Promise.allSettled([
+        searchOpenFoodFacts(safeTxt),
+        searchRawUSDA(safeTxt),
+        searchOpenFoodFacts(translatedTxt),
+        searchRawUSDA(translatedTxt),
+      ])
 
     const openFoodFacts: Item[] =
       offRes.status === 'fulfilled' ? offRes.value : []
     const usda: Item[] = usdaRes.status === 'fulfilled' ? usdaRes.value : []
 
-    res = [...openFoodFacts, ...usda]
+    const openFoodFactsTranslated: Item[] =
+      offResTranslated.status === 'fulfilled' ? offResTranslated.value : []
+    const usdaTranslated: Item[] =
+      usdaResTranslated.status === 'fulfilled' ? usdaResTranslated.value : []
+
+    res = [
+      ...openFoodFacts,
+      ...openFoodFactsTranslated,
+      ...usda,
+      ...usdaTranslated,
+    ]
+
+    res = filterDuplicates(res)
 
     res = handleResSorting(res, safeTxt, favoriteItems)
 
@@ -89,6 +112,13 @@ function handleResSorting(
     (a, b) =>
       computeRelevanceScore(txt, b, favoriteItems) -
       computeRelevanceScore(txt, a, favoriteItems)
+  )
+}
+
+function filterDuplicates(res: Item[]) {
+  return res.filter(
+    (item, index, self) =>
+      index === self.findIndex((t) => t.searchId === item.searchId)
   )
 }
 
@@ -244,6 +274,7 @@ async function removeFromCache(item: Item, key: string) {
 
 // Search for products
 async function searchOpenFoodFacts(query: string) {
+  if (!query || query === '') return []
   try {
     const { data } = await axios.get(OPEN_FOOD_FACTS_API_URL, {
       params: {
@@ -368,6 +399,7 @@ async function getProductsByIds(ids: string[]) {
 
 // Search for foods
 async function searchRawUSDA(query: string) {
+  if (!query || query === '') return []
   try {
     const { data } = await axios.get(USDA_API_URL, {
       params: {
