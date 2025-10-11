@@ -88,6 +88,8 @@ export function ItemDetails({
   const [clockOpen, setClockOpen] = useState(false)
   const [macrosOpen, setMacrosOpen] = useState(false)
 
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false)
+
   const editOptions =
     !isCustomLog && (item as Log).source !== searchTypes.custom
       ? [
@@ -134,6 +136,14 @@ export function ItemDetails({
   }
   const openMacros = () => {
     setMacrosOpen(true)
+  }
+
+  const openImageModal = () => {
+    setIsImageModalOpen(true)
+  }
+
+  const closeImageModal = () => {
+    setIsImageModalOpen(false)
   }
 
   const onEditItemChange = (key: string, value: string | number) => {
@@ -205,8 +215,9 @@ export function ItemDetails({
     }))
   }
 
-  const onFavoriteClick = async () => {
+  const onFavoriteClick = async (e: React.MouseEvent<HTMLDivElement>) => {
     try {
+      e.stopPropagation()
       if (!user) return showErrorMsg(messages.error.favorite)
       if (!searchedItem.searchId) return showErrorMsg(messages.error.favorite)
 
@@ -479,149 +490,171 @@ export function ItemDetails({
   }
 
   return (
-    <div
-      className={`item-details ${noEdit ? 'no-edit' : ''} ${
-        isCustomLog ? 'custom-log' : ''
-      }`}
-    >
-      {(!isCustomLog && (item as Log).source !== searchTypes.custom && (
-        <div className='header'>
-          <div className='image'>
-            {item.image && <img src={item.image} alt={item.name} />}
-          </div>
-          <div className='title'>{item.name}</div>
-          <div className='subtitle'>{`${(+item.macros?.calories).toFixed(
-            0
-          )} kcal for ${!_hasItems(item) ? '100g' : 'serving'}`}</div>
-
-          {!noEdit && !_hasItems(item) && (
-            <div className='favorite-container' onClick={onFavoriteClick}>
-              <FavoriteButton
-                isFavorite={
-                  searchService.isFavorite(searchedItem, user) || false
-                }
-              />
+    <>
+      <div
+        className={`item-details ${noEdit ? 'no-edit' : ''} ${
+          isCustomLog ? 'custom-log' : ''
+        }`}
+      >
+        {(!isCustomLog && (item as Log).source !== searchTypes.custom && (
+          <div className='header' onClick={openImageModal}>
+            <div className='image'>
+              {item.image && <img src={item.image} alt={item.name} />}
             </div>
-          )}
-        </div>
-      )) || (
-        <CustomInput
-          value={editItem.name || ''}
-          onChange={(value) => onEditItemChange('name', value)}
-          placeholder='Name'
-        />
-      )}
+            <div className='title'>{item.name}</div>
+            <div className='subtitle'>{`${(+item.macros?.calories).toFixed(
+              0
+            )} kcal for ${!_hasItems(item) ? '100g' : 'serving'}`}</div>
 
-      <div className='content'>
-        <div className='macros-container'>
-          <MacrosDonut
-            protein={editItem.totalMacros?.protein}
-            carbs={editItem.totalMacros?.carbs}
-            fats={editItem.totalMacros?.fat}
-            calories={editItem.totalMacros?.calories}
+            {!noEdit && !_hasItems(item) && (
+              <div className='favorite-container' onClick={onFavoriteClick}>
+                <FavoriteButton
+                  isFavorite={
+                    searchService.isFavorite(searchedItem, user) || false
+                  }
+                />
+              </div>
+            )}
+          </div>
+        )) || (
+          <CustomInput
+            value={editItem.name || ''}
+            onChange={(value) => onEditItemChange('name', value)}
+            placeholder='Name'
           />
-          <Macros
-            protein={editItem.totalMacros?.protein}
-            carbs={editItem.totalMacros?.carbs}
-            fats={editItem.totalMacros?.fat}
+        )}
+
+        <div className='content'>
+          <div className='macros-container'>
+            <MacrosDonut
+              protein={editItem.totalMacros?.protein}
+              carbs={editItem.totalMacros?.carbs}
+              fats={editItem.totalMacros?.fat}
+              calories={editItem.totalMacros?.calories}
+            />
+            <Macros
+              protein={editItem.totalMacros?.protein}
+              carbs={editItem.totalMacros?.carbs}
+              fats={editItem.totalMacros?.fat}
+            />
+          </div>
+        </div>
+
+        <div className='edit'>
+          <div className='selects-container'>
+            {!noEdit &&
+              editOptions.map((option) => {
+                if (onAddToMealClick && option.key === 'meal') return null
+
+                if (
+                  !item.searchId &&
+                  _hasItems(item) &&
+                  option.key === 'servingSize'
+                )
+                  return null
+                return (
+                  <div
+                    className={`select-container ${
+                      prefs.isDarkMode ? 'dark-mode' : ''
+                    }`}
+                    key={option.label}
+                  >
+                    <Typography variant='h6'>{option.label}</Typography>
+                    {option.type === 'select' && (
+                      <CustomSelect
+                        label={option.label}
+                        values={option.values.map((value) => value.toString())}
+                        extra={option.extra}
+                        value={
+                          editItem[option.key as keyof EditItem]?.toString() ||
+                          ''
+                        }
+                        onChange={(value) =>
+                          onEditItemChange(option.key, value)
+                        }
+                      />
+                    )}
+                    {option.type === 'clock' && (
+                      <>
+                        <ServingsSelect
+                          openClock={openClock}
+                          option={option}
+                          value={editItem.numberOfServings}
+                        />
+                        <SlideDialog
+                          open={clockOpen}
+                          onClose={closeClock}
+                          component={
+                            <EditComponent
+                              value={editItem.numberOfServings}
+                              onChange={onEditItemChange}
+                            />
+                          }
+                          onSave={() => {}}
+                          title={option.label}
+                        />
+                      </>
+                    )}
+                    {option.type === 'macros' && (
+                      <>
+                        <CustomButton
+                          text='Edit Macros'
+                          onClick={openMacros}
+                          icon={<EditIcon />}
+                        />
+                        <SlideDialog
+                          open={macrosOpen}
+                          onClose={closeMacros}
+                          component={
+                            <EditMacros
+                              isCustomLog={
+                                isCustomLog ||
+                                (item as Log).source === searchTypes.custom
+                              }
+                              protein={editItem.totalMacros?.protein || 0}
+                              carbs={editItem.totalMacros?.carbs || 0}
+                              fats={editItem.totalMacros?.fat || 0}
+                              editCustomLog={onEditCustomLog}
+                            />
+                          }
+                          onSave={() => {}}
+                        />
+                      </>
+                    )}
+                  </div>
+                )
+              })}
+          </div>
+        </div>
+        {!noEdit && (
+          <CustomButton
+            text={editMealItem ? 'Edit Meal' : 'Add to Meal'}
+            icon={!editMealItem && <AddIcon sx={{ mr: 1 }} />}
+            size='large'
+            fullWidth
+            className={`add-to-meal-button ${prefs.favoriteColor}`}
+            onClick={getOnClick()}
           />
-        </div>
+        )}
       </div>
-
-      <div className='edit'>
-        <div className='selects-container'>
-          {!noEdit &&
-            editOptions.map((option) => {
-              if (onAddToMealClick && option.key === 'meal') return null
-
-              if (
-                !item.searchId &&
-                _hasItems(item) &&
-                option.key === 'servingSize'
-              )
-                return null
-              return (
-                <div
-                  className={`select-container ${
-                    prefs.isDarkMode ? 'dark-mode' : ''
-                  }`}
-                  key={option.label}
-                >
-                  <Typography variant='h6'>{option.label}</Typography>
-                  {option.type === 'select' && (
-                    <CustomSelect
-                      label={option.label}
-                      values={option.values.map((value) => value.toString())}
-                      extra={option.extra}
-                      value={
-                        editItem[option.key as keyof EditItem]?.toString() || ''
-                      }
-                      onChange={(value) => onEditItemChange(option.key, value)}
-                    />
-                  )}
-                  {option.type === 'clock' && (
-                    <>
-                      <ServingsSelect
-                        openClock={openClock}
-                        option={option}
-                        value={editItem.numberOfServings}
-                      />
-                      <SlideDialog
-                        open={clockOpen}
-                        onClose={closeClock}
-                        component={
-                          <EditComponent
-                            value={editItem.numberOfServings}
-                            onChange={onEditItemChange}
-                          />
-                        }
-                        onSave={() => {}}
-                        title={option.label}
-                      />
-                    </>
-                  )}
-                  {option.type === 'macros' && (
-                    <>
-                      <CustomButton
-                        text='Edit Macros'
-                        onClick={openMacros}
-                        icon={<EditIcon />}
-                      />
-                      <SlideDialog
-                        open={macrosOpen}
-                        onClose={closeMacros}
-                        component={
-                          <EditMacros
-                            isCustomLog={
-                              isCustomLog ||
-                              (item as Log).source === searchTypes.custom
-                            }
-                            protein={editItem.totalMacros?.protein || 0}
-                            carbs={editItem.totalMacros?.carbs || 0}
-                            fats={editItem.totalMacros?.fat || 0}
-                            editCustomLog={onEditCustomLog}
-                          />
-                        }
-                        onSave={() => {}}
-                      />
-                    </>
-                  )}
-                </div>
-              )
-            })}
-        </div>
-      </div>
-      {!noEdit && (
-        <CustomButton
-          text={editMealItem ? 'Edit Meal' : 'Add to Meal'}
-          icon={!editMealItem && <AddIcon sx={{ mr: 1 }} />}
-          size='large'
-          fullWidth
-          className={`add-to-meal-button ${prefs.favoriteColor}`}
-          onClick={getOnClick()}
-        />
+      {item.image && (
+        <CustomAlertDialog
+          open={isImageModalOpen}
+          onClose={closeImageModal}
+          title={item.name || ''}
+        >
+          <div className='modal-image-container'>
+            <img src={item.image} alt={item.name} className={`box-shadow`} />
+          </div>
+          <CustomButton
+            text='Cancel'
+            fullWidth
+            onClick={closeImageModal}
+            className={`${prefs.favoriteColor}`}
+          />
+        </CustomAlertDialog>
       )}
-    </div>
+    </>
   )
 }
 
@@ -681,6 +714,7 @@ import { calculateCarbCalories } from '../../services/macros/macros.service'
 import { calculateFatCalories } from '../../services/macros/macros.service'
 import EditIcon from '@mui/icons-material/Edit'
 import { CustomInput } from '../../CustomMui/CustomInput/CustomInput'
+import { CustomAlertDialog } from '../../CustomMui/CustomAlertDialog/CustomAlertDialog'
 
 function EditComponent({
   value,
@@ -741,21 +775,10 @@ function EditComponent({
     }))
   }, [value])
 
-  //   useEffect(() => {
-  //     const newValue = pickerValue.numberOfServings + pickerValue.afterValue
-  //     console.log('newValue', newValue)
-  //     onChange('numberOfServings', newValue)
-  //   }, [pickerValue.numberOfServings])
   useEffect(() => {
     const newValue = pickerValue.numberOfServings + pickerValue.afterValue
     onChange('numberOfServings', newValue)
   }, [pickerValue])
-
-  //   useEffect(() => {
-  //     const newValue = pickerValue.numberOfServings + pickerValue.afterValue
-  //     console.log('newValue', newValue)
-  //     onChange('numberOfServings', newValue)
-  //   }, [pickerValue.afterValue])
 
   return (
     <div className='picker-container'>
