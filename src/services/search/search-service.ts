@@ -95,7 +95,7 @@ async function search(filter: SearchFilter) {
 
     res = filterDuplicates(res)
 
-    res = handleResSorting(res, safeTxt, favoriteItems)
+    res = handleResSorting(res, safeTxt, favoriteItems, translatedTxt)
 
     return res
   } catch (err) {
@@ -107,12 +107,13 @@ async function search(filter: SearchFilter) {
 function handleResSorting(
   res: Item[],
   txt: string,
-  favoriteItems: string[] = []
+  favoriteItems: string[] = [],
+  translatedTxt: string = ''
 ) {
   return res.sort(
     (a, b) =>
-      computeRelevanceScore(txt, b, favoriteItems) -
-      computeRelevanceScore(txt, a, favoriteItems)
+      computeRelevanceScore(txt, b, favoriteItems, translatedTxt) -
+      computeRelevanceScore(txt, a, favoriteItems, translatedTxt)
   )
 }
 
@@ -277,8 +278,6 @@ async function removeFromCache(item: Item, key: string) {
 async function searchOpenFoodFacts(query: string) {
   if (!query || query === '') return []
   try {
-    const images = await imageService.getImage(query)
-    let currImageIdx = 0
     const { data } = await axios.get(OPEN_FOOD_FACTS_API_URL, {
       params: {
         search_terms: query,
@@ -296,8 +295,8 @@ async function searchOpenFoodFacts(query: string) {
       // headers: { 'User-Agent': 'MyTracker/1.0 (you@example.com)' },
     })
 
-    return data.products
-      .map((product: OFFProduct) => {
+    const res = await Promise.all(
+      data.products.map(async (product: OFFProduct) => {
         const proteins = Math.floor(+(product.nutriments?.proteins_100g ?? 0))
         const carbs = Math.floor(+(product.nutriments?.carbohydrates_100g ?? 0))
         const fats = Math.floor(+(product.nutriments?.fat_100g ?? 0))
@@ -313,8 +312,15 @@ async function searchOpenFoodFacts(query: string) {
         let image = product.image_small_url
 
         if (!image) {
-          image = images[currImageIdx].webformatURL || DEFAULT_IMAGE
-          currImageIdx++
+          const isEnglishWord = translateService.isEnglishWord(
+            product.product_name
+          )
+          let translatedTxt = product.product_name
+          if (!isEnglishWord) {
+            translatedTxt = await translateService.translate(translatedTxt)
+          }
+          image =
+            (await imageService.getSingleImage(translatedTxt)) || DEFAULT_IMAGE
         }
 
         // console.log(image)
@@ -329,7 +335,8 @@ async function searchOpenFoodFacts(query: string) {
           type: 'product',
         }
       })
-      .filter((product: OFFProduct) => product !== null)
+    )
+    return res.filter((product: OFFProduct) => product !== null)
   } catch (err) {
     // console.error(err)
     throw err
@@ -345,8 +352,14 @@ async function getProductById(id: string) {
 
     let image = product.image_small_url
     if (!image) {
+      const isEnglishWord = translateService.isEnglishWord(product.product_name)
+      let translatedTxt = product.product_name
+      if (!isEnglishWord) {
+        translatedTxt = await translateService.translate(translatedTxt)
+      }
+
       image =
-        (await imageService.getImage(product.product_name)) || DEFAULT_IMAGE
+        (await imageService.getSingleImage(translatedTxt)) || DEFAULT_IMAGE
     }
 
     return {
@@ -387,7 +400,16 @@ async function getProductsByIds(ids: string[]) {
       //headers: { 'User-Agent': 'MyTracker/1.0 (you@example.com)' },
     })
 
-    const images = await imageService.getImage(data.products[0].product_name)
+    const isEnglishWord = translateService.isEnglishWord(
+      data.products[0].product_name
+    )
+    let translatedTxt = data.products[0].product_name
+
+    if (!isEnglishWord) {
+      translatedTxt = await translateService.translate(translatedTxt)
+    }
+
+    const images = await imageService.getImage(translatedTxt)
     let currImageIdx = 0
 
     const products: OFFProduct[] = data.products || []
@@ -404,6 +426,7 @@ async function getProductsByIds(ids: string[]) {
       let image = product.image_small_url
       if (!image) {
         image = images[currImageIdx].webformatURL || DEFAULT_IMAGE
+
         currImageIdx++
       }
 
@@ -569,20 +592,19 @@ async function getFoodsByIds(ids: string[]) {
 // Utils functions related to the search service
 
 function isFavorite(item: Item, user: User | null) {
-  return (
-    // user?.favoriteItems?.food.includes(item.searchId || '') ||
-    // user?.favoriteItems?.product.includes(item.searchId || '')
-    user?.favoriteItems?.includes(item.searchId || '')
-  )
+  return user?.favoriteItems?.includes(item.searchId || '')
 }
 
 function normalizeText(s: string) {
+  if (translateService.isEnglishWord(s))
+    return s
+      .toLowerCase()
+      .normalize('NFKD')
+      .replace(/[^\w\s]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim()
+
   return s
-    .toLowerCase()
-    .normalize('NFKD')
-    .replace(/[^\w\s]/g, '')
-    .replace(/\s+/g, ' ')
-    .trim()
 }
 function getTokens(s: string) {
   return normalizeText(s).split(' ').filter(Boolean)
@@ -590,20 +612,39 @@ function getTokens(s: string) {
 function computeRelevanceScore(
   query: string,
   item: Item,
-  favoriteIds?: string[]
+  favoriteIds?: string[],
+  translatedTxt: string = ''
 ) {
   const q = normalizeText(query)
   const name = normalizeText(item.name || '')
+
+  const isEnglishWord = translateService.isEnglishWord(q)
+
+  let translatedName = name
+  if (!isEnglishWord) {
+    translatedName = normalizeText(translatedTxt)
+  }
+
   if (!q || !name) return 0
 
   let score = 0
   if (name === q) score += 100
+  if (translatedName === q) score += 100
+
   if (name.startsWith(q)) score += 50
+  if (translatedName.startsWith(q)) score += 50
 
   const qTokens = getTokens(q)
   const nTokens = getTokens(name)
+  const translatedNTokens = getTokens(translatedName)
+
   const overlap = qTokens.filter((t) => nTokens.includes(t)).length
+  const translatedOverlap = qTokens.filter((t) =>
+    translatedNTokens.includes(t)
+  ).length
+
   score += Math.floor((overlap / Math.max(qTokens.length, 1)) * 40) // up to +40
+  score += Math.floor((translatedOverlap / Math.max(qTokens.length, 1)) * 40) // up to +40
 
   if (favoriteIds?.includes(item.searchId || '')) score += 20
 

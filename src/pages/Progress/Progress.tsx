@@ -181,6 +181,7 @@ function LogsList({
           const img =
             cachedItems.find((item) => item.searchId === i.itemId)?.image ||
             searchUrls.DEFAULT_IMAGE
+
           return img ? (
             <>
               <ListItemIcon className='item-image-container'>
