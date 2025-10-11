@@ -23,6 +23,7 @@ import { SignIn } from './CustomMui/SignIn/SignIn.tsx'
 import { searchService } from './services/search/search-service.ts'
 import { EditGoal } from './components/EditGoal/EditGoal.tsx'
 import { ScreenLoader } from './components/ScreenLoader/ScreenLoader.tsx'
+import { getDefaultsPrefs } from './services/system/system.service.ts'
 
 const colors = [
   'primary',
@@ -58,13 +59,17 @@ function App() {
   const location = useLocation()
 
   useEffect(() => {
+    const defaultPrefs = getDefaultsPrefs()
     if (prefs.isDarkMode) {
       document.body.classList.add('dark-mode')
     } else {
       document.body.classList.remove('dark-mode')
     }
     document.body.classList.remove(...colors)
-    document.body.classList.add(prefs.favoriteColor || '')
+
+    document.body.classList.add(
+      prefs.favoriteColor || defaultPrefs.favoriteColor
+    )
   }, [prefs])
 
   useEffect(() => {

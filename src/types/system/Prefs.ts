@@ -1,5 +1,5 @@
 export interface Prefs {
   isEnglish: boolean
   isDarkMode: boolean
-  favoriteColor?: string
+  favoriteColor: string
 }
