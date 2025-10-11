@@ -16,3 +16,20 @@
     justify-self: start;
   }
 }
+
+.modal-profile-picture-container {
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  gap: 1rem;
+  padding: 1rem;
+
+  img {
+    width: 250px;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+}

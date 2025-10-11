@@ -238,17 +238,19 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
             )
           if (input.type === 'toggle' && input.options)
             return (
-              <>
+              <div
+                key={`${input.key}-edit-user`}
+                className={`${input.className}-container`}
+              >
                 {input.extraLabel && (
                   <Typography variant='h6'>{input.extraLabel}</Typography>
                 )}
                 <CustomToggle
-                  key={`${input.key}-edit-user`}
                   options={input.options}
                   value={input.value as string}
                   onChange={input.onChange}
                 />
-              </>
+              </div>
             )
         })}
       </div>

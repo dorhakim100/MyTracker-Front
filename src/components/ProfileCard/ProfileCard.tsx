@@ -12,6 +12,8 @@ import { updateUser } from '../../store/actions/user.actions'
 import { showSuccessMsg } from '../../services/event-bus.service'
 import { showErrorMsg } from '../../services/event-bus.service'
 import { messages } from '../../assets/config/messages'
+import { CustomAlertDialog } from '../../CustomMui/CustomAlertDialog/CustomAlertDialog'
+import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 
 export function ProfileCard() {
   const prefs = useSelector(
@@ -24,12 +26,20 @@ export function ProfileCard() {
 
   const [isEditUserOpen, setIsEditUserOpen] = useState<boolean>(false)
 
+  const [openAlertDialog, setOpenAlertDialog] = useState<boolean>(false)
+
   const onOpenEditUser = () => {
     setIsEditUserOpen(true)
   }
 
   const onCloseEditUser = () => {
     setIsEditUserOpen(false)
+  }
+  const onOpenAlertDialog = () => {
+    setOpenAlertDialog(true)
+  }
+  const onCloseAlertDialog = () => {
+    setOpenAlertDialog(false)
   }
 
   const onSaveEditUser = async (user: User) => {
@@ -51,7 +61,7 @@ export function ProfileCard() {
         className={`card user-details ${prefs.isDarkMode ? 'dark-mode' : ''}`}
       >
         <EditIcon onClick={onOpenEditUser} />
-        <div className='profile-container'>
+        <div className='profile-container' onClick={onOpenAlertDialog}>
           <img
             className='profile-avatar  box-shadow white-outline'
             src={user?.details?.imgUrl || '/logo-square.png'}
@@ -79,6 +89,25 @@ export function ProfileCard() {
         onSave={() => onSaveEditUser(user as User)}
         type='full'
       />
+      <CustomAlertDialog
+        open={openAlertDialog}
+        onClose={onCloseAlertDialog}
+        title='Profile Picture'
+      >
+        <div className='modal-profile-picture-container'>
+          <img
+            src={user?.details?.imgUrl || '/logo-square.png'}
+            alt='Profile'
+            className={`profile-picture box-shadow white-outline`}
+          />
+          <CustomButton
+            text='Cancel'
+            fullWidth
+            onClick={onCloseAlertDialog}
+            className={`${prefs.favoriteColor}`}
+          />
+        </div>
+      </CustomAlertDialog>
     </>
   )
 }

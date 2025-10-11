@@ -498,7 +498,7 @@ export function ItemDetails({
       >
         {(!isCustomLog && (item as Log).source !== searchTypes.custom && (
           <div className='header' onClick={openImageModal}>
-            <div className='image'>
+            <div className='image box-shadow white-outline'>
               {item.image && <img src={item.image} alt={item.name} />}
             </div>
             <div className='title'>{item.name}</div>
@@ -644,7 +644,11 @@ export function ItemDetails({
           title={item.name || ''}
         >
           <div className='modal-image-container'>
-            <img src={item.image} alt={item.name} className={`box-shadow`} />
+            <img
+              src={item.image}
+              alt={item.name}
+              className={`box-shadow white-outline`}
+            />
           </div>
           <CustomButton
             text='Cancel'
