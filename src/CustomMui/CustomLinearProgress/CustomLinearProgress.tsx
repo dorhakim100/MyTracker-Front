@@ -25,6 +25,7 @@ export function CustomLinearProgress({
       </div>
       <LinearProgress
         variant='determinate'
+        className='custom-linear-progress'
         value={value > 100 ? 100 : value}
         sx={{
           height: 8,

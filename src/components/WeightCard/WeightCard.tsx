@@ -136,7 +136,7 @@ export function WeightCard() {
       </Typography>
     ) : (
       <Typography variant='body1' className='weight-text'>
-        Haven't logged that day...
+        Haven't logged...
       </Typography>
     )
   }

@@ -418,7 +418,7 @@ select {
     .MuiToggleButtonGroup-grouped
   ):not(.MuiCheckbox-root):not(.MuiMenuItem-root):not(.color-button):not(
     .MuiFab-circular
-  ):not(.MuiPickersDay-root),
+  ):not(.MuiPickersDay-root):not(.delete-account-button),
 .MuiToolbar-gutters,
 .MuiToolbar-root,
 .MuiFab-root,
@@ -753,5 +753,22 @@ select {
 .dark-mode {
   .MuiChip-label {
     color: $white;
+  }
+}
+
+.delete-account-button {
+  background-color: $medium-red !important;
+  color: $white !important;
+
+  &.red {
+    background-color: $dark-red !important;
+  }
+}
+
+.MuiLinearProgress-root:not(.custom-linear-progress) {
+  background-color: $primary-color-light !important;
+
+  .MuiLinearProgress-bar {
+    background-color: $primary-color-dark !important;
   }
 }

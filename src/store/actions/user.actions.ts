@@ -78,6 +78,14 @@ export async function login(credentials: UserCred) {
   }
 }
 
+export async function deleteAccount(user: User) {
+  try {
+    await userService.remove(user._id)
+  } catch (err) {
+    throw err
+  }
+}
+
 export async function handleGuestMode() {
   try {
     await _loginWithGuest()
