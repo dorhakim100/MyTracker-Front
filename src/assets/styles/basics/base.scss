@@ -64,6 +64,7 @@ body {
     background-color: $primary-color-darker !important;
     color: $neutral-gray;
   }
+
   // font-family: regularAssistant;
   // transition: color 0.3s, background-color 0.3s;
 
@@ -194,6 +195,13 @@ body {
   // margin-bottom: 100px !important;
 
   padding: 0 1em;
+  &.no-user {
+    padding: 0;
+
+    div:first-child:not(:has(div:has(.screen-loader))) {
+      height: 100%;
+    }
+  }
   padding-bottom: 1.5em;
   overflow-x: hidden;
 

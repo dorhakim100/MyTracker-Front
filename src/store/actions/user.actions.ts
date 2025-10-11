@@ -46,6 +46,8 @@ export async function removeUser(userId: string) {
   try {
     await userService.remove(userId)
     store.dispatch({ type: REMOVE_USER, userId })
+    setUserToEdit(null)
+    setSelectedDiaryDay(null)
   } catch (err) {
     // console.log('UserActions: err in removeUser', err)
     throw err

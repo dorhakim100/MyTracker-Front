@@ -12,9 +12,19 @@
   align-items: center;
 
   background-color: $light-gray;
+  // background-image: linear-gradient(
+  //   to bottom,
+  //   hsla(180, 40%, 95%, 0.9),
+  //   hsla(174, 47%, 80%, 0.9)
+  // );
 
   &.dark-mode {
     background-color: $primary-color-darker;
+    // background-image: linear-gradient(
+    //   to bottom,
+    //   hsla(174, 46%, 14%, 0.7),
+    //   hsla(180, 40%, 6%, 0.846)
+    // );
   }
   img {
     // width: 100%;

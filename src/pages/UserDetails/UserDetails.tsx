@@ -122,8 +122,9 @@ export function UserDetails() {
       setIsLoading(true)
       await deleteAccount(user)
       setIsDeleteModalOpen(false)
-      showSuccessMsg(messages.success.deleteAccount)
+
       await logout()
+      showSuccessMsg(messages.success.deleteAccount)
     } catch (err) {
       console.log('err', err)
       showErrorMsg(messages.error.deleteAccount)

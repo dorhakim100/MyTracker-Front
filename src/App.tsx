@@ -123,24 +123,17 @@ function App() {
 
   if (isFirstLoading) return <ScreenLoader />
 
-  if (!user)
+  if ((user && !user.currGoal) || (user && !user.goals.length)) {
     return (
-      <main className={`main ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
-        <AppHeader />
-        <div className='page-container login-sign-up-container'>
-          <SignIn />
-        </div>
-      </main>
-    )
-
-  if (!user.currGoal || !user.goals.length) {
-    return (
-      <main className={`main ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
-        <AppHeader />
-        <div className=''>
-          <EditGoal saveGoal={(goal) => handleFirstGoal(goal, user)} />
-        </div>
-      </main>
+      <>
+        <UserMsg />
+        <main className={`main ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
+          <AppHeader />
+          <div className=''>
+            <EditGoal saveGoal={(goal) => handleFirstGoal(goal, user)} />
+          </div>
+        </main>
+      </>
     )
   }
 
@@ -151,26 +144,35 @@ function App() {
       <Prefs />
       {/* <PrefsButton /> */}
 
-      <main className={`main ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
+      <main
+        className={`main ${prefs.isDarkMode ? 'dark-mode' : ''} ${
+          user ? '' : 'no-user'
+        }`}
+      >
         <SlideAnimation
           motionKey={location.pathname}
           direction={slideDirection}
           duration={0.25}
         >
-          {/* <SearchBar /> */}
-          <Routes location={location} key={location.pathname}>
-            {filteredRoutes.map((route, index) => (
-              <Route
-                key={index}
-                path={route.path}
-                element={<route.element />}
-              />
-            ))}
-          </Routes>
+          {!user ? (
+            <div className='page-container login-sign-up-container'>
+              <SignIn />
+            </div>
+          ) : (
+            <Routes location={location} key={location.pathname}>
+              {filteredRoutes.map((route, index) => (
+                <Route
+                  key={index}
+                  path={route.path}
+                  element={<route.element />}
+                />
+              ))}
+            </Routes>
+          )}
         </SlideAnimation>
       </main>
 
-      <FixedBottomNavigation routes={filteredRoutes} />
+      {user && <FixedBottomNavigation routes={filteredRoutes} />}
     </>
   )
 }
