@@ -63,17 +63,10 @@ async function search(filter: SearchFilter) {
 
     const isEnglishWord = translateService.isEnglishWord(safeTxt)
     let translatedTxt = ''
-    let englishTxt = ''
 
     if (!isEnglishWord) {
       translatedTxt = await translateService.translate(safeTxt)
-      englishTxt = translatedTxt
-    } else {
-      englishTxt = safeTxt
     }
-
-    const imgRes = await imageService.getImage(englishTxt)
-    console.log(imgRes)
 
     // Fetch both sources in parallel, tolerate failures
     const [offRes, usdaRes, offResTranslated, usdaResTranslated] =
@@ -350,6 +343,12 @@ async function getProductById(id: string) {
     )
     const product: OFFProduct = data.product
 
+    let image = product.image_small_url
+    if (!image) {
+      image =
+        (await imageService.getImage(product.product_name)) || DEFAULT_IMAGE
+    }
+
     return {
       searchId: product.code,
       name: product.product_name,
@@ -364,7 +363,7 @@ async function getProductById(id: string) {
 
         return { protein, carbs, fat: fats, calories }
       })(),
-      image: product.image_small_url || DEFAULT_IMAGE,
+      image: image,
       type: 'product',
     }
   } catch (err) {
@@ -388,36 +387,36 @@ async function getProductsByIds(ids: string[]) {
       //headers: { 'User-Agent': 'MyTracker/1.0 (you@example.com)' },
     })
 
+    const images = await imageService.getImage(data.products[0].product_name)
+    let currImageIdx = 0
+
     const products: OFFProduct[] = data.products || []
 
-    return await Promise.all(
-      products.map(async (product: OFFProduct) => {
-        const proteins = +(product.nutriments?.proteins_100g ?? 0)
-        const carbs = +(product.nutriments?.carbohydrates_100g ?? 0)
-        const fats = +(product.nutriments?.fat_100g ?? 0)
-        const calories =
-          +(product.nutriments?.['energy-kcal_100g'] ?? 0) ||
-          +(product.nutriments?.['energy-kcal'] ?? 0) ||
-          calculateCaloriesFromMacros({ protein: proteins, carbs, fats }).total
+    return products.map((product: OFFProduct) => {
+      const proteins = +(product.nutriments?.proteins_100g ?? 0)
+      const carbs = +(product.nutriments?.carbohydrates_100g ?? 0)
+      const fats = +(product.nutriments?.fat_100g ?? 0)
+      const calories =
+        +(product.nutriments?.['energy-kcal_100g'] ?? 0) ||
+        +(product.nutriments?.['energy-kcal'] ?? 0) ||
+        calculateCaloriesFromMacros({ protein: proteins, carbs, fats }).total
 
-        let image = product.image_small_url
-        if (!image) {
-          image =
-            (await imageService.getSingleImage(product.product_name)) ||
-            DEFAULT_IMAGE
-        }
+      let image = product.image_small_url
+      if (!image) {
+        image = images[currImageIdx].webformatURL || DEFAULT_IMAGE
+        currImageIdx++
+      }
 
-        return {
-          searchId: product.code,
-          name: product.brands
-            ? `${product.product_name} - ${product.brands}`
-            : product.product_name,
-          macros: { calories, protein: proteins, carbs, fat: fats },
-          image: image,
-          type: 'product',
-        }
-      })
-    )
+      return {
+        searchId: product.code,
+        name: product.brands
+          ? `${product.product_name} - ${product.brands}`
+          : product.product_name,
+        macros: { calories, protein: proteins, carbs, fat: fats },
+        image: image,
+        type: 'product',
+      }
+    })
   } catch (err) {
     throw err
   }
@@ -469,15 +468,23 @@ async function getFoodById(id: string) {
         fdcIds: id,
       },
     })
+
+    if (!data.foods[0]) return null
+
+    const images = await imageService.getImage(data.foods[0].description)
+    let currImageIdx = 0
     const food: FDCFood = Array.isArray(data) ? data[0] : data.foods[0]
 
     const macros = _getMacrosFromUSDA(food)
+
+    const image = images[currImageIdx].webformatURL || DEFAULT_IMAGE
+    currImageIdx++
 
     return {
       searchId: food.fdcId + '',
       name: food.description,
       macros,
-      image: DEFAULT_IMAGE,
+      image: image,
       type: 'food',
     }
   } catch (err) {
@@ -530,17 +537,27 @@ async function getFoodsByIds(ids: string[]) {
       },
     })
 
+    const images = await Promise.all(
+      data.map(
+        async (food: FDCFood) =>
+          await imageService.getSingleImage(food.description)
+      )
+    )
+    let currImageIdx = 0
+
     const foods: FDCFood[] = Array.isArray(data)
       ? (data as FDCFood[])
       : data.foods
 
     return foods.map((food: FDCFood) => {
       const macros = _getMacrosFromUSDA(food)
+      const image = images[currImageIdx] || DEFAULT_IMAGE
+      currImageIdx++
       return {
         searchId: food.fdcId + '',
         name: food.description,
         macros,
-        image: DEFAULT_IMAGE,
+        image: image,
         type: 'food',
       }
     })

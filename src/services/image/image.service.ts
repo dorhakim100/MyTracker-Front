@@ -3,7 +3,6 @@ import axios from 'axios'
 const PIXABAY_API_KEY = import.meta.env.VITE_PIXABAY_API_KEY
 const PIXABAY_API_URL = 'https://pixabay.com/api/'
 
-const IMAGE_SIZE = '250x250'
 const NUMBER_OF_IMAGES = 40
 
 export const imageService = {
@@ -13,7 +12,6 @@ export const imageService = {
 
 async function getImage(query: string) {
   query = query.toLocaleLowerCase()
-  //   const dashedQuery = query.replace(/ /g, '-')
 
   let res
   try {
@@ -30,13 +28,31 @@ async function getImage(query: string) {
 }
 
 async function getSingleImage(query: string) {
-  const res = await fetchPixabay(query, 1)
-  const { hits } = res
-  return hits[0]?.webformatURL
-}
+  if (!query) return null
 
-function getImageByNumber(results: string[], imageNumber: number = 0) {
-  return `https://spoonacular.com/cdn/ingredients_${IMAGE_SIZE}/${results[imageNumber].image}`
+  try {
+    // trim and normalize query
+    query = query.toLowerCase().trim()
+
+    const res = await fetchPixabay(query, 3)
+    const { hits } = res
+
+    if (hits?.length > 0) return hits[0].webformatURL
+
+    const firstWord = query.split(/[^a-zA-Z]+/)[0]
+
+    // optional fallback: try first word if multi-word search failed
+    if (firstWord !== query) {
+      const retryRes = await fetchPixabay(firstWord, 3)
+      const { hits: retryHits } = retryRes
+      if (retryHits?.length > 0) return retryHits[0].webformatURL
+    }
+
+    return null
+  } catch (err) {
+    console.error('Pixabay image error:', err)
+    return null
+  }
 }
 
 async function fetchPixabay(
