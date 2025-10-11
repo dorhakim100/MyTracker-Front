@@ -5,9 +5,14 @@ import { Typography } from '@mui/material'
 import LinearProgress from '@mui/material/LinearProgress'
 
 import loadingAnimation from '../../../public/food-animation.json'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../store/store'
 
 export function ScreenLoader() {
   const [dots, setDots] = useState('')
+  const prefs = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.prefs
+  )
 
   useEffect(() => {
     let dots = 0
@@ -33,7 +38,7 @@ export function ScreenLoader() {
         </div>
       </div>
 
-      <LinearProgress />
+      <LinearProgress className={`${prefs.favoriteColor}`} />
     </div>
   )
 }

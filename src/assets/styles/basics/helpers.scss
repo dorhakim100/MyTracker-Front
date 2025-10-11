@@ -727,13 +727,7 @@ select {
   outline: 1px solid $white;
 }
 
-// fontWeight: selected ? 700 : 400,
-// opacity: selected ? 1 : 0.45,
-
-// transform: selected ? 'scale(1)' : 'scale(0.8)',
-// transition: 'all 160ms ease',
-// position: 'relative',
-
+// Picker Container setup
 .picker-container {
   h5 {
     font-weight: 400;
@@ -756,6 +750,7 @@ select {
   }
 }
 
+// Delete Account Button setup
 .delete-account-button {
   background-color: $medium-red !important;
   color: $white !important;
@@ -765,10 +760,70 @@ select {
   }
 }
 
+// Linear Progress setup
 .MuiLinearProgress-root:not(.custom-linear-progress) {
-  background-color: $primary-color-light !important;
+  &.primary {
+    background-color: $primary-color-light !important;
 
-  .MuiLinearProgress-bar {
-    background-color: $primary-color-dark !important;
+    .MuiLinearProgress-bar {
+      background-color: $primary-color-dark !important;
+    }
+  }
+
+  &.blue {
+    background-color: $picker-color-blue-light !important;
+
+    .MuiLinearProgress-bar {
+      background-color: $picker-color-blue-dark !important;
+    }
+  }
+  &.red {
+    background-color: $picker-color-red-light !important;
+
+    .MuiLinearProgress-bar {
+      background-color: $picker-color-red-dark !important;
+    }
+  }
+  &.yellow {
+    background-color: $picker-color-yellow-light !important;
+
+    .MuiLinearProgress-bar {
+      background-color: $picker-color-yellow-dark !important;
+    }
+  }
+  &.green {
+    background-color: $picker-color-green-light !important;
+
+    .MuiLinearProgress-bar {
+      background-color: $picker-color-green-dark !important;
+    }
+  }
+  &.orange {
+    background-color: $picker-color-orange-light !important;
+
+    .MuiLinearProgress-bar {
+      background-color: $picker-color-orange-dark !important;
+    }
+  }
+  &.deepPurple {
+    background-color: $picker-color-deep-purple-light !important;
+
+    .MuiLinearProgress-bar {
+      background-color: $picker-color-deep-purple-dark !important;
+    }
+  }
+  &.purple {
+    background-color: $picker-color-purple-light !important;
+
+    .MuiLinearProgress-bar {
+      background-color: $picker-color-purple-dark !important;
+    }
+  }
+  &.pink {
+    background-color: $picker-color-pink-light !important;
+
+    .MuiLinearProgress-bar {
+      background-color: $picker-color-pink-dark !important;
+    }
   }
 }

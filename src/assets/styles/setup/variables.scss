@@ -17,27 +17,35 @@
   --macro-carbs-dark: #21c993;
   --macro-fats-dark: #ffcc66;
 
+  --picker-color-blue-light: #add8e6;
   --picker-color-blue: #1976d2;
   --picker-color-blue-dark: #115293;
 
+  --picker-color-yellow-light: #ffe8a6;
   --picker-color-yellow: #ffd166;
   --picker-color-yellow-dark: #e6a800;
 
+  --picker-color-red-light: #f5a3a3;
   --picker-color-red: #d32f2f;
   --picker-color-red-dark: #9a0007;
 
+  --picker-color-orange-light: #ffd6b3;
   --picker-color-orange: #ed6c02;
   --picker-color-orange-dark: #b34700;
 
+  --picker-color-green-light: #b3e5cc;
   --picker-color-green: #06d6a0;
   --picker-color-green-dark: #049173;
 
+  --picker-color-deep-purple-light: #b0b3f1;
   --picker-color-deep-purple: #6366f1;
   --picker-color-deep-purple-dark: #3f41b5;
 
+  --picker-color-purple-light: #d8b4f8;
   --picker-color-purple: #9c27b0;
   --picker-color-purple-dark: #6d1b7b;
 
+  --picker-color-pink-light: #f8b4f8;
   --picker-color-pink: #ff69b4;
   --picker-color-pink-dark: #c2185b;
 }
@@ -54,20 +62,35 @@ $secondary-color-light: var(--secondary-color-light);
 $secondary-color-dark: var(--secondary-color-dark);
 
 $picker-color-blue: var(--picker-color-blue);
+$picker-color-blue-light: var(--picker-color-blue-light);
 $picker-color-blue-dark: var(--picker-color-blue-dark);
+
 $picker-color-yellow: var(--picker-color-yellow);
 $picker-color-yellow-dark: var(--picker-color-yellow-dark);
+$picker-color-yellow-light: var(--picker-color-yellow-light);
+
 $picker-color-red: var(--picker-color-red);
 $picker-color-red-dark: var(--picker-color-red-dark);
+$picker-color-red-light: var(--picker-color-red-light);
+
 $picker-color-orange: var(--picker-color-orange);
 $picker-color-orange-dark: var(--picker-color-orange-dark);
+$picker-color-orange-light: var(--picker-color-orange-light);
+
 $picker-color-green: var(--picker-color-green);
+$picker-color-green-light: var(--picker-color-green-light);
 $picker-color-green-dark: var(--picker-color-green-dark);
+
 $picker-color-deep-purple: var(--picker-color-deep-purple);
 $picker-color-deep-purple-dark: var(--picker-color-deep-purple-dark);
+$picker-color-deep-purple-light: var(--picker-color-deep-purple-light);
+
 $picker-color-purple: var(--picker-color-purple);
+$picker-color-purple-light: var(--picker-color-purple-light);
 $picker-color-purple-dark: var(--picker-color-purple-dark);
+
 $picker-color-pink: var(--picker-color-pink);
+$picker-color-pink-light: var(--picker-color-pink-light);
 $picker-color-pink-dark: var(--picker-color-pink-dark);
 
 // Shades of Red

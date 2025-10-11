@@ -19,6 +19,10 @@ export function CustomAlertDialog(props: SimpleDialogProps) {
     (stateSelector: RootState) => stateSelector.systemModule.isLoading
   )
 
+  const prefs = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.prefs
+  )
+
   const handleClose = () => {
     onClose()
   }
@@ -45,7 +49,7 @@ export function CustomAlertDialog(props: SimpleDialogProps) {
     >
       <DialogTitle>{title}</DialogTitle>
       <div className='dialog-content'>{children}</div>
-      {isLoading && <LinearProgress />}
+      {isLoading && <LinearProgress className={`${prefs.favoriteColor}`} />}
     </Dialog>
   )
 }

@@ -6,7 +6,6 @@ import {
   Divider,
   ListItemIcon,
   Typography,
-  LinearProgress,
 } from '@mui/material'
 import { RootState } from '../../store/store'
 import {
@@ -141,7 +140,6 @@ export function UserDetails() {
         }`}
       >
         <ProfileCard />
-        <LinearProgress />
 
         <div className='content-container'>
           <WeightCard />
