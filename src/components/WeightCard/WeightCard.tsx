@@ -99,6 +99,9 @@ export function WeightCard() {
 
       const savedWeight = await weightService.save(weightToSave)
 
+      const userToSave = { ...user, lastWeight: savedWeight }
+      optimisticUpdateUser(userToSave)
+
       const todayIso = getDateFromISO(new Date().toISOString())
 
       if (selectedDay?.date === todayIso) {
