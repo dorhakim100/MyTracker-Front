@@ -15,6 +15,7 @@ import { cache } from '../../assets/config/cache'
 import { Log } from '../../types/log/Log'
 import { sourceTypes } from '../../assets/config/source.types'
 import { translateService } from '../translate/translate.service'
+import { imageService } from '../image/image.service'
 const {
   OPEN_FOOD_FACTS_API_URL,
   OPEN_FOOD_FACTS_API_URL_BY_ID,
@@ -62,10 +63,17 @@ async function search(filter: SearchFilter) {
 
     const isEnglishWord = translateService.isEnglishWord(safeTxt)
     let translatedTxt = ''
+    let englishTxt = ''
 
     if (!isEnglishWord) {
       translatedTxt = await translateService.translate(safeTxt)
+      englishTxt = translatedTxt
+    } else {
+      englishTxt = safeTxt
     }
+
+    const imgRes = await imageService.getImage(englishTxt)
+    console.log(imgRes)
 
     // Fetch both sources in parallel, tolerate failures
     const [offRes, usdaRes, offResTranslated, usdaResTranslated] =
@@ -276,6 +284,8 @@ async function removeFromCache(item: Item, key: string) {
 async function searchOpenFoodFacts(query: string) {
   if (!query || query === '') return []
   try {
+    const images = await imageService.getImage(query)
+    let currImageIdx = 0
     const { data } = await axios.get(OPEN_FOOD_FACTS_API_URL, {
       params: {
         search_terms: query,
@@ -307,13 +317,22 @@ async function searchOpenFoodFacts(query: string) {
 
         if (!product.nutriments?.['energy-kcal_100g']) return null
 
+        let image = product.image_small_url
+
+        if (!image) {
+          image = images[currImageIdx].webformatURL || DEFAULT_IMAGE
+          currImageIdx++
+        }
+
+        // console.log(image)
+
         return {
           searchId: product.code,
           name: product.brands
             ? `${product.product_name} - ${product.brands}`
             : product.product_name,
           macros: { calories, protein: proteins, carbs, fat: fats },
-          image: product.image_small_url || DEFAULT_IMAGE,
+          image: image,
           type: 'product',
         }
       })
@@ -371,25 +390,34 @@ async function getProductsByIds(ids: string[]) {
 
     const products: OFFProduct[] = data.products || []
 
-    return products.map((product: OFFProduct) => {
-      const proteins = +(product.nutriments?.proteins_100g ?? 0)
-      const carbs = +(product.nutriments?.carbohydrates_100g ?? 0)
-      const fats = +(product.nutriments?.fat_100g ?? 0)
-      const calories =
-        +(product.nutriments?.['energy-kcal_100g'] ?? 0) ||
-        +(product.nutriments?.['energy-kcal'] ?? 0) ||
-        calculateCaloriesFromMacros({ protein: proteins, carbs, fats }).total
+    return await Promise.all(
+      products.map(async (product: OFFProduct) => {
+        const proteins = +(product.nutriments?.proteins_100g ?? 0)
+        const carbs = +(product.nutriments?.carbohydrates_100g ?? 0)
+        const fats = +(product.nutriments?.fat_100g ?? 0)
+        const calories =
+          +(product.nutriments?.['energy-kcal_100g'] ?? 0) ||
+          +(product.nutriments?.['energy-kcal'] ?? 0) ||
+          calculateCaloriesFromMacros({ protein: proteins, carbs, fats }).total
 
-      return {
-        searchId: product.code,
-        name: product.brands
-          ? `${product.product_name} - ${product.brands}`
-          : product.product_name,
-        macros: { calories, protein: proteins, carbs, fat: fats },
-        image: product.image_small_url || DEFAULT_IMAGE,
-        type: 'product',
-      }
-    })
+        let image = product.image_small_url
+        if (!image) {
+          image =
+            (await imageService.getSingleImage(product.product_name)) ||
+            DEFAULT_IMAGE
+        }
+
+        return {
+          searchId: product.code,
+          name: product.brands
+            ? `${product.product_name} - ${product.brands}`
+            : product.product_name,
+          macros: { calories, protein: proteins, carbs, fat: fats },
+          image: image,
+          type: 'product',
+        }
+      })
+    )
   } catch (err) {
     throw err
   }
@@ -401,6 +429,8 @@ async function getProductsByIds(ids: string[]) {
 async function searchRawUSDA(query: string) {
   if (!query || query === '') return []
   try {
+    const images = await imageService.getImage(query)
+    let currImageIdx = 0
     const { data } = await axios.get(USDA_API_URL, {
       params: {
         api_key: USDA_API_KEY,
@@ -415,11 +445,14 @@ async function searchRawUSDA(query: string) {
     return foods.map((food: FDCFood) => {
       const macros = _getMacrosFromUSDA(food)
 
+      const image = images[currImageIdx].webformatURL || DEFAULT_IMAGE
+      currImageIdx++
+
       return {
         searchId: food.fdcId + '',
         name: food.description,
         macros,
-        image: DEFAULT_IMAGE,
+        image: image,
         type: 'food',
       }
     })
