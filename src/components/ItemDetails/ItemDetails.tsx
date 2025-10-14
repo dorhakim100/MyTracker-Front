@@ -47,6 +47,14 @@ const MEAL_INPUT = {
   extra: '',
 }
 
+const NUMBER_OF_SERVINGS_INPUT = {
+  label: 'Number of Servings',
+  key: 'numberOfServings',
+  values: getArrayOfNumbers(0, 100),
+  type: 'clock',
+  extra: '',
+}
+
 export function ItemDetails({
   onAddToMealClick,
   noEdit = false,
@@ -100,23 +108,19 @@ export function ItemDetails({
             extra: 'gram',
             type: 'select',
           },
-          {
-            label: 'Number of Servings',
-            key: 'numberOfServings',
-            values: getArrayOfNumbers(0, 100),
-            type: 'clock',
-          },
+          NUMBER_OF_SERVINGS_INPUT,
           MEAL_INPUT,
         ]
       : [
           {
-            label: 'Custom Log Macros',
+            label: 'Macros',
             key: 'custom-log-macros',
 
             type: 'macros',
             extra: '',
             values: [],
           },
+          NUMBER_OF_SERVINGS_INPUT,
           MEAL_INPUT,
         ]
 
