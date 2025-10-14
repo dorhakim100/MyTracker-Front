@@ -9,6 +9,7 @@ import { Macros } from '../Macros/Macros'
 import { MacrosDonut } from '../MacrosDonut/MacrosDonut'
 import { FavoriteButton } from '../FavoriteButton/FavoriteButton'
 import { CustomSelect } from '../../CustomMui/CustomSelect/CustomSelect'
+import { CustomInput } from '../../CustomMui/CustomInput/CustomInput'
 import { getArrayOfNumbers, getCurrMeal } from '../../services/util.service'
 import { searchService } from '../../services/search/search-service'
 import Typography from '@mui/material/Typography'
@@ -22,8 +23,31 @@ import AddIcon from '@mui/icons-material/Add'
 import { logService } from '../../services/log/log.service'
 import { MealItem } from '../../types/mealItem/MealItem'
 import { Meal } from '../../types/meal/Meal'
+import { Log } from '../../types/log/Log'
+import { CustomAlertDialog } from '../../CustomMui/CustomAlertDialog/CustomAlertDialog'
+import { User } from '../../types/user/User'
 
 import { Macros as MacrosType } from '../../types/macros/Macros'
+import { EditItem } from '../../types/editItem/editItem'
+import { searchTypes } from '../../assets/config/search-types'
+import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
+import { EditMacros } from '../MacrosProgress/EditMacros'
+import { calculateProteinCalories } from '../../services/macros/macros.service'
+import { calculateCarbCalories } from '../../services/macros/macros.service'
+import { calculateFatCalories } from '../../services/macros/macros.service'
+import EditIcon from '@mui/icons-material/Edit'
+import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
+import { messages } from '../../assets/config/messages'
+import {
+  handleFavorite,
+  optimisticUpdateUser,
+  setSelectedDiaryDay,
+} from '../../store/actions/user.actions'
+import { dayService } from '../../services/day/day.service'
+import { LoggedToday } from '../../types/loggedToday/LoggedToday'
+import { imageService } from '../../services/image/image.service'
+import { loadItems, setSelectedMeal } from '../../store/actions/item.actions'
+import { NumberOfServingsPicker } from './NumberOfServingsPicker'
 
 interface ItemDetailsProps {
   onAddToMealClick?: (item: MealItem) => void
@@ -295,7 +319,6 @@ export function ItemDetails({
 
         if (!logsToAdd.length) return showErrorMsg(messages.error.addLog)
 
-        // setSelectedMeal(null)
         const logsToSave = logsToAdd.map(async (log: Log) => {
           return await logService.save(log)
         })
@@ -389,7 +412,6 @@ export function ItemDetails({
       showSuccessMsg(messages.success.addedToMeal)
     } catch {
       showErrorMsg(messages.error.addLog)
-      // optimisticUpdateUser(user as User)
     }
   }
 
@@ -599,7 +621,7 @@ export function ItemDetails({
                           open={clockOpen}
                           onClose={closeClock}
                           component={
-                            <EditComponent
+                            <NumberOfServingsPicker
                               value={editItem.numberOfServings}
                               onChange={onEditItemChange}
                             />
@@ -711,154 +733,5 @@ function ServingsSelect({
         </MenuItem>
       </Select>
     </FormControl>
-  )
-}
-
-import Picker from 'react-mobile-picker'
-import { EditItem } from '../../types/editItem/editItem'
-import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
-import { messages } from '../../assets/config/messages'
-import {
-  handleFavorite,
-  optimisticUpdateUser,
-  setSelectedDiaryDay,
-} from '../../store/actions/user.actions'
-import { loadItems, setSelectedMeal } from '../../store/actions/item.actions'
-import { User } from '../../types/user/User'
-import { dayService } from '../../services/day/day.service'
-import { LoggedToday } from '../../types/loggedToday/LoggedToday'
-import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
-import { searchTypes } from '../../assets/config/search-types'
-import { Log } from '../../types/log/Log'
-import { Divider } from '@mui/material'
-import { EditMacros } from '../MacrosProgress/EditMacros'
-import { calculateProteinCalories } from '../../services/macros/macros.service'
-import { calculateCarbCalories } from '../../services/macros/macros.service'
-import { calculateFatCalories } from '../../services/macros/macros.service'
-import EditIcon from '@mui/icons-material/Edit'
-import { CustomInput } from '../../CustomMui/CustomInput/CustomInput'
-import { CustomAlertDialog } from '../../CustomMui/CustomAlertDialog/CustomAlertDialog'
-import { imageService } from '../../services/image/image.service'
-
-function EditComponent({
-  value,
-  onChange,
-}: {
-  value: number
-  onChange: (key: keyof EditItem, value: number) => void
-}) {
-  const prefs = useSelector(
-    (stateSelector: RootState) => stateSelector.systemModule.prefs
-  )
-
-  const [pickerValue, setPickerValue] = useState<{
-    numberOfServings: number
-    afterValue: number
-  }>({
-    numberOfServings: value,
-    afterValue: 0,
-  })
-
-  const values = getArrayOfNumbers(0, 150)
-  const afterValues = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
-
-  const buttons = [
-    {
-      value: 1,
-      onClick: onButtonClick,
-    },
-    {
-      value: 50,
-      onClick: onButtonClick,
-    },
-    {
-      value: 100,
-      onClick: onButtonClick,
-    },
-  ]
-
-  function onButtonClick(value: number) {
-    setPickerValue({
-      ...pickerValue,
-      numberOfServings: value,
-    })
-  }
-
-  // Keep picker in sync with external value
-  useEffect(() => {
-    const firstValue = Math.floor(value)
-    let secondValue = Math.round((value - firstValue) * 10) / 10
-    if (firstValue === 0 && secondValue === 0) {
-      secondValue = 0.1
-    }
-
-    setPickerValue((prev) => ({
-      ...prev,
-      numberOfServings: firstValue,
-      afterValue: secondValue,
-    }))
-  }, [value])
-
-  useEffect(() => {
-    const newValue = pickerValue.numberOfServings + pickerValue.afterValue
-    onChange('numberOfServings', newValue)
-  }, [pickerValue])
-
-  return (
-    <div className='picker-container'>
-      <Picker
-        value={pickerValue}
-        onChange={(next) =>
-          setPickerValue(
-            next as unknown as { numberOfServings: number; afterValue: number }
-          )
-        }
-      >
-        <Picker.Column name='numberOfServings'>
-          {values.map((number) => (
-            <Picker.Item key={number} value={number}>
-              {({ selected }) => (
-                <Typography
-                  variant='h5'
-                  className={`${selected ? 'selected' : ''}`}
-                >
-                  {number}
-                </Typography>
-              )}
-            </Picker.Item>
-          ))}
-        </Picker.Column>
-        <Divider
-          orientation='vertical'
-          flexItem
-          className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-        />
-        <Picker.Column name='afterValue'>
-          {afterValues.map((number) => (
-            <Picker.Item key={number} value={number}>
-              {({ selected }) => (
-                <Typography
-                  variant='h5'
-                  className={`${selected ? 'selected' : ''}`}
-                >
-                  {number}
-                </Typography>
-              )}
-            </Picker.Item>
-          ))}
-        </Picker.Column>
-      </Picker>
-      <div className='buttons-container'>
-        {buttons.map((button) => (
-          <CustomButton
-            key={`${button.value}-button`}
-            onClick={() => onButtonClick(button.value)}
-            className={`${prefs.favoriteColor}`}
-            text={button.value.toString()}
-            fullWidth
-          />
-        ))}
-      </div>
-    </div>
   )
 }
