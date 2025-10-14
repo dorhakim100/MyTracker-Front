@@ -139,7 +139,6 @@ export function BarcodeScanner({ onClose }: BarcodeScannerProps) {
         onClose={onClose}
         component={<ItemDetails isCustomLog={isCustomLog} />}
         title={isCustomLog ? 'Custom Log' : 'Barcode Scanned'}
-        onSave={() => {}}
         type='full'
       />
     </>

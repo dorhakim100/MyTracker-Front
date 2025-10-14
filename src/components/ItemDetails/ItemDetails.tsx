@@ -626,7 +626,6 @@ export function ItemDetails({
                               onChange={onEditItemChange}
                             />
                           }
-                          onSave={() => {}}
                           title={option.label}
                         />
                       </>
@@ -653,7 +652,6 @@ export function ItemDetails({
                               editCustomLog={onEditCustomLog}
                             />
                           }
-                          onSave={() => {}}
                         />
                       </>
                     )}

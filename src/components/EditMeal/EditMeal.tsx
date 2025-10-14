@@ -170,7 +170,6 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
               )
             }
             title='Item'
-            onSave={() => {}}
             type='full'
           />
         </>

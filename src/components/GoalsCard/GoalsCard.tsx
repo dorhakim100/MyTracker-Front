@@ -201,7 +201,6 @@ export function GoalsCard() {
         onClose={onCloseGoalDetails}
         component={<EditGoal saveGoal={saveGoal} selectedGoal={selectedGoal} />}
         title={selectedGoal ? 'Edit Goal' : 'Add Goal'}
-        onSave={() => {}}
         type='full'
       />
     </>

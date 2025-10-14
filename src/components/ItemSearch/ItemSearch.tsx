@@ -346,7 +346,6 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
           />
         }
         title={isCustomLog ? 'Custom Log' : 'Item'}
-        onSave={() => {}}
         type='full'
       />
     </>

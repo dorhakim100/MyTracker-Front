@@ -277,7 +277,6 @@ function FavoriteItemsCard() {
         onClose={onCloseItemDetails}
         component={<ItemDetails />}
         title='Item'
-        onSave={() => {}}
         type='full'
       />
     </>
@@ -438,7 +437,6 @@ function MealsCard() {
         onClose={onCloseMealDetails}
         component={<EditMeal saveMeal={saveMeal} selectedMeal={selectedMeal} />}
         title={selectedMeal ? 'Edit Meal' : 'Add Meal'}
-        onSave={() => {}}
         type='full'
       />
     </>

@@ -26,7 +26,7 @@ interface SlideDialogProps {
   onClose: () => void
   component: React.ReactElement
   title?: string
-  onSave: () => void
+  onSave?: () => void
   type?: 'half' | 'full'
 }
 
@@ -48,7 +48,7 @@ export function SlideDialog({
 
   const handleSave = async () => {
     try {
-      await onSave()
+      await onSave?.()
       onClose()
     } catch (err) {
       console.log('err', err)

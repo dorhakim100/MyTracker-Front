@@ -262,7 +262,6 @@ export function FixedBottomNavigation(props: {
           )
         }
         title={modalType === modalTypes.search ? 'Search Food' : 'Scan'}
-        onSave={() => {}}
         type={modalType === modalTypes.search ? 'full' : 'half'}
       />
     </>

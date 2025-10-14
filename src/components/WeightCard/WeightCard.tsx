@@ -50,18 +50,6 @@ export function WeightCard() {
     return date.toLocaleDateString('he')
   }, [selectedDate])
 
-  // const isToday = useMemo(() => {
-  //   const lastLogTime = user?.weights[0].createdAt
-
-  //   if (!lastLogTime) return false
-
-  //   const lastLogIso = getDateFromISO(lastLogTime)
-
-  //   const todayIso = getDateFromISO(new Date().toISOString())
-
-  //   return lastLogIso === todayIso
-  // }, [user?.weights])
-
   useEffect(() => {
     const getDay = async () => {
       const today = await dayService.query({
@@ -177,7 +165,6 @@ export function WeightCard() {
         open={open}
         onClose={onClose}
         component={<WeightEdit value={weightToAdd} onChange={onSave} />}
-        onSave={() => onSave(weightToAdd)}
         title='Update Weight'
       />
     </>
