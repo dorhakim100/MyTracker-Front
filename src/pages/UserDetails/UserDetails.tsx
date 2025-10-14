@@ -1,21 +1,14 @@
 import { useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
-import {
-  Button,
-  DialogActions,
-  Divider,
-  ListItemIcon,
-  Typography,
-} from '@mui/material'
+import { Button, Divider, ListItemIcon, Typography } from '@mui/material'
 import { RootState } from '../../store/store'
 import {
-  deleteAccount,
   handleFavorite,
   logout,
   optimisticUpdateUser,
   updateUser,
 } from '../../store/actions/user.actions'
-import { setIsLoading, setPrefs } from '../../store/actions/system.actions'
+import { setPrefs } from '../../store/actions/system.actions'
 import type { Prefs } from '../../types/system/Prefs'
 import { motion } from 'framer-motion'
 import { DarkModeSwitch } from '../../components/DarkModeSwitch/DarkModeSwitch'
@@ -50,8 +43,6 @@ import SettingsIcon from '@mui/icons-material/Settings'
 import ModeStandbyIcon from '@mui/icons-material/ModeStandby'
 import { DeleteAction } from '../../components/DeleteAction/DeleteAction'
 
-import { CustomAlertDialog } from '../../CustomMui/CustomAlertDialog/CustomAlertDialog'
-
 const colors = {
   primary: '--var(--primary-color)',
   blue: '--var(--picker-color-blue)',
@@ -69,11 +60,9 @@ export function UserDetails() {
     (storeState: RootState) => storeState.systemModule.prefs
   )
 
-  const user = useSelector(
-    (storeState: RootState) => storeState.userModule.user
-  )
-
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false)
+  // const user = useSelector(
+  //   (storeState: RootState) => storeState.userModule.user
+  // )
 
   const acrodions = [
     {
@@ -108,81 +97,34 @@ export function UserDetails() {
     },
   ]
 
-  const setDeleteModalClose = () => {
-    setIsDeleteModalOpen(false)
-  }
-
-  const openDeleteModal = () => {
-    setIsDeleteModalOpen(true)
-  }
-
-  const onDeleteAccount = async () => {
-    if (!user) return
-    try {
-      setIsLoading(true)
-      await deleteAccount(user)
-      setIsDeleteModalOpen(false)
-
-      await logout()
-      showSuccessMsg(messages.success.deleteAccount)
-    } catch (err) {
-      console.log('err', err)
-      showErrorMsg(messages.error.deleteAccount)
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
   return (
-    <>
-      <div
-        className={`page-container user-page ${
-          prefs.isDarkMode ? 'dark-mode' : ''
-        }`}
-      >
-        <ProfileCard />
+    <div
+      className={`page-container user-page ${
+        prefs.isDarkMode ? 'dark-mode' : ''
+      }`}
+    >
+      <ProfileCard />
 
-        <div className='content-container'>
-          <WeightCard />
+      <div className='content-container'>
+        <WeightCard />
 
-          {acrodions.map((accordion) => (
-            <CustomAccordion
-              key={`${accordion.key}-accordion`}
-              title={accordion.title}
-              cmp={accordion.cmp}
-              icon={accordion.icon}
-            />
-          ))}
-
-          <CustomButton
-            fullWidth
-            onClick={() => logout()}
-            className={`${prefs.favoriteColor}`}
-            text='Logout'
+        {acrodions.map((accordion) => (
+          <CustomAccordion
+            key={`${accordion.key}-accordion`}
+            title={accordion.title}
+            cmp={accordion.cmp}
+            icon={accordion.icon}
           />
-          <Divider
-            className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-          />
+        ))}
 
-          <CustomButton
-            fullWidth
-            onClick={openDeleteModal}
-            className={`delete-account-button ${prefs.favoriteColor}`}
-            text='Delete Account'
-          />
-        </div>
-      </div>
-      <CustomAlertDialog
-        open={isDeleteModalOpen}
-        onClose={setDeleteModalClose}
-        title='Delete Account'
-      >
-        <DeleteAccountCard
-          onDeleteAccount={onDeleteAccount}
-          setDeleteModalClose={setDeleteModalClose}
+        <CustomButton
+          fullWidth
+          onClick={() => logout()}
+          className={`${prefs.favoriteColor}`}
+          text='Logout'
         />
-      </CustomAlertDialog>
-    </>
+      </div>
+    </div>
   )
 }
 
@@ -498,44 +440,6 @@ function PreferencesCard() {
           ))}
         </div>
       </div>
-    </>
-  )
-}
-
-function DeleteAccountCard({
-  onDeleteAccount,
-  setDeleteModalClose,
-}: {
-  onDeleteAccount: () => void
-  setDeleteModalClose: () => void
-}) {
-  const prefs = useSelector(
-    (storeState: RootState) => storeState.systemModule.prefs
-  )
-
-  return (
-    <>
-      <Typography variant='body1'>
-        Are you sure you want to delete your account?
-      </Typography>
-
-      <Typography variant='body2'>
-        This action is irreversible and will delete all your data.
-      </Typography>
-      <DialogActions>
-        <CustomButton
-          fullWidth
-          onClick={setDeleteModalClose}
-          className={`${prefs.favoriteColor}`}
-          text='Cancel'
-        />
-        <CustomButton
-          fullWidth
-          onClick={onDeleteAccount}
-          className={`${prefs.favoriteColor} delete-account-button`}
-          text='Delete'
-        />
-      </DialogActions>
     </>
   )
 }

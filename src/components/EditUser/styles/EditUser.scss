@@ -77,6 +77,12 @@
     margin: 0.5rem 0;
   }
 
+  .buttons-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+  }
+
   .save-button-container {
     width: 100%;
     display: grid;
