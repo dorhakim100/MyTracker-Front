@@ -499,7 +499,17 @@ export function ItemDetails({
         {(!isCustomLog && (item as Log).source !== searchTypes.custom && (
           <div className='header' onClick={openImageModal}>
             <div className='image box-shadow white-outline'>
-              {item.image && <img src={item.image} alt={item.name} />}
+              {item.image && (
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  referrerPolicy='no-referrer'
+                  onError={async (e) => {
+                    await imageService.fetchOnError(e, item as Item)
+                    loadItems()
+                  }}
+                />
+              )}
             </div>
             <div className='title'>{item.name}</div>
             <div className='subtitle'>{`${(+item.macros?.calories).toFixed(
@@ -648,6 +658,11 @@ export function ItemDetails({
               src={item.image}
               alt={item.name}
               className={`box-shadow white-outline`}
+              referrerPolicy='no-referrer'
+              onError={async (e) => {
+                await imageService.fetchOnError(e, item as Item)
+                loadItems()
+              }}
             />
           </div>
           <CustomButton
@@ -719,6 +734,7 @@ import { calculateFatCalories } from '../../services/macros/macros.service'
 import EditIcon from '@mui/icons-material/Edit'
 import { CustomInput } from '../../CustomMui/CustomInput/CustomInput'
 import { CustomAlertDialog } from '../../CustomMui/CustomAlertDialog/CustomAlertDialog'
+import { imageService } from '../../services/image/image.service'
 
 function EditComponent({
   value,

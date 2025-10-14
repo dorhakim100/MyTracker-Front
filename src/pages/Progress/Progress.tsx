@@ -25,6 +25,8 @@ import { SkeletonList } from '../../components/SkeletonList/SkeletonList'
 import { MacrosDonut } from '../../components/MacrosDonut/MacrosDonut'
 import { searchTypes } from '../../assets/config/search-types'
 import { searchUrls } from '../../assets/config/search.urls'
+import { imageService } from '../../services/image/image.service'
+import { Item } from '../../types/item/Item'
 
 const ONE_DAY = 24 * 60 * 60 * 1000
 
@@ -178,14 +180,22 @@ function LogsList({
           )
         }}
         renderLeft={(i) => {
-          const img =
-            cachedItems.find((item) => item.searchId === i.itemId)?.image ||
-            searchUrls.DEFAULT_IMAGE
+          const item = cachedItems.find((item) => item.searchId === i.itemId)
+
+          const img = item?.image || searchUrls.DEFAULT_IMAGE
 
           return img ? (
             <>
               <ListItemIcon className='item-image-container'>
-                <img src={img} alt={i.name} />
+                <img
+                  src={img}
+                  alt={i.name}
+                  referrerPolicy='no-referrer'
+                  onError={async (e) => {
+                    await imageService.fetchOnError(e, item as Item)
+                    loadItems()
+                  }}
+                />
               </ListItemIcon>
               <MacrosDonut
                 protein={i.macros?.protein}

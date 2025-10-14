@@ -39,6 +39,7 @@ export const searchService = {
   removeFromCache,
   searchFavoriteItems,
   handleResSorting,
+  handleImageError,
 }
 
 const LONGEST_FOOD_ID_LENGTH = 10
@@ -254,10 +255,24 @@ async function searchById(id: string, source: string) {
 async function addToCache(item: Item, key: string) {
   const cached = await indexedDbService.query<Item>(key)
 
-  const isInCache = cached.find((i: Item) => i.searchId === item.searchId)
-  if (!isInCache) {
+  const index = cached.findIndex((i: Item) => i.searchId === item.searchId)
+
+  if (index === -1) {
     await indexedDbService.post(key, item)
+  } else {
+    const itemToUpdate = {
+      ...item,
+      _id: cached[index]._id,
+    }
+    await indexedDbService.put(key, itemToUpdate)
   }
+}
+
+async function handleImageError(newItem: Item) {
+  await Promise.all([
+    addToCache(newItem, ITEMS_CACHE),
+    addToCache(newItem, FAVORITE_CACHE),
+  ])
 }
 
 async function removeFromCache(item: Item, key: string) {

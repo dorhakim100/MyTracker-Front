@@ -22,7 +22,11 @@ import { setIsLoading } from '../../store/actions/system.actions'
 import { MacrosDonut } from '../MacrosDonut/MacrosDonut'
 import { CustomList } from '../../CustomMui/CustomList/CustomList'
 import { Item } from '../../types/item/Item'
-import { setItem, setSelectedMeal } from '../../store/actions/item.actions'
+import {
+  loadItems,
+  setItem,
+  setSelectedMeal,
+} from '../../store/actions/item.actions'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { ItemDetails } from '../ItemDetails/ItemDetails'
 import { FavoriteButton } from '../FavoriteButton/FavoriteButton'
@@ -47,6 +51,8 @@ import searchLight from '../../../public/searching.json'
 import searchDark from '../../../public/searching-dark.json'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import AddIcon from '@mui/icons-material/Add'
+
+import { imageService } from '../../services/image/image.service'
 
 interface ItemSearchProps {
   onAddToMealClick?: (item: MealItem) => void
@@ -256,7 +262,16 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
                 fats={item.macros?.fat}
               />
               <ListItemIcon className='item-image-container'>
-                <img src={item.image} alt={item.name} className='item-image' />
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  className='item-image'
+                  referrerPolicy='no-referrer'
+                  onError={async (e) => {
+                    await imageService.fetchOnError(e, item)
+                    loadItems()
+                  }}
+                />
               </ListItemIcon>
             </div>
           )}

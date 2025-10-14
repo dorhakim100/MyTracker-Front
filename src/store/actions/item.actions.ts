@@ -15,7 +15,7 @@ import { Log } from '../../types/log/Log'
 export async function loadItems(): Promise<Item[]> {
   try {
     const items = await itemService.query()
-    // console.log('items', items)
+
     store.dispatch(getCmdSetItems(items))
     // store.dispatch({ type: SET_ITEM_FILTER, filter: filterBy })
 
