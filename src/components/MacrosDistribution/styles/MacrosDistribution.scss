@@ -35,3 +35,19 @@
     font-size: 1.2rem;
   }
 }
+
+.edit-macros-container.distribution {
+  display: grid;
+  gap: 0.8rem;
+
+  justify-self: center;
+  // margin-top: 1em;
+  padding: 2rem;
+  // width: 300px;
+
+  .macro-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
