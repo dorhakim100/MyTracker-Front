@@ -26,15 +26,7 @@
 <body style="overflow: hidden !important;">
   <div id="root"></div>
   <script type="module" src="/src/main.tsx"></script>
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function () {
-        navigator.serviceWorker.register('/sw.js').catch(function (err) {
-          console.error('Service worker registration failed:', err)
-        })
-      })
-    }
-  </script>
+  <script type="module" src="/src/service-worker-event.ts"></script>
 </body>
 
 </html>
