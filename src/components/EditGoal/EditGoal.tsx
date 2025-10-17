@@ -89,9 +89,12 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
   const prevTarget = useRef<string>(selectedTarget)
 
   const goalRef = useRef<Goal | Partial<Goal>>(editGoal)
+
   const maintainUserBmr = useMemo(() => {
+    if (selectedGoal) return selectedGoal.dailyCalories
     return bmrService.getBmrByUser(user) || DEFAULT_CALORIES
-  }, [user])
+  }, [user, selectedGoal])
+
   const targetAnimation = useMemo(() => {
     switch (selectedTarget) {
       case 'lose':
