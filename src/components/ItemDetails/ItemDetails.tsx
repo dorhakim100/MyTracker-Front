@@ -48,6 +48,7 @@ import { LoggedToday } from '../../types/loggedToday/LoggedToday'
 import { imageService } from '../../services/image/image.service'
 import { loadItems, setSelectedMeal } from '../../store/actions/item.actions'
 import { NumberOfServingsPicker } from './NumberOfServingsPicker'
+import CustomSkeleton from '../../CustomMui/CustomSkeleton/CustomSkeleton'
 
 interface ItemDetailsProps {
   onAddToMealClick?: (item: MealItem) => void
@@ -515,6 +516,11 @@ export function ItemDetails({
     }))
   }
 
+  const renderErrorImage = () => {
+    if (editMealItem) editMealItem.image = undefined
+    if (searchedItem) searchedItem.image = undefined
+  }
+
   return (
     <>
       <div
@@ -525,15 +531,23 @@ export function ItemDetails({
         {(!isCustomLog && (item as Log).source !== searchTypes.custom && (
           <div className='header' onClick={openImageModal}>
             <div className='image box-shadow white-outline'>
-              {item.image && (
+              {(item.image && (
                 <img
                   src={item.image}
                   alt={item.name}
                   referrerPolicy='no-referrer'
                   onError={async (e) => {
+                    renderErrorImage()
                     await imageService.fetchOnError(e, item as Item)
                     loadItems()
                   }}
+                />
+              )) || (
+                <CustomSkeleton
+                  variant='circular'
+                  width={60}
+                  height={60}
+                  isDarkMode={prefs.isDarkMode}
                 />
               )}
             </div>

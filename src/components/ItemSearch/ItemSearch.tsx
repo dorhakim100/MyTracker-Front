@@ -53,6 +53,7 @@ import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import AddIcon from '@mui/icons-material/Add'
 
 import { imageService } from '../../services/image/image.service'
+import CustomSkeleton from '../../CustomMui/CustomSkeleton/CustomSkeleton'
 
 interface ItemSearchProps {
   onAddToMealClick?: (item: MealItem) => void
@@ -246,6 +247,14 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
       return renderSearchFirst()
     }
 
+    const renderErrorImage = (item: Item) => {
+      item.image = undefined
+      const newResults = results.map((i) =>
+        i.searchId === item.searchId ? { ...i, image: undefined } : i
+      )
+      setResults(newResults)
+    }
+
     return (
       <Box className='results'>
         <CustomList<Item>
@@ -262,16 +271,26 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
                 fats={item.macros?.fat}
               />
               <ListItemIcon className='item-image-container'>
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  className='item-image'
-                  referrerPolicy='no-referrer'
-                  onError={async (e) => {
-                    await imageService.fetchOnError(e, item)
-                    loadItems()
-                  }}
-                />
+                {(item.image && (
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className='item-image'
+                    referrerPolicy='no-referrer'
+                    onError={async (e) => {
+                      renderErrorImage(item)
+                      await imageService.fetchOnError(e, item)
+                      loadItems()
+                    }}
+                  />
+                )) || (
+                  <CustomSkeleton
+                    variant='circular'
+                    width={40}
+                    height={40}
+                    isDarkMode={prefs.isDarkMode}
+                  />
+                )}
               </ListItemIcon>
             </div>
           )}
