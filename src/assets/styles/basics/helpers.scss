@@ -424,8 +424,8 @@ select {
 .MuiFab-root,
 .MuiPickersDay-root.Mui-selected,
 .custom-date-picker-button {
-  // background-color: $primary-color !important;
-  // color: $white;
+  background-color: $primary-color;
+  color: $white;
 
   &.primary {
     background-color: $primary-color !important;
