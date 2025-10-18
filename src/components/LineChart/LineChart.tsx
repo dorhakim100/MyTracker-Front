@@ -18,6 +18,7 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js'
+import { ChartSettings } from '../../types/chartSettings/ChartSettings'
 
 ChartJS.register(
   CategoryScale,
@@ -53,6 +54,7 @@ export interface LineChartProps {
     isBaseline?: boolean
   ) => void
   movingAverageData?: (number | null)[]
+  chartSettings: ChartSettings
 }
 
 const DARK_MODE_WHITE = '#fff'
@@ -67,6 +69,7 @@ export default function LineChart({
   isDarkMode = false,
   onLineClick,
   movingAverageData,
+  chartSettings,
 }: LineChartProps) {
   const chartRef = useRef<ChartJS<'line'>>(null)
   const [clickedIndex, setClickedIndex] = useState<number | null>(null)
@@ -147,13 +150,14 @@ export default function LineChart({
 
     if (movingAverageData && movingAverageData.length) {
       const baseLineColor =
+        chartSettings.movingAverageColor ||
         (data.datasets?.[0]?.borderColor as string | undefined) ||
         (isDarkMode ? DARK_MODE_WHITE : LIGHT_MODE_GRAY)
 
       let maColor: string
       if (baseLineColor.startsWith('#')) {
         const lightened = lightenColor(baseLineColor, 0.35)
-        maColor = toRgba(lightened, isDarkMode ? 0.7 : 0.5)
+        maColor = toRgba(lightened, isDarkMode ? 0.7 : 0.9)
       } else {
         maColor = isDarkMode ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.25)'
       }

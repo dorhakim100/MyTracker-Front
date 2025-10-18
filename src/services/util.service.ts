@@ -264,3 +264,19 @@ export function shuffle<T>(array: T[]): T[] {
   }
   return arr
 }
+
+export function getColor(color: string): string {
+  const colors = {
+    primary: '#009688',
+    blue: '#1976d2',
+    yellow: '#ffd166',
+    red: '#d32f2f',
+    orange: '#ed6c02',
+    green: '#06d6a0',
+    deepPurple: '#6366f1',
+    purple: '#9c27b0',
+    pink: '#ff69b4',
+  }
+
+  return colors[color as keyof typeof colors] || '#009688'
+}
