@@ -1,6 +1,6 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { useSelector } from 'react-redux'
-import { Button, Divider, ListItemIcon, Typography } from '@mui/material'
+import { Divider, ListItemIcon, Typography } from '@mui/material'
 import { RootState } from '../../store/store'
 import {
   handleFavorite,
@@ -10,10 +10,9 @@ import {
 } from '../../store/actions/user.actions'
 import { setPrefs } from '../../store/actions/system.actions'
 import type { Prefs } from '../../types/system/Prefs'
-import { motion } from 'framer-motion'
 import { DarkModeSwitch } from '../../components/DarkModeSwitch/DarkModeSwitch'
 import { CustomAccordion } from '../../CustomMui/CustomAccordion/CustomAccordion'
-import CheckIcon from '@mui/icons-material/Check'
+
 import { CustomList } from '../../CustomMui/CustomList/CustomList'
 import { SkeletonList } from '../../components/SkeletonList/SkeletonList'
 import { ProfileCard } from '../../components/ProfileCard/ProfileCard'
@@ -42,18 +41,7 @@ import CalculateIcon from '@mui/icons-material/Calculate'
 import SettingsIcon from '@mui/icons-material/Settings'
 import ModeStandbyIcon from '@mui/icons-material/ModeStandby'
 import { DeleteAction } from '../../components/DeleteAction/DeleteAction'
-
-const colors = {
-  primary: '--var(--primary-color)',
-  blue: '--var(--picker-color-blue)',
-  yellow: '--var(--picker-color-yellow)',
-  red: '--var(--picker-color-red)',
-  orange: '--var(--picker-color-orange)',
-  green: '--var(--picker-color-green)',
-  deepPurple: '--var(--picker-color-deep-purple)',
-  purple: '--var(--picker-color-purple)',
-  pink: '--var(--picker-color-pink)',
-}
+import { ColorPicker } from '../../components/ColorPicker/ColorPicker'
 
 export function UserDetails() {
   const prefs = useSelector(
@@ -125,25 +113,6 @@ export function UserDetails() {
         />
       </div>
     </div>
-  )
-}
-
-function ColorMotion({
-  color,
-  favoriteColor,
-}: {
-  color: string
-  favoriteColor: string
-}) {
-  return (
-    <motion.div
-      whileTap={{ scale: 0.8 }}
-      animate={color === favoriteColor ? { scale: [1, 1.3, 1] } : { scale: 1 }}
-      transition={{ duration: 0.3 }}
-      className='motion-container'
-    >
-      {color === favoriteColor ? <CheckIcon /> : null}
-    </motion.div>
   )
 }
 
@@ -394,8 +363,6 @@ function PreferencesCard() {
     prefs.favoriteColor || '#1976d2'
   )
 
-  const colorChoices = useMemo<string[]>(() => Object.keys(colors), [])
-
   function onToggleDarkMode() {
     const newPrefs: Prefs = { ...prefs, isDarkMode: !prefs.isDarkMode }
     setPrefs(newPrefs)
@@ -422,23 +389,10 @@ function PreferencesCard() {
         <Typography variant='body1' className='prefs-label'>
           Favorite color
         </Typography>
-        <div className='color-options'>
-          {colorChoices.map((color) => (
-            <Button
-              key={`${color}-color-button`}
-              className={`color-button ${color} ${
-                favoriteColor === color ? 'selected' : ''
-              }`}
-              onClick={() => onChangeFavoriteColor(color)}
-              sx={{
-                minWidth: '30px',
-                minHeight: '30px',
-              }}
-            >
-              <ColorMotion color={color} favoriteColor={favoriteColor} />
-            </Button>
-          ))}
-        </div>
+        <ColorPicker
+          pickedColor={favoriteColor}
+          onColorPick={onChangeFavoriteColor}
+        />
       </div>
     </>
   )

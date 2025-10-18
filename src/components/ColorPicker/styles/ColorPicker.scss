@@ -1,0 +1,31 @@
+.color-options {
+  justify-self: end;
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(2, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  // grid-template-columns: 1fr 1fr;
+
+  gap: 1rem;
+
+  .color-button {
+    &.css-r75yrr-MuiButtonBase-root-MuiButton-root {
+      // min-width: 30px !important;
+    }
+    width: 30px;
+    height: 30px;
+
+    border-radius: 50%;
+
+    .motion-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 50%;
+
+      color: $darker-gray;
+      background-color: $white;
+    }
+  }
+}
