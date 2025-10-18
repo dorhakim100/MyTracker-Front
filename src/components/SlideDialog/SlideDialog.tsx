@@ -89,7 +89,7 @@ export function SlideDialog({
               onClick={onClose}
               aria-label='close'
             >
-              <CloseIcon />
+              <CloseIcon sx={{ color: '#fff' }} />
             </IconButton>
             <Typography sx={{ ml: 2, flex: 1 }} variant='h6' component='div'>
               {title}
