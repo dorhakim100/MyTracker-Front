@@ -104,10 +104,10 @@ export function LoggedList({ mealPeriod }: { mealPeriod: MealPeriod }) {
 
   const renderSecondaryText = (item: Log) => {
     if (item.source === searchTypes.custom)
-      return `${item.macros?.calories} kcal`
+      return `${item.macros?.calories.toFixed(0)} kcal`
     const cachedItem = cachedItems.find((i) => i.searchId === item.itemId)
     return cachedItem ? (
-      `${item.macros?.calories} kcal`
+      `${item.macros?.calories.toFixed(0)} kcal`
     ) : (
       <CustomSkeleton
         variant='text'
