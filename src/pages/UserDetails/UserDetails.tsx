@@ -333,7 +333,9 @@ function MealsCard() {
               </ListItemIcon>
             </div>
           )}
-          renderSecondaryText={(meal) => `${meal.macros.calories} kcal`}
+          renderSecondaryText={(meal) =>
+            `${meal.macros.calories.toFixed(0)} kcal`
+          }
           onItemClick={onSelectMeal}
           isDragable={true}
           onReorder={onReorderMeals}
