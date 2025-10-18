@@ -77,6 +77,37 @@ export function WeightChart({
     }
   }, [weights])
 
+  const DEFAULT_MOVING_AVERAGE_PERIOD = 7
+
+  const movingAverageData = useMemo(() => {
+    const series = prepareSeries(range, weights)
+    const data = series?.data ?? []
+    console.log(data)
+
+    const calcPeriod = (array: number[] | null[]) => {
+      return (
+        array.reduce((acc: number, curr: number | null) => {
+          if (curr === null) return acc
+          return acc + curr
+        }, 0) / DEFAULT_MOVING_AVERAGE_PERIOD
+      )
+    }
+
+    const res = data.map((_, index, array) => {
+      const period = array.slice(index - DEFAULT_MOVING_AVERAGE_PERIOD, index)
+
+      if (
+        period.includes(null) ||
+        period.length !== DEFAULT_MOVING_AVERAGE_PERIOD
+      )
+        return null
+
+      return calcPeriod(period as number[] | null[])
+    })
+
+    return res
+  }, [weights])
+
   useEffect(() => {
     const fetchWeights = async () => {
       let fromDate
