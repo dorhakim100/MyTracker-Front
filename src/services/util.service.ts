@@ -255,3 +255,12 @@ export function getFullDate(stringDate: string) {
   const [day, month] = stringDate.split('/')
   return new Date(year, +month - 1, +day)
 }
+
+export function shuffle<T>(array: T[]): T[] {
+  const arr = [...array] // make a shallow copy (avoid mutating original)
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[arr[i], arr[j]] = [arr[j], arr[i]] // swap
+  }
+  return arr
+}

@@ -19,6 +19,16 @@
       display: grid;
       justify-items: start;
     }
+
+    .typewriter-container {
+      // justify-self: start;
+      width: 250px;
+      display: grid;
+      justify-items: start;
+      span {
+        font-size: 1.2rem;
+      }
+    }
   }
 
   .MuiLinearProgress-root {
