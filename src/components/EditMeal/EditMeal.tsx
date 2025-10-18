@@ -24,6 +24,10 @@ import { DeleteAction } from '../DeleteAction/DeleteAction'
 import { searchUrls } from '../../assets/config/search.urls'
 import { searchTypes } from '../../assets/config/search-types'
 
+import SearchIcon from '@mui/icons-material/Search'
+import QrCode2Icon from '@mui/icons-material/QrCode2'
+import { BarcodeScanner } from '../BarcodeScanner/BarcodeScanner'
+
 const stages = ['name', 'items']
 
 interface EditMealProps {
@@ -46,7 +50,9 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
   const [direction, setDirection] = useState(1)
 
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false)
-  const [modalType, setModalType] = useState<'search' | 'edit'>('search')
+  const [modalType, setModalType] = useState<'search' | 'edit' | 'scan'>(
+    'search'
+  )
 
   const onEditMeal = (key: keyof Meal, value: string | number) => {
     const newEditMeal = { ...editMeal }
@@ -94,6 +100,29 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
     saveMeal(editMeal)
   }
 
+  const onScanItem = () => {
+    setIsOpenModal(true)
+    setModalType('scan')
+  }
+
+  const getModelType = () => {
+    switch (modalType) {
+      case 'search':
+        return <ItemSearch onAddToMealClick={onAddToMealClick} />
+      case 'edit':
+        return <ItemDetails onAddToMealClick={onAddToMealClick} />
+      case 'scan':
+        return (
+          <BarcodeScanner
+            onClose={onCloseItemDetails}
+            onAddToMealClick={onAddToMealClick}
+          />
+        )
+      default:
+        return <ItemSearch onAddToMealClick={onAddToMealClick} />
+    }
+  }
+
   const renderStageContent = () => {
     if (stage === 'name')
       return (
@@ -119,7 +148,20 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
               hideEditAndHeader={true}
               className={`edit-meal-macros-distribution`}
             />
-            <CustomButton text='Add Item' fullWidth onClick={onAddItem} />
+            <div className='buttons-container'>
+              <CustomButton
+                text='Search Item'
+                fullWidth
+                onClick={onAddItem}
+                icon={<SearchIcon />}
+              />
+              <CustomButton
+                text='Scan Item'
+                fullWidth
+                onClick={onScanItem}
+                icon={<QrCode2Icon />}
+              />
+            </div>
             <CustomList
               className={`edit-meal-list ${
                 prefs.isDarkMode ? 'dark-mode' : ''
@@ -162,15 +204,9 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
           <SlideDialog
             open={isOpenModal}
             onClose={onCloseItemDetails}
-            component={
-              modalType === 'search' ? (
-                <ItemSearch onAddToMealClick={onAddToMealClick} />
-              ) : (
-                <ItemDetails onAddToMealClick={onAddToMealClick} />
-              )
-            }
+            component={getModelType()}
             title='Item'
-            type='full'
+            type={modalType === 'scan' ? 'half' : 'full'}
           />
         </>
       )

@@ -17,12 +17,17 @@ import searchingAnimationDark from '../../../public/searching-dark.json'
 import scanAnimation from '../../../public/scanning.gif'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import AddIcon from '@mui/icons-material/Add'
+import { MealItem } from '../../types/mealItem/MealItem'
 
 interface BarcodeScannerProps {
   onClose: () => void
+  onAddToMealClick?: (item: MealItem) => void
 }
 
-export function BarcodeScanner({ onClose }: BarcodeScannerProps) {
+export function BarcodeScanner({
+  onClose,
+  onAddToMealClick,
+}: BarcodeScannerProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
@@ -137,7 +142,12 @@ export function BarcodeScanner({ onClose }: BarcodeScannerProps) {
       <SlideDialog
         open={isCustomLog || isItemFound}
         onClose={onClose}
-        component={<ItemDetails isCustomLog={isCustomLog} />}
+        component={
+          <ItemDetails
+            isCustomLog={isCustomLog}
+            onAddToMealClick={onAddToMealClick}
+          />
+        }
         title={isCustomLog ? 'Custom Log' : 'Barcode Scanned'}
         type='full'
       />
