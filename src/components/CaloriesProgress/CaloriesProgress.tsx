@@ -4,7 +4,7 @@ import { CircularProgress } from '../CircularProgress/CircularProgress'
 
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import {
   optimisticUpdateUser,
   updateUser,
@@ -59,6 +59,10 @@ export function CaloriesProgress({
   // }
   const [openModal, setOpenModal] = useState(false)
 
+  const currentValue = useMemo(() => {
+    return +current.toFixed(0)
+  }, [current])
+
   const edit = () => {
     setOpenModal(true)
   }
@@ -86,7 +90,7 @@ export function CaloriesProgress({
   }
 
   function getPercentageValue() {
-    return (current / (user?.currGoal?.dailyCalories || 1)) * 100
+    return (currentValue / (user?.currGoal?.dailyCalories || 1)) * 100
     // return user?.currGoal?.dailyCalories
     //   ? (current / user?.currGoal?.dailyCalories) * 100
     //   : 0
@@ -102,14 +106,14 @@ export function CaloriesProgress({
         <EditIcon onClick={edit} />
         <div className='goal-container'>
           <GoalBanner
-            current={current}
+            current={currentValue}
             goal={roundToNearest50(user?.currGoal?.dailyCalories || 0)}
           />
         </div>
         <CircularProgress
           value={getPercentageValue()}
           // text={`${valueToShow}`}
-          text={`${current}`}
+          text={`${currentValue}`}
         />
       </Card>
       <SlideDialog

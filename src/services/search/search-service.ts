@@ -320,7 +320,7 @@ async function searchOpenFoodFacts(query: string) {
             +(product.nutriments?.['energy-kcal'] ?? 0) ||
             calculateCaloriesFromMacros({ protein: proteins, carbs, fats })
               .total
-        )
+        ).toFixed(0)
 
         if (!product.nutriments?.['energy-kcal_100g']) return null
 
