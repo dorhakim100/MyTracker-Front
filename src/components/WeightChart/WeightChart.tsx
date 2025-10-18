@@ -34,6 +34,8 @@ interface Stats {
 const LABEL = 'Weight'
 const GOAL_WEIGHT = 94
 
+const DEFAULT_MOVING_AVERAGE_PERIOD = 7
+
 export function WeightChart({
   className = '',
   setSelectedDate,
@@ -77,20 +79,17 @@ export function WeightChart({
     }
   }, [weights])
 
-  const DEFAULT_MOVING_AVERAGE_PERIOD = 7
-
   const movingAverageData = useMemo(() => {
     const series = prepareSeries(range, weights)
     const data = series?.data ?? []
-    console.log(data)
 
     const calcPeriod = (array: number[] | null[]) => {
-      return (
+      return +(
         array.reduce((acc: number, curr: number | null) => {
           if (curr === null) return acc
           return acc + curr
         }, 0) / DEFAULT_MOVING_AVERAGE_PERIOD
-      )
+      ).toFixed(1)
     }
 
     const res = data.map((_, index, array) => {
@@ -106,7 +105,7 @@ export function WeightChart({
     })
 
     return res
-  }, [weights])
+  }, [weights, range])
 
   useEffect(() => {
     const fetchWeights = async () => {
@@ -269,6 +268,7 @@ export function WeightChart({
             baseline={user?.currGoal?.targetWeight}
             baselineLabel='Goal weight'
             isDarkMode={prefs.isDarkMode}
+            movingAverageData={movingAverageData}
           />
         </div>
       </Card>

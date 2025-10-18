@@ -52,6 +52,7 @@ export interface LineChartProps {
     estimatedValue: number,
     isBaseline?: boolean
   ) => void
+  movingAverageData?: (number | null)[]
 }
 
 const DARK_MODE_WHITE = '#fff'
@@ -65,6 +66,7 @@ export default function LineChart({
   baselineLabel = 'Baseline',
   isDarkMode = false,
   onLineClick,
+  movingAverageData,
 }: LineChartProps) {
   const chartRef = useRef<ChartJS<'line'>>(null)
   const [clickedIndex, setClickedIndex] = useState<number | null>(null)
@@ -134,6 +136,17 @@ export default function LineChart({
       })
     }
 
+    if (movingAverageData && movingAverageData.length) {
+      baseDatasets.push({
+        label: 'Moving Average',
+        data: movingAverageData,
+        borderColor: isDarkMode ? DARK_MODE_WHITE : LIGHT_MODE_GRAY,
+        tension: 0,
+        borderDash: [2, 6],
+        pointRadius: 0,
+      })
+    }
+
     const base: ChartData<'line', SeriesValue[], string> = {
       labels: data.labels,
       datasets: baseDatasets,
@@ -154,6 +167,7 @@ export default function LineChart({
     baselineLabel,
     isDarkMode,
     interpolateSeries,
+    movingAverageData,
   ])
 
   const options: ChartOptions<'line'> = {
