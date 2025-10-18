@@ -18,8 +18,9 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js'
-import { ChartSettings } from '../../types/chartSettings/ChartSettings'
 import { getColor } from '../../services/util.service'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../store/store'
 
 ChartJS.register(
   CategoryScale,
@@ -55,7 +56,7 @@ export interface LineChartProps {
     isBaseline?: boolean
   ) => void
   movingAverageData?: (number | null)[]
-  chartSettings: ChartSettings
+  movingAverageLabel?: string
 }
 
 const DARK_MODE_WHITE = '#fff'
@@ -70,8 +71,14 @@ export default function LineChart({
   isDarkMode = false,
   onLineClick,
   movingAverageData,
-  chartSettings,
+  movingAverageLabel = 'Weakly Average',
 }: LineChartProps) {
+  const prefs = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.prefs
+  )
+
+  const chartSettings = useMemo(() => prefs.weightChartSettings, [prefs])
+
   const chartRef = useRef<ChartJS<'line'>>(null)
   const [clickedIndex, setClickedIndex] = useState<number | null>(null)
 
@@ -149,7 +156,11 @@ export default function LineChart({
       })
     }
 
-    if (movingAverageData && movingAverageData.length) {
+    if (
+      movingAverageData &&
+      movingAverageData.length &&
+      chartSettings.isMovingAverage
+    ) {
       const movingAverageColor = getColor(chartSettings.movingAverageColor)
       const baseLineColor =
         movingAverageColor ||
@@ -165,7 +176,7 @@ export default function LineChart({
       }
 
       baseDatasets.push({
-        label: 'Moving Average',
+        label: movingAverageLabel,
         data: movingAverageData,
         borderColor: maColor,
         borderWidth: 2,
@@ -199,6 +210,8 @@ export default function LineChart({
     isDarkMode,
     interpolateSeries,
     movingAverageData,
+    chartSettings,
+    movingAverageLabel,
   ])
 
   const options: ChartOptions<'line'> = {

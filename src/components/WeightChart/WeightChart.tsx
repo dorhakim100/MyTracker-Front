@@ -21,6 +21,11 @@ import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
 import CircleIcon from '@mui/icons-material/Circle'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import Settings from '@mui/icons-material/Settings'
+import { CustomAlertDialog } from '../../CustomMui/CustomAlertDialog/CustomAlertDialog'
+import { ColorPicker } from '../ColorPicker/ColorPicker'
+import { setPrefs } from '../../store/actions/system.actions'
+import { CustomIOSSwitch } from '../../CustomMui/CustomIOSSwitch/CustomIOSSwitch'
+
 interface WeightChartProps {
   className?: string
   setSelectedDate?: (date: Date) => void
@@ -60,6 +65,8 @@ export function WeightChart({
     message: '',
     isGoal: false,
   })
+
+  const [openSettings, setOpenSettings] = useState(false)
 
   const data = useMemo(() => {
     const series = prepareSeries(range, weights)
@@ -235,51 +242,126 @@ export function WeightChart({
     setSelectedDate?.(getFullDate(data.labels[index]))
   }
 
-  return (
-    <div className={`weight-chart ${className}`}>
-      <Card
-        variant='outlined'
-        className={`card weight   ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-      >
-        <div className='header'>
-          <div className='weight-container'>
-            <h3 className='title'>
-              {stats.isGoal ? <FlagIcon /> : <ScaleIcon />}
-              {stats.selectedWeight}
-              {stats.selectedWeight && <span className='kg'>kg</span>}
-            </h3>
+  const onOpenSettings = () => {
+    setOpenSettings(true)
+  }
 
-            {stats.message && (
-              <Typography variant='caption' className='message'>
-                <CircleIcon />
-                {stats.message}
-              </Typography>
-            )}
+  const onCloseSettings = () => {
+    setOpenSettings(false)
+  }
+
+  return (
+    <>
+      <div className={`weight-chart ${className}`}>
+        <Card
+          variant='outlined'
+          className={`card weight   ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+        >
+          <div className='header'>
+            <div className='weight-container'>
+              <h3 className='title'>
+                {stats.isGoal ? <FlagIcon /> : <ScaleIcon />}
+                {stats.selectedWeight}
+                {stats.selectedWeight && <span className='kg'>kg</span>}
+              </h3>
+
+              {stats.message && (
+                <Typography variant='caption' className='message'>
+                  <CircleIcon />
+                  {stats.message}
+                </Typography>
+              )}
+            </div>
+            <div className='date-container'>
+              <CalendarTodayIcon />
+              <TimesContainer
+                selectedDay={stats.selectedDate}
+                isClock={false}
+              />
+            </div>
+            <div className='setting-button-container'>
+              <CustomButton
+                isIcon={true}
+                icon={<Settings />}
+                onClick={onOpenSettings}
+                backgroundColor='transparent'
+              />
+            </div>
           </div>
-          <div className='date-container'>
-            <CalendarTodayIcon />
-            <TimesContainer selectedDay={stats.selectedDate} isClock={false} />
+          <div className='chart-container'>
+            <LineChart
+              data={data}
+              interpolateGaps={true}
+              spanGaps={true}
+              onLineClick={handleLineClick}
+              baseline={user?.currGoal?.targetWeight}
+              baselineLabel='Goal weight'
+              isDarkMode={prefs.isDarkMode}
+              movingAverageData={movingAverageData}
+            />
           </div>
-          <div className='setting-button-container'>
-            <CustomButton isIcon={true} icon={<Settings />} />
-          </div>
-        </div>
-        <div className='chart-container'>
-          <LineChart
-            data={data}
-            interpolateGaps={true}
-            spanGaps={true}
-            onLineClick={handleLineClick}
-            baseline={user?.currGoal?.targetWeight}
-            baselineLabel='Goal weight'
-            isDarkMode={prefs.isDarkMode}
-            movingAverageData={movingAverageData}
-            chartSettings={prefs.weightChartSettings}
-          />
-        </div>
-      </Card>
-      <LineChartControls value={range} onChange={setRange} />
-      {/* <WeightCard /> */}
+        </Card>
+        <LineChartControls value={range} onChange={setRange} />
+        {/* <WeightCard /> */}
+      </div>
+
+      <CustomAlertDialog
+        open={openSettings}
+        onClose={onCloseSettings}
+        title='Settings'
+      >
+        <ModalWeightChartSettings />
+      </CustomAlertDialog>
+    </>
+  )
+}
+
+const ModalWeightChartSettings = () => {
+  const prefs = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.prefs
+  )
+  const onChangeMovingAverageColor = (color: string) => {
+    setPrefs({
+      ...prefs,
+      weightChartSettings: {
+        ...prefs.weightChartSettings,
+        movingAverageColor: color,
+      },
+    })
+  }
+
+  const onDisplayMovingAverage = (display: boolean) => {
+    setPrefs({
+      ...prefs,
+      weightChartSettings: {
+        ...prefs.weightChartSettings,
+        isMovingAverage: display,
+      },
+    })
+  }
+
+  return (
+    <div className='weight-chart-settings-container'>
+      <div
+        className='display-moving-average-container'
+        onClick={() =>
+          onDisplayMovingAverage(!prefs.weightChartSettings.isMovingAverage)
+        }
+      >
+        <Typography variant='h6'>Display Weakly Average</Typography>
+
+        <CustomIOSSwitch
+          checked={prefs.weightChartSettings.isMovingAverage}
+          color={prefs.favoriteColor}
+        />
+      </div>
+      <div className='color-picker-container'>
+        <Typography variant='h6'>Weakly Average Color</Typography>
+        <ColorPicker
+          pickedColor={prefs.weightChartSettings.movingAverageColor}
+          onColorPick={onChangeMovingAverageColor}
+        />
+      </div>
     </div>
   )
 }

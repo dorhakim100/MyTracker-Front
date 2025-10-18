@@ -1,0 +1,16 @@
+.weight-chart-settings-container {
+  display: grid;
+  gap: 2rem;
+
+  .display-moving-average-container {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 1rem;
+    align-items: center;
+  }
+  .color-picker-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+}
