@@ -12,7 +12,7 @@ import { weightService } from '../../services/weight/weight.service'
 import { Weight } from '../../types/weight/Weight'
 
 import { TimesContainer } from '../TimesContainer/TimesContainer'
-import { getColor, getFullDate } from '../../services/util.service'
+import { getFullDate } from '../../services/util.service'
 import { Card, Typography } from '@mui/material'
 
 import ScaleIcon from '@mui/icons-material/Scale'
@@ -274,9 +274,7 @@ export function WeightChart({
             baselineLabel='Goal weight'
             isDarkMode={prefs.isDarkMode}
             movingAverageData={movingAverageData}
-            chartSettings={{
-              movingAverageColor: getColor('red'),
-            }}
+            chartSettings={prefs.weightChartSettings}
           />
         </div>
       </Card>

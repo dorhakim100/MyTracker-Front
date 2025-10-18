@@ -19,6 +19,7 @@ import {
   Legend,
 } from 'chart.js'
 import { ChartSettings } from '../../types/chartSettings/ChartSettings'
+import { getColor } from '../../services/util.service'
 
 ChartJS.register(
   CategoryScale,
@@ -149,8 +150,9 @@ export default function LineChart({
     }
 
     if (movingAverageData && movingAverageData.length) {
+      const movingAverageColor = getColor(chartSettings.movingAverageColor)
       const baseLineColor =
-        chartSettings.movingAverageColor ||
+        movingAverageColor ||
         (data.datasets?.[0]?.borderColor as string | undefined) ||
         (isDarkMode ? DARK_MODE_WHITE : LIGHT_MODE_GRAY)
 

@@ -24,6 +24,7 @@ export async function getPrefs(): Promise<Prefs> {
         isDarkMode: !!entity.isDarkMode,
         isEnglish: entity.isEnglish ?? false,
         favoriteColor: entity.favoriteColor,
+        weightChartSettings: entity.weightChartSettings,
       }
     }
   } catch {
@@ -38,6 +39,7 @@ export async function getPrefs(): Promise<Prefs> {
         isDarkMode: !!parsed.isDarkMode,
         isEnglish: parsed.isEnglish ?? false,
         favoriteColor: parsed.favoriteColor,
+        weightChartSettings: parsed.weightChartSettings,
       }
       await indexedDbService.put(STORE_NAME, { _id: RECORD_ID, ...migrated })
       localStorage.removeItem(LS_KEY)
@@ -64,6 +66,7 @@ export async function setPrefs(prefs: Prefs): Promise<void> {
     isDarkMode: !!prefs.isDarkMode,
     isEnglish: !!prefs.isEnglish,
     favoriteColor: prefs.favoriteColor,
+    weightChartSettings: prefs.weightChartSettings,
   }
   await indexedDbService.put(STORE_NAME, toSave)
 }
@@ -73,5 +76,8 @@ export function getDefaultsPrefs(): Prefs {
     isDarkMode: false,
     isEnglish: false,
     favoriteColor: 'primary',
+    weightChartSettings: {
+      movingAverageColor: 'orange',
+    },
   }
 }
