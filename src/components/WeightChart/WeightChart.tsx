@@ -19,6 +19,8 @@ import ScaleIcon from '@mui/icons-material/Scale'
 import FlagIcon from '@mui/icons-material/Flag'
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
 import CircleIcon from '@mui/icons-material/Circle'
+import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
+import Settings from '@mui/icons-material/Settings'
 interface WeightChartProps {
   className?: string
   setSelectedDate?: (date: Date) => void
@@ -257,6 +259,9 @@ export function WeightChart({
           <div className='date-container'>
             <CalendarTodayIcon />
             <TimesContainer selectedDay={stats.selectedDate} isClock={false} />
+          </div>
+          <div className='setting-button-container'>
+            <CustomButton isIcon={true} icon={<Settings />} />
           </div>
         </div>
         <div className='chart-container'>
