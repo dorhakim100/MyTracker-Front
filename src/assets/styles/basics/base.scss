@@ -59,7 +59,9 @@ body {
 
   transition: color 0.3s, background-color 0.3s;
   &:not(.dark-mode) {
-    .MuiIconButton-root {
+    .MuiIconButton-root:not(.primary):not(.blue):not(.red):not(.yellow):not(
+        .green
+      ):not(.orange):not(.deepPurple):not(.purple):not(.pink) {
       color: $dark-gray;
     }
   }
