@@ -84,6 +84,15 @@ export default function LineChart({
     return `#${toHex(r)}${toHex(g)}${toHex(b)}`
   }
 
+  const toRgba = (hex: string, alpha: number) => {
+    if (!hex || !hex.startsWith('#')) return hex
+    const num = parseInt(hex.slice(1), 16)
+    const r = (num >> 16) & 0xff
+    const g = (num >> 8) & 0xff
+    const b = num & 0xff
+    return `rgba(${r},${g},${b},${alpha})`
+  }
+
   const interpolateSeries = useCallback(
     (series: SeriesValue[]): SeriesValue[] => {
       if (!interpolateGaps) return series
@@ -137,14 +146,30 @@ export default function LineChart({
     }
 
     if (movingAverageData && movingAverageData.length) {
+      const baseLineColor =
+        (data.datasets?.[0]?.borderColor as string | undefined) ||
+        (isDarkMode ? DARK_MODE_WHITE : LIGHT_MODE_GRAY)
+
+      let maColor: string
+      if (baseLineColor.startsWith('#')) {
+        const lightened = lightenColor(baseLineColor, 0.35)
+        maColor = toRgba(lightened, isDarkMode ? 0.7 : 0.5)
+      } else {
+        maColor = isDarkMode ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.25)'
+      }
+
       baseDatasets.push({
         label: 'Moving Average',
         data: movingAverageData,
-        borderColor: isDarkMode ? DARK_MODE_WHITE : LIGHT_MODE_GRAY,
-        tension: 0,
-        borderDash: [2, 6],
+        borderColor: maColor,
+        borderWidth: 2,
+        tension: 0.2,
         pointRadius: 0,
-      })
+        pointHitRadius: 0,
+        borderJoinStyle: 'round',
+        borderCapStyle: 'round',
+        order: -1, // draw behind the main line
+      } as ChartDataset<'line', SeriesValue[]>)
     }
 
     const base: ChartData<'line', SeriesValue[], string> = {
@@ -219,7 +244,16 @@ export default function LineChart({
       const ds = chart.data.datasets[datasetIndex]
       const estimatedValue = (ds.data as SeriesValue[])[index]
       const isBaselineHit = ds.label === baselineLabel
+      const isMovingAverage = ds.label === 'Moving Average'
       setClickedIndex(index)
+
+      if (isMovingAverage) {
+        const firstDs = chart.data.datasets[0]
+        const val = (firstDs?.data as SeriesValue[] | undefined)?.[index]
+        onLineClick?.(index, typeof val === 'number' ? val : 0, false)
+        return
+      }
+
       onLineClick?.(
         index,
         typeof estimatedValue === 'number' ? estimatedValue : 0,
