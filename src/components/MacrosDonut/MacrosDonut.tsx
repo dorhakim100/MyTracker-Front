@@ -32,8 +32,9 @@ export function MacrosDonut({
   const carbsCalories = calculateCarbCalories(carbs)
   const fatsCalories = calculateFatCalories(fats)
 
-  const total =
+  const total = +(
     calories || Math.max(proteinCalories + carbsCalories + fatsCalories, 0.0001)
+  )
 
   const pPct = (proteinCalories / total) * 100
   const cPct = (carbsCalories / total) * 100

@@ -98,7 +98,7 @@ export function WeightCard() {
 
       setSelectedDiaryDay({
         ...selectedDay,
-        weight: savedWeight,
+        weight: { ...savedWeight },
       } as LoggedToday)
 
       showSuccessMsg(messages.success.updateWeight)
