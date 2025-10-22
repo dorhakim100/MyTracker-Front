@@ -1,6 +1,6 @@
 # MyTracker Frontend 🥙
 
-MyTracker is a nutrition and progress tracking frontend built with React, TypeScript, Vite, MUI, and modern charts. It features barcode scanning, daily diary logging, macro goals, BMR/weight tools, theming, and smooth UX.
+MyTracker is a nutrition and progress tracking mobile app built with React, TypeScript, Vite, MUI, and modern charts. It features barcode scanning, daily diary logging, macro goals, BMR/weight tools, theming, and smooth UX.
 
 ## Tech Stack
 
