@@ -295,7 +295,9 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
               </ListItemIcon>
             </div>
           )}
-          renderPrimaryText={(item) => item.name}
+          renderPrimaryText={(item) => (
+            <div className='hide-text-overflow'>{item.name}</div>
+          )}
           renderSecondaryText={(item) => {
             let caloriesToDisplay
             const itemCalories = item.macros.calories
