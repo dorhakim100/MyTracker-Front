@@ -67,6 +67,19 @@ async function search(filter: SearchFilter) {
 
     if (!isEnglishWord) {
       translatedTxt = await translateService.translate(safeTxt)
+    } else translatedTxt = safeTxt
+
+    let cachedRes = await indexedDbService.query<Item>(translatedTxt, 0)
+
+    if (cachedRes.length > 0) {
+      cachedRes = filterDuplicates(cachedRes)
+      cachedRes = handleResSorting(
+        cachedRes,
+        safeTxt,
+        favoriteItems,
+        translatedTxt
+      )
+      return cachedRes
     }
 
     // Fetch both sources in parallel, tolerate failures
@@ -95,6 +108,13 @@ async function search(filter: SearchFilter) {
     ]
 
     res = filterDuplicates(res)
+
+    if (res.length > 0) {
+      res.forEach((item) => {
+        addToCache(item as Item, translatedTxt)
+        addToCache(item as Item, ITEMS_CACHE)
+      })
+    }
 
     res = handleResSorting(res, safeTxt, favoriteItems, translatedTxt)
 
@@ -220,8 +240,8 @@ async function searchBulkIds(logs: Log[]) {
     const [products, foods] = await Promise.all(promises)
     const res = [...products, ...foods]
 
-    res.forEach(async (item) => {
-      await addToCache(item as Item, ITEMS_CACHE)
+    res.forEach((item) => {
+      addToCache(item as Item, ITEMS_CACHE)
     })
     return res
   } catch (err) {
@@ -337,8 +357,6 @@ async function searchOpenFoodFacts(query: string) {
           image =
             (await imageService.getSingleImage(translatedTxt)) || DEFAULT_IMAGE
         }
-
-        // console.log(image)
 
         return {
           searchId: product.code,
@@ -636,6 +654,7 @@ function computeRelevanceScore(
   const isEnglishWord = translateService.isEnglishWord(q)
 
   let translatedName = name
+
   if (!isEnglishWord) {
     translatedName = normalizeText(translatedTxt)
   }

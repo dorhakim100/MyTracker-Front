@@ -1,7 +1,8 @@
-if ('serviceWorker' in navigator && import.meta.env.PROD) {
-  window.addEventListener('load', function () {
-    navigator.serviceWorker.register('/sw.js').catch(function (err) {
-      console.error('Service worker registration failed:', err)
-    })
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations?.().then((regs) => {
+    regs.forEach((r) => r.unregister())
   })
+}
+if ('caches' in window) {
+  caches.keys().then((keys) => Promise.all(keys.map((k) => caches.delete(k))))
 }

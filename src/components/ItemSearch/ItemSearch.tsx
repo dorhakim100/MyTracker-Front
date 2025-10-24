@@ -155,12 +155,13 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
   useEffect(() => {
     if (!filter.txt) {
       setResults(favoriteItems)
-      setResultsDragable(true)
     }
   }, [filter.txt, favoriteItems])
 
   const onClearQuery = () => {
     setFilter((prev) => ({ ...prev, txt: '' }))
+    setResults(favoriteItems)
+    setResultsDragable(true)
   }
 
   const onItemClick = (item: Item) => {
