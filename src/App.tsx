@@ -26,7 +26,7 @@ import { searchService } from './services/search/search-service.ts'
 import { EditGoal } from './components/EditGoal/EditGoal.tsx'
 import { ScreenLoader } from './components/ScreenLoader/ScreenLoader.tsx'
 import { getDefaultsPrefs } from './services/system/system.service.ts'
-import { CustomButton } from './CustomMui/CustomButton/CustomButton.tsx'
+import { PwaInstall } from './pages/PwaInstall/PwaInstall.tsx'
 
 const colors = [
   'primary',
@@ -140,12 +140,7 @@ function App() {
   }
 
   if (shouldShowInstallGuide) {
-    // return <InstallGuide />
-    return (
-      <div>
-        <CustomButton onClick={() => promptInstall()} text='Install' />
-      </div>
-    )
+    return <PwaInstall />
   }
 
   if (isFirstLoading) return <ScreenLoader />
