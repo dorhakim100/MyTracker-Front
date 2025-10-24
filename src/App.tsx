@@ -28,6 +28,8 @@ import { ScreenLoader } from './components/ScreenLoader/ScreenLoader.tsx'
 import { getDefaultsPrefs } from './services/system/system.service.ts'
 import { PwaInstall } from './pages/PwaInstall/PwaInstall.tsx'
 
+const isProd = import.meta.env.PROD
+
 const colors = [
   'primary',
   'blue',
@@ -41,20 +43,7 @@ const colors = [
 ]
 
 function App() {
-  const {
-    isPwaInstalled,
-    isInstallable,
-    promptInstall,
-    shouldShowInstallGuide,
-    platform,
-  } = usePwaDetect()
-
-  useEffect(() => {
-    console.log('isPwaInstalled', isPwaInstalled)
-    console.log('isInstallable', isInstallable)
-    console.log('shouldShowInstallGuide', shouldShowInstallGuide)
-    console.log('platform', platform)
-  }, [platform])
+  const { shouldShowInstallGuide } = usePwaDetect()
 
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -139,12 +128,12 @@ function App() {
     }
   }
 
-  if (shouldShowInstallGuide) {
+  if (shouldShowInstallGuide && isProd) {
     return (
       <main className={`main ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
         <AppHeader />
         <div className=''>
-          <PwaInstall promptInstall={() => promptInstall()} />
+          <PwaInstall />
         </div>
       </main>
     )

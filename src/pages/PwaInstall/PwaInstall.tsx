@@ -2,11 +2,10 @@ import { CustomButton } from '../../CustomMui/CustomButton/CustomButton.tsx'
 import { Typography } from '@mui/material'
 
 import downloadAnimation from '../../../public/download-animation.gif'
+import { usePwaDetect } from '../../hooks/usePwaDetect.tsx'
 
-interface PwaInstallProps {
-  promptInstall: () => void
-}
-export function PwaInstall({ promptInstall }: PwaInstallProps) {
+export function PwaInstall() {
+  const { promptInstall } = usePwaDetect()
   return (
     <div className='pwa-install-container'>
       <Typography variant='h3'>Install the app</Typography>
