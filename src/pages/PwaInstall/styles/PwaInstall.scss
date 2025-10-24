@@ -5,14 +5,38 @@
   gap: 1.5rem;
   padding: 1rem;
 
-  h3 {
-    text-align: center;
+  .title-container {
+    display: grid;
+    grid-template-columns: 40px 1fr 40px;
 
-    font-weight: 600;
-    color: $primary-color;
+    align-items: center;
+
+    // gap: 0.2rem 1rem;
+    h3 {
+      text-align: center;
+      font-size: 2rem;
+
+      font-weight: 600;
+      color: $primary-color;
+
+      grid-column: 2/3;
+    }
+
+    img {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+    }
   }
+
   h6 {
     text-align: center;
+  }
+
+  .ios-instructions-image {
+    width: 80% !important;
+    justify-self: center !important;
+    margin: 0 auto !important;
   }
 
   .install-container {

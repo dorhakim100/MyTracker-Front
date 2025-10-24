@@ -132,7 +132,7 @@ function App() {
 
   // _handleManifest removed; logic inlined in effect above
 
-  if (shouldShowInstallGuide && !isProd) {
+  if (shouldShowInstallGuide && isProd) {
     return (
       <main className={`main ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
         <AppHeader />

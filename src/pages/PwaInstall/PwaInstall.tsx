@@ -3,6 +3,7 @@ import { Typography } from '@mui/material'
 
 import downloadAnimation from '../../../public/download-animation.gif'
 import iosInstructions from '../../../public/ios-download.png'
+import logo from '../../../public/logo-square.png'
 
 type Props = {
   promptInstall: () => Promise<void>
@@ -13,15 +14,17 @@ type Props = {
 export function PwaInstall({ promptInstall, platform, isInstallable }: Props) {
   return (
     <div className='pwa-install-container'>
-      <Typography variant='h3'>Install the app</Typography>
+      <div className='title-container'>
+        <img src={logo} alt='logo' className='logo-image' />
+        <Typography variant='h3'>Install the app</Typography>
+        <img src={downloadAnimation} alt='download-animation' />
+      </div>
       {platform === 'ios' ? (
-        <div className='ios-instructions'>
-          <img
-            src={iosInstructions}
-            alt='ios-instructions'
-            className='ios-instructions-image'
-          />
-        </div>
+        <img
+          src={iosInstructions}
+          alt='ios-instructions'
+          className='ios-instructions-image'
+        />
       ) : (
         <div className='install-container'>
           <Typography variant='h6'>
