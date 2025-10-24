@@ -43,7 +43,8 @@ const colors = [
 ]
 
 function App() {
-  const { shouldShowInstallGuide } = usePwaDetect()
+  const { shouldShowInstallGuide, promptInstall, platform, isInstallable } =
+    usePwaDetect()
 
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -82,7 +83,30 @@ function App() {
   useEffect(() => {
     smoothScroll()
 
-    _handleManifest()
+    const manifest = document.querySelector<HTMLLinkElement>('#pwa-manifest')
+    if (manifest) {
+      let desiredHref = '/manifest.json'
+      switch (location.pathname) {
+        case '/diary':
+          desiredHref = '/manifest-diary.json'
+          break
+        case '/progress':
+          desiredHref = '/manifest-progress.json'
+          break
+        case '/signin':
+          desiredHref = '/manifest-signin.json'
+          break
+        case '/user':
+          desiredHref = '/manifest-user.json'
+          break
+        default:
+          desiredHref = '/manifest.json'
+          break
+      }
+      if (!manifest.href.endsWith(desiredHref)) {
+        manifest.href = desiredHref
+      }
+    }
   }, [location.pathname])
 
   useEffect(() => {
@@ -106,34 +130,18 @@ function App() {
     loadFavoriteItems()
   }, [user])
 
-  function _handleManifest() {
-    const manifest = document.querySelector<HTMLLinkElement>('#pwa-manifest')
-    if (!manifest) return
-    switch (location.pathname) {
-      case '/diary':
-        manifest.href = '/manifest-diary.json'
-        break
-      case '/progress':
-        manifest.href = '/manifest-progress.json'
-        break
-      case '/signin':
-        manifest.href = '/manifest-signin.json'
-        break
-      case '/user':
-        manifest.href = '/manifest-user.json'
-        break
-      default:
-        manifest.href = '/manifest.json'
-        break
-    }
-  }
+  // _handleManifest removed; logic inlined in effect above
 
-  if (shouldShowInstallGuide && isProd) {
+  if (shouldShowInstallGuide && !isProd) {
     return (
       <main className={`main ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
         <AppHeader />
         <div className=''>
-          <PwaInstall />
+          <PwaInstall
+            promptInstall={promptInstall}
+            platform={platform}
+            isInstallable={isInstallable}
+          />
         </div>
       </main>
     )

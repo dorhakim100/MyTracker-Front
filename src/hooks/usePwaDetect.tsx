@@ -43,6 +43,8 @@ export function usePwaDetect(): UsePwaDetect {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const onBeforeInstallPrompt = (e: any) => {
+      // Avoid re-capturing and re-calling preventDefault on route changes
+      if (deferredPromptRef.current) return
       e.preventDefault()
       deferredPromptRef.current = e
       setIsInstallable(true)
