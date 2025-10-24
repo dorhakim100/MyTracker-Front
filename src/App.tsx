@@ -2,6 +2,8 @@ import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { Routes, Route, useLocation } from 'react-router'
 
+import { usePwaDetect } from './hooks/usePwaDetect.tsx'
+
 import { routes } from './assets/routes/routes'
 
 import { smoothScroll, getRoutes } from './services/util.service'
@@ -24,6 +26,7 @@ import { searchService } from './services/search/search-service.ts'
 import { EditGoal } from './components/EditGoal/EditGoal.tsx'
 import { ScreenLoader } from './components/ScreenLoader/ScreenLoader.tsx'
 import { getDefaultsPrefs } from './services/system/system.service.ts'
+import { CustomButton } from './CustomMui/CustomButton/CustomButton.tsx'
 
 const colors = [
   'primary',
@@ -38,6 +41,21 @@ const colors = [
 ]
 
 function App() {
+  const {
+    isPwaInstalled,
+    isInstallable,
+    promptInstall,
+    shouldShowInstallGuide,
+    platform,
+  } = usePwaDetect()
+
+  useEffect(() => {
+    console.log('isPwaInstalled', isPwaInstalled)
+    console.log('isInstallable', isInstallable)
+    console.log('shouldShowInstallGuide', shouldShowInstallGuide)
+    console.log('platform', platform)
+  }, [platform])
+
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
@@ -119,6 +137,15 @@ function App() {
         manifest.href = '/manifest.json'
         break
     }
+  }
+
+  if (shouldShowInstallGuide) {
+    // return <InstallGuide />
+    return (
+      <div>
+        <CustomButton onClick={() => promptInstall()} text='Install' />
+      </div>
+    )
   }
 
   if (isFirstLoading) return <ScreenLoader />
