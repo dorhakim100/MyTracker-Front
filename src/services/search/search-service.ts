@@ -332,10 +332,12 @@ async function searchOpenFoodFacts(query: string) {
 
     const res = await Promise.all(
       data.products.map(async (product: OFFProduct) => {
-        const proteins = Math.floor(+(product.nutriments?.proteins_100g ?? 0))
-        const carbs = Math.floor(+(product.nutriments?.carbohydrates_100g ?? 0))
-        const fats = Math.floor(+(product.nutriments?.fat_100g ?? 0))
-        const calories = Math.floor(
+        const proteins = +Math.floor(+(product.nutriments?.proteins_100g ?? 0))
+        const carbs = +Math.floor(
+          +(product.nutriments?.carbohydrates_100g ?? 0)
+        )
+        const fats = +Math.floor(+(product.nutriments?.fat_100g ?? 0))
+        const calories = +Math.floor(
           +(product.nutriments?.['energy-kcal_100g'] ?? 0) ||
             +(product.nutriments?.['energy-kcal'] ?? 0) ||
             calculateCaloriesFromMacros({ protein: proteins, carbs, fats })
@@ -405,7 +407,7 @@ async function getProductById(id: string) {
         const calories =
           +(product.nutriments?.['energy-kcal_100g'] ?? 0) ||
           +(product.nutriments?.['energy-kcal'] ?? 0) ||
-          calculateCaloriesFromMacros({ protein, carbs, fats }).total
+          +calculateCaloriesFromMacros({ protein, carbs, fats }).total
 
         return { protein, carbs, fat: fats, calories }
       })(),
@@ -454,7 +456,7 @@ async function getProductsByIds(ids: string[]) {
       const calories =
         +(product.nutriments?.['energy-kcal_100g'] ?? 0) ||
         +(product.nutriments?.['energy-kcal'] ?? 0) ||
-        calculateCaloriesFromMacros({ protein: proteins, carbs, fats }).total
+        +calculateCaloriesFromMacros({ protein: proteins, carbs, fats }).total
 
       let image = product.image_small_url
       if (!image) {
@@ -573,10 +575,10 @@ function _getMacrosFromUSDA(food: FDCFood) {
   }).total
 
   return {
-    protein,
-    carbs,
-    fat: fats,
-    calories,
+    protein: +protein,
+    carbs: +carbs,
+    fat: +fats,
+    calories: +calories,
   }
 }
 

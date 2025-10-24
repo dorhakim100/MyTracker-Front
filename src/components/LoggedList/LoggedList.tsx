@@ -103,11 +103,15 @@ export function LoggedList({ mealPeriod }: { mealPeriod: MealPeriod }) {
   }
 
   const renderSecondaryText = (item: Log) => {
+    console.log(item.macros?.calories)
+
     if (item.source === searchTypes.custom)
       return `${item.macros?.calories.toFixed(0)} kcal`
     const cachedItem = cachedItems.find((i) => i.searchId === item.itemId)
-    return cachedItem ? (
-      `${item.macros?.calories.toFixed(0)} kcal`
+    let caloriesToReturn
+    if (cachedItem) caloriesToReturn = +item.macros?.calories
+    return caloriesToReturn ? (
+      `${caloriesToReturn.toFixed(0)} kcal`
     ) : (
       <CustomSkeleton
         variant='text'
