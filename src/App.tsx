@@ -140,7 +140,14 @@ function App() {
   }
 
   if (shouldShowInstallGuide) {
-    return <PwaInstall />
+    return (
+      <main className={`main ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
+        <AppHeader />
+        <div className=''>
+          <PwaInstall promptInstall={() => promptInstall()} />
+        </div>
+      </main>
+    )
   }
 
   if (isFirstLoading) return <ScreenLoader />

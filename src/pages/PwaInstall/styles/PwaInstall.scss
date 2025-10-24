@@ -1,0 +1,23 @@
+.pwa-install-container {
+  display: grid;
+
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1rem;
+
+  h3 {
+    text-align: center;
+
+    font-weight: 600;
+    color: $primary-color;
+  }
+  h6 {
+    text-align: center;
+  }
+
+  .download-animation {
+    justify-self: center;
+    width: 280px;
+    height: 280px;
+  }
+}
