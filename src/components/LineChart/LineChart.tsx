@@ -81,6 +81,7 @@ export default function LineChart({
 
   const chartRef = useRef<ChartJS<'line'>>(null)
   const [clickedIndex, setClickedIndex] = useState<number | null>(null)
+  const isDragging = useRef(false)
 
   const lightenColor = (hex: string, amount: number) => {
     if (!hex || !hex.startsWith('#')) return hex
@@ -248,6 +249,7 @@ export default function LineChart({
 
   // Click handler (mouse)
   const handleClick: React.MouseEventHandler<HTMLCanvasElement> = (e) => {
+    if (isDragging.current) return
     const chart = chartRef.current
     if (!chart) return
 
@@ -371,12 +373,22 @@ export default function LineChart({
     chart.update('none')
   }, [clickedIndex, isDarkMode])
 
+  const handleTouchEnd: React.TouchEventHandler<HTMLCanvasElement> = () => {
+    isDragging.current = false
+  }
+
+  const handleTouchStart: React.TouchEventHandler<HTMLCanvasElement> = () => {
+    isDragging.current = true
+  }
+
   return (
     <Line
       data={processedData}
       options={options}
       onClick={handleClick}
       onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      onTouchStart={handleTouchStart}
       ref={chartRef}
       plugins={[guidelinePlugin]}
     />

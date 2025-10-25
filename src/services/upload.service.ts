@@ -18,7 +18,6 @@ async function uploadImg(ev: any): Promise<any> {
   try {
     const res = await fetch(UPLOAD_URL, { method: 'POST', body: formData })
     const imgData = await res.json()
-    // console.log(imgData)
     return imgData
   } catch (err) {
     console.error(err)
