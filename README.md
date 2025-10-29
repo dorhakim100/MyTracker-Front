@@ -2,6 +2,10 @@
 
 MyTracker is a nutrition and progress tracking mobile app built with React, TypeScript, Vite, MUI, and modern charts. It features barcode scanning, daily diary logging, macro goals, BMR/weight tools, theming, and smooth UX.
 
+## Related Links
+- 🔗 [Backend Repository](https://github.com/dorhakim100/MyTracker-Back)
+- 🔗 [Live Site](https://interested-selia-dorhakim-444c2d8e.koyeb.app/)
+
 ## Tech Stack
 
 - React 19 + TypeScript, Vite
