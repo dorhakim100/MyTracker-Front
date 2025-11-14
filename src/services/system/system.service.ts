@@ -18,9 +18,12 @@ export async function getPrefs(): Promise<Prefs> {
     )
     if (
       entity &&
-      (entity.isDarkMode !== undefined || entity.isEnglish !== undefined)
+      (entity.isDarkMode !== undefined ||
+        entity.isEnglish !== undefined ||
+        entity.app !== undefined)
     ) {
       return {
+        app: entity.app,
         isDarkMode: !!entity.isDarkMode,
         isEnglish: entity.isEnglish ?? false,
         favoriteColor: entity.favoriteColor,
@@ -36,6 +39,7 @@ export async function getPrefs(): Promise<Prefs> {
     if (str) {
       const parsed = JSON.parse(str)
       const migrated: Prefs = {
+        app: parsed.app,
         isDarkMode: !!parsed.isDarkMode,
         isEnglish: parsed.isEnglish ?? false,
         favoriteColor: parsed.favoriteColor,
@@ -63,6 +67,7 @@ export async function getPrefs(): Promise<Prefs> {
 export async function setPrefs(prefs: Prefs): Promise<void> {
   const toSave: Prefs & { _id: string } = {
     _id: RECORD_ID,
+    app: prefs.app,
     isDarkMode: !!prefs.isDarkMode,
     isEnglish: !!prefs.isEnglish,
     favoriteColor: prefs.favoriteColor,
@@ -73,6 +78,7 @@ export async function setPrefs(prefs: Prefs): Promise<void> {
 
 export function getDefaultsPrefs(): Prefs {
   return {
+    app: 'my-tracker',
     isDarkMode: false,
     isEnglish: false,
     favoriteColor: 'primary',

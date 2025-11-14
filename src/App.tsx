@@ -25,7 +25,7 @@ import { SignIn } from './CustomMui/SignIn/SignIn.tsx'
 import { searchService } from './services/search/search-service.ts'
 import { EditGoal } from './components/EditGoal/EditGoal.tsx'
 import { ScreenLoader } from './components/ScreenLoader/ScreenLoader.tsx'
-import { getDefaultsPrefs } from './services/system/system.service.ts'
+import { getDefaultsPrefs, setPrefs } from './services/system/system.service.ts'
 import { PwaInstall } from './pages/PwaInstall/PwaInstall.tsx'
 
 const isProd = import.meta.env.PROD
@@ -50,6 +50,10 @@ function App() {
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
 
+  const app = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.app
+  )
+
   const user = useSelector(
     (stateSelector: RootState) => stateSelector.userModule.user
   )
@@ -62,7 +66,7 @@ function App() {
     (stateSelector: RootState) => stateSelector.systemModule.isFirstLoading
   )
 
-  const filteredRoutes = getRoutes(routes, user)
+  const filteredRoutes = getRoutes(routes, user, prefs.app)
 
   const location = useLocation()
 
@@ -130,13 +134,19 @@ function App() {
     loadFavoriteItems()
   }, [user])
 
-  // _handleManifest removed; logic inlined in effect above
+  useEffect(() => {
+    // setPrefs({ ...prefs, app: app })
+  }, [app])
+
+  useEffect(() => {
+    // console.log('prefs', prefs)
+  }, [prefs])
 
   if (shouldShowInstallGuide && isProd) {
     return (
       <main className={`main ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
         <AppHeader />
-        <div className=''>
+        <div className="">
           <PwaInstall
             promptInstall={promptInstall}
             platform={platform}
@@ -155,7 +165,7 @@ function App() {
         <UserMsg />
         <main className={`main ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
           <AppHeader />
-          <div className=''>
+          <div className="">
             <EditGoal saveGoal={(goal) => handleFirstGoal(goal, user)} />
           </div>
         </main>
@@ -181,7 +191,7 @@ function App() {
           duration={0.25}
         >
           {!user ? (
-            <div className='page-container login-sign-up-container'>
+            <div className="page-container login-sign-up-container">
               <SignIn />
             </div>
           ) : (

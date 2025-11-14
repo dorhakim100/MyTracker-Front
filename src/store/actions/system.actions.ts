@@ -15,9 +15,7 @@ import {
   // SET_SHOWED_UPDATE_MESSAGE,
   SET_NAVIGATE_TO,
   SET_IS_FIRST_LOADING,
-  SET_APP,
 } from '../reducers/system.reducer'
-import { App } from '../../types/app/App'
 
 export function setIsLoading(stateToSet: boolean) {
   store.dispatch({ type: stateToSet ? LOADING_START : LOADING_DONE })
@@ -70,7 +68,4 @@ export function setIsFirstLoading(isFirstLoadingToSet: boolean) {
 }
 export function onClosePrefsHeader() {
   setIsPrefs(false)
-}
-export function setApp(appToSet: App) {
-  store.dispatch({ type: SET_APP, app: appToSet })
 }

@@ -29,7 +29,6 @@ export interface SystemState {
   modalMessage: string
   slideDirection: number
   navigateTo: string
-  app: App
 }
 
 const initialState: SystemState = {
@@ -43,7 +42,6 @@ const initialState: SystemState = {
   modalMessage: '',
   slideDirection: 1,
   navigateTo: '',
-  app: 'my-tracker',
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

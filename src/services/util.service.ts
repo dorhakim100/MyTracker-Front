@@ -1,4 +1,5 @@
 import { Route } from '../assets/routes/routes'
+import { App } from '../types/app/App'
 import { User } from '../types/user/User'
 import debounceLib from 'debounce'
 
@@ -151,7 +152,7 @@ export function smoothScroll(): void {
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
-export function getRoutes(routes: Route[], user: User | null) {
+export function getRoutes(routes: Route[], user: User | null, app: App) {
   let filteredRoutes = routes
   if (user) {
     filteredRoutes = filteredRoutes.filter((route) => route.path !== '/signin')
