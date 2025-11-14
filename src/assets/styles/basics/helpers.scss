@@ -869,3 +869,13 @@ select {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+.app-name {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: $primary-color;
+
+  &.dark-mode {
+    color: $white;
+  }
+}

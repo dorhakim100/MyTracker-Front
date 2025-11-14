@@ -7,29 +7,35 @@
 
   padding: 0.5em;
 
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr 20px;
   align-items: center;
 
   background-color: $light-gray;
-  // background-image: linear-gradient(
-  //   to bottom,
-  //   hsla(180, 40%, 95%, 0.9),
-  //   hsla(174, 47%, 80%, 0.9)
-  // );
 
   &.dark-mode {
     background-color: $primary-color-darker;
-    // background-image: linear-gradient(
-    //   to bottom,
-    //   hsla(174, 46%, 14%, 0.7),
-    //   hsla(180, 40%, 6%, 0.846)
-    // );
   }
   img {
-    // width: 100%;
     height: $header-height;
-    // object-fit: contain;
+  }
+
+  .app-select-container {
+    grid-column: 1/2;
+    #header-select {
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+      padding: 0;
+    }
+
+    .MuiInputBase-root {
+      width: 100%;
+    }
+
+    .MuiOutlinedInput-notchedOutline {
+      border: none !important;
+    }
   }
 
   button {
@@ -37,5 +43,15 @@
     svg {
       font-size: 1.5em;
     }
+  }
+}
+
+.app-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+
+  img {
+    height: $header-height;
   }
 }

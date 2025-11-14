@@ -2,6 +2,7 @@
 
 import { Prefs } from '../../types/system/Prefs.ts'
 import { getDefaultsPrefs } from '../../services/system/system.service.ts'
+import { App } from '../../types/app/App.ts'
 
 export const LOADING_START = 'LOADING_START'
 export const LOADING_DONE = 'LOADING_DONE'
@@ -16,7 +17,7 @@ export const SET_MODAL_MESSAGE = 'SET_MODAL_MESSAGE'
 export const SET_SHOWED_UPDATE_MESSAGE = 'SET_SHOWED_UPDATE_MESSAGE'
 export const SET_SLIDE_DIRECTION = 'SET_SLIDE_DIRECTION'
 export const SET_NAVIGATE_TO = 'SET_NAVIGATE_TO'
-
+export const SET_APP = 'SET_APP'
 export interface SystemState {
   isLoading: boolean
   prefs: Prefs
@@ -28,6 +29,7 @@ export interface SystemState {
   modalMessage: string
   slideDirection: number
   navigateTo: string
+  app: App
 }
 
 const initialState: SystemState = {
@@ -41,6 +43,7 @@ const initialState: SystemState = {
   modalMessage: '',
   slideDirection: 1,
   navigateTo: '',
+  app: 'my-tracker',
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -70,6 +73,8 @@ export function systemReducer(state = initialState, action: any = {}) {
       return { ...state, slideDirection: action.slideDirection }
     case SET_NAVIGATE_TO:
       return { ...state, navigateTo: action.navigateTo }
+    case SET_APP:
+      return { ...state, app: action.app }
     default:
       return state
   }
