@@ -1,3 +1,4 @@
+import { apps } from '../assets/config/apps'
 import { Route } from '../assets/routes/routes'
 import { App } from '../types/app/App'
 import { User } from '../types/user/User'
@@ -158,6 +159,19 @@ export function getRoutes(routes: Route[], user: User | null, app: App) {
     filteredRoutes = filteredRoutes.filter((route) => route.path !== '/signin')
   } else {
     filteredRoutes = filteredRoutes.filter((route) => route.path !== '/user')
+  }
+
+  switch (app) {
+    case apps.myTracker.id:
+      // filteredRoutes = filteredRoutes.filter((route) => route.path !== '/lift-mate')
+      console.log('my-tracker')
+      break
+    case apps.liftMate.id:
+      // filteredRoutes = filteredRoutes.filter((route) => route.path !== '/my-tracker')
+      console.log('lift-mate')
+      break
+    default:
+      break
   }
 
   return filteredRoutes

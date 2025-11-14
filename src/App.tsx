@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { Routes, Route, useLocation } from 'react-router'
 
@@ -50,10 +50,6 @@ function App() {
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
 
-  const app = useSelector(
-    (stateSelector: RootState) => stateSelector.systemModule.app
-  )
-
   const user = useSelector(
     (stateSelector: RootState) => stateSelector.userModule.user
   )
@@ -66,7 +62,10 @@ function App() {
     (stateSelector: RootState) => stateSelector.systemModule.isFirstLoading
   )
 
-  const filteredRoutes = getRoutes(routes, user, prefs.app)
+  const filteredRoutes = useMemo(
+    () => getRoutes(routes, user, prefs.app),
+    [user, prefs.app]
+  )
 
   const location = useLocation()
 
@@ -133,14 +132,6 @@ function App() {
     }
     loadFavoriteItems()
   }, [user])
-
-  useEffect(() => {
-    // setPrefs({ ...prefs, app: app })
-  }, [app])
-
-  useEffect(() => {
-    // console.log('prefs', prefs)
-  }, [prefs])
 
   if (shouldShowInstallGuide && isProd) {
     return (
