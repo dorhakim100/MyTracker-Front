@@ -879,3 +879,13 @@ select {
     color: $white;
   }
 }
+
+body.dark-mode {
+  .MuiPopover-paper {
+    background-color: $dark-gray;
+
+    .Mui-selected {
+      background-color: $darker-gray;
+    }
+  }
+}
