@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react'
 import { useSelector } from 'react-redux'
-import { Routes, Route, useLocation } from 'react-router'
+import { Routes, Route, useLocation, useNavigate } from 'react-router'
 
 import { usePwaDetect } from './hooks/usePwaDetect.tsx'
 
@@ -25,8 +25,9 @@ import { SignIn } from './CustomMui/SignIn/SignIn.tsx'
 import { searchService } from './services/search/search-service.ts'
 import { EditGoal } from './components/EditGoal/EditGoal.tsx'
 import { ScreenLoader } from './components/ScreenLoader/ScreenLoader.tsx'
-import { getDefaultsPrefs, setPrefs } from './services/system/system.service.ts'
+import { getDefaultsPrefs } from './services/system/system.service.ts'
 import { PwaInstall } from './pages/PwaInstall/PwaInstall.tsx'
+import { apps } from './assets/config/apps.ts'
 
 const isProd = import.meta.env.PROD
 
@@ -46,6 +47,8 @@ function App() {
   const { shouldShowInstallGuide, promptInstall, platform, isInstallable } =
     usePwaDetect()
 
+  const navigate = useNavigate()
+
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
@@ -62,10 +65,23 @@ function App() {
     (stateSelector: RootState) => stateSelector.systemModule.isFirstLoading
   )
 
-  const filteredRoutes = useMemo(
-    () => getRoutes(routes, user, prefs.app),
-    [user, prefs.app]
-  )
+  const filteredRoutes = useMemo(() => {
+    if (user) {
+      switch (prefs.app) {
+        case apps.myTracker.id:
+          navigate('/')
+          break
+        case apps.liftMate.id:
+          navigate('/lift-mate/dashboard')
+          break
+      }
+    }
+
+    const routesToReturn = getRoutes(routes, user, prefs.app)
+    console.log(routesToReturn)
+
+    return routesToReturn
+  }, [user, prefs.app])
 
   const location = useLocation()
 

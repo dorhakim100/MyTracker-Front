@@ -27,6 +27,7 @@ import { setSelectedDiaryDay } from '../../store/actions/user.actions'
 import { messages } from '../../assets/config/messages'
 import { showErrorMsg } from '../../services/event-bus.service'
 import { BarcodeScanner } from '../../components/BarcodeScanner/BarcodeScanner'
+import { apps } from '../../assets/config/apps'
 // import { searchTypes } from '../../assets/config/search-types'
 
 type ModalType = 'search' | 'scan'
@@ -111,7 +112,7 @@ export function FixedBottomNavigation(props: {
     } else {
       setValue(index)
     }
-  }, [location.pathname, props.routes])
+  }, [location.pathname, props.routes, prefs.app])
 
   function onScanClick() {
     setModalType(modalTypes.scan)
@@ -166,7 +167,7 @@ export function FixedBottomNavigation(props: {
             >
               <SpeedDial
                 // color='primary'
-                ariaLabel='SpeedDial basic example'
+                ariaLabel="SpeedDial basic example"
                 aria-label={props.centerAction?.ariaLabel || 'center-action'}
                 icon={<AddIcon />}
                 onClick={(ev) => {

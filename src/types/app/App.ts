@@ -1,1 +1,1 @@
-export type App = 'my-tracker' | 'lift-mate'
+export type App = 'my-tracker' | 'lift-mate' | 'all'

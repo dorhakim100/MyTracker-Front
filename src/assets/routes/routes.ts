@@ -6,6 +6,9 @@ import { Diary } from '../../pages/Diary/Diary'
 import { Progress } from '../../pages/Progress/Progress'
 import { UserDetails } from '../../pages/UserDetails/UserDetails'
 
+import { LiftMateDashboard } from '../../pages/LiftMateDashboard/LiftMateDashboard'
+import { LiftMateWorkouts } from '../../pages/LiftMateWorkouts/LiftMateWorkouts'
+
 import { SignIn } from '../../CustomMui/SignIn/SignIn.tsx'
 import { App } from '../../types/app/App'
 
@@ -56,10 +59,31 @@ export const routes: Route[] = [
   },
 
   {
+    title: 'Dasdhboard',
+    path: '/lift-mate/dashboard',
+    element: LiftMateDashboard,
+    icon: DashboardIcon,
+    app: apps.liftMate.id,
+  },
+  {
+    title: 'Workouts',
+    path: '/lift-mate/workouts',
+    element: LiftMateWorkouts,
+    icon: DashboardIcon,
+    app: apps.liftMate.id,
+  },
+  {
+    title: 'Workouts',
+    path: '/lift-mate/workouts',
+    element: LiftMateWorkouts,
+    icon: DashboardIcon,
+    app: apps.liftMate.id,
+  },
+  {
     title: 'User',
     path: '/user',
     element: UserDetails,
     icon: UserIcon,
-    app: apps.myTracker.id,
+    app: 'all',
   },
 ]

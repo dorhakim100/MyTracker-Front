@@ -164,13 +164,13 @@ export function getRoutes(routes: Route[], user: User | null, app: App) {
   switch (app) {
     case apps.myTracker.id:
       filteredRoutes = filteredRoutes.filter(
-        (route) => route.app === apps.myTracker.id
+        (route) => route.app === apps.myTracker.id || route.app === 'all'
       )
 
       break
     case apps.liftMate.id:
       filteredRoutes = filteredRoutes.filter(
-        (route) => route.app === apps.liftMate.id
+        (route) => route.app === apps.liftMate.id || route.app === 'all'
       )
 
       break
