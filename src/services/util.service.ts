@@ -163,12 +163,16 @@ export function getRoutes(routes: Route[], user: User | null, app: App) {
 
   switch (app) {
     case apps.myTracker.id:
-      // filteredRoutes = filteredRoutes.filter((route) => route.path !== '/lift-mate')
-      console.log('my-tracker')
+      filteredRoutes = filteredRoutes.filter(
+        (route) => route.app === apps.myTracker.id
+      )
+
       break
     case apps.liftMate.id:
-      // filteredRoutes = filteredRoutes.filter((route) => route.path !== '/my-tracker')
-      console.log('lift-mate')
+      filteredRoutes = filteredRoutes.filter(
+        (route) => route.app === apps.liftMate.id
+      )
+
       break
     default:
       break
