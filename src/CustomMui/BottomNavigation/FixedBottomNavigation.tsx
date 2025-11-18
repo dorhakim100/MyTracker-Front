@@ -1,4 +1,4 @@
-import React, { MouseEventHandler, useEffect, useState } from 'react'
+import React, { MouseEventHandler, useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import Box from '@mui/material/Box'
 import CssBaseline from '@mui/material/CssBaseline'
@@ -72,14 +72,22 @@ export function FixedBottomNavigation(props: {
 
   const [currIndex, setCurrIndex] = useState(0)
 
-  const midIndex = Math.floor(props.routes.length / 2)
+  const filteredRoutes = useMemo(() => {
+    const userRoute = props.routes.find((route) => route.path === '/user')
+    return [
+      ...props.routes.filter((route) => route.app === prefs.app),
+      userRoute,
+    ]
+  }, [props.routes, prefs.app])
+
+  const midIndex = Math.floor(filteredRoutes.length / 2)
   const leftRoutes = React.useMemo(
-    () => props.routes.slice(0, midIndex),
-    [props.routes, midIndex]
+    () => filteredRoutes.slice(0, midIndex),
+    [filteredRoutes, midIndex]
   )
   const rightRoutes = React.useMemo(
-    () => props.routes.slice(midIndex),
-    [props.routes, midIndex]
+    () => filteredRoutes.slice(midIndex),
+    [filteredRoutes, midIndex]
   )
 
   const speedDialActions = [
@@ -96,8 +104,8 @@ export function FixedBottomNavigation(props: {
   ]
 
   useEffect(() => {
-    const index = props.routes.findIndex(
-      (route) => route.path === location.pathname
+    const index = filteredRoutes.findIndex(
+      (route) => route && route.path === location.pathname
     )
 
     if (index === -1) {
@@ -112,7 +120,7 @@ export function FixedBottomNavigation(props: {
     } else {
       setValue(index)
     }
-  }, [location.pathname, props.routes, prefs.app])
+  }, [location.pathname, filteredRoutes, prefs.app])
 
   function onScanClick() {
     setModalType(modalTypes.scan)
@@ -129,6 +137,61 @@ export function FixedBottomNavigation(props: {
 
   function closeSearchModal() {
     setSearchModalOpen(false)
+  }
+
+  const renderSpeedDial = () => {
+    return (
+      prefs.app === apps.myTracker.id && (
+        <div
+          className={`speed-dial-container ${isAddModal ? 'show' : ''}`}
+          onClick={(ev) => {
+            ev.stopPropagation()
+            ev.preventDefault()
+
+            if (!isAddModal) return
+            setIsAddModal(false)
+          }}
+        >
+          <SpeedDial
+            // color='primary'
+            ariaLabel="SpeedDial basic example"
+            aria-label={props.centerAction?.ariaLabel || 'center-action'}
+            icon={<AddIcon />}
+            onClick={(ev) => {
+              if (!user) return showErrorMsg(messages.error.register)
+              ev.stopPropagation()
+              setIsAddModal(!isAddModal)
+
+              setSelectedDiaryDay({
+                ...user.loggedToday,
+                weight: selectedDay?.weight,
+              })
+            }}
+            open={isAddModal}
+            className={`${prefs.isDarkMode ? 'dark-mode' : ''} ${
+              prefs.favoriteColor
+            }`}
+            sx={
+              {
+                // position: 'absolute',
+                // opacity: 0,
+              }
+            }
+          >
+            {speedDialActions.map((action) => (
+              <SpeedDialAction
+                key={action.name}
+                icon={action.icon}
+                onClick={
+                  action.onClick as unknown as MouseEventHandler<HTMLDivElement>
+                }
+                className={`${prefs.favoriteColor}`}
+              />
+            ))}
+          </SpeedDial>
+        </div>
+      )
+    )
   }
 
   return (
@@ -155,54 +218,7 @@ export function FixedBottomNavigation(props: {
           elevation={3}
         >
           <Box sx={{ position: 'relative' }}>
-            <div
-              className={`speed-dial-container ${isAddModal ? 'show' : ''}`}
-              onClick={(ev) => {
-                ev.stopPropagation()
-                ev.preventDefault()
-
-                if (!isAddModal) return
-                setIsAddModal(false)
-              }}
-            >
-              <SpeedDial
-                // color='primary'
-                ariaLabel="SpeedDial basic example"
-                aria-label={props.centerAction?.ariaLabel || 'center-action'}
-                icon={<AddIcon />}
-                onClick={(ev) => {
-                  if (!user) return showErrorMsg(messages.error.register)
-                  ev.stopPropagation()
-                  setIsAddModal(!isAddModal)
-
-                  setSelectedDiaryDay({
-                    ...user.loggedToday,
-                    weight: selectedDay?.weight,
-                  })
-                }}
-                open={isAddModal}
-                className={`${prefs.isDarkMode ? 'dark-mode' : ''} ${
-                  prefs.favoriteColor
-                }`}
-                sx={
-                  {
-                    // position: 'absolute',
-                    // opacity: 0,
-                  }
-                }
-              >
-                {speedDialActions.map((action) => (
-                  <SpeedDialAction
-                    key={action.name}
-                    icon={action.icon}
-                    onClick={
-                      action.onClick as unknown as MouseEventHandler<HTMLDivElement>
-                    }
-                    className={`${prefs.favoriteColor}`}
-                  />
-                ))}
-              </SpeedDial>
-            </div>
+            {renderSpeedDial()}
 
             <BottomNavigation
               showLabels
@@ -212,6 +228,7 @@ export function FixedBottomNavigation(props: {
               }}
             >
               {leftRoutes.map((route, index) => {
+                if (!route) return null
                 return (
                   <BottomNavigationAction
                     key={route.path}
@@ -232,6 +249,7 @@ export function FixedBottomNavigation(props: {
               <BottomNavigationAction sx={{ visibility: 'hidden' }} />
 
               {rightRoutes.map((route, index) => {
+                if (!route) return null
                 return (
                   <BottomNavigationAction
                     key={route.path}

@@ -72,15 +72,16 @@ function App() {
           navigate('/')
           break
         case apps.liftMate.id:
-          navigate('/lift-mate/dashboard')
+          navigate('/lift-mate/workout')
           break
       }
     }
 
-    const routesToReturn = getRoutes(routes, user, prefs.app)
-    console.log(routesToReturn)
+    // const routesToReturn = getRoutes(routes, user, prefs.app)
+    // console.log(routesToReturn)
 
-    return routesToReturn
+    // return routesToReturn
+    return routes
   }, [user, prefs.app])
 
   const location = useLocation()

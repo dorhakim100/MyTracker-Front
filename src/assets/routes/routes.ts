@@ -25,6 +25,10 @@ import FormatListBulletedAddIcon from '@mui/icons-material/FormatListBulletedAdd
 import InsightsIcon from '@mui/icons-material/Insights'
 import SignInIcon from '@mui/icons-material/Login'
 import UserIcon from '@mui/icons-material/Person'
+
+import FitnessCenterIcon from '@mui/icons-material/FitnessCenter'
+import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered'
+
 import { apps } from '../config/apps.ts'
 
 export const routes: Route[] = [
@@ -51,32 +55,24 @@ export const routes: Route[] = [
   },
 
   {
-    title: 'Sign in',
-    path: '/signin',
-    element: SignIn,
-    icon: SignInIcon,
-    app: apps.myTracker.id,
-  },
-
-  {
-    title: 'Dasdhboard',
-    path: '/lift-mate/dashboard',
+    title: 'Workout',
+    path: '/lift-mate/workout',
     element: LiftMateDashboard,
-    icon: DashboardIcon,
+    icon: FitnessCenterIcon,
     app: apps.liftMate.id,
   },
   {
-    title: 'Workouts',
+    title: 'My Workouts',
     path: '/lift-mate/workouts',
     element: LiftMateWorkouts,
-    icon: DashboardIcon,
+    icon: FormatListNumberedIcon,
     app: apps.liftMate.id,
   },
   {
-    title: 'Workouts',
-    path: '/lift-mate/workouts',
+    title: 'Progress',
+    path: '/lift-mate/progress',
     element: LiftMateWorkouts,
-    icon: DashboardIcon,
+    icon: InsightsIcon,
     app: apps.liftMate.id,
   },
   {
@@ -84,6 +80,13 @@ export const routes: Route[] = [
     path: '/user',
     element: UserDetails,
     icon: UserIcon,
+    app: 'all',
+  },
+  {
+    title: 'Sign in',
+    path: '/signin',
+    element: SignIn,
+    icon: SignInIcon,
     app: 'all',
   },
 ]
