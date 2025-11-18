@@ -1,31 +1,31 @@
 import { useMemo, useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
-import { LoggedList } from '../../components/LoggedList/LoggedList'
+import { LoggedList } from '../../../components/LoggedList/LoggedList'
 import { Box, Divider, IconButton, Typography } from '@mui/material'
 import { useSelector } from 'react-redux'
-import { RootState } from '../../store/store'
+import { RootState } from '../../../store/store'
 
-import { TimesContainer } from '../../components/TimesContainer/TimesContainer'
-import { getMacrosAmountFromDay } from '../../services/macros/macros.service'
+import { TimesContainer } from '../../../components/TimesContainer/TimesContainer'
+import { getMacrosAmountFromDay } from '../../../services/macros/macros.service'
 
-import { CustomAccordion } from '../../CustomMui/CustomAccordion/CustomAccordion'
-import { LinearMacrosProgress } from '../../components/LinearMacrosProgress/LinearMacrosProgress'
+import { CustomAccordion } from '../../../CustomMui/CustomAccordion/CustomAccordion'
+import { LinearMacrosProgress } from '../../../components/LinearMacrosProgress/LinearMacrosProgress'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
-import { dayService } from '../../services/day/day.service'
-import { showErrorMsg } from '../../services/event-bus.service'
-import { messages } from '../../assets/config/messages'
-import { SlideAnimation } from '../../components/SlideAnimation/SlideAnimation'
-import { setSelectedDiaryDay } from '../../store/actions/user.actions'
-import { MealPeriod } from '../../types/mealPeriod/MealPeriod'
-import { AddItemButton } from '../../components/AddItemButton/AddItemButton'
+import { dayService } from '../../../services/day/day.service'
+import { showErrorMsg } from '../../../services/event-bus.service'
+import { messages } from '../../../assets/config/messages'
+import { SlideAnimation } from '../../../components/SlideAnimation/SlideAnimation'
+import { setSelectedDiaryDay } from '../../../store/actions/user.actions'
+import { MealPeriod } from '../../../types/mealPeriod/MealPeriod'
+import { AddItemButton } from '../../../components/AddItemButton/AddItemButton'
 import DonutLargeIcon from '@mui/icons-material/DonutLarge'
 import WbTwilightIcon from '@mui/icons-material/WbTwilight'
 import LightModeIcon from '@mui/icons-material/LightMode'
 import BedtimeIcon from '@mui/icons-material/Bedtime'
 
-import { getDateFromISO } from '../../services/util.service'
-import { CustomDatePicker } from '../../CustomMui/CustomDatePicker/CustomDatePicker'
+import { getDateFromISO } from '../../../services/util.service'
+import { CustomDatePicker } from '../../../CustomMui/CustomDatePicker/CustomDatePicker'
 
 const DAY_IN_MS = 24 * 60 * 60 * 1000
 export function Diary() {
@@ -167,7 +167,7 @@ export function Diary() {
           prefs.isDarkMode ? 'dark-mode' : ''
         }`}
       >
-        <div className='header' style={{ padding: '1rem 0' }}>
+        <div className="header" style={{ padding: '1rem 0' }}>
           <IconButton onClick={() => onDayChange(-1)}>
             <ArrowBackIcon />
           </IconButton>
@@ -190,9 +190,9 @@ export function Diary() {
             <ArrowForwardIcon />
           </IconButton>
         </div>
-        <div className='macros-accordion-container'>
+        <div className="macros-accordion-container">
           <CustomAccordion
-            title='Macros'
+            title="Macros"
             cmp={
               <LinearMacrosProgress
                 caloriesProgress={selectedDayDiary?.calories || 0}
@@ -232,12 +232,12 @@ export function Diary() {
                   }`}
                   key={meal.label}
                 >
-                  <div className='header'>
-                    <div className='label-container'>
+                  <div className="header">
+                    <div className="label-container">
                       {meal.icon}
-                      <Typography variant='h6'>{meal.label}</Typography>
+                      <Typography variant="h6">{meal.label}</Typography>
                     </div>
-                    <Typography variant='body2' className='period'>
+                    <Typography variant="body2" className="period">
                       {meal.rangeLabel}
                     </Typography>
                   </div>
@@ -245,8 +245,8 @@ export function Diary() {
                     className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
                   />
                   <LoggedList mealPeriod={meal.period as MealPeriod} />
-                  <div className='meal-footer'>
-                    <Typography variant='body2' className='total-calories'>
+                  <div className="meal-footer">
+                    <Typography variant="body2" className="total-calories">
                       {`Total: ${caloriesToSet} kcal`}
                     </Typography>
                     {hasItems?.length !== 0 && (

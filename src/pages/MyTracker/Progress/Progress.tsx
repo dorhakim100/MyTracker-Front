@@ -1,32 +1,32 @@
 import { Card, Divider, ListItemIcon, Typography } from '@mui/material'
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { WeightChart } from '../../components/WeightChart/WeightChart'
+import { WeightChart } from '../../../components/WeightChart/WeightChart'
 
-import { debounce } from '../../services/util.service'
+import { debounce } from '../../../services/util.service'
 
-import { getDateFromISO } from '../../services/util.service'
-import { dayService } from '../../services/day/day.service'
-import { RootState } from '../../store/store'
+import { getDateFromISO } from '../../../services/util.service'
+import { dayService } from '../../../services/day/day.service'
+import { RootState } from '../../../store/store'
 import { useSelector } from 'react-redux'
-import { searchService } from '../../services/search/search-service'
-import { loadItems, setEditMealItem } from '../../store/actions/item.actions'
-import { CustomList } from '../../CustomMui/CustomList/CustomList'
-import { LoggedToday } from '../../types/loggedToday/LoggedToday'
-import { messages } from '../../assets/config/messages'
-import { showErrorMsg } from '../../services/event-bus.service'
-import { israelLocaleStringObject } from '../../assets/config/times'
+import { searchService } from '../../../services/search/search-service'
+import { loadItems, setEditMealItem } from '../../../store/actions/item.actions'
+import { CustomList } from '../../../CustomMui/CustomList/CustomList'
+import { LoggedToday } from '../../../types/loggedToday/LoggedToday'
+import { messages } from '../../../assets/config/messages'
+import { showErrorMsg } from '../../../services/event-bus.service'
+import { israelLocaleStringObject } from '../../../assets/config/times'
 import EventRepeatIcon from '@mui/icons-material/EventRepeat'
-import { SlideDialog } from '../../components/SlideDialog/SlideDialog'
-import { ItemDetails } from '../../components/ItemDetails/ItemDetails'
-import { Log } from '../../types/log/Log'
-import CustomSkeleton from '../../CustomMui/CustomSkeleton/CustomSkeleton'
-import { SkeletonList } from '../../components/SkeletonList/SkeletonList'
-import { MacrosDonut } from '../../components/MacrosDonut/MacrosDonut'
-import { searchTypes } from '../../assets/config/search-types'
-import { searchUrls } from '../../assets/config/search.urls'
-import { imageService } from '../../services/image/image.service'
-import { Item } from '../../types/item/Item'
+import { SlideDialog } from '../../../components/SlideDialog/SlideDialog'
+import { ItemDetails } from '../../../components/ItemDetails/ItemDetails'
+import { Log } from '../../../types/log/Log'
+import CustomSkeleton from '../../../CustomMui/CustomSkeleton/CustomSkeleton'
+import { SkeletonList } from '../../../components/SkeletonList/SkeletonList'
+import { MacrosDonut } from '../../../components/MacrosDonut/MacrosDonut'
+import { searchTypes } from '../../../assets/config/search-types'
+import { searchUrls } from '../../../assets/config/search.urls'
+import { imageService } from '../../../services/image/image.service'
+import { Item } from '../../../types/item/Item'
 
 const ONE_DAY = 24 * 60 * 60 * 1000
 
@@ -97,7 +97,7 @@ export function Progress() {
   return (
     <>
       <div
-        className='page-container progress-container'
+        className="page-container progress-container"
         style={{ overflowY: 'hidden' }}
       >
         <WeightChart setSelectedDate={setSelectedDate} />
@@ -108,9 +108,9 @@ export function Progress() {
         open={isEditOpen}
         onClose={closeEdit}
         component={<ItemDetails noEdit={true} />}
-        title='Edit Meal'
+        title="Edit Meal"
         onSave={closeEdit}
-        type='half'
+        type="half"
       />
     </>
   )
@@ -157,8 +157,8 @@ function LogsList({
           return (
             cachedItems.find((item) => item.searchId === i.itemId)?.name || (
               <CustomSkeleton
-                variant='text'
-                width='100%'
+                variant="text"
+                width="100%"
                 height={20}
                 isDarkMode={prefs.isDarkMode}
               />
@@ -171,8 +171,8 @@ function LogsList({
           return (
             i.macros?.calories + ' kcal' || (
               <CustomSkeleton
-                variant='text'
-                width='25%'
+                variant="text"
+                width="25%"
                 height={20}
                 isDarkMode={prefs.isDarkMode}
               />
@@ -186,11 +186,11 @@ function LogsList({
 
           return img ? (
             <>
-              <ListItemIcon className='item-image-container'>
+              <ListItemIcon className="item-image-container">
                 <img
                   src={img}
                   alt={i.name}
-                  referrerPolicy='no-referrer'
+                  referrerPolicy="no-referrer"
                   onError={async (e) => {
                     await imageService.fetchOnError(e, item as Item)
                     loadItems()
@@ -205,7 +205,7 @@ function LogsList({
             </>
           ) : (
             <CustomSkeleton
-              variant='circular'
+              variant="circular"
               width={40}
               height={40}
               isDarkMode={prefs.isDarkMode}
@@ -220,7 +220,7 @@ function LogsList({
 
   return (
     <Card
-      variant='outlined'
+      variant="outlined"
       className={`card logged-today-card ${
         prefs.isDarkMode ? 'dark-mode' : ''
       }`}
@@ -229,9 +229,9 @@ function LogsList({
         className={`header-container ${prefs.isDarkMode ? 'dark-mode' : ''}`}
       >
         <EventRepeatIcon />
-        <Typography variant='h5'>Previous day logs</Typography>
-        <Typography variant='caption'>{hebrewDate}</Typography>
-        <Typography variant='h6'>{loggedToday?.calories} kcal</Typography>
+        <Typography variant="h5">Previous day logs</Typography>
+        <Typography variant="caption">{hebrewDate}</Typography>
+        <Typography variant="h6">{loggedToday?.calories} kcal</Typography>
         <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
       </div>
       {renderList()}

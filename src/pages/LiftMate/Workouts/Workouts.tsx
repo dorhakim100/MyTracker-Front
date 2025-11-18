@@ -1,4 +1,4 @@
-export function LiftMateWorkouts() {
+export function Workouts() {
   return (
     <div>
       <h1>Lift Mate Workouts</h1>

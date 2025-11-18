@@ -1,15 +1,15 @@
 import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { RootState } from '../../store/store'
+import { RootState } from '../../../store/store'
 
-import { TimesContainer } from '../../components/TimesContainer/TimesContainer'
-import { StatsCarousel } from '../../components/StatsCarousel/StatsCarousel'
-import { CurrMeal } from '../../components/CurrMeal/CurrMeal'
+import { TimesContainer } from '../../../components/TimesContainer/TimesContainer'
+import { StatsCarousel } from '../../../components/StatsCarousel/StatsCarousel'
+import { CurrMeal } from '../../../components/CurrMeal/CurrMeal'
 import {
   handleDiaryDayChange,
   setSelectedDiaryDay,
-} from '../../store/actions/user.actions'
-import { getDateFromISO } from '../../services/util.service'
+} from '../../../store/actions/user.actions'
+import { getDateFromISO } from '../../../services/util.service'
 
 const CHECK_INTERVAL = 1000 * 60 // minute
 
@@ -39,7 +39,7 @@ export function Dashboard() {
   }
 
   return (
-    <div className='page-container dashboard-container'>
+    <div className="page-container dashboard-container">
       <TimesContainer />
       <StatsCarousel />
       <CurrMeal />

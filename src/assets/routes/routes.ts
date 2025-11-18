@@ -1,13 +1,14 @@
 // routes.ts
 import React from 'react'
 
-import { Dashboard } from '../../pages/Dashboard/Dashboard'
-import { Diary } from '../../pages/Diary/Diary'
-import { Progress } from '../../pages/Progress/Progress'
+import { Dashboard } from '../../pages/MyTracker/Dashboard/Dashboard'
+import { Diary } from '../../pages/MyTracker/Diary/Diary'
+import { Progress as MyTrackerProgress } from '../../pages/MyTracker/Progress/Progress'
 import { UserDetails } from '../../pages/UserDetails/UserDetails'
 
-import { LiftMateDashboard } from '../../pages/LiftMateDashboard/LiftMateDashboard'
-import { LiftMateWorkouts } from '../../pages/LiftMateWorkouts/LiftMateWorkouts'
+import { Workout } from '../../pages/LiftMate/Workout/Workout.tsx'
+import { Workouts } from '../../pages/LiftMate/Workouts/Workouts.tsx'
+import { Progress as LiftMateProgress } from '../../pages/LiftMate/Progress/Progress.tsx'
 
 import { SignIn } from '../../CustomMui/SignIn/SignIn.tsx'
 import { App } from '../../types/app/App'
@@ -49,7 +50,7 @@ export const routes: Route[] = [
   {
     title: 'Progress',
     path: '/progress',
-    element: Progress,
+    element: MyTrackerProgress,
     icon: InsightsIcon,
     app: apps.myTracker.id,
   },
@@ -57,21 +58,21 @@ export const routes: Route[] = [
   {
     title: 'Workout',
     path: '/lift-mate/workout',
-    element: LiftMateDashboard,
+    element: Workout,
     icon: FitnessCenterIcon,
     app: apps.liftMate.id,
   },
   {
     title: 'My Workouts',
     path: '/lift-mate/workouts',
-    element: LiftMateWorkouts,
+    element: Workouts,
     icon: FormatListNumberedIcon,
     app: apps.liftMate.id,
   },
   {
     title: 'Progress',
     path: '/lift-mate/progress',
-    element: LiftMateWorkouts,
+    element: LiftMateProgress,
     icon: InsightsIcon,
     app: apps.liftMate.id,
   },
