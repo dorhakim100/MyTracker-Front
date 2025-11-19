@@ -183,10 +183,12 @@ export function EditWorkout({
         <div className="exercises-lists-container">
           <CustomList
             items={exerciseResults}
-            renderPrimaryText={(exercise) => exercise.name}
+            renderPrimaryText={(exercise) =>
+              capitalizeFirstLetter(exercise.name)
+            }
             renderSecondaryText={(exercise) => (
               <span className={`${prefs.isDarkMode ? 'dark-mode' : ''}`}>
-                {exercise.muscleGroups.join(', ')}
+                {capitalizeFirstLetter(exercise.muscleGroups.join(', '))}
               </span>
             )}
             renderLeft={(exercise) => (
@@ -212,9 +214,11 @@ export function EditWorkout({
           {workout.exercises.length > 0 ? (
             <CustomList
               items={workout.exercises}
-              renderPrimaryText={(exercise) => exercise.name}
+              renderPrimaryText={(exercise) =>
+                capitalizeFirstLetter(exercise.name)
+              }
               renderSecondaryText={(exercise) =>
-                exercise.muscleGroups.join(', ')
+                capitalizeFirstLetter(exercise.muscleGroups.join(', '))
               }
               renderLeft={(exercise) => (
                 <img src={exercise.image} alt={exercise.name} />
