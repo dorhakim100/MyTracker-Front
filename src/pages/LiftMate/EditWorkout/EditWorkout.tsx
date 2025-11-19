@@ -19,6 +19,7 @@ import { CustomButton } from '../../../CustomMui/CustomButton/CustomButton'
 import AddIcon from '@mui/icons-material/Add'
 import RemoveIcon from '@mui/icons-material/Remove'
 import { Divider } from '@mui/material'
+import { DeleteAction } from '../../../components/DeleteAction/DeleteAction'
 
 interface EditWorkoutProps {
   selectedWorkout?: Workout | null
@@ -89,6 +90,13 @@ export function EditWorkout({
 
   function onExerciseFilterChangeTxt(txt: string) {
     setExerciseFilter((prev) => ({ ...prev, txt }))
+  }
+
+  function onDeleteExercise(exercise: Exercise) {
+    const newExercises = workout.exercises.filter(
+      (e) => e.exerciseId !== exercise.exerciseId
+    )
+    setWorkout({ ...workout, exercises: newExercises })
   }
 
   async function handleSearch() {
@@ -195,6 +203,7 @@ export function EditWorkout({
                 className={`${getExerciseActionButtonClass(exercise)}`}
               />
             )}
+            noResultsMessage="No exercises found..."
           />
           <h4>Selected Exercises</h4>
           <Divider
@@ -214,6 +223,11 @@ export function EditWorkout({
               className={`selected-exercise-list ${
                 prefs.isDarkMode ? 'dark-mode' : ''
               }`}
+              noResultsMessage="No exercises added yet"
+              isSwipeable={true}
+              renderRightSwipeActions={(exercise) => (
+                <DeleteAction item={exercise} onDeleteItem={onDeleteExercise} />
+              )}
             />
           ) : (
             <div className="no-exercises">No exercises added yet</div>

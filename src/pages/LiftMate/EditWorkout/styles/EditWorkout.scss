@@ -1,10 +1,15 @@
 .edit-workout-container {
   padding: 1em;
   height: 100%;
+  .custom-stepper {
+    height: 650px;
+  }
 
   .edit-workout-stage {
     min-height: 300px;
     padding: 1em;
+    display: grid;
+    gap: 1rem;
 
     &.name-stage {
       // TODO: Add styles for name stage
@@ -26,7 +31,7 @@
   .exercises-lists-container {
     display: grid;
     height: 400px;
-    grid-template-rows: 200px auto auto 200px;
+    grid-template-rows: 150px auto auto 200px;
 
     h4 {
       margin: 0.8rem 0;
