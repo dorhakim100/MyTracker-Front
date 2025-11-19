@@ -1,13 +1,31 @@
 import axios from 'axios'
+import { Exercise } from '../../types/exercise/Exercise'
 
 export const exerciseSearch = async (query: string) => {
   const url = 'https://www.exercisedb.dev/api/v1/exercises/search'
 
-  const { data } = await axios.get(url, {
-    params: { q: query },
-  })
+  try {
+    const { data } = await axios.get(url, {
+      params: { q: query },
+    })
 
-  return data
+    const exercise = data.data
+
+    if (!exercise) throw new Error('No exercises found')
+
+    const formattedData: Exercise[] = exercise.map((exercise: any) => {
+      return {
+        name: exercise.name,
+        muscleGroups: exercise.bodyParts,
+        image: exercise.gifUrl,
+        exerciseId: exercise.exerciseId,
+      }
+    })
+
+    return formattedData
+  } catch (err) {
+    throw err
+  }
 }
 
 const WGER_BASE_URL = 'https://wger.de/api/v2'

@@ -1,5 +1,6 @@
 .edit-workout-container {
   padding: 1em;
+  height: 100%;
 
   .edit-workout-stage {
     min-height: 300px;
@@ -21,5 +22,28 @@
   &.dark-mode {
     // TODO: Add dark mode styles if needed
   }
-}
 
+  .exercises-lists-container {
+    display: grid;
+    height: 400px;
+    grid-template-rows: 200px auto auto 200px;
+
+    h4 {
+      margin: 0.8rem 0;
+    }
+  }
+
+  .search-exercise-list,
+  .selected-exercise-list {
+    // max-height: 300px;
+    height: 100%;
+    overflow-y: auto;
+
+    img {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+  }
+}
