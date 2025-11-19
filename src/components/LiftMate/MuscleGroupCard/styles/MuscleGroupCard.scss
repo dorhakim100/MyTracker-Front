@@ -1,6 +1,44 @@
-.muscle-container {
+.muscle-group-card-container {
   position: relative;
   width: 300px;
+  border-radius: 6px;
+
+  h2 {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    text-align: start;
+    font-size: 1.5rem;
+    font-weight: 600;
+    z-index: 3;
+    margin-bottom: 0px;
+    color: $white;
+    padding: 0.5rem 1rem;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 50%;
+    border-radius: 3px;
+
+    background: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.75) 0%,
+      rgba(0, 0, 0, 0.2) 40%,
+      rgba(0, 0, 0, 0) 90%
+    );
+    z-index: 2;
+  }
+}
+
+.muscle-container {
+  position: relative;
   //   height: auto;
 
   .base-img {
@@ -19,16 +57,17 @@
   .base-img,
   .muscle-overlay {
     width: 100%;
-    // height: 100%; // fill the container
-    object-fit: cover; // keep aspect ratio, fill, crop extra
     object-fit: contain;
-    object-position: top; // default: upper body
     display: block;
   }
 
   .muscle-overlay {
-    // width: 99%;
     padding: 5%;
+  }
+  &.back {
+    .muscle-overlay {
+      padding: 8%;
+    }
   }
 
   &.upper-body {
@@ -58,6 +97,9 @@
     .muscle-overlay {
       transform: translateY(-5%);
     }
+    .muscle-overlay {
+      padding: 7%;
+    }
   }
   &.quads {
     .base-img,
@@ -70,6 +112,10 @@
     .muscle-overlay {
       transform: translateY(-35%);
     }
+    .muscle-overlay {
+      padding: 8%;
+      transform: translateY(-32%);
+    }
   }
   &.hamstrings {
     .base-img,
@@ -80,8 +126,11 @@
   &.calves {
     .base-img,
     .muscle-overlay {
-      //   transform: translateY(-10%);
       transform: translateY(-65%);
+    }
+    .muscle-overlay {
+      padding: 10%;
+      transform: translateY(-55%);
     }
   }
 

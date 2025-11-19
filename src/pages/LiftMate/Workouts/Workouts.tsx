@@ -7,7 +7,6 @@ export function Workouts() {
       <h1>Lift Mate Workouts</h1>
       {musclesGroup.map((muscleGroup) => (
         <div key={muscleGroup.name}>
-          <h2>{muscleGroup.name}</h2>
           <MuscleGroupCard muscleGroup={muscleGroup} />
         </div>
       ))}

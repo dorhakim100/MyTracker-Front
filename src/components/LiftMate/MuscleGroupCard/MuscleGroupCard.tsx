@@ -3,6 +3,7 @@ import { MuscleGroup } from '../../../types/muscleGroup/MuscleGroup'
 
 import { Card } from '@mui/material'
 import { RootState } from '../../../store/store'
+import { capitalizeFirstLetter } from '../../../services/util.service'
 
 const BASE_FRONT =
   'https://wger.de/static/images/muscles/muscular_system_front.svg'
@@ -29,20 +30,23 @@ export function MuscleGroupCard({ muscleGroup }: { muscleGroup: MuscleGroup }) {
   }
 
   return (
-    <Card
-      className={`card muscle-container ${
-        prefs.isDarkMode ? 'dark-mode' : ''
-      } ${getMuscleContainerClass()}`}
-    >
-      <img src={getBase()} alt="base" className="base-img" />
-      {muscleGroup.img.map((img) => (
-        <img
-          key={`${muscleGroup.name}-${img}`}
-          src={img}
-          alt="muscle"
-          className="muscle-overlay"
-        />
-      ))}
-    </Card>
+    <div className="muscle-group-card-container">
+      <h2>{capitalizeFirstLetter(muscleGroup.name)}</h2>
+      <Card
+        className={`card muscle-container ${
+          prefs.isDarkMode ? 'dark-mode' : ''
+        } ${getMuscleContainerClass()}`}
+      >
+        <img src={getBase()} alt="base" className="base-img" />
+        {muscleGroup.img.map((img) => (
+          <img
+            key={`${muscleGroup.name}-${img}`}
+            src={img}
+            alt="muscle"
+            className="muscle-overlay"
+          />
+        ))}
+      </Card>{' '}
+    </div>
   )
 }
