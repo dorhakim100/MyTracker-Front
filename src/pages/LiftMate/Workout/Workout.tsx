@@ -1,5 +1,8 @@
 import { useEffect } from 'react'
-import { exerciseSearch } from '../../../services/exersice-search/exersice-search'
+import {
+  exerciseSearch,
+  fetchMuscles,
+} from '../../../services/exersice-search/exersice-search'
 
 export function Workout() {
   useEffect(() => {
@@ -8,6 +11,11 @@ export function Workout() {
       console.log(data)
     }
     fetchExercises()
+    const fetchMusclesData = async () => {
+      const data = await fetchMuscles()
+      console.log(data)
+    }
+    fetchMusclesData()
   }, [])
   return (
     <div>

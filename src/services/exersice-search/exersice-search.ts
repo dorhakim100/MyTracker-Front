@@ -9,3 +9,15 @@ export const exerciseSearch = async (query: string) => {
 
   return data
 }
+
+const WGER_BASE_URL = 'https://wger.de/api/v2'
+
+export const fetchMuscles = async () => {
+  const res = await fetch(`${WGER_BASE_URL}/muscle/`)
+  if (!res.ok) throw new Error('Failed to fetch muscles')
+
+  const data = await res.json()
+  // data.results is an array of muscles
+  console.log(data)
+  return data
+}
