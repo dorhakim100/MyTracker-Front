@@ -1,7 +1,7 @@
 .muscle-container {
   position: relative;
-  width: 400px;
-  height: auto;
+  width: 300px;
+  //   height: auto;
 
   .base-img {
     display: block;
@@ -14,5 +14,81 @@
     left: 0;
     width: 100%; /* same size as base image */
     pointer-events: none;
+  }
+
+  .base-img,
+  .muscle-overlay {
+    width: 100%;
+    // height: 100%; // fill the container
+    object-fit: cover; // keep aspect ratio, fill, crop extra
+    object-fit: contain;
+    object-position: top; // default: upper body
+    display: block;
+  }
+
+  .muscle-overlay {
+    // width: 99%;
+    padding: 5%;
+  }
+
+  &.upper-body {
+    .base-img,
+    .muscle-overlay {
+    }
+  }
+
+  &.middle {
+    .base-img,
+    .muscle-overlay {
+      transform: translateY(-50%);
+    }
+  }
+
+  &.lower-body {
+    .base-img,
+    .muscle-overlay {
+      transform: translateY(-60%);
+    }
+  }
+
+  &.triceps,
+  &.biceps,
+  &.back {
+    .base-img,
+    .muscle-overlay {
+      transform: translateY(-5%);
+    }
+  }
+  &.quads {
+    .base-img,
+    .muscle-overlay {
+      transform: translateY(-40%);
+    }
+  }
+  &.glutes {
+    .base-img,
+    .muscle-overlay {
+      transform: translateY(-35%);
+    }
+  }
+  &.hamstrings {
+    .base-img,
+    .muscle-overlay {
+      transform: translateY(-45%);
+    }
+  }
+  &.calves {
+    .base-img,
+    .muscle-overlay {
+      //   transform: translateY(-10%);
+      transform: translateY(-65%);
+    }
+  }
+
+  &.abs {
+    .base-img,
+    .muscle-overlay {
+      transform: translateY(-20%);
+    }
   }
 }
