@@ -1,0 +1,18 @@
+.muscle-container {
+  position: relative;
+  width: 400px;
+  height: auto;
+
+  .base-img {
+    display: block;
+    width: 100%;
+  }
+
+  .muscle-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%; /* same size as base image */
+    pointer-events: none;
+  }
+}

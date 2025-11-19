@@ -1,4 +1,6 @@
-const musclesGroup = [
+import { MuscleGroup } from '../../types/muscleGroup/MuscleGroup'
+
+export const musclesGroup: MuscleGroup[] = [
   {
     name: 'chest',
     base: 'front',
