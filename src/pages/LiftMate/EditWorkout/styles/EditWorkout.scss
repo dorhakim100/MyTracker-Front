@@ -1,0 +1,25 @@
+.edit-workout-container {
+  padding: 1em;
+
+  .edit-workout-stage {
+    min-height: 300px;
+    padding: 1em;
+
+    &.name-stage {
+      // TODO: Add styles for name stage
+    }
+
+    &.exercises-stage {
+      // TODO: Add styles for exercises stage
+    }
+
+    &.details-stage {
+      // TODO: Add styles for details stage
+    }
+  }
+
+  &.dark-mode {
+    // TODO: Add dark mode styles if needed
+  }
+}
+
