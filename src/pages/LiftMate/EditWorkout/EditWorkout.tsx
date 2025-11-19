@@ -99,6 +99,10 @@ export function EditWorkout({
     setWorkout({ ...workout, exercises: newExercises })
   }
 
+  function onReorderExercises(exercises: Exercise[]) {
+    setWorkout({ ...workout, exercises })
+  }
+
   async function handleSearch() {
     try {
       if (!exerciseFilter.txt) {
@@ -232,6 +236,9 @@ export function EditWorkout({
               renderRightSwipeActions={(exercise) => (
                 <DeleteAction item={exercise} onDeleteItem={onDeleteExercise} />
               )}
+              isDragable={true}
+              onReorder={onReorderExercises}
+              dragOffsetY={-180}
             />
           ) : (
             <div className="no-exercises">No exercises added yet</div>
