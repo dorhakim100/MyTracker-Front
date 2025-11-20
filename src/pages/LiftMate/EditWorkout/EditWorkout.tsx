@@ -21,7 +21,7 @@ import { CustomButton } from '../../../CustomMui/CustomButton/CustomButton'
 
 import AddIcon from '@mui/icons-material/Add'
 import RemoveIcon from '@mui/icons-material/Remove'
-import { Divider } from '@mui/material'
+import { Chip, Divider } from '@mui/material'
 import { DeleteAction } from '../../../components/DeleteAction/DeleteAction'
 import { musclesGroup } from '../../../assets/config/muscles-group'
 import { MuscleGroupCard } from '../../../components/LiftMate/MuscleGroupCard/MuscleGroupCard'
@@ -197,6 +197,9 @@ export function EditWorkout({
           isRemoveIcon={true}
         />
         <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
+        <div className="selected-muscles-group-container">
+          {renderSelectedMusclesGroup()}
+        </div>
         <CustomInput
           value={searchMuscleGroupTxt}
           onChange={setSearchMuscleGroupTxt}
@@ -216,6 +219,20 @@ export function EditWorkout({
           ))}
         </div>
       </div>
+    )
+  }
+
+  function renderSelectedMusclesGroup() {
+    return workout.muscleGroups.length > 0 ? (
+      workout.muscleGroups.map((muscleGroup) => (
+        <Chip
+          label={capitalizeFirstLetter(muscleGroup)}
+          variant="outlined"
+          key={`${muscleGroup}-chip`}
+        />
+      ))
+    ) : (
+      <span className="no-muscles-selected">No muscles selected</span>
     )
   }
 
