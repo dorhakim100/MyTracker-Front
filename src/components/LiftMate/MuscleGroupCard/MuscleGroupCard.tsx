@@ -14,10 +14,12 @@ const BASE_BACK =
 interface MuscleGroupCardProps {
   muscleGroup: MuscleGroup
   className?: string
+  onClick?: () => void
 }
 export function MuscleGroupCard({
   muscleGroup,
   className,
+  onClick,
 }: MuscleGroupCardProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -38,7 +40,10 @@ export function MuscleGroupCard({
   }
 
   return (
-    <div className={`muscle-group-card-container ${className}`}>
+    <div
+      className={`muscle-group-card-container ${className}`}
+      onClick={onClick}
+    >
       <h2>{capitalizeFirstLetter(muscleGroup.name)}</h2>
       <Card
         className={`card muscle-container ${

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 
 import { RootState } from '../../../store/store'
@@ -44,6 +44,8 @@ export function EditWorkout({
     selectedWorkout || workoutService.getEmptyWorkout()
   )
 
+  const [searchMuscleGroupTxt, setSearchMuscleGroupTxt] = useState('')
+
   const [exerciseFilter, setExerciseFilter] = useState({
     txt: '',
   })
@@ -58,6 +60,13 @@ export function EditWorkout({
   const [activeStage, setActiveStage] = useState<WorkoutStage>(stages[0])
   const [direction, setDirection] = useState(1)
 
+  const filteredMuscleGroups = useMemo(() => {
+    const regex = new RegExp(searchMuscleGroupTxt, 'i')
+    return musclesGroup.filter((muscleGroup) => {
+      return regex.test(muscleGroup.name)
+    })
+  }, [searchMuscleGroupTxt])
+
   useEffect(() => {
     latestHandleSearchRef.current = handleSearch
   }, [handleSearch])
@@ -66,20 +75,29 @@ export function EditWorkout({
     debouncedRunSearch()
   }, [exerciseFilter, debouncedRunSearch])
 
-  function onStageChange(stage: WorkoutStage, diff: number) {
+  const onStageChange = (stage: WorkoutStage, diff: number) => {
     setDirection(diff)
     setActiveStage(stage)
   }
 
-  function onNameChange(name: string) {
+  const onNameChange = (name: string) => {
     setWorkout({ ...workout, name })
   }
 
-  function onAddExercise(exercise: Exercise) {
+  const onToggleMuscleGroup = (muscleGroup: MuscleGroup) => {
+    const newMuscleGroups = [...workout.muscleGroups]
+    if (newMuscleGroups.includes(muscleGroup.name)) {
+      newMuscleGroups.splice(newMuscleGroups.indexOf(muscleGroup.name), 1)
+    } else {
+      newMuscleGroups.push(muscleGroup.name)
+    }
+    setWorkout({ ...workout, muscleGroups: newMuscleGroups })
+  }
+
+  const onAddExercise = (exercise: Exercise) => {
     const addedIndex = workout.exercises.findIndex(
       (e) => e.exerciseId === exercise.exerciseId
     )
-    console.log(addedIndex)
     let newExercises: Exercise[] = []
     if (addedIndex === -1) {
       newExercises = [...workout.exercises, exercise]
@@ -87,22 +105,21 @@ export function EditWorkout({
       workout.exercises.splice(addedIndex, 1)
       newExercises = [...workout.exercises]
     }
-    console.log(newExercises)
     setWorkout({ ...workout, exercises: newExercises })
   }
 
-  function onExerciseFilterChangeTxt(txt: string) {
+  const onExerciseFilterChangeTxt = (txt: string) => {
     setExerciseFilter((prev) => ({ ...prev, txt }))
   }
 
-  function onDeleteExercise(exercise: Exercise) {
+  const onDeleteExercise = (exercise: Exercise) => {
     const newExercises = workout.exercises.filter(
       (e) => e.exerciseId !== exercise.exerciseId
     )
     setWorkout({ ...workout, exercises: newExercises })
   }
 
-  function onReorderExercises(exercises: Exercise[]) {
+  const onReorderExercises = (exercises: Exercise[]) => {
     setWorkout({ ...workout, exercises })
   }
 
@@ -115,7 +132,6 @@ export function EditWorkout({
       }
       setIsLoading(true)
       const results = await exerciseSearch(exerciseFilter.txt)
-      console.log(results)
       setExerciseResults(results)
     } catch (err) {
       console.error(err)
@@ -126,7 +142,7 @@ export function EditWorkout({
     }
   }
 
-  function getStageTitle(stage: WorkoutStage): string {
+  const getStageTitle = (stage: WorkoutStage): string => {
     switch (stage) {
       case 'name':
         return 'Workout Name'
@@ -139,7 +155,7 @@ export function EditWorkout({
     }
   }
 
-  function getIsNextDisabled(stage: WorkoutStage): boolean {
+  const getIsNextDisabled = (stage: WorkoutStage): boolean => {
     // TODO: Add validation logic
     switch (stage) {
       case 'name':
@@ -153,7 +169,7 @@ export function EditWorkout({
     }
   }
 
-  function renderStage(stage: WorkoutStage) {
+  const renderStage = (stage: WorkoutStage) => {
     switch (stage) {
       case 'name':
         return renderNameStage()
@@ -174,12 +190,21 @@ export function EditWorkout({
           onChange={onNameChange}
           placeholder="Enter workout name"
         />
+        <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
+        <CustomInput
+          value={searchMuscleGroupTxt}
+          onChange={setSearchMuscleGroupTxt}
+          placeholder="Search for muscles"
+        />
         <div className="muscles-group-container">
-          {musclesGroup.map((muscleGroup) => (
+          {filteredMuscleGroups.map((muscleGroup) => (
             <MuscleGroupCard
               key={muscleGroup.name}
               muscleGroup={muscleGroup}
-              className={`${getMuscleGroupCardClass(muscleGroup)}`}
+              className={`${getMuscleGroupCardClass(muscleGroup)} ${
+                prefs.favoriteColor
+              }`}
+              onClick={() => onToggleMuscleGroup(muscleGroup)}
             />
           ))}
         </div>
