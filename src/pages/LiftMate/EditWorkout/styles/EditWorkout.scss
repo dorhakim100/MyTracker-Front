@@ -61,10 +61,6 @@
     display: grid;
     height: 400px;
     grid-template-rows: 150px auto auto 200px;
-
-    h4 {
-      margin: 0.8rem 0;
-    }
   }
 
   .search-exercise-list,
@@ -73,11 +69,35 @@
     // height: 100%;
     overflow-y: auto;
 
+    .custom-list-item {
+      display: grid;
+      grid-template-columns: 50px 1fr auto;
+      gap: 1rem;
+    }
+
+    .MuiListItemText-primary {
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
     img {
       width: 50px;
       height: 50px;
       object-fit: cover;
       border-radius: 50%;
     }
+  }
+
+  .no-exercises,
+  .no-results-container,
+  h4 {
+    margin-top: 1rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    opacity: 0.7;
+  }
+  .no-results-container {
+    margin-top: 0;
   }
 }

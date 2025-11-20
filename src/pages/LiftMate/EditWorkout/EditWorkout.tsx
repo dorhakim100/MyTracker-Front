@@ -243,6 +243,7 @@ export function EditWorkout({
           value={exerciseFilter.txt}
           onChange={onExerciseFilterChangeTxt}
           placeholder="Search for exercises"
+          isRemoveIcon={true}
         />
 
         <div className="exercises-lists-container">
