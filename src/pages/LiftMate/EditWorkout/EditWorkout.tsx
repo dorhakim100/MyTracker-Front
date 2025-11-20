@@ -164,13 +164,17 @@ export function EditWorkout({
     // TODO: Add validation logic
     switch (stage) {
       case 'name':
-        return false // TODO: Check if name is filled
+        if (!workout.name) return true
+        if (workout.muscleGroups.length < 1) return true
+        return false
       case 'exercises':
-        return false // TODO: Check if exercises are added
+        if (workout.exercises.length < 1) return true
+        return false
       case 'details':
+        if (!workout.details) return true
         return false
       default:
-        return false
+        return true
     }
   }
 
