@@ -10,6 +10,8 @@
     padding: 1em;
     display: grid;
     gap: 1rem;
+    align-content: start;
+    height: 100%;
 
     &.name-stage {
       // TODO: Add styles for name stage

@@ -189,12 +189,14 @@ export function EditWorkout({
           value={workout.name}
           onChange={onNameChange}
           placeholder="Enter workout name"
+          isRemoveIcon={true}
         />
         <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
         <CustomInput
           value={searchMuscleGroupTxt}
           onChange={setSearchMuscleGroupTxt}
           placeholder="Search for muscles"
+          isRemoveIcon={true}
         />
         <div className="muscles-group-container">
           {filteredMuscleGroups.map((muscleGroup) => (
