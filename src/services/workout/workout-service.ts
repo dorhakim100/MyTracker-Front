@@ -8,6 +8,7 @@ function getEmptyWorkout(): Workout {
   return {
     name: '',
     exercises: [],
+    muscleGroups: [],
     details: '',
   }
 }

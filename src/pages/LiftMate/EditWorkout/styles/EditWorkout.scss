@@ -13,6 +13,17 @@
 
     &.name-stage {
       // TODO: Add styles for name stage
+      .muscles-group-container {
+        padding: 1rem;
+        width: 100%;
+        display: grid;
+        grid-auto-flow: column;
+        gap: 1rem;
+        overflow-x: auto;
+
+        .muscle-group-card-container {
+        }
+      }
     }
 
     &.exercises-stage {

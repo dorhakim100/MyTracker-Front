@@ -20,6 +20,9 @@ import AddIcon from '@mui/icons-material/Add'
 import RemoveIcon from '@mui/icons-material/Remove'
 import { Divider } from '@mui/material'
 import { DeleteAction } from '../../../components/DeleteAction/DeleteAction'
+import { musclesGroup } from '../../../assets/config/muscles-group'
+import { MuscleGroupCard } from '../../../components/LiftMate/MuscleGroupCard/MuscleGroupCard'
+import { MuscleGroup } from '../../../types/muscleGroup/MuscleGroup'
 
 interface EditWorkoutProps {
   selectedWorkout?: Workout | null
@@ -171,6 +174,15 @@ export function EditWorkout({
           onChange={onNameChange}
           placeholder="Enter workout name"
         />
+        <div className="muscles-group-container">
+          {musclesGroup.map((muscleGroup) => (
+            <MuscleGroupCard
+              key={muscleGroup.name}
+              muscleGroup={muscleGroup}
+              className={`${getMuscleGroupCardClass(muscleGroup)}`}
+            />
+          ))}
+        </div>
       </div>
     )
   }
@@ -259,6 +271,10 @@ export function EditWorkout({
     return workout.exercises.find((e) => e.exerciseId === exercise.exerciseId)
       ? 'red'
       : ''
+  }
+
+  function getMuscleGroupCardClass(muscleGroup: MuscleGroup) {
+    return workout.muscleGroups.includes(muscleGroup.name) ? 'selected' : ''
   }
 
   function renderDetailsStage() {

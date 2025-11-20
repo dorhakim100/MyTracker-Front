@@ -35,6 +35,45 @@
     );
     z-index: 2;
   }
+
+  &.selected {
+    outline: 3px solid;
+    &.primary-color {
+      outline-color: $primary-color;
+    }
+
+    &.blue {
+      outline-color: $picker-color-blue;
+    }
+
+    &.red {
+      outline-color: $picker-color-red;
+    }
+
+    &.yellow {
+      outline-color: $picker-color-yellow;
+    }
+
+    &.green {
+      outline-color: $picker-color-green;
+    }
+
+    &.orange {
+      outline-color: $picker-color-orange;
+    }
+
+    &.deepPurple {
+      outline-color: $picker-color-deep-purple;
+    }
+
+    &.purple {
+      outline-color: $picker-color-purple;
+    }
+
+    &.pink {
+      outline-color: $picker-color-pink;
+    }
+  }
 }
 
 .muscle-container {

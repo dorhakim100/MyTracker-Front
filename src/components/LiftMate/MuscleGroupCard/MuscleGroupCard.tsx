@@ -10,7 +10,15 @@ const BASE_FRONT =
 
 const BASE_BACK =
   'https://wger.de/static/images/muscles/muscular_system_back.svg'
-export function MuscleGroupCard({ muscleGroup }: { muscleGroup: MuscleGroup }) {
+
+interface MuscleGroupCardProps {
+  muscleGroup: MuscleGroup
+  className?: string
+}
+export function MuscleGroupCard({
+  muscleGroup,
+  className,
+}: MuscleGroupCardProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
@@ -30,7 +38,7 @@ export function MuscleGroupCard({ muscleGroup }: { muscleGroup: MuscleGroup }) {
   }
 
   return (
-    <div className="muscle-group-card-container">
+    <div className={`muscle-group-card-container ${className}`}>
       <h2>{capitalizeFirstLetter(muscleGroup.name)}</h2>
       <Card
         className={`card muscle-container ${
