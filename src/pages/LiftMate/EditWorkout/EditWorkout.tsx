@@ -12,7 +12,10 @@ import { CustomList } from '../../../CustomMui/CustomList/CustomList'
 import { Exercise } from '../../../types/exercise/Exercise'
 import { showErrorMsg } from '../../../services/event-bus.service'
 import { messages } from '../../../assets/config/messages'
-import { exerciseSearch } from '../../../services/exersice-search/exersice-search'
+import {
+  exerciseSearch,
+  matchesMuscleGroup,
+} from '../../../services/exersice-search/exersice-search'
 import { setIsLoading } from '../../../store/actions/system.actions'
 import { CustomButton } from '../../../CustomMui/CustomButton/CustomButton'
 
@@ -61,9 +64,11 @@ export function EditWorkout({
   const [direction, setDirection] = useState(1)
 
   const filteredMuscleGroups = useMemo(() => {
-    const regex = new RegExp(searchMuscleGroupTxt, 'i')
+    if (!searchMuscleGroupTxt) {
+      return musclesGroup
+    }
     return musclesGroup.filter((muscleGroup) => {
-      return regex.test(muscleGroup.name)
+      return matchesMuscleGroup(muscleGroup, searchMuscleGroupTxt)
     })
   }, [searchMuscleGroupTxt])
 
