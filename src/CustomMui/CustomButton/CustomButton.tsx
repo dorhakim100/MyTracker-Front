@@ -1,9 +1,9 @@
 import { Button, IconButton } from '@mui/material'
 import type { SxProps, Theme } from '@mui/material/styles'
-import { motion } from 'framer-motion'
 import type { ReactNode, MouseEvent } from 'react'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
+import { ClickAnimation } from '../../components/ClickAnimation/ClickAnimation'
 
 interface CustomButtonProps {
   text?: string
@@ -40,13 +40,9 @@ export function CustomButton({
 
   const resolvedBg = backgroundColor || prefs.favoriteColor || undefined
 
-  const MotionWrapper = motion.div
-
   return (
-    <MotionWrapper
-      whileTap={!disabled ? { scale: 0.94 } : undefined}
-      whileHover={!disabled ? { scale: 0.98 } : undefined}
-      transition={{ type: 'spring', stiffness: 400, damping: 22 }}
+    <ClickAnimation
+      disabled={disabled}
       className={`custom-button-wrapper ${
         prefs.isDarkMode ? 'dark-mode' : ''
       } ${disabled ? 'disabled' : ''}`}
@@ -78,7 +74,7 @@ export function CustomButton({
         </IconButton>
       ) : (
         <Button
-          variant='contained'
+          variant="contained"
           size={size}
           fullWidth={fullWidth}
           aria-label={ariaLabel || (typeof text === 'string' ? text : 'button')}
@@ -93,6 +89,6 @@ export function CustomButton({
           {icon && !isIconReverse && icon}
         </Button>
       )}
-    </MotionWrapper>
+    </ClickAnimation>
   )
 }

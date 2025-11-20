@@ -150,11 +150,11 @@ export function EditWorkout({
   const getStageTitle = (stage: WorkoutStage): string => {
     switch (stage) {
       case 'name':
-        return 'Workout Name'
+        return 'Name and Muscles'
       case 'exercises':
-        return 'Exercises'
+        return 'Exercises List'
       case 'details':
-        return 'Workout Details'
+        return 'Details'
       default:
         return capitalizeFirstLetter(stage)
     }
