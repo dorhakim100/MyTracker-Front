@@ -45,7 +45,7 @@ export const fetchMuscles = async () => {
  * Maps common muscle group aliases to their official names
  */
 const MUSCLE_GROUP_ALIASES: Record<string, string[]> = {
-  chest: ['pecs', 'pectorals', 'pec', 'chest muscles'],
+  chest: ['pecs', 'pectorals', 'pec', 'chest muscles', 'upper'],
   shoulders: [
     'delts',
     'deltoids',
@@ -62,8 +62,9 @@ const MUSCLE_GROUP_ALIASES: Record<string, string[]> = {
     'side deltoid',
     'lateral delt',
     'lateral deltoid',
+    'upper',
   ],
-  triceps: ['tris', 'tricep', 'triceps brachii', 'tricep muscle'],
+  triceps: ['tris', 'tricep', 'triceps brachii', 'tricep muscle', 'upper'],
   back: [
     'lats',
     'latissimus',
@@ -79,8 +80,9 @@ const MUSCLE_GROUP_ALIASES: Record<string, string[]> = {
     'lower back',
     'lumbar',
     'thoracic',
+    'romboids',
   ],
-  biceps: ['bis', 'bicep', 'biceps brachii', 'bicep muscle'],
+  biceps: ['bis', 'bicep', 'biceps brachii', 'bicep muscle', 'upper'],
   quads: [
     'quadriceps',
     'quad',
@@ -89,6 +91,8 @@ const MUSCLE_GROUP_ALIASES: Record<string, string[]> = {
     'thigh',
     'front thighs',
     'quadricep',
+    'legs',
+    'lower',
   ],
   glutes: [
     'glute',
@@ -99,6 +103,9 @@ const MUSCLE_GROUP_ALIASES: Record<string, string[]> = {
     'butt',
     'buttocks',
     'glutes muscles',
+    'legs',
+    'hips',
+    'lower',
   ],
   calves: [
     'calf',
@@ -107,8 +114,18 @@ const MUSCLE_GROUP_ALIASES: Record<string, string[]> = {
     'soleus',
     'lower leg',
     'lower legs',
+    'legs',
+    'lower',
   ],
-  hamstrings: ['hams', 'hamstring', 'ham', 'back thighs', 'posterior thigh'],
+  hamstrings: [
+    'hams',
+    'hamstring',
+    'ham',
+    'back thighs',
+    'posterior thigh',
+    'legs',
+    'lower',
+  ],
   abs: [
     'abdominals',
     'abdominal',
