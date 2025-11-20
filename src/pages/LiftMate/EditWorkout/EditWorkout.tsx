@@ -26,6 +26,7 @@ import { DeleteAction } from '../../../components/DeleteAction/DeleteAction'
 import { musclesGroup } from '../../../assets/config/muscles-group'
 import { MuscleGroupCard } from '../../../components/LiftMate/MuscleGroupCard/MuscleGroupCard'
 import { MuscleGroup } from '../../../types/muscleGroup/MuscleGroup'
+import { ClickAnimation } from '../../../components/ClickAnimation/ClickAnimation'
 
 interface EditWorkoutProps {
   selectedWorkout?: Workout | null
@@ -212,14 +213,17 @@ export function EditWorkout({
         />
         <div className="muscles-group-container">
           {filteredMuscleGroups.map((muscleGroup) => (
-            <MuscleGroupCard
+            <ClickAnimation
               key={muscleGroup.name}
-              muscleGroup={muscleGroup}
-              className={`${getMuscleGroupCardClass(muscleGroup)} ${
-                prefs.favoriteColor
-              }`}
               onClick={() => onToggleMuscleGroup(muscleGroup)}
-            />
+            >
+              <MuscleGroupCard
+                muscleGroup={muscleGroup}
+                className={`${getMuscleGroupCardClass(muscleGroup)} ${
+                  prefs.favoriteColor
+                }`}
+              />
+            </ClickAnimation>
           ))}
         </div>
       </div>
