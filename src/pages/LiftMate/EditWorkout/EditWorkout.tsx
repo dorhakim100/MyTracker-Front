@@ -7,10 +7,13 @@ import { capitalizeFirstLetter, debounce } from '../../../services/util.service'
 import { CustomStepper } from '../../../CustomMui/CustomStepper/CustomStepper'
 import { CustomInput } from '../../../CustomMui/CustomInput/CustomInput'
 import { Workout } from '../../../types/workout/Workout'
-import { workoutService } from '../../../services/workout/workout-service'
+import { workoutService } from '../../../services/workout/workout.service'
 import { CustomList } from '../../../CustomMui/CustomList/CustomList'
 import { Exercise, ExerciseDetail } from '../../../types/exercise/Exercise'
-import { showErrorMsg } from '../../../services/event-bus.service'
+import {
+  showErrorMsg,
+  showSuccessMsg,
+} from '../../../services/event-bus.service'
 import { messages } from '../../../assets/config/messages'
 import { exersiceDetailsSelects } from '../../../assets/config/exersice-details-selects'
 
@@ -33,10 +36,12 @@ import { CustomSelect } from '../../../CustomMui/CustomSelect/CustomSelect'
 import { PickerSelect } from '../../../components/Pickers/PickerSelect'
 import { SlideDialog } from '../../../components/SlideDialog/SlideDialog'
 import { ClockPicker } from '../../../components/Pickers/ClockPicker'
+import { saveWorkout } from '../../../store/actions/workout.action'
 
 interface EditWorkoutProps {
   selectedWorkout?: Workout | null
-  saveWorkout?: (workout: Workout) => void
+  // saveWorkout?: (workout: Workout) => void
+  forUserId: string
 }
 
 type MuscleGroupArea = 'all' | 'upper' | 'lower'
@@ -51,10 +56,15 @@ type WorkoutStage = (typeof stages)[number]
 
 export function EditWorkout({
   selectedWorkout,
-  saveWorkout,
+  // saveWorkout,
+  forUserId,
 }: EditWorkoutProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
+  )
+
+  const user = useSelector(
+    (stateSelector: RootState) => stateSelector.userModule.user
   )
 
   const [workout, setWorkout] = useState<Workout>(
@@ -499,12 +509,23 @@ export function EditWorkout({
     )
   }
 
-  function onFinish() {
+  async function onFinish() {
     console.log(workout)
-    // TODO: Implement save logic
-    if (saveWorkout) {
-      // saveWorkout(workoutData)
+    if (!forUserId) {
+      workout.forUserId = user?._id
     }
+
+    try {
+      await saveWorkout(workout)
+      showSuccessMsg(messages.success.saveWorkout)
+    } catch (err) {
+      console.error(err)
+      showErrorMsg(messages.error.saveWorkout)
+    }
+    // TODO: Implement save logic
+    // if (saveWorkout) {
+    //   // saveWorkout(workoutData)
+    // }
   }
 
   return (

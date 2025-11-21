@@ -10,6 +10,7 @@ export const messages = {
     saveGoal: 'Goal saved successfully',
     deleteGoal: 'Goal deleted successfully',
     deleteAccount: 'Account deleted successfully',
+    saveWorkout: 'Workout saved successfully',
   },
   error: {
     updateCalories: 'Failed to update calories',
@@ -31,5 +32,6 @@ export const messages = {
     saveGoal: 'Failed to save goal',
     deleteGoal: 'Failed to delete goal',
     deleteAccount: 'Failed to delete account',
+    saveWorkout: 'Failed to save workout',
   },
 }
