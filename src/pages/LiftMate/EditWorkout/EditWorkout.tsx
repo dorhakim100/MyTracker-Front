@@ -500,6 +500,7 @@ export function EditWorkout({
   }
 
   function onFinish() {
+    console.log(workout)
     // TODO: Implement save logic
     if (saveWorkout) {
       // saveWorkout(workoutData)
