@@ -216,7 +216,7 @@ export function EditWorkout({
         if (workout.exercises.length < 1) return true
         return false
       case 'details':
-        if (!workout.details) return true
+        if (workout.exercises.length < 1) return true
         return false
       default:
         return true
@@ -411,31 +411,44 @@ export function EditWorkout({
         ?.isAfterValue
     }
 
-    const getPickerModalValue = (type: PickerModalType | null): number => {
+    const getPickerModalValue = (
+      type: PickerModalType | null
+    ): number | string => {
       if (!type) return 0
       return (
         selectedExercise?.details![type as keyof ExerciseDetail]?.expected || 0
       )
     }
-    const onEditExerciseDetailes = (newValue: number) => {
+    const onEditExerciseDetailes = (newValue: number | string) => {
       const exerciseToUpdate = workout.exercises.find(
         (e) => e.exerciseId === pickerModal.exerciseId
       )
       if (!exerciseToUpdate) return
 
       exerciseToUpdate.details![
-        pickerModal.type! as keyof ExerciseDetail
-      ].expected = newValue
+        pickerModal.type as keyof ExerciseDetail
+      ]!.expected = newValue
 
       editExerciseDetailes(exerciseToUpdate)
+    }
+
+    const onEditExerciseNotes = (notes: string, exercise: Exercise) => {
+      if (!exercise.details?.notes)
+        exercise.details!.notes = { expected: '', actual: '' }
+      exercise.details!.notes!.expected = notes
+
+      editExerciseDetailes(exercise)
     }
 
     return (
       <>
         <div className="edit-workout-stage details-stage">
           {workout.exercises.map((exercise: Exercise) => (
-            <div key={exercise.exerciseId}>
-              <h4>{exercise.name}</h4>
+            <div
+              key={exercise.exerciseId}
+              className="exercise-details-edit-container"
+            >
+              <h4>{capitalizeFirstLetter(exercise.name)}</h4>
 
               {exersiceDetailsSelects.map((select) => (
                 <PickerSelect
@@ -448,11 +461,25 @@ export function EditWorkout({
                     type: 'number',
                   }}
                   value={
-                    exercise.details![select.name as keyof ExerciseDetail]
-                      .expected
+                    (exercise.details?.[select.name as keyof ExerciseDetail]
+                      ?.expected as number) || 0
                   }
+                  key={select.name}
                 />
               ))}
+              <CustomInput
+                value={exercise.details?.notes?.expected || ''}
+                onChange={(notes: string) =>
+                  onEditExerciseNotes(notes, exercise)
+                }
+                placeholder={`${capitalizeFirstLetter(
+                  exercise.name || ''
+                )} notes`}
+                isRemoveIcon={true}
+              />
+              <Divider
+                className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+              />
             </div>
           ))}
         </div>
@@ -461,7 +488,7 @@ export function EditWorkout({
           onClose={closePickerModal}
           component={
             <ClockPicker
-              value={getPickerModalValue(pickerModal.type)}
+              value={getPickerModalValue(pickerModal.type) as number}
               onChange={(_, value: number) => onEditExerciseDetailes(value)}
               isAfterValue={getIsAfterValue(pickerModal.type)}
             />

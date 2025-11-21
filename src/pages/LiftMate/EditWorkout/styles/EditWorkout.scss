@@ -54,8 +54,21 @@
     }
 
     &.details-stage {
-      height: 400px;
+      height: 250px;
       overflow-y: auto;
+
+      .exercise-details-edit-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+
+        gap: 1rem 0rem;
+
+        .divider,
+        .MuiTextField-root,
+        h4 {
+          grid-column: 1/-1;
+        }
+      }
     }
   }
 

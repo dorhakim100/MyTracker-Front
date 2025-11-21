@@ -11,21 +11,21 @@ export interface ExerciseDetail {
   sets: {
     expected: number
     actual: number
-    notes?: string
   }
   reps: {
     expected: number
     actual: number
-    notes?: string
   }
   weight: {
     expected: number
     actual: number
-    notes?: string
   }
   rpe: {
     expected: number
     actual: number
-    notes?: string
+  }
+  notes?: {
+    expected: string
+    actual: string
   }
 }

@@ -33,5 +33,9 @@ function getEmptyExerciseDetail(): ExerciseDetail {
       expected: 8,
       actual: 0,
     },
+    notes: {
+      expected: '',
+      actual: '',
+    },
   }
 }

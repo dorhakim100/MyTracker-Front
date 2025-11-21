@@ -4,5 +4,5 @@ export interface Workout {
   name: string
   exercises: Exercise[]
   muscleGroups: string[]
-  details: string
+  details?: string
 }
