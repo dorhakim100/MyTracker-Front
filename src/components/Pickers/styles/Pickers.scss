@@ -1,0 +1,14 @@
+.picker-container {
+  display: grid;
+  // grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+
+  padding: 0em 1em;
+
+  .buttons-container {
+    display: grid;
+    grid-auto-flow: column;
+    gap: 1em;
+  }
+}
+

@@ -42,8 +42,8 @@ import { dayService } from '../../services/day/day.service'
 import { LoggedToday } from '../../types/loggedToday/LoggedToday'
 import { imageService } from '../../services/image/image.service'
 import { loadItems, setSelectedMeal } from '../../store/actions/item.actions'
-import { ClockPicker } from './ClockPicker'
-import { PickerSelect } from './PickerSelect'
+import { ClockPicker } from '../Pickers/ClockPicker'
+import { PickerSelect } from '../Pickers/PickerSelect'
 import CustomSkeleton from '../../CustomMui/CustomSkeleton/CustomSkeleton'
 
 interface ItemDetailsProps {
