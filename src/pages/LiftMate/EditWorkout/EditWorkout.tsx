@@ -27,10 +27,17 @@ import { musclesGroup } from '../../../assets/config/muscles-group'
 import { MuscleGroupCard } from '../../../components/LiftMate/MuscleGroupCard/MuscleGroupCard'
 import { MuscleGroup } from '../../../types/muscleGroup/MuscleGroup'
 import { ClickAnimation } from '../../../components/ClickAnimation/ClickAnimation'
+import { CustomSelect } from '../../../CustomMui/CustomSelect/CustomSelect'
 
 interface EditWorkoutProps {
   selectedWorkout?: Workout | null
   saveWorkout?: (workout: Workout) => void
+}
+
+type MuscleGroupArea = 'all' | 'upper' | 'lower'
+interface MuscleGroupFilter {
+  txt: string
+  area: MuscleGroupArea
 }
 
 const stages = ['name', 'exercises', 'details']
@@ -48,7 +55,12 @@ export function EditWorkout({
     selectedWorkout || workoutService.getEmptyWorkout()
   )
 
-  const [searchMuscleGroupTxt, setSearchMuscleGroupTxt] = useState('')
+  const [muscleGroupFilter, setMuscleGroupFilter] = useState<MuscleGroupFilter>(
+    {
+      txt: '',
+      area: 'all',
+    }
+  )
 
   const [exerciseFilter, setExerciseFilter] = useState({
     txt: '',
@@ -65,13 +77,20 @@ export function EditWorkout({
   const [direction, setDirection] = useState(1)
 
   const filteredMuscleGroups = useMemo(() => {
-    if (!searchMuscleGroupTxt) {
-      return musclesGroup
+    let filteredMuscleGroups = musclesGroup
+    if (muscleGroupFilter.txt) {
+      filteredMuscleGroups = musclesGroup.filter((muscleGroup) => {
+        return matchesMuscleGroup(muscleGroup, muscleGroupFilter.txt)
+      })
     }
-    return musclesGroup.filter((muscleGroup) => {
-      return matchesMuscleGroup(muscleGroup, searchMuscleGroupTxt)
-    })
-  }, [searchMuscleGroupTxt])
+
+    if (muscleGroupFilter.area !== 'all') {
+      filteredMuscleGroups = filteredMuscleGroups.filter((muscleGroup) => {
+        return muscleGroup.area === muscleGroupFilter.area
+      })
+    }
+    return filteredMuscleGroups
+  }, [muscleGroupFilter.txt, muscleGroupFilter.area])
 
   useEffect(() => {
     latestHandleSearchRef.current = handleSearch
@@ -205,12 +224,27 @@ export function EditWorkout({
         <div className="selected-muscles-group-container">
           {renderSelectedMusclesGroup()}
         </div>
-        <CustomInput
-          value={searchMuscleGroupTxt}
-          onChange={setSearchMuscleGroupTxt}
-          placeholder="Search for muscles"
-          isRemoveIcon={true}
-        />
+        <div className="muscle-filter-container">
+          <CustomInput
+            value={muscleGroupFilter.txt}
+            onChange={(txt: string) =>
+              setMuscleGroupFilter({ ...muscleGroupFilter, txt })
+            }
+            placeholder="Search muscle"
+            isRemoveIcon={true}
+          />
+          <CustomSelect
+            value={muscleGroupFilter.area}
+            onChange={(area: string) =>
+              setMuscleGroupFilter({
+                ...muscleGroupFilter,
+                area: area as MuscleGroupArea,
+              })
+            }
+            values={['all', 'upper', 'lower']}
+            label="Area"
+          />
+        </div>
         <div className="muscles-group-container">
           {filteredMuscleGroups.map((muscleGroup) => (
             <ClickAnimation

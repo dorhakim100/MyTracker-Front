@@ -4,6 +4,7 @@ import FormControl from '@mui/material/FormControl'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
+import { capitalizeFirstLetter } from '../../services/util.service'
 
 interface CustomSelectProps {
   label: string
@@ -29,7 +30,7 @@ export function CustomSelect({
   }
 
   return (
-    <FormControl sx={{ m: 1, minWidth: 140 }} size='small'>
+    <FormControl sx={{ m: 1, minWidth: 140 }} size="small">
       <InputLabel id={`${label}-select-label`}>{label}</InputLabel>
       <Select
         labelId={`${label}-select-label`}
@@ -48,7 +49,7 @@ export function CustomSelect({
         </MenuItem> */}
         {values.map((value) => (
           <MenuItem key={`${label}-${value}-select`} value={value}>
-            {value} {extra}
+            {capitalizeFirstLetter(value)} {extra}
           </MenuItem>
         ))}
       </Select>

@@ -4,6 +4,7 @@ export const musclesGroup: MuscleGroup[] = [
   {
     name: 'chest',
     base: 'front',
+    area: 'upper',
     img: [
       'https://wger.de/static/images/muscles/main/muscle-4.svg', // chest
     ],
@@ -11,6 +12,7 @@ export const musclesGroup: MuscleGroup[] = [
   {
     name: 'shoulders',
     base: 'front',
+    area: 'upper',
     img: [
       'https://wger.de/static/images/muscles/main/muscle-2.svg', // anterior deltoid
     ],
@@ -18,6 +20,7 @@ export const musclesGroup: MuscleGroup[] = [
   {
     name: 'triceps',
     base: 'back',
+    area: 'upper',
     img: [
       'https://wger.de/static/images/muscles/main/muscle-5.svg', // triceps
     ],
@@ -25,6 +28,7 @@ export const musclesGroup: MuscleGroup[] = [
   {
     name: 'back',
     base: 'back',
+    area: 'upper',
     img: [
       'https://wger.de/static/images/muscles/main/muscle-12.svg', // lats
       'https://wger.de/static/images/muscles/main/muscle-9.svg', // traps
@@ -33,6 +37,7 @@ export const musclesGroup: MuscleGroup[] = [
   {
     name: 'biceps',
     base: 'front',
+    area: 'upper',
     img: [
       'https://wger.de/static/images/muscles/main/muscle-1.svg', // biceps
       'https://wger.de/static/images/muscles/main/muscle-13.svg', // brachialis
@@ -42,6 +47,7 @@ export const musclesGroup: MuscleGroup[] = [
   {
     name: 'quads',
     base: 'front',
+    area: 'lower',
     img: [
       'https://wger.de/static/images/muscles/main/muscle-10.svg', // quads
     ],
@@ -49,6 +55,7 @@ export const musclesGroup: MuscleGroup[] = [
   {
     name: 'glutes',
     base: 'back',
+    area: 'lower',
     img: [
       'https://wger.de/static/images/muscles/main/muscle-8.svg', // glutes
     ],
@@ -56,6 +63,7 @@ export const musclesGroup: MuscleGroup[] = [
   {
     name: 'calves',
     base: 'back',
+    area: 'lower',
     img: [
       'https://wger.de/static/images/muscles/main/muscle-7.svg', // gastrocnemius
       'https://wger.de/static/images/muscles/main/muscle-16.svg', // calves
@@ -65,6 +73,7 @@ export const musclesGroup: MuscleGroup[] = [
   {
     name: 'hamstrings',
     base: 'back',
+    area: 'lower',
     img: [
       'https://wger.de/static/images/muscles/main/muscle-11.svg', // hamstrings
     ],
@@ -73,6 +82,7 @@ export const musclesGroup: MuscleGroup[] = [
   {
     name: 'abs',
     base: 'front',
+    area: 'upper',
     img: [
       'https://wger.de/static/images/muscles/main/muscle-6.svg', // abs
       'https://wger.de/static/images/muscles/main/muscle-14.svg', // obliques
