@@ -9,12 +9,14 @@ import { RootState } from '../../store/store'
 import { useEffect, useState } from 'react'
 import { getArrayOfNumbers } from '../../services/util.service'
 
-export function NumberOfServingsPicker({
+export function ClockPicker({
   value,
   onChange,
+  buttonsValues = [1, 50, 100],
 }: {
   value: number
   onChange: (key: keyof EditItem, value: number) => void
+  buttonsValues?: number[]
 }) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -31,20 +33,10 @@ export function NumberOfServingsPicker({
   const values = getArrayOfNumbers(0, 150)
   const afterValues = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
 
-  const buttons = [
-    {
-      value: 1,
-      onClick: onButtonClick,
-    },
-    {
-      value: 50,
-      onClick: onButtonClick,
-    },
-    {
-      value: 100,
-      onClick: onButtonClick,
-    },
-  ]
+  const buttons = buttonsValues.map((value) => ({
+    value,
+    onClick: onButtonClick,
+  }))
 
   function onButtonClick(value: number) {
     setPickerValue({
@@ -74,7 +66,7 @@ export function NumberOfServingsPicker({
   }, [pickerValue])
 
   return (
-    <div className='picker-container'>
+    <div className="picker-container">
       <Picker
         value={pickerValue}
         onChange={(next) =>
@@ -83,12 +75,12 @@ export function NumberOfServingsPicker({
           )
         }
       >
-        <Picker.Column name='numberOfServings'>
+        <Picker.Column name="numberOfServings">
           {values.map((number) => (
             <Picker.Item key={number} value={number}>
               {({ selected }) => (
                 <Typography
-                  variant='h5'
+                  variant="h5"
                   className={`${selected ? 'selected' : ''}`}
                 >
                   {number}
@@ -98,16 +90,16 @@ export function NumberOfServingsPicker({
           ))}
         </Picker.Column>
         <Divider
-          orientation='vertical'
+          orientation="vertical"
           flexItem
           className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
         />
-        <Picker.Column name='afterValue'>
+        <Picker.Column name="afterValue">
           {afterValues.map((number) => (
             <Picker.Item key={number} value={number}>
               {({ selected }) => (
                 <Typography
-                  variant='h5'
+                  variant="h5"
                   className={`${selected ? 'selected' : ''}`}
                 >
                   {number}
@@ -117,7 +109,7 @@ export function NumberOfServingsPicker({
           ))}
         </Picker.Column>
       </Picker>
-      <div className='buttons-container'>
+      <div className="buttons-container">
         {buttons.map((button) => (
           <CustomButton
             key={`${button.value}-button`}

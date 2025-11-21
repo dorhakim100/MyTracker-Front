@@ -14,11 +14,6 @@ import { getArrayOfNumbers, getCurrMeal } from '../../services/util.service'
 import { searchService } from '../../services/search/search-service'
 import Typography from '@mui/material/Typography'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
-import Select from '@mui/material/Select'
-import FormControl from '@mui/material/FormControl'
-
-import InputLabel from '@mui/material/InputLabel'
-import MenuItem from '@mui/material/MenuItem'
 import AddIcon from '@mui/icons-material/Add'
 import { logService } from '../../services/log/log.service'
 import { MealItem } from '../../types/mealItem/MealItem'
@@ -47,7 +42,8 @@ import { dayService } from '../../services/day/day.service'
 import { LoggedToday } from '../../types/loggedToday/LoggedToday'
 import { imageService } from '../../services/image/image.service'
 import { loadItems, setSelectedMeal } from '../../store/actions/item.actions'
-import { NumberOfServingsPicker } from './NumberOfServingsPicker'
+import { ClockPicker } from './ClockPicker'
+import { PickerSelect } from './PickerSelect'
 import CustomSkeleton from '../../CustomMui/CustomSkeleton/CustomSkeleton'
 
 interface ItemDetailsProps {
@@ -123,7 +119,7 @@ export function ItemDetails({
 
   const [isImageModalOpen, setIsImageModalOpen] = useState(false)
 
-  const editOptions =
+  const editOptions: EditOption[] =
     !isCustomLog && (item as Log).source !== searchTypes.custom
       ? [
           {
@@ -529,13 +525,13 @@ export function ItemDetails({
         }`}
       >
         {(!isCustomLog && (item as Log).source !== searchTypes.custom && (
-          <div className='header' onClick={openImageModal}>
-            <div className='image box-shadow white-outline'>
+          <div className="header" onClick={openImageModal}>
+            <div className="image box-shadow white-outline">
               {(item.image && (
                 <img
                   src={item.image}
                   alt={item.name}
-                  referrerPolicy='no-referrer'
+                  referrerPolicy="no-referrer"
                   onError={async (e) => {
                     renderErrorImage()
                     await imageService.fetchOnError(e, item as Item)
@@ -544,20 +540,20 @@ export function ItemDetails({
                 />
               )) || (
                 <CustomSkeleton
-                  variant='circular'
+                  variant="circular"
                   width={60}
                   height={60}
                   isDarkMode={prefs.isDarkMode}
                 />
               )}
             </div>
-            <div className='title'>{item.name}</div>
-            <div className='subtitle'>{`${(+item.macros?.calories).toFixed(
+            <div className="title">{item.name}</div>
+            <div className="subtitle">{`${(+item.macros?.calories).toFixed(
               0
             )} kcal for ${!_hasItems(item) ? '100g' : 'serving'}`}</div>
 
             {!noEdit && !_hasItems(item) && (
-              <div className='favorite-container' onClick={onFavoriteClick}>
+              <div className="favorite-container" onClick={onFavoriteClick}>
                 <FavoriteButton
                   isFavorite={
                     searchService.isFavorite(searchedItem, user) || false
@@ -570,12 +566,12 @@ export function ItemDetails({
           <CustomInput
             value={editItem.name || ''}
             onChange={(value) => onEditItemChange('name', value)}
-            placeholder='Name'
+            placeholder="Name"
           />
         )}
 
-        <div className='content'>
-          <div className='macros-container'>
+        <div className="content">
+          <div className="macros-container">
             <MacrosDonut
               protein={editItem.totalMacros?.protein}
               carbs={editItem.totalMacros?.carbs}
@@ -590,8 +586,8 @@ export function ItemDetails({
           </div>
         </div>
 
-        <div className='edit'>
-          <div className='selects-container'>
+        <div className="edit">
+          <div className="selects-container">
             {!noEdit &&
               editOptions.map((option) => {
                 if (onAddToMealClick && option.key === 'meal') return null
@@ -609,8 +605,8 @@ export function ItemDetails({
                     }`}
                     key={option.label}
                   >
-                    <Typography variant='h6'>{option.label}</Typography>
-                    {option.type === 'select' && (
+                    <Typography variant="h6">{option.label}</Typography>
+                    {option.type === 'select' && option.values && (
                       <CustomSelect
                         label={option.label}
                         values={option.values.map((value) => value.toString())}
@@ -626,7 +622,7 @@ export function ItemDetails({
                     )}
                     {option.type === 'clock' && (
                       <>
-                        <ServingsSelect
+                        <PickerSelect
                           openClock={openClock}
                           option={option}
                           value={editItem.numberOfServings}
@@ -635,7 +631,7 @@ export function ItemDetails({
                           open={clockOpen}
                           onClose={closeClock}
                           component={
-                            <NumberOfServingsPicker
+                            <ClockPicker
                               value={editItem.numberOfServings}
                               onChange={onEditItemChange}
                             />
@@ -647,7 +643,7 @@ export function ItemDetails({
                     {option.type === 'macros' && (
                       <>
                         <CustomButton
-                          text='Edit Macros'
+                          text="Edit Macros"
                           onClick={openMacros}
                           icon={<EditIcon />}
                         />
@@ -678,7 +674,7 @@ export function ItemDetails({
           <CustomButton
             text={editMealItem ? 'Edit Meal' : 'Add to Meal'}
             icon={!editMealItem && <AddIcon sx={{ mr: 1 }} />}
-            size='large'
+            size="large"
             fullWidth
             className={`add-to-meal-button ${prefs.favoriteColor}`}
             onClick={getOnClick()}
@@ -691,12 +687,12 @@ export function ItemDetails({
           onClose={closeImageModal}
           title={item.name || ''}
         >
-          <div className='modal-image-container'>
+          <div className="modal-image-container">
             <img
               src={item.image}
               alt={item.name}
               className={`box-shadow white-outline`}
-              referrerPolicy='no-referrer'
+              referrerPolicy="no-referrer"
               onError={async (e) => {
                 await imageService.fetchOnError(e, item as Item)
                 loadItems()
@@ -704,7 +700,7 @@ export function ItemDetails({
             />
           </div>
           <CustomButton
-            text='Cancel'
+            text="Cancel"
             fullWidth
             onClick={closeImageModal}
             className={`${prefs.favoriteColor}`}
@@ -712,38 +708,5 @@ export function ItemDetails({
         </CustomAlertDialog>
       )}
     </>
-  )
-}
-
-function ServingsSelect({
-  openClock,
-  option,
-  value,
-}: {
-  openClock: () => void
-  option: EditOption
-  value: number
-}) {
-  return (
-    <FormControl sx={{ m: 1, minWidth: 150 }} size='small' onClick={openClock}>
-      <InputLabel id={`${option.label}-label`}>{option.label}</InputLabel>
-      <Select
-        labelId={`${option.label}-label`}
-        label={option.label}
-        value={value}
-        open={false}
-        onOpen={() => {}}
-        renderValue={(selected) => `${selected}`}
-      >
-        <MenuItem
-          sx={{
-            display: 'none',
-          }}
-          value={value}
-        >
-          {value}
-        </MenuItem>
-      </Select>
-    </FormControl>
   )
 }
