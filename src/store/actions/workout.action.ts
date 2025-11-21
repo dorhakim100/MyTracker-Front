@@ -23,10 +23,10 @@ export async function loadWorkouts(filter: WorkoutFilter) {
 export async function saveWorkout(workout: Workout) {
   try {
     const savedWorkout = await workoutService.save(workout)
-    if (savedWorkout._id) {
-      store.dispatch({ type: ADD_WORKOUT, workout: savedWorkout })
-    } else {
+    if (workout._id) {
       store.dispatch({ type: UPDATE_WORKOUT, workout: savedWorkout })
+    } else {
+      store.dispatch({ type: ADD_WORKOUT, workout: savedWorkout })
     }
     return savedWorkout
   } catch (err) {

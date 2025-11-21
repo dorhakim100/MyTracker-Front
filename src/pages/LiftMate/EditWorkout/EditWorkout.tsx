@@ -41,7 +41,8 @@ import { saveWorkout } from '../../../store/actions/workout.action'
 interface EditWorkoutProps {
   selectedWorkout?: Workout | null
   // saveWorkout?: (workout: Workout) => void
-  forUserId: string
+  forUserId?: string
+  closeDialog: () => void
 }
 
 type MuscleGroupArea = 'all' | 'upper' | 'lower'
@@ -58,6 +59,7 @@ export function EditWorkout({
   selectedWorkout,
   // saveWorkout,
   forUserId,
+  closeDialog,
 }: EditWorkoutProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -516,11 +518,15 @@ export function EditWorkout({
     }
 
     try {
+      setIsLoading(true)
       await saveWorkout(workout)
       showSuccessMsg(messages.success.saveWorkout)
     } catch (err) {
       console.error(err)
       showErrorMsg(messages.error.saveWorkout)
+    } finally {
+      setIsLoading(false)
+      closeDialog()
     }
     // TODO: Implement save logic
     // if (saveWorkout) {
