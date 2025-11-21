@@ -9,9 +9,11 @@ import { CustomInput } from '../../../CustomMui/CustomInput/CustomInput'
 import { Workout } from '../../../types/workout/Workout'
 import { workoutService } from '../../../services/workout/workout-service'
 import { CustomList } from '../../../CustomMui/CustomList/CustomList'
-import { Exercise } from '../../../types/exercise/Exercise'
+import { Exercise, ExerciseDetail } from '../../../types/exercise/Exercise'
 import { showErrorMsg } from '../../../services/event-bus.service'
 import { messages } from '../../../assets/config/messages'
+import { exersiceDetailsSelects } from '../../../assets/config/exersice-details-selects'
+
 import {
   exerciseSearch,
   matchesMuscleGroup,
@@ -28,6 +30,9 @@ import { MuscleGroupCard } from '../../../components/LiftMate/MuscleGroupCard/Mu
 import { MuscleGroup } from '../../../types/muscleGroup/MuscleGroup'
 import { ClickAnimation } from '../../../components/ClickAnimation/ClickAnimation'
 import { CustomSelect } from '../../../CustomMui/CustomSelect/CustomSelect'
+import { PickerSelect } from '../../../components/Pickers/PickerSelect'
+import { SlideDialog } from '../../../components/SlideDialog/SlideDialog'
+import { ClockPicker } from '../../../components/Pickers/ClockPicker'
 
 interface EditWorkoutProps {
   selectedWorkout?: Workout | null
@@ -35,6 +40,7 @@ interface EditWorkoutProps {
 }
 
 type MuscleGroupArea = 'all' | 'upper' | 'lower'
+type PickerModalType = 'sets' | 'reps' | 'weight' | 'rpe'
 interface MuscleGroupFilter {
   txt: string
   area: MuscleGroupArea
@@ -72,6 +78,15 @@ export function EditWorkout({
   const debouncedRunSearch = useRef(
     debounce(() => latestHandleSearchRef.current(), 300)
   ).current
+
+  const [pickerModal, setPickerModal] = useState({
+    isOpen: false,
+    type: null as PickerModalType | null,
+    exerciseId: null as string | null,
+  })
+  const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(
+    null
+  )
 
   const [activeStage, setActiveStage] = useState<WorkoutStage>(stages[0])
   const [direction, setDirection] = useState(1)
@@ -125,6 +140,7 @@ export function EditWorkout({
     )
     let newExercises: Exercise[] = []
     if (addedIndex === -1) {
+      exercise.details = workoutService.getEmptyExerciseDetail()
       newExercises = [...workout.exercises, exercise]
     } else {
       workout.exercises.splice(addedIndex, 1)
@@ -146,6 +162,15 @@ export function EditWorkout({
 
   const onReorderExercises = (exercises: Exercise[]) => {
     setWorkout({ ...workout, exercises })
+  }
+
+  const editExerciseDetailes = (exerciseToUpdate: Exercise) => {
+    const exerciseIndex = workout.exercises.findIndex(
+      (e) => e.exerciseId === exerciseToUpdate.exerciseId
+    )
+    if (exerciseIndex === -1) return
+    workout.exercises[exerciseIndex].details = exerciseToUpdate.details
+    setWorkout({ ...workout, exercises: [...workout.exercises] })
   }
 
   async function handleSearch() {
@@ -370,16 +395,79 @@ export function EditWorkout({
   }
 
   function renderDetailsStage() {
+    const openPickerModal = (exercise: Exercise, type: PickerModalType) => {
+      setPickerModal({ isOpen: true, type, exerciseId: exercise.exerciseId })
+      setSelectedExercise(exercise)
+    }
+
+    const closePickerModal = () => {
+      setPickerModal({ isOpen: false, type: null, exerciseId: null })
+      setSelectedExercise(null)
+    }
+
+    const getIsAfterValue = (type: PickerModalType | null) => {
+      if (!type) return false
+      return exersiceDetailsSelects.find((select) => select.name === type)
+        ?.isAfterValue
+    }
+
+    const getPickerModalValue = (type: PickerModalType | null): number => {
+      if (!type) return 0
+      return (
+        selectedExercise?.details![type as keyof ExerciseDetail]?.expected || 0
+      )
+    }
+    const onEditExerciseDetailes = (newValue: number) => {
+      const exerciseToUpdate = workout.exercises.find(
+        (e) => e.exerciseId === pickerModal.exerciseId
+      )
+      if (!exerciseToUpdate) return
+
+      exerciseToUpdate.details![
+        pickerModal.type! as keyof ExerciseDetail
+      ].expected = newValue
+
+      editExerciseDetailes(exerciseToUpdate)
+    }
+
     return (
       <>
         <div className="edit-workout-stage details-stage">
-          {workout.exercises.map((exercise) => (
+          {workout.exercises.map((exercise: Exercise) => (
             <div key={exercise.exerciseId}>
               <h4>{exercise.name}</h4>
-              {/* <p>{exercise.description}</p> */}
+
+              {exersiceDetailsSelects.map((select) => (
+                <PickerSelect
+                  openClock={() =>
+                    openPickerModal(exercise, select.name as PickerModalType)
+                  }
+                  option={{
+                    label: select.label,
+                    key: select.name,
+                    type: 'number',
+                  }}
+                  value={
+                    exercise.details![select.name as keyof ExerciseDetail]
+                      .expected
+                  }
+                />
+              ))}
             </div>
           ))}
         </div>
+        <SlideDialog
+          open={pickerModal.isOpen}
+          onClose={closePickerModal}
+          component={
+            <ClockPicker
+              value={getPickerModalValue(pickerModal.type)}
+              onChange={(_, value: number) => onEditExerciseDetailes(value)}
+              isAfterValue={getIsAfterValue(pickerModal.type)}
+            />
+          }
+          title={capitalizeFirstLetter(pickerModal.type || '')}
+        />
       </>
     )
   }

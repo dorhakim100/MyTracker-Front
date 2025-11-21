@@ -13,10 +13,12 @@ export function ClockPicker({
   value,
   onChange,
   buttonsValues = [1, 50, 100],
+  isAfterValue = true,
 }: {
   value: number
   onChange: (key: keyof EditItem, value: number) => void
   buttonsValues?: number[]
+  isAfterValue?: boolean
 }) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -89,25 +91,29 @@ export function ClockPicker({
             </Picker.Item>
           ))}
         </Picker.Column>
-        <Divider
-          orientation="vertical"
-          flexItem
-          className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-        />
-        <Picker.Column name="afterValue">
-          {afterValues.map((number) => (
-            <Picker.Item key={number} value={number}>
-              {({ selected }) => (
-                <Typography
-                  variant="h5"
-                  className={`${selected ? 'selected' : ''}`}
-                >
-                  {number}
-                </Typography>
-              )}
-            </Picker.Item>
-          ))}
-        </Picker.Column>
+        {isAfterValue && (
+          <>
+            <Divider
+              orientation="vertical"
+              flexItem
+              className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+            />
+            <Picker.Column name="afterValue">
+              {afterValues.map((number) => (
+                <Picker.Item key={number} value={number}>
+                  {({ selected }) => (
+                    <Typography
+                      variant="h5"
+                      className={`${selected ? 'selected' : ''}`}
+                    >
+                      {number}
+                    </Typography>
+                  )}
+                </Picker.Item>
+              ))}
+            </Picker.Column>
+          </>
+        )}
       </Picker>
       <div className="buttons-container">
         {buttons.map((button) => (

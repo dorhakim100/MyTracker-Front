@@ -54,7 +54,8 @@
     }
 
     &.details-stage {
-      // TODO: Add styles for details stage
+      height: 400px;
+      overflow-y: auto;
     }
   }
 
