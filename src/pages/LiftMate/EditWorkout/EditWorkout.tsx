@@ -371,9 +371,16 @@ export function EditWorkout({
 
   function renderDetailsStage() {
     return (
-      <div className="edit-workout-stage details-stage">
-        <p>Details stage - TODO: Add workout details</p>
-      </div>
+      <>
+        <div className="edit-workout-stage details-stage">
+          {workout.exercises.map((exercise) => (
+            <div key={exercise.exerciseId}>
+              <h4>{exercise.name}</h4>
+              {/* <p>{exercise.description}</p> */}
+            </div>
+          ))}
+        </div>
+      </>
     )
   }
 
