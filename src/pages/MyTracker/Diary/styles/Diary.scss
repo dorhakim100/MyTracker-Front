@@ -1,45 +1,13 @@
 .diary {
-  .header:first-child {
-    // padding: 1rem 0;
-    // display: flex;
+  .label-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
 
-    // justify-content: space-between;
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    align-items: end;
-    gap: 0.4rem;
-
-    .label-container {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .time-controls-container {
-      display: grid;
-      grid-template-columns: 40px 1fr 40px;
-      align-items: center;
-
-      .times-container {
-        grid-column: 2/3;
-      }
-
-      .custom-date-picker-button {
-        background-color: transparent !important;
-        color: $dark-gray;
-      }
-
-      .dark-mode {
-        .custom-date-picker-button {
-          color: $white;
-        }
-      }
-    }
-
-    .circular-progress {
-      width: 100px;
-      height: 100px;
-    }
+  .circular-progress {
+    width: 100px;
+    height: 100px;
   }
 
   .macros-accordion-container {
@@ -84,34 +52,5 @@
         }
       }
     }
-  }
-}
-.time-controls-container.today {
-  font-weight: 600;
-  border-bottom: 2px solid transparent;
-
-  &.primary {
-    border-bottom: 2px solid $primary-color;
-  }
-  &.blue {
-    border-bottom: 2px solid $picker-color-blue;
-  }
-  &.red {
-    border-bottom: 2px solid $picker-color-red;
-  }
-  &.green {
-    border-bottom: 2px solid $picker-color-green;
-  }
-  &.orange {
-    border-bottom: 2px solid $picker-color-orange;
-  }
-  &.deepPurple {
-    border-bottom: 2px solid $picker-color-deep-purple;
-  }
-  &.purple {
-    border-bottom: 2px solid $picker-color-purple;
-  }
-  &.pink {
-    border-bottom: 2px solid $picker-color-pink;
   }
 }

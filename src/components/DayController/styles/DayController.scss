@@ -1,0 +1,59 @@
+.day-controller-container {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: end;
+  gap: 0.4rem;
+  padding: 1rem 0;
+
+  .time-controls-container {
+    display: grid;
+    grid-template-columns: 40px 1fr 40px;
+    align-items: center;
+
+    .times-container {
+      grid-column: 2/3;
+    }
+
+    .custom-date-picker-button {
+      background-color: transparent !important;
+      color: $dark-gray;
+    }
+
+    .dark-mode {
+      .custom-date-picker-button {
+        color: $white;
+      }
+    }
+
+    &.today {
+      font-weight: 600;
+      border-bottom: 2px solid transparent;
+
+      &.primary {
+        border-bottom: 2px solid $primary-color;
+      }
+      &.blue {
+        border-bottom: 2px solid $picker-color-blue;
+      }
+      &.red {
+        border-bottom: 2px solid $picker-color-red;
+      }
+      &.green {
+        border-bottom: 2px solid $picker-color-green;
+      }
+      &.orange {
+        border-bottom: 2px solid $picker-color-orange;
+      }
+      &.deepPurple {
+        border-bottom: 2px solid $picker-color-deep-purple;
+      }
+      &.purple {
+        border-bottom: 2px solid $picker-color-purple;
+      }
+      &.pink {
+        border-bottom: 2px solid $picker-color-pink;
+      }
+    }
+  }
+}
+

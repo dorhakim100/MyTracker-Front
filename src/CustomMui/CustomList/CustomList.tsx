@@ -147,8 +147,6 @@ CustomListProps<T>) {
   }
 
   if (!reorderedItems.length) {
-    console.log('no results', noResultsMessage)
-
     return (
       <div className='no-results-container'>
         <span>{noResultsMessage}</span>
