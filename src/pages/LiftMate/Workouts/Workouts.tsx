@@ -6,8 +6,6 @@ import {
   removeWorkout,
 } from '../../../store/actions/workout.action'
 
-import { musclesGroup } from '../../../assets/config/muscles-group'
-
 import { SlideDialog } from '../../../components/SlideDialog/SlideDialog'
 import { CustomButton } from '../../../CustomMui/CustomButton/CustomButton'
 import { EditWorkout } from '../EditWorkout/EditWorkout'
@@ -17,12 +15,25 @@ import { RootState } from '../../../store/store'
 
 import { Workout } from '../../../types/workout/Workout'
 import { capitalizeFirstLetter } from '../../../services/util.service'
-import { MuscleGroupCard } from '../../../components/LiftMate/MuscleGroupCard/MuscleGroupCard'
-import { MuscleGroup } from '../../../types/muscleGroup/MuscleGroup'
 import { EditIcon } from '../../../components/EditIcon/EditIcon'
 import { DeleteAction } from '../../../components/DeleteAction/DeleteAction'
 import { messages } from '../../../assets/config/messages'
 import { showErrorMsg } from '../../../services/event-bus.service'
+import { WorkoutDetails } from '../../../components/WorkoutDetails/WorkoutDetails'
+
+const EDIT = 'edit'
+const DETAILS = 'details'
+
+const EDIT_TITLE = 'Edit Workout'
+const CREATE_TITLE = 'Create Workout'
+const DETAILS_TITLE = 'Workout Details'
+
+type dialogType = typeof EDIT | typeof DETAILS
+
+interface dialogOptions {
+  open: boolean
+  type: dialogType | null
+}
 
 export function Workouts() {
   const user = useSelector(
@@ -37,7 +48,10 @@ export function Workouts() {
     (stateSelector: RootState) => stateSelector.workoutModule.workouts
   )
 
-  const [openEdit, setOpenEdit] = useState(false)
+  const [dialogOptions, setDialogOptions] = useState<dialogOptions>({
+    open: false,
+    type: null,
+  })
   const [selectedWorkout, setSelectedWorkout] = useState<Workout | null>(null)
 
   useEffect(() => {
@@ -46,13 +60,18 @@ export function Workouts() {
     }
   }, [user])
 
-  function onSelectWorkout(workout: Workout) {
+  const onOpenEdit = (workout: Workout) => {
+    setDialogOptions({ open: true, type: EDIT })
     setSelectedWorkout(workout)
-    setOpenEdit(true)
+  }
+
+  function onOpenDetails(workout: Workout) {
+    setSelectedWorkout(workout)
+    setDialogOptions({ open: true, type: DETAILS })
   }
 
   const closeEdit = () => {
-    setOpenEdit(false)
+    setDialogOptions({ open: false, type: null })
     setSelectedWorkout(null)
   }
 
@@ -66,6 +85,27 @@ export function Workouts() {
     }
   }
 
+  const getDialogComponent = () => {
+    if (dialogOptions.type === EDIT) {
+      return (
+        <EditWorkout
+          selectedWorkout={selectedWorkout}
+          closeDialog={closeEdit}
+        />
+      )
+    }
+    return <WorkoutDetails workout={selectedWorkout} />
+  }
+
+  const getDialogTitle = () => {
+    if (dialogOptions.type === EDIT && selectedWorkout) {
+      return EDIT_TITLE
+    } else if (dialogOptions.type === EDIT && !selectedWorkout) {
+      return CREATE_TITLE
+    }
+    return DETAILS_TITLE
+  }
+
   return (
     <>
       <div className={`page-container workouts-container`}>
@@ -76,11 +116,11 @@ export function Workouts() {
           renderSecondaryText={(workout) =>
             capitalizeFirstLetter(workout.muscleGroups.join(', '))
           }
-          onItemClick={() => console.log('hello')}
+          onItemClick={(workout) => onOpenDetails(workout)}
           renderRight={(workout) => (
             <EditIcon
               onClick={() => {
-                onSelectWorkout(workout)
+                onOpenEdit(workout)
               }}
             />
           )}
@@ -90,18 +130,16 @@ export function Workouts() {
           )}
         />
 
-        <CustomButton text="Create Workout" onClick={() => setOpenEdit(true)} />
+        <CustomButton
+          text={CREATE_TITLE}
+          onClick={() => setDialogOptions({ open: true, type: EDIT })}
+        />
       </div>
       <SlideDialog
-        open={openEdit}
+        open={dialogOptions.open}
         onClose={closeEdit}
-        component={
-          <EditWorkout
-            selectedWorkout={selectedWorkout}
-            closeDialog={closeEdit}
-          />
-        }
-        title="Create Workout"
+        component={getDialogComponent()}
+        title={getDialogTitle()}
         type="full"
       />
     </>

@@ -1,0 +1,65 @@
+.workout-details-container {
+  display: grid;
+  gap: 1.5rem;
+  padding: 1rem;
+  height: 100%;
+
+  .header-container {
+    display: grid;
+    gap: 0.5rem;
+
+    .name-container {
+      font-weight: 600;
+    }
+
+    .muscle-groups-container {
+      opacity: 0.7;
+    }
+
+    .date-container {
+      opacity: 0.6;
+      font-size: 0.875rem;
+    }
+  }
+
+  .details-container {
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .exercises-container {
+    display: grid;
+    gap: 1rem;
+
+    .exercise-container {
+      display: grid;
+      gap: 0.5rem;
+
+      .exercise-name-container {
+        font-weight: 600;
+      }
+
+      .exercise-muscle-groups-container {
+        opacity: 0.7;
+      }
+
+      .exercise-equipment-container {
+        opacity: 0.7;
+      }
+
+      .exercise-details-container {
+        display: grid;
+        gap: 0.5rem;
+        padding: 0.5rem;
+        margin-top: 0.5rem;
+
+        .detail-item-container {
+          display: grid;
+          grid-template-columns: auto 1fr;
+          gap: 0.5rem;
+        }
+      }
+    }
+  }
+}
+
