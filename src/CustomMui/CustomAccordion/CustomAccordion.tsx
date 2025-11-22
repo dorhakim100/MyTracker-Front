@@ -14,6 +14,8 @@ export interface CustomAccordionProps {
   cmp: React.ReactNode
   className?: string
   defaultExpanded?: boolean
+  expanded?: boolean
+  onChange?: (event: React.SyntheticEvent, isExpanded: boolean) => void
   disableGutters?: boolean
   square?: boolean
   icon?: React.ReactNode
@@ -24,6 +26,8 @@ export function CustomAccordion({
   cmp,
   className,
   defaultExpanded,
+  expanded,
+  onChange,
   disableGutters,
   square,
   icon,
@@ -34,6 +38,29 @@ export function CustomAccordion({
 
   const summaryId = React.useId()
 
+  // expanded and onChange must be provided together
+  const isControlled =
+    typeof expanded === 'boolean' && typeof onChange === 'function'
+
+  // Memoize props to ensure they're stable and don't cause re-renders
+  const accordionProps = React.useMemo(() => {
+    if (isControlled) {
+      // Controlled mode: always pass both expanded and onChange
+      return {
+        expanded: expanded as boolean,
+        onChange: onChange as (
+          event: React.SyntheticEvent,
+          isExpanded: boolean
+        ) => void,
+      }
+    } else if (defaultExpanded !== undefined) {
+      // Uncontrolled mode: only pass defaultExpanded
+      return { defaultExpanded }
+    }
+    // No props - let Accordion use its defaults
+    return {}
+  }, [isControlled, expanded, onChange, defaultExpanded])
+
   return (
     <div
       className={`custom-accordion ${className ? className : ''}
@@ -42,9 +69,9 @@ export function CustomAccordion({
     >
       <Accordion
         className={prefs.isDarkMode ? 'dark-mode' : ''}
-        defaultExpanded={defaultExpanded}
         disableGutters={disableGutters}
         square={square}
+        {...accordionProps}
       >
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
