@@ -1,0 +1,30 @@
+.exercise-details-container {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+
+  img {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    justify-self: center;
+  }
+
+  .notes-container {
+    &.english-notes {
+      text-align: left;
+      direction: ltr;
+    }
+    &.hebrew-notes {
+      text-align: right;
+      direction: rtl;
+    }
+  }
+
+  .exercise-details {
+    display: grid;
+    gap: 1rem;
+    overflow-y: auto;
+  }
+}

@@ -34,5 +34,6 @@ export const messages = {
     deleteAccount: 'Failed to delete account',
     saveWorkout: 'Failed to save workout',
     deleteWorkout: 'Failed to delete workout',
+    getExerciseSummary: 'Failed to get exercise summary',
   },
 }
