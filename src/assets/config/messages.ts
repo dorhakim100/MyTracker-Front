@@ -37,5 +37,6 @@ export const messages = {
     getExerciseSummary: 'Failed to get exercise summary',
     getSessionDay: 'Failed to get session day',
     startWorkout: 'Failed to start workout',
+    addSet: 'Failed to add set',
   },
 }
