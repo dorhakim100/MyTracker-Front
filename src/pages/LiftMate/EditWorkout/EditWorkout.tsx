@@ -311,7 +311,9 @@ export function EditWorkout({
         />
       ))
     ) : (
-      <span className="no-muscles-selected">No muscles selected</span>
+      <span className="no-muscles-selected bold-header">
+        No muscles selected
+      </span>
     )
   }
 
@@ -352,7 +354,7 @@ export function EditWorkout({
             )}
             noResultsMessage="No exercises found..."
           />
-          <h4>Selected Exercises</h4>
+          <h4 className="bold-header">Selected Exercises</h4>
           <Divider
             className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
           />
@@ -382,7 +384,9 @@ export function EditWorkout({
               dragOffsetY={-180}
             />
           ) : (
-            <div className="no-exercises">No exercises added yet</div>
+            <div className="no-exercises bold-header">
+              No exercises added yet
+            </div>
           )}
         </div>
       </div>

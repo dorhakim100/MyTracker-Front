@@ -20,6 +20,8 @@ import { DeleteAction } from '../../../components/DeleteAction/DeleteAction'
 import { messages } from '../../../assets/config/messages'
 import { showErrorMsg } from '../../../services/event-bus.service'
 import { WorkoutDetails } from '../../../components/WorkoutDetails/WorkoutDetails'
+import { Divider, Typography } from '@mui/material'
+import { Add } from '@mui/icons-material'
 
 const EDIT = 'edit'
 const DETAILS = 'details'
@@ -27,6 +29,7 @@ const DETAILS = 'details'
 const EDIT_TITLE = 'Edit Workout'
 const CREATE_TITLE = 'Create Workout'
 const DETAILS_TITLE = 'Workout Details'
+const ADD_BUTTON = 'Add'
 
 type dialogType = typeof EDIT | typeof DETAILS
 
@@ -109,6 +112,17 @@ export function Workouts() {
   return (
     <>
       <div className={`page-container workouts-container`}>
+        <div className="workouts-header">
+          <Typography variant="h5" className="bold-header">
+            Workouts
+          </Typography>
+          <CustomButton
+            text={ADD_BUTTON}
+            onClick={() => setDialogOptions({ open: true, type: EDIT })}
+            icon={<Add />}
+          />
+        </div>
+        <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
         <CustomList
           items={workouts}
           className={`workouts-list ${prefs.isDarkMode ? 'dark-mode' : ''}`}
@@ -128,11 +142,6 @@ export function Workouts() {
           renderRightSwipeActions={(workout) => (
             <DeleteAction item={workout} onDeleteItem={onDeleteWorkout} />
           )}
-        />
-
-        <CustomButton
-          text={CREATE_TITLE}
-          onClick={() => setDialogOptions({ open: true, type: EDIT })}
         />
       </div>
       <SlideDialog
