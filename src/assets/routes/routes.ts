@@ -6,7 +6,7 @@ import { Diary } from '../../pages/MyTracker/Diary/Diary'
 import { Progress as MyTrackerProgress } from '../../pages/MyTracker/Progress/Progress'
 import { UserDetails } from '../../pages/UserDetails/UserDetails'
 
-import { Workout } from '../../pages/LiftMate/Workout/Workout.tsx'
+import { Session } from '../../pages/LiftMate/Session/Session.tsx'
 import { Workouts } from '../../pages/LiftMate/Workouts/Workouts.tsx'
 import { Progress as LiftMateProgress } from '../../pages/LiftMate/Progress/Progress.tsx'
 
@@ -56,9 +56,9 @@ export const routes: Route[] = [
   },
 
   {
-    title: 'Workout',
-    path: '/lift-mate/workout',
-    element: Workout,
+    title: 'Session',
+    path: '/lift-mate/session',
+    element: Session,
     icon: FitnessCenterIcon,
     app: apps.liftMate.id,
   },

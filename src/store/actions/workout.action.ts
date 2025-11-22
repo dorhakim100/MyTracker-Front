@@ -66,9 +66,7 @@ export async function handleSessionDayChange(dateToCheck: string, user: User) {
 
     if (!user) return
 
-    const sessionDay = await sessionService.query(filter)
-
-    setSelectedSessionDay(sessionDay)
+    return await sessionService.query(filter)
   } catch (err) {
     throw err
   }

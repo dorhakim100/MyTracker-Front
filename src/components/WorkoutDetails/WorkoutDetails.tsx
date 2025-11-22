@@ -58,11 +58,6 @@ export function WorkoutDetails({ workout }: WorkoutDetailsProps) {
                 .join(', ')}
             </Typography>
           )}
-          {workout.date && (
-            <Typography variant='body2' className='date-container'>
-              {new Date(workout.date).toLocaleDateString()}
-            </Typography>
-          )}
         </div>
         <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
 

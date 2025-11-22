@@ -35,5 +35,6 @@ export const messages = {
     saveWorkout: 'Failed to save workout',
     deleteWorkout: 'Failed to delete workout',
     getExerciseSummary: 'Failed to get exercise summary',
+    getSessionDay: 'Failed to get session day',
   },
 }

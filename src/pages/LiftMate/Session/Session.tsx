@@ -4,10 +4,15 @@ import { RootState } from '../../../store/store'
 
 import { DayController } from '../../../components/DayController/DayController'
 import { DAY_IN_MS } from '../../../assets/config/times'
-import { handleSessionDayChange } from '../../../store/actions/workout.action'
+import {
+  handleSessionDayChange,
+  setSelectedSessionDay,
+} from '../../../store/actions/workout.action'
 import { getDateFromISO } from '../../../services/util.service'
+import { showErrorMsg } from '../../../services/event-bus.service'
+import { messages } from '../../../assets/config/messages'
 
-export function Workout() {
+export function Session() {
   const sessionDay = useSelector(
     (state: RootState) => state.workoutModule.sessionDay
   )
@@ -32,7 +37,15 @@ export function Workout() {
 
   useEffect(() => {
     if (!user) return
-    handleSessionDayChange(sessionFilter.date, user)
+    const updateSessionDay = async () => {
+      try {
+        const day = await handleSessionDayChange(sessionFilter.date, user)
+        setSelectedSessionDay(day)
+      } catch (err) {
+        showErrorMsg(messages.error.getSessionDay)
+      }
+    }
+    updateSessionDay()
   }, [user, sessionFilter])
 
   const onDayChange = (diff: number) => {
@@ -53,7 +66,7 @@ export function Workout() {
       date: date,
     })
   }
-  if (!sessionDay) return null
+  // if (!sessionDay) return null
   return (
     <div className='page-container workout-container'>
       <DayController
