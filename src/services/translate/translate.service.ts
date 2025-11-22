@@ -8,6 +8,7 @@ const LATIN_WORDS =
 export const translateService = {
   translate,
   isEnglishWord,
+  isLtrString,
 }
 
 async function translate(q: string, target: string = 'en') {
@@ -31,5 +32,9 @@ function isEnglishWord(input: string): boolean {
   // disallow digits/symbol-heavy tokens
   if (/[0-9_@#]/.test(s)) return false
 
-  return LATIN_WORDS.test(s)
+  return LATIN_WORDS.test(s.slice(0, 1))
+}
+
+function isLtrString(input: string): boolean {
+  return LATIN_WORDS.test(input.slice(0, 1))
 }

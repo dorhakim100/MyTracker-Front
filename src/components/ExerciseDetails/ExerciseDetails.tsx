@@ -45,7 +45,7 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
   }
 
   const getNotesClass = (notes: string) => {
-    return translateService.isEnglishWord(notes)
+    return translateService.isLtrString(notes)
       ? 'english-notes'
       : 'hebrew-notes'
   }
