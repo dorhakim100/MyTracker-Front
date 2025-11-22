@@ -6,8 +6,12 @@ import { RootState } from '../../store/store'
 import { SessionDay } from '../../types/workout/SessionDay'
 import { Exercise } from '../../types/exercise/Exercise'
 import { capitalizeFirstLetter } from '../../services/util.service'
+
+import { ExerciseEditor } from '../../components/ExerciseEditor/ExerciseEditor'
+
 import { CustomAccordion } from '../../CustomMui/CustomAccordion/CustomAccordion'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
+
 import InfoOutlineIcon from '@mui/icons-material/InfoOutline'
 import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
@@ -81,7 +85,7 @@ export function WorkoutSession({
             <CustomAccordion
               key={`${exercise.exerciseId}-${sessionDay._id}`}
               title={capitalizeFirstLetter(exercise.name)}
-              cmp={<div>bla</div>}
+              cmp={<ExerciseEditor exercise={exercise} />}
               expanded={isExpanded}
               onChange={handleAccordionChange(exercise.exerciseId)}
               icon={
