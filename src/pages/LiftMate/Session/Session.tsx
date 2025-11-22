@@ -26,10 +26,20 @@ import { Exercise } from '../../../types/exercise/Exercise'
 import PlayCircleFilledWhiteIcon from '@mui/icons-material/PlayCircleFilledWhite'
 import { setIsLoading } from '../../../store/actions/system.actions'
 import { SlideAnimation } from '../../../components/SlideAnimation/SlideAnimation'
+import { CustomAccordion } from '../../../CustomMui/CustomAccordion/CustomAccordion'
+import InfoOutlineIcon from '@mui/icons-material/InfoOutline'
+import { ExerciseDetails } from '../../../components/ExerciseDetails/ExerciseDetails'
 
+import ExpandLessIcon from '@mui/icons-material/ExpandLess'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+
+const WORKOUT = 'workout'
+const EXERCISE = 'exercise'
+type SessionDialogType = typeof WORKOUT | typeof EXERCISE
 interface SessionDialogOptions {
   open: boolean
   item: Workout | Exercise | null
+  type: SessionDialogType | null
 }
 
 export function Session() {
@@ -58,6 +68,7 @@ export function Session() {
   const [dialogOptions, setDialogOptions] = useState<SessionDialogOptions>({
     open: false,
     item: null,
+    type: null,
   })
 
   const isToday = useMemo(() => {
@@ -139,7 +150,7 @@ export function Session() {
           }
           className={`${prefs.isDarkMode ? 'dark-mode' : ''}`}
           onItemClick={(workout) => {
-            setDialogOptions({ open: true, item: workout })
+            setDialogOptions({ open: true, item: workout, type: WORKOUT })
           }}
           renderRight={(workout) => (
             <PlayCircleFilledWhiteIcon
@@ -155,6 +166,54 @@ export function Session() {
     )
   }
 
+  const renderWorkout = () => {
+    console.log('sessionDay', sessionDay)
+    if (!sessionDay) return null
+    return (
+      <div className='workout-container'>
+        <div className='workout-header-container'>
+          <Typography variant='h5' className='bold-header'>
+            {sessionDay?.workout?.name}
+          </Typography>
+          <ExpandLessIcon className='arrow-up-icon' />
+        </div>
+        <div className='exercises-container'>
+          {sessionDay.workout.exercises.map((exercise) => {
+            return (
+              <CustomAccordion
+                key={`${exercise.exerciseId}-${sessionDay._id}`}
+                title={capitalizeFirstLetter(exercise.name)}
+                cmp={<div>bla</div>}
+                icon={
+                  <InfoOutlineIcon
+                    onClick={(ev) => {
+                      ev.stopPropagation()
+                      setDialogOptions({
+                        open: true,
+                        item: exercise,
+                        type: EXERCISE,
+                      })
+                    }}
+                  />
+                }
+              />
+            )
+          })}
+        </div>
+      </div>
+    )
+  }
+
+  const getDialogComponent = () => {
+    if (dialogOptions.type === WORKOUT) {
+      return <WorkoutDetails workout={dialogOptions.item as Workout} />
+    }
+    if (dialogOptions.type === EXERCISE) {
+      return <ExerciseDetails exercise={dialogOptions.item as Exercise} />
+    }
+    return null
+  }
+
   if (!sessionDay || !sessionDay._id) return null
 
   return (
@@ -168,18 +227,20 @@ export function Session() {
           onDateChange={onDateChange}
         />
         <SlideAnimation motionKey={sessionDay._id} direction={direction}>
-          {!sessionDay.workoutId && renderNoSession()}
+          {!sessionDay.workoutId ? renderNoSession() : renderWorkout()}
         </SlideAnimation>
       </div>
-      <SlideDialog
-        open={dialogOptions.open}
-        onClose={() => {
-          setDialogOptions({ open: false, item: null })
-        }}
-        component={<WorkoutDetails workout={dialogOptions.item as Workout} />}
-        title={dialogOptions.item?.name}
-        type='full'
-      />
+      {dialogOptions.type && (
+        <SlideDialog
+          open={dialogOptions.open}
+          onClose={() => {
+            setDialogOptions({ open: false, item: null, type: null })
+          }}
+          component={getDialogComponent() as React.ReactElement}
+          title={dialogOptions.item?.name}
+          type='full'
+        />
+      )}
     </>
   )
 }

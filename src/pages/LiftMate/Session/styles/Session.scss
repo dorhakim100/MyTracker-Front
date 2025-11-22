@@ -4,4 +4,16 @@
     // color: $primary-color;
     font-size: 2.5rem;
   }
+
+  .workout-header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+  }
+  .exercises-container {
+    display: grid;
+
+    gap: 0.5rem;
+  }
 }
