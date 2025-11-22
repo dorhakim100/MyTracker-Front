@@ -42,3 +42,13 @@ export async function removeWorkout(workoutId: string) {
     throw err
   }
 }
+
+export async function toggleActivateWorkout(workout: Workout) {
+  try {
+    workout.isActive = !workout.isActive
+    const savedWorkout = await workoutService.save(workout)
+    store.dispatch({ type: UPDATE_WORKOUT, workout: savedWorkout })
+  } catch (err) {
+    throw err
+  }
+}

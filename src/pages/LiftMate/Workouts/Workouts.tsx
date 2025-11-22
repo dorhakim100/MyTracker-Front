@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux'
 import {
   loadWorkouts,
   removeWorkout,
+  toggleActivateWorkout,
 } from '../../../store/actions/workout.action'
 
 import { SlideDialog } from '../../../components/SlideDialog/SlideDialog'
@@ -20,7 +21,7 @@ import { DeleteAction } from '../../../components/DeleteAction/DeleteAction'
 import { messages } from '../../../assets/config/messages'
 import { showErrorMsg } from '../../../services/event-bus.service'
 import { WorkoutDetails } from '../../../components/WorkoutDetails/WorkoutDetails'
-import { Divider, Typography } from '@mui/material'
+import { Checkbox, Divider, Typography } from '@mui/material'
 import { Add } from '@mui/icons-material'
 
 const EDIT = 'edit'
@@ -109,11 +110,97 @@ export function Workouts() {
     return DETAILS_TITLE
   }
 
+  const renderWorkoutLists = () => {
+    const activeWorkouts = workouts.filter((workout) => workout.isActive)
+    const inactiveWorkouts = workouts.filter((workout) => !workout.isActive)
+
+    if (activeWorkouts.length === 0 && inactiveWorkouts.length === 0) {
+      return (
+        <div className='no-workouts-container'>
+          <Typography variant='body1'>No workouts found</Typography>
+        </div>
+      )
+    }
+
+    return (
+      <div className='workouts-lists-container'>
+        {activeWorkouts.length > 0 && (
+          <span className='bold-header'>Active</span>
+        )}
+        <CustomList
+          items={activeWorkouts}
+          className={`workouts-list ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+          renderPrimaryText={(workout) => workout.name}
+          renderSecondaryText={(workout) =>
+            capitalizeFirstLetter(workout.muscleGroups.join(', '))
+          }
+          onItemClick={(workout) => onOpenDetails(workout)}
+          renderRight={(workout) => (
+            <div className='actions-container'>
+              <EditIcon
+                onClick={() => {
+                  onOpenEdit(workout)
+                }}
+              />
+              <Checkbox
+                className={`${prefs.favoriteColor}`}
+                checked={workout.isActive}
+                onClick={(ev) => {
+                  ev.stopPropagation()
+                  toggleActivateWorkout(workout)
+                }}
+              />
+            </div>
+          )}
+          isSwipeable={true}
+          renderRightSwipeActions={(workout) => (
+            <DeleteAction item={workout} onDeleteItem={onDeleteWorkout} />
+          )}
+          noResultsMessage='No active workouts found'
+        />
+        <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
+        {inactiveWorkouts.length > 0 && (
+          <span className='bold-header'>Past</span>
+        )}
+        <CustomList
+          items={inactiveWorkouts}
+          className={`workouts-list ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+          renderPrimaryText={(workout) => workout.name}
+          renderSecondaryText={(workout) =>
+            capitalizeFirstLetter(workout.muscleGroups.join(', '))
+          }
+          onItemClick={(workout) => onOpenDetails(workout)}
+          renderRight={(workout) => (
+            <div className='actions-container'>
+              <EditIcon
+                onClick={() => {
+                  onOpenEdit(workout)
+                }}
+              />
+              <Checkbox
+                className={`${prefs.favoriteColor}`}
+                checked={workout.isActive}
+                onClick={(ev) => {
+                  ev.stopPropagation()
+                  toggleActivateWorkout(workout)
+                }}
+              />
+            </div>
+          )}
+          isSwipeable={true}
+          renderRightSwipeActions={(workout) => (
+            <DeleteAction item={workout} onDeleteItem={onDeleteWorkout} />
+          )}
+        />
+      </div>
+    )
+  }
+
   return (
     <>
       <div className={`page-container workouts-container`}>
-        <div className="workouts-header">
-          <Typography variant="h5" className="bold-header">
+        <div className='workouts-header'>
+          <Typography variant='h5' className='bold-header'>
             Workouts
           </Typography>
           <CustomButton
@@ -123,33 +210,14 @@ export function Workouts() {
           />
         </div>
         <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
-        <CustomList
-          items={workouts}
-          className={`workouts-list ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-          renderPrimaryText={(workout) => workout.name}
-          renderSecondaryText={(workout) =>
-            capitalizeFirstLetter(workout.muscleGroups.join(', '))
-          }
-          onItemClick={(workout) => onOpenDetails(workout)}
-          renderRight={(workout) => (
-            <EditIcon
-              onClick={() => {
-                onOpenEdit(workout)
-              }}
-            />
-          )}
-          isSwipeable={true}
-          renderRightSwipeActions={(workout) => (
-            <DeleteAction item={workout} onDeleteItem={onDeleteWorkout} />
-          )}
-        />
+        {renderWorkoutLists()}
       </div>
       <SlideDialog
         open={dialogOptions.open}
         onClose={closeEdit}
         component={getDialogComponent()}
         title={getDialogTitle()}
-        type="full"
+        type='full'
       />
     </>
   )

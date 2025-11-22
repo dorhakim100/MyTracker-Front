@@ -8,4 +8,5 @@ export interface Workout {
   muscleGroups: string[]
   details?: string
   date?: Date
+  isActive: boolean
 }

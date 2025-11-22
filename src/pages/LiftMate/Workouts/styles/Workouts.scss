@@ -1,9 +1,21 @@
 .workouts-container {
   padding: 1rem 0;
+  text-align: start;
+
   .workouts-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin: 1rem 0;
+  }
+
+  .divider {
+    margin: 0.5rem 0;
+  }
+
+  .actions-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
 }
