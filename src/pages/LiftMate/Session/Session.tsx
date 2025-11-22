@@ -7,6 +7,7 @@ import { DAY_IN_MS } from '../../../assets/config/times'
 import {
   handleSessionDayChange,
   loadWorkouts,
+  saveSessionDay,
   setSelectedSessionDay,
 } from '../../../store/actions/workout.action'
 import {
@@ -23,6 +24,8 @@ import { Workout } from '../../../types/workout/Workout'
 import { Exercise } from '../../../types/exercise/Exercise'
 
 import PlayCircleFilledWhiteIcon from '@mui/icons-material/PlayCircleFilledWhite'
+import { setIsLoading } from '../../../store/actions/system.actions'
+import { SlideAnimation } from '../../../components/SlideAnimation/SlideAnimation'
 
 interface SessionDialogOptions {
   open: boolean
@@ -103,9 +106,21 @@ export function Session() {
     })
   }
 
-  const onStartWorkout = (workout: Workout) => {
+  const onStartWorkout = async (workout: Workout) => {
     console.log('workout', workout)
-    // setDialogOptions({ open: true, item: workout })
+    if (!workout._id || !sessionDay) return
+    try {
+      setIsLoading(true)
+
+      await saveSessionDay({
+        ...sessionDay,
+        workoutId: workout._id,
+      })
+    } catch (err) {
+      showErrorMsg(messages.error.startWorkout)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const renderNoSession = () => {
@@ -140,7 +155,7 @@ export function Session() {
     )
   }
 
-  if (!sessionDay) return null
+  if (!sessionDay || !sessionDay._id) return null
 
   return (
     <>
@@ -152,8 +167,9 @@ export function Session() {
           onDayChange={onDayChange}
           onDateChange={onDateChange}
         />
-
-        {!sessionDay.workoutId && renderNoSession()}
+        <SlideAnimation motionKey={sessionDay._id} direction={direction}>
+          {!sessionDay.workoutId && renderNoSession()}
+        </SlideAnimation>
       </div>
       <SlideDialog
         open={dialogOptions.open}

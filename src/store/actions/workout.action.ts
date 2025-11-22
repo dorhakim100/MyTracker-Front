@@ -78,3 +78,15 @@ export function setSelectedSessionDay(sessionDay: SessionDay) {
     sessionDay,
   })
 }
+
+export async function saveSessionDay(sessionDay: SessionDay) {
+  try {
+    const savedSessionDay = await sessionService.save(sessionDay)
+    store.dispatch({
+      type: SET_SELECTED_SESSION_DAY,
+      sessionDay: savedSessionDay,
+    })
+  } catch (err) {
+    throw err
+  }
+}
