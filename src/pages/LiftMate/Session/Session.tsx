@@ -30,15 +30,16 @@ export function Session() {
 
   const isToday = useMemo(() => {
     const isToday =
-      sessionFilter?.date === getDateFromISO(new Date().toISOString())
+      getDateFromISO(sessionFilter?.date) ===
+      getDateFromISO(new Date().toISOString())
 
     return isToday
   }, [sessionDay?.date, sessionFilter])
 
   useEffect(() => {
-    if (!user) return
     const updateSessionDay = async () => {
       try {
+        if (!user) return
         const day = await handleSessionDayChange(sessionFilter.date, user)
         setSelectedSessionDay(day)
       } catch (err) {

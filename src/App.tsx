@@ -72,7 +72,7 @@ function App() {
           navigate('/')
           break
         case apps.liftMate.id:
-          navigate('/lift-mate/workout')
+          navigate('/lift-mate/session')
           break
       }
     }
@@ -154,7 +154,7 @@ function App() {
     return (
       <main className={`main ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
         <AppHeader />
-        <div className="">
+        <div className=''>
           <PwaInstall
             promptInstall={promptInstall}
             platform={platform}
@@ -173,7 +173,7 @@ function App() {
         <UserMsg />
         <main className={`main ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
           <AppHeader />
-          <div className="">
+          <div className=''>
             <EditGoal saveGoal={(goal) => handleFirstGoal(goal, user)} />
           </div>
         </main>
@@ -199,7 +199,7 @@ function App() {
           duration={0.25}
         >
           {!user ? (
-            <div className="page-container login-sign-up-container">
+            <div className='page-container login-sign-up-container'>
               <SignIn />
             </div>
           ) : (
