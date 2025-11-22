@@ -33,5 +33,6 @@ export const messages = {
     deleteGoal: 'Failed to delete goal',
     deleteAccount: 'Failed to delete account',
     saveWorkout: 'Failed to save workout',
+    deleteWorkout: 'Failed to delete workout',
   },
 }

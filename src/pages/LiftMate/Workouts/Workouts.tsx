@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 
-import { loadWorkouts } from '../../../store/actions/workout.action'
+import {
+  loadWorkouts,
+  removeWorkout,
+} from '../../../store/actions/workout.action'
 
 import { musclesGroup } from '../../../assets/config/muscles-group'
 
@@ -17,6 +20,9 @@ import { capitalizeFirstLetter } from '../../../services/util.service'
 import { MuscleGroupCard } from '../../../components/LiftMate/MuscleGroupCard/MuscleGroupCard'
 import { MuscleGroup } from '../../../types/muscleGroup/MuscleGroup'
 import { EditIcon } from '../../../components/EditIcon/EditIcon'
+import { DeleteAction } from '../../../components/DeleteAction/DeleteAction'
+import { messages } from '../../../assets/config/messages'
+import { showErrorMsg } from '../../../services/event-bus.service'
 
 export function Workouts() {
   const user = useSelector(
@@ -50,6 +56,16 @@ export function Workouts() {
     setSelectedWorkout(null)
   }
 
+  async function onDeleteWorkout(workout: Workout) {
+    try {
+      if (!workout._id) return showErrorMsg(messages.error.deleteWorkout)
+      await removeWorkout(workout._id)
+    } catch (err) {
+      console.error(err)
+      showErrorMsg(messages.error.deleteWorkout)
+    }
+  }
+
   return (
     <>
       <div className={`page-container workouts-container`}>
@@ -67,6 +83,10 @@ export function Workouts() {
                 onSelectWorkout(workout)
               }}
             />
+          )}
+          isSwipeable={true}
+          renderRightSwipeActions={(workout) => (
+            <DeleteAction item={workout} onDeleteItem={onDeleteWorkout} />
           )}
         />
 
