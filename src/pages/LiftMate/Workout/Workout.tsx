@@ -1,25 +1,68 @@
-import { useEffect } from 'react'
-import {
-  exerciseSearch,
-  fetchMuscles,
-} from '../../../services/exersice-search/exersice-search'
+import { useEffect, useMemo, useState } from 'react'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../../store/store'
+
+import { DayController } from '../../../components/DayController/DayController'
+import { DAY_IN_MS } from '../../../assets/config/times'
+import { handleSessionDayChange } from '../../../store/actions/workout.action'
+import { getDateFromISO } from '../../../services/util.service'
 
 export function Workout() {
+  const sessionDay = useSelector(
+    (state: RootState) => state.workoutModule.sessionDay
+  )
+  const user = useSelector((state: RootState) => state.userModule.user)
+
+  const [selectedDay, setSelectedDay] = useState(new Date())
+  const [selectedDayDate] = useState(new Date().toISOString())
+
+  const [sessionFilter, setSessionFilter] = useState({
+    userId: user?._id,
+    date: selectedDayDate,
+  })
+
+  const [direction, setDirection] = useState(1)
+
+  const isToday = useMemo(() => {
+    const isToday =
+      sessionFilter?.date === getDateFromISO(new Date().toISOString())
+
+    return isToday
+  }, [sessionDay?.date, sessionFilter])
+
   useEffect(() => {
-    const fetchExercises = async () => {
-      const data = await exerciseSearch('bench press')
-      console.log(data)
-    }
-    fetchExercises()
-    const fetchMusclesData = async () => {
-      const data = await fetchMuscles()
-      console.log(data)
-    }
-    fetchMusclesData()
-  }, [])
+    if (!user) return
+    handleSessionDayChange(sessionFilter.date, user)
+  }, [user, sessionFilter])
+
+  const onDayChange = (diff: number) => {
+    const newDate = new Date(selectedDay.getTime() + diff * DAY_IN_MS)
+
+    setDirection(diff)
+    setSelectedDay(newDate)
+    setSessionFilter({
+      userId: user?._id,
+      date: getDateFromISO(newDate?.toISOString()),
+    })
+  }
+
+  const onDateChange = (date: string) => {
+    setSelectedDay(new Date(date))
+    setSessionFilter({
+      userId: user?._id,
+      date: date,
+    })
+  }
+  if (!sessionDay) return null
   return (
-    <div>
-      <h1>Lift Mate Dashboard</h1>
+    <div className='page-container workout-container'>
+      <DayController
+        selectedDay={selectedDay}
+        selectedDayDate={sessionFilter.date}
+        isToday={isToday}
+        onDayChange={onDayChange}
+        onDateChange={onDateChange}
+      />
     </div>
   )
 }

@@ -6,9 +6,13 @@ import {
   ADD_WORKOUT,
   UPDATE_WORKOUT,
   REMOVE_WORKOUT,
+  SET_SELECTED_SESSION_DAY,
 } from '../reducers/workout.reducer'
 import { Workout } from '../../types/workout/Workout'
 import { WorkoutFilter } from '../../types/workoutFilter/WorkoutFilter'
+import { User } from '../../types/user/User'
+import { SessionDay } from '../../types/workout/SessionDay'
+import { sessionService } from '../../services/session/session.service'
 
 export async function loadWorkouts(filter: WorkoutFilter) {
   try {
@@ -51,4 +55,28 @@ export async function toggleActivateWorkout(workout: Workout) {
   } catch (err) {
     throw err
   }
+}
+
+export async function handleSessionDayChange(dateToCheck: string, user: User) {
+  try {
+    const filter = {
+      date: dateToCheck,
+      userId: user._id,
+    }
+
+    if (!user) return
+
+    const sessionDay = await sessionService.query(filter)
+
+    setSelectedSessionDay(sessionDay)
+  } catch (err) {
+    throw err
+  }
+}
+
+export function setSelectedSessionDay(sessionDay: SessionDay) {
+  store.dispatch({
+    type: SET_SELECTED_SESSION_DAY,
+    sessionDay,
+  })
 }

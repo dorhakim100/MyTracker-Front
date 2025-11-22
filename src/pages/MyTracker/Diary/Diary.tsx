@@ -23,8 +23,8 @@ import LightModeIcon from '@mui/icons-material/LightMode'
 import BedtimeIcon from '@mui/icons-material/Bedtime'
 
 import { getDateFromISO } from '../../../services/util.service'
+import { DAY_IN_MS } from '../../../assets/config/times'
 
-const DAY_IN_MS = 24 * 60 * 60 * 1000
 export function Diary() {
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
   const user = useSelector((state: RootState) => state.userModule.user)
@@ -137,17 +137,6 @@ export function Diary() {
       date: newDate?.toISOString(),
     })
   }
-
-  // const onTodayClick = () => {
-  //   const today = new Date()
-  //   const dir = today.getTime() - selectedDay.getTime() > 0 ? 1 : -1
-  //   setDirection(dir)
-  //   setSelectedDay(today)
-  //   setDiaryFilter({
-  //     userId: user?._id,
-  //     date: new Date().toISOString(),
-  //   })
-  // }
 
   const onDateChange = (date: string) => {
     setSelectedDay(new Date(date))
