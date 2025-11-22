@@ -1,16 +1,20 @@
 import { Typography } from '@mui/material'
 import { Exercise } from '../../types/exercise/Exercise'
+import { getArrayOfNumbers } from '../../services/util.service'
 
 export interface ExerciseEditorProps {
   exercise: Exercise
 }
 
 export function ExerciseEditor({ exercise }: ExerciseEditorProps) {
+  console.log('exercise', exercise)
   return (
     <div className='exercise-editor-container'>
-      <div className='exercise-editor-header'>
-        <Typography variant='h6'>{exercise.name}</Typography>
-      </div>
+      {/* {
+        getArrayOfNumbers(exercise.details.sets.actual).map((set)=>{
+
+        })
+      } */}
     </div>
   )
 }

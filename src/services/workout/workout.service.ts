@@ -64,26 +64,28 @@ function getEmptyWorkout(): Workout {
     exercises: [],
     muscleGroups: [],
     details: '',
+    isActive: true,
   }
 }
 
 function getEmptyExerciseDetail(): ExerciseDetail {
   return {
+    // actualSets: [],
     sets: {
       expected: 3,
       actual: 0,
     },
-    reps: {
-      expected: 8,
-      actual: 0,
-    },
     weight: {
+      expected: 15,
+      actual: 15,
+    },
+    reps: {
       expected: 10,
-      actual: 0,
+      actual: 8,
     },
     rpe: {
       expected: 8,
-      actual: 0,
+      actual: 7,
     },
     notes: {
       expected: '',

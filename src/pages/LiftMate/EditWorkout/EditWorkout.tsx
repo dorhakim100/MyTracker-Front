@@ -46,7 +46,7 @@ interface EditWorkoutProps {
 }
 
 type MuscleGroupArea = 'all' | 'upper' | 'lower'
-type PickerModalType = 'sets' | 'reps' | 'weight' | 'rpe'
+type PickerModalType = 'expectedSets' | 'actualSets' | 'rpe'
 interface MuscleGroupFilter {
   txt: string
   area: MuscleGroupArea
@@ -250,24 +250,24 @@ export function EditWorkout({
 
   function renderNameStage() {
     return (
-      <div className="edit-workout-stage name-stage">
+      <div className='edit-workout-stage name-stage'>
         <CustomInput
           value={workout.name}
           onChange={onNameChange}
-          placeholder="Enter workout name"
+          placeholder='Enter workout name'
           isRemoveIcon={true}
         />
         <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
-        <div className="selected-muscles-group-container">
+        <div className='selected-muscles-group-container'>
           {renderSelectedMusclesGroup()}
         </div>
-        <div className="muscle-filter-container">
+        <div className='muscle-filter-container'>
           <CustomInput
             value={muscleGroupFilter.txt}
             onChange={(txt: string) =>
               setMuscleGroupFilter({ ...muscleGroupFilter, txt })
             }
-            placeholder="Search muscle"
+            placeholder='Search muscle'
             isRemoveIcon={true}
           />
           <CustomSelect
@@ -279,10 +279,10 @@ export function EditWorkout({
               })
             }
             values={['all', 'upper', 'lower']}
-            label="Area"
+            label='Area'
           />
         </div>
-        <div className="muscles-group-container">
+        <div className='muscles-group-container'>
           {filteredMuscleGroups.map((muscleGroup) => (
             <ClickAnimation
               key={muscleGroup.name}
@@ -306,12 +306,12 @@ export function EditWorkout({
       workout.muscleGroups.map((muscleGroup) => (
         <Chip
           label={capitalizeFirstLetter(muscleGroup)}
-          variant="outlined"
+          variant='outlined'
           key={`${muscleGroup}-chip`}
         />
       ))
     ) : (
-      <span className="no-muscles-selected bold-header">
+      <span className='no-muscles-selected bold-header'>
         No muscles selected
       </span>
     )
@@ -319,15 +319,15 @@ export function EditWorkout({
 
   function renderExercisesStage() {
     return (
-      <div className="edit-workout-stage exercises-stage">
+      <div className='edit-workout-stage exercises-stage'>
         <CustomInput
           value={exerciseFilter.txt}
           onChange={onExerciseFilterChangeTxt}
-          placeholder="Search for exercises"
+          placeholder='Search for exercises'
           isRemoveIcon={true}
         />
 
-        <div className="exercises-lists-container">
+        <div className='exercises-lists-container'>
           <CustomList
             items={exerciseResults}
             renderPrimaryText={(exercise) =>
@@ -352,9 +352,9 @@ export function EditWorkout({
                 className={`${getExerciseActionButtonClass(exercise)}`}
               />
             )}
-            noResultsMessage="No exercises found..."
+            noResultsMessage='No exercises found...'
           />
-          <h4 className="bold-header">Selected Exercises</h4>
+          <h4 className='bold-header'>Selected Exercises</h4>
           <Divider
             className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
           />
@@ -374,7 +374,7 @@ export function EditWorkout({
               className={`selected-exercise-list ${
                 prefs.isDarkMode ? 'dark-mode' : ''
               }`}
-              noResultsMessage="No exercises added yet"
+              noResultsMessage='No exercises added yet'
               isSwipeable={true}
               renderRightSwipeActions={(exercise) => (
                 <DeleteAction item={exercise} onDeleteItem={onDeleteExercise} />
@@ -384,7 +384,7 @@ export function EditWorkout({
               dragOffsetY={-180}
             />
           ) : (
-            <div className="no-exercises bold-header">
+            <div className='no-exercises bold-header'>
               No exercises added yet
             </div>
           )}
@@ -431,19 +431,29 @@ export function EditWorkout({
       type: PickerModalType | null
     ): number | string => {
       if (!type) return 0
+      console.log(type)
+
       return (
-        selectedExercise?.details![type as keyof ExerciseDetail]?.expected || 0
+        (
+          selectedExercise?.details![
+            pickerModal.type as keyof ExerciseDetail
+          ] as { expected: number | string } | undefined
+        )?.expected || 0
       )
     }
+
     const onEditExerciseDetailes = (newValue: number | string) => {
       const exerciseToUpdate = workout.exercises.find(
         (e) => e.exerciseId === pickerModal.exerciseId
       )
       if (!exerciseToUpdate) return
 
-      exerciseToUpdate.details![
+      const detail = exerciseToUpdate.details![
         pickerModal.type as keyof ExerciseDetail
-      ]!.expected = newValue
+      ] as { expected: number | string } | undefined
+      if (detail) {
+        detail.expected = newValue
+      }
 
       editExerciseDetailes(exerciseToUpdate)
     }
@@ -458,31 +468,41 @@ export function EditWorkout({
 
     return (
       <>
-        <div className="edit-workout-stage details-stage">
+        <div className='edit-workout-stage details-stage'>
           {workout.exercises.map((exercise: Exercise) => (
             <div
               key={exercise.exerciseId}
-              className="exercise-details-edit-container"
+              className='exercise-details-edit-container'
             >
               <h4>{capitalizeFirstLetter(exercise.name)}</h4>
 
-              {exersiceDetailsSelects.map((select) => (
-                <PickerSelect
-                  openClock={() =>
-                    openPickerModal(exercise, select.name as PickerModalType)
-                  }
-                  option={{
-                    label: select.label,
-                    key: select.name,
-                    type: 'number',
-                  }}
-                  value={
-                    (exercise.details?.[select.name as keyof ExerciseDetail]
-                      ?.expected as number) || 0
-                  }
-                  key={select.name}
-                />
-              ))}
+              {exersiceDetailsSelects.map((select) => {
+                let valueToReturn
+                if (select.name === 'sets') {
+                } else {
+                }
+
+                return (
+                  <PickerSelect
+                    openClock={() =>
+                      openPickerModal(exercise, select.name as PickerModalType)
+                    }
+                    option={{
+                      label: select.label,
+                      key: select.name,
+                      type: 'number',
+                    }}
+                    value={
+                      (
+                        exercise.details?.[
+                          select.name as keyof ExerciseDetail
+                        ] as { expected: number } | undefined
+                      )?.expected || 0
+                    }
+                    key={select.name}
+                  />
+                )
+              })}
               <CustomInput
                 value={exercise.details?.notes?.expected || ''}
                 onChange={(notes: string) =>
@@ -516,10 +536,10 @@ export function EditWorkout({
   }
 
   async function onFinish() {
-    console.log(workout)
     if (!forUserId) {
       workout.forUserId = user?._id
     }
+    console.log(workout)
 
     try {
       setIsLoading(true)
@@ -553,7 +573,7 @@ export function EditWorkout({
         direction={direction}
         getIsNextDisabled={getIsNextDisabled}
         onFinish={onFinish}
-        finishText="Save Workout"
+        finishText='Save Workout'
       />
     </div>
   )

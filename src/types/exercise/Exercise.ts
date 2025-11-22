@@ -8,24 +8,25 @@ export interface Exercise {
 }
 
 export interface ExerciseDetail {
-  sets: {
-    expected: number
-    actual: number
-  }
-  reps: {
-    expected: number
-    actual: number
-  }
-  weight: {
-    expected: number
-    actual: number
-  }
-  rpe: {
-    expected: number
-    actual: number
-  }
-  notes?: {
-    expected: string
-    actual: string
-  }
+  actualSets?: Set[]
+  sets: ExpectedActual
+  rpe: ExpectedActual
+  weight: ExpectedActual
+  reps: ExpectedActual
+  notes?: Notes
+}
+
+export interface Set {
+  reps: number
+  weight: number
+}
+
+interface ExpectedActual {
+  expected: number
+  actual: number
+}
+
+interface Notes {
+  expected: string
+  actual: string
 }
