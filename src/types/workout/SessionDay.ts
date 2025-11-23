@@ -1,5 +1,5 @@
 import { Workout } from './Workout'
-import { Set } from '../exercise/Exercise'
+
 import { WorkoutSet } from '../set/Set'
 
 export interface SessionDay {

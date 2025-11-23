@@ -895,3 +895,59 @@ body.dark-mode {
   font-weight: 600 !important;
   opacity: 0.7;
 }
+
+.MuiBadge-root {
+  &.primary {
+    .MuiBadge-badge {
+      background-color: $primary-color;
+    }
+  }
+
+  &.blue {
+    .MuiBadge-badge {
+      background-color: $picker-color-blue;
+    }
+  }
+
+  &.red {
+    .MuiBadge-badge {
+      background-color: $picker-color-red;
+    }
+  }
+
+  &.yellow {
+    .MuiBadge-badge {
+      background-color: $picker-color-yellow;
+    }
+  }
+
+  &.green {
+    .MuiBadge-badge {
+      background-color: $picker-color-green;
+    }
+  }
+
+  &.orange {
+    .MuiBadge-badge {
+      background-color: $picker-color-orange;
+    }
+  }
+
+  &.deepPurple {
+    .MuiBadge-badge {
+      background-color: $picker-color-deep-purple;
+    }
+  }
+
+  &.purple {
+    .MuiBadge-badge {
+      background-color: $picker-color-purple;
+    }
+  }
+
+  &.pink {
+    .MuiBadge-badge {
+      background-color: $picker-color-pink;
+    }
+  }
+}

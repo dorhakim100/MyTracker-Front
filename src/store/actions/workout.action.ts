@@ -86,6 +86,7 @@ export async function saveSessionDay(sessionDay: SessionDay) {
       setsIds: sessionDay.sets.map((set) => set._id),
     }
     const savedSessionDay = await sessionService.save(sessionToSave)
+    console.log(savedSessionDay)
     store.dispatch({
       type: SET_SELECTED_SESSION_DAY,
       sessionDay: savedSessionDay,

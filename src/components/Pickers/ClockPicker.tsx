@@ -14,11 +14,15 @@ export function ClockPicker({
   onChange,
   buttonsValues = [1, 50, 100],
   isAfterValue = true,
+  minValue = 0,
+  maxValue = 150,
 }: {
   value: number
   onChange: (key: keyof EditItem, value: number) => void
   buttonsValues?: number[]
   isAfterValue?: boolean
+  minValue?: number
+  maxValue?: number
 }) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -32,7 +36,7 @@ export function ClockPicker({
     afterValue: 0,
   })
 
-  const values = getArrayOfNumbers(0, 150)
+  const values = getArrayOfNumbers(isAfterValue ? 0 : minValue, maxValue)
   const afterValues = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
 
   const buttons = buttonsValues.map((value) => ({
@@ -68,7 +72,7 @@ export function ClockPicker({
   }, [pickerValue])
 
   return (
-    <div className="picker-container">
+    <div className='picker-container'>
       <Picker
         value={pickerValue}
         onChange={(next) =>
@@ -77,12 +81,12 @@ export function ClockPicker({
           )
         }
       >
-        <Picker.Column name="numberOfServings">
+        <Picker.Column name='numberOfServings'>
           {values.map((number) => (
             <Picker.Item key={number} value={number}>
               {({ selected }) => (
                 <Typography
-                  variant="h5"
+                  variant='h5'
                   className={`${selected ? 'selected' : ''}`}
                 >
                   {number}
@@ -94,16 +98,16 @@ export function ClockPicker({
         {isAfterValue && (
           <>
             <Divider
-              orientation="vertical"
+              orientation='vertical'
               flexItem
               className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
             />
-            <Picker.Column name="afterValue">
+            <Picker.Column name='afterValue'>
               {afterValues.map((number) => (
                 <Picker.Item key={number} value={number}>
                   {({ selected }) => (
                     <Typography
-                      variant="h5"
+                      variant='h5'
                       className={`${selected ? 'selected' : ''}`}
                     >
                       {number}
@@ -115,7 +119,7 @@ export function ClockPicker({
           </>
         )}
       </Picker>
-      <div className="buttons-container">
+      <div className='buttons-container'>
         {buttons.map((button) => (
           <CustomButton
             key={`${button.value}-button`}
