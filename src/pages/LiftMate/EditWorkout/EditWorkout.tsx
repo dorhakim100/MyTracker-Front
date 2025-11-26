@@ -2,41 +2,34 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 
 import { RootState } from '../../../store/store'
-import { capitalizeFirstLetter, debounce } from '../../../services/util.service'
+import {
+  capitalizeFirstLetter,
+  debounce,
+  getArrayOfNumbers,
+} from '../../../services/util.service'
 
 import { CustomStepper } from '../../../CustomMui/CustomStepper/CustomStepper'
-import { CustomInput } from '../../../CustomMui/CustomInput/CustomInput'
 import { Workout } from '../../../types/workout/Workout'
 import { workoutService } from '../../../services/workout/workout.service'
-import { CustomList } from '../../../CustomMui/CustomList/CustomList'
-import { Exercise, ExerciseDetail } from '../../../types/exercise/Exercise'
+import { Exercise } from '../../../types/exercise/Exercise'
 import {
   showErrorMsg,
   showSuccessMsg,
 } from '../../../services/event-bus.service'
 import { messages } from '../../../assets/config/messages'
-import { exersiceDetailsSelects } from '../../../assets/config/exersice-details-selects'
 
 import {
   exerciseSearch,
   matchesMuscleGroup,
 } from '../../../services/exersice-search/exersice-search'
 import { setIsLoading } from '../../../store/actions/system.actions'
-import { CustomButton } from '../../../CustomMui/CustomButton/CustomButton'
-
-import AddIcon from '@mui/icons-material/Add'
-import RemoveIcon from '@mui/icons-material/Remove'
-import { Chip, Divider } from '@mui/material'
-import { DeleteAction } from '../../../components/DeleteAction/DeleteAction'
 import { musclesGroup } from '../../../assets/config/muscles-group'
-import { MuscleGroupCard } from '../../../components/LiftMate/MuscleGroupCard/MuscleGroupCard'
 import { MuscleGroup } from '../../../types/muscleGroup/MuscleGroup'
-import { ClickAnimation } from '../../../components/ClickAnimation/ClickAnimation'
-import { CustomSelect } from '../../../CustomMui/CustomSelect/CustomSelect'
-import { PickerSelect } from '../../../components/Pickers/PickerSelect'
-import { SlideDialog } from '../../../components/SlideDialog/SlideDialog'
-import { ClockPicker } from '../../../components/Pickers/ClockPicker'
 import { saveWorkout } from '../../../store/actions/workout.action'
+import { NameStage } from './NameStage'
+import { ExercisesStage } from './ExercisesStage'
+import { DetailsStage } from './DetailsStage'
+import { instructionsService } from '../../../services/instructions/instructions.service'
 
 interface EditWorkoutProps {
   selectedWorkout?: Workout | null
@@ -46,7 +39,6 @@ interface EditWorkoutProps {
 }
 
 type MuscleGroupArea = 'all' | 'upper' | 'lower'
-type PickerModalType = 'expectedSets' | 'actualSets' | 'rpe'
 interface MuscleGroupFilter {
   txt: string
   area: MuscleGroupArea
@@ -90,15 +82,6 @@ export function EditWorkout({
   const debouncedRunSearch = useRef(
     debounce(() => latestHandleSearchRef.current(), 300)
   ).current
-
-  const [pickerModal, setPickerModal] = useState({
-    isOpen: false,
-    type: null as PickerModalType | null,
-    exerciseId: null as string | null,
-  })
-  const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(
-    null
-  )
 
   const [activeStage, setActiveStage] = useState<WorkoutStage>(stages[0])
   const [direction, setDirection] = useState(1)
@@ -238,309 +221,78 @@ export function EditWorkout({
   const renderStage = (stage: WorkoutStage) => {
     switch (stage) {
       case 'name':
-        return renderNameStage()
+        return (
+          <NameStage
+            workoutName={workout.name}
+            muscleGroups={workout.muscleGroups}
+            onNameChange={onNameChange}
+            onToggleMuscleGroup={onToggleMuscleGroup}
+            muscleGroupFilter={muscleGroupFilter}
+            onMuscleGroupFilterChange={setMuscleGroupFilter}
+            filteredMuscleGroups={filteredMuscleGroups}
+          />
+        )
       case 'exercises':
-        return renderExercisesStage()
+        return (
+          <ExercisesStage
+            exerciseFilter={exerciseFilter}
+            onExerciseFilterChange={onExerciseFilterChangeTxt}
+            exerciseResults={exerciseResults}
+            exercises={workout.exercises}
+            onAddExercise={onAddExercise}
+            onDeleteExercise={onDeleteExercise}
+            onReorderExercises={onReorderExercises}
+          />
+        )
       case 'details':
-        return renderDetailsStage()
+        return (
+          <DetailsStage
+            exercises={workout.exercises}
+            onEditExerciseDetails={editExerciseDetailes}
+          />
+        )
       default:
         return <div>Stage not implemented</div>
     }
-  }
-
-  function renderNameStage() {
-    return (
-      <div className='edit-workout-stage name-stage'>
-        <CustomInput
-          value={workout.name}
-          onChange={onNameChange}
-          placeholder='Enter workout name'
-          isRemoveIcon={true}
-        />
-        <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
-        <div className='selected-muscles-group-container'>
-          {renderSelectedMusclesGroup()}
-        </div>
-        <div className='muscle-filter-container'>
-          <CustomInput
-            value={muscleGroupFilter.txt}
-            onChange={(txt: string) =>
-              setMuscleGroupFilter({ ...muscleGroupFilter, txt })
-            }
-            placeholder='Search muscle'
-            isRemoveIcon={true}
-          />
-          <CustomSelect
-            value={muscleGroupFilter.area}
-            onChange={(area: string) =>
-              setMuscleGroupFilter({
-                ...muscleGroupFilter,
-                area: area as MuscleGroupArea,
-              })
-            }
-            values={['all', 'upper', 'lower']}
-            label='Area'
-          />
-        </div>
-        <div className='muscles-group-container'>
-          {filteredMuscleGroups.map((muscleGroup) => (
-            <ClickAnimation
-              key={muscleGroup.name}
-              onClick={() => onToggleMuscleGroup(muscleGroup)}
-            >
-              <MuscleGroupCard
-                muscleGroup={muscleGroup}
-                className={`${getMuscleGroupCardClass(muscleGroup)} ${
-                  prefs.favoriteColor
-                }`}
-              />
-            </ClickAnimation>
-          ))}
-        </div>
-      </div>
-    )
-  }
-
-  function renderSelectedMusclesGroup() {
-    return workout.muscleGroups.length > 0 ? (
-      workout.muscleGroups.map((muscleGroup) => (
-        <Chip
-          label={capitalizeFirstLetter(muscleGroup)}
-          variant='outlined'
-          key={`${muscleGroup}-chip`}
-        />
-      ))
-    ) : (
-      <span className='no-muscles-selected bold-header'>
-        No muscles selected
-      </span>
-    )
-  }
-
-  function renderExercisesStage() {
-    return (
-      <div className='edit-workout-stage exercises-stage'>
-        <CustomInput
-          value={exerciseFilter.txt}
-          onChange={onExerciseFilterChangeTxt}
-          placeholder='Search for exercises'
-          isRemoveIcon={true}
-        />
-
-        <div className='exercises-lists-container'>
-          <CustomList
-            items={exerciseResults}
-            renderPrimaryText={(exercise) =>
-              capitalizeFirstLetter(exercise.name)
-            }
-            renderSecondaryText={(exercise) => (
-              <span className={`${prefs.isDarkMode ? 'dark-mode' : ''}`}>
-                {capitalizeFirstLetter(exercise.muscleGroups.join(', '))}
-              </span>
-            )}
-            renderLeft={(exercise) => (
-              <img src={exercise.image} alt={exercise.name} />
-            )}
-            getKey={(exercise) => exercise.exerciseId}
-            className={`search-exercise-list ${
-              prefs.isDarkMode ? 'dark-mode' : ''
-            }`}
-            renderRight={(exercise) => (
-              <CustomButton
-                icon={getExerciseActionIcon(exercise)}
-                onClick={() => onAddExercise(exercise)}
-                className={`${getExerciseActionButtonClass(exercise)}`}
-              />
-            )}
-            noResultsMessage='No exercises found...'
-          />
-          <h4 className='bold-header'>Selected Exercises</h4>
-          <Divider
-            className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-          />
-          {workout.exercises.length > 0 ? (
-            <CustomList
-              items={workout.exercises}
-              renderPrimaryText={(exercise) =>
-                capitalizeFirstLetter(exercise.name)
-              }
-              renderSecondaryText={(exercise) =>
-                capitalizeFirstLetter(exercise.muscleGroups.join(', '))
-              }
-              renderLeft={(exercise) => (
-                <img src={exercise.image} alt={exercise.name} />
-              )}
-              getKey={(exercise) => `${exercise.exerciseId}-selected`}
-              className={`selected-exercise-list ${
-                prefs.isDarkMode ? 'dark-mode' : ''
-              }`}
-              noResultsMessage='No exercises added yet'
-              isSwipeable={true}
-              renderRightSwipeActions={(exercise) => (
-                <DeleteAction item={exercise} onDeleteItem={onDeleteExercise} />
-              )}
-              isDragable={true}
-              onReorder={onReorderExercises}
-              dragOffsetY={-180}
-            />
-          ) : (
-            <div className='no-exercises bold-header'>
-              No exercises added yet
-            </div>
-          )}
-        </div>
-      </div>
-    )
-  }
-
-  function getExerciseActionIcon(exercise: Exercise) {
-    const addedIndex = workout.exercises.findIndex(
-      (e) => e.exerciseId === exercise.exerciseId
-    )
-    return addedIndex === -1 ? <AddIcon /> : <RemoveIcon />
-  }
-
-  function getExerciseActionButtonClass(exercise: Exercise) {
-    return workout.exercises.find((e) => e.exerciseId === exercise.exerciseId)
-      ? 'red'
-      : ''
-  }
-
-  function getMuscleGroupCardClass(muscleGroup: MuscleGroup) {
-    return workout.muscleGroups.includes(muscleGroup.name) ? 'selected' : ''
-  }
-
-  function renderDetailsStage() {
-    const openPickerModal = (exercise: Exercise, type: PickerModalType) => {
-      setPickerModal({ isOpen: true, type, exerciseId: exercise.exerciseId })
-      setSelectedExercise(exercise)
-    }
-
-    const closePickerModal = () => {
-      setPickerModal({ isOpen: false, type: null, exerciseId: null })
-      setSelectedExercise(null)
-    }
-
-    const getIsAfterValue = (type: PickerModalType | null) => {
-      if (!type) return false
-      return exersiceDetailsSelects.find((select) => select.name === type)
-        ?.isAfterValue
-    }
-
-    const getPickerModalValue = (
-      type: PickerModalType | null
-    ): number | string => {
-      if (!type) return 0
-      console.log(type)
-
-      return (
-        (
-          selectedExercise?.details![
-            pickerModal.type as keyof ExerciseDetail
-          ] as { expected: number | string } | undefined
-        )?.expected || 0
-      )
-    }
-
-    const onEditExerciseDetailes = (newValue: number | string) => {
-      const exerciseToUpdate = workout.exercises.find(
-        (e) => e.exerciseId === pickerModal.exerciseId
-      )
-      if (!exerciseToUpdate) return
-
-      const detail = exerciseToUpdate.details![
-        pickerModal.type as keyof ExerciseDetail
-      ] as { expected: number | string } | undefined
-      if (detail) {
-        detail.expected = newValue
-      }
-
-      editExerciseDetailes(exerciseToUpdate)
-    }
-
-    const onEditExerciseNotes = (notes: string, exercise: Exercise) => {
-      if (!exercise.details?.notes)
-        exercise.details!.notes = { expected: '', actual: '' }
-      exercise.details!.notes!.expected = notes
-
-      editExerciseDetailes(exercise)
-    }
-
-    return (
-      <>
-        <div className='edit-workout-stage details-stage'>
-          {workout.exercises.map((exercise: Exercise) => (
-            <div
-              key={exercise.exerciseId}
-              className='exercise-details-edit-container'
-            >
-              <h4>{capitalizeFirstLetter(exercise.name)}</h4>
-
-              {exersiceDetailsSelects.map((select) => {
-                let valueToReturn
-                if (select.name === 'sets') {
-                } else {
-                }
-
-                return (
-                  <PickerSelect
-                    openClock={() =>
-                      openPickerModal(exercise, select.name as PickerModalType)
-                    }
-                    option={{
-                      label: select.label,
-                      key: select.name,
-                      type: 'number',
-                    }}
-                    value={
-                      (
-                        exercise.details?.[
-                          select.name as keyof ExerciseDetail
-                        ] as { expected: number } | undefined
-                      )?.expected || 0
-                    }
-                    key={select.name}
-                  />
-                )
-              })}
-              <CustomInput
-                value={exercise.details?.notes?.expected || ''}
-                onChange={(notes: string) =>
-                  onEditExerciseNotes(notes, exercise)
-                }
-                placeholder={`${capitalizeFirstLetter(
-                  exercise.name || ''
-                )} notes`}
-                isRemoveIcon={true}
-              />
-              <Divider
-                className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-              />
-            </div>
-          ))}
-        </div>
-        <SlideDialog
-          open={pickerModal.isOpen}
-          onClose={closePickerModal}
-          component={
-            <ClockPicker
-              value={getPickerModalValue(pickerModal.type) as number}
-              onChange={(_, value: number) => onEditExerciseDetailes(value)}
-              isAfterValue={getIsAfterValue(pickerModal.type)}
-            />
-          }
-          title={capitalizeFirstLetter(pickerModal.type || '')}
-        />
-      </>
-    )
   }
 
   async function onFinish() {
     if (!forUserId) {
       workout.forUserId = user?._id
     }
-    console.log(workout)
+    // console.log(workout)
 
+    const exercisesDetailsInstructions = workout.exercises.map((exercise) => {
+      return {
+        workoutId: workout._id,
+        exerciseId: exercise.exerciseId,
+        sets: getArrayOfNumbers(1, exercise.details?.sets.expected || 1).map(
+          () => {
+            return {
+              reps: {
+                expected: exercise.details?.reps.expected,
+                actual: exercise.details?.reps.actual || 0,
+              },
+              weight: {
+                expected: exercise.details?.weight.expected,
+                actual: exercise.details?.weight.actual || 0,
+              },
+            }
+          }
+        ),
+        rpe: exercise.details?.rpe,
+      }
+    })
+
+    console.log(exercisesDetailsInstructions)
+
+    instructionsService.save({
+      userId: user?._id || '',
+      workoutId: workout._id || '',
+      sets: exercisesDetailsInstructions,
+      weekNumber: 1,
+    })
+    return
     try {
       setIsLoading(true)
       await saveWorkout(workout)
