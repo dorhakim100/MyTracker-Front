@@ -65,11 +65,13 @@ async function save(instructions: Instructions) {
   }
 }
 
-async function getByWorkoutId(filter = { workoutId: '', forUserId: '' }) {
+async function getByWorkoutId(
+  filter = { workoutId: '', forUserId: '', weekNumber: 1 }
+) {
   try {
     const instructions = await httpService.get(
       `${KEY}/workout/${filter.workoutId}`,
-      { forUserId: filter.forUserId }
+      { forUserId: filter.forUserId, weekNumber: filter.weekNumber }
     )
     return instructions
   } catch (err) {

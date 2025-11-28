@@ -109,6 +109,11 @@
     }
   }
 
+  .week-number-toggle {
+    overflow-x: auto;
+    max-width: calc(100vw - 2em);
+  }
+
   .no-exercises,
   .no-results-container,
   h4 {

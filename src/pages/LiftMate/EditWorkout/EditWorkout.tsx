@@ -43,6 +43,7 @@ import { ClockPicker } from '../../../components/Pickers/ClockPicker'
 import { saveWorkout } from '../../../store/actions/workout.action'
 import { Instructions } from '../../../types/instructions/Instructions'
 import { instructionsService } from '../../../services/instructions/instructions.service'
+import { CustomToggle } from '../../../CustomMui/CustomToggle/CustomToggle'
 
 interface EditWorkoutProps {
   selectedWorkout?: Workout | null
@@ -82,6 +83,12 @@ export function EditWorkout({
   const [instructions, setInstructions] = useState<Instructions>(
     instructionsService.getEmptyInstructions()
   )
+
+  const [instructionsFilter, setInstructionsFilter] = useState({
+    weekNumber: 1,
+    forUserId: user?._id || '',
+    workoutId: workout._id || '',
+  })
 
   const [muscleGroupFilter, setMuscleGroupFilter] = useState<MuscleGroupFilter>(
     {
@@ -139,15 +146,15 @@ export function EditWorkout({
 
   useEffect(() => {
     getWorkoutInstructions()
-  }, [workout])
+  }, [workout, instructionsFilter])
 
   async function getWorkoutInstructions() {
     try {
       if (!workout._id || !user?._id) return
 
-      const filter = { workoutId: workout._id, forUserId: user?._id || '' }
-
-      const instructions = await instructionsService.getByWorkoutId(filter)
+      const instructions = await instructionsService.getByWorkoutId(
+        instructionsFilter
+      )
       console.log(instructions)
       setInstructions(instructions)
     } catch (err) {
@@ -564,6 +571,20 @@ export function EditWorkout({
 
     return (
       <>
+        <CustomToggle
+          value={instructionsFilter.weekNumber + ''}
+          onChange={(weekNumber: string) =>
+            setInstructionsFilter({
+              ...instructionsFilter,
+              weekNumber: +weekNumber,
+            })
+          }
+          options={getArrayOfNumbers(1, 10).map((weekNumber) => ({
+            label: `Week ${weekNumber}`,
+            value: weekNumber.toString(),
+          }))}
+          className='week-number-toggle'
+        />
         <div className='edit-workout-stage details-stage'>
           {workout.exercises.map((exercise: Exercise) => (
             <div
