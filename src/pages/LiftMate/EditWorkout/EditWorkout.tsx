@@ -150,7 +150,7 @@ export function EditWorkout({
 
   useEffect(() => {
     getWorkoutInstructions()
-  }, [workout, instructionsFilter])
+  }, [workout._id, instructionsFilter])
 
   async function getWorkoutInstructions() {
     try {
@@ -253,6 +253,41 @@ export function EditWorkout({
     if (exerciseIndex === -1) return
     workout.exercises[exerciseIndex].details = exerciseToUpdate.details
     setWorkout({ ...workout, exercises: [...workout.exercises] })
+    console.log(exerciseToUpdate)
+
+    const instructionExercise = instructions.exercises.find(
+      (e) => e.exerciseId === exerciseToUpdate.exerciseId
+    )
+
+    if (pickerModal.type === 'rpe') {
+      instructionExercise!.rpe = exerciseToUpdate.details?.rpe!
+    } else if (pickerModal.type === ('weight' as PickerModalType)) {
+      const weightValue = exerciseToUpdate.details?.weight?.expected ?? 0
+      const setsToSave = instructionExercise!.sets.map((set) => {
+        return {
+          ...set,
+          weight: {
+            expected: weightValue,
+            actual: weightValue,
+          },
+        }
+      })
+
+      instructionExercise!.sets = setsToSave
+    } else if (pickerModal.type === ('reps' as PickerModalType)) {
+      const repsValue = exerciseToUpdate.details?.reps?.expected ?? 0
+      const setsToSave = instructionExercise!.sets.map((set) => {
+        return {
+          ...set,
+          reps: {
+            expected: repsValue,
+            actual: repsValue,
+          },
+        }
+      })
+      instructionExercise!.sets = setsToSave
+    }
+    setInstructions({ ...instructions, exercises: [...instructions.exercises] })
   }
 
   async function handleSearch() {
@@ -578,6 +613,14 @@ export function EditWorkout({
       exercise.details!.notes!.expected = notes
 
       editExerciseDetailes(exercise)
+      setInstructions((prev) => ({
+        ...prev,
+        exercises: prev.exercises.map((exercise) =>
+          exercise.exerciseId === exercise.exerciseId
+            ? { ...exercise, notes: { expected: notes, actual: notes } }
+            : exercise
+        ),
+      }))
     }
 
     function getWeekNumberIcon(weekNumber: number) {
