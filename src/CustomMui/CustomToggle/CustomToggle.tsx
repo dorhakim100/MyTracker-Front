@@ -2,12 +2,14 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
 import ToggleButton from '@mui/material/ToggleButton'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
+import Badge from '@mui/material/Badge'
 
 export interface ToggleOption {
   value: string
   label: string
   ariaLabel?: string
   icon?: React.ReactNode
+  badgeIcon?: React.ReactNode
 }
 
 interface CustomToggleProps {
@@ -17,6 +19,7 @@ interface CustomToggleProps {
   exclusive?: boolean
   className?: string
   ariaLabel?: string
+  isBadge?: boolean
 }
 
 export function CustomToggle({
@@ -26,6 +29,7 @@ export function CustomToggle({
   exclusive = true,
   className,
   ariaLabel = 'toggle-group',
+  isBadge = false,
 }: CustomToggleProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -41,14 +45,22 @@ export function CustomToggle({
       className={`custom-toggle no-scroll ${className} ${prefs.favoriteColor}`}
     >
       {options.map((opt) => (
-        <ToggleButton
-          key={opt.value}
-          value={opt.value}
-          aria-label={opt.ariaLabel || opt.value}
-        >
-          {opt.icon}
-          {opt.label}
-        </ToggleButton>
+        <>
+          {isBadge && (
+            <Badge
+              badgeContent={opt.badgeIcon}
+              className={`${prefs.favoriteColor} toggle-badge`}
+            ></Badge>
+          )}
+          <ToggleButton
+            key={opt.value}
+            value={opt.value}
+            aria-label={opt.ariaLabel || opt.value}
+          >
+            {opt.icon}
+            {opt.label}
+          </ToggleButton>
+        </>
       ))}
     </ToggleButtonGroup>
   )

@@ -8,6 +8,7 @@ export const instructionsService = {
   save,
   remove,
   getByWorkoutId,
+  getWeekNumberDone,
   getEmptyInstructions,
   getEmptySet,
   getEmptyExpectedActual,
@@ -74,6 +75,18 @@ async function getByWorkoutId(
       { forUserId: filter.forUserId, weekNumber: filter.weekNumber }
     )
     return instructions
+  } catch (err) {
+    throw err
+  }
+}
+
+async function getWeekNumberDone(workoutId: string) {
+  try {
+    const weeksStatus = await httpService.get(`${KEY}/weekNumberDone`, {
+      workoutId,
+    })
+    console.log(weeksStatus)
+    return weeksStatus
   } catch (err) {
     throw err
   }

@@ -44,6 +44,9 @@ import { saveWorkout } from '../../../store/actions/workout.action'
 import { Instructions } from '../../../types/instructions/Instructions'
 import { instructionsService } from '../../../services/instructions/instructions.service'
 import { CustomToggle } from '../../../CustomMui/CustomToggle/CustomToggle'
+import { WeekNumberStatus } from '../../../types/weekNumberStatus/WeekNumberStatus'
+import CheckIcon from '@mui/icons-material/Check'
+import CloseIcon from '@mui/icons-material/Close'
 
 interface EditWorkoutProps {
   selectedWorkout?: Workout | null
@@ -84,6 +87,7 @@ export function EditWorkout({
     instructionsService.getEmptyInstructions()
   )
 
+  const [weeksStatus, setWeeksStatus] = useState<WeekNumberStatus[]>([])
   const [instructionsFilter, setInstructionsFilter] = useState({
     weekNumber: 1,
     forUserId: user?._id || '',
@@ -156,6 +160,8 @@ export function EditWorkout({
         instructionsFilter
       )
       console.log(instructions)
+      const statuses = await instructionsService.getWeekNumberDone(workout._id)
+      setWeeksStatus(statuses)
       setInstructions(instructions)
     } catch (err) {
       console.error(err)
@@ -211,7 +217,6 @@ export function EditWorkout({
         },
       }
     })
-    console.log(instructionsExercises)
 
     setInstructions((prev) => {
       return {
@@ -219,10 +224,7 @@ export function EditWorkout({
         exercises: instructionsExercises,
       }
     })
-    // setInstructions((prev) => ({
-    //   ...prev,
-    //   exercises: instructionsExercises,
-    // }))
+
     setWorkout({ ...workout, exercises: newExercises })
   }
 
@@ -569,6 +571,15 @@ export function EditWorkout({
       editExerciseDetailes(exercise)
     }
 
+    async function getWeekNumberIcon(weekNumber: number) {
+      if (!weeksStatus) return <CloseIcon />
+      const status = weeksStatus.find(
+        (status) => status.weekNumber === weekNumber
+      )
+      return status?.isDone ? <CheckIcon /> : <CloseIcon />
+      return status?.isDone
+    }
+
     return (
       <>
         <CustomToggle
@@ -580,9 +591,13 @@ export function EditWorkout({
             })
           }
           options={getArrayOfNumbers(1, 10).map((weekNumber) => ({
-            label: `Week ${weekNumber}`,
+            label: `Week`,
             value: weekNumber.toString(),
+            icon: <span>{weekNumber}</span>,
+            // icon: getWeekNumberIcon(+weekNumber),
+            badgeIcon: getWeekNumberIcon(+weekNumber),
           }))}
+          isBadge={true}
           className='week-number-toggle'
         />
         <div className='edit-workout-stage details-stage'>
@@ -688,6 +703,7 @@ export function EditWorkout({
 
     try {
       setIsLoading(true)
+
       const savedWorkout = await saveWorkout(workout)
       instructionsToSave.workoutId = savedWorkout._id
       await instructionsService.save(instructionsToSave as Instructions)
@@ -699,10 +715,6 @@ export function EditWorkout({
       setIsLoading(false)
       closeDialog()
     }
-    // TODO: Implement save logic
-    // if (saveWorkout) {
-    //   // saveWorkout(workoutData)
-    // }
   }
 
   return (
