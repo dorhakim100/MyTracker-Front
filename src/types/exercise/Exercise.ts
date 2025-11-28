@@ -1,3 +1,5 @@
+import { ExpectedActual } from '../expectedActual/ExpectedActual'
+
 export interface Exercise {
   name: string
   muscleGroups: string[]
@@ -8,25 +10,12 @@ export interface Exercise {
 }
 
 export interface ExerciseDetail {
-  actualSets?: Set[]
-  sets: ExpectedActual
-  rpe: ExpectedActual
-  weight: ExpectedActual
-  reps: ExpectedActual
-  notes?: Notes
+  sets: Set[]
+  rpe: ExpectedActual<number>
+  notes?: ExpectedActual<string>
 }
 
 export interface Set {
-  reps: number
-  weight: number
-}
-
-interface ExpectedActual {
-  expected: number
-  actual: number
-}
-
-interface Notes {
-  expected: string
-  actual: string
+  expected: ExpectedActual<number>
+  actual: ExpectedActual<number>
 }
