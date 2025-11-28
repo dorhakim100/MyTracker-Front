@@ -13,9 +13,12 @@ export interface ExerciseDetail {
   sets: Set[]
   rpe: ExpectedActual<number>
   notes?: ExpectedActual<string>
+  // just for editing
+  reps?: ExpectedActual<number>
+  weight?: ExpectedActual<number>
 }
 
 export interface Set {
-  expected: ExpectedActual<number>
-  actual: ExpectedActual<number>
+  reps: ExpectedActual<number>
+  weight: ExpectedActual<number>
 }

@@ -2,7 +2,11 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 
 import { RootState } from '../../../store/store'
-import { capitalizeFirstLetter, debounce } from '../../../services/util.service'
+import {
+  capitalizeFirstLetter,
+  debounce,
+  getArrayOfNumbers,
+} from '../../../services/util.service'
 
 import { CustomStepper } from '../../../CustomMui/CustomStepper/CustomStepper'
 import { CustomInput } from '../../../CustomMui/CustomInput/CustomInput'
@@ -37,6 +41,8 @@ import { PickerSelect } from '../../../components/Pickers/PickerSelect'
 import { SlideDialog } from '../../../components/SlideDialog/SlideDialog'
 import { ClockPicker } from '../../../components/Pickers/ClockPicker'
 import { saveWorkout } from '../../../store/actions/workout.action'
+import { Instructions } from '../../../types/instructions/Instructions'
+import { instructionsService } from '../../../services/instructions/instructions.service'
 
 interface EditWorkoutProps {
   selectedWorkout?: Workout | null
@@ -71,6 +77,10 @@ export function EditWorkout({
 
   const [workout, setWorkout] = useState<Workout>(
     selectedWorkout || workoutService.getEmptyWorkout()
+  )
+
+  const [instructions, setInstructions] = useState<Instructions>(
+    instructionsService.getEmptyInstructions()
   )
 
   const [muscleGroupFilter, setMuscleGroupFilter] = useState<MuscleGroupFilter>(
@@ -127,6 +137,24 @@ export function EditWorkout({
     debouncedRunSearch()
   }, [exerciseFilter, debouncedRunSearch])
 
+  useEffect(() => {
+    getWorkoutInstructions()
+  }, [workout])
+
+  async function getWorkoutInstructions() {
+    try {
+      if (!workout._id || !user?._id) return
+
+      const filter = { workoutId: workout._id, forUserId: user?._id || '' }
+
+      const instructions = await instructionsService.getByWorkoutId(filter)
+      setInstructions(instructions)
+    } catch (err) {
+      console.error(err)
+      showErrorMsg(messages.error.getWorkoutInstructions)
+    }
+  }
+
   const onStageChange = (stage: WorkoutStage, diff: number) => {
     setDirection(diff)
     setActiveStage(stage)
@@ -158,6 +186,35 @@ export function EditWorkout({
       workout.exercises.splice(addedIndex, 1)
       newExercises = [...workout.exercises]
     }
+
+    const instructionsExercises = newExercises.map((exercise) => {
+      const rpe = instructionsService.getEmptyExpectedActual('rpe')
+      const notes = instructionsService.getEmptyExpectedActual('notes')
+      return {
+        exerciseId: exercise.exerciseId,
+        sets: [instructionsService.getEmptySet()],
+        rpe: (rpe || { expected: 8, actual: 8 }) as {
+          expected: number
+          actual: number
+        },
+        notes: (notes || { expected: '', actual: '' }) as {
+          expected: string
+          actual: string
+        },
+      }
+    })
+    console.log(instructionsExercises)
+
+    setInstructions((prev) => {
+      return {
+        ...prev,
+        exercises: instructionsExercises,
+      }
+    })
+    // setInstructions((prev) => ({
+    //   ...prev,
+    //   exercises: instructionsExercises,
+    // }))
     setWorkout({ ...workout, exercises: newExercises })
   }
 
@@ -428,24 +485,64 @@ export function EditWorkout({
     }
 
     const getPickerModalValue = (
-      type: PickerModalType | null
-    ): number | string => {
+      type: PickerModalType | null,
+      exercise: Exercise
+    ): number => {
       if (!type) return 0
-      console.log(type)
 
-      return (
-        (
-          selectedExercise?.details![
-            pickerModal.type as keyof ExerciseDetail
-          ] as { expected: number | string } | undefined
-        )?.expected || 0
-      )
+      if (type === ('sets' as PickerModalType)) {
+        console.log(instructions)
+
+        return (
+          instructions.exercises.find(
+            (e) => e.exerciseId === exercise.exerciseId
+          )?.sets.length ||
+          0 ||
+          0
+        )
+      }
+
+      const value = (
+        exercise.details?.[type as keyof ExerciseDetail] as
+          | { expected: number | string }
+          | undefined
+      )?.expected
+
+      return typeof value === 'number' ? value : Number(value) || 0
     }
 
     const onEditExerciseDetailes = (newValue: number | string) => {
       const exerciseToUpdate = workout.exercises.find(
         (e) => e.exerciseId === pickerModal.exerciseId
       )
+
+      console.log(pickerModal)
+
+      if (pickerModal.type === ('sets' as PickerModalType)) {
+        const instructionsExercise = instructions.exercises.find(
+          (exercise) => exercise.exerciseId === pickerModal.exerciseId
+        )
+        if (!instructionsExercise) return
+
+        instructionsExercise.sets.length = newValue as number
+        instructionsExercise.sets = instructionsExercise.sets.map(() => {
+          return instructionsService.getEmptySet()
+        })
+
+        console.log(instructionsExercise)
+
+        setInstructions((prev) => ({
+          ...prev,
+          exercises: prev.exercises.map((exercise) =>
+            exercise.exerciseId === pickerModal.exerciseId
+              ? { ...exercise, sets: instructionsExercise.sets }
+              : exercise
+          ),
+        }))
+
+        return
+      }
+
       if (!exerciseToUpdate) return
 
       const detail = exerciseToUpdate.details![
@@ -477,11 +574,6 @@ export function EditWorkout({
               <h4>{capitalizeFirstLetter(exercise.name)}</h4>
 
               {exersiceDetailsSelects.map((select) => {
-                let valueToReturn
-                if (select.name === 'sets') {
-                } else {
-                }
-
                 return (
                   <PickerSelect
                     openClock={() =>
@@ -492,13 +584,10 @@ export function EditWorkout({
                       key: select.name,
                       type: 'number',
                     }}
-                    value={
-                      (
-                        exercise.details?.[
-                          select.name as keyof ExerciseDetail
-                        ] as { expected: number } | undefined
-                      )?.expected || 0
-                    }
+                    value={getPickerModalValue(
+                      select.name as PickerModalType,
+                      exercise
+                    )}
                     key={select.name}
                   />
                 )
@@ -524,7 +613,10 @@ export function EditWorkout({
           onClose={closePickerModal}
           component={
             <ClockPicker
-              value={getPickerModalValue(pickerModal.type) as number}
+              value={getPickerModalValue(
+                pickerModal.type,
+                selectedExercise || workout.exercises[0]
+              )}
               onChange={(_, value: number) => onEditExerciseDetailes(value)}
               isAfterValue={getIsAfterValue(pickerModal.type)}
             />
@@ -535,11 +627,48 @@ export function EditWorkout({
     )
   }
 
+  function getInstructionsToSave() {
+    const instructionsExercises = workout.exercises.map((exercise) => {
+      const sets = instructions.exercises.find(
+        (e) => e.exerciseId === exercise.exerciseId
+      )?.sets
+      const newSets = getArrayOfNumbers(1, sets?.length || 0).map(() => {
+        return {
+          reps: {
+            expected: exercise.details?.reps?.expected || 0,
+            actual: exercise.details?.reps?.expected || 0,
+          },
+          weight: {
+            expected: exercise.details?.weight?.expected || 0,
+            actual: exercise.details?.weight?.expected || 0,
+          },
+        }
+      })
+      return {
+        exerciseId: exercise.exerciseId,
+        sets: newSets,
+        rpe: exercise.details?.rpe,
+        notes: exercise.details?.notes,
+      }
+    })
+
+    const instructionsToSave = {
+      ...instructions,
+      exercises: instructionsExercises,
+    }
+    return instructionsToSave
+  }
+
   async function onFinish() {
     if (!forUserId) {
       workout.forUserId = user?._id
     }
-    console.log(workout)
+
+    const instructionsToSave = getInstructionsToSave()
+
+    console.log(instructionsToSave)
+
+    return
 
     try {
       setIsLoading(true)

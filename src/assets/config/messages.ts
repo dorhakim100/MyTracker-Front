@@ -39,5 +39,6 @@ export const messages = {
     startWorkout: 'Failed to start workout',
     addSet: 'Failed to add set',
     updateSet: 'Failed to update set',
+    getWorkoutInstructions: 'Failed to get workout instructions',
   },
 }
