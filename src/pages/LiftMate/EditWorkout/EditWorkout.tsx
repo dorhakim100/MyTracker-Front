@@ -156,6 +156,7 @@ export function EditWorkout({
     try {
       if (!workout._id || !user?._id) return
 
+      setIsLoading(true)
       const instructions = await instructionsService.getByWorkoutId(
         instructionsFilter
       )
@@ -166,6 +167,8 @@ export function EditWorkout({
     } catch (err) {
       console.error(err)
       showErrorMsg(messages.error.getWorkoutInstructions)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -510,13 +513,19 @@ export function EditWorkout({
         )
       }
 
-      const value = (
-        exercise.details?.[type as keyof ExerciseDetail] as
-          | { expected: number | string }
-          | undefined
-      )?.expected
+      const exerciseInstruction = instructions.exercises.find(
+        (e) => e.exerciseId === exercise.exerciseId
+      )
+      if (!exerciseInstruction) return 0
 
-      return typeof value === 'number' ? value : Number(value) || 0
+      if (type === ('rpe' as PickerModalType)) {
+        return exerciseInstruction!!.rpe.expected || 0
+      } else if (type === ('weight' as PickerModalType)) {
+        return exerciseInstruction!!.sets[0].weight.expected || 0
+      } else if (type === ('reps' as PickerModalType)) {
+        return exerciseInstruction!!.sets[0].reps.expected || 0
+      }
+      return 0
     }
 
     const onEditExerciseDetailes = (newValue: number | string) => {
@@ -571,7 +580,7 @@ export function EditWorkout({
       editExerciseDetailes(exercise)
     }
 
-    async function getWeekNumberIcon(weekNumber: number) {
+    function getWeekNumberIcon(weekNumber: number) {
       if (!weeksStatus) return <CloseIcon />
       const status = weeksStatus.find(
         (status) => status.weekNumber === weekNumber
@@ -628,7 +637,11 @@ export function EditWorkout({
                 )
               })}
               <CustomInput
-                value={exercise.details?.notes?.expected || ''}
+                value={
+                  instructions.exercises.find(
+                    (e) => e.exerciseId === exercise.exerciseId
+                  )?.notes?.expected || ''
+                }
                 onChange={(notes: string) =>
                   onEditExerciseNotes(notes, exercise)
                 }
