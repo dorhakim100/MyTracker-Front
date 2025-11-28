@@ -148,6 +148,7 @@ export function EditWorkout({
       const filter = { workoutId: workout._id, forUserId: user?._id || '' }
 
       const instructions = await instructionsService.getByWorkoutId(filter)
+      console.log(instructions)
       setInstructions(instructions)
     } catch (err) {
       console.error(err)
@@ -491,8 +492,6 @@ export function EditWorkout({
       if (!type) return 0
 
       if (type === ('sets' as PickerModalType)) {
-        console.log(instructions)
-
         return (
           instructions.exercises.find(
             (e) => e.exerciseId === exercise.exerciseId
@@ -666,13 +665,11 @@ export function EditWorkout({
 
     const instructionsToSave = getInstructionsToSave()
 
-    console.log(instructionsToSave)
-
-    return
-
     try {
       setIsLoading(true)
-      await saveWorkout(workout)
+      const savedWorkout = await saveWorkout(workout)
+      instructionsToSave.workoutId = savedWorkout._id
+      await instructionsService.save(instructionsToSave as Instructions)
       showSuccessMsg(messages.success.saveWorkout)
     } catch (err) {
       console.error(err)
