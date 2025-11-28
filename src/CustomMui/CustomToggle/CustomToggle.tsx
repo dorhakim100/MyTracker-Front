@@ -20,6 +20,7 @@ interface CustomToggleProps {
   className?: string
   ariaLabel?: string
   isBadge?: boolean
+  isReversedIcon?: boolean
 }
 
 export function CustomToggle({
@@ -30,6 +31,7 @@ export function CustomToggle({
   className,
   ariaLabel = 'toggle-group',
   isBadge = false,
+  isReversedIcon = false,
 }: CustomToggleProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -45,22 +47,21 @@ export function CustomToggle({
       className={`custom-toggle no-scroll ${className} ${prefs.favoriteColor}`}
     >
       {options.map((opt) => (
-        <>
+        <ToggleButton
+          key={opt.value}
+          value={opt.value}
+          aria-label={opt.ariaLabel || opt.value}
+        >
           {isBadge && (
             <Badge
               badgeContent={opt.badgeIcon}
               className={`${prefs.favoriteColor} toggle-badge`}
             ></Badge>
           )}
-          <ToggleButton
-            key={opt.value}
-            value={opt.value}
-            aria-label={opt.ariaLabel || opt.value}
-          >
-            {opt.icon}
-            {opt.label}
-          </ToggleButton>
-        </>
+          {!isReversedIcon && opt.icon}
+          {opt.label}
+          {isReversedIcon && opt.icon}
+        </ToggleButton>
       ))}
     </ToggleButtonGroup>
   )

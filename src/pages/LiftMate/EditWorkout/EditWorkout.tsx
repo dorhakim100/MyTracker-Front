@@ -594,10 +594,10 @@ export function EditWorkout({
             label: `Week`,
             value: weekNumber.toString(),
             icon: <span>{weekNumber}</span>,
-            // icon: getWeekNumberIcon(+weekNumber),
             badgeIcon: getWeekNumberIcon(+weekNumber),
           }))}
           isBadge={true}
+          isReversedIcon={true}
           className='week-number-toggle'
         />
         <div className='edit-workout-stage details-stage'>
