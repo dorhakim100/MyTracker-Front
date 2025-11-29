@@ -217,12 +217,18 @@ export function EditWorkout({
     setWorkout({ ...workout, exercises })
   }
 
+  useEffect(() => {
+    console.log(instructions)
+  }, [instructions])
   const onEditExerciseDetails = (
     exerciseId: string,
     type: PickerModalType,
     value: number | string
   ) => {
     if (type === 'sets') {
+      // console.log(value)
+      // console.log(exerciseId)
+      // console.log(type)
       setInstructions((prev) => {
         const exerciseIndex = prev.exercises.findIndex(
           (e) => e.exerciseId === exerciseId
@@ -233,6 +239,8 @@ export function EditWorkout({
         const newSets = Array.from({ length: newSetsLength }, () =>
           instructionsService.getEmptySet()
         )
+
+        console.log(newSets)
 
         const updatedExercises = [...prev.exercises]
         updatedExercises[exerciseIndex] = {

@@ -1,5 +1,6 @@
 import { httpService } from '../http.service'
 import { WorkoutSet } from '../../types/set/Set'
+import { Set } from '../../types/exercise/Exercise'
 
 const KEY = 'set'
 
@@ -58,10 +59,8 @@ async function save(set: WorkoutSet) {
   }
 }
 
-function getEmptySet(): WorkoutSet {
+function getEmptySet(): Set {
   return {
-    exerciseId: '',
-    workoutId: '',
     reps: {
       expected: 8,
       actual: 8,

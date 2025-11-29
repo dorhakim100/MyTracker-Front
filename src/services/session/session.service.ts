@@ -82,7 +82,10 @@ async function playWorkout(sessionDay: SessionDay) {
       )
 
     console.log(instructionsWithDetails)
-    return { ...session, instructions: instructionsWithDetails }
+    return {
+      ...session,
+      instructions: { ...instructionsWithDetails, isDone: true },
+    }
   } catch (err) {
     throw err
   }

@@ -16,9 +16,9 @@ import { Workout } from '../../../types/workout/Workout'
 import { Instructions } from '../../../types/instructions/Instructions'
 import { WeekNumberStatus } from '../../../types/weekNumberStatus/WeekNumberStatus'
 import { exersiceDetailsSelects } from '../../../assets/config/exersice-details-selects'
-import { instructionsService } from '../../../services/instructions/instructions.service'
 import CheckIcon from '@mui/icons-material/Check'
 import CloseIcon from '@mui/icons-material/Close'
+import { ExpectedActual } from '../../../types/expectedActual/ExpectedActual'
 
 type PickerModalType =
   | 'expectedSets'
@@ -97,24 +97,52 @@ export function DetailsStage({
     const exerciseInstruction = instructions.exercises.find(
       (e) => e.exerciseId === exercise.exerciseId
     )
-    if (!exerciseInstruction) return 0
+
+    // Fallback to workout exercise details if instruction doesn't exist or has no value
+    const exerciseDetails = exercise.details
 
     if (type === 'sets') {
-      return exerciseInstruction.sets.length || 0
+      // Check instruction first (reactive - gets updated when editing)
+      if (
+        exerciseInstruction?.sets &&
+        Array.isArray(exerciseInstruction.sets)
+      ) {
+        return exerciseInstruction.sets.length
+      }
+      // Fallback to exercise details (initial value when editing)
+      if (
+        (exerciseDetails?.sets as unknown as ExpectedActual<number>)
+          ?.expected !== undefined
+      ) {
+        return (exerciseDetails?.sets as unknown as ExpectedActual<number>)
+          .expected
+      }
+      return 0
     }
 
     if (type === 'rpe') {
-      return exerciseInstruction.rpe.expected || 0
+      if (exerciseInstruction?.rpe?.expected !== undefined) {
+        return exerciseInstruction.rpe.expected
+      }
+      return exerciseDetails?.rpe?.expected || 0
     } else if (type === 'weight') {
-      return exerciseInstruction.sets[0]?.weight.expected || 0
+      if (exerciseInstruction?.sets?.[0]?.weight?.expected !== undefined) {
+        return exerciseInstruction.sets[0].weight.expected
+      }
+      return exerciseDetails?.weight?.expected || 0
     } else if (type === 'reps') {
-      return exerciseInstruction.sets[0]?.reps.expected || 0
+      if (exerciseInstruction?.sets?.[0]?.reps?.expected !== undefined) {
+        return exerciseInstruction.sets[0].reps.expected
+      }
+      return exerciseDetails?.reps?.expected || 0
     }
     return 0
   }
 
   const handlePickerChange = (newValue: number) => {
     if (!pickerModal.type || !pickerModal.exerciseId) return
+    // console.log(newValue)
+
     onEditExerciseDetails(pickerModal.exerciseId, pickerModal.type, newValue)
   }
 

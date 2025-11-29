@@ -96,7 +96,9 @@ async function getWeekNumberDone(workoutId: string) {
 
 async function getExercisesFromInstructions(instructions: Instructions) {
   try {
+    console.log('instructions:', instructions)
     const exercises = instructions.exercises
+    console.log('exercises:', exercises)
 
     const exercisesWithDetails = await Promise.all(
       exercises.map(async (exercise) => {

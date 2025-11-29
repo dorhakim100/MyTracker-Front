@@ -15,7 +15,7 @@ interface ExerciseWithDetails extends Exercise {
   notes?: ExpectedActual<string>
   rpe?: ExpectedActual<number>
   instructions?: string[]
-  sets?: Set[]
+  sets?: ExpectedActual<number>
 }
 interface ExerciseDetailsProps {
   exercise: ExerciseWithDetails | null
