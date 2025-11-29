@@ -1,5 +1,6 @@
 import { httpService } from '../http.service'
 import { Instructions } from '../../types/instructions/Instructions'
+import { getExerciseById } from '../exersice-search/exersice-search'
 const KEY = 'instructions'
 
 export const instructionsService = {
@@ -9,6 +10,7 @@ export const instructionsService = {
   remove,
   getByWorkoutId,
   getWeekNumberDone,
+  getExercisesFromInstructions,
   getEmptyInstructions,
   getEmptySet,
   getEmptyExpectedActual,
@@ -87,6 +89,23 @@ async function getWeekNumberDone(workoutId: string) {
     })
     console.log(weeksStatus)
     return weeksStatus
+  } catch (err) {
+    throw err
+  }
+}
+
+async function getExercisesFromInstructions(instructions: Instructions) {
+  try {
+    const exercises = instructions.exercises
+
+    const exercisesWithDetails = await Promise.all(
+      exercises.map(async (exercise) => {
+        const fullExercise = await getExerciseById(exercise.exerciseId)
+        return { ...exercise, ...fullExercise }
+      })
+    )
+
+    return { ...instructions, exercises: exercisesWithDetails }
   } catch (err) {
     throw err
   }

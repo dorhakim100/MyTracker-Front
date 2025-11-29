@@ -1,6 +1,7 @@
 import { httpService } from '../http.service'
 import { SessionDay } from '../../types/workout/SessionDay'
 import { workoutService } from '../workout/workout.service'
+import { instructionsService } from '../instructions/instructions.service'
 
 const KEY = 'session'
 
@@ -9,6 +10,7 @@ export const sessionService = {
   getById,
   save,
   remove,
+  playWorkout,
   getEmptySessionDay,
   getDefaultFilter,
 }
@@ -19,9 +21,15 @@ async function query(
   }
 ) {
   try {
-    const items = await httpService.get(KEY, filterBy)
+    const session = await httpService.get(KEY, filterBy)
+    if (!session.instructions) return session
 
-    return items
+    const instructionsWithDetails =
+      await instructionsService.getExercisesFromInstructions(
+        session.instructions
+      )
+
+    return { ...session, instructions: instructionsWithDetails }
   } catch (err) {
     // // console.log(err)
     throw err
@@ -61,6 +69,24 @@ async function save(sessionDay: SessionDay) {
   }
 }
 
+async function playWorkout(sessionDay: SessionDay) {
+  try {
+    const session = await httpService.put(`${KEY}/play/${sessionDay._id}`, {
+      workoutId: sessionDay.workoutId,
+    })
+    console.log(session)
+
+    const instructionsWithDetails =
+      await instructionsService.getExercisesFromInstructions(
+        session.instructions
+      )
+
+    console.log(instructionsWithDetails)
+    return { ...session, instructions: instructionsWithDetails }
+  } catch (err) {
+    throw err
+  }
+}
 function getEmptySessionDay() {
   return {
     ...workoutService.getEmptyWorkout(),

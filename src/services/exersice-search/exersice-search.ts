@@ -29,6 +29,24 @@ export const exerciseSearch = async (query: string) => {
   }
 }
 
+export const getExerciseById = async (exerciseId: string) => {
+  try {
+    const url = `https://www.exercisedb.dev/api/v1/exercises/${exerciseId}`
+    const { data: exerciseData } = await axios.get(url)
+    const { data } = exerciseData
+    console.log('data:', data)
+    const {
+      instructions,
+      name,
+      gifUrl: image,
+      bodyParts: muscleGroups,
+      equipments,
+    } = data
+    return { name, image, muscleGroups, equipments, instructions }
+  } catch (err) {
+    throw err
+  }
+}
 export const getExerciseSummary = async (exerciseId: string) => {
   try {
     const url = `https://www.exercisedb.dev/api/v1/exercises/${exerciseId}`

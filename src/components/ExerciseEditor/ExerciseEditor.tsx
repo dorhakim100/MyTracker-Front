@@ -21,9 +21,10 @@ import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { WorkoutSet } from '../../types/set/Set'
 import { setIsLoading } from '../../store/actions/system.actions'
 import { SessionDay } from '../../types/workout/SessionDay'
+import { ExerciseInstructions } from '../../types/exercise/ExerciseInstructions'
 
 export interface ExerciseEditorProps {
-  exercise: Exercise
+  exercise: ExerciseInstructions
 }
 
 interface PickerOption {
@@ -54,7 +55,7 @@ export function ExerciseEditor({ exercise }: ExerciseEditorProps) {
           const savedset = await setService.save(editSet)
           const sessionToUpdate = {
             ...sessionDay!,
-            sets: sessionDay?.sets.map((set) =>
+            sets: sessionDay?.instructions.exercises.map((set) =>
               set._id === savedset._id ? savedset : set
             ) || [savedset],
           } as SessionDay
@@ -77,13 +78,13 @@ export function ExerciseEditor({ exercise }: ExerciseEditorProps) {
     newSet.exerciseId = exercise.exerciseId
     newSet.workoutId = sessionDay?.workoutId
 
-    const existingSet = sessionDay?.sets.find(
+    const existingSet = sessionDay?.instructions.exercises.find(
       (set) => set.exerciseId === exercise.exerciseId
     )
 
     if (existingSet) {
-      newSet.reps = existingSet.reps
-      newSet.weight = existingSet.weight
+      newSet.reps.actual = existingSet.sets[0].reps.actual
+      newSet.weight.actual = existingSet.sets[0].weight.actual
     }
 
     try {
@@ -101,19 +102,19 @@ export function ExerciseEditor({ exercise }: ExerciseEditorProps) {
 
   const onPickerChange = async (_: any, value: number) => {
     if (picerOptions.type === 'rpe' && sessionDay?.workout) {
-      const exerciseToUpdate = sessionDay?.workout.exercises.find(
+      const exerciseToUpdate = sessionDay?.instructions.exercises.find(
         (exercise) => exercise.exerciseId === exercise.exerciseId
       )
       if (exerciseToUpdate) {
-        exerciseToUpdate.details!.rpe.actual = value
+        exerciseToUpdate.rpe.actual = value
       }
 
-      if (exerciseToUpdate?.details?.rpe.actual === value) return
+      if (exerciseToUpdate?.rpe.actual === value) return
       const sessionToUpdate = {
         ...sessionDay,
-        workout: {
-          ...sessionDay?.workout,
-          exercises: [...sessionDay?.workout.exercises],
+        instructions: {
+          ...sessionDay?.instructions,
+          exercises: [...sessionDay?.instructions.exercises],
         },
       }
 
@@ -169,22 +170,26 @@ export function ExerciseEditor({ exercise }: ExerciseEditorProps) {
     return 0
   }
   const getRpeValue = (): number => {
+    if (!sessionDay?.instructions) return 0
     return (
-      sessionDay?.workout.exercises.find(
+      sessionDay?.instructions.exercises.find(
         (exerciseToFind) => exerciseToFind.exerciseId === exercise.exerciseId
-      )?.details?.rpe.actual || 0
+      )?.rpe.actual || 0
     )
   }
   if (sessionDay)
     return (
       <>
         <div className='exercise-editor-container'>
-          {sessionDay.sets &&
-            sessionDay.sets.length > 0 &&
-            sessionDay.sets.map((set, index) => {
+          {exercise.sets &&
+            exercise.sets.length > 0 &&
+            exercise.sets.map((set, index) => {
               return (
                 <>
-                  <div key={set._id} className='set-editor-container'>
+                  <div
+                    key={`${exercise.exerciseId}-${index}`}
+                    className='set-editor-container'
+                  >
                     <Badge
                       badgeContent={index + 1}
                       color='primary'
@@ -204,7 +209,7 @@ export function ExerciseEditor({ exercise }: ExerciseEditorProps) {
                           key: 'reps',
                           type: 'number',
                         }}
-                        value={set.reps}
+                        value={set.reps.actual}
                       />
                     </div>
                     <div className='weight-container'>
@@ -221,7 +226,7 @@ export function ExerciseEditor({ exercise }: ExerciseEditorProps) {
                           key: 'weight',
                           type: 'number',
                         }}
-                        value={set.weight}
+                        value={set.weight.actual}
                       />
                     </div>
                   </div>

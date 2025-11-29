@@ -8,9 +8,14 @@ import { messages } from '../../assets/config/messages'
 import { Divider, Typography } from '@mui/material'
 import { RootState } from '../../store/store'
 import { translateService } from '../../services/translate/translate.service'
+import { ExpectedActual } from '../../types/expectedActual/ExpectedActual'
+import { Set } from '../../types/exercise/Exercise'
 
 interface ExerciseWithDetails extends Exercise {
-  details?: ExerciseDetail
+  notes?: ExpectedActual<string>
+  rpe?: ExpectedActual<number>
+  instructions?: string[]
+  sets?: Set[]
 }
 interface ExerciseDetailsProps {
   exercise: ExerciseWithDetails | null
@@ -20,6 +25,7 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
+  console.log('exercise:', exercise)
 
   const [exerciseInstructions, setExerciseInstructions] = useState<
     string[] | null
@@ -27,6 +33,10 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
   useEffect(() => {
     const getWorkoutInstructions = async () => {
       try {
+        if (exercise?.instructions) {
+          setExerciseInstructions(exercise.instructions)
+          return
+        }
         const exerciseId = exercise?.exerciseId
         if (!exerciseId) return
 
@@ -58,17 +68,17 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
       <img src={exercise?.image} alt={exercise?.name} />
       <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
       <div className='exercise-details'>
-        {exercise?.details?.notes?.expected && (
+        {exercise?.notes?.expected && (
           <>
             <Typography variant='h5' className='bold-header'>
               Notes
             </Typography>
             <div
               className={`notes-container ${getNotesClass(
-                exercise?.details?.notes?.expected
+                exercise?.notes?.expected || ''
               )}`}
             >
-              {exercise?.details?.notes?.expected}
+              {exercise?.notes?.expected}
             </div>
           </>
         )}

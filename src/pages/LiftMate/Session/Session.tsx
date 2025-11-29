@@ -7,6 +7,7 @@ import { DAY_IN_MS } from '../../../assets/config/times'
 import {
   handleSessionDayChange,
   loadWorkouts,
+  playWorkout,
   saveSessionDay,
   setSelectedSessionDay,
 } from '../../../store/actions/workout.action'
@@ -78,8 +79,11 @@ export function Session() {
   useEffect(() => {
     const updateSessionDay = async () => {
       try {
+        console.log('sessionFilter:', sessionFilter)
+
         if (!user) return
         const day = await handleSessionDayChange(sessionFilter.date, user)
+        console.log('day:', day)
         setSelectedSessionDay(day)
       } catch (err) {
         showErrorMsg(messages.error.getSessionDay)
@@ -118,10 +122,14 @@ export function Session() {
     try {
       setIsLoading(true)
 
-      await saveSessionDay({
+      if (!sessionDay._id) return
+
+      const sessionWithInstructions = await playWorkout({
         ...sessionDay,
         workoutId: workout._id,
       })
+
+      // await saveSessionDay()
     } catch (err) {
       showErrorMsg(messages.error.startWorkout)
     } finally {
@@ -162,6 +170,7 @@ export function Session() {
   }
 
   const handleExerciseInfoClick = (exercise: Exercise) => {
+    // console.log('exercise:', exercise)
     setDialogOptions({
       open: true,
       item: exercise,
@@ -192,7 +201,7 @@ export function Session() {
           onDateChange={onDateChange}
         />
         <SlideAnimation motionKey={sessionDay._id} direction={direction}>
-          {!sessionDay.workoutId ? (
+          {!sessionDay.workoutId || !sessionDay.instructions ? (
             renderNoSession()
           ) : (
             <WorkoutSession

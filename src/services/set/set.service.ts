@@ -62,7 +62,13 @@ function getEmptySet(): WorkoutSet {
   return {
     exerciseId: '',
     workoutId: '',
-    reps: 8,
-    weight: 15,
+    reps: {
+      expected: 8,
+      actual: 8,
+    },
+    weight: {
+      expected: 15,
+      actual: 15,
+    },
   }
 }

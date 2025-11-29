@@ -65,9 +65,12 @@ export async function handleSessionDayChange(dateToCheck: string, user: User) {
     }
 
     if (!user) return
+    const res = await sessionService.query(filter)
+    console.log('res:', res)
 
-    return await sessionService.query(filter)
+    return res
   } catch (err) {
+    console.log('err:', err)
     throw err
   }
 }
@@ -77,6 +80,20 @@ export function setSelectedSessionDay(sessionDay: SessionDay) {
     type: SET_SELECTED_SESSION_DAY,
     sessionDay,
   })
+}
+
+export async function playWorkout(sessionDay: SessionDay) {
+  try {
+    const sessionWithInstructions = await sessionService.playWorkout(sessionDay)
+    store.dispatch({
+      type: SET_SELECTED_SESSION_DAY,
+      sessionDay: sessionWithInstructions,
+    })
+
+    return sessionWithInstructions
+  } catch (err) {
+    throw err
+  }
 }
 
 export async function saveSessionDay(sessionDay: SessionDay) {

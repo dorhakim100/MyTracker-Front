@@ -25,6 +25,8 @@ export function WorkoutSession({
   sessionDay,
   onExerciseInfoClick,
 }: WorkoutSessionProps) {
+  if (!sessionDay.instructions) return null
+
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
 
   const [expandedExercises, setExpandedExercises] = useState<Set<string>>(
@@ -61,7 +63,9 @@ export function WorkoutSession({
     }
   }
 
-  const allExerciseIds = sessionDay.workout.exercises.map((ex) => ex.exerciseId)
+  const allExerciseIds = sessionDay.instructions.exercises.map(
+    (ex) => ex.exerciseId
+  )
   const allExpanded =
     allExerciseIds.length > 0 &&
     allExerciseIds.every((id) => expandedExercises.has(id))
@@ -78,13 +82,14 @@ export function WorkoutSession({
         />
       </div>
       <div className='exercises-container'>
-        {sessionDay.workout.exercises.map((exercise) => {
+        {sessionDay.instructions.exercises.map((exercise) => {
+          // console.log('exercise:', exercise)
           const isExpanded = expandedExercises.has(exercise.exerciseId)
 
           return (
             <CustomAccordion
               key={`${exercise.exerciseId}-${sessionDay._id}`}
-              title={capitalizeFirstLetter(exercise.name)}
+              title={capitalizeFirstLetter(exercise.name || '')}
               cmp={<ExerciseEditor exercise={exercise} />}
               expanded={isExpanded}
               onChange={handleAccordionChange(exercise.exerciseId)}
@@ -92,7 +97,7 @@ export function WorkoutSession({
                 <InfoOutlineIcon
                   onClick={(ev) => {
                     ev.stopPropagation()
-                    onExerciseInfoClick(exercise)
+                    onExerciseInfoClick(exercise as Exercise)
                   }}
                 />
               }

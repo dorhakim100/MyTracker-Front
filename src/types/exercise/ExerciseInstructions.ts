@@ -5,4 +5,9 @@ export interface ExerciseInstructions {
   sets: Set[]
   rpe: ExpectedActual<number>
   notes: ExpectedActual<string>
+  name?: string
+  image?: string
+  muscleGroups?: string[]
+  equipment?: string[]
+  instructions?: string[]
 }
