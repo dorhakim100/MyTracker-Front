@@ -5,4 +5,5 @@ export interface Instructions {
   workoutId: string
   exercises: ExerciseInstructions[]
   weekNumber: number
+  isDone: boolean
 }

@@ -491,7 +491,7 @@ export function EditWorkout({
       setIsLoading(true)
       const savedWorkout = await saveWorkout(workoutToSave)
       instructionsToSave.workoutId = savedWorkout._id
-      await instructionsService.save(instructionsToSave)
+      await instructionsService.save({ ...instructionsToSave, isDone: false })
       showSuccessMsg(messages.success.saveWorkout)
     } catch (err) {
       showErrorMsg(messages.error.saveWorkout)

@@ -82,13 +82,22 @@ export function ExerciseEditor({ exercise }: ExerciseEditorProps) {
           exercises: updatedExercises,
         }
 
+        const fullInstructions = {
+          ...sessionDay.instructions,
+          exercises: sessionDay.instructions.exercises.map((ex) =>
+            ex.exerciseId === exercise.exerciseId
+              ? { ...ex, ...updatedExercise }
+              : ex
+          ),
+        }
+
         // Save to backend
         await instructionsService.save(instructionsToSave)
 
         // Update Redux store
         const sessionToUpdate: SessionDay = {
           ...sessionDay,
-          instructions: instructionsToSave,
+          instructions: fullInstructions,
         }
         setSelectedSessionDay(sessionToUpdate)
       } catch (err) {
