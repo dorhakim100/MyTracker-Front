@@ -307,15 +307,6 @@ export function ExerciseEditor({ exercise }: ExerciseEditorProps) {
     }
   }
 
-  const onDeleteExercise = () => {
-    try {
-      setIsLoading(true)
-      console.log('delete exercise', exercise)
-    } catch (err) {
-      showErrorMsg(messages.error.deleteExercise)
-    }
-  }
-
   return (
     <>
       <div className='exercise-editor-container'>
@@ -387,12 +378,6 @@ export function ExerciseEditor({ exercise }: ExerciseEditorProps) {
           />
         )}
         <div className='controls-container'>
-          <CustomButton
-            icon={<AddIcon />}
-            text='Add Set'
-            onClick={onAddSet}
-            fullWidth
-          />
           <PickerSelect
             openClock={() => {
               setPickerOptions({
@@ -408,15 +393,14 @@ export function ExerciseEditor({ exercise }: ExerciseEditorProps) {
               type: 'number',
             }}
             value={exercise.rpe.actual}
-            minWidth={100}
+            minWidth={120}
           />
-          <div className='remove-container'>
-            <CustomButton
-              icon={<DeleteIcon />}
-              onClick={() => onDeleteExercise()}
-              className='red'
-            />
-          </div>
+          <CustomButton
+            icon={<AddIcon />}
+            text='Add Set'
+            onClick={onAddSet}
+            fullWidth
+          />
         </div>
       </div>
       <SlideDialog
@@ -436,14 +420,3 @@ export function ExerciseEditor({ exercise }: ExerciseEditorProps) {
     </>
   )
 }
-
-// function DeleteAction({ onDeleteItem }: { onDeleteItem: () => void }) {
-//   return (
-//     <SwipeAction onClick={onDeleteItem} destructive={true}>
-//       <div className='swipeable-right-action delete'>
-//         <DeleteIcon className='delete-icon-button' />
-//         <Typography variant='body2'>Delete</Typography>
-//       </div>
-//     </SwipeAction>
-//   )
-// }
