@@ -18,6 +18,9 @@ import { ClockPicker } from '../Pickers/ClockPicker'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { instructionsService as instructionsServiceUtil } from '../../services/instructions/instructions.service'
 import DeleteIcon from '@mui/icons-material/Delete'
+import { DeleteAction } from '../DeleteAction/DeleteAction'
+import { SwipeableWrapper } from '../SwipeableWrapper/SwipeableWrapper'
+
 export interface ExerciseEditorProps {
   exercise: ExerciseInstructions
 }
@@ -71,7 +74,7 @@ export function ExerciseEditor({ exercise }: ExerciseEditorProps) {
             ? exerciseInstructionsToSave
             : {
                 exerciseId: ex.exerciseId,
-                sets: ex.sets,
+                sets: [...ex.sets],
                 rpe: ex.rpe,
                 notes: ex.notes,
               }
@@ -284,16 +287,19 @@ export function ExerciseEditor({ exercise }: ExerciseEditorProps) {
     saveExerciseInstructions,
   ])
 
-  const onDeleteSet = (index: number) => {
+  const onDeleteSet = async (index: number) => {
     try {
       setIsLoading(true)
+      console.log('index', index)
       const updatedSets = [...exercise.sets]
+
       updatedSets.splice(index, 1)
       const updatedExercise: ExerciseInstructions = {
         ...exercise,
         sets: updatedSets,
       }
-      saveExerciseInstructions(updatedExercise)
+      console.log('updatedExercise', updatedExercise)
+      await saveExerciseInstructions(updatedExercise)
     } catch (err) {
       showErrorMsg(messages.error.deleteSet)
     } finally {
@@ -301,70 +307,92 @@ export function ExerciseEditor({ exercise }: ExerciseEditorProps) {
     }
   }
 
+  const onDeleteExercise = () => {
+    try {
+      setIsLoading(true)
+      console.log('delete exercise', exercise)
+    } catch (err) {
+      showErrorMsg(messages.error.deleteExercise)
+    }
+  }
+
   return (
     <>
       <div className='exercise-editor-container'>
-        {exercise.sets &&
-          exercise.sets.length > 0 &&
-          exercise.sets.map((set, index) => (
-            <div key={`${exercise.exerciseId}-${index}`}>
-              <div className='set-editor-container'>
-                <Badge
-                  badgeContent={index + 1}
-                  color='primary'
-                  className={prefs.favoriteColor}
+        {exercise.sets && exercise.sets.length > 0 && (
+          <SwipeableWrapper
+            items={exercise.sets.map((set, index) => ({
+              id: `${exercise.exerciseId}-set-${index}`,
+              content: (
+                <div className='set-container'>
+                  <div className='set-editor-container'>
+                    <Badge
+                      badgeContent={index + 1}
+                      color='primary'
+                      className={prefs.favoriteColor}
+                    />
+                    <div className='reps-container'>
+                      <PickerSelect
+                        openClock={() => {
+                          setPickerOptions({
+                            type: 'reps',
+                            isOpen: true,
+                          })
+                          setEditSet({ ...set, index })
+                          setCurrentPickerValue(set.reps.actual || 0)
+                        }}
+                        option={{
+                          label: 'Reps',
+                          key: 'reps',
+                          type: 'number',
+                        }}
+                        value={set.reps.actual}
+                        minWidth={120}
+                      />
+                    </div>
+                    <div className='weight-container'>
+                      <PickerSelect
+                        openClock={() => {
+                          setPickerOptions({
+                            type: 'weight',
+                            isOpen: true,
+                          })
+                          setEditSet({ ...set, index })
+                          setCurrentPickerValue(set.weight.actual || 0)
+                        }}
+                        option={{
+                          label: 'Weight',
+                          key: 'weight',
+                          type: 'number',
+                        }}
+                        value={set.weight.actual}
+                        minWidth={150}
+                      />
+                    </div>
+                  </div>
+                  <Divider
+                    className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+                  />
+                </div>
+              ),
+              renderRightSwipeActions: () => (
+                <DeleteAction
+                  item={set}
+                  onDeleteItem={() => onDeleteSet(index)}
                 />
-                <div className='reps-container'>
-                  <PickerSelect
-                    openClock={() => {
-                      setPickerOptions({
-                        type: 'reps',
-                        isOpen: true,
-                      })
-                      setEditSet({ ...set, index })
-                      setCurrentPickerValue(set.reps.actual || 0)
-                    }}
-                    option={{
-                      label: 'Reps',
-                      key: 'reps',
-                      type: 'number',
-                    }}
-                    value={set.reps.actual}
-                    minWidth={100}
-                  />
-                </div>
-                <div className='weight-container'>
-                  <PickerSelect
-                    openClock={() => {
-                      setPickerOptions({
-                        type: 'weight',
-                        isOpen: true,
-                      })
-                      setEditSet({ ...set, index })
-                      setCurrentPickerValue(set.weight.actual || 0)
-                    }}
-                    option={{
-                      label: 'Weight',
-                      key: 'weight',
-                      type: 'number',
-                    }}
-                    value={set.weight.actual}
-                    minWidth={120}
-                  />
-                </div>
-                <div className='remove-container'>
-                  <CustomButton
-                    icon={<DeleteIcon />}
-                    onClick={() => onDeleteSet(index)}
-                  />
-                </div>
-              </div>
-              <Divider
-                className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-              />
-            </div>
-          ))}
+              ),
+            }))}
+            listKey={`${exercise.exerciseId}-list-${exercise.sets.length}`}
+            threshold={0.15}
+          />
+        )}
         <div className='controls-container'>
+          <CustomButton
+            icon={<AddIcon />}
+            text='Add Set'
+            onClick={onAddSet}
+            fullWidth
+          />
           <PickerSelect
             openClock={() => {
               setPickerOptions({
@@ -380,13 +408,15 @@ export function ExerciseEditor({ exercise }: ExerciseEditorProps) {
               type: 'number',
             }}
             value={exercise.rpe.actual}
+            minWidth={100}
           />
-          <CustomButton
-            icon={<AddIcon />}
-            text='Add Set'
-            onClick={onAddSet}
-            fullWidth
-          />
+          <div className='remove-container'>
+            <CustomButton
+              icon={<DeleteIcon />}
+              onClick={() => onDeleteExercise()}
+              className='red'
+            />
+          </div>
         </div>
       </div>
       <SlideDialog
@@ -406,3 +436,14 @@ export function ExerciseEditor({ exercise }: ExerciseEditorProps) {
     </>
   )
 }
+
+// function DeleteAction({ onDeleteItem }: { onDeleteItem: () => void }) {
+//   return (
+//     <SwipeAction onClick={onDeleteItem} destructive={true}>
+//       <div className='swipeable-right-action delete'>
+//         <DeleteIcon className='delete-icon-button' />
+//         <Typography variant='body2'>Delete</Typography>
+//       </div>
+//     </SwipeAction>
+//   )
+// }

@@ -42,5 +42,6 @@ export const messages = {
     getWorkoutInstructions: 'Failed to get workout instructions',
     saveSet: 'Failed to save set',
     deleteSet: 'Failed to delete set',
+    deleteExercise: 'Failed to delete exercise',
   },
 }

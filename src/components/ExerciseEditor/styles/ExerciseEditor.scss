@@ -1,20 +1,29 @@
 .exercise-editor-container {
   display: grid;
   gap: 1rem;
-  .set-editor-container {
-    display: grid;
-    grid-auto-flow: column;
-    // align-items: center;
-    justify-items: start;
 
-    .remove-container {
-      align-self: center;
+  .set-container {
+    .set-editor-container {
+      display: grid;
+      grid-auto-flow: column;
+      // align-items: center;
+      justify-items: start;
+      padding: 1rem 0 0 1rem;
+
+      .remove-container {
+        align-self: center;
+      }
+    }
+
+    .divider {
+      margin: 0.5rem 0;
     }
   }
 
   .controls-container {
     display: grid;
-    grid-template-columns: auto 1fr;
+    grid-template-columns: auto auto auto;
     gap: 1rem;
+    align-items: center;
   }
 }
