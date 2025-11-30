@@ -17,7 +17,7 @@ import { PickerSelect } from '../Pickers/PickerSelect'
 import { ClockPicker } from '../Pickers/ClockPicker'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { instructionsService as instructionsServiceUtil } from '../../services/instructions/instructions.service'
-
+import DeleteIcon from '@mui/icons-material/Delete'
 export interface ExerciseEditorProps {
   exercise: ExerciseInstructions
 }
@@ -283,7 +283,24 @@ export function ExerciseEditor({ exercise }: ExerciseEditorProps) {
     currentPickerValue,
     saveExerciseInstructions,
   ])
-  // ========== Render ==========
+
+  const onDeleteSet = (index: number) => {
+    try {
+      setIsLoading(true)
+      const updatedSets = [...exercise.sets]
+      updatedSets.splice(index, 1)
+      const updatedExercise: ExerciseInstructions = {
+        ...exercise,
+        sets: updatedSets,
+      }
+      saveExerciseInstructions(updatedExercise)
+    } catch (err) {
+      showErrorMsg(messages.error.deleteSet)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   return (
     <>
       <div className='exercise-editor-container'>
@@ -313,6 +330,7 @@ export function ExerciseEditor({ exercise }: ExerciseEditorProps) {
                       type: 'number',
                     }}
                     value={set.reps.actual}
+                    minWidth={100}
                   />
                 </div>
                 <div className='weight-container'>
@@ -331,6 +349,13 @@ export function ExerciseEditor({ exercise }: ExerciseEditorProps) {
                       type: 'number',
                     }}
                     value={set.weight.actual}
+                    minWidth={120}
+                  />
+                </div>
+                <div className='remove-container'>
+                  <CustomButton
+                    icon={<DeleteIcon />}
+                    onClick={() => onDeleteSet(index)}
                   />
                 </div>
               </div>

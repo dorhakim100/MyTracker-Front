@@ -4,6 +4,12 @@
   .set-editor-container {
     display: grid;
     grid-auto-flow: column;
+    // align-items: center;
+    justify-items: start;
+
+    .remove-container {
+      align-self: center;
+    }
   }
 
   .controls-container {

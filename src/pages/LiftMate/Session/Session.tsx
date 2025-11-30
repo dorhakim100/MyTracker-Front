@@ -200,7 +200,11 @@ export function Session() {
           onDayChange={onDayChange}
           onDateChange={onDateChange}
         />
-        <SlideAnimation motionKey={sessionDay._id} direction={direction}>
+        <SlideAnimation
+          motionKey={sessionDay._id}
+          direction={direction}
+          className='session-container-animation'
+        >
           {!sessionDay.workoutId || !sessionDay.instructions ? (
             renderNoSession()
           ) : (

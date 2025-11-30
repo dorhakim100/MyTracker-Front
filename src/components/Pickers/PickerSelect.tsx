@@ -13,11 +13,21 @@ interface PickerSelectProps {
     extra?: string
   }
   value: number
+  minWidth?: number
 }
 
-export function PickerSelect({ openClock, option, value }: PickerSelectProps) {
+export function PickerSelect({
+  openClock,
+  option,
+  value,
+  minWidth,
+}: PickerSelectProps) {
   return (
-    <FormControl sx={{ m: 1, minWidth: 150 }} size="small" onClick={openClock}>
+    <FormControl
+      sx={{ m: 1, minWidth: minWidth || 150 }}
+      size='small'
+      onClick={openClock}
+    >
       <InputLabel id={`${option.label}-label`}>{option.label}</InputLabel>
       <Select
         labelId={`${option.label}-label`}
