@@ -8,7 +8,6 @@ import {
   handleSessionDayChange,
   loadWorkouts,
   playWorkout,
-  saveSessionDay,
   setSelectedSessionDay,
 } from '../../../store/actions/workout.action'
 import {
@@ -124,7 +123,7 @@ export function Session() {
 
       if (!sessionDay._id) return
 
-      const sessionWithInstructions = await playWorkout({
+      await playWorkout({
         ...sessionDay,
         workoutId: workout._id,
       })

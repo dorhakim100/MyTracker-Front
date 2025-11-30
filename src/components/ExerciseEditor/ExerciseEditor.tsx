@@ -17,7 +17,6 @@ import { PickerSelect } from '../Pickers/PickerSelect'
 import { ClockPicker } from '../Pickers/ClockPicker'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { instructionsService as instructionsServiceUtil } from '../../services/instructions/instructions.service'
-import DeleteIcon from '@mui/icons-material/Delete'
 import { DeleteAction } from '../DeleteAction/DeleteAction'
 import { SwipeableWrapper } from '../SwipeableWrapper/SwipeableWrapper'
 

@@ -2,7 +2,7 @@ import { workoutService } from '../../services/workout/workout.service'
 import { store } from '../store'
 import {
   SET_WORKOUTS,
-  SET_WORKOUT,
+  // SET_WORKOUT,
   ADD_WORKOUT,
   UPDATE_WORKOUT,
   REMOVE_WORKOUT,
@@ -98,11 +98,7 @@ export async function playWorkout(sessionDay: SessionDay) {
 
 export async function saveSessionDay(sessionDay: SessionDay) {
   try {
-    const sessionToSave = {
-      ...sessionDay,
-      setsIds: sessionDay.sets.map((set) => set._id),
-    }
-    const savedSessionDay = await sessionService.save(sessionToSave)
+    const savedSessionDay = await sessionService.save(sessionDay)
     console.log(savedSessionDay)
     store.dispatch({
       type: SET_SELECTED_SESSION_DAY,

@@ -193,7 +193,7 @@ export function EditWorkout({
       exercises: instructionsExercises,
     }))
 
-    setWorkout({ ...workout, exercises: newExercises })
+    setWorkout({ ...workout, exercises: newExercises as Exercise[] })
   }
 
   const onExerciseFilterChangeTxt = (txt: string) => {

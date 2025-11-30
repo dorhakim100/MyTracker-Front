@@ -2,7 +2,6 @@
 
 import { Prefs } from '../../types/system/Prefs.ts'
 import { getDefaultsPrefs } from '../../services/system/system.service.ts'
-import { App } from '../../types/app/App.ts'
 
 export const LOADING_START = 'LOADING_START'
 export const LOADING_DONE = 'LOADING_DONE'

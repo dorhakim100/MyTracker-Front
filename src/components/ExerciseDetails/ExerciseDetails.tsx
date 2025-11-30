@@ -1,15 +1,13 @@
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { capitalizeFirstLetter } from '../../services/util.service'
 import { getExerciseSummary } from '../../services/exersice-search/exersice-search'
-import { Exercise, ExerciseDetail } from '../../types/exercise/Exercise'
+import { Exercise } from '../../types/exercise/Exercise'
 import { showErrorMsg } from '../../services/event-bus.service'
 import { messages } from '../../assets/config/messages'
 import { Divider, Typography } from '@mui/material'
 import { RootState } from '../../store/store'
 import { translateService } from '../../services/translate/translate.service'
 import { ExpectedActual } from '../../types/expectedActual/ExpectedActual'
-import { Set } from '../../types/exercise/Exercise'
 
 interface ExerciseWithDetails extends Exercise {
   notes?: ExpectedActual<string>

@@ -1,4 +1,3 @@
-import { ExerciseDetail } from '../../types/exercise/Exercise'
 import { Workout } from '../../types/workout/Workout'
 import { httpService } from '../http.service'
 import { WorkoutFilter } from '../../types/workoutFilter/WorkoutFilter'
@@ -68,7 +67,7 @@ function getEmptyWorkout(): Workout {
   }
 }
 
-function getEmptyExerciseDetail(): ExerciseDetail {
+function getEmptyExerciseDetail() {
   return {
     // actualSets: [],
     sets: {

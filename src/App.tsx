@@ -6,7 +6,7 @@ import { usePwaDetect } from './hooks/usePwaDetect.tsx'
 
 import { routes } from './assets/routes/routes'
 
-import { smoothScroll, getRoutes } from './services/util.service'
+import { smoothScroll } from './services/util.service'
 
 import { AppHeader } from './components/AppHeader/AppHeader'
 import { Prefs } from './components/Prefs/Prefs'

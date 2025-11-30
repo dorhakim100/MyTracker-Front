@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 
 import { apps } from '../../assets/config/apps'
@@ -17,18 +16,18 @@ export function AppHeader() {
     <>
       <header className={`app-header ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
         {/* <img src={logo} alt="logo" /> */}
-        <div className="app-select-container">
+        <div className='app-select-container'>
           <Select
-            labelId="header-select-label"
-            id="header-select"
+            labelId='header-select-label'
+            id='header-select'
             value={prefs.app}
             onChange={(event) => {
               setPrefs({ ...prefs, app: event.target.value as App })
             }}
-            label="App"
+            label='App'
           >
             {Object.values(apps).map((app) => (
-              <MenuItem key={app.id} value={app.id} className="app-menu-item">
+              <MenuItem key={app.id} value={app.id} className='app-menu-item'>
                 <img src={app.logo} alt={app.name} />
                 <span
                   className={`app-name ${prefs.isDarkMode ? 'dark-mode' : ''}`}

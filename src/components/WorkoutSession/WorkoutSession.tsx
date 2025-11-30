@@ -1,8 +1,6 @@
 import { useCallback, useState } from 'react'
-import { useSelector } from 'react-redux'
 import { Typography } from '@mui/material'
 
-import { RootState } from '../../store/store'
 import { SessionDay } from '../../types/workout/SessionDay'
 import { Exercise } from '../../types/exercise/Exercise'
 import { capitalizeFirstLetter } from '../../services/util.service'
@@ -26,8 +24,6 @@ export function WorkoutSession({
   onExerciseInfoClick,
 }: WorkoutSessionProps) {
   if (!sessionDay.instructions) return null
-
-  const prefs = useSelector((state: RootState) => state.systemModule.prefs)
 
   const [expandedExercises, setExpandedExercises] = useState<Set<string>>(
     new Set()
