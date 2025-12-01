@@ -16,7 +16,7 @@ import {
 } from '../../../services/util.service'
 import { showErrorMsg } from '../../../services/event-bus.service'
 import { messages } from '../../../assets/config/messages'
-import { Typography } from '@mui/material'
+import { CircularProgress, Typography } from '@mui/material'
 import { CustomList } from '../../../CustomMui/CustomList/CustomList'
 import { SlideDialog } from '../../../components/SlideDialog/SlideDialog'
 import { WorkoutDetails } from '../../../components/WorkoutDetails/WorkoutDetails'
@@ -47,6 +47,10 @@ export function Session() {
     (state: RootState) => state.workoutModule.workouts
   )
 
+  const isLoading = useSelector(
+    (state: RootState) => state.systemModule.isLoading
+  )
+
   const user = useSelector((state: RootState) => state.userModule.user)
 
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
@@ -58,6 +62,10 @@ export function Session() {
     userId: user?._id,
     date: selectedDayDate,
   })
+
+  const [selectedWorkoutId, setSelectedWorkoutId] = useState<string | null>(
+    null
+  )
 
   const [direction, setDirection] = useState(1)
 
@@ -122,6 +130,7 @@ export function Session() {
       setIsLoading(true)
 
       if (!sessionDay._id) return
+      setSelectedWorkoutId(workout._id)
 
       await playWorkout({
         ...sessionDay,
@@ -154,15 +163,19 @@ export function Session() {
           onItemClick={(workout) => {
             setDialogOptions({ open: true, item: workout, type: WORKOUT })
           }}
-          renderRight={(workout) => (
-            <PlayCircleFilledWhiteIcon
-              className='start-icon'
-              onClick={(ev) => {
-                ev.stopPropagation()
-                onStartWorkout(workout)
-              }}
-            />
-          )}
+          renderRight={(workout) =>
+            isLoading && selectedWorkoutId === workout._id ? (
+              <CircularProgress className={`${prefs.favoriteColor}`} />
+            ) : (
+              <PlayCircleFilledWhiteIcon
+                className='start-icon'
+                onClick={(ev) => {
+                  ev.stopPropagation()
+                  onStartWorkout(workout)
+                }}
+              />
+            )
+          }
         />
       </div>
     )

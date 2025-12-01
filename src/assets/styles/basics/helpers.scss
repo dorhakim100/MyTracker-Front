@@ -951,3 +951,51 @@ body.dark-mode {
     }
   }
 }
+
+.MuiCircularProgress-root {
+  &.primary {
+    .MuiCircularProgress-circle {
+      stroke: $primary-color;
+    }
+  }
+  &.blue {
+    .MuiCircularProgress-circle {
+      stroke: $picker-color-blue;
+    }
+  }
+  &.red {
+    .MuiCircularProgress-circle {
+      stroke: $picker-color-red;
+    }
+  }
+  &.yellow {
+    .MuiCircularProgress-circle {
+      stroke: $picker-color-yellow;
+    }
+  }
+  &.green {
+    .MuiCircularProgress-circle {
+      stroke: $picker-color-green;
+    }
+  }
+  &.orange {
+    .MuiCircularProgress-circle {
+      stroke: $picker-color-orange;
+    }
+  }
+  &.deepPurple {
+    .MuiCircularProgress-circle {
+      stroke: $picker-color-deep-purple;
+    }
+  }
+  &.purple {
+    .MuiCircularProgress-circle {
+      stroke: $picker-color-purple;
+    }
+  }
+  &.pink {
+    .MuiCircularProgress-circle {
+      stroke: $picker-color-pink;
+    }
+  }
+}

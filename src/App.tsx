@@ -82,7 +82,7 @@ function App() {
 
     // return routesToReturn
     return routes
-  }, [user, prefs.app])
+  }, [user?._id, prefs.app])
 
   const location = useLocation()
 

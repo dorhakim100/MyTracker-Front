@@ -2,7 +2,7 @@
   padding: 1em;
   height: 100%;
   .custom-stepper {
-    height: 650px;
+    height: 600px;
   }
 
   .edit-workout-stage {
@@ -81,7 +81,9 @@
   .exercises-lists-container {
     display: grid;
     height: 400px;
-    grid-template-rows: 150px auto auto 200px;
+    height: 350px;
+
+    // grid-template-rows: 150px auto;
   }
 
   .search-exercise-list,
