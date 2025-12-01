@@ -25,6 +25,8 @@ export const userService = {
   getById,
   remove,
   update,
+  requestTrainee,
+  getRequests,
   getLoggedinUser,
   getDefaultFilter,
   saveLoggedinUser,
@@ -109,6 +111,22 @@ async function update(user: User) {
     // return saveLoggedinUser(savedUser)
   } catch (err) {
     console.log(err)
+    throw err
+  }
+}
+
+async function requestTrainee(request: { trainer: string; trainee: string }) {
+  try {
+    return await httpService.post(`trainer-request`, request)
+  } catch (err) {
+    throw err
+  }
+}
+
+async function getRequests(trainerId: string) {
+  try {
+    return await httpService.get(`trainer-request/trainer/${trainerId}`, null)
+  } catch (err) {
     throw err
   }
 }

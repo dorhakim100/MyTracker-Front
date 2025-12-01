@@ -1,11 +1,11 @@
-import { useCallback, useEffect, useState } from 'react'
+import { use, useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 
 import { RootState } from '../../store/store'
 
 import { CustomInput } from '../../CustomMui/CustomInput/CustomInput'
 import { User } from '../../types/user/User'
-import { Divider } from '@mui/material'
+import { Chip, Divider } from '@mui/material'
 import { CustomList } from '../../CustomMui/CustomList/CustomList'
 import { userService } from '../../services/user/user.service'
 import { setIsLoading } from '../../store/actions/system.actions'
@@ -13,35 +13,126 @@ import { messages } from '../../assets/config/messages'
 import { showErrorMsg } from '../../services/event-bus.service'
 import AddIcon from '@mui/icons-material/Add'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
+import { TrainerRequest } from '../../types/trainerRequest/TrainerRequest'
 
 export function MyTraineeCard() {
   const user = useSelector((state: RootState) => state.userModule.user)
 
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
 
+  const [searchedTrainees, setSearchedTrainees] = useState<User[]>([])
   const [trainees, setTrainees] = useState<User[]>(user?.trainees ?? [])
+
+  const [requests, setRequests] = useState<TrainerRequest[]>([])
 
   const [search, setSearch] = useState<string>('')
 
+  if (!user) {
+    return null
+  }
+
   useEffect(() => {
-    if (search) {
-      onSearchTrainee()
+    if (!search || search === '') {
+      setSearchedTrainees([])
+      return
     }
+    onSearchTrainee()
   }, [search])
+
+  useEffect(() => {
+    getRequests()
+  }, [user])
+
+  useEffect(() => {
+    console.log('requests:', requests)
+  }, [requests])
 
   async function onSearchTrainee() {
     try {
+      if (!user) {
+        return
+      }
       setIsLoading(true)
       console.log('search:', search)
       const trainees = await userService.getUsers({
         txt: search,
+        searchingUserId: user._id,
       })
-      setTrainees(trainees)
+      setSearchedTrainees(trainees)
     } catch (error) {
       showErrorMsg(messages.error.findUser)
     } finally {
       setIsLoading(false)
     }
+  }
+
+  async function onAddTrainee(trainee: User) {
+    try {
+      console.log(trainee)
+      if (!user) {
+        return
+      }
+
+      const request = await userService.requestTrainee({
+        trainer: user._id,
+        trainee: trainee._id,
+      })
+
+      setRequests([...requests, request])
+    } catch (error) {
+      showErrorMsg(messages.error.addTrainee)
+    }
+  }
+
+  async function getRequests() {
+    try {
+      if (!user) {
+        return
+      }
+      setIsLoading(true)
+      const requests = await userService.getRequests(user._id)
+
+      const requestUsers = requests.map(
+        (request: TrainerRequest) => request.trainee
+      )
+      console.log('requestUsers:', requestUsers)
+
+      setTrainees((prevTrainees) => [...prevTrainees, ...requestUsers])
+
+      setRequests(requests)
+    } catch (err) {
+      showErrorMsg(messages.error.getRequests)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const renderRequestStatus = (trainee: User) => {
+    const request = requests.find(
+      (request) => request.traineeId === trainee._id
+    )
+    if (!request) {
+      return (
+        <CustomButton
+          icon={<AddIcon />}
+          onClick={(ev) => {
+            ev.preventDefault()
+            onAddTrainee(trainee)
+          }}
+        />
+      )
+    }
+
+    switch (request.status) {
+      case 'pending':
+        return <Chip label='Pending' />
+      case 'accepted':
+        return <Chip label='Accepted' />
+      case 'rejected':
+        return <Chip label='Rejected' />
+    }
+
+    return null
   }
 
   return (
@@ -55,26 +146,27 @@ export function MyTraineeCard() {
       {/* <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} /> */}
 
       <CustomList
-        items={trainees}
+        items={searchedTrainees}
         renderPrimaryText={(trainee) => trainee.details.fullname}
         renderSecondaryText={(trainee) => trainee.email}
         renderLeft={(trainee) => (
           <img src={trainee.details.imgUrl} alt={trainee.details.fullname} />
         )}
-        getKey={(trainee) => `${trainee._id}-trainee-card`}
+        getKey={(trainee) => `${trainee._id}-searched-trainee-card`}
         noResultsMessage='No trainees found'
         className={`trainees-list ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-        renderRight={() => <CustomButton icon={<AddIcon />} />}
+        renderRight={(trainee) => renderRequestStatus(trainee)}
       />
       <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
       <CustomList
-        items={user?.trainees ?? []}
+        items={trainees ?? []}
         renderPrimaryText={(trainee) => trainee.details.fullname}
         renderSecondaryText={(trainee) => trainee.email}
         renderLeft={(trainee) => (
           <img src={trainee.details.imgUrl} alt={trainee.details.fullname} />
         )}
-        getKey={(trainee) => `${trainee._id}-trainee-card`}
+        renderRight={(trainee) => renderRequestStatus(trainee)}
+        getKey={(trainee) => `${trainee._id}-assigned-trainee-card`}
         noResultsMessage='No assigned trainees yet'
         className={`trainees-list ${prefs.isDarkMode ? 'dark-mode' : ''}`}
       />

@@ -23,7 +23,6 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
-  console.log('exercise:', exercise)
 
   const [exerciseInstructions, setExerciseInstructions] = useState<
     string[] | null

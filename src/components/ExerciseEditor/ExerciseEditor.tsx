@@ -289,7 +289,6 @@ export function ExerciseEditor({ exercise }: ExerciseEditorProps) {
   const onDeleteSet = async (index: number) => {
     try {
       setIsLoading(true)
-      console.log('index', index)
       const updatedSets = [...exercise.sets]
 
       updatedSets.splice(index, 1)
@@ -297,7 +296,6 @@ export function ExerciseEditor({ exercise }: ExerciseEditorProps) {
         ...exercise,
         sets: updatedSets,
       }
-      console.log('updatedExercise', updatedExercise)
       await saveExerciseInstructions(updatedExercise)
     } catch (err) {
       showErrorMsg(messages.error.deleteSet)

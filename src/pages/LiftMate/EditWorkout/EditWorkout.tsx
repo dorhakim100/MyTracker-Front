@@ -119,7 +119,6 @@ export function EditWorkout({
         instructionsFilter
       )
       const statuses = await instructionsService.getWeekNumberDone(workout._id)
-      console.log('statuses:', statuses)
       setWeeksStatus(statuses)
       setInstructions(instructions)
     } catch (err) {
@@ -218,9 +217,6 @@ export function EditWorkout({
     setWorkout({ ...workout, exercises })
   }
 
-  useEffect(() => {
-    console.log(instructions)
-  }, [instructions])
   const onEditExerciseDetails = (
     exerciseId: string,
     type: PickerModalType,
@@ -240,8 +236,6 @@ export function EditWorkout({
         const newSets = Array.from({ length: newSetsLength }, () =>
           instructionsService.getEmptySet()
         )
-
-        console.log(newSets)
 
         const updatedExercises = [...prev.exercises]
         updatedExercises[exerciseIndex] = {

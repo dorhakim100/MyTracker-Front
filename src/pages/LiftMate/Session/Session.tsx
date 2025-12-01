@@ -88,11 +88,8 @@ export function Session() {
   useEffect(() => {
     const updateSessionDay = async () => {
       try {
-        console.log('sessionFilter:', sessionFilter)
-
         if (!user) return
         const day = await handleSessionDayChange(sessionFilter.date, user)
-        console.log('day:', day)
         setSelectedSessionDay(day)
       } catch (err) {
         showErrorMsg(messages.error.getSessionDay)
@@ -149,8 +146,6 @@ export function Session() {
 
   const renderNoSession = () => {
     const filteredWorkouts = workouts.filter((workout) => workout.isActive)
-
-    console.log(workouts)
 
     return (
       <div className='no-session-container'>

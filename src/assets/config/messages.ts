@@ -44,5 +44,7 @@ export const messages = {
     deleteSet: 'Failed to delete set',
     deleteExercise: 'Failed to delete exercise',
     findUser: 'Failed to find user',
+    addTrainee: 'Failed to add trainee',
+    getRequests: 'Failed to get requests',
   },
 }
