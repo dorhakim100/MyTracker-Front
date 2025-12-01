@@ -22,6 +22,7 @@ import {
 } from '@hello-pangea/dnd'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
+import { SkeletonList } from '../../components/SkeletonList/SkeletonList'
 
 export interface CustomListProps<T> {
   items: T[]
@@ -69,6 +70,10 @@ CustomListProps<T>) {
   const [reorderedItems, setReorderedItems] = useState<T[]>(items || [])
 
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
+
+  const isLoading = useSelector(
+    (state: RootState) => state.systemModule.isLoading
+  )
 
   useEffect(() => {
     setReorderedItems([...items])
@@ -150,6 +155,14 @@ CustomListProps<T>) {
     return (
       <div className='no-results-container'>
         <span>{noResultsMessage}</span>
+      </div>
+    )
+  }
+
+  if (isLoading) {
+    return (
+      <div className={`custom-list ${className ? className : ''}`}>
+        <SkeletonList />
       </div>
     )
   }
