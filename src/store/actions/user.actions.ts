@@ -59,6 +59,7 @@ export async function login(credentials: UserCred) {
     await logout()
 
     const retrived = await userService.login(credentials)
+    console.log('retrived:', retrived)
 
     const user = {
       ...retrived,
@@ -247,6 +248,8 @@ export async function setRemembered() {
   try {
     setIsFirstLoading(true)
     const remembered = await userService.getRememberedUser()
+
+    console.log('remembered:', remembered)
 
     if (!remembered) return
 

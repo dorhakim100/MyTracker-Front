@@ -29,6 +29,14 @@ export function UserDetails() {
   )
 
   const acrodions = [
+    user?.isTrainer
+      ? {
+          title: 'My Trainees',
+          cmp: <MyTraineeCard />,
+          icon: <PersonAddIcon />,
+          key: 'my-trainees',
+        }
+      : null,
     {
       title: 'Meals',
       cmp: <MealsCard />,
@@ -59,14 +67,6 @@ export function UserDetails() {
       icon: <SettingsIcon />,
       key: 'preferences',
     },
-    user?.isTrainer
-      ? {
-          title: 'My Trainees',
-          cmp: <MyTraineeCard />,
-          icon: <PersonAddIcon />,
-          key: 'my-trainees',
-        }
-      : null,
   ].filter(Boolean) as {
     title: string
     cmp: React.ReactNode

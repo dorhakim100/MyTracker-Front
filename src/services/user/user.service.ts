@@ -230,6 +230,8 @@ function saveLoggedinUser(user: User) {
       favoriteItems: user.favoriteItems ?? [],
       meals: user.meals ?? [],
       lastWeight: user.lastWeight,
+      isTrainer: user.isTrainer,
+      trainees: user.trainees ?? [],
       // weights: user.weights ?? [],
     }
     sessionStorage.setItem(STORAGE_KEY_LOGGEDIN_USER, JSON.stringify(user))

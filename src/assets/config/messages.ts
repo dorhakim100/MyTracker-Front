@@ -43,5 +43,6 @@ export const messages = {
     saveSet: 'Failed to save set',
     deleteSet: 'Failed to delete set',
     deleteExercise: 'Failed to delete exercise',
+    findUser: 'Failed to find user',
   },
 }
