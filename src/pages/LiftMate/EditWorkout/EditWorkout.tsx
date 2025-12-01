@@ -119,6 +119,7 @@ export function EditWorkout({
         instructionsFilter
       )
       const statuses = await instructionsService.getWeekNumberDone(workout._id)
+      console.log('statuses:', statuses)
       setWeeksStatus(statuses)
       setInstructions(instructions)
     } catch (err) {

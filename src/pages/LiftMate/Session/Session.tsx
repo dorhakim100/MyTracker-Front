@@ -16,7 +16,7 @@ import {
 } from '../../../services/util.service'
 import { showErrorMsg } from '../../../services/event-bus.service'
 import { messages } from '../../../assets/config/messages'
-import { CircularProgress, Typography } from '@mui/material'
+import { Badge, CircularProgress, Typography } from '@mui/material'
 import { CustomList } from '../../../CustomMui/CustomList/CustomList'
 import { SlideDialog } from '../../../components/SlideDialog/SlideDialog'
 import { WorkoutDetails } from '../../../components/WorkoutDetails/WorkoutDetails'
@@ -28,6 +28,8 @@ import { setIsLoading } from '../../../store/actions/system.actions'
 import { SlideAnimation } from '../../../components/SlideAnimation/SlideAnimation'
 import { ExerciseDetails } from '../../../components/ExerciseDetails/ExerciseDetails'
 import { WorkoutSession } from '../../../components/WorkoutSession/WorkoutSession'
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
+import FiberNewIcon from '@mui/icons-material/FiberNew'
 
 const WORKOUT = 'workout'
 const EXERCISE = 'exercise'
@@ -148,6 +150,8 @@ export function Session() {
   const renderNoSession = () => {
     const filteredWorkouts = workouts.filter((workout) => workout.isActive)
 
+    console.log(workouts)
+
     return (
       <div className='no-session-container'>
         <Typography variant='h5' className='bold-header'>
@@ -159,23 +163,29 @@ export function Session() {
           renderSecondaryText={(workout) =>
             capitalizeFirstLetter(workout.muscleGroups.join(', '))
           }
-          className={`${prefs.isDarkMode ? 'dark-mode' : ''}`}
+          className={`${
+            prefs.isDarkMode ? 'dark-mode' : ''
+          } selected-workout-list`}
           onItemClick={(workout) => {
             setDialogOptions({ open: true, item: workout, type: WORKOUT })
           }}
-          renderRight={(workout) =>
-            isLoading && selectedWorkoutId === workout._id ? (
+          renderRight={(workout) => {
+            return isLoading && selectedWorkoutId === workout._id ? (
               <CircularProgress className={`${prefs.favoriteColor}`} />
+            ) : workout.isNewInstructions ? (
+              <Badge badgeContent={'New'} className={`${prefs.favoriteColor}`}>
+                <PlayCircleFilledWhiteIcon
+                  className='start-icon'
+                  onClick={(ev) => {
+                    ev.stopPropagation()
+                    onStartWorkout(workout)
+                  }}
+                />
+              </Badge>
             ) : (
-              <PlayCircleFilledWhiteIcon
-                className='start-icon'
-                onClick={(ev) => {
-                  ev.stopPropagation()
-                  onStartWorkout(workout)
-                }}
-              />
+              <CheckCircleOutlineIcon className='done-icon' />
             )
-          }
+          }}
         />
       </div>
     )

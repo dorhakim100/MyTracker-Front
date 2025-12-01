@@ -13,6 +13,8 @@ import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import InfoOutlineIcon from '@mui/icons-material/InfoOutline'
 import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../store/store'
 
 interface WorkoutSessionProps {
   sessionDay: SessionDay
@@ -27,6 +29,10 @@ export function WorkoutSession({
 
   const [expandedExercises, setExpandedExercises] = useState<Set<string>>(
     new Set()
+  )
+
+  const workouts = useSelector(
+    (state: RootState) => state.workoutModule.workouts
   )
 
   const handleAccordionChange = useCallback(
@@ -59,6 +65,13 @@ export function WorkoutSession({
     }
   }
 
+  const getWorkoutName = () => {
+    const workoutId = sessionDay.instructions.workoutId
+
+    const workout = workouts.find((w) => w._id === workoutId)
+    return workout?.name
+  }
+
   const allExerciseIds = sessionDay.instructions.exercises.map(
     (ex) => ex.exerciseId
   )
@@ -70,7 +83,7 @@ export function WorkoutSession({
     <div className='workout-container'>
       <div className='workout-header-container'>
         <Typography variant='h5' className='bold-header'>
-          {sessionDay?.workout?.name}
+          {getWorkoutName()}
         </Typography>
         <CustomButton
           icon={allExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}

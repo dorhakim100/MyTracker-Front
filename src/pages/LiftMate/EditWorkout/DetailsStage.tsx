@@ -151,6 +151,8 @@ export function DetailsStage({
     const status = weeksStatus.find(
       (status) => status.weekNumber === weekNumber
     )
+    console.log('status:', status)
+
     return status?.isDone ? <CheckIcon /> : <CloseIcon />
   }
 
