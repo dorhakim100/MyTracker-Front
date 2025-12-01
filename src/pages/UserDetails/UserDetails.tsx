@@ -42,15 +42,16 @@ import SettingsIcon from '@mui/icons-material/Settings'
 import ModeStandbyIcon from '@mui/icons-material/ModeStandby'
 import { DeleteAction } from '../../components/DeleteAction/DeleteAction'
 import { ColorPicker } from '../../components/ColorPicker/ColorPicker'
+import PersonAddIcon from '@mui/icons-material/PersonAdd'
 
 export function UserDetails() {
   const prefs = useSelector(
     (storeState: RootState) => storeState.systemModule.prefs
   )
 
-  // const user = useSelector(
-  //   (storeState: RootState) => storeState.userModule.user
-  // )
+  const user = useSelector(
+    (storeState: RootState) => storeState.userModule.user
+  )
 
   const acrodions = [
     {
@@ -83,7 +84,20 @@ export function UserDetails() {
       icon: <SettingsIcon />,
       key: 'preferences',
     },
-  ]
+    user?.isTrainer
+      ? {
+          title: 'My Trainees',
+          cmp: <MyTraineeCard />,
+          icon: <PersonAddIcon />,
+          key: 'my-trainees',
+        }
+      : null,
+  ].filter(Boolean) as {
+    title: string
+    cmp: React.ReactNode
+    icon: React.ReactNode
+    key: string
+  }[]
 
   return (
     <div
@@ -398,4 +412,8 @@ function PreferencesCard() {
       </div>
     </>
   )
+}
+
+function MyTraineeCard() {
+  return <div>My Trainee Card</div>
 }

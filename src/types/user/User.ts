@@ -22,6 +22,9 @@ export interface User {
 
   weights?: Weight[]
   lastWeight?: Weight
+
+  isTrainer?: boolean
+  trainees?: User[]
 }
 
 export interface UserDetails {
