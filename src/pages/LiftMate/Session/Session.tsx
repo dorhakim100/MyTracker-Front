@@ -29,7 +29,6 @@ import { SlideAnimation } from '../../../components/SlideAnimation/SlideAnimatio
 import { ExerciseDetails } from '../../../components/ExerciseDetails/ExerciseDetails'
 import { WorkoutSession } from '../../../components/WorkoutSession/WorkoutSession'
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
-import FiberNewIcon from '@mui/icons-material/FiberNew'
 
 const WORKOUT = 'workout'
 const EXERCISE = 'exercise'
