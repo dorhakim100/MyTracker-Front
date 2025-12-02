@@ -97,7 +97,7 @@ export function MyTraineeCard() {
       )
       console.log('requestUsers:', requestUsers)
 
-      setTrainees((prevTrainees) => [...prevTrainees, ...requestUsers])
+      setTrainees(requestUsers)
 
       setRequests(requests)
     } catch (err) {

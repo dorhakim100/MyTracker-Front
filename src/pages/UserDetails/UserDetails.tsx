@@ -21,6 +21,7 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import { userService } from '../../services/user/user.service'
 import { setIsLoading } from '../../store/actions/system.actions'
 import { TrainerRequest } from '../../types/trainerRequest/TrainerRequest'
+import { TrainerRequestCard } from '../../components/TrainerRequestCard/TrainerRequestCard'
 
 export function UserDetails() {
   const prefs = useSelector(
@@ -97,6 +98,14 @@ export function UserDetails() {
     }
   }
 
+  function onAcceptRequest(request: TrainerRequest) {
+    console.log(request)
+  }
+
+  function onRejectRequest(request: TrainerRequest) {
+    console.log(request)
+  }
+
   return (
     <div
       className={`page-container user-page ${
@@ -107,6 +116,14 @@ export function UserDetails() {
 
       <div className='content-container'>
         <WeightCard />
+
+        {requests.length > 0 && (
+          <TrainerRequestCard
+            request={requests[0]}
+            onAccept={onAcceptRequest}
+            onReject={onRejectRequest}
+          />
+        )}
 
         {acrodions.map((accordion) => (
           <CustomAccordion

@@ -5,5 +5,6 @@ export interface TrainerRequest {
   trainerId: string
   traineeId: string
   trainee?: User
+  trainer?: User
   status: 'pending' | 'accepted' | 'rejected'
 }
