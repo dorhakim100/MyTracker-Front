@@ -22,6 +22,12 @@ import { userService } from '../../services/user/user.service'
 import { setIsLoading } from '../../store/actions/system.actions'
 import { TrainerRequest } from '../../types/trainerRequest/TrainerRequest'
 import { TrainerRequestCard } from '../../components/TrainerRequestCard/TrainerRequestCard'
+import { messages } from '../../assets/config/messages'
+import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
+import {
+  APPROVED_STATUS,
+  REJECTED_STATUS,
+} from '../../assets/config/request-statuses'
 
 export function UserDetails() {
   const prefs = useSelector(
@@ -98,12 +104,22 @@ export function UserDetails() {
     }
   }
 
-  function onAcceptRequest(request: TrainerRequest) {
-    console.log(request)
-  }
-
-  function onRejectRequest(request: TrainerRequest) {
-    console.log(request)
+  async function onUpdateRequest(
+    request: TrainerRequest,
+    status: typeof APPROVED_STATUS | typeof REJECTED_STATUS
+  ) {
+    if (!request?._id) return
+    try {
+      setIsLoading(true)
+      await userService.updateRequest(request._id, status)
+      const updatedRequests = requests.filter((r) => r._id !== request._id)
+      setRequests(updatedRequests)
+      showSuccessMsg(messages.success.updateRequest)
+    } catch (err) {
+      showErrorMsg(messages.error.updateRequest)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -120,8 +136,8 @@ export function UserDetails() {
         {requests.length > 0 && (
           <TrainerRequestCard
             request={requests[0]}
-            onAccept={onAcceptRequest}
-            onReject={onRejectRequest}
+            onAccept={(request) => onUpdateRequest(request, APPROVED_STATUS)}
+            onReject={(request) => onUpdateRequest(request, REJECTED_STATUS)}
           />
         )}
 

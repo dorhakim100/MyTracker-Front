@@ -15,6 +15,10 @@ import { Gender } from '../bmr/bmr.service'
 import { MealItem } from '../../types/mealItem/MealItem'
 import { Meal } from '../../types/meal/Meal'
 import { searchTypes } from '../../assets/config/search-types'
+import {
+  APPROVED_STATUS,
+  REJECTED_STATUS,
+} from '../../assets/config/request-statuses'
 // import { getPrefs, setPrefs } from '../system/system.service'
 
 export const userService = {
@@ -27,6 +31,7 @@ export const userService = {
   update,
   requestTrainee,
   getRequests,
+  updateRequest,
   getLoggedinUser,
   getDefaultFilter,
   saveLoggedinUser,
@@ -134,6 +139,16 @@ async function getRequests(trainerId?: string, traineeId?: string) {
   }
 }
 
+async function updateRequest(
+  requestId: string,
+  status: typeof APPROVED_STATUS | typeof REJECTED_STATUS
+) {
+  try {
+    return await httpService.put(`trainer-request/${requestId}/${status}`, null)
+  } catch (err) {
+    throw err
+  }
+}
 async function login(userCred: UserCred) {
   try {
     const user = await httpService.post('auth/login', userCred)

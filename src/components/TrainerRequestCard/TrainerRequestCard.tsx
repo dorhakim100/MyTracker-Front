@@ -7,6 +7,12 @@ import CheckIcon from '@mui/icons-material/Check'
 import CloseIcon from '@mui/icons-material/Close'
 import { Chip } from '@mui/material'
 
+import {
+  PENDING_STATUS,
+  APPROVED_STATUS,
+  REJECTED_STATUS,
+} from '../../assets/config/request-statuses'
+
 export interface TrainerRequestCardProps {
   request: TrainerRequest
   onAccept?: (request: TrainerRequest) => void
@@ -19,8 +25,6 @@ export function TrainerRequestCard({
   onReject,
 }: TrainerRequestCardProps) {
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
-
-  // Determine if current user is the trainer or trainee
 
   const displayName = request.trainer?.details?.fullname || 'Unknown User'
   const displayEmail = request.trainer?.email || ''
@@ -40,11 +44,11 @@ export function TrainerRequestCard({
 
   const getStatusChip = () => {
     switch (request.status) {
-      case 'accepted':
+      case APPROVED_STATUS:
         return <Chip label='Accepted' color='success' size='small' />
-      case 'rejected':
+      case REJECTED_STATUS:
         return <Chip label='Rejected' color='error' size='small' />
-      case 'pending':
+      case PENDING_STATUS:
         return <Chip label='Pending' color='warning' size='small' />
       default:
         return null
@@ -77,7 +81,7 @@ export function TrainerRequestCard({
           </div>
         </div>
 
-        {request.status === 'pending' ? (
+        {request.status === PENDING_STATUS ? (
           <div className='trainer-request-actions'>
             <CustomButton
               text='Reject'

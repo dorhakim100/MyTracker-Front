@@ -11,6 +11,7 @@ export const messages = {
     deleteGoal: 'Goal deleted successfully',
     deleteAccount: 'Account deleted successfully',
     saveWorkout: 'Workout saved successfully',
+    updateRequest: 'Request handled successfully',
   },
   error: {
     updateCalories: 'Failed to update calories',
@@ -46,5 +47,6 @@ export const messages = {
     findUser: 'Failed to find user',
     addTrainee: 'Failed to add trainee',
     getRequests: 'Failed to get requests',
+    updateRequest: 'Failed to handle request',
   },
 }

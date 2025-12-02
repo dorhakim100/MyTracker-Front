@@ -14,6 +14,11 @@ import { showErrorMsg } from '../../services/event-bus.service'
 import AddIcon from '@mui/icons-material/Add'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import { TrainerRequest } from '../../types/trainerRequest/TrainerRequest'
+import {
+  APPROVED_STATUS,
+  REJECTED_STATUS,
+  PENDING_STATUS,
+} from '../../assets/config/request-statuses'
 
 export function MyTraineeCard() {
   const user = useSelector((state: RootState) => state.userModule.user)
@@ -124,11 +129,11 @@ export function MyTraineeCard() {
     }
 
     switch (request.status) {
-      case 'pending':
+      case PENDING_STATUS:
         return <Chip label='Pending' />
-      case 'accepted':
+      case APPROVED_STATUS:
         return <Chip label='Accepted' />
-      case 'rejected':
+      case REJECTED_STATUS:
         return <Chip label='Rejected' />
     }
 
