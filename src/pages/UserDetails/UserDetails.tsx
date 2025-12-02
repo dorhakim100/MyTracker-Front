@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { logout } from '../../store/actions/user.actions'
@@ -18,6 +18,9 @@ import CalculateIcon from '@mui/icons-material/Calculate'
 import SettingsIcon from '@mui/icons-material/Settings'
 import ModeStandbyIcon from '@mui/icons-material/ModeStandby'
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
+import { userService } from '../../services/user/user.service'
+import { setIsLoading } from '../../store/actions/system.actions'
+import { TrainerRequest } from '../../types/trainerRequest/TrainerRequest'
 
 export function UserDetails() {
   const prefs = useSelector(
@@ -27,6 +30,8 @@ export function UserDetails() {
   const user = useSelector(
     (storeState: RootState) => storeState.userModule.user
   )
+
+  const [requests, setRequests] = useState<TrainerRequest[]>([])
 
   const acrodions = [
     user?.isTrainer
@@ -73,6 +78,24 @@ export function UserDetails() {
     icon: React.ReactNode
     key: string
   }[]
+
+  useEffect(() => {
+    getUsersRequests()
+  }, [user])
+
+  async function getUsersRequests() {
+    try {
+      if (!user?._id) return
+      setIsLoading(true)
+      const requests = await userService.getRequests(undefined, user._id)
+      console.log(requests)
+      setRequests(requests)
+    } catch (err) {
+      console.log(err)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   return (
     <div

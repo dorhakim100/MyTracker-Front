@@ -123,8 +123,11 @@ async function requestTrainee(request: { trainer: string; trainee: string }) {
   }
 }
 
-async function getRequests(trainerId: string) {
+async function getRequests(trainerId?: string, traineeId?: string) {
   try {
+    if (traineeId) {
+      return await httpService.get(`trainer-request/trainee/${traineeId}`, null)
+    }
     return await httpService.get(`trainer-request/trainer/${trainerId}`, null)
   } catch (err) {
     throw err
