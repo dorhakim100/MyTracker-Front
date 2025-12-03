@@ -14,6 +14,8 @@ import { showErrorMsg } from '../../services/event-bus.service'
 import AddIcon from '@mui/icons-material/Add'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import { TrainerRequest } from '../../types/trainerRequest/TrainerRequest'
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
+
 import {
   APPROVED_STATUS,
   REJECTED_STATUS,
@@ -127,11 +129,13 @@ export function MyTraineeCard() {
         />
       )
     }
+    console.log('request:', request)
 
     switch (request.status) {
       case PENDING_STATUS:
         return <Chip label='Pending' />
       case APPROVED_STATUS:
+        return <CustomButton icon={<ArrowForwardIcon />} />
         return <Chip label='Accepted' />
       case REJECTED_STATUS:
         return <Chip label='Rejected' />
