@@ -8,6 +8,8 @@ import {
   SET_WATCHED_USER,
   SET_USER_TO_EDIT,
   SET_SELECTED_DAY,
+  SET_TRAINEE_USER,
+  REMOVE_TRAINEE_USER,
   // SET_USER_FILTER,
 } from '../reducers/user.reducer'
 
@@ -346,4 +348,15 @@ export async function handleFirstGoal(goal: Goal, user: User) {
   } catch (err) {
     console.log('err', err)
   }
+}
+
+export function setTraineeUser(traineeUser: User) {
+  store.dispatch({
+    type: SET_TRAINEE_USER,
+    traineeUser,
+  })
+}
+
+export function removeTraineeUser() {
+  store.dispatch({ type: REMOVE_TRAINEE_USER })
 }
