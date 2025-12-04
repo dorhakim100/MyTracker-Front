@@ -15,12 +15,13 @@
   border-top-right-radius: 1rem;
   border-bottom-right-radius: 1rem;
 
-  transition: 0.3s ease-in-out;
+  transition: transform 0.3s ease-in-out;
 
   border-top: 1px solid $dark-gray;
   border-right: 1px solid $dark-gray;
+
   &.hidden {
-    translate: -80%;
+    transform: translateX(calc(-100% + 60px));
   }
 
   &.dark-mode {
