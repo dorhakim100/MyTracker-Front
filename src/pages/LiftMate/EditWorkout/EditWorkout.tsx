@@ -60,6 +60,10 @@ export function EditWorkout({
     (stateSelector: RootState) => stateSelector.userModule.user
   )
 
+  const traineeUser = useSelector(
+    (stateSelector: RootState) => stateSelector.userModule.traineeUser
+  )
+
   const [workout, setWorkout] = useState<Workout>(
     selectedWorkout || workoutService.getEmptyWorkout()
   )
@@ -71,7 +75,7 @@ export function EditWorkout({
   const [weeksStatus, setWeeksStatus] = useState<WeekNumberStatus[]>([])
   const [instructionsFilter, setInstructionsFilter] = useState({
     weekNumber: 1,
-    forUserId: user?._id || '',
+    forUserId: traineeUser?._id || user?._id || '',
     workoutId: workout._id || '',
   })
 
@@ -112,7 +116,7 @@ export function EditWorkout({
 
   const getWorkoutInstructions = useCallback(async () => {
     try {
-      if (!workout._id || !user?._id) return
+      if (!workout._id || (!user?._id && !traineeUser?._id)) return
 
       setIsLoading(true)
       const instructions = await instructionsService.getByWorkoutId(
@@ -126,7 +130,7 @@ export function EditWorkout({
     } finally {
       setIsLoading(false)
     }
-  }, [workout._id, instructionsFilter, user?._id])
+  }, [workout._id, instructionsFilter, user?._id, traineeUser?._id])
 
   useEffect(() => {
     latestHandleSearchRef.current = handleSearch
@@ -477,7 +481,8 @@ export function EditWorkout({
   const onFinish = async () => {
     const workoutToSave = {
       ...workout,
-      forUserId: forUserId || user?._id || workout.forUserId,
+      forUserId:
+        forUserId || traineeUser?._id || user?._id || workout.forUserId,
     }
 
     const instructionsToSave = getInstructionsToSave()
