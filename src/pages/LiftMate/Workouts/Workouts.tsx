@@ -48,6 +48,10 @@ export function Workouts() {
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
 
+  const traineeUser = useSelector(
+    (stateSelector: RootState) => stateSelector.userModule.traineeUser
+  )
+
   const workouts = useSelector(
     (stateSelector: RootState) => stateSelector.workoutModule.workouts
   )
@@ -59,10 +63,12 @@ export function Workouts() {
   const [selectedWorkout, setSelectedWorkout] = useState<Workout | null>(null)
 
   useEffect(() => {
-    if (user) {
+    if (traineeUser) {
+      loadWorkouts({ forUserId: traineeUser._id })
+    } else if (user) {
       loadWorkouts({ forUserId: user._id })
     }
-  }, [user])
+  }, [user, traineeUser])
 
   const onOpenEdit = (workout: Workout) => {
     setDialogOptions({ open: true, type: EDIT })

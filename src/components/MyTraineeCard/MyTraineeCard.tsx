@@ -16,16 +16,27 @@ import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import { TrainerRequest } from '../../types/trainerRequest/TrainerRequest'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 
+import VisibilityIcon from '@mui/icons-material/Visibility'
+import DisabledVisibleIcon from '@mui/icons-material/DisabledVisible'
+
 import {
   APPROVED_STATUS,
   REJECTED_STATUS,
   PENDING_STATUS,
 } from '../../assets/config/request-statuses'
+import {
+  removeTraineeUser,
+  setTraineeUser,
+} from '../../store/actions/user.actions'
 
 export function MyTraineeCard() {
   const user = useSelector((state: RootState) => state.userModule.user)
 
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
+
+  const traineeUser = useSelector(
+    (state: RootState) => state.userModule.traineeUser
+  )
 
   const [searchedTrainees, setSearchedTrainees] = useState<User[]>([])
   const [trainees, setTrainees] = useState<User[]>(user?.trainees ?? [])
@@ -135,7 +146,25 @@ export function MyTraineeCard() {
       case PENDING_STATUS:
         return <Chip label='Pending' />
       case APPROVED_STATUS:
-        return <CustomButton icon={<ArrowForwardIcon />} />
+        if (traineeUser?._id === trainee._id) {
+          return (
+            <CustomButton
+              className='red'
+              icon={<DisabledVisibleIcon />}
+              onClick={() => {
+                removeTraineeUser()
+              }}
+            />
+          )
+        } else
+          return (
+            <CustomButton
+              icon={<VisibilityIcon />}
+              onClick={() => {
+                setTraineeUser(trainee)
+              }}
+            />
+          )
         return <Chip label='Accepted' />
       case REJECTED_STATUS:
         return <Chip label='Rejected' />

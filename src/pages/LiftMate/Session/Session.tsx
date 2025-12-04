@@ -54,13 +54,17 @@ export function Session() {
 
   const user = useSelector((state: RootState) => state.userModule.user)
 
+  const traineeUser = useSelector(
+    (state: RootState) => state.userModule.traineeUser
+  )
+
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
 
   const [selectedDay, setSelectedDay] = useState(new Date())
   const [selectedDayDate] = useState(new Date().toISOString())
 
   const [sessionFilter, setSessionFilter] = useState({
-    userId: user?._id,
+    userId: traineeUser?._id || user?._id || '',
     date: selectedDayDate,
   })
 
@@ -88,20 +92,25 @@ export function Session() {
     const updateSessionDay = async () => {
       try {
         if (!user) return
-        const day = await handleSessionDayChange(sessionFilter.date, user)
+        const day = await handleSessionDayChange(
+          sessionFilter.date,
+          traineeUser || user
+        )
         setSelectedSessionDay(day)
       } catch (err) {
         showErrorMsg(messages.error.getSessionDay)
       }
     }
     updateSessionDay()
-  }, [user, sessionFilter])
+  }, [user, traineeUser, sessionFilter])
 
   useEffect(() => {
-    if (user) {
+    if (traineeUser) {
+      loadWorkouts({ forUserId: traineeUser._id })
+    } else if (user) {
       loadWorkouts({ forUserId: user._id })
     }
-  }, [user])
+  }, [user, traineeUser])
 
   const onDayChange = (diff: number) => {
     const newDate = new Date(selectedDay.getTime() + diff * DAY_IN_MS)
@@ -109,7 +118,7 @@ export function Session() {
     setDirection(diff)
     setSelectedDay(newDate)
     setSessionFilter({
-      userId: user?._id,
+      userId: traineeUser?._id || user?._id || '',
       date: getDateFromISO(newDate?.toISOString()),
     })
   }
@@ -117,7 +126,7 @@ export function Session() {
   const onDateChange = (date: string) => {
     setSelectedDay(new Date(date))
     setSessionFilter({
-      userId: user?._id,
+      userId: traineeUser?._id || user?._id || '',
       date: date,
     })
   }
