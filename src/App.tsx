@@ -28,6 +28,7 @@ import { ScreenLoader } from './components/ScreenLoader/ScreenLoader.tsx'
 import { getDefaultsPrefs } from './services/system/system.service.ts'
 import { PwaInstall } from './pages/PwaInstall/PwaInstall.tsx'
 import { apps } from './assets/config/apps.ts'
+import { TraineeUserCard } from './components/TraineeUserCard/TraineeUserCard.tsx'
 
 const isProd = import.meta.env.PROD
 
@@ -55,6 +56,10 @@ function App() {
 
   const user = useSelector(
     (stateSelector: RootState) => stateSelector.userModule.user
+  )
+
+  const traineeUser = useSelector(
+    (stateSelector: RootState) => stateSelector.userModule.traineeUser
   )
 
   const slideDirection = useSelector(
@@ -186,6 +191,9 @@ function App() {
       <AppHeader />
       <UserMsg />
       <Prefs />
+
+      {traineeUser && <TraineeUserCard />}
+
       {/* <PrefsButton /> */}
 
       <main
