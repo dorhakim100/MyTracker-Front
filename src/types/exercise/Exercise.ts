@@ -11,7 +11,8 @@ export interface Exercise {
 
 export interface ExerciseDetail {
   sets: Set[]
-  rpe: ExpectedActual<number>
+  rpe?: ExpectedActual<number>
+  rir?: ExpectedActual<number>
   notes?: ExpectedActual<string>
   // just for editing
   reps?: ExpectedActual<number>

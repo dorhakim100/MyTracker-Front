@@ -12,6 +12,7 @@ import { ExpectedActual } from '../../types/expectedActual/ExpectedActual'
 interface ExerciseWithDetails extends Exercise {
   notes?: ExpectedActual<string>
   rpe?: ExpectedActual<number>
+  rir?: ExpectedActual<number>
   instructions?: string[]
   sets?: ExpectedActual<number>
 }

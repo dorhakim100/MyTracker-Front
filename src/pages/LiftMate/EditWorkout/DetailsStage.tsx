@@ -27,6 +27,7 @@ type PickerModalType =
   | 'sets'
   | 'weight'
   | 'reps'
+  | 'rir'
 
 interface DetailsStageProps {
   workout: Workout
@@ -37,6 +38,7 @@ interface DetailsStageProps {
     forUserId: string
     workoutId: string
   }
+
   onInstructionsFilterChange: (filter: {
     weekNumber: number
     forUserId: string
@@ -48,7 +50,19 @@ interface DetailsStageProps {
     value: number | string
   ) => void
   onEditExerciseNotes: (exerciseId: string, notes: string) => void
+  onChangeRpeRir: (exerciseId: string, value: 'rpe' | 'rir') => void
 }
+
+const RPE_RIR_TOGGLE_OPTIONS = [
+  {
+    label: 'RPE',
+    value: 'rpe',
+  },
+  {
+    label: 'RIR',
+    value: 'rir',
+  },
+]
 
 export function DetailsStage({
   workout,
@@ -58,6 +72,7 @@ export function DetailsStage({
   onInstructionsFilterChange,
   onEditExerciseDetails,
   onEditExerciseNotes,
+  onChangeRpeRir,
 }: DetailsStageProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -125,6 +140,11 @@ export function DetailsStage({
         return exerciseInstruction.rpe.expected
       }
       return exerciseDetails?.rpe?.expected || 0
+    } else if (type === 'rir') {
+      if (exerciseInstruction?.rir?.expected !== undefined) {
+        return exerciseInstruction.rir.expected
+      }
+      return exerciseDetails?.rir?.expected || 0
     } else if (type === 'weight') {
       if (exerciseInstruction?.sets?.[0]?.weight?.expected !== undefined) {
         return exerciseInstruction.sets[0].weight.expected
@@ -155,6 +175,27 @@ export function DetailsStage({
     return status?.isDone ? <CheckIcon /> : <CloseIcon />
   }
 
+  const onSwitchRpeRir = (exerciseId: string, value: 'rpe' | 'rir') => {
+    const exerciseDetailsToUpdate = workout.exercises.find(
+      (e) => e.exerciseId === exerciseId
+    )
+    if (!exerciseDetailsToUpdate) return
+    onChangeRpeRir(exerciseId, value)
+    // if (value === 'rpe' && exerciseDetailsToUpdate.details?.rpe) {
+    //   exerciseDetailsToUpdate.details.rpe = {
+    //     expected: 8,
+    //     actual: 8,
+    //   }
+    // }
+
+    // if (value === 'rir' && exerciseDetailsToUpdate.details?.rir) {
+    //   exerciseDetailsToUpdate.details.rir = {
+    //     expected: 2,
+    //     actual: 2,
+    //   }
+    // }
+  }
+
   return (
     <>
       <CustomToggle
@@ -181,6 +222,8 @@ export function DetailsStage({
             (e) => e.exerciseId === exercise.exerciseId
           )
 
+          console.log(exercise)
+
           return (
             <div
               key={exercise.exerciseId}
@@ -188,23 +231,39 @@ export function DetailsStage({
             >
               <h4>{capitalizeFirstLetter(exercise.name)}</h4>
 
-              {exersiceDetailsSelects.map((select) => (
-                <PickerSelect
-                  key={select.name}
-                  openClock={() =>
-                    openPickerModal(exercise, select.name as PickerModalType)
-                  }
-                  option={{
-                    label: select.label,
-                    key: select.name,
-                    type: 'number',
-                  }}
-                  value={getPickerModalValue(
-                    select.name as PickerModalType,
-                    exercise
-                  )}
-                />
-              ))}
+              <CustomToggle
+                options={RPE_RIR_TOGGLE_OPTIONS}
+                value={exercise?.details?.rpe ? 'rpe' : 'rir'}
+                onChange={(value) => {
+                  onSwitchRpeRir(exercise.exerciseId, value as 'rpe' | 'rir')
+                }}
+              />
+
+              {exersiceDetailsSelects
+                .filter((select) => {
+                  if (!exercise.details?.rpe && select.name === 'rpe')
+                    return false
+                  if (!exercise.details?.rir && select.name === 'rir')
+                    return false
+                  return true
+                })
+                .map((select) => (
+                  <PickerSelect
+                    key={select.name}
+                    openClock={() =>
+                      openPickerModal(exercise, select.name as PickerModalType)
+                    }
+                    option={{
+                      label: select.label,
+                      key: select.name,
+                      type: 'number',
+                    }}
+                    value={getPickerModalValue(
+                      select.name as PickerModalType,
+                      exercise
+                    )}
+                  />
+                ))}
               <CustomInput
                 value={exerciseInstruction?.notes?.expected || ''}
                 onChange={(notes: string) =>

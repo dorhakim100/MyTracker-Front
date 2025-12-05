@@ -150,7 +150,7 @@ export function ExercisesStage({
         open={modalPrefs.isOpen}
         onClose={onCloseModal}
         component={<ExerciseDetails exercise={modalPrefs.exercise} />}
-        title='Exercise Details'
+        title={capitalizeFirstLetter(modalPrefs.exercise?.name || '')}
         type='full'
       />
     </>

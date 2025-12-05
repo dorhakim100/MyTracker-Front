@@ -29,4 +29,11 @@ export const exersiceDetailsSelects = [
     values: getArrayOfNumbers(1, 10),
     isAfterValue: true,
   },
+  {
+    name: 'rir',
+    label: 'RIR',
+    type: 'number',
+    values: getArrayOfNumbers(1, 10),
+    isAfterValue: false,
+  },
 ]

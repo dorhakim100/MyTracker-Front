@@ -247,7 +247,7 @@ export function Session() {
             setDialogOptions({ open: false, item: null, type: null })
           }}
           component={getDialogComponent() as React.ReactElement}
-          title={dialogOptions.item?.name}
+          title={capitalizeFirstLetter(dialogOptions.item?.name || '')}
           type='full'
         />
       )}

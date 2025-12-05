@@ -170,7 +170,7 @@ export function ExerciseEditor({ exercise }: ExerciseEditorProps) {
     const type = pickerOptions.type
     if (!type) return 0
 
-    if (type === 'rpe') {
+    if (type === 'rpe' && exercise.rpe) {
       return exercise.rpe.actual || 0
     }
 
@@ -227,7 +227,7 @@ export function ExerciseEditor({ exercise }: ExerciseEditorProps) {
 
       let updatedExercise: ExerciseInstructions | null = null
 
-      if (pickerOptions.type === 'rpe') {
+      if (pickerOptions.type === 'rpe' && exercise.rpe) {
         // Update RPE - use the current picker value tracked in state
         updatedExercise = {
           ...exercise,
@@ -382,14 +382,14 @@ export function ExerciseEditor({ exercise }: ExerciseEditorProps) {
                 isOpen: true,
               })
               setEditSet({ ...exercise.sets[0], index: -1 } as EditSet)
-              setCurrentPickerValue(exercise.rpe.actual || 0)
+              setCurrentPickerValue(exercise.rpe?.actual || 0)
             }}
             option={{
               label: 'RPE',
               key: 'rpe',
               type: 'number',
             }}
-            value={exercise.rpe.actual}
+            value={exercise.rpe?.actual || 0}
             minWidth={120}
           />
           <CustomButton

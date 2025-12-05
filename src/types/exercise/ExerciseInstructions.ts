@@ -3,7 +3,8 @@ import { Set } from './Exercise'
 export interface ExerciseInstructions {
   exerciseId: string
   sets: Set[]
-  rpe: ExpectedActual<number>
+  rpe?: ExpectedActual<number>
+  rir?: ExpectedActual<number>
   notes: ExpectedActual<string>
   name?: string
   image?: string

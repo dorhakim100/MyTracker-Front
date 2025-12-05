@@ -16,11 +16,13 @@
 
     &.name-stage {
       // TODO: Add styles for name stage
+
+      gap: 0.2rem;
       .selected-muscles-group-container {
         min-height: 48px;
         display: grid;
         grid-auto-flow: column;
-        align-items: start;
+        align-items: center;
         justify-content: start;
         gap: 0.5rem;
         overflow-x: auto;
@@ -84,6 +86,7 @@
 
     &.details-stage {
       height: 250px;
+      height: 350px;
       overflow-y: auto;
 
       .exercise-details-edit-container {
@@ -91,6 +94,16 @@
         grid-template-columns: repeat(2, 1fr);
 
         gap: 0.5rem 0rem;
+
+        h4 {
+          grid-row: 1/2;
+          grid-column: 1/2;
+        }
+        .custom-toggle {
+          grid-row: 1/2;
+          grid-column: 2/3;
+          justify-self: end;
+        }
 
         .divider,
         .MuiTextField-root,

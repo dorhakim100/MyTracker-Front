@@ -21,6 +21,7 @@ import { MuscleGroup } from '../../../types/muscleGroup/MuscleGroup'
 import { NameStage } from './NameStage'
 import { ExercisesStage } from './ExercisesStage'
 import { DetailsStage } from './DetailsStage'
+// import { useKeyboardHeight } from '../../../hooks/useKeyboardHeight'
 
 interface EditWorkoutProps {
   selectedWorkout?: Workout | null
@@ -37,6 +38,7 @@ type PickerModalType =
   | 'sets'
   | 'weight'
   | 'reps'
+  | 'rir'
 
 interface MuscleGroupFilter {
   txt: string
@@ -63,6 +65,8 @@ export function EditWorkout({
   const traineeUser = useSelector(
     (stateSelector: RootState) => stateSelector.userModule.traineeUser
   )
+
+  // const keyboardHeight = useKeyboardHeight()
 
   const [workout, setWorkout] = useState<Workout>(
     selectedWorkout || workoutService.getEmptyWorkout()
@@ -227,9 +231,7 @@ export function EditWorkout({
     value: number | string
   ) => {
     if (type === 'sets') {
-      // console.log(value)
-      // console.log(exerciseId)
-      // console.log(type)
+      value = Math.floor(value as number)
       setInstructions((prev) => {
         const exerciseIndex = prev.exercises.findIndex(
           (e) => e.exerciseId === exerciseId
@@ -277,6 +279,8 @@ export function EditWorkout({
         },
       } as ExerciseDetail,
     }
+
+    console.log('updatedExercises', updatedExercises)
     setWorkout({ ...workout, exercises: updatedExercises })
 
     // Update instructions
@@ -304,6 +308,7 @@ export function EditWorkout({
           },
         }))
       } else if (type === 'reps') {
+        value = Math.floor(value as number)
         const repsValue = (value as number) ?? 0
         instructionExercise.sets = instructionExercise.sets.map((set) => ({
           ...set,
@@ -312,6 +317,12 @@ export function EditWorkout({
             actual: repsValue,
           },
         }))
+      } else if (type === 'rir') {
+        value = Math.floor(value as number)
+        instructionExercise.rir = {
+          expected: value as number,
+          actual: value as number,
+        }
       }
 
       updatedInstructions[instructionIndex] = instructionExercise
@@ -368,6 +379,23 @@ export function EditWorkout({
         exercises: updatedExercises,
       }
     })
+  }
+
+  const onChangeRpeRir = (exerciseId: string, value: 'rpe' | 'rir') => {
+    console.log(exerciseId, value)
+    const exerciseToUpdate = workout.exercises.find(
+      (e) => e.exerciseId === exerciseId
+    )
+    if (!exerciseToUpdate) return
+
+    if (value === 'rpe') {
+      delete exerciseToUpdate.details?.rir
+    } else {
+      delete exerciseToUpdate.details?.rpe
+    }
+    console.log('exerciseToUpdate', exerciseToUpdate)
+
+    onEditExerciseDetails(exerciseId, value, value === 'rpe' ? 8 : 2)
   }
 
   const getStageTitle = (stage: WorkoutStage): string => {
@@ -435,6 +463,7 @@ export function EditWorkout({
             onInstructionsFilterChange={setInstructionsFilter}
             onEditExerciseDetails={onEditExerciseDetails}
             onEditExerciseNotes={onEditExerciseNotes}
+            onChangeRpeRir={onChangeRpeRir}
           />
         )
       default:
@@ -514,6 +543,17 @@ export function EditWorkout({
       className={`page-container edit-workout-container ${
         prefs.isDarkMode ? 'dark-mode' : ''
       }`}
+      // style={
+      //   keyboardHeight > 0
+      //     ? {
+      //         position: 'absolute',
+      //         bottom: `${25}px`,
+      //         left: 0,
+      //         right: 0,
+      //         transition: 'bottom 0.25s ease',
+      //       }
+      //     : {}
+      // }
     >
       <CustomStepper
         stages={stages}

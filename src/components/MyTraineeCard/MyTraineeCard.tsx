@@ -14,7 +14,6 @@ import { showErrorMsg } from '../../services/event-bus.service'
 import AddIcon from '@mui/icons-material/Add'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import { TrainerRequest } from '../../types/trainerRequest/TrainerRequest'
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import DisabledVisibleIcon from '@mui/icons-material/DisabledVisible'
