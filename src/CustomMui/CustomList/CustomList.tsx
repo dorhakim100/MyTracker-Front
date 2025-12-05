@@ -150,19 +150,18 @@ CustomListProps<T>) {
       </ListItemButton>
     )
   }
+  if (isLoading) {
+    return (
+      <div className={`custom-list ${className ? className : ''}`}>
+        <SkeletonList />
+      </div>
+    )
+  }
 
   if (!reorderedItems.length) {
     return (
       <div className='no-results-container'>
         <span>{noResultsMessage}</span>
-      </div>
-    )
-  }
-
-  if (isLoading) {
-    return (
-      <div className={`custom-list ${className ? className : ''}`}>
-        <SkeletonList />
       </div>
     )
   }

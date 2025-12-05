@@ -10,6 +10,9 @@ import { Exercise } from '../../../types/exercise/Exercise'
 import { Workout } from '../../../types/workout/Workout'
 import AddIcon from '@mui/icons-material/Add'
 import RemoveIcon from '@mui/icons-material/Remove'
+import { CustomAccordion } from '../../../CustomMui/CustomAccordion/CustomAccordion'
+
+import FitnessCenterIcon from '@mui/icons-material/FitnessCenter'
 
 interface ExercisesStageProps {
   workout: Workout
@@ -72,32 +75,40 @@ export function ExercisesStage({
           )}
           noResultsMessage='No exercises found...'
         />
-        <h4 className='bold-header'>Selected Exercises</h4>
         <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
         {workout.exercises.length > 0 ? (
-          <CustomList
-            items={workout.exercises}
-            renderPrimaryText={(exercise) =>
-              capitalizeFirstLetter(exercise.name)
+          <CustomAccordion
+            title='Selected Exercises'
+            icon={<FitnessCenterIcon />}
+            cmp={
+              <CustomList
+                items={workout.exercises}
+                renderPrimaryText={(exercise) =>
+                  capitalizeFirstLetter(exercise.name)
+                }
+                renderSecondaryText={(exercise) =>
+                  capitalizeFirstLetter(exercise.muscleGroups.join(', '))
+                }
+                renderLeft={(exercise) => (
+                  <img src={exercise.image} alt={exercise.name} />
+                )}
+                getKey={(exercise) => `${exercise.exerciseId}-selected`}
+                className={`selected-exercise-list ${
+                  prefs.isDarkMode ? 'dark-mode' : ''
+                }`}
+                noResultsMessage='No exercises added yet'
+                isSwipeable={true}
+                renderRightSwipeActions={(exercise) => (
+                  <DeleteAction
+                    item={exercise}
+                    onDeleteItem={onDeleteExercise}
+                  />
+                )}
+                isDragable={true}
+                onReorder={onReorderExercises}
+                dragOffsetY={-180}
+              />
             }
-            renderSecondaryText={(exercise) =>
-              capitalizeFirstLetter(exercise.muscleGroups.join(', '))
-            }
-            renderLeft={(exercise) => (
-              <img src={exercise.image} alt={exercise.name} />
-            )}
-            getKey={(exercise) => `${exercise.exerciseId}-selected`}
-            className={`selected-exercise-list ${
-              prefs.isDarkMode ? 'dark-mode' : ''
-            }`}
-            noResultsMessage='No exercises added yet'
-            isSwipeable={true}
-            renderRightSwipeActions={(exercise) => (
-              <DeleteAction item={exercise} onDeleteItem={onDeleteExercise} />
-            )}
-            isDragable={true}
-            onReorder={onReorderExercises}
-            dragOffsetY={-180}
           />
         ) : (
           <div className='no-exercises bold-header'>No exercises added yet</div>

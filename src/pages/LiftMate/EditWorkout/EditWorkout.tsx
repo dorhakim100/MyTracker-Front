@@ -387,7 +387,7 @@ export function EditWorkout({
     // TODO: Add validation logic
     switch (stage) {
       case 'name':
-        if (!workout.name) return true
+        // if (!workout.name) return true
         if (workout.muscleGroups.length < 1) return true
         return false
       case 'exercises':
@@ -483,6 +483,10 @@ export function EditWorkout({
       ...workout,
       forUserId:
         forUserId || traineeUser?._id || user?._id || workout.forUserId,
+    }
+
+    if (!workoutToSave.name) {
+      workoutToSave.name = 'Untitled Workout'
     }
 
     const instructionsToSave = getInstructionsToSave()
