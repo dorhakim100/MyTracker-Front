@@ -185,7 +185,11 @@ export function EditWorkout({
 
     const instructionsExercises = newExercises.map((exercise) => ({
       exerciseId: exercise.exerciseId,
-      sets: [instructionsService.getEmptySet()],
+      sets: [
+        instructionsService.getEmptySet(),
+        instructionsService.getEmptySet(),
+        instructionsService.getEmptySet(),
+      ],
       rpe: (rpe || { expected: 8, actual: 8 }) as {
         expected: number
         actual: number

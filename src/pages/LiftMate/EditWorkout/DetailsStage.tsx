@@ -19,6 +19,9 @@ import { exersiceDetailsSelects } from '../../../assets/config/exersice-details-
 import CheckIcon from '@mui/icons-material/Check'
 import CloseIcon from '@mui/icons-material/Close'
 import { ExpectedActual } from '../../../types/expectedActual/ExpectedActual'
+import InfoOutlineIcon from '@mui/icons-material/InfoOutline'
+import { CustomButton } from '../../../CustomMui/CustomButton/CustomButton'
+import { ExerciseDetails } from '../../../components/ExerciseDetails/ExerciseDetails'
 
 type PickerModalType =
   | 'expectedSets'
@@ -87,14 +90,20 @@ export function DetailsStage({
     null
   )
 
+  const [exerciseInfoDialog, setExerciseInfoDialog] = useState({
+    isOpen: false,
+    exercise: null as Exercise | null,
+  })
+
   const openPickerModal = (exercise: Exercise, type: PickerModalType) => {
     setPickerModal({ isOpen: true, type, exerciseId: exercise.exerciseId })
     setSelectedExercise(exercise)
   }
 
-  const closePickerModal = () => {
+  const closeSlideDialog = () => {
     setPickerModal({ isOpen: false, type: null, exerciseId: null })
     setSelectedExercise(null)
+    setExerciseInfoDialog({ isOpen: false, exercise: null })
   }
 
   const getIsAfterValue = (type: PickerModalType | null) => {
@@ -196,6 +205,66 @@ export function DetailsStage({
     // }
   }
 
+  const getButtonsValues = (type: PickerModalType | null) => {
+    if (!type) return []
+    return exersiceDetailsSelects.find((select) => select.name === type)
+      ?.buttons
+  }
+
+  const getPickerValues = (
+    type: PickerModalType | null,
+    key: 'min' | 'max'
+  ): number => {
+    if (!type) return 0
+    const select = exersiceDetailsSelects.find((select) => select.name === type)
+    if (!select) return 0
+    const index = key === 'min' ? 0 : select.values.length - 1
+    return select.values[index] as number
+  }
+
+  const getIsButtonsVisible = (type: PickerModalType | null): boolean => {
+    if (type === 'rpe' || type === 'rir' || type === 'sets') return false
+    return true
+  }
+
+  const getIsDialogOpen = () => {
+    return pickerModal.isOpen || exerciseInfoDialog.isOpen
+  }
+
+  const getDialogTitle = () => {
+    if (exerciseInfoDialog.isOpen) {
+      return capitalizeFirstLetter(exerciseInfoDialog.exercise?.name || '')
+    }
+    return capitalizeFirstLetter(pickerModal.type || '')
+  }
+
+  const getDialogComponent = () => {
+    if (exerciseInfoDialog.isOpen) {
+      return <ExerciseDetails exercise={exerciseInfoDialog.exercise} />
+    }
+    return (
+      <ClockPicker
+        value={getPickerModalValue(
+          pickerModal.type,
+          selectedExercise || workout.exercises[0]
+        )}
+        onChange={(_, value: number) => handlePickerChange(value)}
+        isAfterValue={getIsAfterValue(pickerModal.type)}
+        buttonsValues={getButtonsValues(pickerModal.type as PickerModalType)}
+        isButtonsVisible={getIsButtonsVisible(
+          pickerModal.type as PickerModalType
+        )}
+        minValue={getPickerValues(pickerModal.type as PickerModalType, 'min')}
+        maxValue={getPickerValues(pickerModal.type as PickerModalType, 'max')}
+      />
+    )
+  }
+
+  const getDialogHeight = () => {
+    if (exerciseInfoDialog.isOpen) return 'full'
+    return 'half'
+  }
+
   return (
     <>
       <CustomToggle
@@ -222,22 +291,30 @@ export function DetailsStage({
             (e) => e.exerciseId === exercise.exerciseId
           )
 
-          console.log(exercise)
-
           return (
             <div
               key={exercise.exerciseId}
               className='exercise-details-edit-container'
             >
-              <h4>{capitalizeFirstLetter(exercise.name)}</h4>
+              <div className='header-container'>
+                <CustomButton
+                  isIcon={true}
+                  icon={<InfoOutlineIcon />}
+                  onClick={(ev) => {
+                    ev.stopPropagation()
+                    setExerciseInfoDialog({ isOpen: true, exercise })
+                  }}
+                />
+                <h4>{capitalizeFirstLetter(exercise.name)}</h4>
 
-              <CustomToggle
-                options={RPE_RIR_TOGGLE_OPTIONS}
-                value={exercise?.details?.rpe ? 'rpe' : 'rir'}
-                onChange={(value) => {
-                  onSwitchRpeRir(exercise.exerciseId, value as 'rpe' | 'rir')
-                }}
-              />
+                <CustomToggle
+                  options={RPE_RIR_TOGGLE_OPTIONS}
+                  value={exercise?.details?.rpe ? 'rpe' : 'rir'}
+                  onChange={(value) => {
+                    onSwitchRpeRir(exercise.exerciseId, value as 'rpe' | 'rir')
+                  }}
+                />
+              </div>
 
               {exersiceDetailsSelects
                 .filter((select) => {
@@ -282,19 +359,11 @@ export function DetailsStage({
         })}
       </div>
       <SlideDialog
-        open={pickerModal.isOpen}
-        onClose={closePickerModal}
-        component={
-          <ClockPicker
-            value={getPickerModalValue(
-              pickerModal.type,
-              selectedExercise || workout.exercises[0]
-            )}
-            onChange={(_, value: number) => handlePickerChange(value)}
-            isAfterValue={getIsAfterValue(pickerModal.type)}
-          />
-        }
-        title={capitalizeFirstLetter(pickerModal.type || '')}
+        open={getIsDialogOpen()}
+        onClose={closeSlideDialog}
+        component={getDialogComponent()}
+        title={getDialogTitle()}
+        type={getDialogHeight()}
       />
     </>
   )

@@ -14,6 +14,7 @@ export const exersiceDetailsSelects = [
     type: 'number',
     values: getArrayOfNumbers(1, 25),
     isAfterValue: false,
+    buttons: [5, 15, 25],
   },
   {
     name: 'weight',
@@ -21,6 +22,7 @@ export const exersiceDetailsSelects = [
     type: 'number',
     values: getArrayOfNumbers(1, 320),
     isAfterValue: true,
+    buttons: [15, 45, 75, 100, 125, 150, 175, 200],
   },
   {
     name: 'rpe',

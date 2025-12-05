@@ -23,7 +23,7 @@ export function TraineeUserCard() {
   const displayName = traineeUser?.details.fullname
   const displayImage = traineeUser?.details.imgUrl
 
-  const [isHidden, setIsHidden] = useState(false)
+  const [isHidden, setIsHidden] = useState(true)
 
   return (
     <div

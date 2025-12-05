@@ -16,6 +16,7 @@ export function ClockPicker({
   isAfterValue = true,
   minValue = 0,
   maxValue = 150,
+  isButtonsVisible = true,
 }: {
   value: number
   onChange: (key: keyof EditItem, value: number) => void
@@ -23,6 +24,7 @@ export function ClockPicker({
   isAfterValue?: boolean
   minValue?: number
   maxValue?: number
+  isButtonsVisible?: boolean
 }) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -119,17 +121,19 @@ export function ClockPicker({
           </>
         )}
       </Picker>
-      <div className='buttons-container'>
-        {buttons.map((button) => (
-          <CustomButton
-            key={`${button.value}-button`}
-            onClick={() => onButtonClick(button.value)}
-            className={`${prefs.favoriteColor}`}
-            text={button.value.toString()}
-            fullWidth
-          />
-        ))}
-      </div>
+      {isButtonsVisible && (
+        <div className='buttons-container'>
+          {buttons.map((button) => (
+            <CustomButton
+              key={`${button.value}-button`}
+              onClick={() => onButtonClick(button.value)}
+              className={`${prefs.favoriteColor}`}
+              text={button.value.toString()}
+              fullWidth
+            />
+          ))}
+        </div>
+      )}
     </div>
   )
 }
