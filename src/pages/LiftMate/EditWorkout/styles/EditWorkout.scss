@@ -163,6 +163,13 @@
     overflow-x: auto;
     max-width: calc(100vw - 2em);
   }
+  .times-per-week-container {
+    margin-top: 1rem;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    // gap: 0.5rem;
+  }
 
   .no-exercises,
   .no-results-container,

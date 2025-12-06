@@ -12,6 +12,7 @@ interface CustomSelectProps {
   extra?: string
   value: string
   onChange: (value: string) => void
+  className?: string
 }
 
 export function CustomSelect({
@@ -20,6 +21,7 @@ export function CustomSelect({
   value,
   extra,
   onChange,
+  className,
 }: CustomSelectProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -30,7 +32,11 @@ export function CustomSelect({
   }
 
   return (
-    <FormControl sx={{ m: 1, minWidth: 140 }} size="small">
+    <FormControl
+      sx={{ m: 1, minWidth: 140 }}
+      size='small'
+      className={`custom-select ${className}`}
+    >
       <InputLabel id={`${label}-select-label`}>{label}</InputLabel>
       <Select
         labelId={`${label}-select-label`}
@@ -40,7 +46,7 @@ export function CustomSelect({
         onChange={handleChange}
         MenuProps={{
           PaperProps: {
-            className: prefs.isDarkMode ? 'dark-mode' : '',
+            className: `${prefs.isDarkMode ? 'dark-mode' : ''} ${className}`,
           },
         }}
       >

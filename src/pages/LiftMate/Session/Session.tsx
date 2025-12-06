@@ -111,7 +111,7 @@ export function Session() {
     } else if (user) {
       loadWorkouts({ forUserId: user._id })
     }
-  }, [user, traineeUser])
+  }, [user, traineeUser, sessionDay?.date])
 
   const onDayChange = (diff: number) => {
     const newDate = new Date(selectedDay.getTime() + diff * DAY_IN_MS)

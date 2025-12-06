@@ -22,6 +22,7 @@ import { ExpectedActual } from '../../../types/expectedActual/ExpectedActual'
 import InfoOutlineIcon from '@mui/icons-material/InfoOutline'
 import { CustomButton } from '../../../CustomMui/CustomButton/CustomButton'
 import { ExerciseDetails } from '../../../components/ExerciseDetails/ExerciseDetails'
+import { CustomSelect } from '../../../CustomMui/CustomSelect/CustomSelect'
 
 type PickerModalType =
   | 'expectedSets'
@@ -54,6 +55,7 @@ interface DetailsStageProps {
   ) => void
   onEditExerciseNotes: (exerciseId: string, notes: string) => void
   onChangeRpeRir: (exerciseId: string, value: 'rpe' | 'rir') => void
+  setInstructions: (instructions: Instructions) => void
 }
 
 const RPE_RIR_TOGGLE_OPTIONS = [
@@ -76,6 +78,7 @@ export function DetailsStage({
   onEditExerciseDetails,
   onEditExerciseNotes,
   onChangeRpeRir,
+  setInstructions,
 }: DetailsStageProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -265,6 +268,15 @@ export function DetailsStage({
     return 'half'
   }
 
+  const onEditTimes = (times: string) => {
+    setInstructions({
+      ...instructions,
+      timesPerWeek: +times,
+    })
+  }
+
+  console.log('instructions', instructions)
+
   return (
     <>
       <CustomToggle
@@ -285,6 +297,18 @@ export function DetailsStage({
         isReversedIcon={true}
         className={`week-number-toggle ${prefs.isDarkMode ? 'dark-mode' : ''}`}
       />
+      <div className='times-per-week-container'>
+        <span className='bold-header'>Times per week</span>
+        <CustomSelect
+          label='Times'
+          values={getArrayOfNumbers(1, 7).map(
+            (timesNumber) => timesNumber + ''
+          )}
+          value={instructions.timesPerWeek + ''}
+          onChange={(times: string) => onEditTimes(times)}
+          className={`${prefs.favoriteColor}`}
+        />
+      </div>
       <div className='edit-workout-stage details-stage'>
         {workout.exercises.map((exercise: Exercise) => {
           const exerciseInstruction = instructions.exercises.find(

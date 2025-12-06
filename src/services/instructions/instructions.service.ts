@@ -117,6 +117,7 @@ function getEmptyInstructions() {
     workoutId: '',
     exercises: [],
     weekNumber: 1,
+    timesPerWeek: 1,
     isDone: false,
   }
 }

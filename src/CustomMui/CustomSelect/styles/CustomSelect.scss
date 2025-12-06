@@ -10,3 +10,90 @@
     // box-shadow: rgba(255, 255, 255, 0.21) 1.95px 1.95px 2.6px;
   }
 }
+
+.custom-select {
+  &.primary {
+    .MuiInputBase-colorPrimary {
+      &.Mui-focused {
+        fieldset {
+          border-color: $primary-color !important;
+        }
+      }
+    }
+  }
+
+  &.blue {
+    .MuiInputBase-colorBlue {
+      &.Mui-focused {
+        fieldset {
+          border-color: $picker-color-blue !important;
+        }
+      }
+    }
+  }
+
+  &.green {
+    .MuiInputBase-colorGreen {
+      &.Mui-focused {
+        fieldset {
+          border-color: $picker-color-green !important;
+        }
+      }
+    }
+  }
+
+  &.yellow {
+    .MuiInputBase-colorYellow {
+      &.Mui-focused {
+        fieldset {
+          border-color: $picker-color-yellow !important;
+        }
+      }
+    }
+  }
+  &.red {
+    .MuiInputBase-colorRed {
+      &.Mui-focused {
+        fieldset {
+          border-color: $picker-color-red !important;
+        }
+      }
+    }
+  }
+  &.orange {
+    .MuiInputBase-colorOrange {
+      &.Mui-focused {
+        fieldset {
+          border-color: $picker-color-orange !important;
+        }
+      }
+    }
+  }
+  &.purple {
+    .MuiInputBase-colorPurple {
+      &.Mui-focused {
+        fieldset {
+          border-color: $picker-color-purple !important;
+        }
+      }
+    }
+  }
+  &.pink {
+    .MuiInputBase-colorPink {
+      &.Mui-focused {
+        fieldset {
+          border-color: $picker-color-pink !important;
+        }
+      }
+    }
+  }
+  &.deep-purple {
+    .MuiInputBase-colorDeepPurple {
+      &.Mui-focused {
+        fieldset {
+          border-color: $picker-color-deep-purple !important;
+        }
+      }
+    }
+  }
+}

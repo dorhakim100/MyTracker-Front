@@ -390,7 +390,6 @@ export function EditWorkout({
   }
 
   const onChangeRpeRir = (exerciseId: string, value: 'rpe' | 'rir') => {
-    console.log(exerciseId, value)
     const exerciseToUpdate = workout.exercises.find(
       (e) => e.exerciseId === exerciseId
     )
@@ -478,6 +477,7 @@ export function EditWorkout({
             onEditExerciseDetails={onEditExerciseDetails}
             onEditExerciseNotes={onEditExerciseNotes}
             onChangeRpeRir={onChangeRpeRir}
+            setInstructions={setInstructions}
           />
         )
       default:
