@@ -28,7 +28,7 @@ interface EditSet extends Set {
   index: number
 }
 
-type PickerType = 'reps' | 'weight' | 'rpe' | null
+type PickerType = 'reps' | 'weight' | 'rpe' | 'rir' | null
 
 interface PickerOption {
   isOpen: boolean
@@ -48,6 +48,8 @@ export function ExerciseEditor({ exercise }: ExerciseEditorProps) {
     type: null,
   })
 
+  console.log('exercise:', exercise)
+
   const [editSet, setEditSet] = useState<EditSet | null>(null)
   const [currentPickerValue, setCurrentPickerValue] = useState<number>(0)
 
@@ -65,6 +67,7 @@ export function ExerciseEditor({ exercise }: ExerciseEditorProps) {
           sets: updatedExercise.sets,
           rpe: updatedExercise.rpe,
           notes: updatedExercise.notes,
+          rir: updatedExercise.rir,
         }
 
         // Update session day with new exercise instructions
@@ -75,6 +78,7 @@ export function ExerciseEditor({ exercise }: ExerciseEditorProps) {
                 exerciseId: ex.exerciseId,
                 sets: [...ex.sets],
                 rpe: ex.rpe,
+                rir: ex.rir,
                 notes: ex.notes,
               }
         )
@@ -146,6 +150,12 @@ export function ExerciseEditor({ exercise }: ExerciseEditorProps) {
         return
       }
 
+      if (pickerOptions.type === 'rir') {
+        // For RIR, store marker in editSet and track value
+        setEditSet({ ...exercise.sets[0], index: -1 } as EditSet)
+        return
+      }
+
       if (
         (pickerOptions.type === 'weight' || pickerOptions.type === 'reps') &&
         editSet &&
@@ -174,6 +184,10 @@ export function ExerciseEditor({ exercise }: ExerciseEditorProps) {
       return exercise.rpe.actual || 0
     }
 
+    if (type === 'rir' && exercise.rir) {
+      return exercise.rir.actual || 0
+    }
+
     if (editSet && editSet.index >= 0 && exercise.sets[editSet.index]) {
       const set = exercise.sets[editSet.index]
       if (type === 'weight') {
@@ -195,6 +209,8 @@ export function ExerciseEditor({ exercise }: ExerciseEditorProps) {
     switch (type) {
       case 'rpe':
         return [5, 7, 9]
+      case 'rir':
+        return [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
       case 'weight':
         return [15, 45, 75, 100]
       case 'reps':
@@ -209,6 +225,8 @@ export function ExerciseEditor({ exercise }: ExerciseEditorProps) {
       switch (type) {
         case 'rpe':
           return key === 'min' ? 1 : 9
+        case 'rir':
+          return key === 'min' ? 1 : 3
         case 'weight':
           return key === 'min' ? 2 : 320
         case 'reps':
@@ -233,6 +251,14 @@ export function ExerciseEditor({ exercise }: ExerciseEditorProps) {
           ...exercise,
           rpe: {
             ...exercise.rpe,
+            actual: currentPickerValue,
+          },
+        }
+      } else if (pickerOptions.type === 'rir' && exercise.rir) {
+        updatedExercise = {
+          ...exercise,
+          rir: {
+            ...exercise.rir,
             actual: currentPickerValue,
           },
         }
@@ -378,18 +404,22 @@ export function ExerciseEditor({ exercise }: ExerciseEditorProps) {
           <PickerSelect
             openClock={() => {
               setPickerOptions({
-                type: 'rpe',
+                type: exercise.rpe ? 'rpe' : 'rir',
                 isOpen: true,
               })
               setEditSet({ ...exercise.sets[0], index: -1 } as EditSet)
-              setCurrentPickerValue(exercise.rpe?.actual || 0)
+              setCurrentPickerValue(
+                exercise.rpe ? exercise.rpe.actual : exercise.rir?.actual || 0
+              )
             }}
             option={{
-              label: 'RPE',
-              key: 'rpe',
+              label: exercise.rpe ? 'RPE' : 'RIR',
+              key: exercise.rpe ? 'rpe' : 'rir',
               type: 'number',
             }}
-            value={exercise.rpe?.actual || 0}
+            value={
+              exercise.rpe ? exercise.rpe.actual : exercise.rir?.actual || 0
+            }
             minWidth={120}
           />
           <CustomButton

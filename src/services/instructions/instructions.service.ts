@@ -51,6 +51,7 @@ async function remove(instructionId: string) {
   }
 }
 async function save(instructions: Instructions) {
+  console.log('instructions:', instructions)
   try {
     let savedInstructions
     if (instructions._id) {
@@ -87,7 +88,6 @@ async function getWeekNumberDone(workoutId: string) {
     const weeksStatus = await httpService.get(`${KEY}/weekNumberDone`, {
       workoutId,
     })
-    console.log(weeksStatus)
     return weeksStatus
   } catch (err) {
     throw err
@@ -96,9 +96,7 @@ async function getWeekNumberDone(workoutId: string) {
 
 async function getExercisesFromInstructions(instructions: Instructions) {
   try {
-    console.log('instructions:', instructions)
     const exercises = instructions.exercises
-    console.log('exercises:', exercises)
 
     const exercisesWithDetails = await Promise.all(
       exercises.map(async (exercise) => {
@@ -136,7 +134,9 @@ function getEmptySet() {
   }
 }
 
-function getEmptyExpectedActual(type: 'weight' | 'reps' | 'rpe' | 'notes') {
+function getEmptyExpectedActual(
+  type: 'weight' | 'reps' | 'rpe' | 'notes' | 'rir'
+) {
   switch (type) {
     case 'weight':
       return {
@@ -159,7 +159,12 @@ function getEmptyExpectedActual(type: 'weight' | 'reps' | 'rpe' | 'notes') {
         actual: '',
       }
       break
-
+    case 'rir':
+      return {
+        expected: 2,
+        actual: 2,
+      }
+      break
     default:
       break
   }

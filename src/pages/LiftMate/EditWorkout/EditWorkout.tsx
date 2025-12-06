@@ -22,6 +22,7 @@ import { NameStage } from './NameStage'
 import { ExercisesStage } from './ExercisesStage'
 import { DetailsStage } from './DetailsStage'
 import { imageService } from '../../../services/image/image.service'
+import { ExerciseInstructions } from '../../../types/exercise/ExerciseInstructions'
 // import { useKeyboardHeight } from '../../../hooks/useKeyboardHeight'
 
 interface EditWorkoutProps {
@@ -299,6 +300,7 @@ export function EditWorkout({
       const instructionExercise = { ...updatedInstructions[instructionIndex] }
 
       if (type === 'rpe') {
+        delete instructionExercise.rir
         instructionExercise.rpe = {
           expected: value as number,
           actual: value as number,
@@ -323,6 +325,7 @@ export function EditWorkout({
           },
         }))
       } else if (type === 'rir') {
+        delete instructionExercise.rpe
         value = Math.floor(value as number)
         instructionExercise.rir = {
           expected: value as number,
@@ -398,7 +401,6 @@ export function EditWorkout({
     } else {
       delete exerciseToUpdate.details?.rpe
     }
-    console.log('exerciseToUpdate', exerciseToUpdate)
 
     onEditExerciseDetails(exerciseId, value, value === 'rpe' ? 8 : 2)
   }
@@ -505,12 +507,25 @@ export function EditWorkout({
         },
       }))
 
-      return {
+      const exerciseInstructions: ExerciseInstructions = {
         exerciseId: exercise.exerciseId,
         sets: newSets,
-        rpe: exercise.details?.rpe || { expected: 8, actual: 8 },
         notes: exercise.details?.notes || { expected: '', actual: '' },
       }
+
+      if (exercise.details?.rpe) {
+        exerciseInstructions.rpe =
+          exercise.details?.rpe ||
+          instructionsService.getEmptyExpectedActual('rpe')
+      }
+
+      if (exercise.details?.rir) {
+        exerciseInstructions.rir =
+          exercise.details?.rir ||
+          instructionsService.getEmptyExpectedActual('rir')
+      }
+
+      return exerciseInstructions
     })
 
     return {
