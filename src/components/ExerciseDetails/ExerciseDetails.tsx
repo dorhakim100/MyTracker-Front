@@ -8,8 +8,8 @@ import { Divider, Typography } from '@mui/material'
 import { RootState } from '../../store/store'
 import { translateService } from '../../services/translate/translate.service'
 import { ExpectedActual } from '../../types/expectedActual/ExpectedActual'
-
-interface ExerciseWithDetails extends Exercise {
+import { exerciseImage as exerciseImageObject } from '../../assets/config/exercise-image'
+export interface ExerciseWithDetails extends Exercise {
   notes?: ExpectedActual<string>
   rpe?: ExpectedActual<number>
   rir?: ExpectedActual<number>
@@ -28,6 +28,11 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
   const [exerciseInstructions, setExerciseInstructions] = useState<
     string[] | null
   >(null)
+
+  const [exerciseImage, setExerciseImage] = useState<string>(
+    exercise?.image || ''
+  )
+
   useEffect(() => {
     const getWorkoutInstructions = async () => {
       try {
@@ -63,7 +68,11 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
 
   return (
     <div className='exercise-details-container'>
-      <img src={exercise?.image} alt={exercise?.name} />
+      <img
+        src={exerciseImage}
+        alt={exercise?.name}
+        onError={() => setExerciseImage(exerciseImageObject.ERROR_IMAGE)}
+      />
       <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
       <div className='exercise-details'>
         {exercise?.notes?.expected && (

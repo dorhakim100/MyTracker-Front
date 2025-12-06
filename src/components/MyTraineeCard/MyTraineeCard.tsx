@@ -179,6 +179,7 @@ export function MyTraineeCard() {
         onChange={setSearch}
         placeholder='Search for a trainee'
         isRemoveIcon={true}
+        className={`${prefs.favoriteColor}`}
       />
       {/* <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} /> */}
 

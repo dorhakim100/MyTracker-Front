@@ -342,6 +342,7 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
                 </IconButton>
               )}
               autoFocus
+              className={`${prefs.favoriteColor}`}
             />
           </div>
           <CustomToggle

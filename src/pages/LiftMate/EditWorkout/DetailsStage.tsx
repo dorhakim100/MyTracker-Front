@@ -283,7 +283,7 @@ export function DetailsStage({
         }))}
         isBadge={true}
         isReversedIcon={true}
-        className='week-number-toggle'
+        className={`week-number-toggle ${prefs.isDarkMode ? 'dark-mode' : ''}`}
       />
       <div className='edit-workout-stage details-stage'>
         {workout.exercises.map((exercise: Exercise) => {
@@ -313,6 +313,9 @@ export function DetailsStage({
                   onChange={(value) => {
                     onSwitchRpeRir(exercise.exerciseId, value as 'rpe' | 'rir')
                   }}
+                  className={`rpe-rir-toggle ${
+                    prefs.isDarkMode ? 'dark-mode' : ''
+                  }`}
                 />
               </div>
 
@@ -350,6 +353,7 @@ export function DetailsStage({
                   exercise.name || ''
                 )} notes`}
                 isRemoveIcon={true}
+                className={`${prefs.favoriteColor}`}
               />
               <Divider
                 className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}

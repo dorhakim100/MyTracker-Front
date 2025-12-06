@@ -355,6 +355,7 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
           value={editGoal.title || ''}
           onChange={(value) => setEditGoal({ ...editGoal, title: value })}
           placeholder='Enter goal title...'
+          className={`${prefs.favoriteColor}`}
         />
         <div className='animation-container'>
           <Lottie animationData={goalAnimation} loop={false} />

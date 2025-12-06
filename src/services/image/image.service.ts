@@ -3,6 +3,9 @@ import { searchUrls } from '../../assets/config/search.urls'
 import { translateService } from '../translate/translate.service'
 import { Item } from '../../types/item/Item'
 import { searchService } from '../search/search-service'
+import { Exercise } from '../../types/exercise/Exercise'
+import { exerciseImage } from '../../assets/config/exercise-image'
+import { ExerciseInstructions } from '../../types/exercise/ExerciseInstructions'
 
 const PIXABAY_API_KEY = import.meta.env.VITE_PIXABAY_API_KEY
 const PIXABAY_API_URL = 'https://pixabay.com/api/'
@@ -13,6 +16,8 @@ export const imageService = {
   getImage,
   getSingleImage,
   fetchOnError,
+  renderErrorExerciseImage,
+  getFormattedExercise,
 }
 
 async function getImage(query: string) {
@@ -110,5 +115,23 @@ async function fetchOnError(
     await searchService.handleImageError(newItem)
   } catch {
     img.src = searchUrls.DEFAULT_IMAGE
+  }
+}
+
+function renderErrorExerciseImage(
+  exercise: Exercise,
+  exerciseResults: Exercise[],
+  renderExercises: (exercises: Exercise[]) => void
+) {
+  const newExerciseResults = exerciseResults.map((e) =>
+    e.exerciseId === exercise.exerciseId ? getFormattedExercise(e) : e
+  )
+  renderExercises(newExerciseResults as Exercise[])
+}
+
+function getFormattedExercise(exercise: Exercise | ExerciseInstructions) {
+  return {
+    ...exercise,
+    image: exerciseImage.ERROR_IMAGE,
   }
 }

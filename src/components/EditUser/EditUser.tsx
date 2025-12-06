@@ -243,7 +243,7 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
                   value={input.value + ''}
                   onChange={input.onChange as (value: string) => void}
                   placeholder={input.label}
-                  className={input.className}
+                  className={`${input.className} ${prefs.favoriteColor}`}
                 />
               )
             if (input.type === 'select')

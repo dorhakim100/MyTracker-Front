@@ -34,6 +34,12 @@
     }
   }
 
+  &.dark-mode {
+    button:not(.Mui-selected) {
+      border: 1px solid $dark-mode-border;
+    }
+  }
+
   .MuiToggleButtonGroup-groupedHorizontal {
     display: flex;
     gap: 0.5rem;

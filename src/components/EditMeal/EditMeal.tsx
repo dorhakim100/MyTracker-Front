@@ -131,6 +131,7 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
             value={editMeal.name}
             onChange={(value) => onEditMeal('name', value)}
             placeholder='Meal Name'
+            className={`${prefs.favoriteColor}`}
           />
           <div className='animation-container'>
             <Lottie animationData={foodAnimation} loop={false} />

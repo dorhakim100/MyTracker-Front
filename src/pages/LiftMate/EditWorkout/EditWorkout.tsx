@@ -21,6 +21,7 @@ import { MuscleGroup } from '../../../types/muscleGroup/MuscleGroup'
 import { NameStage } from './NameStage'
 import { ExercisesStage } from './ExercisesStage'
 import { DetailsStage } from './DetailsStage'
+import { imageService } from '../../../services/image/image.service'
 // import { useKeyboardHeight } from '../../../hooks/useKeyboardHeight'
 
 interface EditWorkoutProps {
@@ -455,6 +456,13 @@ export function EditWorkout({
             onAddExercise={onAddExercise}
             onDeleteExercise={onDeleteExercise}
             onReorderExercises={onReorderExercises}
+            renderErrorImage={(exercise) =>
+              imageService.renderErrorExerciseImage(
+                exercise,
+                exerciseResults,
+                setExerciseResults
+              )
+            }
           />
         )
       case 'details':

@@ -65,6 +65,7 @@ export function NameStage({
         onChange={onNameChange}
         placeholder='Enter workout name'
         isRemoveIcon={true}
+        className={`${prefs.favoriteColor}`}
       />
       <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
       <div className='selected-muscles-group-container'>
@@ -90,6 +91,7 @@ export function NameStage({
           }
           placeholder='Search muscle'
           isRemoveIcon={true}
+          className={`${prefs.favoriteColor} muscle-filter-input`}
         />
         <CustomSelect
           value={muscleGroupFilter.area}

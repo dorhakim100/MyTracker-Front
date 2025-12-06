@@ -1,2 +1,94 @@
 .custom-input {
+  //   outline: 1px solid $dark-mode-border !important;
+  //   outline: 1px solid $very-dark-gray !important;
+
+  &.primary {
+    .MuiOutlinedInput-root.Mui-focused {
+      box-shadow: none !important;
+
+      fieldset {
+        border-color: $primary-color !important;
+      }
+    }
+  }
+
+  &.blue {
+    .MuiOutlinedInput-root.Mui-focused {
+      box-shadow: none !important;
+
+      fieldset {
+        border-color: $picker-color-blue !important;
+      }
+    }
+  }
+
+  &.green {
+    .MuiOutlinedInput-root.Mui-focused {
+      box-shadow: none !important;
+
+      fieldset {
+        border-color: $picker-color-green !important;
+      }
+    }
+  }
+
+  &.yellow {
+    .MuiOutlinedInput-root.Mui-focused {
+      box-shadow: none !important;
+
+      fieldset {
+        border-color: $picker-color-yellow !important;
+      }
+    }
+  }
+
+  &.red {
+    .MuiOutlinedInput-root.Mui-focused {
+      box-shadow: none !important;
+
+      fieldset {
+        border-color: $picker-color-red !important;
+      }
+    }
+  }
+
+  &.orange {
+    .MuiOutlinedInput-root.Mui-focused {
+      box-shadow: none !important;
+
+      fieldset {
+        border-color: $picker-color-orange !important;
+      }
+    }
+  }
+
+  &.purple {
+    .MuiOutlinedInput-root.Mui-focused {
+      box-shadow: none !important;
+
+      fieldset {
+        border-color: $picker-color-purple !important;
+      }
+    }
+  }
+
+  &.pink {
+    .MuiOutlinedInput-root.Mui-focused {
+      box-shadow: none !important;
+
+      fieldset {
+        border-color: $picker-color-pink !important;
+      }
+    }
+  }
+
+  &.deep-purple {
+    .MuiOutlinedInput-root.Mui-focused {
+      box-shadow: none !important;
+
+      fieldset {
+        border-color: $picker-color-deep-purple !important;
+      }
+    }
+  }
 }

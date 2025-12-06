@@ -1,7 +1,7 @@
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
 import type { ReactNode } from 'react'
-import { useRef, useEffect } from 'react'
+import { useRef } from 'react'
 import { IconButton } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 
@@ -30,10 +30,6 @@ export function CustomInput({
 }: CustomInputProps) {
   const inputRef = useRef<HTMLInputElement>(null)
 
-  useEffect(() => {
-    // inputRef.current?.focus()
-  }, [])
-
   return (
     <TextField
       fullWidth
@@ -44,15 +40,15 @@ export function CustomInput({
       placeholder={placeholder}
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className={className}
+      className={`custom-input ${className}`}
       InputProps={{
         startAdornment: startIconFn ? (
-          <InputAdornment position="start">{startIconFn()}</InputAdornment>
+          <InputAdornment position='start'>{startIconFn()}</InputAdornment>
         ) : undefined,
         endAdornment: endIconFn ? (
-          <InputAdornment position="end">{endIconFn()}</InputAdornment>
+          <InputAdornment position='end'>{endIconFn()}</InputAdornment>
         ) : isRemoveIcon ? (
-          <InputAdornment position="end">
+          <InputAdornment position='end'>
             <IconButton onClick={() => onChange('')}>
               <CloseIcon />
             </IconButton>

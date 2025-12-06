@@ -25,6 +25,7 @@ interface ExercisesStageProps {
   onAddExercise: (exercise: Exercise) => void
   onDeleteExercise: (exercise: Exercise) => void
   onReorderExercises: (exercises: Exercise[]) => void
+  renderErrorImage: (exercise: Exercise) => void
 }
 
 export function ExercisesStage({
@@ -35,6 +36,7 @@ export function ExercisesStage({
   onAddExercise,
   onDeleteExercise,
   onReorderExercises,
+  renderErrorImage,
 }: ExercisesStageProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -68,6 +70,7 @@ export function ExercisesStage({
           onChange={onExerciseFilterChange}
           placeholder='Search for exercises'
           isRemoveIcon={true}
+          className={`${prefs.favoriteColor}`}
         />
 
         <div className='exercises-lists-container'>
@@ -82,7 +85,13 @@ export function ExercisesStage({
               </span>
             )}
             renderLeft={(exercise) => (
-              <img src={exercise.image} alt={exercise.name} />
+              <img
+                src={exercise.image}
+                alt={exercise.name}
+                onError={() => {
+                  renderErrorImage(exercise)
+                }}
+              />
             )}
             getKey={(exercise) => exercise.exerciseId}
             className={`search-exercise-list ${
