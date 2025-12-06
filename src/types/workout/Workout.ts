@@ -9,4 +9,7 @@ export interface Workout {
   details?: string
   isActive: boolean
   isNewInstructions?: boolean
+
+  doneTimes?: number
+  timesPerWeek?: number
 }

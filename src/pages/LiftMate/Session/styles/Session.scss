@@ -17,9 +17,13 @@
     .custom-list-item {
       padding-right: 1.5rem;
     }
-    .done-icon {
+    .done-badge {
       width: 36px;
       height: 36px;
+      .MuiBadge-badge {
+        width: fit-content;
+        // padding: 0;
+      }
     }
   }
 

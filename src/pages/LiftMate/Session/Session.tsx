@@ -167,6 +167,7 @@ export function Session() {
           renderSecondaryText={(workout) =>
             capitalizeFirstLetter(workout.muscleGroups.join(', '))
           }
+          isDefaultLoader={false}
           className={`${
             prefs.isDarkMode ? 'dark-mode' : ''
           } selected-workout-list`}
@@ -187,7 +188,22 @@ export function Session() {
                 />
               </Badge>
             ) : (
-              <CheckCircleOutlineIcon className='done-icon' />
+              <PlayCircleFilledWhiteIcon
+                className='start-icon'
+                onClick={(ev) => {
+                  ev.stopPropagation()
+                  onStartWorkout(workout)
+                }}
+              />
+            )
+          }}
+          renderLeft={(workout) => {
+            return !workout.isNewInstructions ? (
+              <CheckCircleOutlineIcon />
+            ) : (
+              <span>
+                {workout.doneTimes} / {workout.timesPerWeek}
+              </span>
             )
           }}
         />

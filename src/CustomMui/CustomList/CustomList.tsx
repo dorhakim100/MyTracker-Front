@@ -44,6 +44,7 @@ export interface CustomListProps<T> {
   // onDragStart?: (result: DragStart) => void
   /** Optional vertical offset to apply to the dragging clone (in px). Can be negative. */
   dragOffsetY?: number
+  isDefaultLoader?: boolean
 }
 
 export function CustomList<T>({
@@ -65,6 +66,7 @@ export function CustomList<T>({
 
   onReorder,
   dragOffsetY = 0,
+  isDefaultLoader = true,
 }: // onDragStart,
 CustomListProps<T>) {
   const [reorderedItems, setReorderedItems] = useState<T[]>(items || [])
@@ -150,7 +152,7 @@ CustomListProps<T>) {
       </ListItemButton>
     )
   }
-  if (isLoading) {
+  if (isDefaultLoader && isLoading) {
     return (
       <div className={`custom-list ${className ? className : ''}`}>
         <SkeletonList />

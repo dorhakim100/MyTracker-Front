@@ -900,18 +900,21 @@ body.dark-mode {
   &.primary {
     .MuiBadge-badge {
       background-color: $primary-color;
+      color: $white;
     }
   }
 
   &.blue {
     .MuiBadge-badge {
       background-color: $picker-color-blue;
+      color: $white;
     }
   }
 
   &.red {
     .MuiBadge-badge {
       background-color: $picker-color-red;
+      color: $white;
     }
   }
 
@@ -930,24 +933,28 @@ body.dark-mode {
   &.orange {
     .MuiBadge-badge {
       background-color: $picker-color-orange;
+      color: $white;
     }
   }
 
   &.deepPurple {
     .MuiBadge-badge {
       background-color: $picker-color-deep-purple;
+      color: $white;
     }
   }
 
   &.purple {
     .MuiBadge-badge {
       background-color: $picker-color-purple;
+      color: $white;
     }
   }
 
   &.pink {
     .MuiBadge-badge {
       background-color: $picker-color-pink;
+      color: $white;
     }
   }
 }

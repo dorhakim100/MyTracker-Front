@@ -38,7 +38,8 @@ export function CustomButton({
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
 
-  const resolvedBg = backgroundColor || prefs.favoriteColor || undefined
+  // const resolvedBg = backgroundColor || prefs.favoriteColor || undefined
+  const resolvedBg = backgroundColor || undefined
 
   return (
     <ClickAnimation
@@ -74,7 +75,7 @@ export function CustomButton({
         </IconButton>
       ) : (
         <Button
-          variant="contained"
+          variant='contained'
           size={size}
           fullWidth={fullWidth}
           aria-label={ariaLabel || (typeof text === 'string' ? text : 'button')}
