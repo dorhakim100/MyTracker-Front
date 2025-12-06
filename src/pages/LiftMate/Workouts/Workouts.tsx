@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
 
 import {
@@ -15,7 +15,10 @@ import { CustomList } from '../../../CustomMui/CustomList/CustomList'
 import { RootState, store } from '../../../store/store'
 
 import { Workout } from '../../../types/workout/Workout'
-import { capitalizeFirstLetter } from '../../../services/util.service'
+import {
+  capitalizeFirstLetter,
+  getDateFromISO,
+} from '../../../services/util.service'
 import { EditIcon } from '../../../components/EditIcon/EditIcon'
 import { DeleteAction } from '../../../components/DeleteAction/DeleteAction'
 import { messages } from '../../../assets/config/messages'
@@ -25,6 +28,8 @@ import { Checkbox, Divider, Typography } from '@mui/material'
 import { Add } from '@mui/icons-material'
 import { SET_WORKOUTS } from '../../../store/reducers/workout.reducer'
 import { workoutService } from '../../../services/workout/workout.service'
+import { CustomDatePicker } from '../../../CustomMui/CustomDatePicker/CustomDatePicker'
+import { MONTH_IN_MS } from '../../../assets/config/times'
 
 const EDIT = 'edit'
 const DETAILS = 'details'
@@ -64,16 +69,35 @@ export function Workouts() {
   })
   const [selectedWorkout, setSelectedWorkout] = useState<Workout | null>(null)
 
+  const [selectedPastDate, setSelectedPastDate] = useState({
+    from: getDateFromISO(
+      new Date(new Date().getTime() - MONTH_IN_MS).toISOString()
+    ),
+    to: getDateFromISO(new Date().toISOString()),
+  })
+
   useEffect(() => {
     if (traineeUser) {
-      loadWorkouts({ forUserId: traineeUser._id })
+      loadWorkouts({
+        forUserId: traineeUser._id,
+        from: selectedPastDate?.from,
+        to: selectedPastDate?.to,
+      })
     } else if (user) {
-      loadWorkouts({ forUserId: user._id })
+      loadWorkouts({
+        forUserId: user._id,
+        from: selectedPastDate?.from,
+        to: selectedPastDate?.to,
+      })
     }
     return () => {
-      loadWorkouts({ forUserId: traineeUser?._id || user?._id || '' })
+      loadWorkouts({
+        forUserId: traineeUser?._id || user?._id || '',
+        from: selectedPastDate?.from,
+        to: selectedPastDate?.to,
+      })
     }
-  }, [user, traineeUser])
+  }, [user, traineeUser, selectedPastDate])
 
   const onOpenEdit = (workout: Workout) => {
     setDialogOptions({ open: true, type: EDIT })
@@ -170,12 +194,38 @@ export function Workouts() {
           noResultsMessage='No active workouts found'
         />
         <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
-        {inactiveWorkouts.length > 0 && (
+
+        <div className='past-controller'>
           <span className='bold-header'>Past</span>
-        )}
+          <div className='date-picker-container'>
+            <Typography variant='body1'>
+              From: {selectedPastDate?.from}
+            </Typography>
+            <CustomDatePicker
+              value={selectedPastDate?.from}
+              onChange={(date) =>
+                setSelectedPastDate((prev) => ({ ...prev, from: date || '' }))
+              }
+              className={`${prefs.favoriteColor}`}
+            />
+            <Typography variant='body1'>To: {selectedPastDate?.to}</Typography>
+            <CustomDatePicker
+              value={selectedPastDate?.to}
+              onChange={(date) =>
+                setSelectedPastDate((prev) => ({ ...prev, to: date || '' }))
+              }
+              className={`${prefs.favoriteColor}`}
+            />
+          </div>
+        </div>
+
+        <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
+
         <CustomList
           items={inactiveWorkouts}
-          className={`workouts-list ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+          className={`workouts-list inactive-list ${
+            prefs.isDarkMode ? 'dark-mode' : ''
+          }`}
           renderPrimaryText={(workout) => workout.name}
           renderSecondaryText={(workout) =>
             capitalizeFirstLetter(workout.muscleGroups.join(', '))
@@ -203,6 +253,11 @@ export function Workouts() {
             <DeleteAction item={workout} onDeleteItem={onDeleteWorkout} />
           )}
         />
+        {inactiveWorkouts.length === 0 && (
+          <Typography variant='body1' className='no-past-workouts-message'>
+            No past workouts found...
+          </Typography>
+        )}
       </div>
     )
   }
