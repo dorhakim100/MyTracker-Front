@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../store/store'
 
@@ -24,12 +25,15 @@ import { Workout } from '../../../types/workout/Workout'
 import { Exercise } from '../../../types/exercise/Exercise'
 
 import PlayCircleFilledWhiteIcon from '@mui/icons-material/PlayCircleFilledWhite'
-import { setIsLoading } from '../../../store/actions/system.actions'
+import {
+  setIsLoading,
+  setSlideDirection,
+} from '../../../store/actions/system.actions'
 import { SlideAnimation } from '../../../components/SlideAnimation/SlideAnimation'
 import { ExerciseDetails } from '../../../components/ExerciseDetails/ExerciseDetails'
 import { WorkoutSession } from '../../../components/WorkoutSession/WorkoutSession'
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
-import { imageService } from '../../../services/image/image.service'
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
 
 const WORKOUT = 'workout'
 const EXERCISE = 'exercise'
@@ -60,6 +64,8 @@ export function Session() {
   )
 
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
+
+  const navigate = useNavigate()
 
   const [selectedDay, setSelectedDay] = useState(new Date())
   const [selectedDayDate] = useState(new Date().toISOString())
@@ -153,6 +159,8 @@ export function Session() {
     }
   }
 
+  console.log('workouts:', workouts)
+
   const renderNoSession = () => {
     const filteredWorkouts = workouts.filter((workout) => workout.isActive)
 
@@ -180,7 +188,7 @@ export function Session() {
             ) : workout.isNewInstructions ? (
               <Badge badgeContent={'New'} className={`${prefs.favoriteColor}`}>
                 <PlayCircleFilledWhiteIcon
-                  className='start-icon'
+                  className='icon start'
                   onClick={(ev) => {
                     ev.stopPropagation()
                     onStartWorkout(workout)
@@ -188,18 +196,19 @@ export function Session() {
                 />
               </Badge>
             ) : (
-              <PlayCircleFilledWhiteIcon
-                className='start-icon'
+              <AddCircleOutlineIcon
+                className='icon add'
                 onClick={(ev) => {
                   ev.stopPropagation()
-                  onStartWorkout(workout)
+                  navigate(`/lift-mate/workouts`)
+                  setSlideDirection(1)
                 }}
               />
             )
           }}
           renderLeft={(workout) => {
             return !workout.isNewInstructions ? (
-              <CheckCircleOutlineIcon />
+              <CheckCircleOutlineIcon className='icon check' />
             ) : (
               <span>
                 {workout.doneTimes} / {workout.timesPerWeek}

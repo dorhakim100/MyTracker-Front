@@ -128,6 +128,7 @@ export function EditWorkout({
       const instructions = await instructionsService.getByWorkoutId(
         instructionsFilter
       )
+
       const statuses = await instructionsService.getWeekNumberDone(workout._id)
       setWeeksStatus(statuses)
       setInstructions(instructions)
@@ -551,10 +552,8 @@ export function EditWorkout({
       setIsLoading(true)
       const savedWorkout = await saveWorkout(workoutToSave)
       instructionsToSave.workoutId = savedWorkout._id
-      const idDoneToSave = instructionsToSave._id ? true : false
       await instructionsService.save({
         ...instructionsToSave,
-        isDone: idDoneToSave,
       })
       showSuccessMsg(messages.success.saveWorkout)
     } catch (err) {

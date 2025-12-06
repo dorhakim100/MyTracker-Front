@@ -1,8 +1,13 @@
 .session-container {
-  .start-icon {
+  .icon {
     // cursor: pointer;
     // color: $primary-color;
-    font-size: 2.5rem;
+
+    font-size: 2rem;
+
+    &.start {
+      font-size: 2rem;
+    }
   }
 
   .workout-header-container {
