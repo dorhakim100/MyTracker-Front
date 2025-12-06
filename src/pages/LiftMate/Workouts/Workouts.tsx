@@ -12,7 +12,7 @@ import { CustomButton } from '../../../CustomMui/CustomButton/CustomButton'
 import { EditWorkout } from '../EditWorkout/EditWorkout'
 import { CustomList } from '../../../CustomMui/CustomList/CustomList'
 
-import { RootState } from '../../../store/store'
+import { RootState, store } from '../../../store/store'
 
 import { Workout } from '../../../types/workout/Workout'
 import { capitalizeFirstLetter } from '../../../services/util.service'
@@ -23,6 +23,8 @@ import { showErrorMsg } from '../../../services/event-bus.service'
 import { WorkoutDetails } from '../../../components/WorkoutDetails/WorkoutDetails'
 import { Checkbox, Divider, Typography } from '@mui/material'
 import { Add } from '@mui/icons-material'
+import { SET_WORKOUTS } from '../../../store/reducers/workout.reducer'
+import { workoutService } from '../../../services/workout/workout.service'
 
 const EDIT = 'edit'
 const DETAILS = 'details'
@@ -68,6 +70,9 @@ export function Workouts() {
     } else if (user) {
       loadWorkouts({ forUserId: user._id })
     }
+    return () => {
+      loadWorkouts({ forUserId: traineeUser?._id || user?._id || '' })
+    }
   }, [user, traineeUser])
 
   const onOpenEdit = (workout: Workout) => {
@@ -88,7 +93,7 @@ export function Workouts() {
   async function onDeleteWorkout(workout: Workout) {
     try {
       if (!workout._id) return showErrorMsg(messages.error.deleteWorkout)
-      await removeWorkout(workout._id)
+      await workoutService.remove(workout._id)
     } catch (err) {
       console.error(err)
       showErrorMsg(messages.error.deleteWorkout)
