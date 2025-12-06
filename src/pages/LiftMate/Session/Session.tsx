@@ -159,7 +159,27 @@ export function Session() {
     }
   }
 
-  console.log('workouts:', workouts)
+  const renderStartWorkoutIcon = (workout: Workout) => {
+    return (
+      <PlayCircleFilledWhiteIcon
+        className='icon start'
+        onClick={(ev) => {
+          ev.stopPropagation()
+          onStartWorkout(workout)
+        }}
+      />
+    )
+  }
+
+  const renderAvailableWorkoutButton = (workout: Workout) => {
+    return workout.doneTimes === 0 ? (
+      <Badge badgeContent={'New'} className={`${prefs.favoriteColor}`}>
+        {renderStartWorkoutIcon(workout)}
+      </Badge>
+    ) : (
+      renderStartWorkoutIcon(workout)
+    )
+  }
 
   const renderNoSession = () => {
     const filteredWorkouts = workouts.filter((workout) => workout.isActive)
@@ -186,15 +206,7 @@ export function Session() {
             return isLoading && selectedWorkoutId === workout._id ? (
               <CircularProgress className={`${prefs.favoriteColor}`} />
             ) : workout.isNewInstructions ? (
-              <Badge badgeContent={'New'} className={`${prefs.favoriteColor}`}>
-                <PlayCircleFilledWhiteIcon
-                  className='icon start'
-                  onClick={(ev) => {
-                    ev.stopPropagation()
-                    onStartWorkout(workout)
-                  }}
-                />
-              </Badge>
+              renderAvailableWorkoutButton(workout)
             ) : (
               <AddCircleOutlineIcon
                 className='icon add'
@@ -221,7 +233,6 @@ export function Session() {
   }
 
   const handleExerciseInfoClick = (exercise: Exercise) => {
-    // console.log('exercise:', exercise)
     setDialogOptions({
       open: true,
       item: exercise,

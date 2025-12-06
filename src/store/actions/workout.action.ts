@@ -66,7 +66,6 @@ export async function handleSessionDayChange(dateToCheck: string, user: User) {
 
     if (!user) return
     const res = await sessionService.query(filter)
-    console.log('res:', res)
 
     return res
   } catch (err) {
@@ -99,7 +98,6 @@ export async function playWorkout(sessionDay: SessionDay) {
 export async function saveSessionDay(sessionDay: SessionDay) {
   try {
     const savedSessionDay = await sessionService.save(sessionDay)
-    console.log(savedSessionDay)
     store.dispatch({
       type: SET_SELECTED_SESSION_DAY,
       sessionDay: savedSessionDay,

@@ -287,7 +287,6 @@ export function EditWorkout({
       } as ExerciseDetail,
     }
 
-    console.log('updatedExercises', updatedExercises)
     setWorkout({ ...workout, exercises: updatedExercises })
 
     // Update instructions

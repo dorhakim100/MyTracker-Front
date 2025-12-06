@@ -48,8 +48,6 @@ export function ExerciseEditor({ exercise }: ExerciseEditorProps) {
     type: null,
   })
 
-  console.log('exercise:', exercise)
-
   const [editSet, setEditSet] = useState<EditSet | null>(null)
   const [currentPickerValue, setCurrentPickerValue] = useState<number>(0)
 

@@ -92,7 +92,6 @@ export function WorkoutSession({
       </div>
       <div className='exercises-container'>
         {sessionDay.instructions.exercises.map((exercise) => {
-          // console.log('exercise:', exercise)
           const isExpanded = expandedExercises.has(exercise.exerciseId)
 
           return (

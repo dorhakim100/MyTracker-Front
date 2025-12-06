@@ -60,17 +60,12 @@ export function MyTraineeCard() {
     getRequests()
   }, [user])
 
-  useEffect(() => {
-    console.log('requests:', requests)
-  }, [requests])
-
   async function onSearchTrainee() {
     try {
       if (!user) {
         return
       }
       setIsLoading(true)
-      console.log('search:', search)
       const trainees = await userService.getUsers({
         txt: search,
         searchingUserId: user._id,
@@ -85,7 +80,6 @@ export function MyTraineeCard() {
 
   async function onAddTrainee(trainee: User) {
     try {
-      console.log(trainee)
       if (!user) {
         return
       }
@@ -112,7 +106,6 @@ export function MyTraineeCard() {
       const requestUsers = requests.map(
         (request: TrainerRequest) => request.trainee
       )
-      console.log('requestUsers:', requestUsers)
 
       setTrainees(requestUsers)
 
@@ -139,7 +132,6 @@ export function MyTraineeCard() {
         />
       )
     }
-    console.log('request:', request)
 
     switch (request.status) {
       case PENDING_STATUS:

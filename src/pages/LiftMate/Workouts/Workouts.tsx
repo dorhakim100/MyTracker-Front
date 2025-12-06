@@ -1,9 +1,8 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 
 import {
   loadWorkouts,
-  removeWorkout,
   toggleActivateWorkout,
 } from '../../../store/actions/workout.action'
 
@@ -12,7 +11,7 @@ import { CustomButton } from '../../../CustomMui/CustomButton/CustomButton'
 import { EditWorkout } from '../EditWorkout/EditWorkout'
 import { CustomList } from '../../../CustomMui/CustomList/CustomList'
 
-import { RootState, store } from '../../../store/store'
+import { RootState } from '../../../store/store'
 
 import { Workout } from '../../../types/workout/Workout'
 import {
@@ -26,7 +25,6 @@ import { showErrorMsg } from '../../../services/event-bus.service'
 import { WorkoutDetails } from '../../../components/WorkoutDetails/WorkoutDetails'
 import { Checkbox, Divider, Typography } from '@mui/material'
 import { Add } from '@mui/icons-material'
-import { SET_WORKOUTS } from '../../../store/reducers/workout.reducer'
 import { workoutService } from '../../../services/workout/workout.service'
 import { CustomDatePicker } from '../../../CustomMui/CustomDatePicker/CustomDatePicker'
 import { MONTH_IN_MS } from '../../../assets/config/times'

@@ -95,7 +95,6 @@ export function UserDetails() {
       if (!user?._id) return
       setIsLoading(true)
       const requests = await userService.getRequests(undefined, user._id)
-      console.log(requests)
       setRequests(requests)
     } catch (err) {
       console.log(err)

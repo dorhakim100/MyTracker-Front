@@ -173,7 +173,6 @@ export function DetailsStage({
 
   const handlePickerChange = (newValue: number) => {
     if (!pickerModal.type || !pickerModal.exerciseId) return
-    // console.log(newValue)
 
     onEditExerciseDetails(pickerModal.exerciseId, pickerModal.type, newValue)
   }
@@ -274,8 +273,6 @@ export function DetailsStage({
       timesPerWeek: +times,
     })
   }
-
-  console.log('instructions', instructions)
 
   return (
     <>

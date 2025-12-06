@@ -31,12 +31,9 @@ export const exerciseSearch = async (query: string) => {
 
 export const getExerciseById = async (exerciseId: string) => {
   try {
-    console.log('exerciseId:', exerciseId)
-
     const url = `https://www.exercisedb.dev/api/v1/exercises/${exerciseId}`
     const { data: exerciseData } = await axios.get(url)
     const { data } = exerciseData
-    console.log('data:', data)
     const {
       instructions,
       name,
@@ -69,7 +66,6 @@ export const fetchMuscles = async () => {
 
   const data = await res.json()
   // data.results is an array of muscles
-  console.log(data)
   return data
 }
 

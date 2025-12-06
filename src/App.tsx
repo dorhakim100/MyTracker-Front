@@ -82,10 +82,6 @@ function App() {
       }
     }
 
-    // const routesToReturn = getRoutes(routes, user, prefs.app)
-    // console.log(routesToReturn)
-
-    // return routesToReturn
     return routes
   }, [user?._id, prefs.app])
 
