@@ -9,6 +9,7 @@ export const setService = {
   getById,
   save,
   remove,
+  saveSetBySessionIdAndExerciseId,
   getEmptySet,
 }
 
@@ -50,6 +51,24 @@ async function save(set: Set & { _id?: string }) {
     } else {
       savedSet = await httpService.post(KEY, set)
     }
+    return savedSet
+  } catch (err) {
+    // // console.log(err)
+    throw err
+  }
+}
+
+async function saveSetBySessionIdAndExerciseId(
+  sessionId: string,
+  exerciseId: string,
+  set: Set,
+  setIndex: number
+) {
+  try {
+    const savedSet = await httpService.put(
+      `${KEY}/session/${sessionId}/exercise/${exerciseId}/${setIndex}`,
+      set
+    )
     return savedSet
   } catch (err) {
     // // console.log(err)
