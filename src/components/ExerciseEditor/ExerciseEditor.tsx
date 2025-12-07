@@ -1,6 +1,6 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { Divider, Badge } from '@mui/material'
+import { Badge } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 
 import { RootState } from '../../store/store'
@@ -10,7 +10,7 @@ import { SessionDay } from '../../types/workout/SessionDay'
 import { instructionsService } from '../../services/instructions/instructions.service'
 import { setSelectedSessionDay } from '../../store/actions/workout.action'
 import { setIsLoading } from '../../store/actions/system.actions'
-import { showErrorMsg } from '../../services/event-bus.service'
+import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
 import { messages } from '../../assets/config/messages'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import { PickerSelect } from '../Pickers/PickerSelect'
@@ -19,9 +19,12 @@ import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { instructionsService as instructionsServiceUtil } from '../../services/instructions/instructions.service'
 import { DeleteAction } from '../DeleteAction/DeleteAction'
 import { SwipeableWrapper } from '../SwipeableWrapper/SwipeableWrapper'
+import { EditItem } from '../../types/editItem/editItem'
 
 export interface ExerciseEditorProps {
   exercise: ExerciseInstructions
+  isExpected: boolean
+  updateExercise: (exercise: ExerciseInstructions) => void
 }
 
 interface EditSet extends Set {
@@ -35,7 +38,11 @@ interface PickerOption {
   type: PickerType
 }
 
-export function ExerciseEditor({ exercise }: ExerciseEditorProps) {
+export function ExerciseEditor({
+  exercise,
+  isExpected,
+  updateExercise,
+}: ExerciseEditorProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
@@ -51,157 +58,84 @@ export function ExerciseEditor({ exercise }: ExerciseEditorProps) {
   const [editSet, setEditSet] = useState<EditSet | null>(null)
   const [currentPickerValue, setCurrentPickerValue] = useState<number>(0)
 
-  // ========== Save Functions ==========
-  const saveExerciseInstructions = useCallback(
-    async (updatedExercise: ExerciseInstructions) => {
-      if (!sessionDay?.instructions) return
+  const onAddSet = () => {
+    const existingSet =
+      exercise.sets[exercise.sets.length - 1] ||
+      instructionsService.getEmptySet()
 
-      try {
-        setIsLoading(true)
-
-        // Extract only required fields: exerciseId, sets, rpe, notes
-        const exerciseInstructionsToSave: ExerciseInstructions = {
-          exerciseId: updatedExercise.exerciseId,
-          sets: updatedExercise.sets,
-          rpe: updatedExercise.rpe,
-          notes: updatedExercise.notes,
-          rir: updatedExercise.rir,
-        }
-
-        // Update session day with new exercise instructions
-        const updatedExercises = sessionDay.instructions.exercises.map((ex) =>
-          ex.exerciseId === exercise.exerciseId
-            ? exerciseInstructionsToSave
-            : {
-                exerciseId: ex.exerciseId,
-                sets: [...ex.sets],
-                rpe: ex.rpe,
-                rir: ex.rir,
-                notes: ex.notes,
-              }
-        )
-
-        const instructionsToSave = {
-          ...sessionDay.instructions,
-          exercises: updatedExercises,
-        }
-
-        const fullInstructions = {
-          ...sessionDay.instructions,
-          exercises: sessionDay.instructions.exercises.map((ex) =>
-            ex.exerciseId === exercise.exerciseId
-              ? { ...ex, ...updatedExercise }
-              : ex
-          ),
-        }
-
-        // Save to backend
-        await instructionsService.save(instructionsToSave)
-
-        // Update Redux store
-        const sessionToUpdate: SessionDay = {
-          ...sessionDay,
-          instructions: fullInstructions,
-        }
-        setSelectedSessionDay(sessionToUpdate)
-      } catch (err) {
-        showErrorMsg(messages.error.updateSet)
-      } finally {
-        setIsLoading(false)
-      }
-    },
-    [sessionDay, exercise.exerciseId]
-  )
-
-  // ========== Set Handlers ==========
-  const onAddSet = useCallback(async () => {
-    if (!sessionDay?.instructions) return
-
-    const lastSet = exercise.sets[exercise.sets.length - 1]
-    const newSet = instructionsServiceUtil.getEmptySet()
-
-    // Copy values from last set if exists
-    if (lastSet) {
-      newSet.reps.actual = lastSet.reps.actual
-      newSet.weight.actual = lastSet.weight.actual
-      newSet.reps.expected = lastSet.reps.expected
-      newSet.weight.expected = lastSet.weight.expected
+    const newSet = {
+      ...existingSet,
     }
 
-    const updatedExercise: ExerciseInstructions = {
-      ...exercise,
-      sets: [...exercise.sets, newSet],
+    const newSets = [...exercise.sets, newSet]
+    updateExercise({ ...exercise, sets: newSets })
+    showSuccessMsg(messages.success.addSet)
+  }
+
+  const onDeleteSet = (indexToRemove: number) => {
+    if (indexToRemove === 0 && exercise.sets.length === 1) {
+      showErrorMsg(messages.error.deleteSet)
+      return
     }
+    console.log('exercise', exercise)
+    const newSets = exercise.sets.filter((_, index) => index !== indexToRemove)
+    updateExercise({ ...exercise, sets: newSets })
+    // showSuccessMsg(messages.success.deleteSet)
+  }
 
-    await saveExerciseInstructions(updatedExercise)
-  }, [sessionDay, exercise, saveExerciseInstructions])
+  const onClosePicker = () => {
+    setPickerOptions({
+      isOpen: false,
+      type: null,
+    })
+  }
 
-  // ========== Picker Handlers ==========
-  const onPickerChange = useCallback(
-    (_: unknown, value: number) => {
-      // Track current picker value
-      setCurrentPickerValue(value)
+  const getPickerValue = () => {
+    return currentPickerValue
+  }
 
-      if (pickerOptions.type === 'rpe') {
-        // For RPE, store marker in editSet and track value
-        setEditSet({ ...exercise.sets[0], index: -1 } as EditSet)
-        return
+  const onPickerChange = (value: number) => {
+    if (!editSet) return
+
+    let newSet = { ...editSet }
+
+    const type = pickerOptions.type as keyof Set
+    if (isExpected) {
+      newSet = {
+        ...newSet,
+        [type]: {
+          expected: value,
+          actual: value,
+        },
       }
-
-      if (pickerOptions.type === 'rir') {
-        // For RIR, store marker in editSet and track value
-        setEditSet({ ...exercise.sets[0], index: -1 } as EditSet)
-        return
-      }
-
-      if (
-        (pickerOptions.type === 'weight' || pickerOptions.type === 'reps') &&
-        editSet &&
-        editSet.index >= 0
-      ) {
-        // Update set in local state with new actual value
-        const updatedSet: EditSet = {
-          ...editSet,
-          [pickerOptions.type]: {
-            ...editSet[pickerOptions.type],
-            actual: value,
-          },
-        }
-        setEditSet(updatedSet)
-      }
-    },
-    [pickerOptions.type, editSet, exercise]
-  )
-
-  // ========== Picker Value Helpers ==========
-  const getPickerValue = useCallback((): number => {
-    const type = pickerOptions.type
-    if (!type) return 0
-
-    if (type === 'rpe' && exercise.rpe) {
-      return exercise.rpe.actual || 0
-    }
-
-    if (type === 'rir' && exercise.rir) {
-      return exercise.rir.actual || 0
-    }
-
-    if (editSet && editSet.index >= 0 && exercise.sets[editSet.index]) {
-      const set = exercise.sets[editSet.index]
-      if (type === 'weight') {
-        return set.weight.actual || 0
-      }
-      if (type === 'reps') {
-        return set.reps.actual || 0
+    } else {
+      newSet = {
+        ...newSet,
+        [type]: {
+          expected: newSet[type]?.expected || value,
+          actual: value,
+        },
       }
     }
+    setEditSet(newSet)
+  }
 
-    return 0
-  }, [pickerOptions.type, editSet, exercise])
+  useEffect(() => {
+    const newExercise = { ...exercise }
+    if (!newExercise || !editSet) return
+    newExercise.sets = newExercise.sets.map((set, index) => {
+      if (editSet.index === 0) return editSet
+      if (index === editSet?.index) {
+        return editSet
+      }
+      return set
+    })
+    updateExercise(newExercise)
+  }, [editSet])
 
-  const getIsAfterValue = useCallback((type: PickerType): boolean => {
+  const getIsAfterValue = (type: PickerType): boolean => {
     return type === 'rpe' || type === 'weight'
-  }, [])
+  }
 
   const getButtonsValues = useCallback((type: PickerType): number[] => {
     switch (type) {
@@ -236,98 +170,6 @@ export function ExerciseEditor({ exercise }: ExerciseEditorProps) {
     []
   )
 
-  // ========== Picker Close Handler ==========
-  const onClosePicker = useCallback(async () => {
-    try {
-      setIsLoading(true)
-
-      let updatedExercise: ExerciseInstructions | null = null
-
-      if (pickerOptions.type === 'rpe' && exercise.rpe) {
-        // Update RPE - use the current picker value tracked in state
-        updatedExercise = {
-          ...exercise,
-          rpe: {
-            ...exercise.rpe,
-            actual: currentPickerValue,
-          },
-        }
-      } else if (pickerOptions.type === 'rir' && exercise.rir) {
-        updatedExercise = {
-          ...exercise,
-          rir: {
-            ...exercise.rir,
-            actual: currentPickerValue,
-          },
-        }
-      } else if (
-        (pickerOptions.type === 'weight' || pickerOptions.type === 'reps') &&
-        editSet &&
-        editSet.index >= 0
-      ) {
-        // Update specific set - use editSet which has the updated value
-        const updatedSets = [...exercise.sets]
-        const setToUpdate = { ...updatedSets[editSet.index] }
-
-        if (pickerOptions.type === 'weight' && editSet.weight) {
-          setToUpdate.weight = {
-            ...setToUpdate.weight,
-            actual: editSet.weight.actual,
-          }
-        } else if (pickerOptions.type === 'reps' && editSet.reps) {
-          setToUpdate.reps = {
-            ...setToUpdate.reps,
-            actual: editSet.reps.actual,
-          }
-        }
-
-        updatedSets[editSet.index] = setToUpdate
-        updatedExercise = {
-          ...exercise,
-          sets: updatedSets,
-        }
-      }
-
-      // Save to backend if there are changes
-      if (updatedExercise) {
-        await saveExerciseInstructions(updatedExercise)
-      }
-
-      // Reset picker state
-      setPickerOptions({ isOpen: false, type: null })
-      setEditSet(null)
-      setCurrentPickerValue(0)
-    } catch (err) {
-      showErrorMsg(messages.error.saveSet)
-    } finally {
-      setIsLoading(false)
-    }
-  }, [
-    pickerOptions.type,
-    editSet,
-    exercise,
-    currentPickerValue,
-    saveExerciseInstructions,
-  ])
-
-  const onDeleteSet = async (index: number) => {
-    try {
-      setIsLoading(true)
-      const updatedSets = [...exercise.sets]
-
-      updatedSets.splice(index, 1)
-      const updatedExercise: ExerciseInstructions = {
-        ...exercise,
-        sets: updatedSets,
-      }
-      await saveExerciseInstructions(updatedExercise)
-    } catch (err) {
-      showErrorMsg(messages.error.deleteSet)
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
   return (
     <>
       <div className='exercise-editor-container'>
@@ -359,7 +201,8 @@ export function ExerciseEditor({ exercise }: ExerciseEditorProps) {
                           type: 'number',
                         }}
                         value={set.reps.actual}
-                        minWidth={120}
+                        minWidth={80}
+                        // isAutoWidth={true}
                       />
                     </div>
                     <div className='weight-container'>
@@ -378,19 +221,46 @@ export function ExerciseEditor({ exercise }: ExerciseEditorProps) {
                           type: 'number',
                         }}
                         value={set.weight.actual}
-                        minWidth={150}
+                        minWidth={100}
+                        // isAutoWidth={true}
                       />
                     </div>
-                  </div>
-                  <Divider
+                    <div className='rpe-rir-container'>
+                      <PickerSelect
+                        openClock={() => {
+                          setPickerOptions({
+                            type: set.rpe ? 'rpe' : 'rir',
+                            isOpen: true,
+                          })
+                          setEditSet({ ...set, index })
+
+                          setCurrentPickerValue(
+                            set.rpe ? set.rpe.actual : set.rir?.actual || 0
+                          )
+                        }}
+                        option={{
+                          label: set.rpe ? 'RPE' : 'RIR',
+                          key: set.rpe ? 'rpe' : 'rir',
+                          type: 'number',
+                        }}
+                        value={set.rpe ? set.rpe.actual : set.rir?.actual || 0}
+                        minWidth={70}
+                        // isAutoWidth={true}
+                      />
+                    </div>
+                  </div>{' '}
+                  {/* <Divider
                     className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-                  />
+                  /> */}
                 </div>
               ),
               renderRightSwipeActions: () => (
                 <DeleteAction
                   item={set}
                   onDeleteItem={() => onDeleteSet(index)}
+                  destructive={
+                    index === 0 && exercise.sets.length === 1 ? false : true
+                  }
                 />
               ),
             }))}
@@ -399,7 +269,7 @@ export function ExerciseEditor({ exercise }: ExerciseEditorProps) {
           />
         )}
         <div className='controls-container'>
-          <PickerSelect
+          {/* <PickerSelect
             openClock={() => {
               setPickerOptions({
                 type: exercise.rpe ? 'rpe' : 'rir',
@@ -419,7 +289,7 @@ export function ExerciseEditor({ exercise }: ExerciseEditorProps) {
               exercise.rpe ? exercise.rpe.actual : exercise.rir?.actual || 0
             }
             minWidth={120}
-          />
+          /> */}
           <CustomButton
             icon={<AddIcon />}
             text='Add Set'
@@ -434,7 +304,7 @@ export function ExerciseEditor({ exercise }: ExerciseEditorProps) {
         component={
           <ClockPicker
             value={getPickerValue()}
-            onChange={onPickerChange}
+            onChange={(_, value) => onPickerChange(value)}
             isAfterValue={getIsAfterValue(pickerOptions.type)}
             buttonsValues={getButtonsValues(pickerOptions.type)}
             minValue={getPickerValues(pickerOptions.type, 'min')}

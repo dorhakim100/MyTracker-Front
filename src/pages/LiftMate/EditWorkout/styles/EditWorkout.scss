@@ -98,8 +98,8 @@
     }
 
     &.details-stage {
-      height: 250px;
-      height: 350px;
+      height: 300px;
+      // height: 350px;
       overflow-y: auto;
 
       .exercise-details-edit-container {
@@ -134,6 +134,14 @@
             button {
               padding: 0.3rem 1rem;
             }
+          }
+        }
+
+        .exercise-editor-container {
+          grid-column: 1/-1;
+
+          .divider {
+            margin: 0.8rem 0;
           }
         }
 

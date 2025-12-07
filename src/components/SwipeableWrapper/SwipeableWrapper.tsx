@@ -8,6 +8,9 @@ import {
 } from 'react-swipeable-list'
 
 import './styles/SwipeableWrapper.scss'
+import { Divider } from '@mui/material'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../store/store'
 
 export interface SwipeableItem {
   id: string | number
@@ -34,9 +37,10 @@ export function SwipeableWrapper({
   renderLeftSwipeActions,
   className,
   listKey,
-  threshold = 0.15,
+  threshold = 0.25,
   scrollStartThreshold = 20,
 }: SwipeableWrapperProps) {
+  const prefs = useSelector((state: RootState) => state.systemModule.prefs)
   // List mode: render multiple items
   if (items && items.length > 0) {
     return (
@@ -60,15 +64,19 @@ export function SwipeableWrapper({
           ) : null
 
           return (
-            <SwipeableListItem
-              key={item.id}
-              leadingActions={leadingActions}
-              trailingActions={trailingActions}
-              scrollStartThreshold={scrollStartThreshold}
-              threshold={threshold}
-            >
-              {item.content}
-            </SwipeableListItem>
+            <div className='swipeable-list-item-container' key={item.id}>
+              <SwipeableListItem
+                leadingActions={leadingActions}
+                trailingActions={trailingActions}
+                scrollStartThreshold={scrollStartThreshold}
+                threshold={threshold}
+              >
+                {item.content}
+              </SwipeableListItem>
+              <Divider
+                className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+              />
+            </div>
           )
         })}
       </SwipeableList>

@@ -22,5 +22,7 @@ export interface ExerciseDetail {
 export interface Set {
   reps: ExpectedActual<number>
   weight: ExpectedActual<number>
+  rpe?: ExpectedActual<number>
+  rir?: ExpectedActual<number>
   // just for editing
 }

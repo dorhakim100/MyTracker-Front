@@ -183,20 +183,16 @@ export function EditWorkout({
           ]
         : workout.exercises.filter((e) => e.exerciseId !== exercise.exerciseId)
 
-    const rpe = instructionsService.getEmptyExpectedActual('rpe')
     const notes = instructionsService.getEmptyExpectedActual('notes')
+
+    const sets = Array.from({ length: 3 }, () =>
+      instructionsService.getEmptySet()
+    )
 
     const instructionsExercises = newExercises.map((exercise) => ({
       exerciseId: exercise.exerciseId,
-      sets: [
-        instructionsService.getEmptySet(),
-        instructionsService.getEmptySet(),
-        instructionsService.getEmptySet(),
-      ],
-      rpe: (rpe || { expected: 8, actual: 8 }) as {
-        expected: number
-        actual: number
-      },
+      sets,
+
       notes: (notes || { expected: '', actual: '' }) as {
         expected: string
         actual: string
@@ -230,115 +226,15 @@ export function EditWorkout({
 
   const onReorderExercises = (exercises: Exercise[]) => {
     setWorkout({ ...workout, exercises })
-  }
-
-  const onEditExerciseDetails = (
-    exerciseId: string,
-    type: PickerModalType,
-    value: number | string
-  ) => {
-    if (type === 'sets') {
-      value = Math.floor(value as number)
-      setInstructions((prev) => {
-        const exerciseIndex = prev.exercises.findIndex(
-          (e) => e.exerciseId === exerciseId
-        )
-        if (exerciseIndex === -1) return prev
-
-        const newSetsLength = value as number
-        const newSets = Array.from({ length: newSetsLength }, () =>
-          instructionsService.getEmptySet()
-        )
-
-        const updatedExercises = [...prev.exercises]
-        updatedExercises[exerciseIndex] = {
-          ...updatedExercises[exerciseIndex],
-          sets: newSets,
-        }
-
-        return {
-          ...prev,
-          exercises: updatedExercises,
-        }
-      })
-      return
-    }
-
-    const exerciseToUpdate = workout.exercises.find(
-      (e) => e.exerciseId === exerciseId
-    )
-    if (!exerciseToUpdate) return
-
-    // Update workout exercise details
-    const updatedExercises = [...workout.exercises]
-    const exerciseIndex = updatedExercises.findIndex(
-      (e) => e.exerciseId === exerciseId
-    )
-    if (exerciseIndex === -1) return
-
-    updatedExercises[exerciseIndex] = {
-      ...updatedExercises[exerciseIndex],
-      details: {
-        ...updatedExercises[exerciseIndex].details,
-        [type]: {
-          expected: value,
-          actual: value,
-        },
-      } as ExerciseDetail,
-    }
-
-    setWorkout({ ...workout, exercises: updatedExercises })
-
-    // Update instructions
-    setInstructions((prev) => {
-      const instructionIndex = prev.exercises.findIndex(
-        (e) => e.exerciseId === exerciseId
-      )
-      if (instructionIndex === -1) return prev
-
-      const updatedInstructions = [...prev.exercises]
-      const instructionExercise = { ...updatedInstructions[instructionIndex] }
-
-      if (type === 'rpe') {
-        delete instructionExercise.rir
-        instructionExercise.rpe = {
-          expected: value as number,
-          actual: value as number,
-        }
-      } else if (type === 'weight') {
-        const weightValue = (value as number) ?? 0
-        instructionExercise.sets = instructionExercise.sets.map((set) => ({
-          ...set,
-          weight: {
-            expected: weightValue,
-            actual: weightValue,
-          },
-        }))
-      } else if (type === 'reps') {
-        value = Math.floor(value as number)
-        const repsValue = (value as number) ?? 0
-        instructionExercise.sets = instructionExercise.sets.map((set) => ({
-          ...set,
-          reps: {
-            expected: repsValue,
-            actual: repsValue,
-          },
-        }))
-      } else if (type === 'rir') {
-        delete instructionExercise.rpe
-        value = Math.floor(value as number)
-        instructionExercise.rir = {
-          expected: value as number,
-          actual: value as number,
-        }
-      }
-
-      updatedInstructions[instructionIndex] = instructionExercise
-      return {
-        ...prev,
-        exercises: updatedInstructions,
-      }
-    })
+    const reOrderedExercisesInstructions = exercises.map((exercise) => ({
+      ...(instructions.exercises.find(
+        (e) => e.exerciseId === exercise.exerciseId
+      ) as ExerciseInstructions),
+    }))
+    setInstructions((prev) => ({
+      ...prev,
+      exercises: reOrderedExercisesInstructions,
+    }))
   }
 
   const onEditExerciseNotes = (exerciseId: string, notes: string) => {
@@ -401,7 +297,7 @@ export function EditWorkout({
       delete exerciseToUpdate.details?.rpe
     }
 
-    onEditExerciseDetails(exerciseId, value, value === 'rpe' ? 8 : 2)
+    // onEditExerciseDetails(exerciseId, value, value === 'rpe' ? 8 : 2)
   }
 
   const getStageTitle = (stage: WorkoutStage): string => {
@@ -474,7 +370,6 @@ export function EditWorkout({
             weeksStatus={weeksStatus}
             instructionsFilter={instructionsFilter}
             onInstructionsFilterChange={setInstructionsFilter}
-            onEditExerciseDetails={onEditExerciseDetails}
             onEditExerciseNotes={onEditExerciseNotes}
             onChangeRpeRir={onChangeRpeRir}
             setInstructions={setInstructions}
@@ -482,55 +377,6 @@ export function EditWorkout({
         )
       default:
         return <div>Stage not implemented</div>
-    }
-  }
-
-  const getInstructionsToSave = (): Instructions => {
-    const instructionsExercises = workout.exercises.map((exercise) => {
-      const existingInstruction = instructions.exercises.find(
-        (e) => e.exerciseId === exercise.exerciseId
-      )
-
-      if (existingInstruction) {
-        return existingInstruction
-      }
-
-      const setsLength = 1
-      const newSets = Array.from({ length: setsLength }, () => ({
-        reps: {
-          expected: exercise.details?.reps?.expected || 0,
-          actual: exercise.details?.reps?.expected || 0,
-        },
-        weight: {
-          expected: exercise.details?.weight?.expected || 0,
-          actual: exercise.details?.weight?.expected || 0,
-        },
-      }))
-
-      const exerciseInstructions: ExerciseInstructions = {
-        exerciseId: exercise.exerciseId,
-        sets: newSets,
-        notes: exercise.details?.notes || { expected: '', actual: '' },
-      }
-
-      if (exercise.details?.rpe) {
-        exerciseInstructions.rpe =
-          exercise.details?.rpe ||
-          instructionsService.getEmptyExpectedActual('rpe')
-      }
-
-      if (exercise.details?.rir) {
-        exerciseInstructions.rir =
-          exercise.details?.rir ||
-          instructionsService.getEmptyExpectedActual('rir')
-      }
-
-      return exerciseInstructions
-    })
-
-    return {
-      ...instructions,
-      exercises: instructionsExercises,
     }
   }
 
@@ -545,7 +391,7 @@ export function EditWorkout({
       workoutToSave.name = 'Untitled Workout'
     }
 
-    const instructionsToSave = getInstructionsToSave()
+    const instructionsToSave = instructions
 
     try {
       setIsLoading(true)

@@ -7,15 +7,12 @@ import {
 } from '../../../services/util.service'
 import { CustomInput } from '../../../CustomMui/CustomInput/CustomInput'
 import { Divider } from '@mui/material'
-import { PickerSelect } from '../../../components/Pickers/PickerSelect'
 import { SlideDialog } from '../../../components/SlideDialog/SlideDialog'
-import { ClockPicker } from '../../../components/Pickers/ClockPicker'
 import { CustomToggle } from '../../../CustomMui/CustomToggle/CustomToggle'
 import { Exercise } from '../../../types/exercise/Exercise'
 import { Workout } from '../../../types/workout/Workout'
 import { Instructions } from '../../../types/instructions/Instructions'
 import { WeekNumberStatus } from '../../../types/weekNumberStatus/WeekNumberStatus'
-import { exersiceDetailsSelects } from '../../../assets/config/exersice-details-selects'
 import CheckIcon from '@mui/icons-material/Check'
 import CloseIcon from '@mui/icons-material/Close'
 import { ExpectedActual } from '../../../types/expectedActual/ExpectedActual'
@@ -23,15 +20,8 @@ import InfoOutlineIcon from '@mui/icons-material/InfoOutline'
 import { CustomButton } from '../../../CustomMui/CustomButton/CustomButton'
 import { ExerciseDetails } from '../../../components/ExerciseDetails/ExerciseDetails'
 import { CustomSelect } from '../../../CustomMui/CustomSelect/CustomSelect'
-
-type PickerModalType =
-  | 'expectedSets'
-  | 'actualSets'
-  | 'rpe'
-  | 'sets'
-  | 'weight'
-  | 'reps'
-  | 'rir'
+import { ExerciseEditor } from '../../../components/ExerciseEditor/ExerciseEditor'
+import { ExerciseInstructions } from '../../../types/exercise/ExerciseInstructions'
 
 interface DetailsStageProps {
   workout: Workout
@@ -48,11 +38,6 @@ interface DetailsStageProps {
     forUserId: string
     workoutId: string
   }) => void
-  onEditExerciseDetails: (
-    exerciseId: string,
-    type: PickerModalType,
-    value: number | string
-  ) => void
   onEditExerciseNotes: (exerciseId: string, notes: string) => void
   onChangeRpeRir: (exerciseId: string, value: 'rpe' | 'rir') => void
   setInstructions: (instructions: Instructions) => void
@@ -75,7 +60,6 @@ export function DetailsStage({
   weeksStatus,
   instructionsFilter,
   onInstructionsFilterChange,
-  onEditExerciseDetails,
   onEditExerciseNotes,
   onChangeRpeRir,
   setInstructions,
@@ -86,95 +70,18 @@ export function DetailsStage({
 
   const [pickerModal, setPickerModal] = useState({
     isOpen: false,
-    type: null as PickerModalType | null,
+    type: null as string | null,
     exerciseId: null as string | null,
   })
-  const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(
-    null
-  )
 
   const [exerciseInfoDialog, setExerciseInfoDialog] = useState({
     isOpen: false,
     exercise: null as Exercise | null,
   })
 
-  const openPickerModal = (exercise: Exercise, type: PickerModalType) => {
-    setPickerModal({ isOpen: true, type, exerciseId: exercise.exerciseId })
-    setSelectedExercise(exercise)
-  }
-
   const closeSlideDialog = () => {
     setPickerModal({ isOpen: false, type: null, exerciseId: null })
-    setSelectedExercise(null)
     setExerciseInfoDialog({ isOpen: false, exercise: null })
-  }
-
-  const getIsAfterValue = (type: PickerModalType | null) => {
-    if (!type) return false
-    return exersiceDetailsSelects.find((select) => select.name === type)
-      ?.isAfterValue
-  }
-
-  const getPickerModalValue = (
-    type: PickerModalType | null,
-    exercise: Exercise
-  ): number => {
-    if (!type) return 0
-
-    const exerciseInstruction = instructions.exercises.find(
-      (e) => e.exerciseId === exercise.exerciseId
-    )
-
-    // Fallback to workout exercise details if instruction doesn't exist or has no value
-    const exerciseDetails = exercise.details
-
-    if (type === 'sets') {
-      // Check instruction first (reactive - gets updated when editing)
-      if (
-        exerciseInstruction?.sets &&
-        Array.isArray(exerciseInstruction.sets)
-      ) {
-        return exerciseInstruction.sets.length
-      }
-      // Fallback to exercise details (initial value when editing)
-      if (
-        (exerciseDetails?.sets as unknown as ExpectedActual<number>)
-          ?.expected !== undefined
-      ) {
-        return (exerciseDetails?.sets as unknown as ExpectedActual<number>)
-          .expected
-      }
-      return 0
-    }
-
-    if (type === 'rpe') {
-      if (exerciseInstruction?.rpe?.expected !== undefined) {
-        return exerciseInstruction.rpe.expected
-      }
-      return exerciseDetails?.rpe?.expected || 0
-    } else if (type === 'rir') {
-      if (exerciseInstruction?.rir?.expected !== undefined) {
-        return exerciseInstruction.rir.expected
-      }
-      return exerciseDetails?.rir?.expected || 0
-    } else if (type === 'weight') {
-      if (exerciseInstruction?.sets?.[0]?.weight?.expected !== undefined) {
-        return exerciseInstruction.sets[0].weight.expected
-      }
-      return exerciseDetails?.weight?.expected || 0
-    } else if (type === 'reps') {
-      if (exerciseInstruction?.sets?.[0]?.reps?.expected !== undefined) {
-        return exerciseInstruction.sets[0].reps.expected
-      }
-      return exerciseDetails?.reps?.expected || 0
-    }
-    return 0
-  }
-
-  const handlePickerChange = (newValue: number) => {
-    if (!pickerModal.type || !pickerModal.exerciseId) return
-
-    onEditExerciseDetails(pickerModal.exerciseId, pickerModal.type, newValue)
   }
 
   const getWeekNumberIcon = (weekNumber: number) => {
@@ -187,46 +94,49 @@ export function DetailsStage({
   }
 
   const onSwitchRpeRir = (exerciseId: string, value: 'rpe' | 'rir') => {
-    const exerciseDetailsToUpdate = workout.exercises.find(
+    const exerciseInstructionToUpdate = instructions.exercises.find(
       (e) => e.exerciseId === exerciseId
     )
-    if (!exerciseDetailsToUpdate) return
+    const exerciseIndex = instructions.exercises.findIndex(
+      (e) => e.exerciseId === exerciseId
+    )
+    if (!exerciseInstructionToUpdate) return
     onChangeRpeRir(exerciseId, value)
-    // if (value === 'rpe' && exerciseDetailsToUpdate.details?.rpe) {
-    //   exerciseDetailsToUpdate.details.rpe = {
-    //     expected: 8,
-    //     actual: 8,
-    //   }
-    // }
 
-    // if (value === 'rir' && exerciseDetailsToUpdate.details?.rir) {
-    //   exerciseDetailsToUpdate.details.rir = {
-    //     expected: 2,
-    //     actual: 2,
-    //   }
-    // }
-  }
+    let newExerciseInstruction = { ...exerciseInstructionToUpdate }
 
-  const getButtonsValues = (type: PickerModalType | null) => {
-    if (!type) return []
-    return exersiceDetailsSelects.find((select) => select.name === type)
-      ?.buttons
-  }
+    if (value === 'rpe') {
+      newExerciseInstruction.sets = newExerciseInstruction.sets.map((set) => {
+        delete set.rir
+        return {
+          ...set,
+          rpe: {
+            expected: 8,
+            actual: 8,
+          } as ExpectedActual<number>,
+        }
+      })
+    }
+    if (value === 'rir') {
+      newExerciseInstruction.sets = newExerciseInstruction.sets.map((set) => {
+        delete set.rpe
+        return {
+          ...set,
+          rir: {
+            expected: 2,
+            actual: 2,
+          } as ExpectedActual<number>,
+        }
+      })
+    }
 
-  const getPickerValues = (
-    type: PickerModalType | null,
-    key: 'min' | 'max'
-  ): number => {
-    if (!type) return 0
-    const select = exersiceDetailsSelects.find((select) => select.name === type)
-    if (!select) return 0
-    const index = key === 'min' ? 0 : select.values.length - 1
-    return select.values[index] as number
-  }
+    const newExercises = [...instructions.exercises]
+    newExercises[exerciseIndex] = newExerciseInstruction
 
-  const getIsButtonsVisible = (type: PickerModalType | null): boolean => {
-    if (type === 'rpe' || type === 'rir' || type === 'sets') return false
-    return true
+    setInstructions({
+      ...instructions,
+      exercises: newExercises,
+    })
   }
 
   const getIsDialogOpen = () => {
@@ -240,28 +150,6 @@ export function DetailsStage({
     return capitalizeFirstLetter(pickerModal.type || '')
   }
 
-  const getDialogComponent = () => {
-    if (exerciseInfoDialog.isOpen) {
-      return <ExerciseDetails exercise={exerciseInfoDialog.exercise} />
-    }
-    return (
-      <ClockPicker
-        value={getPickerModalValue(
-          pickerModal.type,
-          selectedExercise || workout.exercises[0]
-        )}
-        onChange={(_, value: number) => handlePickerChange(value)}
-        isAfterValue={getIsAfterValue(pickerModal.type)}
-        buttonsValues={getButtonsValues(pickerModal.type as PickerModalType)}
-        isButtonsVisible={getIsButtonsVisible(
-          pickerModal.type as PickerModalType
-        )}
-        minValue={getPickerValues(pickerModal.type as PickerModalType, 'min')}
-        maxValue={getPickerValues(pickerModal.type as PickerModalType, 'max')}
-      />
-    )
-  }
-
   const getDialogHeight = () => {
     if (exerciseInfoDialog.isOpen) return 'full'
     return 'half'
@@ -271,6 +159,15 @@ export function DetailsStage({
     setInstructions({
       ...instructions,
       timesPerWeek: +times,
+    })
+  }
+
+  const updateExercise = (exercise: ExerciseInstructions) => {
+    setInstructions({
+      ...instructions,
+      exercises: instructions.exercises.map((e) =>
+        e.exerciseId === exercise.exerciseId ? exercise : e
+      ),
     })
   }
 
@@ -307,14 +204,14 @@ export function DetailsStage({
         />
       </div>
       <div className='edit-workout-stage details-stage'>
-        {workout.exercises.map((exercise: Exercise) => {
-          const exerciseInstruction = instructions.exercises.find(
+        {instructions.exercises.map((exercise: ExerciseInstructions, index) => {
+          const exerciseDetails = workout.exercises.find(
             (e) => e.exerciseId === exercise.exerciseId
           )
-
+          if (!exerciseDetails) return null
           return (
             <div
-              key={exercise.exerciseId}
+              key={`${exercise.exerciseId}-${index}`}
               className='exercise-details-edit-container'
             >
               <div className='header-container'>
@@ -323,14 +220,17 @@ export function DetailsStage({
                   icon={<InfoOutlineIcon />}
                   onClick={(ev) => {
                     ev.stopPropagation()
-                    setExerciseInfoDialog({ isOpen: true, exercise })
+                    setExerciseInfoDialog({
+                      isOpen: true,
+                      exercise: exerciseDetails,
+                    })
                   }}
                 />
-                <h4>{capitalizeFirstLetter(exercise.name)}</h4>
+                <h4>{capitalizeFirstLetter(exerciseDetails.name)}</h4>
 
                 <CustomToggle
                   options={RPE_RIR_TOGGLE_OPTIONS}
-                  value={exercise?.details?.rpe ? 'rpe' : 'rir'}
+                  value={exerciseDetails?.details?.rpe ? 'rpe' : 'rir'}
                   onChange={(value) => {
                     onSwitchRpeRir(exercise.exerciseId, value as 'rpe' | 'rir')
                   }}
@@ -340,33 +240,14 @@ export function DetailsStage({
                 />
               </div>
 
-              {exersiceDetailsSelects
-                .filter((select) => {
-                  if (!exercise.details?.rpe && select.name === 'rpe')
-                    return false
-                  if (!exercise.details?.rir && select.name === 'rir')
-                    return false
-                  return true
-                })
-                .map((select) => (
-                  <PickerSelect
-                    key={select.name}
-                    openClock={() =>
-                      openPickerModal(exercise, select.name as PickerModalType)
-                    }
-                    option={{
-                      label: select.label,
-                      key: select.name,
-                      type: 'number',
-                    }}
-                    value={getPickerModalValue(
-                      select.name as PickerModalType,
-                      exercise
-                    )}
-                  />
-                ))}
+              <ExerciseEditor
+                exercise={exercise}
+                isExpected={true}
+                updateExercise={updateExercise}
+              />
+
               <CustomInput
-                value={exerciseInstruction?.notes?.expected || ''}
+                value={exercise?.notes?.expected || ''}
                 onChange={(notes: string) =>
                   onEditExerciseNotes(exercise.exerciseId, notes)
                 }
@@ -386,7 +267,7 @@ export function DetailsStage({
       <SlideDialog
         open={getIsDialogOpen()}
         onClose={closeSlideDialog}
-        component={getDialogComponent()}
+        component={<ExerciseDetails exercise={exerciseInfoDialog.exercise} />}
         title={getDialogTitle()}
         type={getDialogHeight()}
       />

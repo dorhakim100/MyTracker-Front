@@ -14,6 +14,7 @@ interface PickerSelectProps {
   }
   value: number
   minWidth?: number
+  isAutoWidth?: boolean
 }
 
 export function PickerSelect({
@@ -21,10 +22,11 @@ export function PickerSelect({
   option,
   value,
   minWidth,
+  isAutoWidth = false,
 }: PickerSelectProps) {
   return (
     <FormControl
-      sx={{ m: 1, minWidth: minWidth || 150 }}
+      sx={{ m: 1, minWidth: isAutoWidth ? 'auto' : minWidth || 150 }}
       size='small'
       onClick={openClock}
     >

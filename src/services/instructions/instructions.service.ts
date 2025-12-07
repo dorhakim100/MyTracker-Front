@@ -132,6 +132,10 @@ function getEmptySet() {
       expected: 15,
       actual: 15,
     },
+    rpe: {
+      expected: 8,
+      actual: 8,
+    },
   }
 }
 

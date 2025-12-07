@@ -11,6 +11,7 @@ interface DeleteActionProps<T> {
   trailing?: boolean
   leading?: boolean
   main?: boolean
+  destructive?: boolean
 }
 
 export function DeleteAction<T>({
@@ -19,12 +20,14 @@ export function DeleteAction<T>({
   trailing,
   leading,
   main,
+  destructive = true,
 }: DeleteActionProps<T>) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const extraProps = { trailing, leading, main } as any
+
   return (
     <SwipeAction
-      destructive={true}
+      destructive={destructive}
       onClick={() => onDeleteItem(item)}
       {...extraProps}
     >
