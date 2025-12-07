@@ -4,6 +4,7 @@ import { Typography } from '@mui/material'
 import { SessionDay } from '../../types/workout/SessionDay'
 import { Exercise } from '../../types/exercise/Exercise'
 import { capitalizeFirstLetter } from '../../services/util.service'
+import { setSelectedSessionDay } from '../../store/actions/workout.action'
 
 import { ExerciseEditor } from '../../components/ExerciseEditor/ExerciseEditor'
 
@@ -15,7 +16,13 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
+import { ExerciseInstructions } from '../../types/exercise/ExerciseInstructions'
+import { showErrorMsg } from '../../services/event-bus.service'
+import { messages } from '../../assets/config/messages'
+import { instructionsService } from '../../services/instructions/instructions.service'
+import { setIsLoading } from '../../store/actions/system.actions'
 
+import { Instructions } from '../../types/instructions/Instructions'
 interface WorkoutSessionProps {
   sessionDay: SessionDay
   onExerciseInfoClick: (exercise: Exercise) => void
@@ -72,6 +79,49 @@ export function WorkoutSession({
     return workout?.name
   }
 
+  const updateExercise = async (exercise: ExerciseInstructions) => {
+    const originalInstructions = sessionDay.instructions
+    const newInstructions = {
+      ...sessionDay.instructions,
+      exercises: sessionDay.instructions.exercises.map((e) =>
+        e.exerciseId === exercise.exerciseId ? exercise : e
+      ),
+    }
+    if (getIsStringifySame(originalInstructions, newInstructions)) return
+    setSelectedSessionDay({
+      ...sessionDay,
+      instructions: newInstructions,
+    })
+    try {
+      await saveNewInstructions(newInstructions)
+    } catch (err) {
+      setSelectedSessionDay({
+        ...sessionDay,
+        instructions: originalInstructions,
+      })
+    }
+  }
+
+  async function saveNewInstructions(newInstructions: Instructions) {
+    try {
+      setIsLoading(true)
+      await instructionsService.save(newInstructions)
+    } catch (err) {
+      showErrorMsg(messages.error.updateSet)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  function getIsStringifySame(
+    originalInstructions: Instructions,
+    newInstructions: Instructions
+  ) {
+    return (
+      JSON.stringify(originalInstructions) === JSON.stringify(newInstructions)
+    )
+  }
+
   const allExerciseIds = sessionDay.instructions.exercises.map(
     (ex) => ex.exerciseId
   )
@@ -98,7 +148,12 @@ export function WorkoutSession({
             <CustomAccordion
               key={`${exercise.exerciseId}-${sessionDay._id}`}
               title={capitalizeFirstLetter(exercise.name || '')}
-              cmp={<ExerciseEditor exercise={exercise} />}
+              cmp={
+                <ExerciseEditor
+                  exercise={exercise}
+                  updateExercise={updateExercise}
+                />
+              }
               expanded={isExpanded}
               onChange={handleAccordionChange(exercise.exerciseId)}
               icon={

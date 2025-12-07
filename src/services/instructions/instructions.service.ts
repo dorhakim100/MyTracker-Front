@@ -51,7 +51,6 @@ async function remove(instructionId: string) {
   }
 }
 async function save(instructions: Instructions) {
-  console.log('instructions:', instructions)
   try {
     let savedInstructions
     if (instructions._id) {

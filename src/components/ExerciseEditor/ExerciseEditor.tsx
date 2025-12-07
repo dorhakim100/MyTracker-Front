@@ -23,7 +23,7 @@ import { EditItem } from '../../types/editItem/editItem'
 
 export interface ExerciseEditorProps {
   exercise: ExerciseInstructions
-  isExpected: boolean
+  isExpected?: boolean
   updateExercise: (exercise: ExerciseInstructions) => void
 }
 
@@ -77,10 +77,8 @@ export function ExerciseEditor({
       showErrorMsg(messages.error.deleteSet)
       return
     }
-    console.log('exercise', exercise)
     const newSets = exercise.sets.filter((_, index) => index !== indexToRemove)
     updateExercise({ ...exercise, sets: newSets })
-    // showSuccessMsg(messages.success.deleteSet)
   }
 
   const onClosePicker = () => {
@@ -124,7 +122,7 @@ export function ExerciseEditor({
     const newExercise = { ...exercise }
     if (!newExercise || !editSet) return
     newExercise.sets = newExercise.sets.map((set, index) => {
-      if (editSet.index === 0) return editSet
+      if (editSet.index === 0 && isExpected) return editSet
       if (index === editSet?.index) {
         return editSet
       }
