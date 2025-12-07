@@ -69,10 +69,11 @@ async function save(sessionDay: SessionDay) {
   }
 }
 
-async function playWorkout(sessionDay: SessionDay) {
+async function playWorkout(sessionDay: SessionDay, userId: string) {
   try {
     const session = await httpService.put(`${KEY}/play/${sessionDay._id}`, {
       workoutId: sessionDay.workoutId,
+      userId: userId,
     })
     console.log(session)
 

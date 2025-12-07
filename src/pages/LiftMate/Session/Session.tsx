@@ -146,10 +146,13 @@ export function Session() {
       if (!sessionDay._id) return
       setSelectedWorkoutId(workout._id)
 
-      await playWorkout({
-        ...sessionDay,
-        workoutId: workout._id,
-      })
+      await playWorkout(
+        {
+          ...sessionDay,
+          workoutId: workout._id,
+        },
+        traineeUser?._id || user?._id || ''
+      )
 
       // await saveSessionDay()
     } catch (err) {

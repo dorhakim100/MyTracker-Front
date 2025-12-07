@@ -81,9 +81,12 @@ export function setSelectedSessionDay(sessionDay: SessionDay) {
   })
 }
 
-export async function playWorkout(sessionDay: SessionDay) {
+export async function playWorkout(sessionDay: SessionDay, userId: string) {
   try {
-    const sessionWithInstructions = await sessionService.playWorkout(sessionDay)
+    const sessionWithInstructions = await sessionService.playWorkout(
+      sessionDay,
+      userId
+    )
     store.dispatch({
       type: SET_SELECTED_SESSION_DAY,
       sessionDay: sessionWithInstructions,
