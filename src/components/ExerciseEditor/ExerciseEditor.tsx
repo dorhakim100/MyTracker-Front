@@ -24,7 +24,11 @@ import { EditItem } from '../../types/editItem/editItem'
 export interface ExerciseEditorProps {
   exercise: ExerciseInstructions
   isExpected?: boolean
-  updateExercise: (exercise: ExerciseInstructions) => void
+  updateExercise: (
+    exercise: ExerciseInstructions,
+    setIndex?: number,
+    isNew?: boolean
+  ) => void
 }
 
 interface EditSet extends Set {
@@ -68,7 +72,7 @@ export function ExerciseEditor({
     }
 
     const newSets = [...exercise.sets, newSet]
-    updateExercise({ ...exercise, sets: newSets })
+    updateExercise({ ...exercise, sets: newSets }, newSets.length - 1, true)
     showSuccessMsg(messages.success.addSet)
   }
 
@@ -78,7 +82,7 @@ export function ExerciseEditor({
       return
     }
     const newSets = exercise.sets.filter((_, index) => index !== indexToRemove)
-    updateExercise({ ...exercise, sets: newSets })
+    updateExercise({ ...exercise, sets: newSets }, indexToRemove)
   }
 
   const onClosePicker = () => {
@@ -128,7 +132,7 @@ export function ExerciseEditor({
       }
       return set
     })
-    updateExercise(newExercise)
+    updateExercise(newExercise, editSet.index)
   }, [editSet])
 
   const getIsAfterValue = (type: PickerType): boolean => {

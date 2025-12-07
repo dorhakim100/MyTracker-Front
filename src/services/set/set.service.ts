@@ -61,11 +61,12 @@ async function save(set: Set & { _id?: string }) {
 async function saveSetBySessionIdAndExerciseId(
   sessionId: string,
   exerciseId: string,
-  set: Set,
-  setIndex: number
+  set: Set | (Set & { userId: string }),
+  setIndex: number,
+  isNew: boolean
 ) {
   try {
-    const savedSet = await httpService.put(
+    const savedSet = await httpService[isNew ? 'post' : 'put'](
       `${KEY}/session/${sessionId}/exercise/${exerciseId}/${setIndex}`,
       set
     )

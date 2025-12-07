@@ -21,7 +21,7 @@ import { showErrorMsg } from '../../services/event-bus.service'
 import { messages } from '../../assets/config/messages'
 import { instructionsService } from '../../services/instructions/instructions.service'
 import { setIsLoading } from '../../store/actions/system.actions'
-
+import { setService } from '../../services/set/set.service'
 import { Instructions } from '../../types/instructions/Instructions'
 interface WorkoutSessionProps {
   sessionDay: SessionDay
@@ -79,7 +79,14 @@ export function WorkoutSession({
     return workout?.name
   }
 
-  const updateExercise = async (exercise: ExerciseInstructions) => {
+  const updateExercise = async (
+    exercise: ExerciseInstructions,
+    setIndex: number,
+    isNew: boolean
+  ) => {
+    if (!sessionDay._id) return showErrorMsg(messages.error.updateSet)
+    console.log(exercise)
+
     const originalInstructions = sessionDay.instructions
     const newInstructions = {
       ...sessionDay.instructions,
@@ -87,6 +94,9 @@ export function WorkoutSession({
         e.exerciseId === exercise.exerciseId ? exercise : e
       ),
     }
+    const exerciseIndex = newInstructions.exercises.findIndex(
+      (e) => e.exerciseId === exercise.exerciseId
+    )
     if (getIsStringifySame(originalInstructions, newInstructions)) return
     setSelectedSessionDay({
       ...sessionDay,
@@ -94,6 +104,18 @@ export function WorkoutSession({
     })
     try {
       await saveNewInstructions(newInstructions)
+      if (exerciseIndex !== -1) {
+        await setService.saveSetBySessionIdAndExerciseId(
+          sessionDay._id,
+          exercise.exerciseId,
+          {
+            ...exercise.sets[setIndex],
+            userId: sessionDay.workout.forUserId || '',
+          },
+          setIndex,
+          isNew
+        )
+      }
     } catch (err) {
       setSelectedSessionDay({
         ...sessionDay,
@@ -151,7 +173,9 @@ export function WorkoutSession({
               cmp={
                 <ExerciseEditor
                   exercise={exercise}
-                  updateExercise={updateExercise}
+                  updateExercise={(exercise, setIndex, isNewSet) =>
+                    updateExercise(exercise, setIndex || 0, isNewSet || false)
+                  }
                 />
               }
               expanded={isExpanded}
