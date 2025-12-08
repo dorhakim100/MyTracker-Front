@@ -33,14 +33,6 @@ interface EditWorkoutProps {
 }
 
 type MuscleGroupArea = 'all' | 'upper' | 'lower'
-type PickerModalType =
-  | 'expectedSets'
-  | 'actualSets'
-  | 'rpe'
-  | 'sets'
-  | 'weight'
-  | 'reps'
-  | 'rir'
 
 interface MuscleGroupFilter {
   txt: string

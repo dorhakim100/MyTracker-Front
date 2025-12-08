@@ -95,9 +95,7 @@ export function DetailsStage({
 
   const getIsWeekNumberDisabled = (weekNumber: number) => {
     if (weekNumber === 1) return false
-    const status = weeksStatus.find(
-      (status) => status.weekNumber === weekNumber
-    )
+
     const previousStatus = weeksStatus.find(
       (status) => status.weekNumber === weekNumber - 1
     )

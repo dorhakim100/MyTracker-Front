@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { DateRangeController } from '../../../components/DateRangeController/DateRangeController'
-import { debounce, getDateFromISO } from '../../../services/util.service'
-import { MONTH_IN_MS } from '../../../assets/config/times'
+// import { DateRangeController } from '../../../components/DateRangeController/DateRangeController'
+import { debounce } from '../../../services/util.service'
+// import {getDateFromISO} from '../../../services/util.service'
+// import { MONTH_IN_MS } from '../../../assets/config/times'
 import { CustomInput } from '../../../CustomMui/CustomInput/CustomInput'
 import { showErrorMsg } from '../../../services/event-bus.service'
 import { messages } from '../../../assets/config/messages'
@@ -10,7 +11,7 @@ import { Exercise } from '../../../types/exercise/Exercise'
 import { setIsLoading } from '../../../store/actions/system.actions'
 import SearchIcon from '@mui/icons-material/Search'
 import { CustomList } from '../../../CustomMui/CustomList/CustomList'
-import { CustomButton } from '../../../CustomMui/CustomButton/CustomButton'
+// import { CustomButton } from '../../../CustomMui/CustomButton/CustomButton'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../store/store'
 import { Divider } from '@mui/material'
@@ -28,12 +29,12 @@ export function Progress() {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
-  const [selectedPastDate, setSelectedPastDate] = useState({
-    from: getDateFromISO(
-      new Date(new Date().getTime() - MONTH_IN_MS).toISOString()
-    ),
-    to: getDateFromISO(new Date().toISOString()),
-  })
+  // const [selectedPastDate, setSelectedPastDate] = useState({
+  //   from: getDateFromISO(
+  //     new Date(new Date().getTime() - MONTH_IN_MS).toISOString()
+  //   ),
+  //   to: getDateFromISO(new Date().toISOString()),
+  // })
 
   const [slideOptions, setSlideOptions] = useState<slideOptions>({
     open: false,
