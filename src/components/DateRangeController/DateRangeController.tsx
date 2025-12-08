@@ -19,9 +19,14 @@ export function DateRangeController({
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
 
+  const fromDate = new Date(selectedPastDate?.from)
+  const toDate = new Date(selectedPastDate?.to)
+
   return (
     <div className='date-picker-container'>
-      <Typography variant='body1'>From: {selectedPastDate?.from}</Typography>
+      <Typography variant='body1'>
+        From: {fromDate.toLocaleDateString('he')}
+      </Typography>
       <CustomDatePicker
         value={selectedPastDate?.from}
         onChange={(date) =>
@@ -29,7 +34,9 @@ export function DateRangeController({
         }
         className={`${prefs.favoriteColor}`}
       />
-      <Typography variant='body1'>To: {selectedPastDate?.to}</Typography>
+      <Typography variant='body1'>
+        To: {toDate.toLocaleDateString('he')}
+      </Typography>
       <CustomDatePicker
         value={selectedPastDate?.to}
         onChange={(date) =>

@@ -1,0 +1,12 @@
+.progress-container {
+  //   align-items: start;
+  //   padding: 1rem;
+  padding-top: 2rem;
+  grid-template-rows: auto auto 1fr;
+
+  .filters-container {
+    display: grid;
+
+    gap: 1rem;
+  }
+}

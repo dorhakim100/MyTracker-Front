@@ -60,7 +60,6 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
       setExerciseSets(sets as Set[])
       const groupedSetsToSet = groupSetsByDate(sets as Set[])
       setGroupedSets(groupedSetsToSet)
-      console.log('groupedSets', groupedSetsToSet)
     }
     getExerciseSets()
   }, [exercise, traineeUser?._id, user?._id])

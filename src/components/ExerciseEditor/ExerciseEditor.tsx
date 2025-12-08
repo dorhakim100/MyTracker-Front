@@ -283,27 +283,6 @@ export function ExerciseEditor({
           />
         )}
         <div className='controls-container'>
-          {/* <PickerSelect
-            openClock={() => {
-              setPickerOptions({
-                type: exercise.rpe ? 'rpe' : 'rir',
-                isOpen: true,
-              })
-              setEditSet({ ...exercise.sets[0], index: -1 } as EditSet)
-              setCurrentPickerValue(
-                exercise.rpe ? exercise.rpe.actual : exercise.rir?.actual || 0
-              )
-            }}
-            option={{
-              label: exercise.rpe ? 'RPE' : 'RIR',
-              key: exercise.rpe ? 'rpe' : 'rir',
-              type: 'number',
-            }}
-            value={
-              exercise.rpe ? exercise.rpe.actual : exercise.rir?.actual || 0
-            }
-            minWidth={120}
-          /> */}
           <CustomButton
             icon={<AddIcon />}
             text='Add Set'

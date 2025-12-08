@@ -75,14 +75,12 @@ async function playWorkout(sessionDay: SessionDay, userId: string) {
       workoutId: sessionDay.workoutId,
       userId: userId,
     })
-    console.log(session)
 
     const instructionsWithDetails =
       await instructionsService.getExercisesFromInstructions(
         session.instructions
       )
 
-    console.log(instructionsWithDetails)
     return {
       ...session,
       instructions: { ...instructionsWithDetails, isDone: true },
