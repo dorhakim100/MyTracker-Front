@@ -224,6 +224,7 @@ export function DetailsStage({
             (e) => e.exerciseId === exercise.exerciseId
           )
           if (!exerciseDetails) return null
+
           return (
             <div
               key={`${exercise.exerciseId}-${index}`}
@@ -245,7 +246,7 @@ export function DetailsStage({
 
                 <CustomToggle
                   options={RPE_RIR_TOGGLE_OPTIONS}
-                  value={exerciseDetails?.details?.rpe ? 'rpe' : 'rir'}
+                  value={exercise.sets[0]?.rpe ? 'rpe' : 'rir'}
                   onChange={(value) => {
                     onSwitchRpeRir(exercise.exerciseId, value as 'rpe' | 'rir')
                   }}
@@ -267,7 +268,7 @@ export function DetailsStage({
                   onEditExerciseNotes(exercise.exerciseId, notes)
                 }
                 placeholder={`${capitalizeFirstLetter(
-                  exercise.name || ''
+                  exerciseDetails.name || ''
                 )} notes`}
                 isRemoveIcon={true}
                 className={`${prefs.favoriteColor}`}

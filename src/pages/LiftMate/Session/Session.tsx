@@ -230,6 +230,7 @@ export function Session() {
               </span>
             )
           }}
+          noResultsMessage='No active workouts found'
         />
       </div>
     )

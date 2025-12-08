@@ -52,9 +52,6 @@ export function ExerciseEditor({
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
-  const sessionDay = useSelector(
-    (stateSelector: RootState) => stateSelector.workoutModule.sessionDay
-  )
 
   const [pickerOptions, setPickerOptions] = useState<PickerOption>({
     isOpen: false,
@@ -172,7 +169,7 @@ export function ExerciseEditor({
         case 'rpe':
           return key === 'min' ? 1 : 9
         case 'rir':
-          return key === 'min' ? 1 : 3
+          return key === 'min' ? 0 : 10
         case 'weight':
           return key === 'min' ? 2 : 320
         case 'reps':

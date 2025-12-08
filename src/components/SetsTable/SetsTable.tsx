@@ -25,7 +25,7 @@ function Row(props: { sets: Set[] }) {
   return (
     <React.Fragment>
       <TableRow
-        sx={{ '& > *': { borderBottom: 'unset' } }}
+        // sx={{ '& > *': { borderBottom: 'unset' } }}
         onClick={() => setOpen(!open)}
       >
         <TableCell component='th' scope='row'>
