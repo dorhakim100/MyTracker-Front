@@ -31,4 +31,13 @@
   .sets-table {
     margin-top: 0rem;
   }
+
+  .MuiBadge-root {
+    // position: absolute;
+    right: 2rem;
+    top: 2rem;
+    span {
+      font-weight: 700;
+    }
+  }
 }

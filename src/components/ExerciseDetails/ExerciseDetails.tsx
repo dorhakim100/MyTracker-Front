@@ -4,7 +4,7 @@ import { getExerciseSummary } from '../../services/exersice-search/exersice-sear
 import { Exercise } from '../../types/exercise/Exercise'
 import { showErrorMsg } from '../../services/event-bus.service'
 import { messages } from '../../assets/config/messages'
-import { Divider, Typography } from '@mui/material'
+import { Badge, Divider, Typography } from '@mui/material'
 import { RootState } from '../../store/store'
 import { translateService } from '../../services/translate/translate.service'
 import { ExpectedActual } from '../../types/expectedActual/ExpectedActual'
@@ -52,12 +52,11 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
 
   useEffect(() => {
     const getExerciseSets = async () => {
-      if (!traineeUser?._id && !user?._id) return
+      if (!exercise?.exerciseId || (!traineeUser?._id && !user?._id)) return
       const sets = await setService.query({
         exerciseId: exercise?.exerciseId,
         userId: traineeUser?._id || user?._id,
       })
-      console.log('sets', sets)
       setExerciseSets(sets as Set[])
       const groupedSetsToSet = groupSetsByDate(sets as Set[])
       setGroupedSets(groupedSetsToSet)
@@ -140,15 +139,7 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
             </div>
           </>
         )}
-        {/* <Typography variant='h5' className='bold-header'>
-          Instructions
-        </Typography> */}
-        {/* {exerciseInstructions?.map(renderExerciseInstructions)} */}
-        {/* <CustomAccordion
-          title='Progress'
-          cmp={<SetsTable groupedSets={groupedSets} />}
-          icon={<TimelineIcon />}
-          /> */}
+
         <CustomAccordion
           title='Instructions'
           cmp={exerciseInstructions?.map(renderExerciseInstructions)}
@@ -157,6 +148,10 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
         <Typography variant='h5' className='bold-header'>
           Past Sessions
         </Typography>
+        {/* {exerciseSets.length === 0} */}
+        {exerciseSets.length === 0 && (
+          <Badge badgeContent={'New'} className={prefs.favoriteColor}></Badge>
+        )}
         <SetsTable groupedSets={groupedSets} />
       </div>
     </div>

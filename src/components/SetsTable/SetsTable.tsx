@@ -8,13 +8,11 @@ import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
-import Typography from '@mui/material/Typography'
 import Paper from '@mui/material/Paper'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import { Set } from '../../types/exercise/Exercise'
-import { getDateFromISO } from '../../services/util.service'
-import { Badge } from '@mui/material'
+import { Badge, Typography } from '@mui/material'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 
@@ -26,17 +24,16 @@ function Row(props: { sets: Set[] }) {
   )
   return (
     <React.Fragment>
-      <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
+      <TableRow
+        sx={{ '& > *': { borderBottom: 'unset' } }}
+        onClick={() => setOpen(!open)}
+      >
         <TableCell component='th' scope='row'>
           {sets[0].createdAt
             ? new Date(sets[0].createdAt).toLocaleDateString('he')
             : ''}
         </TableCell>
-        {/* <TableCell component='th' scope='row'>
-          {sets[0].createdAt
-            ? getDateFromISO(new Date(sets[0].createdAt).toISOString())
-            : ''}
-        </TableCell> */}
+
         <TableCell align='center'>
           {
             sets.find(
@@ -57,11 +54,7 @@ function Row(props: { sets: Set[] }) {
           }
         </TableCell>
         <TableCell>
-          <IconButton
-            aria-label='expand row'
-            size='small'
-            onClick={() => setOpen(!open)}
-          >
+          <IconButton aria-label='expand row' size='small'>
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
@@ -98,9 +91,7 @@ function Row(props: { sets: Set[] }) {
                           <Badge
                             badgeContent={set.setNumber}
                             className={prefs.favoriteColor}
-                          >
-                            {/* {set.setNumber} */}
-                          </Badge>
+                          ></Badge>
                         </TableCell>
                         <TableCell align='center'>
                           {set.weight.actual} kg
@@ -125,6 +116,10 @@ export default function SetsTable({
 }: {
   groupedSets: Record<string, Set[]>
 }) {
+  const entries = Object.entries(groupedSets)
+  const prefs = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.prefs
+  )
   if (groupedSets)
     return (
       <TableContainer component={Paper} className='sets-table'>
@@ -137,11 +132,19 @@ export default function SetsTable({
               <TableCell></TableCell>
             </TableRow>
           </TableHead>
-          {Object.entries(groupedSets).map(([date, sets]) => (
-            <React.Fragment key={date}>
-              <Row sets={sets} />
-            </React.Fragment>
-          ))}
+          {entries.length > 0 ? (
+            entries.map(([date, sets]) => (
+              <React.Fragment key={date}>
+                <Row sets={sets} />
+              </React.Fragment>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={4}>
+                <Typography variant='body1'>No past sessions found</Typography>
+              </TableCell>
+            </TableRow>
+          )}
         </Table>
       </TableContainer>
     )
