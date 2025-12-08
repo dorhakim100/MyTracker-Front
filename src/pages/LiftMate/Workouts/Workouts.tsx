@@ -26,8 +26,8 @@ import { WorkoutDetails } from '../../../components/WorkoutDetails/WorkoutDetail
 import { Checkbox, Divider, Typography } from '@mui/material'
 import { Add } from '@mui/icons-material'
 import { workoutService } from '../../../services/workout/workout.service'
-import { CustomDatePicker } from '../../../CustomMui/CustomDatePicker/CustomDatePicker'
 import { MONTH_IN_MS } from '../../../assets/config/times'
+import { DateRangeController } from '../../../components/DateRangeController/DateRangeController'
 
 const EDIT = 'edit'
 const DETAILS = 'details'
@@ -195,26 +195,10 @@ export function Workouts() {
 
         <div className='past-controller'>
           <span className='bold-header'>Past</span>
-          <div className='date-picker-container'>
-            <Typography variant='body1'>
-              From: {selectedPastDate?.from}
-            </Typography>
-            <CustomDatePicker
-              value={selectedPastDate?.from}
-              onChange={(date) =>
-                setSelectedPastDate((prev) => ({ ...prev, from: date || '' }))
-              }
-              className={`${prefs.favoriteColor}`}
-            />
-            <Typography variant='body1'>To: {selectedPastDate?.to}</Typography>
-            <CustomDatePicker
-              value={selectedPastDate?.to}
-              onChange={(date) =>
-                setSelectedPastDate((prev) => ({ ...prev, to: date || '' }))
-              }
-              className={`${prefs.favoriteColor}`}
-            />
-          </div>
+          <DateRangeController
+            selectedPastDate={selectedPastDate}
+            onDateChange={setSelectedPastDate}
+          />
         </div>
 
         <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
