@@ -20,9 +20,12 @@ export interface ExerciseDetail {
 }
 
 export interface Set {
+  _id?: string
   reps: ExpectedActual<number>
   weight: ExpectedActual<number>
   rpe?: ExpectedActual<number>
   rir?: ExpectedActual<number>
+  setNumber?: number
+  createdAt?: Date
   // just for editing
 }

@@ -20,6 +20,7 @@ import { instructionsService as instructionsServiceUtil } from '../../services/i
 import { DeleteAction } from '../DeleteAction/DeleteAction'
 import { SwipeableWrapper } from '../SwipeableWrapper/SwipeableWrapper'
 import { EditItem } from '../../types/editItem/editItem'
+import { ExpectedActual } from '../../types/expectedActual/ExpectedActual'
 
 export interface ExerciseEditorProps {
   exercise: ExerciseInstructions
@@ -125,7 +126,7 @@ export function ExerciseEditor({
       newSet = {
         ...newSet,
         [type]: {
-          expected: newSet[type]?.expected || value,
+          expected: (newSet[type] as ExpectedActual<number>)?.expected || value,
           actual: value,
         },
       }

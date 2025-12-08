@@ -9,6 +9,13 @@ import { RootState } from '../../store/store'
 import { translateService } from '../../services/translate/translate.service'
 import { ExpectedActual } from '../../types/expectedActual/ExpectedActual'
 import { exerciseImage as exerciseImageObject } from '../../assets/config/exercise-image'
+import { CustomAccordion } from '../../CustomMui/CustomAccordion/CustomAccordion'
+import AutoStoriesIcon from '@mui/icons-material/AutoStories'
+import TimelineIcon from '@mui/icons-material/Timeline'
+import { setService } from '../../services/set/set.service'
+import { Set } from '../../types/exercise/Exercise'
+import { getDateFromISO } from '../../services/util.service'
+import SetsTable from '../SetsTable/SetsTable'
 export interface ExerciseWithDetails extends Exercise {
   notes?: ExpectedActual<string>
   rpe?: ExpectedActual<number>
@@ -25,6 +32,13 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
 
+  const user = useSelector(
+    (stateSelector: RootState) => stateSelector.userModule.user
+  )
+  const traineeUser = useSelector(
+    (stateSelector: RootState) => stateSelector.userModule.traineeUser
+  )
+
   const [exerciseInstructions, setExerciseInstructions] = useState<
     string[] | null
   >(null)
@@ -32,6 +46,25 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
   const [exerciseImage, setExerciseImage] = useState<string>(
     exercise?.image || ''
   )
+
+  const [exerciseSets, setExerciseSets] = useState<Set[]>([])
+  const [groupedSets, setGroupedSets] = useState<Record<string, Set[]>>({})
+
+  useEffect(() => {
+    const getExerciseSets = async () => {
+      if (!traineeUser?._id && !user?._id) return
+      const sets = await setService.query({
+        exerciseId: exercise?.exerciseId,
+        userId: traineeUser?._id || user?._id,
+      })
+      console.log('sets', sets)
+      setExerciseSets(sets as Set[])
+      const groupedSetsToSet = groupSetsByDate(sets as Set[])
+      setGroupedSets(groupedSetsToSet)
+      console.log('groupedSets', groupedSetsToSet)
+    }
+    getExerciseSets()
+  }, [exercise, traineeUser?._id, user?._id])
 
   useEffect(() => {
     const getWorkoutInstructions = async () => {
@@ -66,6 +99,24 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
       : 'hebrew-notes'
   }
 
+  const groupSetsByDate = (sets: Set[]) => {
+    return sets
+      .sort(
+        (a, b) =>
+          new Date(b.createdAt || '').getTime() -
+          new Date(a.createdAt || '').getTime()
+      )
+      .reduce((acc: Record<string, Set[]>, set: Set) => {
+        if (!set.createdAt) return acc
+        const date = getDateFromISO(new Date(set.createdAt).toISOString())
+        if (!acc[date]) {
+          acc[date] = []
+        }
+        acc[date].push(set)
+        return acc
+      }, {} as Record<string, Set[]>)
+  }
+
   return (
     <div className='exercise-details-container'>
       <img
@@ -89,10 +140,24 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
             </div>
           </>
         )}
-        <Typography variant='h5' className='bold-header'>
+        {/* <Typography variant='h5' className='bold-header'>
           Instructions
+        </Typography> */}
+        {/* {exerciseInstructions?.map(renderExerciseInstructions)} */}
+        {/* <CustomAccordion
+          title='Progress'
+          cmp={<SetsTable groupedSets={groupedSets} />}
+          icon={<TimelineIcon />}
+          /> */}
+        <CustomAccordion
+          title='Instructions'
+          cmp={exerciseInstructions?.map(renderExerciseInstructions)}
+          icon={<AutoStoriesIcon />}
+        />
+        <Typography variant='h5' className='bold-header'>
+          Past Sessions
         </Typography>
-        {exerciseInstructions?.map(renderExerciseInstructions)}
+        <SetsTable groupedSets={groupedSets} />
       </div>
     </div>
   )
