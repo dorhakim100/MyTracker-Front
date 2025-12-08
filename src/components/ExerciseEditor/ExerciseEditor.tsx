@@ -72,7 +72,11 @@ export function ExerciseEditor({
     }
 
     const newSets = [...exercise.sets, newSet]
-    updateExercise({ ...exercise, sets: newSets }, newSets.length - 1, true)
+    updateExercise(
+      { ...exercise, sets: newSets },
+      newSets.length - 1,
+      isExpected ? false : true
+    )
     showSuccessMsg(messages.success.addSet)
   }
 
