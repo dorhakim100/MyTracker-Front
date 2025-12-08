@@ -3,6 +3,29 @@
   overflow-x: auto;
   margin-top: 1rem;
 
+  &.dark-mode {
+    background-color: $dark-gray;
+    color: $white;
+
+    .MuiTableRow-root {
+      th {
+        color: $white !important;
+        font-weight: 700;
+        border-bottom: 1px solid $darker-gray !important;
+      }
+    }
+
+    tr {
+      &:last-of-type {
+        border: none !important;
+      }
+      td {
+        color: $white !important;
+        border-bottom: 1px solid $darker-gray !important;
+      }
+    }
+  }
+
   .MuiBadge-root {
     // right: 0.5rem;
     span {

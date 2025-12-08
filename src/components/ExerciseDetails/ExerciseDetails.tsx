@@ -150,7 +150,10 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
         </Typography>
         {/* {exerciseSets.length === 0} */}
         {exerciseSets.length === 0 && (
-          <Badge badgeContent={'New'} className={prefs.favoriteColor}></Badge>
+          <Badge
+            badgeContent={'New'}
+            className={`${prefs.favoriteColor} new`}
+          ></Badge>
         )}
         <SetsTable groupedSets={groupedSets} />
       </div>

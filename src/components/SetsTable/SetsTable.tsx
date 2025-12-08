@@ -122,7 +122,10 @@ export default function SetsTable({
   )
   if (groupedSets)
     return (
-      <TableContainer component={Paper} className='sets-table'>
+      <TableContainer
+        component={Paper}
+        className={`sets-table ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+      >
         <Table aria-label='collapsible table'>
           <TableHead>
             <TableRow>
