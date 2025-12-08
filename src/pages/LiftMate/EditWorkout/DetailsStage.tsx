@@ -93,6 +93,18 @@ export function DetailsStage({
     return status?.isDone ? <CheckIcon /> : <CloseIcon />
   }
 
+  const getIsWeekNumberDisabled = (weekNumber: number) => {
+    if (weekNumber === 1) return false
+    const status = weeksStatus.find(
+      (status) => status.weekNumber === weekNumber
+    )
+    const previousStatus = weeksStatus.find(
+      (status) => status.weekNumber === weekNumber - 1
+    )
+    if (previousStatus?.isDone) return false
+    return true
+  }
+
   const onSwitchRpeRir = (exerciseId: string, value: 'rpe' | 'rir') => {
     const exerciseInstructionToUpdate = instructions.exercises.find(
       (e) => e.exerciseId === exerciseId
@@ -186,6 +198,9 @@ export function DetailsStage({
           value: weekNumber.toString(),
           icon: <span>{weekNumber}</span>,
           badgeIcon: getWeekNumberIcon(+weekNumber),
+          getDisabled: () => {
+            return getIsWeekNumberDisabled(+weekNumber)
+          },
         }))}
         isBadge={true}
         isReversedIcon={true}

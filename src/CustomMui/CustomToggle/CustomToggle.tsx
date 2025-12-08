@@ -10,6 +10,7 @@ export interface ToggleOption {
   ariaLabel?: string
   icon?: React.ReactNode
   badgeIcon?: React.ReactNode
+  getDisabled?: () => boolean
 }
 
 interface CustomToggleProps {
@@ -51,6 +52,7 @@ export function CustomToggle({
           key={opt.value}
           value={opt.value}
           aria-label={opt.ariaLabel || opt.value}
+          disabled={opt.getDisabled?.() || false}
         >
           {isBadge && (
             <Badge

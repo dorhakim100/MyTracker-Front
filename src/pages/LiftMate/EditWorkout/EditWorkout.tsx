@@ -130,6 +130,7 @@ export function EditWorkout({
       )
 
       const statuses = await instructionsService.getWeekNumberDone(workout._id)
+
       setWeeksStatus(statuses)
       setInstructions(instructions)
     } catch (err) {
@@ -138,6 +139,16 @@ export function EditWorkout({
       setIsLoading(false)
     }
   }, [workout._id, instructionsFilter, user?._id, traineeUser?._id])
+
+  useEffect(() => {
+    if (!weeksStatus) return
+    const latestWeekNumber =
+      weeksStatus[weeksStatus.length - 1]?.weekNumber || 1
+    setInstructionsFilter((prev) => ({
+      ...prev,
+      weekNumber: latestWeekNumber,
+    }))
+  }, [weeksStatus.length])
 
   useEffect(() => {
     latestHandleSearchRef.current = handleSearch
