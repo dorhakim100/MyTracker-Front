@@ -82,7 +82,8 @@ export function WorkoutSession({
   const updateExercise = async (
     exercise: ExerciseInstructions,
     setIndex: number,
-    isNew: boolean
+    isNew: boolean,
+    isRemove: boolean
   ) => {
     if (!sessionDay._id) return showErrorMsg(messages.error.updateSet)
     console.log(exercise)
@@ -104,7 +105,8 @@ export function WorkoutSession({
     })
     try {
       await saveNewInstructions(newInstructions)
-      if (exerciseIndex !== -1) {
+      console.log('exerciseIndex', exerciseIndex)
+      if (exerciseIndex !== -1 && !isRemove) {
         await setService.saveSetBySessionIdAndExerciseId(
           sessionDay._id,
           exercise.exerciseId,
@@ -114,6 +116,12 @@ export function WorkoutSession({
           },
           setIndex,
           isNew
+        )
+      } else if (exerciseIndex !== -1 && isRemove) {
+        await setService.removeSetBySessionIdAndExerciseId(
+          sessionDay._id,
+          exercise.exerciseId,
+          setIndex
         )
       }
     } catch (err) {
@@ -173,8 +181,13 @@ export function WorkoutSession({
               cmp={
                 <ExerciseEditor
                   exercise={exercise}
-                  updateExercise={(exercise, setIndex, isNewSet) =>
-                    updateExercise(exercise, setIndex || 0, isNewSet || false)
+                  updateExercise={(exercise, setIndex, isNewSet, isRemove) =>
+                    updateExercise(
+                      exercise,
+                      setIndex || 0,
+                      isNewSet || false,
+                      isRemove || false
+                    )
                   }
                 />
               }

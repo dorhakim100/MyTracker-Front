@@ -27,7 +27,8 @@ export interface ExerciseEditorProps {
   updateExercise: (
     exercise: ExerciseInstructions,
     setIndex?: number,
-    isNew?: boolean
+    isNew?: boolean,
+    isRemove?: boolean
   ) => void
 }
 
@@ -75,7 +76,8 @@ export function ExerciseEditor({
     updateExercise(
       { ...exercise, sets: newSets },
       newSets.length - 1,
-      isExpected ? false : true
+      isExpected ? false : true,
+      false
     )
     showSuccessMsg(messages.success.addSet)
   }
@@ -86,7 +88,12 @@ export function ExerciseEditor({
       return
     }
     const newSets = exercise.sets.filter((_, index) => index !== indexToRemove)
-    updateExercise({ ...exercise, sets: newSets }, indexToRemove)
+    updateExercise(
+      { ...exercise, sets: newSets },
+      indexToRemove,
+      isExpected ? false : true,
+      true
+    )
   }
 
   const onClosePicker = () => {

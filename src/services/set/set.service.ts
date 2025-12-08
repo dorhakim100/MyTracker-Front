@@ -10,6 +10,7 @@ export const setService = {
   save,
   remove,
   saveSetBySessionIdAndExerciseId,
+  removeSetBySessionIdAndExerciseId,
   getEmptySet,
 }
 
@@ -71,6 +72,22 @@ async function saveSetBySessionIdAndExerciseId(
       set
     )
     return savedSet
+  } catch (err) {
+    // // console.log(err)
+    throw err
+  }
+}
+
+async function removeSetBySessionIdAndExerciseId(
+  sessionId: string,
+  exerciseId: string,
+  setIndex: number
+) {
+  try {
+    await httpService.delete(
+      `${KEY}/session/${sessionId}/exercise/${exerciseId}/${setIndex}`,
+      null
+    )
   } catch (err) {
     // // console.log(err)
     throw err
