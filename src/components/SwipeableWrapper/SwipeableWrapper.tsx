@@ -64,19 +64,20 @@ export function SwipeableWrapper({
           ) : null
 
           return (
-            <div className='swipeable-list-item-container' key={item.id}>
-              <SwipeableListItem
-                leadingActions={leadingActions}
-                trailingActions={trailingActions}
-                scrollStartThreshold={scrollStartThreshold}
-                threshold={threshold}
-              >
+            <SwipeableListItem
+              key={item.id}
+              leadingActions={leadingActions}
+              trailingActions={trailingActions}
+              scrollStartThreshold={scrollStartThreshold}
+              threshold={threshold}
+            >
+              <div className='swipeable-list-item-container'>
                 {item.content}
-              </SwipeableListItem>
-              <Divider
-                className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-              />
-            </div>
+                <Divider
+                  className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+                />
+              </div>
+            </SwipeableListItem>
           )
         })}
       </SwipeableList>
