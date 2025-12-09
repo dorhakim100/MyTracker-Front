@@ -116,7 +116,6 @@ export function WorkoutSession({
     })
     try {
       await saveNewInstructions(newInstructions)
-      console.log('exerciseIndex', exerciseIndex)
       if (exerciseIndex !== -1 && !isRemove) {
         await setService.saveSetBySessionIdAndExerciseId(
           sessionDay._id,
@@ -190,17 +189,19 @@ export function WorkoutSession({
           <Typography variant='h5' className='bold-header'>
             {getWorkoutName()}
           </Typography>
-          <CustomButton
-            icon={<DeleteIcon />}
-            onClick={() => {
-              setOpenDeleteWorkoutDialog(true)
-            }}
-            isIcon={true}
-          />
-          <CustomButton
-            icon={allExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-            onClick={toggleExpandAll}
-          />
+          <div className='actions-container'>
+            <CustomButton
+              icon={<DeleteIcon />}
+              onClick={() => {
+                setOpenDeleteWorkoutDialog(true)
+              }}
+              isIcon={true}
+            />
+            <CustomButton
+              icon={allExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+              onClick={toggleExpandAll}
+            />
+          </div>
         </div>
         <div className='exercises-container'>
           {sessionDay.instructions.exercises.map((exercise) => {
