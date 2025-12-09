@@ -43,6 +43,22 @@ export const searchService = {
 }
 
 const LONGEST_FOOD_ID_LENGTH = 10
+const MAX_CONCURRENT_OPERATIONS = 3 // Limit concurrent async operations
+
+// Utility function to process items with concurrency limit
+async function processWithConcurrencyLimit<T, R>(
+  items: T[],
+  processor: (item: T) => Promise<R>,
+  limit: number = MAX_CONCURRENT_OPERATIONS
+): Promise<R[]> {
+  const results: R[] = []
+  for (let i = 0; i < items.length; i += limit) {
+    const batch = items.slice(i, i + limit)
+    const batchResults = await Promise.all(batch.map(processor))
+    results.push(...batchResults)
+  }
+  return results
+}
 
 // await Promise.all(
 //   Object.values(cache).map((storeName) => indexedDbService.clear(storeName))
@@ -110,10 +126,13 @@ async function search(filter: SearchFilter) {
     res = filterDuplicates(res)
 
     if (res.length > 0) {
-      res.forEach((item) => {
-        addToCache(item as Item, translatedTxt)
-        addToCache(item as Item, ITEMS_CACHE)
-      })
+      // Batch cache operations instead of sequential forEach
+      await Promise.all(
+        res.flatMap((item) => [
+          addToCache(item as Item, translatedTxt),
+          addToCache(item as Item, ITEMS_CACHE),
+        ])
+      )
     }
 
     res = handleResSorting(res, safeTxt, favoriteItems, translatedTxt)
@@ -215,9 +234,10 @@ async function searchFavoriteItems(favoriteItems: string[]) {
       }
     })
 
-    res.forEach((item) => {
-      addToCache(item as Item, FAVORITE_CACHE)
-    })
+    // Batch cache operations
+    await Promise.all(
+      res.map((item) => addToCache(item as Item, FAVORITE_CACHE))
+    )
     return res
   } catch (err) {
     throw err
@@ -240,9 +260,8 @@ async function searchBulkIds(logs: Log[]) {
     const [products, foods] = await Promise.all(promises)
     const res = [...products, ...foods]
 
-    res.forEach((item) => {
-      addToCache(item as Item, ITEMS_CACHE)
-    })
+    // Batch cache operations
+    await Promise.all(res.map((item) => addToCache(item as Item, ITEMS_CACHE)))
     return res
   } catch (err) {
     throw err
@@ -330,8 +349,10 @@ async function searchOpenFoodFacts(query: string) {
       // headers: { 'User-Agent': 'MyTracker/1.0 (you@example.com)' },
     })
 
-    const res = await Promise.all(
-      data.products.map(async (product: OFFProduct) => {
+    // Process products with concurrency limit to avoid too many parallel async operations
+    const res = await processWithConcurrencyLimit(
+      data.products,
+      async (product: OFFProduct): Promise<Item | null> => {
         const proteins = +Math.floor(+(product.nutriments?.proteins_100g ?? 0))
         const carbs = +Math.floor(
           +(product.nutriments?.carbohydrates_100g ?? 0)
@@ -369,9 +390,9 @@ async function searchOpenFoodFacts(query: string) {
           image: image,
           type: 'product',
         }
-      })
+      }
     )
-    return res.filter((product: OFFProduct) => product !== null)
+    return res.filter((item): item is Item => item !== null)
   } catch (err) {
     // console.error(err)
     throw err
@@ -595,27 +616,26 @@ async function getFoodsByIds(ids: string[]) {
       },
     })
 
-    const images = await Promise.all(
-      data.map(
-        async (food: FDCFood) =>
-          await imageService.getSingleImage(food.description)
-      )
-    )
-    let currImageIdx = 0
-
     const foods: FDCFood[] = Array.isArray(data)
       ? (data as FDCFood[])
       : data.foods
 
-    return foods.map((food: FDCFood) => {
+    // Process images with concurrency limit to avoid too many parallel API calls
+    const images = await processWithConcurrencyLimit(
+      foods,
+      async (food: FDCFood) => {
+        const image = await imageService.getSingleImage(food.description)
+        return image || DEFAULT_IMAGE
+      }
+    )
+
+    return foods.map((food: FDCFood, idx: number) => {
       const macros = _getMacrosFromUSDA(food)
-      const image = images[currImageIdx] || DEFAULT_IMAGE
-      currImageIdx++
       return {
         searchId: food.fdcId + '',
         name: food.description,
         macros,
-        image: image,
+        image: images[idx] || DEFAULT_IMAGE,
         type: 'food',
       }
     })
