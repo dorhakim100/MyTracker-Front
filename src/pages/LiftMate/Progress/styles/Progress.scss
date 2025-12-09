@@ -3,10 +3,15 @@
   //   padding: 1rem;
   padding-top: 2rem;
   grid-template-rows: auto auto 1fr;
+  overflow-y: hidden !important;
 
   .filters-container {
     display: grid;
 
     gap: 1rem;
+  }
+
+  .search-exercise-list {
+    overflow-y: auto !important;
   }
 }

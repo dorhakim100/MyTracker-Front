@@ -135,19 +135,23 @@ export default function SetsTable({
               <TableCell></TableCell>
             </TableRow>
           </TableHead>
-          {entries.length > 0 ? (
-            entries.map(([date, sets]) => (
-              <React.Fragment key={date}>
-                <Row sets={sets} />
-              </React.Fragment>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={4}>
-                <Typography variant='body1'>No past sessions found</Typography>
-              </TableCell>
-            </TableRow>
-          )}
+          <TableBody>
+            {entries.length > 0 ? (
+              entries.map(([date, sets]) => (
+                <React.Fragment key={date}>
+                  <Row sets={sets} />
+                </React.Fragment>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={4}>
+                  <Typography variant='body1'>
+                    No past sessions found
+                  </Typography>
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
         </Table>
       </TableContainer>
     )
