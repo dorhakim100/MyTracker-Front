@@ -77,8 +77,6 @@ export default function LineChart({
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
 
-  console.log('data', data)
-
   const chartSettings = useMemo(() => prefs.weightChartSettings, [prefs])
 
   const chartRef = useRef<ChartJS<'line'>>(null)
