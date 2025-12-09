@@ -154,7 +154,7 @@ function App() {
   if (shouldShowInstallGuide && isProd) {
     return (
       <main className={`main ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
-        <AppHeader />
+        {/* <AppHeader /> */}
         <div className=''>
           <PwaInstall
             promptInstall={promptInstall}

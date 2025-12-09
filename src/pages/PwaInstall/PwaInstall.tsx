@@ -17,7 +17,7 @@ export function PwaInstall({ promptInstall, platform, isInstallable }: Props) {
       <div className='title-container'>
         <img src={logo} alt='logo' className='logo-image' />
         <Typography variant='h3'>Install the app</Typography>
-        <img src={downloadAnimation} alt='download-animation' />
+        {/* <img src={downloadAnimation} alt='download-animation' /> */}
       </div>
       {platform === 'ios' ? (
         <img
