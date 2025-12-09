@@ -96,18 +96,6 @@ export function Session() {
   }, [sessionDay?.date, sessionFilter])
 
   useEffect(() => {
-    const updateSessionDay = async () => {
-      try {
-        if (!user) return
-        const day = await handleSessionDayChange(
-          sessionFilter.date,
-          traineeUser || user
-        )
-        setSelectedSessionDay(day)
-      } catch (err) {
-        showErrorMsg(messages.error.getSessionDay)
-      }
-    }
     updateSessionDay()
   }, [user, traineeUser, sessionFilter])
 
@@ -118,6 +106,19 @@ export function Session() {
       loadWorkouts({ forUserId: user._id })
     }
   }, [user, traineeUser, sessionDay?.date])
+
+  async function updateSessionDay() {
+    try {
+      if (!user) return
+      const day = await handleSessionDayChange(
+        sessionFilter.date,
+        traineeUser || user
+      )
+      setSelectedSessionDay(day)
+    } catch (err) {
+      showErrorMsg(messages.error.getSessionDay)
+    }
+  }
 
   const onDayChange = (diff: number) => {
     const newDate = new Date(selectedDay.getTime() + diff * DAY_IN_MS)
@@ -277,6 +278,7 @@ export function Session() {
             <WorkoutSession
               sessionDay={sessionDay}
               onExerciseInfoClick={handleExerciseInfoClick}
+              updateSessionDay={updateSessionDay}
             />
           )}
         </SlideAnimation>

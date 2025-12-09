@@ -8,7 +8,7 @@ export const ADD_WORKOUT = 'ADD_WORKOUT'
 export const UPDATE_WORKOUT = 'UPDATE_WORKOUT'
 export const REMOVE_WORKOUT = 'REMOVE_WORKOUT'
 export const SET_SELECTED_SESSION_DAY = 'SET_SELECTED_SESSION_DAY'
-
+export const REMOVE_SESSION_DAY = 'REMOVE_SESSION_DAY'
 export interface WorkoutState {
   workouts: Workout[]
   workout: Workout
@@ -51,6 +51,9 @@ export function workoutReducer(state = initialState, action: any) {
       break
     case SET_SELECTED_SESSION_DAY:
       newState = { ...state, sessionDay: action.sessionDay }
+      break
+    case REMOVE_SESSION_DAY:
+      newState = { ...state, sessionDay: null }
       break
     default:
   }

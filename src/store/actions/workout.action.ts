@@ -7,6 +7,7 @@ import {
   UPDATE_WORKOUT,
   REMOVE_WORKOUT,
   SET_SELECTED_SESSION_DAY,
+  REMOVE_SESSION_DAY,
 } from '../reducers/workout.reducer'
 import { Workout } from '../../types/workout/Workout'
 import { WorkoutFilter } from '../../types/workoutFilter/WorkoutFilter'
@@ -105,6 +106,15 @@ export async function saveSessionDay(sessionDay: SessionDay) {
       type: SET_SELECTED_SESSION_DAY,
       sessionDay: savedSessionDay,
     })
+  } catch (err) {
+    throw err
+  }
+}
+
+export async function removeSessionDay(sessionDayId: string) {
+  try {
+    await sessionService.remove(sessionDayId)
+    store.dispatch({ type: REMOVE_SESSION_DAY, sessionDayId })
   } catch (err) {
     throw err
   }

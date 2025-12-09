@@ -1,10 +1,13 @@
 import { useCallback, useState } from 'react'
-import { Typography } from '@mui/material'
+import { DialogActions, Typography } from '@mui/material'
 
 import { SessionDay } from '../../types/workout/SessionDay'
 import { Exercise } from '../../types/exercise/Exercise'
 import { capitalizeFirstLetter } from '../../services/util.service'
-import { setSelectedSessionDay } from '../../store/actions/workout.action'
+import {
+  removeSessionDay,
+  setSelectedSessionDay,
+} from '../../store/actions/workout.action'
 
 import { ExerciseEditor } from '../../components/ExerciseEditor/ExerciseEditor'
 
@@ -23,16 +26,22 @@ import { instructionsService } from '../../services/instructions/instructions.se
 import { setIsLoading } from '../../store/actions/system.actions'
 import { setService } from '../../services/set/set.service'
 import { Instructions } from '../../types/instructions/Instructions'
+import DeleteIcon from '@mui/icons-material/Delete'
+import { CustomAlertDialog } from '../../CustomMui/CustomAlertDialog/CustomAlertDialog'
 interface WorkoutSessionProps {
   sessionDay: SessionDay
   onExerciseInfoClick: (exercise: Exercise) => void
+  updateSessionDay: () => void
 }
 
 export function WorkoutSession({
   sessionDay,
   onExerciseInfoClick,
+  updateSessionDay,
 }: WorkoutSessionProps) {
   if (!sessionDay.instructions) return null
+
+  const prefs = useSelector((state: RootState) => state.systemModule.prefs)
 
   const [expandedExercises, setExpandedExercises] = useState<Set<string>>(
     new Set()
@@ -41,6 +50,8 @@ export function WorkoutSession({
   const workouts = useSelector(
     (state: RootState) => state.workoutModule.workouts
   )
+
+  const [openDeleteWorkoutDialog, setOpenDeleteWorkoutDialog] = useState(false)
 
   const handleAccordionChange = useCallback(
     (exerciseId: string) =>
@@ -143,6 +154,19 @@ export function WorkoutSession({
     }
   }
 
+  async function deleteSession() {
+    try {
+      if (!sessionDay._id) return showErrorMsg(messages.error.deleteSession)
+      setIsLoading(true)
+      await removeSessionDay(sessionDay._id)
+      updateSessionDay()
+    } catch (err) {
+      showErrorMsg(messages.error.deleteSession)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   function getIsStringifySame(
     originalInstructions: Instructions,
     newInstructions: Instructions
@@ -160,51 +184,85 @@ export function WorkoutSession({
     allExerciseIds.every((id) => expandedExercises.has(id))
 
   return (
-    <div className='workout-container'>
-      <div className='workout-header-container'>
-        <Typography variant='h5' className='bold-header'>
-          {getWorkoutName()}
-        </Typography>
-        <CustomButton
-          icon={allExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-          onClick={toggleExpandAll}
-        />
-      </div>
-      <div className='exercises-container'>
-        {sessionDay.instructions.exercises.map((exercise) => {
-          const isExpanded = expandedExercises.has(exercise.exerciseId)
+    <>
+      <div className='workout-container'>
+        <div className='workout-header-container'>
+          <Typography variant='h5' className='bold-header'>
+            {getWorkoutName()}
+          </Typography>
+          <CustomButton
+            icon={<DeleteIcon />}
+            onClick={() => {
+              setOpenDeleteWorkoutDialog(true)
+            }}
+            isIcon={true}
+          />
+          <CustomButton
+            icon={allExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+            onClick={toggleExpandAll}
+          />
+        </div>
+        <div className='exercises-container'>
+          {sessionDay.instructions.exercises.map((exercise) => {
+            const isExpanded = expandedExercises.has(exercise.exerciseId)
 
-          return (
-            <CustomAccordion
-              key={`${exercise.exerciseId}-${sessionDay._id}`}
-              title={capitalizeFirstLetter(exercise.name || '')}
-              cmp={
-                <ExerciseEditor
-                  exercise={exercise}
-                  updateExercise={(exercise, setIndex, isNewSet, isRemove) =>
-                    updateExercise(
-                      exercise,
-                      setIndex || 0,
-                      isNewSet || false,
-                      isRemove || false
-                    )
-                  }
-                />
-              }
-              expanded={isExpanded}
-              onChange={handleAccordionChange(exercise.exerciseId)}
-              icon={
-                <InfoOutlineIcon
-                  onClick={(ev) => {
-                    ev.stopPropagation()
-                    onExerciseInfoClick(exercise as Exercise)
-                  }}
-                />
-              }
-            />
-          )
-        })}
+            return (
+              <CustomAccordion
+                key={`${exercise.exerciseId}-${sessionDay._id}`}
+                title={capitalizeFirstLetter(exercise.name || '')}
+                cmp={
+                  <ExerciseEditor
+                    exercise={exercise}
+                    updateExercise={(exercise, setIndex, isNewSet, isRemove) =>
+                      updateExercise(
+                        exercise,
+                        setIndex || 0,
+                        isNewSet || false,
+                        isRemove || false
+                      )
+                    }
+                  />
+                }
+                expanded={isExpanded}
+                onChange={handleAccordionChange(exercise.exerciseId)}
+                icon={
+                  <InfoOutlineIcon
+                    onClick={(ev) => {
+                      ev.stopPropagation()
+                      onExerciseInfoClick(exercise as Exercise)
+                    }}
+                  />
+                }
+              />
+            )
+          })}
+        </div>
       </div>
-    </div>
+      <CustomAlertDialog
+        open={openDeleteWorkoutDialog}
+        onClose={() => setOpenDeleteWorkoutDialog(false)}
+        title='Delete Workout'
+      >
+        <div className='modal-delete-workout-container'>
+          <Typography variant='h6'>
+            Are you sure you want to delete this workout?
+          </Typography>
+          <DialogActions>
+            <CustomButton
+              text='Cancel'
+              fullWidth
+              onClick={() => setOpenDeleteWorkoutDialog(false)}
+              className={`${prefs.favoriteColor}`}
+            />
+            <CustomButton
+              text='Delete'
+              fullWidth
+              onClick={deleteSession}
+              className={`${prefs.favoriteColor} delete-account-button`}
+            />
+          </DialogActions>
+        </div>
+      </CustomAlertDialog>
+    </>
   )
 }

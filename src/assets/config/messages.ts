@@ -49,5 +49,6 @@ export const messages = {
     addTrainee: 'Failed to add trainee',
     getRequests: 'Failed to get requests',
     updateRequest: 'Failed to handle request',
+    deleteSession: 'Failed to delete session',
   },
 }
