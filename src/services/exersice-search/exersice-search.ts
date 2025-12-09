@@ -7,7 +7,7 @@ export const exerciseSearch = async (query: string) => {
 
   try {
     const { data } = await axios.get(url, {
-      params: { q: query },
+      params: { q: query, limit: 30 },
     })
 
     const exercise = data.data

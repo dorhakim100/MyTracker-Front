@@ -92,7 +92,7 @@ CustomListProps<T>) {
         const scrollTop = listContainerRef.current.scrollTop
         const scrollHeight = listContainerRef.current.scrollHeight
         const clientHeight = listContainerRef.current.clientHeight
-        if (scrollTop + clientHeight >= scrollHeight - 50) {
+        if (scrollTop + clientHeight >= scrollHeight) {
           handleLoadMore()
         }
       }
