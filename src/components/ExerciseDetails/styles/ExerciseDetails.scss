@@ -28,6 +28,11 @@
     overflow-y: auto;
   }
 
+  .line-chart-container {
+    display: grid;
+    gap: 1rem;
+  }
+
   .sets-table {
     margin-top: 0rem;
   }

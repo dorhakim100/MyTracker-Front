@@ -1,5 +1,6 @@
 import { apps } from '../assets/config/apps'
 import { Route } from '../assets/routes/routes'
+import { LineChartRangeKey } from '../components/LineChart/LineChartControls'
 import { App } from '../types/app/App'
 import { User } from '../types/user/User'
 import debounceLib from 'debounce'
@@ -304,4 +305,59 @@ export function getColor(color: string): string {
   }
 
   return colors[color as keyof typeof colors] || '#009688'
+}
+
+export function prepareSeries<T extends { createdAt: string }>(
+  range: LineChartRangeKey,
+  items: (T & { createdAt: Date; value: number })[]
+) {
+  console.log('items', items)
+
+  const sorted = [...items].sort(
+    (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+  )
+
+  const startOfDay = (d: Date) =>
+    new Date(d.getFullYear(), d.getMonth(), d.getDate())
+  const today = startOfDay(new Date())
+
+  const pad = (n: number) => (n < 10 ? `0${n}` : `${n}`)
+  const dayKey = (d: Date) =>
+    `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
+
+  const dayToLabel = (d: Date) => `${d.getDate()}/${d.getMonth() + 1}`
+
+  const lastOfDayMap = new Map<string, number>()
+  for (const i of sorted) {
+    const d = startOfDay(new Date(i.createdAt))
+    lastOfDayMap.set(dayKey(d), i.value)
+  }
+
+  let start: Date
+  if (range === 'ALL') {
+    if (sorted.length === 0) return { labels: [], data: [] }
+    start = startOfDay(new Date(sorted[0].createdAt))
+  } else {
+    const daysMap: Record<'1M' | '3M' | '6M' | '1Y', number> = {
+      '1M': 30,
+      '3M': 90,
+      '6M': 180,
+      '1Y': 365,
+    }
+    const count = daysMap[range as '1M' | '3M' | '6M' | '1Y']
+    start = new Date(today)
+    start.setDate(start.getDate() - (count - 1))
+  }
+
+  const labels: string[] = []
+  const data: (number | null)[] = []
+  const cursor = new Date(start)
+  while (cursor <= today) {
+    const key = dayKey(cursor)
+    labels.push(dayToLabel(cursor))
+    data.push(lastOfDayMap.get(key) ?? null)
+    cursor.setDate(cursor.getDate() + 1)
+  }
+
+  return { labels, data }
 }

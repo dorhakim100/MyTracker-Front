@@ -229,6 +229,7 @@ export function EditWorkout({
 
   const onReorderExercises = (exercises: Exercise[]) => {
     setWorkout({ ...workout, exercises })
+
     const reOrderedExercisesInstructions = exercises.map((exercise) => ({
       ...(instructions.exercises.find(
         (e) => e.exerciseId === exercise.exerciseId

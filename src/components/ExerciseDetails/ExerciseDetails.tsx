@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { getExerciseSummary } from '../../services/exersice-search/exersice-search'
 import { Exercise } from '../../types/exercise/Exercise'
@@ -13,8 +13,14 @@ import { CustomAccordion } from '../../CustomMui/CustomAccordion/CustomAccordion
 import AutoStoriesIcon from '@mui/icons-material/AutoStories'
 import { setService } from '../../services/set/set.service'
 import { Set } from '../../types/exercise/Exercise'
-import { getDateFromISO } from '../../services/util.service'
+import { getDateFromISO, prepareSeries } from '../../services/util.service'
 import SetsTable from '../SetsTable/SetsTable'
+import LineChart from '../LineChart/LineChart'
+import {
+  LineChartControls,
+  LineChartRangeKey,
+} from '../LineChart/LineChartControls'
+import { colors } from '../../assets/config/colors'
 export interface ExerciseWithDetails extends Exercise {
   notes?: ExpectedActual<string>
   rpe?: ExpectedActual<number>
@@ -48,6 +54,47 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
 
   const [exerciseSets, setExerciseSets] = useState<Set[]>([])
   const [groupedSets, setGroupedSets] = useState<Record<string, Set[]>>({})
+  const [range, setRange] = useState<LineChartRangeKey>('ALL')
+
+  const setsData = useMemo(() => {
+    return Object.values(groupedSets)
+      .reverse()
+      .map((date) =>
+        date.find((set) => {
+          return set.weight.actual ===
+            Math.max(...date.map((set) => set.weight.actual))
+            ? { weight: set.weight.actual, createdAt: set.createdAt }
+            : null
+        })
+      )
+  }, [groupedSets])
+
+  const data = useMemo(() => {
+    const dateToSend = setsData.map((set) => ({
+      createdAt: set?.createdAt as unknown as string,
+      value: set?.weight.actual as number,
+    }))
+    const series = prepareSeries(
+      range,
+      dateToSend as (Set & { createdAt: string; value: number })[]
+    )
+    const labelsToShow = series?.labels
+    const kgs = series?.data ?? []
+
+    return {
+      labels: labelsToShow,
+      datasets: [
+        {
+          label: 'Weight',
+          data: kgs,
+          borderColor:
+            colors[prefs.favoriteColor as keyof typeof colors] ||
+            colors.primary,
+          tension: 0.3,
+        },
+      ],
+    }
+  }, [setsData, range])
 
   useEffect(() => {
     const getExerciseSets = async () => {
@@ -143,6 +190,13 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
           cmp={exerciseInstructions?.map(renderExerciseInstructions)}
           icon={<AutoStoriesIcon />}
         />
+        <div className='line-chart-container'>
+          <Typography variant='h5' className='bold-header'>
+            Max Weight Progress
+          </Typography>
+          <LineChart data={data} isDarkMode={prefs.isDarkMode} />
+          <LineChartControls value={range} onChange={(val) => setRange(val)} />
+        </div>
         <Typography variant='h5' className='bold-header'>
           Past Sessions
         </Typography>
