@@ -252,6 +252,8 @@ export default function LineChart({
     if (isDragging.current) return
     const chart = chartRef.current
     if (!chart) return
+    e.stopPropagation()
+    e.preventDefault()
 
     // Try hit-test first
     const elements = chart.getElementsAtEventForMode(
