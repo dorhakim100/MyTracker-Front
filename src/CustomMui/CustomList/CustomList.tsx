@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 import List from '@mui/material/List'
 import ListItemButton from '@mui/material/ListItemButton'
@@ -23,6 +23,7 @@ import {
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { SkeletonList } from '../../components/SkeletonList/SkeletonList'
+import CircularProgress from '@mui/material/CircularProgress'
 
 export interface CustomListProps<T> {
   items: T[]
@@ -45,6 +46,7 @@ export interface CustomListProps<T> {
   /** Optional vertical offset to apply to the dragging clone (in px). Can be negative. */
   dragOffsetY?: number
   isDefaultLoader?: boolean
+  onLoadMore?: () => Promise<void>
 }
 
 export function CustomList<T>({
@@ -63,7 +65,7 @@ export function CustomList<T>({
   renderLeftSwipeActions,
   isDragable = false,
   noResultsMessage,
-
+  onLoadMore,
   onReorder,
   dragOffsetY = 0,
   isDefaultLoader = true,
@@ -77,9 +79,35 @@ CustomListProps<T>) {
     (state: RootState) => state.systemModule.isLoading
   )
 
+  const listContainerRef = useRef<HTMLDivElement>(null)
+  const [isLoadingMoreItems, setIsLoadingMoreItems] = useState<boolean>(false)
+
   useEffect(() => {
     setReorderedItems([...items])
   }, [items])
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (listContainerRef.current) {
+        const scrollTop = listContainerRef.current.scrollTop
+        const scrollHeight = listContainerRef.current.scrollHeight
+        const clientHeight = listContainerRef.current.clientHeight
+        if (scrollTop + clientHeight >= scrollHeight - 50) {
+          handleLoadMore()
+        }
+      }
+    }
+
+    if (listContainerRef.current) {
+      listContainerRef.current.addEventListener('scroll', handleScroll)
+    }
+
+    return () => {
+      if (listContainerRef.current) {
+        listContainerRef.current.removeEventListener('scroll', handleScroll)
+      }
+    }
+  }, [items, listContainerRef.current])
 
   const leadingActions = (item: T) =>
     renderLeftSwipeActions ? (
@@ -107,6 +135,18 @@ CustomListProps<T>) {
 
   const onDragStart = (result: DragStart) => {
     console.log(result)
+  }
+
+  async function handleLoadMore() {
+    if (!onLoadMore) return
+    try {
+      setIsLoadingMoreItems(true)
+      await onLoadMore()
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setIsLoadingMoreItems(false)
+    }
   }
 
   const renderList = (item: T, dragProvided: DraggableProvided) => {
@@ -169,7 +209,10 @@ CustomListProps<T>) {
   }
 
   return (
-    <div className={`custom-list ${className ? className : ''}`}>
+    <div
+      className={`custom-list ${className ? className : ''}`}
+      ref={listContainerRef}
+    >
       <List>
         <DragDropContext onDragEnd={onDragEnd} onDragStart={onDragStart}>
           <Droppable droppableId='droppable'>
@@ -242,6 +285,12 @@ CustomListProps<T>) {
             )}
           </Droppable>
         </DragDropContext>
+        {isLoadingMoreItems && (
+          <div className='loading-more-items-container'>
+            {/* <CircularProgress /> */}
+            <SkeletonList SKELETON_NUMBER={3} />
+          </div>
+        )}
       </List>
     </div>
   )
