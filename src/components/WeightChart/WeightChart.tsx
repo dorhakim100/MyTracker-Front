@@ -25,6 +25,7 @@ import { CustomAlertDialog } from '../../CustomMui/CustomAlertDialog/CustomAlert
 import { ColorPicker } from '../ColorPicker/ColorPicker'
 import { setPrefs } from '../../store/actions/system.actions'
 import { CustomIOSSwitch } from '../../CustomMui/CustomIOSSwitch/CustomIOSSwitch'
+import { prepareSeries } from '../../services/util.service'
 
 interface WeightChartProps {
   className?: string
@@ -69,7 +70,13 @@ export function WeightChart({
   const [openSettings, setOpenSettings] = useState(false)
 
   const data = useMemo(() => {
-    const series = prepareSeries(range, weights)
+    const series = prepareSeries(
+      range,
+      weights.map((weight) => ({
+        createdAt: new Date(weight.createdAt),
+        value: weight.kg,
+      })) as (Weight & { createdAt: string; value: number })[]
+    )
     const labelsToShow = series?.labels
     const kgs = series?.data ?? []
 
@@ -89,7 +96,13 @@ export function WeightChart({
   }, [weights])
 
   const movingAverageData = useMemo(() => {
-    const series = prepareSeries(range, weights)
+    const series = prepareSeries(
+      range,
+      weights.map((weight) => ({
+        createdAt: new Date(weight.createdAt),
+        value: weight.kg,
+      })) as (Weight & { createdAt: string; value: number })[]
+    )
     const data = series?.data ?? []
 
     const calcPeriod = (array: number[] | null[]) => {
@@ -164,54 +177,6 @@ export function WeightChart({
     }
     fetchWeights()
   }, [user?._id, range])
-
-  function prepareSeries(range: LineChartRangeKey, weights: Weight[]) {
-    const sorted = [...weights].sort((a, b) => a.createdAt - b.createdAt)
-
-    const startOfDay = (d: Date) =>
-      new Date(d.getFullYear(), d.getMonth(), d.getDate())
-    const today = startOfDay(new Date())
-
-    const pad = (n: number) => (n < 10 ? `0${n}` : `${n}`)
-    const dayKey = (d: Date) =>
-      `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
-
-    const dayToLabel = (d: Date) => `${d.getDate()}/${d.getMonth() + 1}`
-
-    const lastOfDayMap = new Map<string, number>()
-    for (const w of sorted) {
-      const d = startOfDay(new Date(w.createdAt))
-      lastOfDayMap.set(dayKey(d), w.kg)
-    }
-
-    let start: Date
-    if (range === 'ALL') {
-      if (sorted.length === 0) return { labels: [], data: [] }
-      start = startOfDay(new Date(sorted[0].createdAt))
-    } else {
-      const daysMap: Record<'1M' | '3M' | '6M' | '1Y', number> = {
-        '1M': 30,
-        '3M': 90,
-        '6M': 180,
-        '1Y': 365,
-      }
-      const count = daysMap[range as '1M' | '3M' | '6M' | '1Y']
-      start = new Date(today)
-      start.setDate(start.getDate() - (count - 1))
-    }
-
-    const labels: string[] = []
-    const data: (number | null)[] = []
-    const cursor = new Date(start)
-    while (cursor <= today) {
-      const key = dayKey(cursor)
-      labels.push(dayToLabel(cursor))
-      data.push(lastOfDayMap.get(key) ?? null)
-      cursor.setDate(cursor.getDate() + 1)
-    }
-
-    return { labels, data }
-  }
 
   const handleLineClick = (
     index: number,
