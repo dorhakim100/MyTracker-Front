@@ -241,7 +241,7 @@ export function ExerciseEditor({
                           setEditSet({ ...set, index })
 
                           setCurrentPickerValue(
-                            set.rpe ? set.rpe.actual : set.rir?.actual || 0
+                            set.rpe ? set.rpe.actual : set.rir?.actual || 2
                           )
                         }}
                         option={{
@@ -249,7 +249,7 @@ export function ExerciseEditor({
                           key: set.rpe ? 'rpe' : 'rir',
                           type: 'number',
                         }}
-                        value={set.rpe ? set.rpe.actual : set.rir?.actual || 0}
+                        value={set.rpe ? set.rpe.actual : set.rir?.actual || 2}
                         minWidth={70}
                         // isAutoWidth={true}
                       />

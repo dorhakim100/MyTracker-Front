@@ -39,7 +39,7 @@ interface DetailsStageProps {
     workoutId: string
   }) => void
   onEditExerciseNotes: (exerciseId: string, notes: string) => void
-  onChangeRpeRir: (exerciseId: string, value: 'rpe' | 'rir') => void
+  // onChangeRpeRir: (exerciseId: string, value: 'rpe' | 'rir') => void
   setInstructions: (instructions: Instructions) => void
 }
 
@@ -61,7 +61,7 @@ export function DetailsStage({
   instructionsFilter,
   onInstructionsFilterChange,
   onEditExerciseNotes,
-  onChangeRpeRir,
+  // onChangeRpeRir,
   setInstructions,
 }: DetailsStageProps) {
   const prefs = useSelector(
@@ -107,19 +107,20 @@ export function DetailsStage({
     const exerciseInstructionToUpdate = instructions.exercises.find(
       (e) => e.exerciseId === exerciseId
     )
+
     const exerciseIndex = instructions.exercises.findIndex(
       (e) => e.exerciseId === exerciseId
     )
     if (!exerciseInstructionToUpdate) return
-    onChangeRpeRir(exerciseId, value)
 
     let newExerciseInstruction = { ...exerciseInstructionToUpdate }
 
     if (value === 'rpe') {
       newExerciseInstruction.sets = newExerciseInstruction.sets.map((set) => {
-        delete set.rir
+        // Create a new set object without rir, but with rpe
+        const { rir, ...setWithoutRir } = set
         return {
-          ...set,
+          ...setWithoutRir,
           rpe: {
             expected: 8,
             actual: 8,
@@ -129,9 +130,10 @@ export function DetailsStage({
     }
     if (value === 'rir') {
       newExerciseInstruction.sets = newExerciseInstruction.sets.map((set) => {
-        delete set.rpe
+        // Create a new set object without rpe, but with rir
+        const { rpe, ...setWithoutRpe } = set
         return {
-          ...set,
+          ...setWithoutRpe,
           rir: {
             expected: 2,
             actual: 2,

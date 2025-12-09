@@ -288,20 +288,31 @@ export function EditWorkout({
     })
   }
 
-  const onChangeRpeRir = (exerciseId: string, value: 'rpe' | 'rir') => {
-    const exerciseToUpdate = workout.exercises.find(
-      (e) => e.exerciseId === exerciseId
-    )
-    if (!exerciseToUpdate) return
+  // const onChangeRpeRir = (exerciseId: string, value: 'rpe' | 'rir') => {
+  //   const exerciseToUpdate = workout.exercises.find(
+  //     (e) => e.exerciseId === exerciseId
+  //   )
+  //   const instructionToUpdate = instructions.exercises.find(
+  //     (e) => e.exerciseId === exerciseId
+  //   )
+  //   if (!exerciseToUpdate || !instructionToUpdate) return
 
-    if (value === 'rpe') {
-      delete exerciseToUpdate.details?.rir
-    } else {
-      delete exerciseToUpdate.details?.rpe
-    }
+  //   if (value === 'rpe') {
+  //     delete exerciseToUpdate.details?.rir
+  //     // delete instructionToUpdate.sets[0]?.rir
+  //   } else {
+  //     delete exerciseToUpdate.details?.rpe
+  //     // delete instructionToUpdate.sets[0]?.rpe
+  //   }
 
-    // onEditExerciseDetails(exerciseId, value, value === 'rpe' ? 8 : 2)
-  }
+  //   // console.log(instructions)
+
+  //   // onEditExerciseDetails(exerciseId, value, value === 'rpe' ? 8 : 2)
+  // }
+
+  useEffect(() => {
+    console.log(instructions)
+  }, [instructions])
 
   const getStageTitle = (stage: WorkoutStage): string => {
     switch (stage) {
@@ -374,7 +385,7 @@ export function EditWorkout({
             instructionsFilter={instructionsFilter}
             onInstructionsFilterChange={setInstructionsFilter}
             onEditExerciseNotes={onEditExerciseNotes}
-            onChangeRpeRir={onChangeRpeRir}
+            //onChangeRpeRir={onChangeRpeRir}
             setInstructions={setInstructions}
           />
         )
