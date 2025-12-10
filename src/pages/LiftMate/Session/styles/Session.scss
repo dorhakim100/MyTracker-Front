@@ -37,6 +37,16 @@
       }
     }
   }
+  .exercise-info-container {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+
+    svg:last-child {
+      width: 24px;
+      height: 24px;
+    }
+  }
 
   .session-container-animation {
     padding-bottom: 5px;
