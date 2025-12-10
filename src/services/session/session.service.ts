@@ -83,7 +83,7 @@ async function playWorkout(sessionDay: SessionDay, userId: string) {
 
     return {
       ...session,
-      instructions: { ...instructionsWithDetails, isDone: true },
+      instructions: { ...instructionsWithDetails },
     }
   } catch (err) {
     throw err

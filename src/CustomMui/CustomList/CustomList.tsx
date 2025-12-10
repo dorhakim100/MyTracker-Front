@@ -23,7 +23,7 @@ import {
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { SkeletonList } from '../../components/SkeletonList/SkeletonList'
-import CircularProgress from '@mui/material/CircularProgress'
+// import CircularProgress from '@mui/material/CircularProgress'
 
 export interface CustomListProps<T> {
   items: T[]
