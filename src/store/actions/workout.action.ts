@@ -70,7 +70,6 @@ export async function handleSessionDayChange(dateToCheck: string, user: User) {
 
     return res
   } catch (err) {
-    console.log('err:', err)
     throw err
   }
 }

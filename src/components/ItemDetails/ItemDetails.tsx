@@ -479,7 +479,6 @@ export function ItemDetails({
 
       showSuccessMsg(messages.success.saveMeal)
     } catch (err) {
-      console.log(err)
       showErrorMsg(messages.error.saveMeal)
       optimisticUpdateUser(user as User)
     }

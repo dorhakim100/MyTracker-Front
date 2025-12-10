@@ -84,7 +84,6 @@ export function MacrosProgress({ protein, carbs, fats }: MacrosProgressProps) {
       await updateUser({ ...userToEdit, currGoal: savedGoal })
       showSuccessMsg(messages.success.updateMacros)
     } catch (err) {
-      console.log(err)
       showErrorMsg(messages.error.updateMacros)
     } finally {
       setIsLoading(false)

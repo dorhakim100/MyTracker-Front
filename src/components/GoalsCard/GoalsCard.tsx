@@ -78,7 +78,6 @@ export function GoalsCard() {
       await updateUser(newUser)
       showSuccessMsg(messages.success.saveGoal)
     } catch (err) {
-      console.log('err', err)
       showErrorMsg(messages.error.saveGoal)
     }
   }
@@ -110,7 +109,6 @@ export function GoalsCard() {
 
       showSuccessMsg(messages.success.saveGoal)
     } catch (err) {
-      console.log('err', err)
       showErrorMsg(messages.error.saveGoal)
       optimisticUpdateUser(user as User)
     }
@@ -129,7 +127,6 @@ export function GoalsCard() {
 
       showSuccessMsg(messages.success.deleteGoal)
     } catch (err) {
-      console.log('err', err)
       showErrorMsg(messages.error.deleteGoal)
       optimisticUpdateUser(user as User)
     }

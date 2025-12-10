@@ -29,7 +29,6 @@ async function getUsers() {
       return user
     })
   } catch (err) {
-    // console.log(err)
     throw err
   }
 }
@@ -38,7 +37,6 @@ async function getById(userId: string) {
   try {
     return await storageService.get('user', userId)
   } catch (err) {
-    // console.log(err)
     throw err
   }
 }
@@ -47,7 +45,6 @@ async function remove(userId: string) {
   try {
     return await storageService.remove('user', userId)
   } catch (err) {
-    // console.log(err)
     throw err
   }
 }
@@ -65,7 +62,6 @@ async function update(userToUpdate: User) {
 
     return savedUser
   } catch (err) {
-    // console.log(err)
     throw err
   }
 }
@@ -88,7 +84,6 @@ async function login(userCred: UserCred) {
       throw err
     }
   } catch (err) {
-    // console.log(err)
     throw err
   }
 }
@@ -118,7 +113,6 @@ async function signup(userCred: UserCred) {
 
     return saveLoggedinUser(user)
   } catch (err) {
-    // console.log(err)
     throw err
   }
 }
@@ -127,7 +121,6 @@ async function logout() {
   try {
     sessionStorage.removeItem(STORAGE_KEY_LOGGEDIN_USER)
   } catch (err) {
-    // console.log(err)
     throw err
   }
 }
@@ -140,7 +133,6 @@ function getLoggedinUser() {
     if (!user) return null
     return user
   } catch (err) {
-    // console.log(err)
     throw err
   }
 }
@@ -161,7 +153,6 @@ function saveLoggedinUser(user: User) {
     sessionStorage.setItem(STORAGE_KEY_LOGGEDIN_USER, JSON.stringify(user))
     return user
   } catch (err) {
-    // console.log(err)
     throw err
   }
 }
@@ -170,7 +161,6 @@ function saveRememberedUser(user: User) {
   try {
     localStorage.setItem(STORAGE_KEY_REMEMBERED_USER, user._id)
   } catch (err) {
-    // console.log(err)
     throw err
   }
 }
@@ -190,7 +180,6 @@ async function getRememberedUser() {
       return null
     }
   } catch (err) {
-    // console.log(err)
     throw err
   }
 }
@@ -209,7 +198,6 @@ function getEmptyUser() {
       products: [],
     },
     weightLogs: [],
-    // isAdmin: false,
   }
 }
 
@@ -235,34 +223,3 @@ function getDefaultLoggedToday() {
     logs: [],
   }
 }
-
-// function getRandomLoggedToday() {
-//   return {
-//     date: new Date().toISOString(),
-//     calories: 1772,
-//     protein: 145,
-//     carbs: 190,
-//     fat: 48,
-//   }
-// }
-
-// To quickly create an admin user, uncomment the next line
-// _createAdmin()
-// async function _createAdmin() {
-//   try {
-//     const userCred = {
-//       email: 'admin@gmail.com',
-
-//       password: 'admin123',
-//       fullname: 'Dor Hakim',
-//       goals: [],
-//       imgUrl:
-//         'https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_1280.png',
-//     }
-
-//     const newUser = await storageService.post('user', userCred)
-//   } catch (err) {
-//     // console.log(err)
-//     throw err
-//   }
-// }

@@ -49,7 +49,6 @@ export function ProfileCard() {
       await updateUser(user)
       showSuccessMsg(messages.success.updateUser)
     } catch (err) {
-      console.log('err', err)
       showErrorMsg(messages.error.updateUser)
       optimisticUpdateUser(user as User)
     }

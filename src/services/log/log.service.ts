@@ -25,7 +25,6 @@ async function query(
 
     return items
   } catch (err) {
-    // // console.log(err)
     throw err
   }
 }
@@ -36,7 +35,6 @@ async function getById(logId: string, filter: any) {
     const res = await httpService.get(`${KEY}/${logId}`, filter)
     return res
   } catch (err) {
-    // // console.log(err)
     throw err
   }
 }
@@ -45,7 +43,6 @@ async function remove(logId: string) {
   try {
     return await httpService.delete(`${KEY}/${logId}`, null)
   } catch (err) {
-    // // console.log(err)
     throw err
   }
 }
@@ -59,7 +56,6 @@ async function save(log: Log) {
     }
     return savedLog
   } catch (err) {
-    // // console.log(err)
     throw err
   }
 }
@@ -86,17 +82,3 @@ function getDefaultFilter() {
     date: '',
   }
 }
-
-// async function getMaxPage(filterBy) {
-//   const PAGE_SIZE = 20
-
-//   try {
-//     var items = await query({ ...filterBy, isAll: true })
-
-//     let maxPage = items.length / PAGE_SIZE
-//     maxPage = Math.ceil(maxPage)
-//     return maxPage
-//   } catch (err) {
-//     // // console.log(err)
-//   }
-// }

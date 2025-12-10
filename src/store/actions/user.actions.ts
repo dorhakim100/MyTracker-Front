@@ -39,7 +39,6 @@ export async function loadUsers(filter: UserFilter) {
     store.dispatch({ type: SET_USERS, users })
     return users
   } catch (err) {
-    // console.log('UserActions: err in loadUsers', err)
     throw err
   }
 }
@@ -51,7 +50,6 @@ export async function removeUser(userId: string) {
     setUserToEdit(null)
     setSelectedDiaryDay(null)
   } catch (err) {
-    // console.log('UserActions: err in removeUser', err)
     throw err
   }
 }
@@ -74,10 +72,8 @@ export async function login(credentials: UserCred) {
 
     setSelectedDiaryDay(user.loggedToday)
     setUserToEdit(user)
-    // socketService.login(user._id)
     return user
   } catch (err) {
-    // console.log('Cannot login', err)
     throw err
   }
 }
@@ -95,8 +91,6 @@ export async function handleGuestMode() {
     await _loginWithGuest()
   } catch (err) {
     throw err
-    // console.log(err);
-    // showErrorMsg(`Couldn't use guest mode`)
   }
 }
 
@@ -127,7 +121,6 @@ async function _loginWithGuest() {
     // socketService.login(user._id)
     return user
   } catch (err) {
-    // console.log('Cannot login', err)
     throw err
   }
 }
@@ -143,7 +136,6 @@ export async function updateUser(userToUpdate: User) {
 
     return saved
   } catch (err) {
-    // console.log(err);
     throw err
   }
 }
@@ -181,7 +173,6 @@ export async function signup(credentials: UserCred) {
     // socketService.login(user._id)
     return user
   } catch (err) {
-    // console.log('Cannot signup', err)
     throw err
   }
 }
@@ -198,22 +189,18 @@ export async function logout() {
 
     // socketService.logout()
   } catch (err) {
-    // console.log('Cannot logout', err)
     throw err
   }
 }
 
 export async function loadUser(userId: string) {
   try {
-    // debugger
     const user = await userService.getById(userId)
 
-    // store.dispatch({ type: SET_WATCHED_USER, user })
     store.dispatch({ type: SET_WATCHED_USER, user })
     return user
   } catch (err) {
     throw err
-    // console.log('Cannot load user', err)
   }
 }
 
@@ -240,7 +227,6 @@ export async function handleFavorite(item: Item, user: User) {
 
     await updateUser(userToSave)
   } catch (err) {
-    console.log('err in handleFavorite', err)
     throw err
   }
 }
@@ -343,7 +329,7 @@ export async function handleFirstGoal(goal: Goal, user: User) {
 
     await updateUser(newUser)
   } catch (err) {
-    console.log('err', err)
+    throw err
   }
 }
 

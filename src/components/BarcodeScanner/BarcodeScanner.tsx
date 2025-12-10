@@ -94,7 +94,6 @@ export function BarcodeScanner({
 
       //onClose()
     } catch (err) {
-      console.log(err)
       showErrorMsg(messages.error.scan)
     }
   }

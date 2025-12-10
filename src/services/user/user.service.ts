@@ -47,7 +47,6 @@ async function getUsers(filter: UserFilter) {
 
     return users
   } catch (err) {
-    // console.log(err)
     throw err
   }
 }
@@ -57,7 +56,6 @@ async function getById(userId: string) {
     const user = await httpService.get(`user/${userId}`, null)
     return user
   } catch (err) {
-    // console.log(err)
     throw err
   }
 }
@@ -67,7 +65,6 @@ async function getRememberedById(userId: string) {
 
     return user
   } catch (err) {
-    // console.log(err)
     throw err
   }
 }
@@ -76,7 +73,6 @@ async function remove(userId: string) {
   try {
     return await httpService.delete(`user/${userId}`, null)
   } catch (err) {
-    // console.log(err)
     throw err
   }
 }
@@ -102,20 +98,11 @@ async function update(user: User) {
 
     const savedUser = await httpService.put(`user/${_id}`, userToSend)
 
-    // When admin updates other user's details, do not update loggedinUser
-    // console.log(savedUser)
-    // return
-
     await getLoggedinUser() // Might not work because its defined in the main service???
-    // const loggedinUser = await getLoggedinUser() // Might not work because its defined in the main service???
-
-    // if (loggedinUser.id === user.id) saveLoggedinUser(savedUser)
 
     delete savedUser.password
     return savedUser
-    // return saveLoggedinUser(savedUser)
   } catch (err) {
-    console.log(err)
     throw err
   }
 }
@@ -182,7 +169,6 @@ async function login(userCred: UserCred) {
 
     return saveLoggedinUser(user)
   } catch (err) {
-    console.log(err)
     throw err
   }
 }
@@ -213,7 +199,6 @@ async function signup(userCred: UserCred) {
 
     return saveLoggedinUser(user)
   } catch (err) {
-    // console.log(err)
     throw err
   }
 }
@@ -226,7 +211,6 @@ async function logout() {
   try {
     return await httpService.post('auth/logout', null)
   } catch (err) {
-    // console.log(err)
     throw err
   }
 }
@@ -250,7 +234,6 @@ async function getLoggedinUser(): Promise<User | null> {
     saveLoggedinUser(remembered)
     return remembered
   } catch (err) {
-    // console.log(err)
     throw err
   }
 }
@@ -273,7 +256,6 @@ function saveLoggedinUser(user: User) {
     sessionStorage.setItem(STORAGE_KEY_LOGGEDIN_USER, JSON.stringify(user))
     return user
   } catch (err) {
-    // console.log(err)
     throw err
   }
 }
@@ -295,15 +277,6 @@ function getDefaultFilter() {
   }
 }
 
-// async function getRememberedById(userId: string) {
-//   try {
-//     const user = await httpService.get(`user/rememberMe/${userId}`, null)
-//     return user
-//   } catch (err) {
-//     // console.log(err)
-//     throw err
-//   }
-// }
 async function getRememberedUser() {
   try {
     let rememberedId: string | null = null
@@ -337,25 +310,9 @@ async function getRememberedUser() {
     if (user) return saveLoggedinUser(user)
     return null
   } catch (err) {
-    // console.log(err)
     throw err
   }
 }
-
-// async function getMaxPage(filter: UserFilter) {
-//   const PAGE_SIZE = 6
-//   try {
-//     var maxPage = await getUsers({ ...filter, isAll: true, isMax: true })
-
-//     // let maxPage = messages.length / PAGE_SIZE
-//     // maxPage = Math.ceil(maxPage)
-
-//     return maxPage
-//   } catch (err) {
-//     // console.log(err)
-//     throw err
-//   }
-// }
 
 async function saveRememberedUser(user: User) {
   try {
@@ -364,7 +321,6 @@ async function saveRememberedUser(user: User) {
       userId: user._id,
     })
   } catch (err) {
-    // console.log(err)
     throw err
   }
 }

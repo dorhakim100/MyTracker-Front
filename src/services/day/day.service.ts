@@ -20,7 +20,6 @@ async function query(filterBy: any) {
 
     return items
   } catch (err) {
-    // // console.log(err)
     throw err
   }
 }
@@ -30,7 +29,6 @@ async function getById(dayId: string, filter: any) {
     const res = await httpService.get(`${KEY}/${dayId}`, filter)
     return res
   } catch (err) {
-    // // console.log(err)
     throw err
   }
 }
@@ -39,7 +37,6 @@ async function remove(dayId: string) {
   try {
     return await httpService.delete(`${KEY}/${dayId}`, null)
   } catch (err) {
-    // // console.log(err)
     throw err
   }
 }
@@ -53,7 +50,6 @@ async function save(day: LoggedToday) {
     }
     return savedDay
   } catch (err) {
-    // // console.log(err)
     throw err
   }
 }
@@ -73,17 +69,3 @@ function getDefaultFilter() {
     date: '',
   }
 }
-
-// async function getMaxPage(filterBy) {
-//   const PAGE_SIZE = 20
-
-//   try {
-//     var items = await query({ ...filterBy, isAll: true })
-
-//     let maxPage = items.length / PAGE_SIZE
-//     maxPage = Math.ceil(maxPage)
-//     return maxPage
-//   } catch (err) {
-//     // // console.log(err)
-//   }
-// }

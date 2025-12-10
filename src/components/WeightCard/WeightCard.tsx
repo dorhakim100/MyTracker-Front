@@ -103,7 +103,6 @@ export function WeightCard() {
 
       showSuccessMsg(messages.success.updateWeight)
     } catch (err) {
-      console.log('err', err)
       showErrorMsg(messages.error.updateWeight)
     }
     onClose()

@@ -28,7 +28,6 @@ async function query(
 
     return allUsersInstructions
   } catch (err) {
-    // // console.log(err)
     throw err
   }
 }
@@ -38,7 +37,6 @@ async function getById(instructionId: string, filter: any) {
     const res = await httpService.get(`${KEY}/${instructionId}`, filter)
     return res
   } catch (err) {
-    // // console.log(err)
     throw err
   }
 }
@@ -47,7 +45,6 @@ async function remove(instructionId: string) {
   try {
     return await httpService.delete(`${KEY}/${instructionId}`, null)
   } catch (err) {
-    // // console.log(err)
     throw err
   }
 }
@@ -64,7 +61,6 @@ async function save(instructions: Instructions) {
     }
     return savedInstructions
   } catch (err) {
-    // // console.log(err)
     throw err
   }
 }

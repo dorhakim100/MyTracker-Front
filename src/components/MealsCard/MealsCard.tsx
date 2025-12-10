@@ -71,7 +71,6 @@ export function MealsCard() {
       await updateUser(newUser)
       showSuccessMsg(messages.success.saveMeal)
     } catch (err) {
-      console.log('err', err)
       showErrorMsg(messages.error.saveMeal)
       const index = user?.meals.findIndex(
         (meal) => meal._id === editMeal._id

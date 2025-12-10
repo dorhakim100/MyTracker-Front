@@ -311,8 +311,6 @@ export function prepareSeries<T extends { createdAt: string }>(
   range: LineChartRangeKey,
   items: (T & { createdAt: Date; value: number })[]
 ) {
-  console.log('items', items)
-
   const sorted = [...items].sort(
     (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
   )

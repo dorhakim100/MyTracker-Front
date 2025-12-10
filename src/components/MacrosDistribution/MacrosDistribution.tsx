@@ -68,7 +68,6 @@ export function MacrosDistribution({
       await updateUser({ ...userToEdit, currGoal: savedGoal })
       showSuccessMsg(messages.success.updateMacros)
     } catch (err) {
-      console.log(err)
       showErrorMsg(messages.error.updateMacros)
       optimisticUpdateUser(user as User)
     } finally {

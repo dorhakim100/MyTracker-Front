@@ -19,7 +19,6 @@ async function query(filterBy: SetFilter = {}) {
     const sets = await httpService.get(KEY, filterBy)
     return sets
   } catch (err) {
-    // // console.log(err)
     throw err
   }
 }
@@ -30,7 +29,6 @@ async function getById(setId: string, filter: any) {
     const res = await httpService.get(`${KEY}/${setId}`, filter)
     return res
   } catch (err) {
-    // // console.log(err)
     throw err
   }
 }
@@ -39,7 +37,6 @@ async function remove(setId: string) {
   try {
     return await httpService.delete(`${KEY}/${setId}`, null)
   } catch (err) {
-    // // console.log(err)
     throw err
   }
 }
@@ -54,7 +51,6 @@ async function save(set: Set & { _id?: string }) {
     }
     return savedSet
   } catch (err) {
-    // // console.log(err)
     throw err
   }
 }
@@ -73,7 +69,6 @@ async function saveSetBySessionIdAndExerciseId(
     )
     return savedSet
   } catch (err) {
-    // // console.log(err)
     throw err
   }
 }
@@ -89,7 +84,6 @@ async function removeSetBySessionIdAndExerciseId(
       null
     )
   } catch (err) {
-    // // console.log(err)
     throw err
   }
 }

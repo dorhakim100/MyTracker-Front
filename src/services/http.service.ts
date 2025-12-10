@@ -29,10 +29,6 @@ async function ajax(endpoint: string, method = 'GET', data = null) {
     const res = await axios(options)
     return res.data
   } catch (err: Error | any) {
-    // console.log(
-    //   `Had Issues ${method}ing to the backend, endpoint: ${endpoint}, with data: `,
-    //   data
-    // )
     console.dir(err)
     if (err.response && err.response.status === 401) {
       sessionStorage.clear()

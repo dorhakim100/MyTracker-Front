@@ -19,7 +19,6 @@ async function query(filterBy: WorkoutFilter = { forUserId: '' }) {
 
     return workouts
   } catch (err) {
-    // // console.log(err)
     throw err
   }
 }
@@ -29,7 +28,6 @@ async function getById(workoutId: string, filter: any) {
     const res = await httpService.get(`${KEY}/${workoutId}`, filter)
     return res
   } catch (err) {
-    // // console.log(err)
     throw err
   }
 }
@@ -38,7 +36,6 @@ async function remove(workoutId: string) {
   try {
     return await httpService.delete(`${KEY}/${workoutId}`, null)
   } catch (err) {
-    // // console.log(err)
     throw err
   }
 }
@@ -52,7 +49,6 @@ async function save(workout: Workout) {
     }
     return savedWorkout
   } catch (err) {
-    // // console.log(err)
     throw err
   }
 }
@@ -69,7 +65,6 @@ function getEmptyWorkout(): Workout {
 
 function getEmptyExerciseDetail() {
   return {
-    // actualSets: [],
     sets: {
       expected: 3,
       actual: 0,

@@ -102,7 +102,6 @@ async function fetchOnError(
     const query = isEnglish
       ? itemName
       : await translateService.translate(itemName)
-    // console.log(query)
 
     const next = await imageService.getSingleImage(query)
 

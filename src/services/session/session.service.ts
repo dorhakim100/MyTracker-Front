@@ -31,7 +31,6 @@ async function query(
 
     return { ...session, instructions: instructionsWithDetails }
   } catch (err) {
-    // // console.log(err)
     throw err
   }
 }
@@ -41,7 +40,6 @@ async function getById(goalId: string, filter: any) {
     const res = await httpService.get(`${KEY}/${goalId}`, filter)
     return res
   } catch (err) {
-    // // console.log(err)
     throw err
   }
 }
@@ -50,7 +48,6 @@ async function remove(goalId: string) {
   try {
     return await httpService.delete(`${KEY}/${goalId}`, null)
   } catch (err) {
-    // // console.log(err)
     throw err
   }
 }
@@ -64,7 +61,6 @@ async function save(sessionDay: SessionDay) {
     }
     return savedGoal
   } catch (err) {
-    // // console.log(err)
     throw err
   }
 }

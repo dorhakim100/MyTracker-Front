@@ -81,7 +81,6 @@ export function CaloriesProgress({
       await updateUser({ ...userToEdit, currGoal: savedGoal })
       showSuccessMsg(messages.success.updateCalories)
     } catch (err) {
-      console.log('err', err)
       showErrorMsg(messages.error.updateCalories)
       optimisticUpdateUser(user as User)
     } finally {

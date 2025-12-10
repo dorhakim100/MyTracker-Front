@@ -111,7 +111,6 @@ export function WorkoutSession({
     isRemove: boolean
   ) => {
     if (!sessionDay._id) return showErrorMsg(messages.error.updateSet)
-    console.log(exercise)
 
     const originalInstructions = sessionDay.instructions
     const newInstructions = {
@@ -183,7 +182,6 @@ export function WorkoutSession({
 
   async function saveExerciseNotes(exerciseId: string, notes: string) {
     try {
-      console.log(exerciseId, notes)
       setIsLoading(true)
       await instructionsService.save({
         ...sessionDay.instructions,

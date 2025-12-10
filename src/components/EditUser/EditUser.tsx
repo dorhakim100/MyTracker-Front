@@ -143,7 +143,6 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
       if (res && res.secure_url) setImgUrl(res.secure_url)
     } catch (err) {
       showErrorMsg(messages.error.uploadImg)
-      console.log(err)
     } finally {
       setIsLoading(false)
     }
@@ -192,7 +191,6 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
       await logout()
       showSuccessMsg(messages.success.deleteAccount)
     } catch (err) {
-      console.log('err', err)
       showErrorMsg(messages.error.deleteAccount)
     } finally {
       setIsLoading(false)

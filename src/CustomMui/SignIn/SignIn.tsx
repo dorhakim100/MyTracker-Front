@@ -134,7 +134,6 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
         showErrorMsg('Login failed. Please check your credentials.')
       }
     } catch (err) {
-      console.log(err)
       showErrorMsg('An error occurred while signing in. Please try again.')
     } finally {
       setIsLoading(false)
