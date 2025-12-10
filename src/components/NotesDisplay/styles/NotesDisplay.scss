@@ -1,0 +1,19 @@
+.notes-display {
+  display: grid;
+  gap: 1.5rem;
+  padding: 0rem 1rem;
+  min-width: 220px;
+
+  .date {
+    text-align: center;
+  }
+
+  .english-notes {
+    text-align: left;
+    direction: ltr;
+  }
+  .hebrew-notes {
+    text-align: right;
+    direction: rtl;
+  }
+}

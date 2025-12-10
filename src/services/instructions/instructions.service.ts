@@ -10,6 +10,7 @@ export const instructionsService = {
   remove,
   getByWorkoutId,
   getWeekNumberDone,
+  getNotesBySessionIdAndExerciseId,
   getExercisesFromInstructions,
   getEmptyInstructions,
   getEmptySet,
@@ -93,6 +94,21 @@ async function getWeekNumberDone(workoutId: string) {
   }
 }
 
+async function getNotesBySessionIdAndExerciseId(
+  sessionId: string,
+  exerciseId: string
+) {
+  try {
+    const notes = await httpService.get(`${KEY}/notes`, {
+      sessionId,
+      exerciseId,
+    })
+
+    return notes
+  } catch (err) {
+    throw err
+  }
+}
 async function getExercisesFromInstructions(instructions: Instructions) {
   try {
     const exercises = instructions.exercises

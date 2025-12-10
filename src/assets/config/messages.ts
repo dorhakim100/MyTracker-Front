@@ -50,5 +50,6 @@ export const messages = {
     getRequests: 'Failed to get requests',
     updateRequest: 'Failed to handle request',
     deleteSession: 'Failed to delete session',
+    getNotes: 'Failed to get notes',
   },
 }

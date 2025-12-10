@@ -27,5 +27,7 @@ export interface Set {
   rir?: ExpectedActual<number>
   setNumber?: number
   createdAt?: Date
+  sessionId?: string
+
   // just for editing
 }

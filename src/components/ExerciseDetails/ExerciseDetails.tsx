@@ -207,7 +207,11 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
             className={`${prefs.favoriteColor} new`}
           ></Badge>
         )}
-        <SetsTable groupedSets={groupedSets} />
+        <SetsTable
+          groupedSets={
+            groupedSets as Record<string, (Set & { exerciseId: string })[]>
+          }
+        />
       </div>
     </div>
   )
