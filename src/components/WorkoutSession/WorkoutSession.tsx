@@ -28,7 +28,7 @@ import { setService } from '../../services/set/set.service'
 import { Instructions } from '../../types/instructions/Instructions'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { CustomAlertDialog } from '../../CustomMui/CustomAlertDialog/CustomAlertDialog'
-import EditNoteIcon from '@mui/icons-material/EditNote'
+import NoteAddIcon from '@mui/icons-material/NoteAdd'
 import { CustomInput } from '../../CustomMui/CustomInput/CustomInput'
 interface WorkoutSessionProps {
   sessionDay: SessionDay
@@ -342,7 +342,7 @@ export function WorkoutSession({
                         onExerciseInfoClick(exercise as Exercise)
                       }}
                     />
-                    <EditNoteIcon
+                    <NoteAddIcon
                       onClick={(ev) => {
                         ev.stopPropagation()
                         setAlertDialogOptions({

@@ -14,7 +14,7 @@ import { Set } from '../../types/exercise/Exercise'
 import { Badge, DialogActions, Typography } from '@mui/material'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
-import EditNoteIcon from '@mui/icons-material/EditNote'
+import NoteAltIcon from '@mui/icons-material/NoteAlt'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import { CustomAlertDialog } from '../../CustomMui/CustomAlertDialog/CustomAlertDialog'
 import { useState } from 'react'
@@ -91,7 +91,7 @@ function Row(props: {
           }}
         >
           <CustomButton
-            icon={<EditNoteIcon />}
+            icon={<NoteAltIcon />}
             onClick={(ev) => {
               ev.stopPropagation()
               const sessionId = sets[0].sessionId
