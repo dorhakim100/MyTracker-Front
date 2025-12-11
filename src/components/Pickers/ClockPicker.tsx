@@ -77,6 +77,7 @@ export function ClockPicker({
     <div className='picker-container'>
       <Picker
         value={pickerValue}
+        // wheelMode='normal'
         onChange={(next) =>
           setPickerValue(
             next as unknown as { numberOfServings: number; afterValue: number }

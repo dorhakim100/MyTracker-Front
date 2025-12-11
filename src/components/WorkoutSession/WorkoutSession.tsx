@@ -125,7 +125,7 @@ export function WorkoutSession({
     if (getIsStringifySame(originalInstructions, newInstructions)) return
     setSelectedSessionDay({
       ...sessionDay,
-      instructions: newInstructions,
+      instructions: { ...newInstructions },
     })
     try {
       await saveNewInstructions(newInstructions)

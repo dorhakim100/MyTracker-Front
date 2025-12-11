@@ -16,6 +16,10 @@ import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { DeleteAction } from '../DeleteAction/DeleteAction'
 import { SwipeableWrapper } from '../SwipeableWrapper/SwipeableWrapper'
 import { ExpectedActual } from '../../types/expectedActual/ExpectedActual'
+import {
+  pickerButtonsValues,
+  pickerMinMaxValues,
+} from '../../assets/config/exercise-editor-pickers'
 
 export interface ExerciseEditorProps {
   exercise: ExerciseInstructions
@@ -96,10 +100,6 @@ export function ExerciseEditor({
     })
   }
 
-  const getPickerValue = () => {
-    return currentPickerValue
-  }
-
   const onPickerChange = (value: number) => {
     if (!editSet) return
 
@@ -130,10 +130,7 @@ export function ExerciseEditor({
     const newExercise = { ...exercise }
     if (!newExercise || !editSet) return
     newExercise.sets = newExercise.sets.map((set, index) => {
-      if (editSet.index === 0 && isExpected) return editSet
-      if (index === editSet?.index) {
-        return editSet
-      }
+      if (editSet.index <= index) return editSet
       return set
     })
     updateExercise(newExercise, editSet.index)
@@ -142,39 +139,6 @@ export function ExerciseEditor({
   const getIsAfterValue = (type: PickerType): boolean => {
     return type === 'rpe' || type === 'weight'
   }
-
-  const getButtonsValues = useCallback((type: PickerType): number[] => {
-    switch (type) {
-      case 'rpe':
-        return [5, 7, 9]
-      case 'rir':
-        return [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-      case 'weight':
-        return [15, 45, 75, 100]
-      case 'reps':
-        return [5, 10, 15, 20]
-      default:
-        return []
-    }
-  }, [])
-
-  const getPickerValues = useCallback(
-    (type: PickerType, key: 'min' | 'max'): number => {
-      switch (type) {
-        case 'rpe':
-          return key === 'min' ? 1 : 9
-        case 'rir':
-          return key === 'min' ? 0 : 10
-        case 'weight':
-          return key === 'min' ? 2 : 320
-        case 'reps':
-          return key === 'min' ? 1 : 25
-        default:
-          return 0
-      }
-    },
-    []
-  )
 
   return (
     <>
@@ -291,12 +255,24 @@ export function ExerciseEditor({
         onClose={onClosePicker}
         component={
           <ClockPicker
-            value={getPickerValue()}
+            value={currentPickerValue}
             onChange={(_, value) => onPickerChange(value)}
             isAfterValue={getIsAfterValue(pickerOptions.type)}
-            buttonsValues={getButtonsValues(pickerOptions.type)}
-            minValue={getPickerValues(pickerOptions.type, 'min')}
-            maxValue={getPickerValues(pickerOptions.type, 'max')}
+            buttonsValues={
+              pickerButtonsValues[
+                pickerOptions.type as keyof typeof pickerButtonsValues
+              ]
+            }
+            minValue={
+              pickerMinMaxValues[
+                pickerOptions.type as keyof typeof pickerMinMaxValues
+              ].min
+            }
+            maxValue={
+              pickerMinMaxValues[
+                pickerOptions.type as keyof typeof pickerMinMaxValues
+              ].max
+            }
           />
         }
       />
