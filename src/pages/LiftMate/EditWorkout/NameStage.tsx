@@ -103,6 +103,7 @@ export function NameStage({
           }
           values={['all', 'upper', 'lower']}
           label='Area'
+          className={`${prefs.favoriteColor}`}
         />
       </div>
       <div className='muscles-group-container'>

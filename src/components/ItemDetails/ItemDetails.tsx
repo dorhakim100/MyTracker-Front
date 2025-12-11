@@ -618,11 +618,13 @@ export function ItemDetails({
                         onChange={(value) =>
                           onEditItemChange(option.key, value)
                         }
+                        className={`${prefs.favoriteColor}`}
                       />
                     )}
                     {option.type === 'clock' && (
                       <>
                         <PickerSelect
+                          className={`${prefs.favoriteColor}`}
                           openClock={openClock}
                           option={option}
                           value={editItem.numberOfServings}

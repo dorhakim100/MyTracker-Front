@@ -11,9 +11,12 @@
   }
 }
 
-.custom-select {
+.custom-select,
+.MuiInputBase-root,
+.picker-select {
   &.primary {
-    .MuiInputBase-colorPrimary {
+    .MuiInputBase-colorPrimary,
+    .MuiSelect-root {
       &.Mui-focused {
         fieldset {
           border-color: $primary-color !important;

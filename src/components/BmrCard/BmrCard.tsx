@@ -176,6 +176,7 @@ export function BmrCard() {
                     onChange(option.key as keyof BmrFormState, val)
                   }
                   extra={option.extra}
+                  className={`${option.className} ${prefs.favoriteColor}`}
                 />
               </div>
             )

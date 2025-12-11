@@ -253,6 +253,7 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
                   value={input.value + ''}
                   onChange={input.onChange}
                   extra='cm'
+                  className={`${input.className} ${prefs.favoriteColor}`}
                 />
               )
             if (input.type === 'date')

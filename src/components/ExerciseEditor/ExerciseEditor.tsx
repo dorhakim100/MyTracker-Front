@@ -193,6 +193,7 @@ export function ExerciseEditor({
                     />
                     <div className='reps-container'>
                       <PickerSelect
+                        className={`${prefs.favoriteColor}`}
                         openClock={() => {
                           setPickerOptions({
                             type: 'reps',
@@ -213,6 +214,7 @@ export function ExerciseEditor({
                     </div>
                     <div className='weight-container'>
                       <PickerSelect
+                        className={`${prefs.favoriteColor}`}
                         openClock={() => {
                           setPickerOptions({
                             type: 'weight',
@@ -233,6 +235,7 @@ export function ExerciseEditor({
                     </div>
                     <div className='rpe-rir-container'>
                       <PickerSelect
+                        className={`${prefs.favoriteColor}`}
                         openClock={() => {
                           setPickerOptions({
                             type: set.rpe ? 'rpe' : 'rir',
