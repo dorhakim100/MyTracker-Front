@@ -130,7 +130,8 @@ export function ExerciseEditor({
     const newExercise = { ...exercise }
     if (!newExercise || !editSet) return
     newExercise.sets = newExercise.sets.map((set, index) => {
-      if (editSet.index <= index) return editSet
+      if (editSet.index === index) return editSet
+      if (editSet.index < index && isExpected) return editSet
       return set
     })
     updateExercise(newExercise, editSet.index)
