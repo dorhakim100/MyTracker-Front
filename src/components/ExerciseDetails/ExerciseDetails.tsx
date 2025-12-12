@@ -194,7 +194,12 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
           <Typography variant='h5' className='bold-header'>
             Max Weight Progress
           </Typography>
-          <LineChart data={data} isDarkMode={prefs.isDarkMode} />
+          <LineChart
+            data={data}
+            isDarkMode={prefs.isDarkMode}
+            interpolateGaps={true}
+            spanGaps={true}
+          />
           <LineChartControls value={range} onChange={(val) => setRange(val)} />
         </div>
         <Typography variant='h5' className='bold-header'>
