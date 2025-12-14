@@ -5,6 +5,15 @@
 
   padding: 0em 1em;
 
+  // height: 100%;
+  // overflow-y: scroll;
+  // -webkit-overflow-scrolling: touch;
+  // overscroll-behavior-y: contain;
+  // touch-action: pan-y;
+  // will-change: transform;
+  // transform: translateZ(0);
+  // contain: content;
+
   .buttons-container {
     display: grid;
     grid-auto-flow: column;

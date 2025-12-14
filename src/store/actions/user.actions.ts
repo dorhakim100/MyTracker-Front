@@ -318,6 +318,7 @@ export async function handleDiaryDayChange(dateToCheck: string, user: User) {
 export async function handleFirstGoal(goal: Goal, user: User) {
   try {
     goal.userId = user._id
+    if (!goal.title) goal.title = 'My Goal'
 
     const savedGoal = await goalService.save(goal)
 

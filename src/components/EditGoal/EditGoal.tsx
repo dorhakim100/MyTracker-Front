@@ -275,18 +275,53 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
     setEditModalType('calories')
   }
 
+  function closePickerModal() {
+    setEditGoalOpen(false)
+  }
+
+  function savePickerModal() {
+    setEditGoal({ ...goalRef.current })
+    closePickerModal()
+  }
+
   function getModalTypeComponent() {
     switch (editModalType) {
       case 'calories':
-        return <CaloriesEdit goalToEdit={editGoal} goalRef={goalRef} />
+        return (
+          <CaloriesEdit
+            goalToEdit={editGoal}
+            goalRef={goalRef}
+            onCancel={closePickerModal}
+            onSave={savePickerModal}
+          />
+        )
       case 'macros':
-        return <EditMacros goalToEdit={editGoal} goalRef={goalRef} />
+        return (
+          <EditMacros
+            goalToEdit={editGoal}
+            goalRef={goalRef}
+            onCancel={closePickerModal}
+            onSave={savePickerModal}
+          />
+        )
       case 'distribution':
         return (
-          <MacrosDistributionEdit goalToEdit={editGoal} goalRef={goalRef} />
+          <MacrosDistributionEdit
+            goalToEdit={editGoal}
+            goalRef={goalRef}
+            onCancel={closePickerModal}
+            onSave={savePickerModal}
+          />
         )
       default:
-        return <CaloriesEdit goalToEdit={editGoal} goalRef={goalRef} />
+        return (
+          <CaloriesEdit
+            goalToEdit={editGoal}
+            goalRef={goalRef}
+            onCancel={closePickerModal}
+            onSave={savePickerModal}
+          />
+        )
     }
   }
 
@@ -342,7 +377,8 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
   }
 
   const getIsNextDisabled = (stage: string) => {
-    if (stage === 'title') return !editGoal.title
+    // if (stage === 'title') return !editGoal.title
+    if (stage === 'title') return false
     if (stage === 'target') return !editGoal.dailyCalories
     if (stage === 'macros') return !editGoal.macros
     return false
@@ -350,14 +386,14 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
   // Stages rendering
   function _renderTitleStage() {
     return (
-      <div className='stage-container'>
+      <div className="stage-container">
         <CustomInput
           value={editGoal.title || ''}
           onChange={(value) => setEditGoal({ ...editGoal, title: value })}
-          placeholder='Enter goal title...'
+          placeholder="Enter goal title..."
           className={`${prefs.favoriteColor}`}
         />
-        <div className='animation-container'>
+        <div className="animation-container">
           <Lottie animationData={goalAnimation} loop={false} />
         </div>
       </div>
@@ -366,8 +402,8 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
 
   function _renderTargetStage() {
     return (
-      <div className='stage-container'>
-        <div className='targets-container'>
+      <div className="stage-container">
+        <div className="targets-container">
           {targets.map((target) => {
             return (
               <CustomButton
@@ -385,7 +421,7 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
             )
           })}
         </div>
-        <div className='animation-container'>
+        <div className="animation-container">
           <SlideAnimation
             motionKey={selectedTarget}
             direction={targetAnimationDirection}
@@ -400,14 +436,16 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
 
   function _renderWeightStage() {
     return (
-      <div className='stage-container'>
-        <WeightEdit
-          value={editGoal.targetWeight || 0}
-          onChange={(value) =>
-            setEditGoal({ ...editGoal, targetWeight: value })
-          }
-          isHideSaveButton={true}
-        />
+      <div className="stage-container">
+        <div className="weight-edit-container">
+          <WeightEdit
+            value={editGoal.targetWeight || 0}
+            onChange={(value) =>
+              setEditGoal({ ...editGoal, targetWeight: value })
+            }
+            isHideSaveButton={true}
+          />
+        </div>
       </div>
     )
   }
@@ -415,7 +453,7 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
   function _renderMacrosStage() {
     return (
       <>
-        <div className='stage-container macros-stage-container'>
+        <div className="stage-container macros-stage-container">
           <MacrosDonut
             protein={editGoal.macros?.protein || 0}
             carbs={editGoal.macros?.carbs || 0}
@@ -426,20 +464,20 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
             carbs={editGoal.macros?.carbs || 0}
             fats={editGoal.macros?.fat || 0}
           />
-          <div className='edit-header-container'>
-            <Typography variant='h5'>Edit Macros</Typography>
-            <EditIcon />
+          <div className="edit-header-container">
+            <Typography variant="h5">Edit Macros</Typography>
             <Divider
               className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
             />
           </div>
-          <div className='buttons-container'>
+          <div className="buttons-container">
             {editButtons.map((button) => (
               <CustomButton
                 text={button.label}
                 onClick={button.onClick}
-                // icon={button.icon}
+                icon={button.icon}
                 key={button.key}
+                fullWidth={true}
               />
             ))}
           </div>
@@ -448,7 +486,7 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
           open={editGoalOpen}
           onClose={onCloseEditGoal}
           component={getModalTypeComponent()}
-          title='Edit Calories'
+          title="Edit Calories"
           onSave={getModalOnSave()}
         />
       </>
@@ -474,14 +512,14 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
     }
 
     return (
-      <div className='stage-container'>
-        <div className='edit-header-container'>
-          <div className='date-picker-container'>
-            <label htmlFor='start-date' className='start-date-label'>
+      <div className="stage-container">
+        <div className="edit-header-container">
+          <div className="date-picker-container">
+            <label htmlFor="start-date" className="start-date-label">
               Start Date:
             </label>
 
-            <Typography variant='h6'>{startDateToShow}</Typography>
+            <Typography variant="h6">{startDateToShow}</Typography>
             <CustomDatePicker
               value={startDate}
               onChange={(date) =>
@@ -509,16 +547,16 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
                     : undefined,
                 })
               }
-              id='end-date'
+              id="end-date"
             />
-            <label htmlFor='end-date' className='end-date-label'>
+            <label htmlFor="end-date" className="end-date-label">
               End Date:
             </label>
             {/* <Typography variant='h6'  >
               End Date:
             </Typography> */}
 
-            <Typography variant='h6'>{endDateToShow}</Typography>
+            <Typography variant="h6">{endDateToShow}</Typography>
             {editGoal.endDate !== undefined && (
               <CustomDatePicker
                 value={endDate}
@@ -533,14 +571,14 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
             )}
           </div>
         </div>
-        <div className='animation-container date'>
+        <div className="animation-container date">
           <Lottie animationData={dateAnimation} loop={true} />
         </div>
       </div>
     )
   }
   return (
-    <div className='page-container edit-goal-container'>
+    <div className="page-container edit-goal-container">
       <CustomStepper
         stages={stages}
         activeStage={activeStage}

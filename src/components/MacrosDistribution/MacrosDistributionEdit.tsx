@@ -18,15 +18,20 @@ import { Box, Typography } from '@mui/material'
 
 import { roundToNearest50 } from '../../services/macros/macros.service'
 import { Goal } from '../../types/goal/Goal'
+import { SaveCancel } from '../SaveCancel/SaveCancel'
 
 interface MacrosDistributionEditProps {
   goalToEdit?: Goal | Partial<Goal>
   goalRef?: React.RefObject<Goal | Partial<Goal>>
+  onCancel?: () => void
+  onSave?: () => void
 }
 
 export function MacrosDistributionEdit({
   goalToEdit,
   goalRef,
+  onCancel,
+  onSave,
 }: MacrosDistributionEditProps) {
   const user = useSelector(
     (stateSelector: RootState) => stateSelector.userModule.user
@@ -195,16 +200,17 @@ export function MacrosDistributionEdit({
 
   return (
     <Box>
-      <div className='edit-macros-container distribution'>
+      <div className="edit-macros-container distribution">
+        <Typography variant="h5">Distribution</Typography>
         {macros.map((macro) => (
           <div
-            className='macro-container'
+            className="macro-container"
             key={`percantage-edit-${macro.name}`}
           >
-            <div className='macro-title'>
-              <Typography variant='h6'>{macro.name}</Typography>
-              <Typography variant='body1'>{macro.value}%</Typography>
-              <Typography variant='body1'>
+            <div className="macro-title">
+              <Typography variant="h6">{macro.name}</Typography>
+              <Typography variant="body1">{macro.value}%</Typography>
+              <Typography variant="body1">
                 ~{roundToNearest50(macro.calories)} kcal
               </Typography>
             </div>
@@ -230,6 +236,7 @@ export function MacrosDistributionEdit({
             />
           </div>
         ))}
+        <SaveCancel onCancel={onCancel} onSave={onSave} />
       </div>
     </Box>
   )

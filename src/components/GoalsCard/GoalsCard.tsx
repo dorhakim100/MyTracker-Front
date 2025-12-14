@@ -55,7 +55,7 @@ export function GoalsCard() {
   const saveGoal = async (goal: Goal) => {
     try {
       if (!user) return showErrorMsg(messages.error.saveGoal)
-
+      if (!goal.title) goal.title = 'My Goal'
       goal.userId = user._id
 
       const savedGoal = await goalService.save(goal)
@@ -142,9 +142,9 @@ export function GoalsCard() {
 
   return (
     <>
-      <div className='goals-card'>
+      <div className="goals-card">
         <CustomButton
-          text='Add Goal'
+          text="Add Goal"
           icon={<AddIcon />}
           onClick={onAddGoal}
           fullWidth
@@ -154,7 +154,7 @@ export function GoalsCard() {
           getKey={(goal) => goal._id}
           renderPrimaryText={(goal) => goal.title}
           renderLeft={(goal) => (
-            <div className='goal-left'>
+            <div className="goal-left">
               {getTargetIcon(goal.target)}
               <MacrosDonut
                 protein={goal.macros?.protein || 0}
@@ -198,7 +198,7 @@ export function GoalsCard() {
         onClose={onCloseGoalDetails}
         component={<EditGoal saveGoal={saveGoal} selectedGoal={selectedGoal} />}
         title={selectedGoal ? 'Edit Goal' : 'Add Goal'}
-        type='full'
+        type="full"
       />
     </>
   )

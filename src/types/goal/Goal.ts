@@ -4,7 +4,7 @@ export interface Goal {
   _id: string
   userId?: string
   isSelected: boolean
-  title: string
+  title?: string
   updatedAt: number
 
   dailyCalories: number

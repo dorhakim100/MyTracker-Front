@@ -8,9 +8,20 @@
 
   .picker-container {
   }
+  .add-remove-buttons-container {
+    // display: flex;
+    // justify-content: space-between;
+    gap: 0.8rem;
+    display: grid;
+    // grid-auto-flow: column;
+  }
 
   .macros-title-container {
     margin-bottom: 1em;
+  }
+
+  .save-cancel-container {
+    justify-self: center;
   }
 
   .macros-title-container {

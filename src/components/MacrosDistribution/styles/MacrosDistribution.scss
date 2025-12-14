@@ -38,16 +38,23 @@
 
 .edit-macros-container.distribution {
   display: grid;
-  gap: 0.8rem;
+  gap: 1.5rem;
 
   justify-self: center;
   // margin-top: 1em;
   padding: 2rem;
   // width: 300px;
 
+  h5 {
+    text-align: center;
+  }
+
   .macro-title {
     display: flex;
     justify-content: space-between;
     align-items: center;
+  }
+  .save-cancel-container {
+    justify-self: center;
   }
 }

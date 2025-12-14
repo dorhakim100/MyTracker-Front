@@ -163,7 +163,7 @@ function App() {
         <UserMsg />
         <main className={`main ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
           {/* <AppHeader /> */}
-          <div className="">
+          <div className="first-time-edit-goal-container">
             <EditGoal saveGoal={(goal) => handleFirstGoal(goal, user)} />
           </div>
         </main>

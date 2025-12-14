@@ -19,6 +19,8 @@ import { Goal } from '../../types/goal/Goal'
 import { Macros as MacrosType } from '../../types/macros/Macros'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import AddIcon from '@mui/icons-material/Add'
+import { SaveCancel } from '../SaveCancel/SaveCancel'
+import RemoveIcon from '@mui/icons-material/Remove'
 
 interface EditMacrosProps {
   goalToEdit?: Goal | Partial<Goal>
@@ -28,6 +30,8 @@ interface EditMacrosProps {
   carbs?: number
   fats?: number
   editCustomLog?: (macros: MacrosType) => void
+  onCancel?: () => void
+  onSave?: () => void
 }
 
 const CARBS_LIMIT = 800
@@ -63,6 +67,8 @@ export function EditMacros({
   carbs,
   fats,
   editCustomLog,
+  onCancel,
+  onSave,
 }: EditMacrosProps) {
   const macros = {
     carbs: getArrayOfNumbers(0, CARBS_LIMIT),
@@ -179,8 +185,8 @@ export function EditMacros({
   }, [user])
 
   return (
-    <Box className='edit-macros-container'>
-      <div className='picker-container'>
+    <Box className="edit-macros-container">
+      <div className="picker-container">
         <Picker
           value={pickerValue}
           onChange={(next) => setPickerValue(next as unknown as PickerValue)}
@@ -202,7 +208,7 @@ export function EditMacros({
                     >
                       {({ selected }) => (
                         <Typography
-                          variant='h5'
+                          variant="h5"
                           className={`${selected ? 'selected' : ''}`}
                         >
                           {option}
@@ -217,7 +223,7 @@ export function EditMacros({
         </Picker>
       </div>
 
-      <div className='macros-title-container'>
+      <div className="macros-title-container">
         {macroKeys.map((name) => {
           const macroName = name as string
 
@@ -234,31 +240,46 @@ export function EditMacros({
             macrosAddButtons[macroName as keyof typeof macrosAddButtons].value
 
           return (
-            <div className='macro-container' key={`name-${macroName}`}>
+            <div className="macro-container" key={`name-${macroName}`}>
               <div className={`banner ${macroName}`}>
-                <span className='title'>
+                <span className="title">
                   {capitalizeFirstLetter(macroName)}
                 </span>
               </div>
-              <Typography variant='h6' className='value'>
+              <Typography variant="h6" className="value">
                 {pickerValue[macroName].toFixed(0)}g
               </Typography>
-              <CustomButton
-                text={`${buttonValue}`}
-                icon={<AddIcon />}
-                isIconReverse
-                disabled={getButtonDisabled()}
-                onClick={() =>
-                  setPickerValue({
-                    ...pickerValue,
-                    [macroName]: pickerValue[macroName] + buttonValue,
-                  })
-                }
-              />
+              {/* <div className="add-remove-buttons-container">
+                <CustomButton
+                  text={`${buttonValue}`}
+                  icon={<AddIcon />}
+                  isIconReverse
+                  disabled={getButtonDisabled()}
+                  onClick={() =>
+                    setPickerValue({
+                      ...pickerValue,
+                      [macroName]: pickerValue[macroName] + buttonValue,
+                    })
+                  }
+                />
+                <CustomButton
+                  text={`${buttonValue}`}
+                  icon={<RemoveIcon />}
+                  isIconReverse
+                  disabled={pickerValue[macroName] - buttonValue < 0}
+                  onClick={() =>
+                    setPickerValue({
+                      ...pickerValue,
+                      [macroName]: pickerValue[macroName] - buttonValue,
+                    })
+                  }
+                />
+              </div> */}
             </div>
           )
         })}
       </div>
+      <SaveCancel onCancel={onCancel} onSave={onSave} />
     </Box>
   )
 }

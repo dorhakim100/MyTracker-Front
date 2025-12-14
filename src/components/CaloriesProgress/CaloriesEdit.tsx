@@ -9,8 +9,9 @@ import {
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
+import { SaveCancel } from '../SaveCancel/SaveCancel'
 import { useEffect, useMemo, useState } from 'react'
-import { Box, Typography } from '@mui/material'
+import { Box, Divider, Typography } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import RemoveIcon from '@mui/icons-material/Remove'
 import { Goal } from '../../types/goal/Goal'
@@ -18,9 +19,16 @@ import { Goal } from '../../types/goal/Goal'
 interface CaloriesEditProps {
   goalToEdit?: Goal | Partial<Goal>
   goalRef?: React.RefObject<Goal | Partial<Goal>>
+  onCancel?: () => void
+  onSave?: () => void
 }
 
-export function CaloriesEdit({ goalToEdit, goalRef }: CaloriesEditProps) {
+export function CaloriesEdit({
+  goalToEdit,
+  goalRef,
+  onCancel,
+  onSave,
+}: CaloriesEditProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
@@ -114,15 +122,15 @@ export function CaloriesEdit({ goalToEdit, goalRef }: CaloriesEditProps) {
       <Box sx={{ p: 2 }}>
         <Box
           sx={{ position: 'relative' }}
-          className='calories-amount-container'
+          className="calories-amount-container"
         >
           <Typography
-            variant='h3'
+            variant="h3"
             className={`calories-amount ${prefs.favoriteColor || ''}`}
           >
             {roundCaloriesToNearest50(pickerCalories.calories)} kcal
           </Typography>
-          <div className='picker-container'>
+          <div className="picker-container">
             <Picker
               value={pickerCalories}
               onChange={(next) =>
@@ -131,12 +139,12 @@ export function CaloriesEdit({ goalToEdit, goalRef }: CaloriesEditProps) {
               }
               height={150}
             >
-              <Picker.Column name='calories'>
+              <Picker.Column name="calories">
                 {options.map((calorie) => (
                   <Picker.Item key={calorie} value={calorie}>
                     {({ selected }) => (
                       <Typography
-                        variant='h5'
+                        variant="h5"
                         className={`${selected ? 'selected' : ''}`}
                       >
                         {`${calorie}`}
@@ -147,20 +155,24 @@ export function CaloriesEdit({ goalToEdit, goalRef }: CaloriesEditProps) {
                 ))}
               </Picker.Column>
             </Picker>
-            <div className='buttons-container'>
+            <div className="buttons-container">
               <CustomButton
                 onClick={() => onFixedChange(-400)}
                 icon={<RemoveIcon />}
                 className={`${prefs.favoriteColor}`}
-                text='400'
+                text="400"
               />
               <CustomButton
                 onClick={() => onFixedChange(400)}
                 icon={<AddIcon />}
                 className={`${prefs.favoriteColor}`}
-                text='400'
+                text="400"
               />
             </div>
+            <Divider
+              className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+            />
+            <SaveCancel onCancel={onCancel} onSave={onSave} />
           </div>
         </Box>
       </Box>

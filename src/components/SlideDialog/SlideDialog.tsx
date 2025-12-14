@@ -18,7 +18,7 @@ const Transition = React.forwardRef(function Transition(
   },
   ref: React.Ref<unknown>
 ) {
-  return <Slide direction='up' ref={ref} {...props} />
+  return <Slide direction="up" ref={ref} {...props} />
 })
 
 interface SlideDialogProps {
@@ -66,7 +66,7 @@ export function SlideDialog({
           // bottom: 20,
 
           '& .MuiDialog-paper': {
-            height: type === 'half' ? '600px' : '100%',
+            height: type === 'half' ? '800px' : '100%',
             paddingBottom: '1.5em',
           },
         }}
@@ -84,23 +84,23 @@ export function SlideDialog({
         <AppBar sx={{ position: 'relative' }}>
           <Toolbar className={`${prefs.favoriteColor}`}>
             <IconButton
-              edge='start'
-              color='inherit'
+              edge="start"
+              color="inherit"
               onClick={onClose}
-              aria-label='close'
+              aria-label="close"
             >
               <CloseIcon sx={{ color: '#fff' }} />
             </IconButton>
-            <Typography sx={{ ml: 2, flex: 1 }} variant='h6' component='div'>
+            <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
               {title}
             </Typography>
             {/* <Button autoFocus color='inherit' onClick={onClose}>
               save
             </Button> */}
-            {isLoading && <CircularProgress size={20} color='inherit' />}
+            {isLoading && <CircularProgress size={20} color="inherit" />}
           </Toolbar>
         </AppBar>
-        <div className='slide-dialog-content'>{component}</div>
+        <div className="slide-dialog-content">{component}</div>
       </Dialog>
     </React.Fragment>
   )
