@@ -166,7 +166,7 @@ export function GoalsCard() {
           renderSecondaryText={(goal) =>
             `${capitalizeFirstLetter(goal.target)} - ${
               goal.targetWeight || 80
-            } kg - ${goal.dailyCalories} kcal`
+            } kg - ${goal.dailyCalories.toFixed(0)} kcal`
           }
           renderRight={(goal) => (
             // <ListItemIcon>

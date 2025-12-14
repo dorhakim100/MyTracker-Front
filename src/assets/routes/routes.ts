@@ -33,7 +33,7 @@ export const routes: Route[] = [
     app: 'all',
   },
   {
-    title: 'Diary',
+    title: 'Food',
     path: '/diary',
     element: Diary,
     icon: FormatListBulletedAddIcon,
