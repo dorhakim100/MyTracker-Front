@@ -1,6 +1,9 @@
 .custom-input {
   //   outline: 1px solid $dark-mode-border !important;
   //   outline: 1px solid $very-dark-gray !important;
+  &.dark-mode {
+    border: 1px solid $dark-mode-border !important;
+  }
 
   &.primary {
     .MuiOutlinedInput-root.Mui-focused {

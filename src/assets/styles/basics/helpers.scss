@@ -150,6 +150,79 @@ button {
   color: $white;
 }
 
+// Menu item selected states with color support (inherited from body)
+body.dark-mode {
+  .MuiPaper-root:has(.MuiMenu-list) {
+    // background-color: $primary-color-dark !important;
+    background-color: $menu-bg !important;
+    .MuiMenuItem-root.Mui-selected {
+      background-color: $primary-color-darker !important;
+      // color: $primary-color !important;
+    }
+
+    &.blue {
+      background-color: $menu-bg-blue !important;
+    }
+    &.yellow {
+      background-color: $menu-bg-yellow !important;
+    }
+    &.red {
+      background-color: $menu-bg-red !important;
+    }
+    &.orange {
+      background-color: $menu-bg-orange !important;
+    }
+    &.green {
+      background-color: $menu-bg-green !important;
+    }
+    &.deepPurple {
+      background-color: $menu-bg-deep-purple !important;
+    }
+    &.purple {
+      background-color: $menu-bg-purple !important;
+    }
+    &.pink {
+      background-color: $menu-bg-pink !important;
+    }
+  }
+
+  // Color-specific menu item selected states
+  &.blue .MuiPaper-root:has(.MuiMenu-list) .MuiMenuItem-root.Mui-selected {
+    background-color: $dark-gray-blue !important;
+    color: $picker-color-blue !important;
+  }
+  &.yellow .MuiPaper-root:has(.MuiMenu-list) .MuiMenuItem-root.Mui-selected {
+    background-color: $dark-gray-yellow !important;
+    color: $picker-color-yellow !important;
+  }
+  &.red .MuiPaper-root:has(.MuiMenu-list) .MuiMenuItem-root.Mui-selected {
+    background-color: $dark-gray-red !important;
+    color: $picker-color-red !important;
+  }
+  &.orange .MuiPaper-root:has(.MuiMenu-list) .MuiMenuItem-root.Mui-selected {
+    background-color: $dark-gray-orange !important;
+    color: $picker-color-orange !important;
+  }
+  &.green .MuiPaper-root:has(.MuiMenu-list) .MuiMenuItem-root.Mui-selected {
+    background-color: $dark-gray-green !important;
+    color: $picker-color-green !important;
+  }
+  &.deepPurple
+    .MuiPaper-root:has(.MuiMenu-list)
+    .MuiMenuItem-root.Mui-selected {
+    background-color: $dark-gray-deep-purple !important;
+    color: $picker-color-deep-purple !important;
+  }
+  &.purple .MuiPaper-root:has(.MuiMenu-list) .MuiMenuItem-root.Mui-selected {
+    background-color: $dark-gray-purple !important;
+    color: $picker-color-purple !important;
+  }
+  &.pink .MuiPaper-root:has(.MuiMenu-list) .MuiMenuItem-root.Mui-selected {
+    background-color: $dark-gray-pink !important;
+    color: $picker-color-pink !important;
+  }
+}
+
 // MUI Component Background Colors (Cards, Paper, Accordions)
 // These inherit from body color classes
 body.dark-mode {
@@ -944,44 +1017,84 @@ select {
 // Toggle Button setup
 
 .MuiToggleButtonGroup-root.dark-mode {
+  .MuiToggleButton-root {
+    background-color: $darker-gray !important;
+  }
+  .MuiToggleButton-root.Mui-selected {
+    background-color: $primary-color-darker !important;
+    color: $primary-color !important;
+    border: 1px solid $dark-mode-border !important;
+  }
   &.blue {
+    .MuiToggleButton-root {
+      background-color: $darker-gray-blue !important;
+    }
     .MuiToggleButton-root.Mui-selected {
+      background-color: $dark-gray-blue !important;
       color: $picker-color-blue !important;
     }
   }
 
   &.red {
+    .MuiToggleButton-root {
+      background-color: $darker-gray-red !important;
+    }
     .MuiToggleButton-root.Mui-selected {
+      background-color: $dark-gray-red !important;
       color: $picker-color-red !important;
     }
   }
   &.yellow {
+    .MuiToggleButton-root {
+      background-color: $darker-gray-yellow !important;
+    }
     .MuiToggleButton-root.Mui-selected {
+      background-color: $dark-gray-yellow !important;
       color: $picker-color-yellow !important;
     }
   }
   &.green {
+    .MuiToggleButton-root {
+      background-color: $darker-gray-green !important;
+    }
     .MuiToggleButton-root.Mui-selected {
+      background-color: $dark-gray-green !important;
       color: $picker-color-green !important;
     }
   }
   &.orange {
+    .MuiToggleButton-root {
+      background-color: $darker-gray-orange !important;
+    }
     .MuiToggleButton-root.Mui-selected {
+      background-color: $dark-gray-orange !important;
       color: $picker-color-orange !important;
     }
   }
   &.deepPurple {
+    .MuiToggleButton-root {
+      background-color: $darker-gray-deep-purple !important;
+    }
     .MuiToggleButton-root.Mui-selected {
+      background-color: $dark-gray-deep-purple !important;
       color: $picker-color-deep-purple !important;
     }
   }
   &.purple {
+    .MuiToggleButton-root {
+      background-color: $darker-gray-purple !important;
+    }
     .MuiToggleButton-root.Mui-selected {
+      background-color: $dark-gray-purple !important;
       color: $picker-color-purple !important;
     }
   }
   &.pink {
+    .MuiToggleButton-root {
+      background-color: $darker-gray-pink !important;
+    }
     .MuiToggleButton-root.Mui-selected {
+      background-color: $dark-gray-pink !important;
       color: $picker-color-pink !important;
     }
   }

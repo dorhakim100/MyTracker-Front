@@ -138,7 +138,9 @@ export function FixedBottomNavigation(props: {
   const renderSpeedDial = () => {
     return (
       <div
-        className={`speed-dial-container ${isAddModal ? 'show' : ''}`}
+        className={`speed-dial-container ${isAddModal ? 'show' : ''} ${
+          prefs.isDarkMode ? 'dark-mode' : ''
+        } ${prefs.favoriteColor}`}
         onClick={(ev) => {
           ev.stopPropagation()
           ev.preventDefault()

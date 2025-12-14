@@ -4,6 +4,8 @@ import type { ReactNode } from 'react'
 import { useRef } from 'react'
 import { IconButton } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
+import { useSelector } from 'react-redux'
+import type { RootState } from '../../store/store'
 
 interface CustomInputProps {
   value: string
@@ -29,6 +31,9 @@ export function CustomInput({
   isRemoveIcon,
 }: CustomInputProps) {
   const inputRef = useRef<HTMLInputElement>(null)
+  const prefs = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.prefs
+  )
 
   return (
     <TextField
@@ -40,15 +45,17 @@ export function CustomInput({
       placeholder={placeholder}
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className={`custom-input ${className}`}
+      className={`custom-input ${className} ${
+        prefs.isDarkMode ? 'dark-mode' : ''
+      }`}
       InputProps={{
         startAdornment: startIconFn ? (
-          <InputAdornment position='start'>{startIconFn()}</InputAdornment>
+          <InputAdornment position="start">{startIconFn()}</InputAdornment>
         ) : undefined,
         endAdornment: endIconFn ? (
-          <InputAdornment position='end'>{endIconFn()}</InputAdornment>
+          <InputAdornment position="end">{endIconFn()}</InputAdornment>
         ) : isRemoveIcon ? (
-          <InputAdornment position='end'>
+          <InputAdornment position="end">
             <IconButton onClick={() => onChange('')}>
               <CloseIcon />
             </IconButton>

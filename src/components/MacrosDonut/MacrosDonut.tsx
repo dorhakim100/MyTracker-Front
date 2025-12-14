@@ -51,11 +51,15 @@ export function MacrosDonut({
   }
 
   return (
-    <div className='donut' style={donutStyle}>
-      <div className={`donut-inner ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
-        <div className='totals'>
-          <div className='value'>{total.toFixed(0)}</div>
-          <div className='label'>kcal</div>
+    <div className="donut" style={donutStyle}>
+      <div
+        className={`donut-inner ${prefs.isDarkMode ? 'dark-mode' : ''} ${
+          prefs.favoriteColor
+        }`}
+      >
+        <div className="totals">
+          <div className="value">{total.toFixed(0)}</div>
+          <div className="label">kcal</div>
         </div>
       </div>
     </div>

@@ -82,7 +82,8 @@
   padding: 1rem !important;
   margin-bottom: 0.8rem !important;
 
-  box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+  box-shadow: rgba(0, 0, 0, 0.308) 0px 10px 20px,
+    rgba(0, 0, 0, 0.23) 0px 6px 6px;
 
   .MuiButtonBase-root {
     // background-color: $primary-color;
@@ -94,10 +95,56 @@
 .MuiSpeedDial-root {
   &.dark-mode {
     .MuiSpeedDial-actions:not(.MuiSpeedDial-actionsClosed) {
-      background-color: $very-dark-gray;
+      background-color: $darker-gray;
     }
   }
 }
+
+.MuiSpeedDial-root {
+  &.dark-mode {
+    &.blue {
+      .MuiSpeedDial-actions:not(.MuiSpeedDial-actionsClosed) {
+        background-color: $darker-gray-blue;
+      }
+    }
+    &.red {
+      .MuiSpeedDial-actions:not(.MuiSpeedDial-actionsClosed) {
+        background-color: $darker-gray-red;
+      }
+    }
+    &.yellow {
+      .MuiSpeedDial-actions:not(.MuiSpeedDial-actionsClosed) {
+        background-color: $darker-gray-yellow;
+      }
+    }
+    &.green {
+      .MuiSpeedDial-actions:not(.MuiSpeedDial-actionsClosed) {
+        background-color: $darker-gray-green;
+      }
+    }
+    &.orange {
+      .MuiSpeedDial-actions:not(.MuiSpeedDial-actionsClosed) {
+        background-color: $darker-gray-orange;
+      }
+    }
+    &.deepPurple {
+      .MuiSpeedDial-actions:not(.MuiSpeedDial-actionsClosed) {
+        background-color: $darker-gray-deep-purple;
+      }
+    }
+    &.purple {
+      .MuiSpeedDial-actions:not(.MuiSpeedDial-actionsClosed) {
+        background-color: $darker-gray-purple;
+      }
+    }
+    &.pink {
+      .MuiSpeedDial-actions:not(.MuiSpeedDial-actionsClosed) {
+        background-color: $darker-gray-pink;
+      }
+    }
+  }
+}
+
 .MuiSpeedDialAction-fab {
   padding: 1rem !important;
   width: 90px !important;
@@ -136,6 +183,10 @@
     bottom: 0;
     left: 0;
     background-color: rgba(0, 0, 0, 0.14);
+
+    &.dark-mode {
+      background-color: rgba(0, 0, 0, 0.639);
+    }
     z-index: 1000;
 
     .MuiSpeedDial-root {

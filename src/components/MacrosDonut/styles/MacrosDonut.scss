@@ -21,7 +21,31 @@
   background: var(--donut-inner-bg, $white);
 
   &.dark-mode {
-    background: var(--donut-inner-bg, $darker-gray);
+    background: var(--donut-inner-bg, $dark-gray);
+    &.blue {
+      background: var(--donut-inner-bg, $dark-gray-blue);
+    }
+    &.yellow {
+      background: var(--donut-inner-bg, $dark-gray-yellow);
+    }
+    &.red {
+      background: var(--donut-inner-bg, $dark-gray-red);
+    }
+    &.orange {
+      background: var(--donut-inner-bg, $dark-gray-orange);
+    }
+    &.green {
+      background: var(--donut-inner-bg, $dark-gray-green);
+    }
+    &.deepPurple {
+      background: var(--donut-inner-bg, $dark-gray-deep-purple);
+    }
+    &.purple {
+      background: var(--donut-inner-bg, $dark-gray-purple);
+    }
+    &.pink {
+      background: var(--donut-inner-bg, $dark-gray-pink);
+    }
   }
 
   display: grid;

@@ -11,5 +11,39 @@
   &.dark-mode {
     background-color: $darker-gray !important;
     color: $white !important;
+
+    // Toolbar with darker picker colors in dark mode
+    .MuiToolbar-root {
+      &.blue {
+        background-color: $picker-color-blue-dark !important;
+      }
+      &.yellow {
+        background-color: $picker-color-yellow-dark !important;
+      }
+      &.red {
+        background-color: $picker-color-red-dark !important;
+      }
+      &.orange {
+        background-color: $picker-color-orange-dark !important;
+      }
+      &.green {
+        background-color: $picker-color-green-dark !important;
+      }
+      &.deepPurple {
+        background-color: $picker-color-deep-purple-dark !important;
+      }
+      &.purple {
+        background-color: $picker-color-purple-dark !important;
+      }
+      &.pink {
+        background-color: $picker-color-pink-dark !important;
+      }
+      // Default for primary
+      &:not(.blue):not(.yellow):not(.red):not(.orange):not(.green):not(
+          .deepPurple
+        ):not(.purple):not(.pink) {
+        background-color: $primary-color-dark !important;
+      }
+    }
   }
 }

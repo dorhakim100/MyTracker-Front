@@ -69,6 +69,13 @@ body {
   &.dark-mode {
     background-color: $dark-gray;
     color: $neutral-gray;
+    .swiper-pagination-bullet {
+      background-color: $neutral-gray;
+    }
+
+    .MuiInputBase-root {
+      outline: 1px solid $dark-mode-border !important;
+    }
   }
 
   // font-family: regularAssistant;
