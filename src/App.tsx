@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react'
 import { useSelector } from 'react-redux'
-import { Routes, Route, useLocation, useNavigate } from 'react-router'
+import { Routes, Route, useLocation } from 'react-router'
 
 import { usePwaDetect } from './hooks/usePwaDetect.tsx'
 
@@ -8,7 +8,6 @@ import { routes } from './assets/routes/routes'
 
 import { smoothScroll } from './services/util.service'
 
-import { AppHeader } from './components/AppHeader/AppHeader'
 import { Prefs } from './components/Prefs/Prefs'
 import { UserMsg } from './components/UserMsg/UserMsg'
 
@@ -27,7 +26,6 @@ import { EditGoal } from './components/EditGoal/EditGoal.tsx'
 import { ScreenLoader } from './components/ScreenLoader/ScreenLoader.tsx'
 import { getDefaultsPrefs } from './services/system/system.service.ts'
 import { PwaInstall } from './pages/PwaInstall/PwaInstall.tsx'
-import { apps } from './assets/config/apps.ts'
 import { TraineeUserCard } from './components/TraineeUserCard/TraineeUserCard.tsx'
 
 const isProd = import.meta.env.PROD
@@ -47,8 +45,6 @@ const colors = [
 function App() {
   const { shouldShowInstallGuide, promptInstall, platform, isInstallable } =
     usePwaDetect()
-
-  const navigate = useNavigate()
 
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -72,18 +68,11 @@ function App() {
 
   const filteredRoutes = useMemo(() => {
     if (user) {
-      switch (prefs.app) {
-        case apps.myTracker.id:
-          navigate('/')
-          break
-        case apps.liftMate.id:
-          navigate('/lift-mate/session')
-          break
-      }
+      return routes.filter((route) => route.path !== '/signin')
     }
 
     return routes
-  }, [user?._id, prefs.app])
+  }, [user?._id])
 
   const location = useLocation()
 

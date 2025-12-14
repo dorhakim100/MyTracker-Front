@@ -14,7 +14,7 @@ import Paper from '@mui/material/Paper'
 import AddIcon from '@mui/icons-material/Add'
 import QrCode2Icon from '@mui/icons-material/QrCode2'
 
-import { Route } from '../../assets/routes/routes'
+import { mainRoutes, Route } from '../../assets/routes/routes'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import SpeedDialAction from '@mui/material/SpeedDialAction'
@@ -27,7 +27,6 @@ import { setSelectedDiaryDay } from '../../store/actions/user.actions'
 import { messages } from '../../assets/config/messages'
 import { showErrorMsg } from '../../services/event-bus.service'
 import { BarcodeScanner } from '../../components/BarcodeScanner/BarcodeScanner'
-import { apps } from '../../assets/config/apps'
 // import { searchTypes } from '../../assets/config/search-types'
 
 type ModalType = 'search' | 'scan'
@@ -73,12 +72,9 @@ export function FixedBottomNavigation(props: {
   const [currIndex, setCurrIndex] = useState(0)
 
   const filteredRoutes = useMemo(() => {
-    const userRoute = props.routes.find((route) => route.path === '/user')
-    return [
-      ...props.routes.filter((route) => route.app === prefs.app),
-      userRoute,
-    ]
-  }, [props.routes, prefs.app])
+    // Show only Dashboard, Diary, Workouts, and User in bottom navigation
+    return props.routes.filter((route) => mainRoutes.includes(route.path))
+  }, [props.routes])
 
   const midIndex = Math.floor(filteredRoutes.length / 2)
   const leftRoutes = React.useMemo(
@@ -120,7 +116,7 @@ export function FixedBottomNavigation(props: {
     } else {
       setValue(index)
     }
-  }, [location.pathname, filteredRoutes, prefs.app])
+  }, [location.pathname, filteredRoutes])
 
   function onScanClick() {
     setModalType(modalTypes.scan)
@@ -141,56 +137,54 @@ export function FixedBottomNavigation(props: {
 
   const renderSpeedDial = () => {
     return (
-      prefs.app === apps.myTracker.id && (
-        <div
-          className={`speed-dial-container ${isAddModal ? 'show' : ''}`}
+      <div
+        className={`speed-dial-container ${isAddModal ? 'show' : ''}`}
+        onClick={(ev) => {
+          ev.stopPropagation()
+          ev.preventDefault()
+
+          if (!isAddModal) return
+          setIsAddModal(false)
+        }}
+      >
+        <SpeedDial
+          // color='primary'
+          ariaLabel="SpeedDial basic example"
+          aria-label={props.centerAction?.ariaLabel || 'center-action'}
+          icon={<AddIcon />}
           onClick={(ev) => {
+            if (!user) return showErrorMsg(messages.error.register)
             ev.stopPropagation()
-            ev.preventDefault()
+            setIsAddModal(!isAddModal)
 
-            if (!isAddModal) return
-            setIsAddModal(false)
+            setSelectedDiaryDay({
+              ...user.loggedToday,
+              weight: selectedDay?.weight,
+            })
           }}
-        >
-          <SpeedDial
-            // color='primary'
-            ariaLabel="SpeedDial basic example"
-            aria-label={props.centerAction?.ariaLabel || 'center-action'}
-            icon={<AddIcon />}
-            onClick={(ev) => {
-              if (!user) return showErrorMsg(messages.error.register)
-              ev.stopPropagation()
-              setIsAddModal(!isAddModal)
-
-              setSelectedDiaryDay({
-                ...user.loggedToday,
-                weight: selectedDay?.weight,
-              })
-            }}
-            open={isAddModal}
-            className={`${prefs.isDarkMode ? 'dark-mode' : ''} ${
-              prefs.favoriteColor
-            }`}
-            sx={
-              {
-                // position: 'absolute',
-                // opacity: 0,
-              }
+          open={isAddModal}
+          className={`${prefs.isDarkMode ? 'dark-mode' : ''} ${
+            prefs.favoriteColor
+          }`}
+          sx={
+            {
+              // position: 'absolute',
+              // opacity: 0,
             }
-          >
-            {speedDialActions.map((action) => (
-              <SpeedDialAction
-                key={action.name}
-                icon={action.icon}
-                onClick={
-                  action.onClick as unknown as MouseEventHandler<HTMLDivElement>
-                }
-                className={`${prefs.favoriteColor}`}
-              />
-            ))}
-          </SpeedDial>
-        </div>
-      )
+          }
+        >
+          {speedDialActions.map((action) => (
+            <SpeedDialAction
+              key={action.name}
+              icon={action.icon}
+              onClick={
+                action.onClick as unknown as MouseEventHandler<HTMLDivElement>
+              }
+              className={`${prefs.favoriteColor}`}
+            />
+          ))}
+        </SpeedDial>
+      </div>
     )
   }
 
