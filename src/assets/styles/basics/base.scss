@@ -219,6 +219,39 @@ body {
   &.dark-mode {
     background-color: $dark-gray;
     color: $neutral-gray;
+
+    &.blue {
+      background-color: $dark-gray-blue;
+      color: $neutral-gray;
+    }
+    &.yellow {
+      background-color: $dark-gray-yellow;
+      color: $neutral-gray;
+    }
+    &.red {
+      background-color: $dark-gray-red;
+      color: $neutral-gray;
+    }
+    &.orange {
+      background-color: $dark-gray-orange;
+      color: $neutral-gray;
+    }
+    &.green {
+      background-color: $dark-gray-green;
+      color: $neutral-gray;
+    }
+    &.deepPurple {
+      background-color: $dark-gray-deep-purple;
+      color: $neutral-gray;
+    }
+    &.purple {
+      background-color: $dark-gray-purple;
+      color: $neutral-gray;
+    }
+    &.pink {
+      background-color: $dark-gray-pink;
+      color: $neutral-gray;
+    }
   }
 }
 
@@ -265,12 +298,15 @@ canvas {
 }
 
 p {
+  margin: 0 0 1em;
   // text-align: justify;
 }
 
 .dark-mode {
   button:not(.MuiIconButton-root) {
+    // Button styles applied via color classes and MUI theme
     // background-color: $dark-gray;
+    color: inherit;
   }
 
   button:not(.favorite-button) {

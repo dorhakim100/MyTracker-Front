@@ -1,7 +1,9 @@
 :root {
   // --primary-color: #027af2;
   --primary-color: #009688;
+
   --primary-color-dark: #00695c;
+  --primary-color-darker: #004d40;
   --primary-color-light: #4db6ac;
 
   --secondary-color: #009688;
@@ -20,34 +22,42 @@
   --picker-color-blue-light: #add8e6;
   --picker-color-blue: #1976d2;
   --picker-color-blue-dark: #115293;
+  --picker-color-blue-darker: #0b3964;
 
   --picker-color-yellow-light: #ffe8a6;
   --picker-color-yellow: #ffd166;
   --picker-color-yellow-dark: #e6a800;
+  --picker-color-yellow-darker: #b38600;
 
   --picker-color-red-light: #f5a3a3;
   --picker-color-red: #d32f2f;
   --picker-color-red-dark: #9a0007;
+  --picker-color-red-darker: #640005;
 
   --picker-color-orange-light: #ffd6b3;
   --picker-color-orange: #ed6c02;
   --picker-color-orange-dark: #b34700;
+  --picker-color-orange-darker: #7a2f00;
 
   --picker-color-green-light: #b3e5cc;
   --picker-color-green: #06d6a0;
   --picker-color-green-dark: #049173;
+  --picker-color-green-darker: #03664e;
 
   --picker-color-deep-purple-light: #b0b3f1;
   --picker-color-deep-purple: #6366f1;
   --picker-color-deep-purple-dark: #3f41b5;
+  --picker-color-deep-purple-darker: #2f3285;
 
   --picker-color-purple-light: #d8b4f8;
   --picker-color-purple: #9c27b0;
   --picker-color-purple-dark: #6d1b7b;
+  --picker-color-purple-darker: #4a1455;
 
   --picker-color-pink-light: #f8b4f8;
   --picker-color-pink: #ff69b4;
   --picker-color-pink-dark: #c2185b;
+  --picker-color-pink-darker: #8e0e44;
 }
 
 // Colors
@@ -55,7 +65,7 @@ $primary-color: var(--primary-color);
 
 $primary-color-light: var(--primary-color-light);
 $primary-color-dark: var(--primary-color-dark);
-$primary-color-darker: #262a31;
+$primary-color-darker: var(--primary-color-darker);
 
 $secondary-color: var(--secondary-color);
 $secondary-color-light: var(--secondary-color-light);
@@ -64,34 +74,42 @@ $secondary-color-dark: var(--secondary-color-dark);
 $picker-color-blue: var(--picker-color-blue);
 $picker-color-blue-light: var(--picker-color-blue-light);
 $picker-color-blue-dark: var(--picker-color-blue-dark);
+$picker-color-blue-darker: var(--picker-color-blue-darker);
 
 $picker-color-yellow: var(--picker-color-yellow);
 $picker-color-yellow-dark: var(--picker-color-yellow-dark);
 $picker-color-yellow-light: var(--picker-color-yellow-light);
+$picker-color-yellow-darker: var(--picker-color-yellow-darker);
 
 $picker-color-red: var(--picker-color-red);
 $picker-color-red-dark: var(--picker-color-red-dark);
 $picker-color-red-light: var(--picker-color-red-light);
+$picker-color-red-darker: var(--picker-color-red-darker);
 
 $picker-color-orange: var(--picker-color-orange);
 $picker-color-orange-dark: var(--picker-color-orange-dark);
 $picker-color-orange-light: var(--picker-color-orange-light);
+$picker-color-orange-darker: var(--picker-color-orange-darker);
 
 $picker-color-green: var(--picker-color-green);
 $picker-color-green-light: var(--picker-color-green-light);
 $picker-color-green-dark: var(--picker-color-green-dark);
+$picker-color-green-darker: var(--picker-color-green-darker);
 
 $picker-color-deep-purple: var(--picker-color-deep-purple);
 $picker-color-deep-purple-dark: var(--picker-color-deep-purple-dark);
 $picker-color-deep-purple-light: var(--picker-color-deep-purple-light);
+$picker-color-deep-purple-darker: var(--picker-color-deep-purple-darker);
 
 $picker-color-purple: var(--picker-color-purple);
 $picker-color-purple-light: var(--picker-color-purple-light);
 $picker-color-purple-dark: var(--picker-color-purple-dark);
+$picker-color-purple-darker: var(--picker-color-purple-darker);
 
 $picker-color-pink: var(--picker-color-pink);
 $picker-color-pink-light: var(--picker-color-pink-light);
 $picker-color-pink-dark: var(--picker-color-pink-dark);
+$picker-color-pink-darker: var(--picker-color-pink-darker);
 
 // Shades of Red
 $light-red: #f28b82;
@@ -103,11 +121,39 @@ $dark-red: #b71c1c;
 $light-gray: #e0e0e0;
 $medium-gray: #9e9e9e;
 
-$dark-gray: #424242;
-$darker-gray: #333;
 $very-dark-gray: #1d1d1d;
 
+$dark-gray: #0b1415;
+$darker-gray: #112021;
 $dark-mode-border: rgba(255, 255, 255, 0.12);
+
+// Dark Mode Background Colors
+// dark-gray variants: darker backgrounds (for main/body)
+// darker-gray variants: lighter backgrounds (for cards/surfaces)
+
+$dark-gray-blue: #0b0f17; // darker (main background) - total RGB: 49
+$darker-gray-blue: #11161f; // lighter (card background) - total RGB: 70
+
+$dark-gray-yellow: #12120b; // darker (main background) - total RGB: 41
+$darker-gray-yellow: #18180f; // lighter (card background) - total RGB: 63
+
+$dark-gray-red: #120a0b; // darker (main background) - total RGB: 39
+$darker-gray-red: #1a1011; // lighter (card background) - total RGB: 59
+
+$dark-gray-orange: #120e0a; // darker (main background) - total RGB: 42
+$darker-gray-orange: #19140f; // lighter (card background) - total RGB: 60
+
+$dark-gray-green: #09100d; // darker (main background) - total RGB: 40
+$darker-gray-green: #0f1815; // lighter (card background) - total RGB: 60
+
+$dark-gray-deep-purple: #0c0a12; // darker (main background) - total RGB: 40
+$darker-gray-deep-purple: #13101a; // lighter (card background) - total RGB: 61
+
+$dark-gray-purple: #0f0a10; // darker (main background) - total RGB: 41
+$darker-gray-purple: #160f17; // lighter (card background) - total RGB: 54
+
+$dark-gray-pink: #120a0e; // darker (main background) - total RGB: 42
+$darker-gray-pink: #190f15; // lighter (card background) - total RGB: 61
 
 $neutral-gray: #f5f5f5;
 

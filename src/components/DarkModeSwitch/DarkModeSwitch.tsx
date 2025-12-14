@@ -27,9 +27,10 @@ export const DarkModeSwitch = styled(Switch)(({ theme }) => ({
     },
   },
   '& .MuiSwitch-thumb': {
-    backgroundColor: '#001e3c',
+    backgroundColor: '#00363D',
     width: 40, // increased thumb width
     height: 40, // increased thumb height
+    outline: '1px solid #fff',
     '&::before': {
       content: "''",
       position: 'absolute',

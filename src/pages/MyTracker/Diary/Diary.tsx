@@ -160,9 +160,9 @@ export function Diary() {
           onDayChange={onDayChange}
           onDateChange={onDateChange}
         />
-        <div className='macros-accordion-container'>
+        <div className="macros-accordion-container">
           <CustomAccordion
-            title='Macros'
+            title="Macros"
             cmp={
               <LinearMacrosProgress
                 caloriesProgress={selectedDayDiary?.calories || 0}
@@ -199,15 +199,15 @@ export function Diary() {
                 <Box
                   className={`diary-meal-container ${
                     prefs.isDarkMode ? 'dark-mode' : ''
-                  }`}
+                  } ${prefs.favoriteColor || ''}`}
                   key={meal.label}
                 >
-                  <div className='header'>
-                    <div className='label-container'>
+                  <div className="header">
+                    <div className="label-container">
                       {meal.icon}
-                      <Typography variant='h6'>{meal.label}</Typography>
+                      <Typography variant="h6">{meal.label}</Typography>
                     </div>
-                    <Typography variant='body2' className='period'>
+                    <Typography variant="body2" className="period">
                       {meal.rangeLabel}
                     </Typography>
                   </div>
@@ -215,8 +215,8 @@ export function Diary() {
                     className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
                   />
                   <LoggedList mealPeriod={meal.period as MealPeriod} />
-                  <div className='meal-footer'>
-                    <Typography variant='body2' className='total-calories'>
+                  <div className="meal-footer">
+                    <Typography variant="body2" className="total-calories">
                       {`Total: ${caloriesToSet} kcal`}
                     </Typography>
                     {hasItems?.length !== 0 && (

@@ -184,7 +184,7 @@ function App() {
       <main
         className={`main ${prefs.isDarkMode ? 'dark-mode' : ''} ${
           user ? '' : 'no-user'
-        }`}
+        } ${prefs.favoriteColor || ''}`}
       >
         <SlideAnimation
           motionKey={location.pathname}

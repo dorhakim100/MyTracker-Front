@@ -6,11 +6,43 @@
   }
 
   &.dark-mode {
+    .MuiAccordion-root {
+      // Default fallback
+      background-color: $darker-gray !important;
+
+      // Color-specific accordion backgrounds (applied directly on Accordion)
+      &.blue {
+        background-color: $darker-gray-blue !important;
+      }
+      &.yellow {
+        background-color: $darker-gray-yellow !important;
+      }
+      &.red {
+        background-color: $darker-gray-red !important;
+      }
+      &.orange {
+        background-color: $darker-gray-orange !important;
+      }
+      &.green {
+        background-color: $darker-gray-green !important;
+      }
+      &.deepPurple {
+        background-color: $darker-gray-deep-purple !important;
+      }
+      &.purple {
+        background-color: $darker-gray-purple !important;
+      }
+      &.pink {
+        background-color: $darker-gray-pink !important;
+      }
+    }
+
     .MuiPaper-root.dark-mode {
-      background-color: $darker-gray;
+      // Inherit from accordion
+      background-color: inherit;
       .MuiAccordion-heading {
         button {
-          background-color: $darker-gray;
+          background-color: inherit;
 
           color: $light-gray;
 
@@ -22,9 +54,7 @@
     }
 
     .MuiCollapse-root {
-      background-color: $very-dark-gray;
-      background-color: $darker-gray;
-      //   background-color: $primary-color-darker;
+      background-color: inherit;
       color: $light-gray;
     }
   }

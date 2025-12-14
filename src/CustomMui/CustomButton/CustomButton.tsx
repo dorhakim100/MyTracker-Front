@@ -46,7 +46,7 @@ export function CustomButton({
       disabled={disabled}
       className={`custom-button-wrapper ${
         prefs.isDarkMode ? 'dark-mode' : ''
-      } ${disabled ? 'disabled' : ''}`}
+      } ${disabled ? 'disabled' : ''} ${prefs.favoriteColor || ''}`}
     >
       {isIcon ? (
         <IconButton
@@ -75,7 +75,7 @@ export function CustomButton({
         </IconButton>
       ) : (
         <Button
-          variant='contained'
+          variant="contained"
           size={size}
           fullWidth={fullWidth}
           aria-label={ariaLabel || (typeof text === 'string' ? text : 'button')}
@@ -83,7 +83,9 @@ export function CustomButton({
           disabled={disabled}
           className={`custom-button ${className || ''} ${
             prefs.favoriteColor || ''
-          } ${disabled ? 'disabled' : ''}`}
+          } ${disabled ? 'disabled' : ''} ${
+            prefs.isDarkMode ? 'dark-mode' : ''
+          }`}
         >
           {icon && isIconReverse && icon}
           {text}

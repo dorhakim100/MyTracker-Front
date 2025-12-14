@@ -7,15 +7,17 @@
   padding-bottom: 1.5em !important;
 
   &.dark-mode {
-    .MuiPaper-root,
-    .MuiBottomNavigation-root,
-    button {
-      background-color: $very-dark-gray;
+    .MuiPaper-root {
+      background-color: $darker-gray !important;
     }
 
-    button:not(.Mui-selected),
-    .MuiPaper-root {
-      background-color: $very-dark-gray;
+    .MuiBottomNavigation-root,
+    button {
+      background-color: $dark-gray;
+    }
+
+    button:not(.Mui-selected) {
+      background-color: $dark-gray;
       color: $light-gray;
     }
 
@@ -85,6 +87,8 @@
   .MuiButtonBase-root {
     // background-color: $primary-color;
     // color: $white;
+    // Styles applied via color classes
+    display: flex;
   }
 }
 .MuiSpeedDial-root {

@@ -41,6 +41,33 @@ button {
   &.dark-mode {
     background-color: $darker-gray;
     color: $white;
+
+    // Color-specific card backgrounds
+    // Note: "primary" uses default $darker-gray (no specific color case needed)
+    &.blue {
+      background-color: $darker-gray-blue;
+    }
+    &.yellow {
+      background-color: $darker-gray-yellow;
+    }
+    &.red {
+      background-color: $darker-gray-red;
+    }
+    &.orange {
+      background-color: $darker-gray-orange;
+    }
+    &.green {
+      background-color: $darker-gray-green;
+    }
+    &.deepPurple {
+      background-color: $darker-gray-deep-purple;
+    }
+    &.purple {
+      background-color: $darker-gray-purple;
+    }
+    &.pink {
+      background-color: $darker-gray-pink;
+    }
   }
 }
 
@@ -121,11 +148,116 @@ button {
 
 .MuiPaper-root:has(.MuiMenu-list).dark-mode {
   color: $white;
-  background-color: $dark-gray !important;
+}
 
-  .MuiMenu-list {
-    color: $white;
-    background-color: $dark-gray !important;
+// MUI Component Background Colors (Cards, Paper, Accordions)
+// These inherit from body color classes
+body.dark-mode {
+  // MuiCard background colors
+  &.blue .MuiCard-root {
+    background-color: $darker-gray-blue !important;
+  }
+  &.yellow .MuiCard-root {
+    background-color: $darker-gray-yellow !important;
+  }
+  &.red .MuiCard-root {
+    background-color: $darker-gray-red !important;
+  }
+  &.orange .MuiCard-root {
+    background-color: $darker-gray-orange !important;
+  }
+  &.green .MuiCard-root {
+    background-color: $darker-gray-green !important;
+  }
+  &.deepPurple .MuiCard-root {
+    background-color: $darker-gray-deep-purple !important;
+  }
+  &.purple .MuiCard-root {
+    background-color: $darker-gray-purple !important;
+  }
+  &.pink .MuiCard-root {
+    background-color: $darker-gray-pink !important;
+  }
+
+  .MuiPaper-root {
+    background-color: $darker-gray !important;
+  }
+
+  // MuiPaper background colors (excluding menus)
+  &.blue .MuiPaper-root:not(:has(.MuiMenu-list)) {
+    background-color: $darker-gray-blue !important;
+  }
+  &.yellow .MuiPaper-root:not(:has(.MuiMenu-list)) {
+    background-color: $darker-gray-yellow !important;
+  }
+  &.red .MuiPaper-root:not(:has(.MuiMenu-list)) {
+    background-color: $darker-gray-red !important;
+  }
+  &.orange .MuiPaper-root:not(:has(.MuiMenu-list)) {
+    background-color: $darker-gray-orange !important;
+  }
+  &.green .MuiPaper-root:not(:has(.MuiMenu-list)) {
+    background-color: $darker-gray-green !important;
+  }
+  &.deepPurple .MuiPaper-root:not(:has(.MuiMenu-list)) {
+    background-color: $darker-gray-deep-purple !important;
+  }
+  &.purple .MuiPaper-root:not(:has(.MuiMenu-list)) {
+    background-color: $darker-gray-purple !important;
+  }
+  &.pink .MuiPaper-root:not(:has(.MuiMenu-list)) {
+    background-color: $darker-gray-pink !important;
+  }
+
+  // MuiAccordion background colors
+  &.blue .MuiAccordion-root {
+    background-color: $darker-gray-blue !important;
+  }
+  &.yellow .MuiAccordion-root {
+    background-color: $darker-gray-yellow !important;
+  }
+  &.red .MuiAccordion-root {
+    background-color: $darker-gray-red !important;
+  }
+  &.orange .MuiAccordion-root {
+    background-color: $darker-gray-orange !important;
+  }
+  &.green .MuiAccordion-root {
+    background-color: $darker-gray-green !important;
+  }
+  &.deepPurple .MuiAccordion-root {
+    background-color: $darker-gray-deep-purple !important;
+  }
+  &.purple .MuiAccordion-root {
+    background-color: $darker-gray-purple !important;
+  }
+  &.pink .MuiAccordion-root {
+    background-color: $darker-gray-pink !important;
+  }
+  // MuiBox-root background colors
+  &.blue .MuiBox-root {
+    background-color: $darker-gray-blue !important;
+  }
+  &.yellow .MuiBox-root {
+    background-color: $darker-gray-yellow !important;
+  }
+  &.red .MuiBox-root {
+    background-color: $darker-gray-red !important;
+  }
+  &.orange .MuiBox-root {
+    background-color: $darker-gray-orange !important;
+  }
+  &.green .MuiBox-root {
+    background-color: $darker-gray-green !important;
+  }
+  &.deepPurple .MuiBox-root {
+    background-color: $darker-gray-deep-purple !important;
+  }
+  &.purple .MuiBox-root {
+    background-color: $darker-gray-purple !important;
+  }
+  &.pink .MuiBox-root {
+    background-color: $darker-gray-pink !important;
   }
 }
 
@@ -157,6 +289,8 @@ button {
     // height: 40px;
 
     svg {
+      // Icon styles applied via MUI
+      display: block;
     }
   }
 }
@@ -276,12 +410,16 @@ select {
       color: $white;
 
       &.Mui-active {
+        // Active state styles applied via color classes below
         // color: $primary-color;
+        color: inherit;
       }
     }
   }
 
   .MuiStepLabel-iconContainer {
+    // Styles applied via MUI theme
+    display: flex;
   }
   &.primary {
     .Mui-active {
@@ -432,9 +570,15 @@ select {
   &.primary {
     background-color: $primary-color !important;
     color: $white;
-
     &.disabled {
       background-color: $primary-color-dark !important;
+    }
+
+    &.dark-mode {
+      background-color: $primary-color-dark !important;
+      &.disabled {
+        background-color: $primary-color-darker !important;
+      }
     }
   }
 
@@ -445,26 +589,42 @@ select {
     &.disabled {
       background-color: $picker-color-blue-dark !important;
     }
+    &.dark-mode {
+      background-color: $picker-color-blue-dark !important;
+      &.disabled {
+        background-color: $picker-color-blue-darker !important;
+      }
+    }
   }
 
   &.red {
     background-color: $picker-color-red !important;
     color: $white;
-
     &.disabled {
       background-color: $picker-color-red-dark !important;
+    }
+    &.dark-mode {
+      background-color: $picker-color-red-dark !important;
+      &.disabled {
+        background-color: $picker-color-red-darker !important;
+      }
     }
   }
 
   &.yellow {
     background-color: $picker-color-yellow !important;
     color: $black;
-    svg {
-      color: $dark-gray;
-    }
-
     &.disabled {
       background-color: $picker-color-yellow-dark !important;
+    }
+    &.dark-mode {
+      background-color: $picker-color-yellow-dark !important;
+      &.disabled {
+        background-color: $picker-color-yellow-darker !important;
+      }
+    }
+    svg {
+      color: $dark-gray;
     }
   }
 
@@ -475,6 +635,12 @@ select {
     &.disabled {
       background-color: $picker-color-green-dark !important;
     }
+    &.dark-mode {
+      background-color: $picker-color-green-dark !important;
+      &.disabled {
+        background-color: $picker-color-green-darker !important;
+      }
+    }
   }
   &.orange {
     background-color: $picker-color-orange !important;
@@ -482,6 +648,12 @@ select {
 
     &.disabled {
       background-color: $picker-color-orange-dark !important;
+    }
+    &.dark-mode {
+      background-color: $picker-color-orange-dark !important;
+      &.disabled {
+        background-color: $picker-color-orange-darker !important;
+      }
     }
   }
 
@@ -492,13 +664,25 @@ select {
     &.disabled {
       background-color: $picker-color-deep-purple-dark !important;
     }
+    &.dark-mode {
+      background-color: $picker-color-deep-purple-dark !important;
+      &.disabled {
+        background-color: $picker-color-deep-purple-darker !important;
+      }
+    }
   }
   &.purple {
     background-color: $picker-color-purple !important;
     color: $white;
-
     &.disabled {
       background-color: $picker-color-purple-dark !important;
+    }
+
+    &.dark-mode {
+      background-color: $picker-color-purple-dark !important;
+      &.disabled {
+        background-color: $picker-color-purple-darker !important;
+      }
     }
   }
   &.pink {
@@ -508,10 +692,90 @@ select {
     &.disabled {
       background-color: $picker-color-pink-dark !important;
     }
+    &.dark-mode {
+      background-color: $picker-color-pink-dark !important;
+      &.disabled {
+        background-color: $picker-color-pink-darker !important;
+      }
+    }
   }
 }
 
 // Bottom Navigation setup
+
+.fixed-bottom-navigation {
+  .dark-mode {
+    .primary {
+      .MuiPaper-root {
+        background-color: $darker-gray !important;
+      }
+    }
+  }
+}
+
+.MuiBottomNavigation-root {
+  &.dark-mode {
+    background-color: $darker-gray !important;
+    button {
+      background-color: $darker-gray !important;
+      // background-color: $darker-gray !important;
+    }
+
+    &.blue {
+      background-color: $darker-gray-blue !important;
+      button {
+        background-color: $darker-gray-blue !important;
+      }
+    }
+    &.red {
+      background-color: $darker-gray-red !important;
+      button {
+        background-color: $darker-gray-red !important;
+      }
+    }
+    &.yellow {
+      background-color: $darker-gray-yellow !important;
+      button {
+        background-color: $darker-gray-yellow !important;
+      }
+    }
+    &.green {
+      background-color: $darker-gray-green !important;
+      button {
+        background-color: $darker-gray-green !important;
+      }
+    }
+    &.orange {
+      background-color: $darker-gray-orange !important;
+      button {
+        background-color: $darker-gray-orange !important;
+      }
+    }
+    &.deepPurple {
+      background-color: $darker-gray-deep-purple !important;
+      button {
+        background-color: $darker-gray-deep-purple !important;
+      }
+    }
+    &.purple {
+      background-color: $darker-gray-purple !important;
+    }
+    &.pink {
+      background-color: $darker-gray-pink !important;
+      button {
+        background-color: $darker-gray-pink !important;
+      }
+    }
+  }
+}
+
+.fixed-bottom-navigation {
+  &.dark-mode {
+    .MuiPaper-root {
+      background-color: $dark-gray !important;
+    }
+  }
+}
 
 .MuiBottomNavigationAction-root.Mui-selected,
 .MuiTypography-h3 {
@@ -584,6 +848,8 @@ select {
 
 .MuiSpeedDial-root {
   &.dark-mode {
+    // Dark mode styles applied via color classes below
+    color: inherit;
   }
   &.primary {
     .MuiFab-circular {

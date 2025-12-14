@@ -195,7 +195,7 @@ export function FixedBottomNavigation(props: {
         ref={ref}
         className={`fixed-bottom-navigation ${
           prefs.isDarkMode ? 'dark-mode' : ''
-        }`}
+        } ${prefs.favoriteColor}`}
       >
         <CssBaseline />
 
@@ -207,6 +207,7 @@ export function FixedBottomNavigation(props: {
             right: 0,
             zIndex: 1000,
             height: '100px',
+
             // paddingBottom: '1.5em',
           }}
           elevation={3}
@@ -220,6 +221,9 @@ export function FixedBottomNavigation(props: {
               onChange={(_, newValue) => {
                 setValue(newValue)
               }}
+              className={`${prefs.favoriteColor} ${
+                prefs.isDarkMode ? 'dark-mode' : ''
+              }`}
             >
               {leftRoutes.map((route, index) => {
                 if (!route) return null

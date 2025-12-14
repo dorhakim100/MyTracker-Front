@@ -65,10 +65,13 @@ export function CustomAccordion({
     <div
       className={`custom-accordion ${className ? className : ''}
     ${prefs.isDarkMode ? 'dark-mode' : ''}
+    ${prefs.favoriteColor ? prefs.favoriteColor : ''}
     `}
     >
       <Accordion
-        className={prefs.isDarkMode ? 'dark-mode' : ''}
+        className={`${prefs.isDarkMode ? 'dark-mode' : ''} ${
+          prefs.favoriteColor ? prefs.favoriteColor : ''
+        }`}
         disableGutters={disableGutters}
         square={square}
         {...accordionProps}
@@ -78,11 +81,11 @@ export function CustomAccordion({
           aria-controls={`${summaryId}-content`}
           id={`${summaryId}-header`}
         >
-          <span className='accordion-icon'>{icon}</span>
+          <span className="accordion-icon">{icon}</span>
           {typeof title === 'string' ? <Typography>{title}</Typography> : title}
         </AccordionSummary>
         <AccordionDetails>
-          <div className='accordion-content'>{cmp}</div>
+          <div className="accordion-content">{cmp}</div>
         </AccordionDetails>
       </Accordion>
     </div>

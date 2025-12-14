@@ -22,7 +22,7 @@ import SignInIcon from '@mui/icons-material/Login'
 import UserIcon from '@mui/icons-material/Person'
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter'
 
-export const mainRoutes = ['/', '/diary', '/workouts', '/user']
+export const mainRoutes = ['/', '/diary', '/lift-mate/workouts', '/user']
 
 export const routes: Route[] = [
   {
@@ -41,7 +41,7 @@ export const routes: Route[] = [
   },
   {
     title: 'Workouts',
-    path: '/workouts',
+    path: '/lift-mate/workouts',
     element: Workouts,
     icon: FitnessCenterIcon,
     app: 'all',
