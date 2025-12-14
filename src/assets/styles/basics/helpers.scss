@@ -254,32 +254,105 @@ body.dark-mode {
 
   .MuiPaper-root {
     background-color: $darker-gray !important;
+
+    &.MuiAlert-root {
+      background-color: $menu-bg !important;
+
+      color: $primary-color-light !important;
+      svg {
+        fill: $primary-color-light !important;
+      }
+    }
   }
 
   // MuiPaper background colors (excluding menus)
   &.blue .MuiPaper-root:not(:has(.MuiMenu-list)) {
     background-color: $darker-gray-blue !important;
+
+    &.MuiAlert-root {
+      color: $picker-color-blue-light !important;
+      background-color: $menu-bg-blue !important;
+      svg {
+        fill: $picker-color-blue-light !important;
+      }
+    }
   }
   &.yellow .MuiPaper-root:not(:has(.MuiMenu-list)) {
     background-color: $darker-gray-yellow !important;
+
+    &.MuiAlert-root {
+      background-color: $menu-bg-yellow !important;
+      color: $picker-color-yellow-light !important;
+      svg {
+        fill: $picker-color-yellow-light !important;
+      }
+    }
   }
   &.red .MuiPaper-root:not(:has(.MuiMenu-list)) {
     background-color: $darker-gray-red !important;
+
+    &.MuiAlert-root {
+      background-color: $menu-bg-red !important;
+      color: $picker-color-red-light !important;
+      svg {
+        fill: $picker-color-red-light !important;
+      }
+    }
   }
   &.orange .MuiPaper-root:not(:has(.MuiMenu-list)) {
     background-color: $darker-gray-orange !important;
+
+    &.MuiAlert-root {
+      background-color: $menu-bg-orange !important;
+      color: $picker-color-orange-light !important;
+      svg {
+        fill: $picker-color-orange-light !important;
+      }
+    }
   }
   &.green .MuiPaper-root:not(:has(.MuiMenu-list)) {
     background-color: $darker-gray-green !important;
+
+    &.MuiAlert-root {
+      background-color: $menu-bg-green !important;
+      color: $picker-color-green-light !important;
+      svg {
+        fill: $picker-color-green-light !important;
+      }
+    }
   }
   &.deepPurple .MuiPaper-root:not(:has(.MuiMenu-list)) {
     background-color: $darker-gray-deep-purple !important;
+
+    &.MuiAlert-root {
+      background-color: $menu-bg-deep-purple !important;
+      color: $picker-color-deep-purple-light !important;
+      svg {
+        fill: $picker-color-deep-purple-light !important;
+      }
+    }
   }
   &.purple .MuiPaper-root:not(:has(.MuiMenu-list)) {
     background-color: $darker-gray-purple !important;
+
+    &.MuiAlert-root {
+      background-color: $menu-bg-purple !important;
+      color: $picker-color-purple-light !important;
+      svg {
+        fill: $picker-color-purple-light !important;
+      }
+    }
   }
   &.pink .MuiPaper-root:not(:has(.MuiMenu-list)) {
     background-color: $darker-gray-pink !important;
+
+    &.MuiAlert-root {
+      background-color: $menu-bg-pink !important;
+      color: $picker-color-pink-light !important;
+      svg {
+        fill: $picker-color-pink-light !important;
+      }
+    }
   }
 
   // MuiAccordion background colors
@@ -484,8 +557,8 @@ select {
 
       &.Mui-active {
         // Active state styles applied via color classes below
-        // color: $primary-color;
-        color: inherit;
+        color: $primary-color;
+        // color: inherit;
       }
     }
   }
