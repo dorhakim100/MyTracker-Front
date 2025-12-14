@@ -268,7 +268,7 @@ export default function LineChart({
       const estimatedValue = (ds.data as SeriesValue[])[index]
       const isBaselineHit = ds.label === baselineLabel
       const isMovingAverage = ds.label === 'Moving Average'
-      setClickedIndex(index)
+      // setClickedIndex(index)
 
       if (isMovingAverage) {
         const firstDs = chart.data.datasets[0]
@@ -298,7 +298,7 @@ export default function LineChart({
       typeof v === 'number' ? Math.round(v) : data.labels.indexOf(v as string)
     if (idx < 0) return
     if (idx >= data.labels.length) idx = data.labels.length - 1
-    setClickedIndex(idx)
+    // setClickedIndex(idx)
 
     const firstDs = chart.data.datasets[0]
     const val = (firstDs?.data as SeriesValue[] | undefined)?.[idx]
