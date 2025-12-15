@@ -235,24 +235,22 @@ export function Workouts() {
             text="Start Empty Workout"
             // onClick={() => setDialogOptions({ open: true, type: EDIT })}
             icon={<Add />}
-            isIconReverse={true}
             className={`${prefs.favoriteColor} empty-workout-button`}
             fullWidth={true}
           />
         </div>
         <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
-        <div className="workouts-header">
+        <div className="workouts-header routines">
           <Typography variant="h5" className="bold-header">
             Routines
           </Typography>
-          <div className="buttons-container">
-            <CustomButton
-              text={ADD_ROUTINE_BUTTON}
-              onClick={() => setDialogOptions({ open: true, type: EDIT })}
-              icon={<Add />}
-              fullWidth={true}
-            />
-          </div>
+
+          <CustomButton
+            text={ADD_ROUTINE_BUTTON}
+            onClick={() => setDialogOptions({ open: true, type: EDIT })}
+            icon={<Add />}
+            fullWidth={true}
+          />
         </div>
         <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
         {renderWorkoutLists()}

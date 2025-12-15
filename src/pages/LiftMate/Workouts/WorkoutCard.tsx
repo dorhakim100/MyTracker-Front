@@ -10,17 +10,26 @@ import { capitalizeFirstLetter } from '../../../services/util.service'
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
 import PlayCircleFilledWhiteIcon from '@mui/icons-material/PlayCircleFilledWhite'
 
+import { CustomOptionsMenu } from '../../../CustomMui/CustomOptionsMenu/CustomOptionsMenu'
+import { DropdownOption } from '../../../types/DropdownOption'
 interface WorkoutCardProps {
   workout: Workout
   className?: string
 }
 
+const options: DropdownOption[] = [
+  {
+    title: 'Start Routine',
+    onClick: () => {
+      console.log('start routine')
+    },
+  },
+]
+
 export function WorkoutCard({ workout, className }: WorkoutCardProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
-
-  console.log(workout)
 
   return (
     <Card
@@ -30,7 +39,12 @@ export function WorkoutCard({ workout, className }: WorkoutCardProps) {
     >
       <div className="header-container">
         <Typography variant="h6">{workout.name}</Typography>
-        <CustomButton isIcon={true} icon={<MoreHorizIcon />} />
+        <CustomOptionsMenu
+          options={options}
+          triggerElement={
+            <CustomButton isIcon={true} icon={<MoreHorizIcon />} />
+          }
+        />
       </div>
       <Typography
         variant="body1"
@@ -50,11 +64,7 @@ export function WorkoutCard({ workout, className }: WorkoutCardProps) {
           .join(', ')}
       </Typography>
       <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
-      <CustomButton
-        text="Start Routine"
-        icon={<PlayCircleFilledWhiteIcon />}
-        fullWidth={true}
-      />
+      <CustomButton text="Start Routine" fullWidth={true} />
     </Card>
   )
 }

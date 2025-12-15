@@ -10,6 +10,13 @@
     // align-items: center;
 
     margin: 1rem 0;
+
+    &.routines {
+      // grid-template-columns: auto 1fr;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
   }
 
   .divider {
