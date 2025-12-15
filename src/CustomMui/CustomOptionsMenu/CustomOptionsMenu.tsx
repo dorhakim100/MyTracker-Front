@@ -12,6 +12,7 @@ interface CustomOptionsMenuProps {
   options: DropdownOption[]
   triggerElement: React.ReactNode
   className?: string
+  onClick?: (item: any) => void
 }
 
 const StyledMenu = styled((props: MenuProps) => (
@@ -64,6 +65,7 @@ export function CustomOptionsMenu({
   options,
   triggerElement,
   className,
+  onClick,
 }: CustomOptionsMenuProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -77,6 +79,9 @@ export function CustomOptionsMenu({
     if (open) return
     setAnchorEl(event.currentTarget)
     setOpen(true)
+    if (onClick) {
+      onClick(event)
+    }
   }
   const handleClose = () => {
     setAnchorEl(null)

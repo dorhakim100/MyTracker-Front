@@ -13,6 +13,7 @@ export const messages = {
     saveWorkout: 'Workout saved successfully',
     updateRequest: 'Request handled successfully',
     addSet: 'Set added successfully',
+    deleteWorkout: 'Workout deleted successfully',
   },
   error: {
     updateCalories: 'Failed to update calories',

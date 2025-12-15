@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 
 import {
   loadWorkouts,
+  removeWorkout,
   toggleActivateWorkout,
 } from '../../../store/actions/workout.action'
 
@@ -18,18 +19,22 @@ import {
   capitalizeFirstLetter,
   getDateFromISO,
 } from '../../../services/util.service'
-import { EditIcon } from '../../../components/EditIcon/EditIcon'
 import { DeleteAction } from '../../../components/DeleteAction/DeleteAction'
 import { messages } from '../../../assets/config/messages'
-import { showErrorMsg } from '../../../services/event-bus.service'
+import {
+  showErrorMsg,
+  showSuccessMsg,
+} from '../../../services/event-bus.service'
 import { WorkoutDetails } from '../../../components/WorkoutDetails/WorkoutDetails'
-import { Checkbox, Divider, Typography } from '@mui/material'
-import { Add } from '@mui/icons-material'
+import { Divider, Typography } from '@mui/material'
+import { Add, Check, Delete, Edit } from '@mui/icons-material'
 import { workoutService } from '../../../services/workout/workout.service'
 import { MONTH_IN_MS } from '../../../assets/config/times'
 import { DateRangeController } from '../../../components/DateRangeController/DateRangeController'
-import { WorkoutCard } from './WorkoutCard'
 import { WorkoutsList } from './WorkoutsList'
+import { CustomOptionsMenu } from '../../../CustomMui/CustomOptionsMenu/CustomOptionsMenu'
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
+import { DropdownOption } from '../../../types/DropdownOption'
 
 const EDIT = 'edit'
 const DETAILS = 'details'
@@ -37,7 +42,6 @@ const DETAILS = 'details'
 const EDIT_TITLE = 'Edit Workout'
 const CREATE_TITLE = 'Create Workout'
 const DETAILS_TITLE = 'Workout Details'
-const ADD_BUTTON = 'Add'
 const ADD_ROUTINE_BUTTON = 'Add Routine'
 
 type dialogType = typeof EDIT | typeof DETAILS
@@ -77,6 +81,42 @@ export function Workouts() {
     to: getDateFromISO(new Date().toISOString()),
   })
 
+  const [selectedWorkoutForOptions, setSelectedWorkoutForOptions] =
+    useState<Workout | null>(null)
+
+  const pastWorkoutOptions: DropdownOption[] = useMemo(
+    () => [
+      {
+        title: 'Activate',
+        icon: <Check />,
+        onClick: () => {
+          if (selectedWorkoutForOptions) {
+            toggleActivateWorkout(selectedWorkoutForOptions)
+          }
+        },
+      },
+      {
+        title: 'Edit',
+        icon: <Edit />,
+        onClick: () => {
+          if (selectedWorkoutForOptions) {
+            onOpenEdit(selectedWorkoutForOptions)
+          }
+        },
+      },
+      {
+        title: 'Delete',
+        icon: <Delete />,
+        onClick: () => {
+          if (selectedWorkoutForOptions) {
+            onDeleteWorkout(selectedWorkoutForOptions, false)
+          }
+        },
+      },
+    ],
+    [onDeleteWorkout, onOpenEdit, selectedWorkoutForOptions]
+  )
+
   useEffect(() => {
     if (traineeUser) {
       loadWorkouts({
@@ -100,7 +140,7 @@ export function Workouts() {
     }
   }, [user, traineeUser, selectedPastDate])
 
-  const onOpenEdit = (workout: Workout) => {
+  function onOpenEdit(workout: Workout) {
     setDialogOptions({ open: true, type: EDIT })
     setSelectedWorkout(workout)
   }
@@ -110,15 +150,25 @@ export function Workouts() {
     setDialogOptions({ open: true, type: DETAILS })
   }
 
-  const closeEdit = () => {
+  function closeEdit() {
     setDialogOptions({ open: false, type: null })
     setSelectedWorkout(null)
   }
 
-  async function onDeleteWorkout(workout: Workout) {
+  async function onDeleteWorkout(
+    workout: Workout,
+    isSwipeable: boolean = true
+  ) {
     try {
       if (!workout._id) return showErrorMsg(messages.error.deleteWorkout)
-      await workoutService.remove(workout._id)
+
+      if (!isSwipeable) {
+        await removeWorkout(workout._id)
+        setSelectedWorkoutForOptions(null)
+      } else {
+        await workoutService.remove(workout._id)
+      }
+      showSuccessMsg(messages.success.deleteWorkout)
     } catch (err) {
       console.error(err)
       showErrorMsg(messages.error.deleteWorkout)
@@ -194,21 +244,15 @@ export function Workouts() {
           }
           onItemClick={(workout) => onOpenDetails(workout)}
           renderRight={(workout) => (
-            <div className="actions-container">
-              <EditIcon
-                onClick={() => {
-                  onOpenEdit(workout)
-                }}
-              />
-              <Checkbox
-                className={`${prefs.favoriteColor}`}
-                checked={workout.isActive}
-                onClick={(ev) => {
-                  ev.stopPropagation()
-                  toggleActivateWorkout(workout)
-                }}
-              />
-            </div>
+            <CustomOptionsMenu
+              options={pastWorkoutOptions}
+              triggerElement={
+                <CustomButton isIcon={true} icon={<MoreHorizIcon />} />
+              }
+              onClick={() => {
+                setSelectedWorkoutForOptions(workout)
+              }}
+            />
           )}
           isSwipeable={true}
           renderRightSwipeActions={(workout) => (
