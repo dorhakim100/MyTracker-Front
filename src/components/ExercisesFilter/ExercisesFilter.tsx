@@ -4,6 +4,7 @@ import { CustomInput } from '../../CustomMui/CustomInput/CustomInput'
 import { CustomSelect } from '../../CustomMui/CustomSelect/CustomSelect'
 import { musclesValues, musclesImgs } from '../../assets/config/muscles'
 import './styles/ExercisesFilter.scss'
+import { Barbell } from '../Icons/Barbell'
 
 interface ExercisesFilterProps {
   searchValue: string
@@ -42,6 +43,21 @@ export function ExercisesFilter({
         values={musclesValues}
         className={`${prefs.favoriteColor}`}
         imgs={musclesImgs}
+      />
+
+      <CustomSelect
+        value={'All'}
+        // onChange={(value: string) => onEquipmentChange(value as Equipment)}
+        label="Equipment"
+        values={[
+          'All',
+          'Barbell',
+          'Dumbbell',
+          'Machine',
+          'Bodyweight',
+          'Other',
+        ]}
+        className={`${prefs.favoriteColor}`}
       />
     </div>
   )

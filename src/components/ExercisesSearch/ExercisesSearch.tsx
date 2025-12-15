@@ -29,29 +29,13 @@ export function ExercisesSearch({
 
   return (
     <div className="exercise-search-container">
-      <div className="exercises-filter-container">
-        {/* <CustomInput
-          value={value}
-          onChange={onChange}
-          placeholder={placeholder}
-          isRemoveIcon={true}
-          className={`${prefs.favoriteColor} ${className}`}
-        />
-        <CustomSelect
-          value={value}
-          onChange={onChange}
-          label="Muscle Group"
-          values={musclesValues}
-          className={`${prefs.favoriteColor} ${className}`}
-          imgs={musclesImgs}
-        /> */}
-        <ExercisesFilter
-          searchValue={value}
-          onSearchChange={onChange}
-          muscleGroupValue={value}
-          onMuscleGroupChange={onChange}
-        />
-      </div>
+      <ExercisesFilter
+        searchValue={value}
+        onSearchChange={onChange}
+        muscleGroupValue={value}
+        onMuscleGroupChange={onChange}
+      />
+
       <CustomList
         items={results}
         renderPrimaryText={(exercise) => exercise.name}

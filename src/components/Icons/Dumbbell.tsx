@@ -1,4 +1,3 @@
-import DumbbellIcon from '../../../public/dumbbell.svg?react'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 
