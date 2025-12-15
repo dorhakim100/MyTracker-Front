@@ -15,8 +15,11 @@ export function AppHeader() {
   return (
     <>
       <header className={`app-header ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
-        {/* <img src={logo} alt="logo" /> */}
-        <div className='app-select-container'>
+        <img src={apps.myTracker.logo} alt="logo" />
+        <span className={`app-name ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
+          {apps.myTracker.name}
+        </span>
+        {/* <div className='app-select-container'>
           <Select
             labelId='header-select-label'
             id='header-select'
@@ -37,7 +40,7 @@ export function AppHeader() {
               </MenuItem>
             ))}
           </Select>
-        </div>
+        </div> */}
       </header>
     </>
   )

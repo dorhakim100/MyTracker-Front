@@ -17,10 +17,10 @@ export interface Route {
 }
 
 import DashboardIcon from '@mui/icons-material/Dashboard'
-import FormatListBulletedAddIcon from '@mui/icons-material/FormatListBulletedAdd'
 import SignInIcon from '@mui/icons-material/Login'
 import UserIcon from '@mui/icons-material/Person'
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter'
+import FastfoodIcon from '@mui/icons-material/Fastfood'
 
 export const mainRoutes = ['/', '/diary', '/lift-mate/workouts', '/user']
 
@@ -36,7 +36,7 @@ export const routes: Route[] = [
     title: 'Food',
     path: '/diary',
     element: Diary,
-    icon: FormatListBulletedAddIcon,
+    icon: FastfoodIcon,
     app: 'all',
   },
   {

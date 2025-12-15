@@ -7,14 +7,18 @@
 
   padding: 0.5em;
 
-  display: grid;
-  grid-template-columns: 1fr 20px;
+  // display: grid;
+  // grid-template-columns: 1fr 20px;
+  // align-items: center;
+
+  display: flex;
   align-items: center;
+  gap: 0.5em;
 
   background-color: $light-gray;
 
   &.dark-mode {
-    background-color: $primary-color-darker;
+    background-color: $darker-gray;
 
     svg {
       color: $white;
