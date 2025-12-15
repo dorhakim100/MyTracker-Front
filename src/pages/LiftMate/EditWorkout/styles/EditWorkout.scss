@@ -24,6 +24,16 @@
     &.name-exercises-stage {
       // height: 400px;
       // height: calc(100vh - $header-height);
+
+      .no-exercises-container {
+        justify-self: center;
+        display: grid;
+        .dumbbell {
+          width: 100px;
+          height: 100px;
+          justify-self: center;
+        }
+      }
     }
 
     &.name-stage {
