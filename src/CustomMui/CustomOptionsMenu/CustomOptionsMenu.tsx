@@ -1,9 +1,7 @@
 import * as React from 'react'
-import Button from '@mui/material/Button'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import { DropdownOption } from '../../types/DropdownOption'
-import { CustomButton } from '../CustomButton/CustomButton'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 
@@ -56,14 +54,17 @@ export function CustomOptionsMenu({
         {options.map((option) => (
           <MenuItem
             key={option.title}
-            className={`${prefs.isDarkMode ? 'dark-mode' : ''}`}
+            className={`${
+              prefs.isDarkMode ? 'dark-mode' : ''
+            } option-menu-item`}
             onClick={(ev) => {
               ev.stopPropagation()
               option.onClick()
               handleClose()
             }}
           >
-            {option.title}
+            <span className="option-menu-item-title">{option.title}</span>
+            <span className="option-menu-item-icon">{option.icon}</span>
           </MenuItem>
         ))}
       </Menu>

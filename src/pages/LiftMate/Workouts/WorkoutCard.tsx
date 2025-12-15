@@ -8,10 +8,12 @@ import { RootState } from '../../../store/store'
 import { CustomButton } from '../../../CustomMui/CustomButton/CustomButton'
 import { capitalizeFirstLetter } from '../../../services/util.service'
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
-import PlayCircleFilledWhiteIcon from '@mui/icons-material/PlayCircleFilledWhite'
+import EditIcon from '@mui/icons-material/Edit'
 
 import { CustomOptionsMenu } from '../../../CustomMui/CustomOptionsMenu/CustomOptionsMenu'
 import { DropdownOption } from '../../../types/DropdownOption'
+import Edit from '@mui/icons-material/Edit'
+import Delete from '@mui/icons-material/Delete'
 interface WorkoutCardProps {
   workout: Workout
   className?: string
@@ -19,9 +21,17 @@ interface WorkoutCardProps {
 
 const options: DropdownOption[] = [
   {
-    title: 'Start Routine',
+    title: 'Edit',
+    icon: <Edit />,
     onClick: () => {
       console.log('start routine')
+    },
+  },
+  {
+    title: 'Delete',
+    icon: <Delete />,
+    onClick: () => {
+      console.log('delete workout')
     },
   },
 ]
