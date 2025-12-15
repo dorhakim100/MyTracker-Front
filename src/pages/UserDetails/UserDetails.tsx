@@ -29,6 +29,8 @@ import {
   REJECTED_STATUS,
 } from '../../assets/config/request-statuses'
 
+import { WeightChart } from '../../components/WeightChart/WeightChart'
+
 export function UserDetails() {
   const prefs = useSelector(
     (storeState: RootState) => storeState.systemModule.prefs
@@ -129,8 +131,9 @@ export function UserDetails() {
     >
       <ProfileCard />
 
-      <div className='content-container'>
+      <div className="content-container">
         <WeightCard />
+        <WeightChart />
 
         {requests.length > 0 && (
           <TrainerRequestCard
@@ -153,7 +156,7 @@ export function UserDetails() {
           fullWidth
           onClick={() => logout()}
           className={`${prefs.favoriteColor}`}
-          text='Logout'
+          text="Logout"
         />
       </div>
     </div>

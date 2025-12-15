@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { ReactNode } from 'react'
 import { useSelector } from 'react-redux'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Pagination } from 'swiper/modules'
@@ -6,138 +6,74 @@ import { Pagination } from 'swiper/modules'
 import 'swiper/css'
 import 'swiper/css/pagination'
 
-import { CaloriesProgress } from '../CaloriesProgress/CaloriesProgress'
-import { MacrosDistribution } from '../MacrosDistribution/MacrosDistribution'
-import { MacrosProgress } from '../MacrosProgress/MacrosProgress'
 import { RootState } from '../../store/store'
 import { Card } from '@mui/material'
 import { CustomSkeleton } from '../../CustomMui/CustomSkeleton/CustomSkeleton'
 
-export function StatsCarousel() {
-  const user = useSelector(
-    (stateSelector: RootState) => stateSelector.userModule.user
-  )
+interface StatsCarouselProps {
+  items: ReactNode[]
+  showSkeleton?: boolean
+  skeletonComponent?: ReactNode
+  className?: string
+}
 
-  const [macros, setMacros] = useState({
-    protein: { percentage: 0, gram: 0 },
-    carbs: { percentage: 0, gram: 0 },
-    fats: { percentage: 0, gram: 0 },
-  })
-
-  const [calories, setCalories] = useState(user?.loggedToday?.calories || 0)
-
-  useEffect(() => {
-    if (!user || !user?.loggedToday) return
-
-    const protein = user?.loggedToday?.logs.reduce(
-      (acc, log) => acc + log.macros.protein,
-      0
-    )
-    const carbs = user?.loggedToday?.logs.reduce(
-      (acc, log) => acc + log.macros.carbs,
-      0
-    )
-    const fats = user?.loggedToday?.logs.reduce(
-      (acc, log) => acc + log.macros.fat,
-      0
-    )
-    const macrosToSet = {
-      protein: {
-        percentage: getPercentage(protein, user?.currGoal?.macros.protein),
-        gram: user?.currGoal?.macros.protein,
-      },
-      carbs: {
-        percentage: getPercentage(carbs, user?.currGoal?.macros.carbs),
-        gram: user?.currGoal?.macros.carbs,
-      },
-      fats: {
-        percentage: getPercentage(fats, user?.currGoal?.macros.fat),
-        gram: user?.currGoal?.macros.fat,
-      },
-    }
-    setMacros(macrosToSet)
-  }, [user])
-
-  useEffect(() => {
-    const caloriesToSet = user?.loggedToday?.calories
-    if (!caloriesToSet && caloriesToSet !== 0) return
-    const newCalories = caloriesToSet
-    setCalories(newCalories)
-  }, [user?.loggedToday?.calories])
-
-  function getPercentage(value: number, goal: number) {
-    return (value / goal) * 100
-  }
-
+export function StatsCarousel({
+  items,
+  showSkeleton = false,
+  skeletonComponent,
+  className = '',
+}: StatsCarouselProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
 
-  if (!user)
+  // Show skeleton if requested or if no items provided
+  if (showSkeleton || items.length === 0) {
+    if (skeletonComponent) {
+      return <>{skeletonComponent}</>
+    }
+
     return (
       <Card
         className={`card calories-progress skeleton ${
           prefs.isDarkMode ? 'dark-mode' : ''
-        }`}
+        } ${className}`}
       >
         <CustomSkeleton
-          variant='text'
-          width='50%'
+          variant="text"
+          width="50%"
           height={30}
-          className='title'
+          className="title"
           isDarkMode={prefs.isDarkMode}
         />
         <CustomSkeleton
-          variant='circular'
-          width='150px'
-          height='150px'
-          className='circular-progress'
+          variant="circular"
+          width="150px"
+          height="150px"
+          className="circular-progress"
           isDarkMode={prefs.isDarkMode}
         />
-
         <CustomSkeleton
-          variant='rectangular'
-          width='150px'
-          height='40px'
-          className='goal-container'
+          variant="rectangular"
+          width="150px"
+          height="40px"
+          className="goal-container"
           isDarkMode={prefs.isDarkMode}
         />
       </Card>
     )
+  }
 
-  if (user)
-    return (
-      <Swiper
-        spaceBetween={30}
-        pagination={{ clickable: true }}
-        modules={[Pagination]}
-        className='stats-carousel'
-      >
-        <SwiperSlide>
-          <CaloriesProgress
-            percentageValue={calories / user.currGoal?.dailyCalories}
-            // percentageValue={calories / 2500}
-            current={calories}
-            goal={user.currGoal?.dailyCalories}
-            // goal={2500}
-          />
-        </SwiperSlide>
-
-        <SwiperSlide>
-          <MacrosProgress
-            protein={macros.protein}
-            carbs={macros.carbs}
-            fats={macros.fats}
-          />
-        </SwiperSlide>
-
-        <SwiperSlide>
-          <MacrosDistribution
-            protein={macros.protein.gram}
-            carbs={macros.carbs.gram}
-            fats={macros.fats.gram}
-          />
-        </SwiperSlide>
-      </Swiper>
-    )
+  return (
+    <Swiper
+      spaceBetween={30}
+      pagination={{ clickable: true }}
+      modules={[Pagination]}
+      className={`stats-carousel ${className}`}
+    >
+      {items.map((item, index) => (
+        <SwiperSlide key={index}>{item}</SwiperSlide>
+      ))}
+    </Swiper>
+  )
 }
