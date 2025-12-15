@@ -5,6 +5,7 @@ import { Exercise } from '../../types/exercise/Exercise'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import { CustomList } from '../../CustomMui/CustomList/CustomList'
 import { CustomSelect } from '../../CustomMui/CustomSelect/CustomSelect'
+import { musclesValues, musclesImgs } from '../../assets/config/muscles'
 
 interface ExercisesSearchProps {
   value: string
@@ -27,7 +28,7 @@ export function ExercisesSearch({
 
   return (
     <div className="exercise-search-container">
-      <div className="filter-container">
+      <div className="exercises-filter-container">
         <CustomInput
           value={value}
           onChange={onChange}
@@ -39,29 +40,9 @@ export function ExercisesSearch({
           value={value}
           onChange={onChange}
           label="Muscle Group"
-          values={[
-            'All',
-            'Chest',
-            'Lats',
-            'Quads',
-            'Glutes',
-            'Calves',
-            'Hamstrings',
-            'Abs',
-            'Shoulders',
-          ]}
+          values={musclesValues}
           className={`${prefs.favoriteColor} ${className}`}
-          imgs={[
-            { value: 'All', src: '/public/muscles/all.webp' },
-            { value: 'Chest', src: '/public/muscles/chest.webp' },
-            { value: 'Lats', src: '/public/muscles/lats.webp' },
-            { value: 'Quads', src: '/public/muscles/quads.webp' },
-            { value: 'Glutes', src: '/public/muscles/glutes.webp' },
-            { value: 'Calves', src: '/public/muscles/calves.webp' },
-            { value: 'Hamstrings', src: '/public/muscles/hamstrings.webp' },
-            { value: 'Abs', src: '/public/muscles/abs.webp' },
-            { value: 'Shoulders', src: '/public/muscles/shoulders.webp' },
-          ]}
+          imgs={musclesImgs}
         />
       </div>
       <CustomList
