@@ -340,7 +340,25 @@ export function EditWorkout({
           />
         )
       case 'Name, Exercises':
-        return <NameExercises workout={workout} onNameChange={onNameChange} />
+        return (
+          <NameExercises
+            workout={workout}
+            onNameChange={onNameChange}
+            exerciseFilter={exerciseFilter}
+            exerciseResults={exerciseResults}
+            onExerciseFilterChange={onExerciseFilterChangeTxt}
+            onAddExercise={onAddExercise}
+            onDeleteExercise={onDeleteExercise}
+            onReorderExercises={onReorderExercises}
+            renderErrorImage={(exercise) =>
+              imageService.renderErrorExerciseImage(
+                exercise,
+                exerciseResults,
+                setExerciseResults
+              )
+            }
+          />
+        )
       case 'exercises':
         return (
           <ExercisesStage

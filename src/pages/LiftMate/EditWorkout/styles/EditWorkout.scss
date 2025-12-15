@@ -36,6 +36,12 @@
       }
     }
 
+    .exercises-stage {
+      padding: 1rem;
+      .search-exercise-input {
+      }
+    }
+
     &.name-stage {
       // TODO: Add styles for name stage
 
@@ -87,94 +93,94 @@
       }
     }
 
-    &.exercises-stage {
-      .search-exercise-list,
-      .selected-exercise-list {
-        // max-height: 250px;
-        // height: 100%;
-        overflow-y: auto;
+    // &.exercises-stage {
+    //   .search-exercise-list,
+    //   .selected-exercise-list {
+    //     // max-height: 250px;
+    //     // height: 100%;
+    //     overflow-y: auto;
 
-        .custom-list-item {
-          display: grid;
-          grid-template-columns: 50px 1fr auto;
-          gap: 1rem;
-        }
+    //     .custom-list-item {
+    //       display: grid;
+    //       grid-template-columns: 50px 1fr auto;
+    //       gap: 1rem;
+    //     }
 
-        .MuiListItemText-primary {
-          text-overflow: ellipsis;
-          overflow: hidden;
-          white-space: nowrap;
-        }
+    //     .MuiListItemText-primary {
+    //       text-overflow: ellipsis;
+    //       overflow: hidden;
+    //       white-space: nowrap;
+    //     }
 
-        img {
-          width: 50px;
-          height: 50px;
-          object-fit: cover;
-          border-radius: 50%;
-        }
-      }
+    //     img {
+    //       width: 50px;
+    //       height: 50px;
+    //       object-fit: cover;
+    //       border-radius: 50%;
+    //     }
+    //   }
 
-      .selected-exercise-list {
-        max-height: 250px;
-      }
-    }
+    //   .selected-exercise-list {
+    //     max-height: 250px;
+    //   }
+    // }
 
-    &.details-stage {
-      height: 300px;
-      // height: 350px;
-      overflow-y: auto;
+    // &.details-stage {
+    //   height: 300px;
+    //   // height: 350px;
+    //   overflow-y: auto;
 
-      .exercise-details-edit-container {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
+    //   .exercise-details-edit-container {
+    //     display: grid;
+    //     grid-template-columns: repeat(2, 1fr);
 
-        gap: 0.5rem 0rem;
+    //     gap: 0.5rem 0rem;
 
-        .header-container {
-          grid-column: 1/-1;
-          // display: flex;
-          display: grid;
-          grid-template-columns: auto 1fr auto;
+    //     .header-container {
+    //       grid-column: 1/-1;
+    //       // display: flex;
+    //       display: grid;
+    //       grid-template-columns: auto 1fr auto;
 
-          // justify-content: space-between;
-          align-items: center;
-          gap: 0.5rem;
+    //       // justify-content: space-between;
+    //       align-items: center;
+    //       gap: 0.5rem;
 
-          h4 {
-            grid-column: 2/3;
-            grid-row: 1/2;
-            max-width: 100%;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            justify-self: start;
-          }
-          .custom-toggle {
-            grid-column: 3/4;
-            grid-row: 1/2;
-            justify-self: end;
-            button {
-              padding: 0.3rem 1rem;
-            }
-          }
-        }
+    //       h4 {
+    //         grid-column: 2/3;
+    //         grid-row: 1/2;
+    //         max-width: 100%;
+    //         overflow: hidden;
+    //         text-overflow: ellipsis;
+    //         white-space: nowrap;
+    //         justify-self: start;
+    //       }
+    //       .custom-toggle {
+    //         grid-column: 3/4;
+    //         grid-row: 1/2;
+    //         justify-self: end;
+    //         button {
+    //           padding: 0.3rem 1rem;
+    //         }
+    //       }
+    //     }
 
-        .exercise-editor-container {
-          grid-column: 1/-1;
+    //     .exercise-editor-container {
+    //       grid-column: 1/-1;
 
-          .divider {
-            margin: 0.8rem 0;
-          }
-        }
+    //       .divider {
+    //         margin: 0.8rem 0;
+    //       }
+    //     }
 
-        .divider,
-        .MuiTextField-root,
-        h4 {
-          margin: 0;
-          grid-column: 1/-1;
-        }
-      }
-    }
+    //     .divider,
+    //     .MuiTextField-root,
+    //     h4 {
+    //       margin: 0;
+    //       grid-column: 1/-1;
+    //     }
+    //   }
+    // }
   }
 
   &.dark-mode {

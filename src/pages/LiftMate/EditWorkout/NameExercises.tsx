@@ -9,13 +9,31 @@ import { Dumbbell } from '../../../components/Icons/Dumbbell'
 import AddIcon from '@mui/icons-material/Add'
 import { SlideDialog } from '../../../components/SlideDialog/SlideDialog'
 import { ExercisesStage } from './ExercisesStage'
+import { Exercise } from '../../../types/exercise/Exercise'
 
 interface NameExercisesProps {
   workout: Workout
   onNameChange: (name: string) => void
+  exerciseFilter: { txt: string }
+  exerciseResults: Exercise[]
+  onExerciseFilterChange: (txt: string) => void
+  onAddExercise: (exercise: Exercise) => void
+  onDeleteExercise: (exercise: Exercise) => void
+  onReorderExercises: (exercises: Exercise[]) => void
+  renderErrorImage: (exercise: Exercise) => void
 }
 
-export function NameExercises({ workout, onNameChange }: NameExercisesProps) {
+export function NameExercises({
+  workout,
+  onNameChange,
+  exerciseFilter,
+  exerciseResults,
+  onExerciseFilterChange,
+  onAddExercise,
+  onDeleteExercise,
+  onReorderExercises,
+  renderErrorImage,
+}: NameExercisesProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
@@ -50,7 +68,18 @@ export function NameExercises({ workout, onNameChange }: NameExercisesProps) {
       <SlideDialog
         open={addExerciseDialogOpen}
         onClose={() => setAddExerciseDialogOpen(false)}
-        component={<ExercisesStage />}
+        component={
+          <ExercisesStage
+            workout={workout}
+            exerciseFilter={exerciseFilter}
+            exerciseResults={exerciseResults}
+            onExerciseFilterChange={onExerciseFilterChange}
+            onAddExercise={onAddExercise}
+            onDeleteExercise={onDeleteExercise}
+            onReorderExercises={onReorderExercises}
+            renderErrorImage={renderErrorImage}
+          />
+        }
         title="Add Exercises"
         type="full"
       />
