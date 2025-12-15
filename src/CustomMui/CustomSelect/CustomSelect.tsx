@@ -13,6 +13,7 @@ interface CustomSelectProps {
   value: string
   onChange: (value: string) => void
   className?: string
+  imgs?: { value: string; src: string }[]
 }
 
 export function CustomSelect({
@@ -22,6 +23,7 @@ export function CustomSelect({
   extra,
   onChange,
   className,
+  imgs,
 }: CustomSelectProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -34,7 +36,7 @@ export function CustomSelect({
   return (
     <FormControl
       sx={{ m: 1, minWidth: 140 }}
-      size='small'
+      size="small"
       className={`custom-select ${className}`}
     >
       <InputLabel id={`${label}-select-label`}>{label}</InputLabel>
@@ -42,6 +44,7 @@ export function CustomSelect({
         labelId={`${label}-select-label`}
         id={`${label}-select`}
         value={value}
+        className={`${imgs ? 'with-imgs' : ''}`}
         label={label}
         onChange={handleChange}
         MenuProps={{
@@ -55,6 +58,13 @@ export function CustomSelect({
         </MenuItem> */}
         {values.map((value) => (
           <MenuItem key={`${label}-${value}-select`} value={value}>
+            {imgs?.find((img) => img.value === value)?.src && (
+              <img
+                src={imgs.find((img) => img.value === value)?.src}
+                alt={value}
+                className="custom-select-img"
+              />
+            )}
             {capitalizeFirstLetter(value)} {extra}
           </MenuItem>
         ))}

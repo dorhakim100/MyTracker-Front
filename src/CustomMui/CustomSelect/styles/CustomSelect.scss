@@ -1,5 +1,29 @@
 .MuiMenu-list {
   max-height: 200px;
+
+  li {
+    gap: 1rem;
+  }
+
+  .custom-select-img {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+}
+.MuiInputBase-root.with-imgs {
+  .MuiSelect-select {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    img {
+      width: 40px;
+      height: 40px;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+  }
 }
 
 .dark-mode {
