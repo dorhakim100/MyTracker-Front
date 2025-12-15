@@ -35,6 +35,7 @@ import { WorkoutsList } from './WorkoutsList'
 import { CustomOptionsMenu } from '../../../CustomMui/CustomOptionsMenu/CustomOptionsMenu'
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
 import { DropdownOption } from '../../../types/DropdownOption'
+import CheckBoxIcon from '@mui/icons-material/CheckBox'
 
 const EDIT = 'edit'
 const DETAILS = 'details'
@@ -88,7 +89,7 @@ export function Workouts() {
     () => [
       {
         title: 'Activate',
-        icon: <Check />,
+        icon: <CheckBoxIcon />,
         onClick: () => {
           if (selectedWorkoutForOptions) {
             toggleActivateWorkout(selectedWorkoutForOptions)

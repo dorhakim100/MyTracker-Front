@@ -217,7 +217,7 @@ export function Diary() {
                   <LoggedList mealPeriod={meal.period as MealPeriod} />
                   <div className="meal-footer">
                     <Typography variant="body2" className="total-calories">
-                      {`Total: ${caloriesToSet} kcal`}
+                      {`Total: ${caloriesToSet.toFixed(0)} kcal`}
                     </Typography>
                     {hasItems?.length !== 0 && (
                       <AddItemButton mealPeriod={meal.period as MealPeriod} />

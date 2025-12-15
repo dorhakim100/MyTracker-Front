@@ -27,6 +27,8 @@ import {
 } from '../../../services/event-bus.service'
 import { messages } from '../../../assets/config/messages'
 import { CustomAlertDialog } from '../../../CustomMui/CustomAlertDialog/CustomAlertDialog'
+import { SlideDialog } from '../../../components/SlideDialog/SlideDialog'
+import { WorkoutDetails } from '../../../components/WorkoutDetails/WorkoutDetails'
 interface WorkoutCardProps {
   workout: Workout
   className?: string
@@ -39,8 +41,13 @@ export function WorkoutCard({ workout, className }: WorkoutCardProps) {
 
   const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false)
 
+  const [slideOptions, setSlideOptions] = useState<{
+    open: boolean
+    type: 'details' | null
+  }>({ open: false, type: null })
+
   const onViewDetails = useCallback(() => {
-    console.log('view details', workout._id)
+    setSlideOptions({ open: true, type: 'details' })
   }, [workout._id])
 
   const onEdit = useCallback(() => {
@@ -84,12 +91,26 @@ export function WorkoutCard({ workout, className }: WorkoutCardProps) {
     [onViewDetails, onEdit, setIsDeleteOpen, workout]
   )
 
+  const getSlideTitle = () => {
+    if (slideOptions.type === 'details') {
+      return 'Workout Details'
+    }
+    return null
+  }
+
+  const getSlideComponent = () => {
+    if (slideOptions.type === 'details') {
+      return <WorkoutDetails workout={workout} />
+    }
+    return null
+  }
   return (
     <>
       <Card
         className={`workout-card-container ${className} ${
           prefs.isDarkMode ? 'dark-mode' : ''
         }`}
+        onClick={onViewDetails}
       >
         <div className="header-container">
           <Typography variant="h6">{workout.name}</Typography>
@@ -118,7 +139,13 @@ export function WorkoutCard({ workout, className }: WorkoutCardProps) {
             .join(', ')}
         </Typography>
         <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
-        <CustomButton text="Start Routine" fullWidth={true} />
+        <CustomButton
+          text="Start Routine"
+          fullWidth={true}
+          onClick={(ev) => {
+            ev.stopPropagation()
+          }}
+        />
       </Card>
       <CustomAlertDialog
         open={isDeleteOpen}
@@ -144,6 +171,13 @@ export function WorkoutCard({ workout, className }: WorkoutCardProps) {
           </DialogActions>
         </div>
       </CustomAlertDialog>
+      <SlideDialog
+        open={slideOptions.open}
+        onClose={() => setSlideOptions({ open: false, type: null })}
+        title={getSlideTitle() || ''}
+        component={getSlideComponent() || <></>}
+        type="full"
+      />
     </>
   )
 }
