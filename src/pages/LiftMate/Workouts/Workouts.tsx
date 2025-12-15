@@ -28,6 +28,8 @@ import { Add } from '@mui/icons-material'
 import { workoutService } from '../../../services/workout/workout.service'
 import { MONTH_IN_MS } from '../../../assets/config/times'
 import { DateRangeController } from '../../../components/DateRangeController/DateRangeController'
+import { WorkoutCard } from './WorkoutCard'
+import { WorkoutsList } from './WorkoutsList'
 
 const EDIT = 'edit'
 const DETAILS = 'details'
@@ -36,6 +38,7 @@ const EDIT_TITLE = 'Edit Workout'
 const CREATE_TITLE = 'Create Workout'
 const DETAILS_TITLE = 'Workout Details'
 const ADD_BUTTON = 'Add'
+const ADD_ROUTINE_BUTTON = 'Add Routine'
 
 type dialogType = typeof EDIT | typeof DETAILS
 
@@ -149,52 +152,29 @@ export function Workouts() {
 
     if (activeWorkouts.length === 0 && inactiveWorkouts.length === 0) {
       return (
-        <div className='no-workouts-container'>
-          <Typography variant='body1'>No workouts found</Typography>
+        <div className="no-workouts-container">
+          <Typography variant="body1">No workouts found</Typography>
         </div>
       )
     }
 
     return (
-      <div className='workouts-lists-container'>
+      <div className="workouts-lists-container">
         {activeWorkouts.length > 0 && (
-          <span className='bold-header'>Active</span>
+          <span className="bold-header">My Routines</span>
         )}
-        <CustomList
-          items={activeWorkouts}
-          className={`workouts-list ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-          renderPrimaryText={(workout) => workout.name}
-          renderSecondaryText={(workout) =>
-            capitalizeFirstLetter(workout.muscleGroups.join(', '))
-          }
-          onItemClick={(workout) => onOpenDetails(workout)}
-          renderRight={(workout) => (
-            <div className='actions-container'>
-              <EditIcon
-                onClick={() => {
-                  onOpenEdit(workout)
-                }}
-              />
-              <Checkbox
-                className={`${prefs.favoriteColor}`}
-                checked={workout.isActive}
-                onClick={(ev) => {
-                  ev.stopPropagation()
-                  toggleActivateWorkout(workout)
-                }}
-              />
-            </div>
-          )}
-          isSwipeable={true}
-          renderRightSwipeActions={(workout) => (
-            <DeleteAction item={workout} onDeleteItem={onDeleteWorkout} />
-          )}
-          noResultsMessage='No active workouts found'
-        />
+
+        <div
+          className={`workouts-list-container ${
+            prefs.isDarkMode ? 'dark-mode' : ''
+          } active`}
+        >
+          <WorkoutsList workouts={activeWorkouts} className={`active-list`} />
+        </div>
         <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
 
-        <div className='past-controller'>
-          <span className='bold-header'>Past</span>
+        <div className="past-controller">
+          <span className="bold-header">Past Routines</span>
           <DateRangeController
             selectedPastDate={selectedPastDate}
             onDateChange={setSelectedPastDate}
@@ -214,7 +194,7 @@ export function Workouts() {
           }
           onItemClick={(workout) => onOpenDetails(workout)}
           renderRight={(workout) => (
-            <div className='actions-container'>
+            <div className="actions-container">
               <EditIcon
                 onClick={() => {
                   onOpenEdit(workout)
@@ -236,7 +216,7 @@ export function Workouts() {
           )}
         />
         {inactiveWorkouts.length === 0 && (
-          <Typography variant='body1' className='no-past-workouts-message'>
+          <Typography variant="body1" className="no-past-workouts-message">
             No past workouts found...
           </Typography>
         )}
@@ -247,15 +227,38 @@ export function Workouts() {
   return (
     <>
       <div className={`page-container workouts-container`}>
-        <div className='workouts-header'>
-          <Typography variant='h5' className='bold-header'>
-            Workouts
+        <div className="workouts-header">
+          <Typography variant="h5" className="bold-header">
+            Workout
           </Typography>
           <CustomButton
-            text={ADD_BUTTON}
-            onClick={() => setDialogOptions({ open: true, type: EDIT })}
+            text="Start Empty Workout"
+            // onClick={() => setDialogOptions({ open: true, type: EDIT })}
             icon={<Add />}
+            isIconReverse={true}
+            className={`${prefs.favoriteColor} empty-workout-button`}
+            fullWidth={true}
           />
+        </div>
+        <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
+        <div className="workouts-header">
+          <Typography variant="h5" className="bold-header">
+            Routines
+          </Typography>
+          <div className="buttons-container">
+            <CustomButton
+              text={ADD_BUTTON}
+              onClick={() => setDialogOptions({ open: true, type: EDIT })}
+              icon={<Add />}
+              fullWidth={true}
+            />
+            <CustomButton
+              text={ADD_ROUTINE_BUTTON}
+              onClick={() => setDialogOptions({ open: true, type: EDIT })}
+              icon={<Add />}
+              fullWidth={true}
+            />
+          </div>
         </div>
         <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
         {renderWorkoutLists()}
@@ -265,7 +268,7 @@ export function Workouts() {
         onClose={closeEdit}
         component={getDialogComponent()}
         title={getDialogTitle()}
-        type='full'
+        type="full"
       />
     </>
   )

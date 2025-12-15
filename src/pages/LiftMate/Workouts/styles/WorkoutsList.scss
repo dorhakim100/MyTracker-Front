@@ -1,0 +1,8 @@
+.workouts-list-container {
+  display: grid;
+  gap: 1rem;
+
+  &.dark-mode {
+    color: $white;
+  }
+}

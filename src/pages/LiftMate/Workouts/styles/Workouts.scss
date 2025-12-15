@@ -3,14 +3,23 @@
   text-align: start;
 
   .workouts-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    // display: flex;
+    display: grid;
+    gap: 0.5rem;
+    // justify-content: space-between;
+    // align-items: center;
+
     margin: 1rem 0;
   }
 
   .divider {
     margin: 0.5rem 0;
+  }
+
+  .buttons-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
   }
 
   .workouts-lists-container {
