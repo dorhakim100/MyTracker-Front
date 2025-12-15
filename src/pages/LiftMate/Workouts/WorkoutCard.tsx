@@ -1,4 +1,4 @@
-import React from 'react'
+import { useMemo, useCallback } from 'react'
 import { Card, Divider, Typography } from '@mui/material'
 
 import { Workout } from '../../../types/workout/Workout'
@@ -8,10 +8,11 @@ import { RootState } from '../../../store/store'
 import { CustomButton } from '../../../CustomMui/CustomButton/CustomButton'
 import { capitalizeFirstLetter } from '../../../services/util.service'
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
-import EditIcon from '@mui/icons-material/Edit'
 
 import { CustomOptionsMenu } from '../../../CustomMui/CustomOptionsMenu/CustomOptionsMenu'
 import { DropdownOption } from '../../../types/DropdownOption'
+
+import InfoOutlineIcon from '@mui/icons-material/InfoOutline'
 import Edit from '@mui/icons-material/Edit'
 import Delete from '@mui/icons-material/Delete'
 interface WorkoutCardProps {
@@ -19,26 +20,42 @@ interface WorkoutCardProps {
   className?: string
 }
 
-const options: DropdownOption[] = [
-  {
-    title: 'Edit',
-    icon: <Edit />,
-    onClick: () => {
-      console.log('start routine')
-    },
-  },
-  {
-    title: 'Delete',
-    icon: <Delete />,
-    onClick: () => {
-      console.log('delete workout')
-    },
-  },
-]
-
 export function WorkoutCard({ workout, className }: WorkoutCardProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
+  )
+
+  const onViewDetails = useCallback(() => {
+    console.log('view details', workout._id)
+  }, [workout._id])
+
+  const onEdit = useCallback(() => {
+    console.log('edit workout', workout._id)
+  }, [workout._id])
+
+  const onDelete = useCallback(() => {
+    console.log('delete workout', workout._id)
+  }, [workout._id])
+
+  const options: DropdownOption[] = useMemo(
+    () => [
+      {
+        title: 'View Details',
+        icon: <InfoOutlineIcon />,
+        onClick: onViewDetails,
+      },
+      {
+        title: 'Edit',
+        icon: <Edit />,
+        onClick: onEdit,
+      },
+      {
+        title: 'Delete',
+        icon: <Delete />,
+        onClick: onDelete,
+      },
+    ],
+    [onViewDetails, onEdit, onDelete]
   )
 
   return (
