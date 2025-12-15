@@ -24,6 +24,7 @@ import { ExercisesStage } from './ExercisesStage'
 import { DetailsStage } from './DetailsStage'
 import { imageService } from '../../../services/image/image.service'
 import { ExerciseInstructions } from '../../../types/exercise/ExerciseInstructions'
+import { ExerciseFilter } from '../../../types/exerciseFilter/ExerciseFilter'
 // import { useKeyboardHeight } from '../../../hooks/useKeyboardHeight'
 
 interface EditWorkoutProps {
@@ -79,27 +80,24 @@ export function EditWorkout({
     workoutId: workout._id || '',
   })
 
-  const [muscleGroupFilter, setMuscleGroupFilter] = useState<MuscleGroupFilter>(
-    {
-      txt: '',
-      area: 'all',
-    }
-  )
-
-  const [exerciseFilter, setExerciseFilter] = useState({ txt: '' })
+  const [exerciseFilter, setExerciseFilter] = useState<ExerciseFilter>({
+    searchValue: '',
+    muscleGroupValue: 'All',
+    equipmentValue: 'All',
+  })
   const [exerciseResults, setExerciseResults] = useState<Exercise[]>([])
   const [activeStage, setActiveStage] = useState<WorkoutStage>(stages[0])
   const [direction, setDirection] = useState(1)
 
   const handleSearch = useCallback(async () => {
     try {
-      if (!exerciseFilter.txt) {
+      if (!exerciseFilter.searchValue) {
         setExerciseResults([])
         setIsLoading(false)
         return
       }
       setIsLoading(true)
-      const results = await exerciseSearch(exerciseFilter.txt)
+      const results = await exerciseSearch(exerciseFilter.searchValue)
       setExerciseResults(results)
     } catch (err) {
       showErrorMsg(messages.error.search)
@@ -107,7 +105,7 @@ export function EditWorkout({
     } finally {
       setIsLoading(false)
     }
-  }, [exerciseFilter.txt])
+  }, [exerciseFilter.searchValue])
 
   const latestHandleSearchRef = useRef(handleSearch)
   const debouncedRunSearch = useRef(
@@ -150,7 +148,7 @@ export function EditWorkout({
 
   useEffect(() => {
     debouncedRunSearch()
-  }, [exerciseFilter.txt, debouncedRunSearch])
+  }, [exerciseFilter.searchValue, debouncedRunSearch])
 
   useEffect(() => {
     getWorkoutInstructions()
@@ -212,8 +210,8 @@ export function EditWorkout({
     setWorkout({ ...workout, exercises: newExercises as Exercise[] })
   }
 
-  const onExerciseFilterChangeTxt = (txt: string) => {
-    setExerciseFilter((prev) => ({ ...prev, txt }))
+  const onExerciseFilterChange = (exerciseFilter: ExerciseFilter) => {
+    setExerciseFilter(exerciseFilter)
   }
 
   const onDeleteExercise = (exercise: Exercise) => {
@@ -329,16 +327,6 @@ export function EditWorkout({
 
   const renderStage = (stage: WorkoutStage) => {
     switch (stage) {
-      case 'name':
-        return (
-          <NameStage
-            workout={workout}
-            muscleGroupFilter={muscleGroupFilter}
-            onNameChange={onNameChange}
-            onToggleMuscleGroup={onToggleMuscleGroup}
-            onMuscleGroupFilterChange={setMuscleGroupFilter}
-          />
-        )
       case 'Name, Exercises':
         return (
           <NameExercises
@@ -346,7 +334,7 @@ export function EditWorkout({
             onNameChange={onNameChange}
             exerciseFilter={exerciseFilter}
             exerciseResults={exerciseResults}
-            onExerciseFilterChange={onExerciseFilterChangeTxt}
+            onExerciseFilterChange={onExerciseFilterChange}
             onAddExercise={onAddExercise}
             onDeleteExercise={onDeleteExercise}
             onReorderExercises={onReorderExercises}
@@ -359,25 +347,25 @@ export function EditWorkout({
             }
           />
         )
-      case 'exercises':
-        return (
-          <ExercisesStage
-            workout={workout}
-            exerciseFilter={exerciseFilter}
-            exerciseResults={exerciseResults}
-            onExerciseFilterChange={onExerciseFilterChangeTxt}
-            onAddExercise={onAddExercise}
-            onDeleteExercise={onDeleteExercise}
-            onReorderExercises={onReorderExercises}
-            renderErrorImage={(exercise) =>
-              imageService.renderErrorExerciseImage(
-                exercise,
-                exerciseResults,
-                setExerciseResults
-              )
-            }
-          />
-        )
+      // case 'exercises':
+      //   return (
+      //     <ExercisesStage
+      //       workout={workout}
+      //       exerciseFilter={exerciseFilter}
+      //       exerciseResults={exerciseResults}
+      //       onExerciseFilterChange={onExerciseFilterChangeTxt}
+      //       onAddExercise={onAddExercise}
+      //       onDeleteExercise={onDeleteExercise}
+      //       onReorderExercises={onReorderExercises}
+      //       renderErrorImage={(exercise) =>
+      //         imageService.renderErrorExerciseImage(
+      //           exercise,
+      //           exerciseResults,
+      //           setExerciseResults
+      //         )
+      //       }
+      //     />
+      //   )
       case 'details':
         return (
           <DetailsStage

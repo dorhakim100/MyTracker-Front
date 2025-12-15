@@ -13,7 +13,7 @@ interface CustomSelectProps {
   value: string
   onChange: (value: string) => void
   className?: string
-  imgs?: { value: string; src: string }[]
+  imgs?: { value: string; src?: string; icon?: React.ReactNode }[]
 }
 
 export function CustomSelect({
@@ -31,6 +31,37 @@ export function CustomSelect({
 
   const handleChange = (event: SelectChangeEvent) => {
     onChange(event.target.value)
+  }
+
+  const getImg = (value: string) => {
+    if (!imgs) return null
+
+    const item = imgs.find((img) => img.value === value)
+    if (!item) return null
+
+    // Determine if it's a src (image) or icon (React component)
+    const isSrc = 'src' in item && item.src !== undefined
+    const isIcon = 'icon' in item && item.icon !== undefined
+
+    if (isSrc) {
+      return (
+        <img
+          src={(item as { value: string; src: string }).src}
+          alt={value}
+          className="custom-select-img"
+        />
+      )
+    }
+
+    if (isIcon) {
+      return (
+        <div className="custom-select-icon">
+          {(item as { value: string; icon: React.ReactNode }).icon}
+        </div>
+      )
+    }
+
+    return null
   }
 
   return (
@@ -58,13 +89,7 @@ export function CustomSelect({
         </MenuItem> */}
         {values.map((value) => (
           <MenuItem key={`${label}-${value}-select`} value={value}>
-            {imgs?.find((img) => img.value === value)?.src && (
-              <img
-                src={imgs.find((img) => img.value === value)?.src}
-                alt={value}
-                className="custom-select-img"
-              />
-            )}
+            {getImg(value)}
             {capitalizeFirstLetter(value)} {extra}
           </MenuItem>
         ))}

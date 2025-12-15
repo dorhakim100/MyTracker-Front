@@ -3,23 +3,33 @@ import { RootState } from '../../store/store'
 import { CustomInput } from '../../CustomMui/CustomInput/CustomInput'
 import { CustomSelect } from '../../CustomMui/CustomSelect/CustomSelect'
 import { musclesValues, musclesImgs } from '../../assets/config/muscles'
-import './styles/ExercisesFilter.scss'
+
 import { Barbell } from '../Icons/Barbell'
+import { Dumbbell } from '../Icons/Dumbbell'
+import WidgetsIcon from '@mui/icons-material/Widgets'
+import { ExerciseFilter } from '../../types/exerciseFilter/ExerciseFilter'
+import { equipmentsValues } from '../../assets/config/equipments'
 
 interface ExercisesFilterProps {
-  searchValue: string
-  onSearchChange: (value: string) => void
-  muscleGroupValue: string
-  onMuscleGroupChange: (value: string) => void
+  exerciseFilter: ExerciseFilter
+  onExerciseFilterChange: (exerciseFilter: ExerciseFilter) => void
   searchPlaceholder?: string
   className?: string
 }
 
+const equipmentsImgs = [
+  { value: 'All', icon: <WidgetsIcon /> },
+  { value: 'Barbell', icon: <Barbell /> },
+  { value: 'Dumbbell', icon: <Dumbbell /> },
+  { value: 'Machine', src: '/public/equipments/machine.webp' },
+  { value: 'Bodyweight', src: '/public/equipments/body-weight.webp' },
+  { value: 'Cable', src: '/public/equipments/cable.webp' },
+  { value: 'Bands', src: '/public/equipments/bands.webp' },
+]
+
 export function ExercisesFilter({
-  searchValue,
-  onSearchChange,
-  muscleGroupValue,
-  onMuscleGroupChange,
+  exerciseFilter,
+  onExerciseFilterChange,
   searchPlaceholder = 'Search for exercises',
   className = '',
 }: ExercisesFilterProps) {
@@ -28,36 +38,39 @@ export function ExercisesFilter({
   )
 
   return (
-    <div className={`exercises-filter-container ${className}`}>
+    <div
+      className={`exercises-filter-container ${className} ${
+        prefs.isDarkMode ? 'dark-mode' : ''
+      }`}
+    >
       <CustomInput
-        value={searchValue}
-        onChange={onSearchChange}
+        value={exerciseFilter.searchValue}
+        onChange={(value) => {
+          onExerciseFilterChange({ ...exerciseFilter, searchValue: value })
+        }}
         placeholder={searchPlaceholder}
         isRemoveIcon={true}
         className={`${prefs.favoriteColor}`}
       />
       <CustomSelect
-        value={muscleGroupValue}
-        onChange={onMuscleGroupChange}
+        value={exerciseFilter.muscleGroupValue}
+        onChange={(value) =>
+          onExerciseFilterChange({ ...exerciseFilter, muscleGroupValue: value })
+        }
         label="Muscle Group"
         values={musclesValues}
         className={`${prefs.favoriteColor}`}
         imgs={musclesImgs}
       />
-      <Barbell />
       <CustomSelect
-        value={'All'}
-        // onChange={(value: string) => onEquipmentChange(value as Equipment)}
+        value={exerciseFilter.equipmentValue}
+        onChange={(value) =>
+          onExerciseFilterChange({ ...exerciseFilter, equipmentValue: value })
+        }
         label="Equipment"
-        values={[
-          'All',
-          'Barbell',
-          'Dumbbell',
-          'Machine',
-          'Bodyweight',
-          'Other',
-        ]}
+        values={equipmentsValues}
         className={`${prefs.favoriteColor}`}
+        imgs={equipmentsImgs}
       />
     </div>
   )

@@ -1,19 +1,6 @@
 .exercise-search-container {
   width: 100%;
-
-  .custom-input {
-    // background-color: red;
-    position: sticky;
-    top: 0;
-    left: 1rem;
-    right: 1rem;
-    // width: calc(100% - 2rem);
-    z-index: 10;
-    background-color: $white;
-    &.dark-mode {
-      background-color: $darker-gray;
-    }
-  }
+  position: relative;
 
   .exercise-list {
     position: relative;

@@ -11,6 +11,14 @@
     object-fit: cover;
     border-radius: 50%;
   }
+
+  .custom-select-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 .MuiInputBase-root.with-imgs {
   .MuiSelect-select {
@@ -23,15 +31,13 @@
       object-fit: cover;
       border-radius: 50%;
     }
-  }
-}
-
-.dark-mode {
-  .MuiSelect-select {
-    // outline: 1px solid $white;
-    // box-shadow: 0 0 0 1px $white;
-    // border: 1px solid $white;
-    // box-shadow: rgba(255, 255, 255, 0.21) 1.95px 1.95px 2.6px;
+    .custom-select-icon {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
   }
 }
 

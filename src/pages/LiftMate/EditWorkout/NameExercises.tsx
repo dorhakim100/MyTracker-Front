@@ -10,13 +10,14 @@ import AddIcon from '@mui/icons-material/Add'
 import { SlideDialog } from '../../../components/SlideDialog/SlideDialog'
 import { ExercisesStage } from './ExercisesStage'
 import { Exercise } from '../../../types/exercise/Exercise'
+import { ExerciseFilter } from '../../../types/exerciseFilter/ExerciseFilter'
 
 interface NameExercisesProps {
   workout: Workout
   onNameChange: (name: string) => void
-  exerciseFilter: { txt: string }
+  exerciseFilter: ExerciseFilter
   exerciseResults: Exercise[]
-  onExerciseFilterChange: (txt: string) => void
+  onExerciseFilterChange: (exerciseFilter: ExerciseFilter) => void
   onAddExercise: (exercise: Exercise) => void
   onDeleteExercise: (exercise: Exercise) => void
   onReorderExercises: (exercises: Exercise[]) => void

@@ -1,24 +1,21 @@
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
-import { CustomInput } from '../../CustomMui/CustomInput/CustomInput'
 import { Exercise } from '../../types/exercise/Exercise'
-import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import { CustomList } from '../../CustomMui/CustomList/CustomList'
-import { CustomSelect } from '../../CustomMui/CustomSelect/CustomSelect'
-import { musclesValues, musclesImgs } from '../../assets/config/muscles'
 import { ExercisesFilter } from '../ExercisesFilter/ExercisesFilter'
+import { ExerciseFilter } from '../../types/exerciseFilter/ExerciseFilter'
 
 interface ExercisesSearchProps {
-  value: string
-  onChange: (value: string) => void
+  exerciseFilter: ExerciseFilter
+  onExerciseFilterChange: (exerciseFilter: ExerciseFilter) => void
   placeholder?: string
   className?: string
   results: Exercise[] | []
 }
 
 export function ExercisesSearch({
-  value,
-  onChange,
+  exerciseFilter,
+  onExerciseFilterChange,
   placeholder = 'Search for exercises',
   className = '',
   results,
@@ -26,14 +23,13 @@ export function ExercisesSearch({
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
+  console.log(onExerciseFilterChange)
 
   return (
     <div className="exercise-search-container">
       <ExercisesFilter
-        searchValue={value}
-        onSearchChange={onChange}
-        muscleGroupValue={value}
-        onMuscleGroupChange={onChange}
+        exerciseFilter={exerciseFilter}
+        onExerciseFilterChange={onExerciseFilterChange}
       />
 
       <CustomList
