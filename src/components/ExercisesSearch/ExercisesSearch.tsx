@@ -6,6 +6,7 @@ import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import { CustomList } from '../../CustomMui/CustomList/CustomList'
 import { CustomSelect } from '../../CustomMui/CustomSelect/CustomSelect'
 import { musclesValues, musclesImgs } from '../../assets/config/muscles'
+import { ExercisesFilter } from '../ExercisesFilter/ExercisesFilter'
 
 interface ExercisesSearchProps {
   value: string
@@ -29,7 +30,7 @@ export function ExercisesSearch({
   return (
     <div className="exercise-search-container">
       <div className="exercises-filter-container">
-        <CustomInput
+        {/* <CustomInput
           value={value}
           onChange={onChange}
           placeholder={placeholder}
@@ -43,6 +44,12 @@ export function ExercisesSearch({
           values={musclesValues}
           className={`${prefs.favoriteColor} ${className}`}
           imgs={musclesImgs}
+        /> */}
+        <ExercisesFilter
+          searchValue={value}
+          onSearchChange={onChange}
+          muscleGroupValue={value}
+          onMuscleGroupChange={onChange}
         />
       </div>
       <CustomList
