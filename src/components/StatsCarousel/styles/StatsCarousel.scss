@@ -7,8 +7,14 @@
 
 .stats-carousel {
   display: grid;
+  padding-bottom: 25px !important;
+  height: fit-content;
 
-  height: calc($card-height * 1.32);
+  // height: calc($card-height * 1.32);
+}
+
+.swiper-pagination {
+  bottom: 0px !important;
 }
 
 .swiper-slide {
@@ -21,8 +27,9 @@
   object-fit: cover;
 }
 
-.skeleton {
+.card.skeleton {
   height: calc($card-height * 1.32) - 22px;
+
   .goal-container {
     grid-row: 2/-1;
   }

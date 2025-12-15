@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { logout } from '../../store/actions/user.actions'
@@ -30,6 +30,7 @@ import {
 } from '../../assets/config/request-statuses'
 
 import { WeightChart } from '../../components/WeightChart/WeightChart'
+import { StatsCarousel } from '../../components/StatsCarousel/StatsCarousel'
 
 export function UserDetails() {
   const prefs = useSelector(
@@ -88,6 +89,11 @@ export function UserDetails() {
     key: string
   }[]
 
+  const statsCarouselItems = useMemo(() => {
+    if (!user) return []
+    return [<WeightCard />, <WeightChart />]
+  }, [user])
+
   useEffect(() => {
     getUsersRequests()
   }, [user])
@@ -132,8 +138,7 @@ export function UserDetails() {
       <ProfileCard />
 
       <div className="content-container">
-        <WeightCard />
-        <WeightChart />
+        <StatsCarousel items={statsCarouselItems} showSkeleton={!user} />
 
         {requests.length > 0 && (
           <TrainerRequestCard
