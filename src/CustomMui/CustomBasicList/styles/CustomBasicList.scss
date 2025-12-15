@@ -1,0 +1,20 @@
+.custom-basic-list-container {
+  display: grid;
+  gap: 1rem;
+
+  &.dark-mode {
+    color: $white;
+  }
+}
+
+.custom-basic-list-empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  color: $medium-gray;
+
+  &.dark-mode {
+    color: $light-gray;
+  }
+}

@@ -1,31 +1,22 @@
-import { useSelector } from 'react-redux'
-import { RootState } from '../../../store/store'
 import { Workout } from '../../../types/workout/Workout'
-
+import { CustomBasicList } from '../../../CustomMui/CustomBasicList/CustomBasicList'
 import { WorkoutCard } from './WorkoutCard'
 
 interface WorkoutsListProps {
   workouts: Workout[]
   className?: string
 }
-export function WorkoutsList({ workouts, className }: WorkoutsListProps) {
-  const prefs = useSelector(
-    (stateSelector: RootState) => stateSelector.systemModule.prefs
-  )
 
+export function WorkoutsList({ workouts, className }: WorkoutsListProps) {
   return (
-    <div
-      className={`workouts-list-container ${className} ${
-        prefs.isDarkMode ? 'dark-mode' : ''
-      }`}
-    >
-      {workouts.map((workout) => (
-        <WorkoutCard
-          key={workout._id}
-          workout={workout}
-          className={`workout-card`}
-        />
-      ))}
-    </div>
+    <CustomBasicList<Workout>
+      items={workouts}
+      renderItem={(workout) => (
+        <WorkoutCard workout={workout} className="workout-card" />
+      )}
+      getKey={(workout, index) => workout._id || `workout-${index}`}
+      containerClassName={`workouts-list-container ${className || ''}`}
+      emptyMessage="No workouts found"
+    />
   )
 }
