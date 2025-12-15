@@ -1,18 +1,30 @@
 .edit-workout-container {
-  padding: 1em;
+  // padding: 1em;
   height: 100%;
   .custom-stepper {
-    height: 600px;
+    // height: 600px;
+  }
+
+  .custom-stepper-stage {
+    height: calc(100vh - $header-height - 250px);
   }
 
   .edit-workout-stage {
-    min-height: 200px;
+    // min-height: 200px;
     padding: 1em;
     padding-bottom: 3rem;
     display: grid;
     gap: 1rem;
     align-content: start;
     height: 100%;
+
+    .custom-stepper-stage {
+    }
+
+    &.name-exercises-stage {
+      // height: 400px;
+      // height: calc(100vh - $header-height);
+    }
 
     &.name-stage {
       // TODO: Add styles for name stage
@@ -161,8 +173,8 @@
 
   .exercises-lists-container {
     display: grid;
-    height: 400px;
-    height: 350px;
+    // height: 400px;
+    // height: 350px;
 
     // grid-template-rows: 150px auto;
   }

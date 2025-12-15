@@ -19,6 +19,7 @@ import { instructionsService } from '../../../services/instructions/instructions
 import { WeekNumberStatus } from '../../../types/weekNumberStatus/WeekNumberStatus'
 import { MuscleGroup } from '../../../types/muscleGroup/MuscleGroup'
 import { NameStage } from './NameStage'
+import { NameExercises } from './NameExercises'
 import { ExercisesStage } from './ExercisesStage'
 import { DetailsStage } from './DetailsStage'
 import { imageService } from '../../../services/image/image.service'
@@ -39,8 +40,9 @@ interface MuscleGroupFilter {
   area: MuscleGroupArea
 }
 
-type WorkoutStage = 'name' | 'exercises' | 'details'
-const stages: WorkoutStage[] = ['name', 'exercises', 'details']
+type WorkoutStage = 'name' | 'Name, Exercises' | 'exercises' | 'details'
+// const stages: WorkoutStage[] = ['name', 'nameExercises', 'exercises', 'details']
+const stages: WorkoutStage[] = ['Name, Exercises', 'exercises', 'details']
 
 export function EditWorkout({
   selectedWorkout,
@@ -293,6 +295,8 @@ export function EditWorkout({
     switch (stage) {
       case 'name':
         return 'Name and Muscles'
+      case 'Name, Exercises':
+        return 'Name, Exercises'
       case 'exercises':
         return 'Exercises List'
       case 'details':
@@ -308,6 +312,9 @@ export function EditWorkout({
       case 'name':
         // if (!workout.name) return true
         if (workout.muscleGroups.length < 1) return true
+        return false
+      case 'Name, Exercises':
+        if (workout.exercises.length < 1) return true
         return false
       case 'exercises':
         if (workout.exercises.length < 1) return true
@@ -332,6 +339,8 @@ export function EditWorkout({
             onMuscleGroupFilterChange={setMuscleGroupFilter}
           />
         )
+      case 'Name, Exercises':
+        return <NameExercises workout={workout} onNameChange={onNameChange} />
       case 'exercises':
         return (
           <ExercisesStage
@@ -403,28 +412,17 @@ export function EditWorkout({
       className={`page-container edit-workout-container ${
         prefs.isDarkMode ? 'dark-mode' : ''
       }`}
-      // style={
-      //   keyboardHeight > 0
-      //     ? {
-      //         position: 'absolute',
-      //         bottom: `${25}px`,
-      //         left: 0,
-      //         right: 0,
-      //         transition: 'bottom 0.25s ease',
-      //       }
-      //     : {}
-      // }
     >
       <CustomStepper
         stages={stages}
         activeStage={activeStage}
         onStageChange={onStageChange}
         renderStage={renderStage}
-        title={getStageTitle}
+        // title={getStageTitle}
         direction={direction}
         getIsNextDisabled={getIsNextDisabled}
         onFinish={onFinish}
-        finishText='Save Workout'
+        finishText="Save Workout"
       />
     </div>
   )
