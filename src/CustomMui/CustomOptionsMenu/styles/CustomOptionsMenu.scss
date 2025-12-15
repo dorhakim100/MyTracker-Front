@@ -3,6 +3,11 @@
     ul {
       color: $white;
     }
+    .option-menu-item {
+      svg {
+        fill: $white;
+      }
+    }
   }
   .option-menu-item {
     display: flex;
