@@ -44,7 +44,7 @@ export function ExercisesFilter({
         className={`${prefs.favoriteColor}`}
         imgs={musclesImgs}
       />
-
+      <Barbell />
       <CustomSelect
         value={'All'}
         // onChange={(value: string) => onEquipmentChange(value as Equipment)}
