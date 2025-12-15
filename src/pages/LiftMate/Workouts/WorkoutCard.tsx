@@ -7,6 +7,8 @@ import { RootState } from '../../../store/store'
 
 import { CustomButton } from '../../../CustomMui/CustomButton/CustomButton'
 import { capitalizeFirstLetter } from '../../../services/util.service'
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
+import PlayCircleFilledWhiteIcon from '@mui/icons-material/PlayCircleFilledWhite'
 
 interface WorkoutCardProps {
   workout: Workout
@@ -26,7 +28,10 @@ export function WorkoutCard({ workout, className }: WorkoutCardProps) {
         prefs.isDarkMode ? 'dark-mode' : ''
       }`}
     >
-      <Typography variant="h6">{workout.name}</Typography>
+      <div className="header-container">
+        <Typography variant="h6">{workout.name}</Typography>
+        <CustomButton isIcon={true} icon={<MoreHorizIcon />} />
+      </div>
       <Typography
         variant="body1"
         className="muscle-groups-list hide-text-overflow"
@@ -36,11 +41,20 @@ export function WorkoutCard({ workout, className }: WorkoutCardProps) {
           .join(', ')}
       </Typography>
       <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
-      <Typography variant="body1" className="exercises-list hide-text-overflow">
+      <Typography
+        variant="body2"
+        className="exercises-list hide-text-overflow opacity-70"
+      >
         {workout.exercises
           .map((exercise) => capitalizeFirstLetter(exercise.name))
           .join(', ')}
       </Typography>
+      <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
+      <CustomButton
+        text="Start Routine"
+        icon={<PlayCircleFilledWhiteIcon />}
+        fullWidth={true}
+      />
     </Card>
   )
 }

@@ -247,12 +247,6 @@ export function Workouts() {
           </Typography>
           <div className="buttons-container">
             <CustomButton
-              text={ADD_BUTTON}
-              onClick={() => setDialogOptions({ open: true, type: EDIT })}
-              icon={<Add />}
-              fullWidth={true}
-            />
-            <CustomButton
               text={ADD_ROUTINE_BUTTON}
               onClick={() => setDialogOptions({ open: true, type: EDIT })}
               icon={<Add />}
