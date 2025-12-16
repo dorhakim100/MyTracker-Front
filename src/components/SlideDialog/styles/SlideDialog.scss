@@ -8,6 +8,12 @@
 }
 
 .slide-dialog {
+  .MuiPaper-root {
+    .MuiToolbar-root {
+      border-top-right-radius: 10px;
+      border-top-left-radius: 10px;
+    }
+  }
   &.dark-mode {
     background-color: $darker-gray !important;
     color: $white !important;

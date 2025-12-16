@@ -1,0 +1,74 @@
+.exercise-card-container {
+  display: grid;
+
+  padding: 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 0 0.5rem 0 rgba(0, 0, 0, 0.1);
+  gap: 1rem;
+
+  &.dark-mode {
+    color: $white;
+  }
+
+  .exercise-card-content {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 1rem;
+    align-items: start;
+    .more-options-container {
+      grid-column: 3/4;
+      justify-self: end;
+    }
+  }
+
+  .exercise-card-image {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 0.5rem;
+  }
+
+  .exercise-card-info {
+    grid-column: 2/3;
+    grid-row: 1/2;
+    display: grid;
+    gap: 0.5rem;
+    min-width: 0; // Allows text truncation
+  }
+
+  .exercise-card-name {
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .exercise-card-muscle-groups {
+    color: $medium-gray;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .exercise-card-equipment {
+    color: $medium-gray;
+    font-size: 0.875rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .exercise-card-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    margin-top: 0.5rem;
+  }
+
+  &.dark-mode {
+    .exercise-card-muscle-groups,
+    .exercise-card-equipment {
+      color: $light-gray;
+    }
+  }
+}

@@ -11,6 +11,12 @@ import { SlideDialog } from '../../../components/SlideDialog/SlideDialog'
 import { ExercisesStage } from './ExercisesStage'
 import { Exercise } from '../../../types/exercise/Exercise'
 import { ExerciseFilter } from '../../../types/exerciseFilter/ExerciseFilter'
+import { CustomList } from '../../../CustomMui/CustomList/CustomList'
+import { capitalizeFirstLetter } from '../../../services/util.service'
+import DeleteIcon from '@mui/icons-material/Delete'
+import { ExerciseCard } from '../../../components/ExerciseCard/ExerciseCard'
+
+import { Instructions } from '../../../types/instructions/Instructions'
 
 interface NameExercisesProps {
   workout: Workout
@@ -22,6 +28,7 @@ interface NameExercisesProps {
   onDeleteExercise: (exercise: Exercise) => void
   onReorderExercises: (exercises: Exercise[]) => void
   renderErrorImage: (exercise: Exercise) => void
+  instructions: Instructions
 }
 
 export function NameExercises({
@@ -34,12 +41,42 @@ export function NameExercises({
   onDeleteExercise,
   onReorderExercises,
   renderErrorImage,
+  instructions,
 }: NameExercisesProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
 
   const [addExerciseDialogOpen, setAddExerciseDialogOpen] = useState(false)
+
+  const renderNoExercises = () => {
+    return (
+      <div className="no-exercises-container">
+        <Dumbbell />
+        <Typography variant="body2">
+          Get started by adding an exercise to your routine
+        </Typography>
+      </div>
+    )
+  }
+
+  const renderExercises = () => {
+    return workout.exercises.map((exercise) => {
+      return (
+        <ExerciseCard
+          exercise={exercise}
+          onDelete={onDeleteExercise}
+          // onEdit={onEditExercise}
+          // onClick={onOpenExerciseDetails}
+          showEquipment={true}
+          showActions={true}
+          instructions={instructions.exercises.find(
+            (i) => i.exerciseId === exercise.exerciseId
+          )}
+        />
+      )
+    })
+  }
 
   return (
     <>
@@ -52,14 +89,8 @@ export function NameExercises({
           className={`${prefs.favoriteColor}`}
         />
         <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
-        {workout.exercises.length === 0 && (
-          <div className="no-exercises-container">
-            <Dumbbell />
-            <Typography variant="body2">
-              Get started by adding an exercise to your routine
-            </Typography>
-          </div>
-        )}
+        {(workout.exercises.length === 0 && renderNoExercises()) ||
+          renderExercises()}
         <CustomButton
           text="Add Exercise"
           onClick={() => setAddExerciseDialogOpen(true)}

@@ -9,19 +9,47 @@
     // height: 100%;
     overflow-y: auto;
 
-    .custom-list-item {
-      display: grid;
-      grid-template-columns: 50px 1fr auto;
-      gap: 1rem;
-    }
-
     .MuiListItemText-primary {
       text-overflow: ellipsis;
       overflow: hidden;
       white-space: nowrap;
     }
 
-    img {
+    .exercise-item {
+      display: grid;
+      grid-template-columns: 50px 1fr auto;
+      gap: 1rem;
+      &:has(.added) {
+        border-left: 2px solid $primary-color;
+
+        &.blue {
+          border-left: 2px solid $picker-color-blue;
+        }
+        &.red {
+          border-left: 2px solid $picker-color-red;
+        }
+        &.yellow {
+          border-left: 2px solid $picker-color-yellow;
+        }
+        &.green {
+          border-left: 2px solid $picker-color-green;
+        }
+        &.orange {
+          border-left: 2px solid $picker-color-orange;
+        }
+        &.deepPurple {
+          border-left: 2px solid $picker-color-deep-purple;
+        }
+        &.purple {
+          border-left: 2px solid $picker-color-purple;
+        }
+        &.pink {
+          border-left: 2px solid $picker-color-pink;
+        }
+      }
+    }
+
+    .exercise-image {
       width: 50px;
       height: 50px;
       object-fit: cover;

@@ -1,47 +1,118 @@
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { Exercise } from '../../types/exercise/Exercise'
+import { Workout } from '../../types/workout/Workout'
 import { CustomList } from '../../CustomMui/CustomList/CustomList'
 import { ExercisesFilter } from '../ExercisesFilter/ExercisesFilter'
 import { ExerciseFilter } from '../../types/exerciseFilter/ExerciseFilter'
+import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
+import { capitalizeFirstLetter } from '../../services/util.service'
+import AddIcon from '@mui/icons-material/Add'
+import RemoveIcon from '@mui/icons-material/Remove'
+import { SlideDialog } from '../SlideDialog/SlideDialog'
+import { ExerciseDetails } from '../ExerciseDetails/ExerciseDetails'
+import { useState } from 'react'
 
 interface ExercisesSearchProps {
+  workout: Workout
   exerciseFilter: ExerciseFilter
   onExerciseFilterChange: (exerciseFilter: ExerciseFilter) => void
   placeholder?: string
   className?: string
   results: Exercise[] | []
+  onAddExercise: (exercise: Exercise) => void
+  onDeleteExercise: (exercise: Exercise) => void
+  onReorderExercises: (exercises: Exercise[]) => void
+  renderErrorImage: (exercise: Exercise) => void
 }
 
 export function ExercisesSearch({
+  workout,
   exerciseFilter,
   onExerciseFilterChange,
   placeholder = 'Search for exercises',
   className = '',
   results,
+  onAddExercise,
+  onDeleteExercise,
+  onReorderExercises,
+  renderErrorImage,
 }: ExercisesSearchProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
-  console.log(onExerciseFilterChange)
+
+  const [openModal, setOpenModal] = useState(false)
+  const [exercise, setExercise] = useState<Exercise | null>(null)
+
+  const isExerciseAdded = (exercise: Exercise) => {
+    return workout.exercises.some((e) => e.exerciseId === exercise.exerciseId)
+  }
+
+  const onOpenModal = (exercise: Exercise) => {
+    setOpenModal(true)
+    setExercise(exercise)
+  }
+
+  const onCloseModal = () => {
+    setOpenModal(false)
+    setExercise(null)
+  }
 
   return (
-    <div className="exercise-search-container">
-      <ExercisesFilter
-        exerciseFilter={exerciseFilter}
-        onExerciseFilterChange={onExerciseFilterChange}
-      />
+    <>
+      <div className="exercise-search-container">
+        <ExercisesFilter
+          exerciseFilter={exerciseFilter}
+          onExerciseFilterChange={onExerciseFilterChange}
+        />
 
-      <CustomList
-        items={results}
-        renderPrimaryText={(exercise) => exercise.name}
-        renderSecondaryText={(exercise) => exercise.muscleGroups.join(', ')}
-        renderLeft={(exercise) => (
-          <img src={exercise.image} alt={exercise.name} />
-        )}
-        className="exercise-list"
-        //   renderRight={(exercise) => <CustomButton icon={<AddIcon />} onClick={() => onChange(exercise.name)} />}
+        <CustomList
+          items={results}
+          renderPrimaryText={(exercise) => capitalizeFirstLetter(exercise.name)}
+          renderSecondaryText={(exercise) => (
+            <span className={`${prefs.isDarkMode ? 'dark-mode' : ''}`}>
+              {capitalizeFirstLetter(exercise.muscleGroups.join(', '))}
+            </span>
+          )}
+          renderLeft={(exercise) => (
+            <img
+              src={exercise.image}
+              alt={exercise.name}
+              onError={() => {
+                renderErrorImage(exercise)
+              }}
+              className={`exercise-image ${
+                isExerciseAdded(exercise) ? 'added' : ''
+              }`}
+            />
+          )}
+          itemClassName={`exercise-item ${
+            prefs.isDarkMode ? 'dark-mode' : ''
+          } ${prefs.favoriteColor}`}
+          getKey={(exercise) => exercise.exerciseId}
+          className={`exercise-list ${prefs.isDarkMode ? 'dark-mode' : ''} `}
+          renderRight={(exercise) => (
+            <CustomButton
+              icon={isExerciseAdded(exercise) ? <RemoveIcon /> : <AddIcon />}
+              onClick={(ev) => {
+                ev.stopPropagation()
+                onAddExercise(exercise)
+              }}
+              className={isExerciseAdded(exercise) ? 'red' : ''}
+            />
+          )}
+          noResultsMessage="No exercises found..."
+          onItemClick={(exercise) => onOpenModal(exercise)}
+        />
+      </div>
+      <SlideDialog
+        open={openModal}
+        onClose={onCloseModal}
+        component={<ExerciseDetails exercise={exercise} />}
+        title={capitalizeFirstLetter(exercise?.name || 'Exercise Details')}
+        type="full"
       />
-    </div>
+    </>
   )
 }

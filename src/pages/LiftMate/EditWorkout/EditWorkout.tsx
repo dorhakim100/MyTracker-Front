@@ -163,6 +163,9 @@ export function EditWorkout({
     setWorkout({ ...workout, name })
   }
 
+  console.log('workout', workout)
+  console.log('instructions', instructions)
+
   const onToggleMuscleGroup = (muscleGroup: MuscleGroup) => {
     const newMuscleGroups = [...workout.muscleGroups]
     if (newMuscleGroups.includes(muscleGroup.name)) {
@@ -345,6 +348,7 @@ export function EditWorkout({
                 setExerciseResults
               )
             }
+            instructions={instructions}
           />
         )
       // case 'exercises':

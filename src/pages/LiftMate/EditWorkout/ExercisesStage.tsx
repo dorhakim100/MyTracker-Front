@@ -30,7 +30,6 @@ export function ExercisesStage({
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
-  console.log(onExerciseFilterChange)
   return (
     <div className="exercises-stage">
       <ExercisesSearch
@@ -39,6 +38,11 @@ export function ExercisesStage({
         placeholder="Search for exercises"
         className={`${prefs.favoriteColor}`}
         results={exerciseResults}
+        onAddExercise={onAddExercise}
+        onDeleteExercise={onDeleteExercise}
+        onReorderExercises={onReorderExercises}
+        renderErrorImage={renderErrorImage}
+        workout={workout}
       />
     </div>
   )
