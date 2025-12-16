@@ -266,7 +266,7 @@ body.dark-mode {
   }
 
   // MuiPaper background colors (excluding menus)
-  &.blue .MuiPaper-root:not(:has(.MuiMenu-list)) {
+  &.blue .MuiPaper-root:not(:has(.MuiMenu-list)):not(.slide-dialog) {
     background-color: $darker-gray-blue !important;
 
     &.MuiAlert-root {
@@ -277,7 +277,7 @@ body.dark-mode {
       }
     }
   }
-  &.yellow .MuiPaper-root:not(:has(.MuiMenu-list)) {
+  &.yellow .MuiPaper-root:not(:has(.MuiMenu-list)):not(.slide-dialog) {
     background-color: $darker-gray-yellow !important;
 
     &.MuiAlert-root {
@@ -288,7 +288,7 @@ body.dark-mode {
       }
     }
   }
-  &.red .MuiPaper-root:not(:has(.MuiMenu-list)) {
+  &.red .MuiPaper-root:not(:has(.MuiMenu-list)):not(.slide-dialog) {
     background-color: $darker-gray-red !important;
 
     &.MuiAlert-root {
@@ -299,7 +299,7 @@ body.dark-mode {
       }
     }
   }
-  &.orange .MuiPaper-root:not(:has(.MuiMenu-list)) {
+  &.orange .MuiPaper-root:not(:has(.MuiMenu-list)):not(.slide-dialog) {
     background-color: $darker-gray-orange !important;
 
     &.MuiAlert-root {
@@ -310,7 +310,7 @@ body.dark-mode {
       }
     }
   }
-  &.green .MuiPaper-root:not(:has(.MuiMenu-list)) {
+  &.green .MuiPaper-root:not(:has(.MuiMenu-list)):not(.slide-dialog) {
     background-color: $darker-gray-green !important;
 
     &.MuiAlert-root {
@@ -321,7 +321,7 @@ body.dark-mode {
       }
     }
   }
-  &.deepPurple .MuiPaper-root:not(:has(.MuiMenu-list)) {
+  &.deepPurple .MuiPaper-root:not(:has(.MuiMenu-list)):not(.slide-dialog) {
     background-color: $darker-gray-deep-purple !important;
 
     &.MuiAlert-root {
@@ -332,7 +332,7 @@ body.dark-mode {
       }
     }
   }
-  &.purple .MuiPaper-root:not(:has(.MuiMenu-list)) {
+  &.purple .MuiPaper-root:not(:has(.MuiMenu-list)):not(.slide-dialog) {
     background-color: $darker-gray-purple !important;
 
     &.MuiAlert-root {
@@ -343,7 +343,7 @@ body.dark-mode {
       }
     }
   }
-  &.pink .MuiPaper-root:not(:has(.MuiMenu-list)) {
+  &.pink .MuiPaper-root:not(:has(.MuiMenu-list)):not(.slide-dialog) {
     background-color: $darker-gray-pink !important;
 
     &.MuiAlert-root {

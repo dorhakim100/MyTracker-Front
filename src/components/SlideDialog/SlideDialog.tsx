@@ -68,7 +68,6 @@ export function SlideDialog({
           '& .MuiDialog-paper': {
             height: type === 'half' ? '800px' : '100%',
             paddingBottom: '1.5em',
-            backgroundColor: 'red',
           },
         }}
         slots={{
@@ -76,7 +75,9 @@ export function SlideDialog({
         }}
         slotProps={{
           paper: {
-            className: `slide-dialog ${prefs.isDarkMode ? 'dark-mode' : ''}`,
+            className: `slide-dialog ${prefs.isDarkMode ? 'dark-mode' : ''} ${
+              prefs.favoriteColor || ''
+            }`,
           },
         }}
       >

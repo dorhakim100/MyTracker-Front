@@ -5,23 +5,32 @@
 .MuiDialog-root.full-dialog {
   top: $header-margin !important;
   bottom: 0 !important;
+  // height: 100% !important;
 }
 
 .slide-dialog {
-  .MuiPaper-root {
+  &.MuiPaper-root {
     .MuiToolbar-root {
       border-top-right-radius: 10px;
       border-top-left-radius: 10px;
     }
   }
-  .slide-dialog-content {
-    height: 100%;
-    // align-self: center;
-    justify-self: center;
-  }
+
   &.dark-mode {
-    background-color: $darker-gray !important;
-    color: $white !important;
+    &.MuiPaper-root {
+      background-color: $dark-gray !important;
+      color: $white !important;
+    }
+    &:has(.blue) {
+      background-color: $dark-gray-blue !important;
+    }
+
+    &.yellow.MuiPaper-root {
+      background-color: $dark-gray-yellow !important;
+    }
+    &.red.MuiPaper-root {
+      background-color: $dark-gray-red !important;
+    }
 
     // Toolbar with darker picker colors in dark mode
     .MuiToolbar-root {
@@ -55,6 +64,45 @@
         ):not(.purple):not(.pink) {
         background-color: $primary-color-dark !important;
       }
+    }
+
+    // Dialog background colors based on favorite color
+    &.blue.MuiPaper-root {
+      background-color: $dark-gray-blue !important;
+    }
+    &.yellow.MuiPaper-root {
+      background-color: $dark-gray-yellow !important;
+    }
+    &.red.MuiPaper-root {
+      background-color: $dark-gray-red !important;
+    }
+    &.orange.MuiPaper-root {
+      background-color: $dark-gray-orange !important;
+    }
+    &.green.MuiPaper-root {
+      background-color: $dark-gray-green !important;
+    }
+    &.deepPurple.MuiPaper-root {
+      background-color: $dark-gray-deep-purple !important;
+    }
+    &.purple.MuiPaper-root {
+      background-color: $dark-gray-purple !important;
+    }
+    &.pink.MuiPaper-root {
+      background-color: $dark-gray-pink !important;
+    }
+    // Default for primary (when no favorite color or primary)
+    &:not(.blue):not(.yellow):not(.red):not(.orange):not(.green):not(
+        .deepPurple
+      ):not(.purple):not(.pink).MuiPaper-root {
+      background-color: $dark-gray !important;
+    }
+  }
+}
+.MuiDialog-container {
+  &:has(.blue) {
+    .MuiPaper-root {
+      background-color: $dark-gray-blue !important;
     }
   }
 }
