@@ -254,49 +254,55 @@ export function NameExercises({
         className="edit-workout-stage name-exercises-stage"
         ref={editWorkoutRef}
       >
-        <CustomInput
-          value={workout.name}
-          onChange={onNameChange}
-          placeholder="Enter workout name"
-          isRemoveIcon={true}
-          className={`${prefs.favoriteColor}`}
-        />
-        {instructions._id && (
-          <CustomToggle
-            value={instructionsFilter.weekNumber.toString()}
-            onChange={(weekNumber: string) =>
-              onInstructionsFilterChange({
-                ...instructionsFilter,
-                weekNumber: +weekNumber,
-              })
-            }
-            options={getArrayOfNumbers(1, 10).map((weekNumber) => ({
-              label: `Week`,
-              value: weekNumber.toString(),
-              icon: <span>{weekNumber}</span>,
-              badgeIcon: getWeekNumberIcon(+weekNumber),
-              getDisabled: () => {
-                return getIsWeekNumberDisabled(+weekNumber)
-              },
-            }))}
-            isBadge={true}
-            isReversedIcon={true}
-            className={`week-number-toggle ${
-              prefs.isDarkMode ? 'dark-mode' : ''
-            }`}
-          />
-        )}
-        <div className="times-per-week-container">
-          <span className="bold-header">Times per week</span>
-          <CustomSelect
-            label="Times"
-            values={getArrayOfNumbers(1, 7).map(
-              (timesNumber) => timesNumber + ''
-            )}
-            value={instructions.timesPerWeek + ''}
-            onChange={(times: string) => onEditTimes(times)}
-            className={`${prefs.favoriteColor}`}
-          />
+        <div className="settings-controls-container">
+          {!instructions._id && (
+            <CustomInput
+              value={workout.name}
+              onChange={onNameChange}
+              placeholder="Enter workout name"
+              isRemoveIcon={true}
+              className={`${prefs.favoriteColor}`}
+            />
+          )}
+          {instructions._id && (
+            <CustomToggle
+              value={instructionsFilter.weekNumber.toString()}
+              onChange={(weekNumber: string) =>
+                onInstructionsFilterChange({
+                  ...instructionsFilter,
+                  weekNumber: +weekNumber,
+                })
+              }
+              options={getArrayOfNumbers(1, 10).map((weekNumber) => ({
+                label: `Week`,
+                value: weekNumber.toString(),
+                icon: <span>{weekNumber}</span>,
+                badgeIcon: getWeekNumberIcon(+weekNumber),
+                getDisabled: () => {
+                  return getIsWeekNumberDisabled(+weekNumber)
+                },
+              }))}
+              isBadge={true}
+              isReversedIcon={true}
+              className={`week-number-toggle ${
+                prefs.isDarkMode ? 'dark-mode' : ''
+              }`}
+            />
+          )}
+          {!instructions._id && (
+            <div className="times-per-week-container">
+              <span className="bold-header">Times per week</span>
+              <CustomSelect
+                label="Times"
+                values={getArrayOfNumbers(1, 7).map(
+                  (timesNumber) => timesNumber + ''
+                )}
+                value={instructions.timesPerWeek + ''}
+                onChange={(times: string) => onEditTimes(times)}
+                className={`${prefs.favoriteColor}`}
+              />
+            </div>
+          )}
         </div>
         <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
         {(workout.exercises.length === 0 && renderNoExercises()) || (

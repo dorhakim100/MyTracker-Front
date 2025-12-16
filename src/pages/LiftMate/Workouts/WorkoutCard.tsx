@@ -29,6 +29,7 @@ import { messages } from '../../../assets/config/messages'
 import { CustomAlertDialog } from '../../../CustomMui/CustomAlertDialog/CustomAlertDialog'
 import { SlideDialog } from '../../../components/SlideDialog/SlideDialog'
 import { WorkoutDetails } from '../../../components/WorkoutDetails/WorkoutDetails'
+import { EditWorkout } from '../EditWorkout/EditWorkout'
 interface WorkoutCardProps {
   workout: Workout
   className?: string
@@ -43,7 +44,7 @@ export function WorkoutCard({ workout, className }: WorkoutCardProps) {
 
   const [slideOptions, setSlideOptions] = useState<{
     open: boolean
-    type: 'details' | null
+    type: 'details' | 'edit' | null
   }>({ open: false, type: null })
 
   const onViewDetails = useCallback(() => {
@@ -51,7 +52,7 @@ export function WorkoutCard({ workout, className }: WorkoutCardProps) {
   }, [workout._id])
 
   const onEdit = useCallback(() => {
-    console.log('edit workout', workout._id)
+    setSlideOptions({ open: true, type: 'edit' })
   }, [workout._id])
 
   const onDelete = useCallback(async () => {
@@ -73,7 +74,7 @@ export function WorkoutCard({ workout, className }: WorkoutCardProps) {
         onClick: onViewDetails,
       },
       {
-        title: 'Edit',
+        title: 'Edit Block',
         icon: <Edit />,
         onClick: onEdit,
       },
@@ -95,12 +96,23 @@ export function WorkoutCard({ workout, className }: WorkoutCardProps) {
     if (slideOptions.type === 'details') {
       return 'Workout Details'
     }
+    if (slideOptions.type === 'edit') {
+      return `Edit ${workout.name}`
+    }
     return null
   }
 
   const getSlideComponent = () => {
     if (slideOptions.type === 'details') {
       return <WorkoutDetails workout={workout} />
+    }
+    if (slideOptions.type === 'edit') {
+      return (
+        <EditWorkout
+          selectedWorkout={workout}
+          closeDialog={() => setSlideOptions({ open: false, type: null })}
+        />
+      )
     }
     return null
   }
