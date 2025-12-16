@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../store/store'
-import { capitalizeFirstLetter, debounce } from '../../../services/util.service'
-import { CustomStepper } from '../../../CustomMui/CustomStepper/CustomStepper'
+import { debounce } from '../../../services/util.service'
 import { Workout } from '../../../types/workout/Workout'
 import { workoutService } from '../../../services/workout/workout.service'
 import { Exercise, ExerciseDetail } from '../../../types/exercise/Exercise'
@@ -17,11 +16,9 @@ import { saveWorkout } from '../../../store/actions/workout.action'
 import { Instructions } from '../../../types/instructions/Instructions'
 import { instructionsService } from '../../../services/instructions/instructions.service'
 import { WeekNumberStatus } from '../../../types/weekNumberStatus/WeekNumberStatus'
-import { MuscleGroup } from '../../../types/muscleGroup/MuscleGroup'
-import { NameStage } from './NameStage'
+
 import { NameExercises } from './NameExercises'
-import { ExercisesStage } from './ExercisesStage'
-import { DetailsStage } from './DetailsStage'
+
 import { imageService } from '../../../services/image/image.service'
 import { ExerciseInstructions } from '../../../types/exercise/ExerciseInstructions'
 import { ExerciseFilter } from '../../../types/exerciseFilter/ExerciseFilter'
@@ -30,14 +27,12 @@ import { ExpectedActual } from '../../../types/expectedActual/ExpectedActual'
 
 interface EditWorkoutProps {
   selectedWorkout?: Workout | null
-  // saveWorkout?: (workout: Workout) => void
   forUserId?: string
   closeDialog: () => void
 }
 
 export function EditWorkout({
   selectedWorkout,
-  // saveWorkout,
   forUserId,
   closeDialog,
 }: EditWorkoutProps) {
@@ -346,11 +341,15 @@ export function EditWorkout({
 
     try {
       setIsLoading(true)
-      const savedWorkout = await saveWorkout(workoutToSave)
+      const savedWorkout = await saveWorkout(
+        workoutToSave,
+        instructionsToSave.timesPerWeek
+      )
       instructionsToSave.workoutId = savedWorkout._id
       await instructionsService.save({
         ...instructionsToSave,
       })
+
       showSuccessMsg(messages.success.saveWorkout)
     } catch (err) {
       showErrorMsg(messages.error.saveWorkout)

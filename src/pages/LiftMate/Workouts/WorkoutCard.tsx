@@ -192,13 +192,15 @@ export function WorkoutCard({
       >
         <div className="header-container">
           <Typography variant="h6">{workout.name}</Typography>
-          {renderTimes()}
-          <CustomOptionsMenu
-            options={options}
-            triggerElement={
-              <CustomButton isIcon={true} icon={<MoreHorizIcon />} />
-            }
-          />
+          <div className="header-actions-container">
+            {renderTimes()}
+            <CustomOptionsMenu
+              options={options}
+              triggerElement={
+                <CustomButton isIcon={true} icon={<MoreHorizIcon />} />
+              }
+            />
+          </div>
         </div>
         <Typography
           variant="body1"
