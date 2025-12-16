@@ -119,12 +119,16 @@ export function EditWorkout({
   }, [workout._id, instructionsFilter, user?._id, traineeUser?._id])
 
   useEffect(() => {
-    if (!weeksStatus) return
+    if (!weeksStatus || weeksStatus.length === 0) return
+
     const latestWeekNumber =
       weeksStatus[weeksStatus.length - 1]?.weekNumber || 1
+    let weekToSet = latestWeekNumber
+    if (weeksStatus[latestWeekNumber - 1]?.isDone)
+      weekToSet = latestWeekNumber + 1
     setInstructionsFilter((prev) => ({
       ...prev,
-      weekNumber: latestWeekNumber,
+      weekNumber: weekToSet,
     }))
   }, [weeksStatus.length])
 
@@ -257,7 +261,7 @@ export function EditWorkout({
         ...updatedExercises[instructionIndex],
         notes: {
           expected: notes,
-          actual: notes,
+          actual: prev.exercises[instructionIndex].notes.actual,
         },
       }
 
@@ -316,6 +320,17 @@ export function EditWorkout({
     })
   }
 
+  function clearActualNotes(instructions: Instructions) {
+    const newExercises = [...instructions.exercises]
+    newExercises.forEach((exercise) => {
+      exercise.notes.actual = ''
+    })
+    return {
+      ...instructions,
+      exercises: newExercises,
+    }
+  }
+
   const onFinish = async () => {
     const workoutToSave = {
       ...workout,
@@ -327,7 +342,7 @@ export function EditWorkout({
       workoutToSave.name = 'Untitled Workout'
     }
 
-    const instructionsToSave = instructions
+    const instructionsToSave = clearActualNotes(instructions)
 
     try {
       setIsLoading(true)

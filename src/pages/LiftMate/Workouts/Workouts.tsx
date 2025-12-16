@@ -7,6 +7,7 @@ import {
   removeWorkout,
   toggleActivateWorkout,
   setSelectedSessionDay,
+  playWorkout,
 } from '../../../store/actions/workout.action'
 
 import { SlideDialog } from '../../../components/SlideDialog/SlideDialog'
@@ -40,6 +41,8 @@ import { DropdownOption } from '../../../types/DropdownOption'
 import CheckBoxIcon from '@mui/icons-material/CheckBox'
 import { DayController } from '../../../components/DayController/DayController'
 import { SlideAnimation } from '../../../components/SlideAnimation/SlideAnimation'
+import { WorkoutSession } from '../../../components/WorkoutSession/WorkoutSession'
+import { setIsLoading } from '../../../store/actions/system.actions'
 
 const EDIT = 'edit'
 const DETAILS = 'details'
@@ -47,7 +50,7 @@ const DETAILS = 'details'
 const EDIT_TITLE = 'Edit Workout'
 const CREATE_TITLE = 'Create Workout'
 const DETAILS_TITLE = 'Workout Details'
-const ADD_ROUTINE_BUTTON = 'Add Routine'
+const ADD_ROUTINE_BUTTON = 'Add New Routine'
 
 type dialogType = typeof EDIT | typeof DETAILS
 
@@ -78,6 +81,10 @@ export function Workouts() {
   )
   const [selectedDay, setSelectedDay] = useState(new Date())
   const [selectedDayDate] = useState(new Date().toISOString())
+
+  const [selectedWorkoutId, setSelectedWorkoutId] = useState<string | null>(
+    null
+  )
 
   const [sessionFilter, setSessionFilter] = useState({
     userId: traineeUser?._id || user?._id || '',
@@ -245,6 +252,30 @@ export function Workouts() {
     }
   }
 
+  const onStartWorkout = async (workout: Workout) => {
+    if (!workout._id || !sessionDay) return
+    try {
+      setIsLoading(true)
+
+      if (!sessionDay._id) return
+      setSelectedWorkoutId(workout._id)
+
+      await playWorkout(
+        {
+          ...sessionDay,
+          workoutId: workout._id,
+        },
+        traineeUser?._id || user?._id || ''
+      )
+
+      // await saveSessionDay()
+    } catch (err) {
+      showErrorMsg(messages.error.startWorkout)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   const getDialogComponent = () => {
     if (dialogOptions.type === EDIT) {
       return (
@@ -281,7 +312,7 @@ export function Workouts() {
     return (
       <div className="workouts-lists-container">
         {activeWorkouts.length > 0 && (
-          <span className="bold-header">My Routines</span>
+          <span className="bold-header">My Active Routines</span>
         )}
 
         <div
@@ -289,12 +320,17 @@ export function Workouts() {
             prefs.isDarkMode ? 'dark-mode' : ''
           } active`}
         >
-          <WorkoutsList workouts={activeWorkouts} className={`active-list`} />
+          <WorkoutsList
+            workouts={activeWorkouts}
+            className={`active-list`}
+            onStartWorkout={onStartWorkout}
+            selectedWorkoutId={selectedWorkoutId}
+          />
         </div>
         <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
 
         <div className="past-controller">
-          <span className="bold-header">Past Routines</span>
+          <span className="bold-header">My Past Routines</span>
           <DateRangeController
             selectedPastDate={selectedPastDate}
             onDateChange={setSelectedPastDate}
@@ -331,7 +367,7 @@ export function Workouts() {
         />
         {inactiveWorkouts.length === 0 && (
           <Typography variant="body1" className="no-past-workouts-message">
-            No past workouts found...
+            No past routines found...
           </Typography>
         )}
       </div>
@@ -358,33 +394,47 @@ export function Workouts() {
             <Typography variant="h5" className="bold-header">
               Workout
             </Typography>
-            <CustomButton
-              text="Start Empty Workout"
-              // onClick={() => setDialogOptions({ open: true, type: EDIT })}
-              icon={<Add />}
-              className={`${prefs.favoriteColor} empty-workout-button`}
-              fullWidth={true}
-            />
+            {!sessionDay.instructions && (
+              <CustomButton
+                text="Start Empty Workout"
+                // onClick={() => setDialogOptions({ open: true, type: EDIT })}
+                icon={<Add />}
+                className={`${prefs.favoriteColor} empty-workout-button`}
+                fullWidth={true}
+              />
+            )}
           </div>
           <Divider
             className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
           />
-          <div className="workouts-header routines">
-            <Typography variant="h5" className="bold-header">
-              Routines
-            </Typography>
+          {!sessionDay.instructions && (
+            <>
+              <div className="workouts-header routines">
+                <Typography variant="h5" className="bold-header">
+                  Routines
+                </Typography>
 
-            <CustomButton
-              text={ADD_ROUTINE_BUTTON}
-              onClick={() => setDialogOptions({ open: true, type: EDIT })}
-              icon={<Add />}
-              fullWidth={true}
+                <CustomButton
+                  text={ADD_ROUTINE_BUTTON}
+                  onClick={() => setDialogOptions({ open: true, type: EDIT })}
+                  icon={<Add />}
+                  fullWidth={true}
+                />
+              </div>
+              <Divider
+                className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+              />
+            </>
+          )}
+          {!sessionDay.workoutId || !sessionDay.instructions ? (
+            renderWorkoutLists()
+          ) : (
+            <WorkoutSession
+              sessionDay={sessionDay}
+              onExerciseInfoClick={() => {}}
+              updateSessionDay={updateSessionDay}
             />
-          </div>
-          <Divider
-            className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-          />
-          {renderWorkoutLists()}
+          )}
         </SlideAnimation>
       </div>
       <SlideDialog

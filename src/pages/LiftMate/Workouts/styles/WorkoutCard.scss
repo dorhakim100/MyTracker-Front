@@ -15,4 +15,20 @@
   &.dark-mode {
     color: $white;
   }
+
+  .start-workout-button {
+    display: grid;
+    grid-template-columns: 1fr 20px;
+    gap: 0.5rem !important;
+  }
+
+  .new-workout-badge {
+    position: relative;
+    .MuiBadge-badge {
+      position: absolute;
+      left: 0.5rem;
+      padding: 0.5rem 1rem;
+      // top: 0;
+    }
+  }
 }

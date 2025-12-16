@@ -76,6 +76,50 @@ body {
     .MuiInputBase-root {
       outline: 1px solid $dark-mode-border !important;
     }
+
+    .slide-dialog-content {
+      background-color: $dark-gray !important;
+    }
+    &.blue {
+      .slide-dialog-content {
+        background-color: $dark-gray-blue !important;
+      }
+    }
+    &.yellow {
+      .slide-dialog-content {
+        background-color: $dark-gray-yellow !important;
+      }
+    }
+    &.red {
+      .slide-dialog-content {
+        background-color: $dark-gray-red !important;
+      }
+    }
+    &.orange {
+      .slide-dialog-content {
+        background-color: $dark-gray-orange !important;
+      }
+    }
+    &.green {
+      .slide-dialog-content {
+        background-color: $dark-gray-green !important;
+      }
+    }
+    &.deepPurple {
+      .slide-dialog-content {
+        background-color: $dark-gray-deep-purple !important;
+      }
+    }
+    &.purple {
+      .slide-dialog-content {
+        background-color: $dark-gray-purple !important;
+      }
+    }
+    &.pink {
+      .slide-dialog-content {
+        background-color: $dark-gray-pink !important;
+      }
+    }
   }
 
   // font-family: regularAssistant;

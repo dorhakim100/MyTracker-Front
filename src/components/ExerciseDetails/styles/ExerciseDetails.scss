@@ -3,6 +3,10 @@
   gap: 1rem;
   padding: 1rem 1rem 2rem 1rem;
 
+  &.dark-mode {
+    // background-color: $dark-gray !important;
+  }
+
   img {
     width: 200px;
     height: 200px;

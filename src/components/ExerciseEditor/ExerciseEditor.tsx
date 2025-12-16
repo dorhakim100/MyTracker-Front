@@ -141,22 +141,24 @@ export function ExerciseEditor({
     return type === 'rpe' || type === 'weight'
   }
 
+  console.log('exercise', exercise)
+
   return (
     <>
-      <div className='exercise-editor-container'>
+      <div className="exercise-editor-container">
         {exercise.sets && exercise.sets.length > 0 && (
           <SwipeableWrapper
             items={exercise.sets.map((set, index) => ({
               id: `${exercise.exerciseId}-set-${index}`,
               content: (
-                <div className='set-container'>
-                  <div className='set-editor-container'>
+                <div className="set-container">
+                  <div className="set-editor-container">
                     <Badge
                       badgeContent={index + 1}
-                      color='primary'
+                      color="primary"
                       className={prefs.favoriteColor}
                     />
-                    <div className='reps-container'>
+                    <div className="reps-container">
                       <PickerSelect
                         className={`${prefs.favoriteColor}`}
                         openClock={() => {
@@ -177,7 +179,7 @@ export function ExerciseEditor({
                         // isAutoWidth={true}
                       />
                     </div>
-                    <div className='weight-container'>
+                    <div className="weight-container">
                       <PickerSelect
                         className={`${prefs.favoriteColor}`}
                         openClock={() => {
@@ -198,7 +200,7 @@ export function ExerciseEditor({
                         // isAutoWidth={true}
                       />
                     </div>
-                    <div className='rpe-rir-container'>
+                    <div className="rpe-rir-container">
                       <PickerSelect
                         className={`${prefs.favoriteColor}`}
                         openClock={() => {
@@ -242,10 +244,10 @@ export function ExerciseEditor({
             threshold={0.15}
           />
         )}
-        <div className='controls-container'>
+        <div className="controls-container">
           <CustomButton
             icon={<AddIcon />}
-            text='Add Set'
+            text="Add Set"
             onClick={onAddSet}
             fullWidth
           />

@@ -36,8 +36,14 @@ interface ExerciseCardProps {
   onEditExerciseNotes: (exerciseId: string, notes: string) => void
   setInstructions?: (instructions: Instructions) => void
   instructions: Instructions
-  onSwitchRpeRir: (exerciseId: string, value: 'rpe' | 'rir') => void
-  setIsReorderExercisesOpen: (isOpen: boolean) => void
+  onSwitchRpeRir?: (exerciseId: string, value: 'rpe' | 'rir') => void
+  setIsReorderExercisesOpen?: (isOpen: boolean) => void
+  updateExercise?: (
+    exercise: ExerciseInstructions,
+    setIndex: number,
+    isNew: boolean,
+    isRemove: boolean
+  ) => void
 }
 
 export function ExerciseCard({
@@ -55,12 +61,13 @@ export function ExerciseCard({
   exerciseInstructions,
   onSwitchRpeRir,
   setIsReorderExercisesOpen,
+  updateExercise,
 }: ExerciseCardProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
 
-  const updateExercise = (exercise: ExerciseInstructions) => {
+  const updateExerciseInInstructions = (exercise: ExerciseInstructions) => {
     if (!setInstructions) return
     setInstructions({
       ...instructions,
@@ -69,8 +76,6 @@ export function ExerciseCard({
       ),
     })
   }
-
-  console.log('exerciseInstructions', exerciseInstructions)
 
   const [isOpen, setIsOpen] = useState(false)
   const [isEditNotesOpen, setIsEditNotesOpen] = useState(false)
@@ -101,7 +106,9 @@ export function ExerciseCard({
       onClick: () => {
         const modeToSet = exerciseInstructions?.sets[0]?.rpe ? 'rir' : 'rpe'
         console.log('modeToSet', modeToSet)
-        onSwitchRpeRir(exercise.exerciseId, modeToSet)
+        if (onSwitchRpeRir) {
+          onSwitchRpeRir(exercise.exerciseId, modeToSet)
+        }
       },
     },
     {
@@ -118,7 +125,9 @@ export function ExerciseCard({
           title: 'Reorder Exercises',
           icon: <DragHandleIcon />,
           onClick: () => {
-            setIsReorderExercisesOpen(true)
+            if (setIsReorderExercisesOpen) {
+              setIsReorderExercisesOpen(true)
+            }
           },
         }
       : null,
@@ -132,7 +141,7 @@ export function ExerciseCard({
       },
     }) ||
       null,
-  ].filter((option) => option !== null) as DropdownOption[]
+  ].filter((option) => option) as DropdownOption[]
 
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -194,13 +203,16 @@ export function ExerciseCard({
                   .join(', ')}
               </Typography>
             )}
-
-            <Typography variant="body2" className="exercise-card-notes">
-              {`${!isExpected ? 'Expected ' : ''}Notes: ${
-                exerciseInstructions?.notes?.expected || ''
-              }`}
-            </Typography>
-            {!isExpected && (
+            {/* if expected is false and expected notes are empty, don't show expected notes */}
+            {!isExpected && !exerciseInstructions?.notes?.expected ? null : (
+              <Typography variant="body2" className="exercise-card-notes">
+                {`Expected Notes: ${
+                  exerciseInstructions?.notes?.expected || ''
+                }`}
+              </Typography>
+            )}
+            {/* if there are actual notes, show them */}
+            {!exerciseInstructions?.notes?.actual ? null : (
               <Typography variant="body2" className="exercise-card-notes">
                 {`Actual Notes: ${exerciseInstructions?.notes?.actual || ''}`}
               </Typography>
@@ -227,7 +239,17 @@ export function ExerciseCard({
         {exerciseInstructions && exerciseInstructions.sets && (
           <ExerciseEditor
             exercise={exerciseInstructions}
-            updateExercise={updateExercise}
+            updateExercise={
+              isExpected
+                ? updateExerciseInInstructions
+                : (exercise, setIndex, isNew, isRemove) =>
+                    updateExercise?.(
+                      exercise,
+                      setIndex || 0,
+                      isNew || false,
+                      isRemove || false
+                    )
+            }
             isExpected={isExpected}
           />
         )}

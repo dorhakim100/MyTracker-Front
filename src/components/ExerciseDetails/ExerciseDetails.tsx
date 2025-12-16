@@ -162,17 +162,21 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
   }
 
   return (
-    <div className='exercise-details-container'>
+    <div
+      className={`exercise-details-container ${
+        prefs.isDarkMode ? 'dark-mode' : ''
+      }`}
+    >
       <img
         src={exerciseImage}
         alt={exercise?.name}
         onError={() => setExerciseImage(exerciseImageObject.ERROR_IMAGE)}
       />
       <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
-      <div className='exercise-details'>
+      <div className="exercise-details">
         {exercise?.notes?.expected && (
           <>
-            <Typography variant='h5' className='bold-header'>
+            <Typography variant="h5" className="bold-header">
               Notes
             </Typography>
             <div
@@ -186,12 +190,12 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
         )}
 
         <CustomAccordion
-          title='Instructions'
+          title="Instructions"
           cmp={exerciseInstructions?.map(renderExerciseInstructions)}
           icon={<AutoStoriesIcon />}
         />
-        <div className='line-chart-container'>
-          <Typography variant='h5' className='bold-header'>
+        <div className="line-chart-container">
+          <Typography variant="h5" className="bold-header">
             Max Weight Progress
           </Typography>
           <LineChart
@@ -202,7 +206,7 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
           />
           <LineChartControls value={range} onChange={(val) => setRange(val)} />
         </div>
-        <Typography variant='h5' className='bold-header'>
+        <Typography variant="h5" className="bold-header">
           Past Sessions
         </Typography>
         {/* {exerciseSets.length === 0} */}

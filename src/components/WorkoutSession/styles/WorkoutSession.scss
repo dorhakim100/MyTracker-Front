@@ -4,3 +4,24 @@
   display: grid;
   gap: 1rem;
 }
+
+.workout-header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 0;
+  padding-inline-start: 1rem;
+
+  .actions-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+}
+
+.workout-container {
+  .exercises-container {
+    display: grid;
+    gap: 1rem;
+  }
+}

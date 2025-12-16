@@ -15,8 +15,8 @@ import { CustomAccordion } from '../../CustomMui/CustomAccordion/CustomAccordion
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 
 import InfoOutlineIcon from '@mui/icons-material/InfoOutline'
-import ExpandLessIcon from '@mui/icons-material/ExpandLess'
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+// import ExpandLessIcon from '@mui/icons-material/ExpandLess'
+// import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { ExerciseInstructions } from '../../types/exercise/ExerciseInstructions'
@@ -30,6 +30,7 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import { CustomAlertDialog } from '../../CustomMui/CustomAlertDialog/CustomAlertDialog'
 import NoteAddIcon from '@mui/icons-material/NoteAdd'
 import { CustomInput } from '../../CustomMui/CustomInput/CustomInput'
+import { ExerciseCard } from '../ExerciseCard/ExerciseCard'
 interface WorkoutSessionProps {
   sessionDay: SessionDay
   onExerciseInfoClick: (exercise: Exercise) => void
@@ -83,19 +84,19 @@ export function WorkoutSession({
     []
   )
 
-  const toggleExpandAll = () => {
-    if (!sessionDay?.workout?.exercises) return
-    const allExerciseIds = sessionDay.workout.exercises.map(
-      (ex) => ex.exerciseId
-    )
-    const allExpanded = allExerciseIds.every((id) => expandedExercises.has(id))
+  // const toggleExpandAll = () => {
+  //   if (!sessionDay?.workout?.exercises) return
+  //   const allExerciseIds = sessionDay.workout.exercises.map(
+  //     (ex) => ex.exerciseId
+  //   )
+  //   const allExpanded = allExerciseIds.every((id) => expandedExercises.has(id))
 
-    if (allExpanded) {
-      setExpandedExercises(new Set())
-    } else {
-      setExpandedExercises(new Set(allExerciseIds))
-    }
-  }
+  //   if (allExpanded) {
+  //     setExpandedExercises(new Set())
+  //   } else {
+  //     setExpandedExercises(new Set(allExerciseIds))
+  //   }
+  // }
 
   const getWorkoutName = () => {
     const workoutId = sessionDay.instructions.workoutId
@@ -224,19 +225,19 @@ export function WorkoutSession({
   const getAlertDialogComponent = () => {
     if (alertDialogOptions.component === 'delete')
       return (
-        <div className='modal-delete-workout-container'>
-          <Typography variant='h6'>
+        <div className="modal-delete-workout-container">
+          <Typography variant="h6">
             Are you sure you want to delete this workout?
           </Typography>
           <DialogActions>
             <CustomButton
-              text='Cancel'
+              text="Cancel"
               fullWidth
               onClick={closeAlertDialog}
               className={`${prefs.favoriteColor}`}
             />
             <CustomButton
-              text='Delete'
+              text="Delete"
               fullWidth
               onClick={deleteSession}
               className={`${prefs.favoriteColor} delete-account-button`}
@@ -247,23 +248,23 @@ export function WorkoutSession({
 
     if (alertDialogOptions.component === 'note') {
       return (
-        <div className='notes-edit-container'>
+        <div className="notes-edit-container">
           <CustomInput
             value={exerciseNotes}
             onChange={setExerciseNotes}
-            placeholder='Enter notes'
+            placeholder="Enter notes"
             isRemoveIcon={true}
             className={`${prefs.favoriteColor}`}
           />
           <DialogActions>
             <CustomButton
-              text='Cancel'
+              text="Cancel"
               fullWidth
               onClick={closeAlertDialog}
               className={`${prefs.favoriteColor}`}
             />
             <CustomButton
-              text='Save'
+              text="Save"
               fullWidth
               onClick={() =>
                 saveExerciseNotes(alertDialogOptions.exerciseId, exerciseNotes)
@@ -276,21 +277,21 @@ export function WorkoutSession({
     }
   }
 
-  const allExerciseIds = sessionDay.instructions.exercises.map(
-    (ex) => ex.exerciseId
-  )
-  const allExpanded =
-    allExerciseIds.length > 0 &&
-    allExerciseIds.every((id) => expandedExercises.has(id))
+  // const allExerciseIds = sessionDay.instructions.exercises.map(
+  //   (ex) => ex.exerciseId
+  // )
+  // const allExpanded =
+  //   allExerciseIds.length > 0 &&
+  //   allExerciseIds.every((id) => expandedExercises.has(id))
 
   return (
     <>
-      <div className='workout-container'>
-        <div className='workout-header-container'>
-          <Typography variant='h5' className='bold-header'>
+      <div className="workout-container">
+        <div className="workout-header-container">
+          <Typography variant="h5" className="bold-header">
             {getWorkoutName()}
           </Typography>
-          <div className='actions-container'>
+          <div className="actions-container">
             <CustomButton
               icon={<DeleteIcon />}
               onClick={() => {
@@ -303,15 +304,39 @@ export function WorkoutSession({
               }}
               isIcon={true}
             />
-            <CustomButton
+            {/* <CustomButton
               icon={allExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               onClick={toggleExpandAll}
-            />
+            /> */}
           </div>
         </div>
-        <div className='exercises-container'>
+        <div className="exercises-container">
           {sessionDay.instructions.exercises.map((exercise) => {
             const isExpanded = expandedExercises.has(exercise.exerciseId)
+
+            const workoutExercise = sessionDay.workout.exercises.find(
+              (e) => e.exerciseId === exercise.exerciseId
+            )
+
+            return (
+              <ExerciseCard
+                key={`${exercise.exerciseId}-${sessionDay._id}`}
+                exercise={workoutExercise as Exercise}
+                updateExercise={(exercise, setIndex, isNewSet, isRemove) =>
+                  updateExercise(
+                    exercise,
+                    setIndex || 0,
+                    isNewSet || false,
+                    isRemove || false
+                  )
+                }
+                instructions={sessionDay.instructions}
+                exerciseInstructions={exercise}
+                onEditExerciseNotes={(exerciseId, notes) =>
+                  saveExerciseNotes(exerciseId, notes)
+                }
+              />
+            )
 
             return (
               <CustomAccordion
@@ -333,7 +358,7 @@ export function WorkoutSession({
                 expanded={isExpanded}
                 onChange={handleAccordionChange(exercise.exerciseId)}
                 icon={
-                  <div className='exercise-info-container'>
+                  <div className="exercise-info-container">
                     <InfoOutlineIcon
                       onClick={(ev) => {
                         ev.stopPropagation()

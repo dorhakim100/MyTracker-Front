@@ -68,6 +68,7 @@ export function SlideDialog({
           '& .MuiDialog-paper': {
             height: type === 'half' ? '800px' : '100%',
             paddingBottom: '1.5em',
+            backgroundColor: 'red',
           },
         }}
         slots={{

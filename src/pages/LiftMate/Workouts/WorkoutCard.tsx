@@ -1,5 +1,11 @@
 import { useMemo, useCallback, useState } from 'react'
-import { Card, DialogActions, Divider, Typography } from '@mui/material'
+import {
+  Card,
+  CircularProgress,
+  DialogActions,
+  Divider,
+  Typography,
+} from '@mui/material'
 
 import { Workout } from '../../../types/workout/Workout'
 import { useSelector } from 'react-redux'
@@ -11,7 +17,7 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
 
 import { CustomOptionsMenu } from '../../../CustomMui/CustomOptionsMenu/CustomOptionsMenu'
 import { DropdownOption } from '../../../types/DropdownOption'
-
+import { PlayArrow } from '@mui/icons-material'
 import InfoOutlineIcon from '@mui/icons-material/InfoOutline'
 import Edit from '@mui/icons-material/Edit'
 import Delete from '@mui/icons-material/Delete'
@@ -19,6 +25,7 @@ import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox
 import ContentPasteIcon from '@mui/icons-material/ContentPaste'
 import {
   removeWorkout,
+  playWorkout,
   toggleActivateWorkout,
 } from '../../../store/actions/workout.action'
 import {
@@ -30,14 +37,28 @@ import { CustomAlertDialog } from '../../../CustomMui/CustomAlertDialog/CustomAl
 import { SlideDialog } from '../../../components/SlideDialog/SlideDialog'
 import { WorkoutDetails } from '../../../components/WorkoutDetails/WorkoutDetails'
 import { EditWorkout } from '../EditWorkout/EditWorkout'
+import { Badge } from '@mui/material'
+
+import DoneAllIcon from '@mui/icons-material/DoneAll'
 interface WorkoutCardProps {
   workout: Workout
   className?: string
+  onStartWorkout: (workout: Workout) => void
+  selectedWorkoutId: string | null
 }
 
-export function WorkoutCard({ workout, className }: WorkoutCardProps) {
+export function WorkoutCard({
+  workout,
+  className,
+  onStartWorkout,
+  selectedWorkoutId,
+}: WorkoutCardProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
+  )
+
+  const isLoading = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.isLoading
   )
 
   const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false)
@@ -116,6 +137,51 @@ export function WorkoutCard({ workout, className }: WorkoutCardProps) {
     }
     return null
   }
+
+  function renderAvailableWorkoutButton() {
+    return (
+      <CustomButton
+        text="Start Routine"
+        fullWidth={true}
+        onClick={(ev) => {
+          ev.stopPropagation()
+          onStartWorkout(workout)
+        }}
+        className="start-workout-button"
+        icon={
+          isLoading && selectedWorkoutId === workout._id ? (
+            <CircularProgress size={20} color="inherit" />
+          ) : (
+            <PlayArrow />
+          )
+        }
+      />
+    )
+  }
+
+  const renderTimes = () => {
+    if (workout.isNewInstructions && workout.doneTimes === 0) {
+      return (
+        <Badge
+          badgeContent={'New'}
+          className={`${prefs.favoriteColor} new-workout-badge`}
+        >
+          <span>
+            {workout.doneTimes} / {workout.timesPerWeek}
+          </span>
+        </Badge>
+      )
+    }
+
+    if (!workout.isNewInstructions) return <DoneAllIcon />
+
+    return (
+      <span>
+        {workout.doneTimes} / {workout.timesPerWeek}
+      </span>
+    )
+  }
+
   return (
     <>
       <Card
@@ -126,6 +192,7 @@ export function WorkoutCard({ workout, className }: WorkoutCardProps) {
       >
         <div className="header-container">
           <Typography variant="h6">{workout.name}</Typography>
+          {renderTimes()}
           <CustomOptionsMenu
             options={options}
             triggerElement={
@@ -151,13 +218,7 @@ export function WorkoutCard({ workout, className }: WorkoutCardProps) {
             .join(', ')}
         </Typography>
         <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
-        <CustomButton
-          text="Start Routine"
-          fullWidth={true}
-          onClick={(ev) => {
-            ev.stopPropagation()
-          }}
-        />
+        {workout.isNewInstructions && renderAvailableWorkoutButton()}
       </Card>
       <CustomAlertDialog
         open={isDeleteOpen}
