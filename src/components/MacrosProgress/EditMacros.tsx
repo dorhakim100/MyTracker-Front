@@ -17,10 +17,7 @@ import { useEffect, useState } from 'react'
 import { Box, Typography } from '@mui/material'
 import { Goal } from '../../types/goal/Goal'
 import { Macros as MacrosType } from '../../types/macros/Macros'
-import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
-import AddIcon from '@mui/icons-material/Add'
 import { SaveCancel } from '../SaveCancel/SaveCancel'
-import RemoveIcon from '@mui/icons-material/Remove'
 
 interface EditMacrosProps {
   goalToEdit?: Goal | Partial<Goal>
@@ -38,20 +35,20 @@ const CARBS_LIMIT = 800
 const PROTEIN_LIMIT = 350
 const FATS_LIMIT = 200
 
-const macrosAddButtons = {
-  carbs: {
-    value: 35,
-    limit: CARBS_LIMIT,
-  },
-  protein: {
-    value: 20,
-    limit: PROTEIN_LIMIT,
-  },
-  fats: {
-    value: 10,
-    limit: FATS_LIMIT,
-  },
-}
+// const macrosAddButtons = {
+//   carbs: {
+//     value: 35,
+//     limit: CARBS_LIMIT,
+//   },
+//   protein: {
+//     value: 20,
+//     limit: PROTEIN_LIMIT,
+//   },
+//   fats: {
+//     value: 10,
+//     limit: FATS_LIMIT,
+//   },
+// }
 
 interface PickerValue {
   carbs: number
@@ -227,17 +224,17 @@ export function EditMacros({
         {macroKeys.map((name) => {
           const macroName = name as string
 
-          const getButtonDisabled = () => {
-            return (
-              pickerValue[macroName] +
-                macrosAddButtons[macroName as keyof typeof macrosAddButtons]
-                  .value >
-              macrosAddButtons[macroName as keyof typeof macrosAddButtons].limit
-            )
-          }
+          // const getButtonDisabled = () => {
+          //   return (
+          //     pickerValue[macroName] +
+          //       macrosAddButtons[macroName as keyof typeof macrosAddButtons]
+          //         .value >
+          //     macrosAddButtons[macroName as keyof typeof macrosAddButtons].limit
+          //   )
+          // }
 
-          const buttonValue =
-            macrosAddButtons[macroName as keyof typeof macrosAddButtons].value
+          // const buttonValue =
+          //   macrosAddButtons[macroName as keyof typeof macrosAddButtons].value
 
           return (
             <div className="macro-container" key={`name-${macroName}`}>

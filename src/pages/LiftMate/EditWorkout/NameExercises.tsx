@@ -25,7 +25,6 @@ import CheckIcon from '@mui/icons-material/Check'
 import { WeekNumberStatus } from '../../../types/weekNumberStatus/WeekNumberStatus'
 import BeenhereIcon from '@mui/icons-material/Beenhere'
 import { CustomList } from '../../../CustomMui/CustomList/CustomList'
-import { DeleteAction } from '../../../components/DeleteAction/DeleteAction'
 
 type DialogType = 'add' | 'reorder' | null
 
@@ -184,7 +183,6 @@ export function NameExercises({
             if (isOpen) openDialog('reorder')
           }}
           showEquipment={true}
-          showActions={true}
           instructions={instructions}
           exerciseInstructions={instructions.exercises.find(
             (i) => i.exerciseId === exercise.exerciseId

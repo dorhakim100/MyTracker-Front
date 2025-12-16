@@ -22,10 +22,8 @@ import InfoOutlineIcon from '@mui/icons-material/InfoOutline'
 import Edit from '@mui/icons-material/Edit'
 import Delete from '@mui/icons-material/Delete'
 import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox'
-import ContentPasteIcon from '@mui/icons-material/ContentPaste'
 import {
   removeWorkout,
-  playWorkout,
   toggleActivateWorkout,
 } from '../../../store/actions/workout.action'
 import {

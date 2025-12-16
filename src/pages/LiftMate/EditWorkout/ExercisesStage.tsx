@@ -1,4 +1,3 @@
-import { CustomInput } from '../../../CustomMui/CustomInput/CustomInput'
 import { Exercise } from '../../../types/exercise/Exercise'
 import { Workout } from '../../../types/workout/Workout'
 import { useSelector } from 'react-redux'

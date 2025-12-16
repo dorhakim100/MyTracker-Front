@@ -101,9 +101,9 @@ export function CaloriesProgress({
         className={`card calories-progress ${prefs.isDarkMode ? 'dark' : ''}`}
         // onClick={onChangeDisplay}
       >
-        <Typography variant='h6'>{label}</Typography>
+        <Typography variant="h6">{label}</Typography>
         <EditIcon onClick={edit} />
-        <div className='goal-container'>
+        <div className="goal-container">
           <GoalBanner
             current={currentValue}
             goal={roundToNearest50(user?.currGoal?.dailyCalories || 0)}
@@ -118,8 +118,8 @@ export function CaloriesProgress({
       <SlideDialog
         open={openModal}
         onClose={onClose}
-        component={<CaloriesEdit />}
-        title='Edit Calories'
+        component={<CaloriesEdit onCancel={onClose} onSave={onSave} />}
+        title="Edit Calories"
         onSave={onSave}
       />
     </>

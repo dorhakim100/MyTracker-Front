@@ -30,12 +30,9 @@ export function ExercisesSearch({
   workout,
   exerciseFilter,
   onExerciseFilterChange,
-  placeholder = 'Search for exercises',
   className = '',
   results,
   onAddExercise,
-  onDeleteExercise,
-  onReorderExercises,
   renderErrorImage,
 }: ExercisesSearchProps) {
   const prefs = useSelector(
@@ -61,7 +58,7 @@ export function ExercisesSearch({
 
   return (
     <>
-      <div className="exercise-search-container">
+      <div className={`exercise-search-container ${className}`}>
         <ExercisesFilter
           exerciseFilter={exerciseFilter}
           onExerciseFilterChange={onExerciseFilterChange}

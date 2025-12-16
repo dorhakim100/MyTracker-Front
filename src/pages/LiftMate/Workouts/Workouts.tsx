@@ -30,7 +30,7 @@ import {
 } from '../../../services/event-bus.service'
 import { WorkoutDetails } from '../../../components/WorkoutDetails/WorkoutDetails'
 import { Divider, Typography } from '@mui/material'
-import { Add, Check, Delete, Edit } from '@mui/icons-material'
+import { Add, Delete, Edit } from '@mui/icons-material'
 import { workoutService } from '../../../services/workout/workout.service'
 import { DAY_IN_MS, MONTH_IN_MS } from '../../../assets/config/times'
 import { DateRangeController } from '../../../components/DateRangeController/DateRangeController'

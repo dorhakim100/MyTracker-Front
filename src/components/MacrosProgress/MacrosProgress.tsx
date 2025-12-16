@@ -97,9 +97,9 @@ export function MacrosProgress({ protein, carbs, fats }: MacrosProgressProps) {
           prefs.isDarkMode ? 'dark-mode' : ''
         }`}
       >
-        <Typography variant='h6'>Macros</Typography>
+        <Typography variant="h6">Macros</Typography>
         <EditIcon onClick={edit} />
-        <div className='macros-container'>
+        <div className="macros-container">
           {macros.map((macro) => (
             <div
               className={`macro-container ${macro.name.toLowerCase()}`}
@@ -125,8 +125,8 @@ export function MacrosProgress({ protein, carbs, fats }: MacrosProgressProps) {
       <SlideDialog
         open={openModal}
         onClose={onClose}
-        component={<EditMacros />}
-        title='Edit Macros'
+        component={<EditMacros onCancel={onClose} onSave={onSave} />}
+        title="Edit Macros"
         onSave={onSave}
       />
     </>

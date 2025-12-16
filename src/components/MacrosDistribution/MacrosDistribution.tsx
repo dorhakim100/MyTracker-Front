@@ -83,7 +83,7 @@ export function MacrosDistribution({
         } ${className}`}
       >
         {!hideEditAndHeader && (
-          <Typography variant='h6'>Distribution</Typography>
+          <Typography variant="h6">Distribution</Typography>
         )}
         {!hideEditAndHeader && <EditIcon onClick={edit} />}
         <MacrosDonut protein={protein} carbs={carbs} fats={fats} />
@@ -93,7 +93,9 @@ export function MacrosDistribution({
       <SlideDialog
         open={open}
         onClose={onClose}
-        component={<MacrosDistributionEdit />}
+        component={
+          <MacrosDistributionEdit onCancel={onClose} onSave={onSave} />
+        }
         onSave={onSave}
       />
     </>

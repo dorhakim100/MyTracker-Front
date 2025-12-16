@@ -19,7 +19,6 @@ import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { ExerciseDetails } from '../ExerciseDetails/ExerciseDetails'
 import SwitchLeftIcon from '@mui/icons-material/SwitchLeft'
 import { CustomAlertDialog } from '../../CustomMui/CustomAlertDialog/CustomAlertDialog'
-import { NotesDisplay } from '../NotesDisplay/NotesDisplay'
 import { CustomInput } from '../../CustomMui/CustomInput/CustomInput'
 import DragHandleIcon from '@mui/icons-material/DragHandle'
 
@@ -27,10 +26,8 @@ interface ExerciseCardProps {
   exercise: Exercise
   className?: string
   onDelete?: (exercise: Exercise) => void
-  onEdit?: (exercise: Exercise) => void
   onClick?: (exercise: Exercise) => void
   showEquipment?: boolean
-  showActions?: boolean
   exerciseInstructions?: ExerciseInstructions
   isExpected?: boolean
   onEditExerciseNotes: (exerciseId: string, notes: string) => void
@@ -50,10 +47,8 @@ export function ExerciseCard({
   exercise,
   className = '',
   onDelete,
-  onEdit,
   onClick,
   showEquipment = false,
-  showActions = true,
   instructions,
   isExpected = false,
   onEditExerciseNotes,
@@ -142,20 +137,6 @@ export function ExerciseCard({
     }) ||
       null,
   ].filter((option) => option) as DropdownOption[]
-
-  const handleDelete = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    if (onDelete) {
-      onDelete(exercise)
-    }
-  }
-
-  const handleEdit = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    if (onEdit) {
-      onEdit(exercise)
-    }
-  }
 
   return (
     <>

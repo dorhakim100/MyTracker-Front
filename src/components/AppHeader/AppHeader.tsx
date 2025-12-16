@@ -2,10 +2,6 @@ import { useSelector } from 'react-redux'
 
 import { apps } from '../../assets/config/apps'
 import { RootState } from '../../store/store'
-import { MenuItem } from '@mui/material'
-import { Select } from '@mui/material'
-import { setPrefs } from '../../store/actions/system.actions'
-import { App } from '../../types/app/App'
 
 export function AppHeader() {
   const prefs = useSelector(
