@@ -1,33 +1,19 @@
 .edit-workout-container {
-  // padding: 1em;
   height: 100%;
-  .custom-stepper {
-    // height: 600px;
-  }
-
-  .custom-stepper-stage {
-    // height: calc(100vh - $header-height - 250px);
-  }
 
   .edit-workout-stage {
-    // min-height: 200px;
     padding: 1em;
     padding-bottom: 3rem;
     display: grid;
-    gap: 1rem;
+
     align-content: start;
     height: 100%;
 
-    .custom-stepper-stage {
-    }
-
     &.name-exercises-stage {
-      // height: 400px;
-      // height: calc(100vh - $header-height);
-
       .no-exercises-container {
         justify-self: center;
         display: grid;
+        margin-bottom: 1rem;
         .dumbbell {
           width: 100px;
           height: 100px;
@@ -43,8 +29,6 @@
     }
 
     &.name-stage {
-      // TODO: Add styles for name stage
-
       .divider {
         margin-top: 0.5rem;
       }
@@ -92,107 +76,14 @@
         }
       }
     }
-
-    // &.exercises-stage {
-    //   .search-exercise-list,
-    //   .selected-exercise-list {
-    //     // max-height: 250px;
-    //     // height: 100%;
-    //     overflow-y: auto;
-
-    //     .custom-list-item {
-    //       display: grid;
-    //       grid-template-columns: 50px 1fr auto;
-    //       gap: 1rem;
-    //     }
-
-    //     .MuiListItemText-primary {
-    //       text-overflow: ellipsis;
-    //       overflow: hidden;
-    //       white-space: nowrap;
-    //     }
-
-    //     img {
-    //       width: 50px;
-    //       height: 50px;
-    //       object-fit: cover;
-    //       border-radius: 50%;
-    //     }
-    //   }
-
-    //   .selected-exercise-list {
-    //     max-height: 250px;
-    //   }
-    // }
-
-    // &.details-stage {
-    //   height: 300px;
-    //   // height: 350px;
-    //   overflow-y: auto;
-
-    //   .exercise-details-edit-container {
-    //     display: grid;
-    //     grid-template-columns: repeat(2, 1fr);
-
-    //     gap: 0.5rem 0rem;
-
-    //     .header-container {
-    //       grid-column: 1/-1;
-    //       // display: flex;
-    //       display: grid;
-    //       grid-template-columns: auto 1fr auto;
-
-    //       // justify-content: space-between;
-    //       align-items: center;
-    //       gap: 0.5rem;
-
-    //       h4 {
-    //         grid-column: 2/3;
-    //         grid-row: 1/2;
-    //         max-width: 100%;
-    //         overflow: hidden;
-    //         text-overflow: ellipsis;
-    //         white-space: nowrap;
-    //         justify-self: start;
-    //       }
-    //       .custom-toggle {
-    //         grid-column: 3/4;
-    //         grid-row: 1/2;
-    //         justify-self: end;
-    //         button {
-    //           padding: 0.3rem 1rem;
-    //         }
-    //       }
-    //     }
-
-    //     .exercise-editor-container {
-    //       grid-column: 1/-1;
-
-    //       .divider {
-    //         margin: 0.8rem 0;
-    //       }
-    //     }
-
-    //     .divider,
-    //     .MuiTextField-root,
-    //     h4 {
-    //       margin: 0;
-    //       grid-column: 1/-1;
-    //     }
-    //   }
-    // }
   }
 
-  &.dark-mode {
-    // TODO: Add dark mode styles if needed
-  }
-
-  .exercises-lists-container {
-    display: grid;
-    // height: 400px;
-    // height: 350px;
-
-    // grid-template-rows: 150px auto;
+  .end-buttons-container {
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
   }
 
   .week-number-toggle {
@@ -214,5 +105,18 @@
   }
   .no-results-container {
     margin-top: 0;
+  }
+}
+
+.reorder-exercise-list {
+  .custom-list-item {
+    grid-template-columns: 50px 1fr 50px;
+
+    img {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      border-radius: 50%;
+    }
   }
 }

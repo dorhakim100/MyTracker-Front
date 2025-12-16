@@ -25,6 +25,7 @@ import { DetailsStage } from './DetailsStage'
 import { imageService } from '../../../services/image/image.service'
 import { ExerciseInstructions } from '../../../types/exercise/ExerciseInstructions'
 import { ExerciseFilter } from '../../../types/exerciseFilter/ExerciseFilter'
+import { ExpectedActual } from '../../../types/expectedActual/ExpectedActual'
 // import { useKeyboardHeight } from '../../../hooks/useKeyboardHeight'
 
 interface EditWorkoutProps {
@@ -33,17 +34,6 @@ interface EditWorkoutProps {
   forUserId?: string
   closeDialog: () => void
 }
-
-type MuscleGroupArea = 'all' | 'upper' | 'lower'
-
-interface MuscleGroupFilter {
-  txt: string
-  area: MuscleGroupArea
-}
-
-type WorkoutStage = 'name' | 'Name, Exercises' | 'exercises' | 'details'
-// const stages: WorkoutStage[] = ['name', 'nameExercises', 'exercises', 'details']
-const stages: WorkoutStage[] = ['Name, Exercises', 'exercises', 'details']
 
 export function EditWorkout({
   selectedWorkout,
@@ -62,8 +52,6 @@ export function EditWorkout({
   const traineeUser = useSelector(
     (stateSelector: RootState) => stateSelector.userModule.traineeUser
   )
-
-  // const keyboardHeight = useKeyboardHeight()
 
   const [workout, setWorkout] = useState<Workout>(
     selectedWorkout || workoutService.getEmptyWorkout()
@@ -86,8 +74,6 @@ export function EditWorkout({
     equipmentValue: 'All',
   })
   const [exerciseResults, setExerciseResults] = useState<Exercise[]>([])
-  const [activeStage, setActiveStage] = useState<WorkoutStage>(stages[0])
-  const [direction, setDirection] = useState(1)
 
   const handleSearch = useCallback(async () => {
     try {
@@ -154,26 +140,8 @@ export function EditWorkout({
     getWorkoutInstructions()
   }, [getWorkoutInstructions])
 
-  const onStageChange = (stage: WorkoutStage, diff: number) => {
-    setDirection(diff)
-    setActiveStage(stage)
-  }
-
   const onNameChange = (name: string) => {
     setWorkout({ ...workout, name })
-  }
-
-  console.log('workout', workout)
-  console.log('instructions', instructions)
-
-  const onToggleMuscleGroup = (muscleGroup: MuscleGroup) => {
-    const newMuscleGroups = [...workout.muscleGroups]
-    if (newMuscleGroups.includes(muscleGroup.name)) {
-      newMuscleGroups.splice(newMuscleGroups.indexOf(muscleGroup.name), 1)
-    } else {
-      newMuscleGroups.push(muscleGroup.name)
-    }
-    setWorkout({ ...workout, muscleGroups: newMuscleGroups })
   }
 
   const onAddExercise = (exercise: Exercise) => {
@@ -195,15 +163,22 @@ export function EditWorkout({
       instructionsService.getEmptySet()
     )
 
-    const instructionsExercises = newExercises.map((exercise) => ({
-      exerciseId: exercise.exerciseId,
-      sets,
-
-      notes: (notes || { expected: '', actual: '' }) as {
-        expected: string
-        actual: string
-      },
-    }))
+    const instructionsExercises = newExercises.map((exercise) => {
+      const existingExercise = instructions.exercises.find(
+        (e) => e.exerciseId === exercise.exerciseId
+      )
+      if (existingExercise) {
+        return existingExercise
+      }
+      return {
+        exerciseId: exercise.exerciseId,
+        sets,
+        notes: (notes || { expected: '', actual: '' }) as {
+          expected: string
+          actual: string
+        },
+      }
+    })
 
     setInstructions((prev) => ({
       ...prev,
@@ -228,6 +203,7 @@ export function EditWorkout({
         (e) => e.exerciseId !== exercise.exerciseId
       ),
     }))
+    showSuccessMsg(messages.success.deleteExercise)
   }
 
   const onReorderExercises = (exercises: Exercise[]) => {
@@ -263,7 +239,7 @@ export function EditWorkout({
         ...updatedExercises[exerciseIndex].details,
         notes: {
           expected: notes,
-          actual: notes,
+          actual: '',
         },
       } as ExerciseDetail,
     }
@@ -292,100 +268,52 @@ export function EditWorkout({
     })
   }
 
-  const getStageTitle = (stage: WorkoutStage): string => {
-    switch (stage) {
-      case 'name':
-        return 'Name and Muscles'
-      case 'Name, Exercises':
-        return 'Name, Exercises'
-      case 'exercises':
-        return 'Exercises List'
-      case 'details':
-        return 'Details'
-      default:
-        return capitalizeFirstLetter(stage)
-    }
-  }
+  const onSwitchRpeRir = (exerciseId: string, value: 'rpe' | 'rir') => {
+    const exerciseInstructionToUpdate = instructions.exercises.find(
+      (e) => e.exerciseId === exerciseId
+    )
 
-  const getIsNextDisabled = (stage: WorkoutStage): boolean => {
-    // TODO: Add validation logic
-    switch (stage) {
-      case 'name':
-        // if (!workout.name) return true
-        if (workout.muscleGroups.length < 1) return true
-        return false
-      case 'Name, Exercises':
-        if (workout.exercises.length < 1) return true
-        return false
-      case 'exercises':
-        if (workout.exercises.length < 1) return true
-        return false
-      case 'details':
-        if (workout.exercises.length < 1) return true
-        return false
-      default:
-        return true
-    }
-  }
+    const exerciseIndex = instructions.exercises.findIndex(
+      (e) => e.exerciseId === exerciseId
+    )
+    if (!exerciseInstructionToUpdate) return
 
-  const renderStage = (stage: WorkoutStage) => {
-    switch (stage) {
-      case 'Name, Exercises':
-        return (
-          <NameExercises
-            workout={workout}
-            onNameChange={onNameChange}
-            exerciseFilter={exerciseFilter}
-            exerciseResults={exerciseResults}
-            onExerciseFilterChange={onExerciseFilterChange}
-            onAddExercise={onAddExercise}
-            onDeleteExercise={onDeleteExercise}
-            onReorderExercises={onReorderExercises}
-            renderErrorImage={(exercise) =>
-              imageService.renderErrorExerciseImage(
-                exercise,
-                exerciseResults,
-                setExerciseResults
-              )
-            }
-            instructions={instructions}
-          />
-        )
-      // case 'exercises':
-      //   return (
-      //     <ExercisesStage
-      //       workout={workout}
-      //       exerciseFilter={exerciseFilter}
-      //       exerciseResults={exerciseResults}
-      //       onExerciseFilterChange={onExerciseFilterChangeTxt}
-      //       onAddExercise={onAddExercise}
-      //       onDeleteExercise={onDeleteExercise}
-      //       onReorderExercises={onReorderExercises}
-      //       renderErrorImage={(exercise) =>
-      //         imageService.renderErrorExerciseImage(
-      //           exercise,
-      //           exerciseResults,
-      //           setExerciseResults
-      //         )
-      //       }
-      //     />
-      //   )
-      case 'details':
-        return (
-          <DetailsStage
-            workout={workout}
-            instructions={instructions}
-            weeksStatus={weeksStatus}
-            instructionsFilter={instructionsFilter}
-            onInstructionsFilterChange={setInstructionsFilter}
-            onEditExerciseNotes={onEditExerciseNotes}
-            //onChangeRpeRir={onChangeRpeRir}
-            setInstructions={setInstructions}
-          />
-        )
-      default:
-        return <div>Stage not implemented</div>
+    let newExerciseInstruction = { ...exerciseInstructionToUpdate }
+
+    if (value === 'rpe') {
+      newExerciseInstruction.sets = newExerciseInstruction.sets.map((set) => {
+        // Create a new set object without rir, but with rpe
+        const { rir, ...setWithoutRir } = set
+        return {
+          ...setWithoutRir,
+          rpe: {
+            expected: 8,
+            actual: 8,
+          } as ExpectedActual<number>,
+        }
+      })
     }
+    if (value === 'rir') {
+      newExerciseInstruction.sets = newExerciseInstruction.sets.map((set) => {
+        // Create a new set object without rpe, but with rir
+        const { rpe, ...setWithoutRpe } = set
+        return {
+          ...setWithoutRpe,
+          rir: {
+            expected: 2,
+            actual: 2,
+          } as ExpectedActual<number>,
+        }
+      })
+    }
+
+    const newExercises = [...instructions.exercises]
+    newExercises[exerciseIndex] = newExerciseInstruction
+
+    setInstructions({
+      ...instructions,
+      exercises: newExercises,
+    })
   }
 
   const onFinish = async () => {
@@ -423,16 +351,30 @@ export function EditWorkout({
         prefs.isDarkMode ? 'dark-mode' : ''
       }`}
     >
-      <CustomStepper
-        stages={stages}
-        activeStage={activeStage}
-        onStageChange={onStageChange}
-        renderStage={renderStage}
-        // title={getStageTitle}
-        direction={direction}
-        getIsNextDisabled={getIsNextDisabled}
-        onFinish={onFinish}
-        finishText="Save Workout"
+      <NameExercises
+        workout={workout}
+        onNameChange={onNameChange}
+        exerciseFilter={exerciseFilter}
+        exerciseResults={exerciseResults}
+        onExerciseFilterChange={onExerciseFilterChange}
+        onAddExercise={onAddExercise}
+        onDeleteExercise={onDeleteExercise}
+        onReorderExercises={onReorderExercises}
+        renderErrorImage={(exercise) =>
+          imageService.renderErrorExerciseImage(
+            exercise,
+            exerciseResults,
+            setExerciseResults
+          )
+        }
+        instructions={instructions}
+        weeksStatus={weeksStatus}
+        instructionsFilter={instructionsFilter}
+        onInstructionsFilterChange={setInstructionsFilter}
+        setInstructions={setInstructions}
+        onEditExerciseNotes={onEditExerciseNotes}
+        onSwitchRpeRir={onSwitchRpeRir}
+        onSaveWorkout={onFinish}
       />
     </div>
   )

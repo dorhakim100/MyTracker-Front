@@ -118,36 +118,7 @@ export function ExercisesStage({
               title='Selected Exercises'
               icon={<FitnessCenterIcon />}
               cmp={
-                <CustomList
-                  items={workout.exercises}
-                  renderPrimaryText={(exercise) =>
-                    capitalizeFirstLetter(exercise.name)
-                  }
-                  renderSecondaryText={(exercise) =>
-                    capitalizeFirstLetter(exercise.muscleGroups.join(', '))
-                  }
-                  renderLeft={(exercise) => (
-                    <img src={exercise.image} alt={exercise.name} />
-                  )}
-                  getKey={(exercise) => `${exercise.exerciseId}-selected`}
-                  className={`selected-exercise-list ${
-                    prefs.isDarkMode ? 'dark-mode' : ''
-                  }`}
-                  noResultsMessage='No exercises added yet'
-                  isSwipeable={true}
-                  renderRightSwipeActions={(exercise) => (
-                    <DeleteAction
-                      item={exercise}
-                      onDeleteItem={onDeleteExercise}
-                    />
-                  )}
-                  isDragable={true}
-                  onReorder={onReorderExercises}
-                  dragOffsetY={-180}
-                  onItemClick={(exercise) => onOpenModal(exercise)}
-                />
-              }
-            />
+               
           ) : (
             <div className='no-exercises bold-header'>
               No exercises added yet
