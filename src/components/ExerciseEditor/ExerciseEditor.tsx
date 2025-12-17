@@ -141,8 +141,6 @@ export function ExerciseEditor({
     return type === 'rpe' || type === 'weight'
   }
 
-  console.log('exercise', exercise)
-
   return (
     <>
       <div className="exercise-editor-container">

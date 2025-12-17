@@ -54,7 +54,7 @@ body {
 
   // background-color: $neutral-gray;
 
-  background-color: $light-gray !important;
+  background-color: $light-gray;
   color: $dark-gray;
 
   transition: color 0.3s, background-color 0.3s;
@@ -67,7 +67,7 @@ body {
   }
 
   &.dark-mode {
-    background-color: $dark-gray;
+    background-color: $dark-gray !important;
     color: $neutral-gray;
     .swiper-pagination-bullet {
       background-color: $neutral-gray;

@@ -312,7 +312,7 @@ export function Workouts() {
     return (
       <div className="workouts-lists-container">
         {activeWorkouts.length > 0 && (
-          <span className="bold-header">My Active Routines</span>
+          <span className="bold-header">Active Routines</span>
         )}
 
         <div
@@ -330,7 +330,7 @@ export function Workouts() {
         <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
 
         <div className="past-controller">
-          <span className="bold-header">My Past Routines</span>
+          <span className="bold-header">Past Routines</span>
           <DateRangeController
             selectedPastDate={selectedPastDate}
             onDateChange={setSelectedPastDate}
@@ -348,6 +348,7 @@ export function Workouts() {
           renderSecondaryText={(workout) =>
             capitalizeFirstLetter(workout.muscleGroups.join(', '))
           }
+          isDefaultLoader={false}
           onItemClick={(workout) => onOpenDetails(workout)}
           renderRight={(workout) => (
             <CustomOptionsMenu

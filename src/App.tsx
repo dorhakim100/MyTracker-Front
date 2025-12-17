@@ -109,8 +109,7 @@ function App() {
           purple: '#0f0a10',
           pink: '#120a0e',
         }
-        themeColorMeta.content =
-          darkColors[prefs.favoriteColor || ''] || '#0b1415'
+        themeColorMeta.content = darkColors[prefs.favoriteColor] || '#0b1415'
       } else {
         themeColorMeta.content = '#f5f5f5' // light mode
       }
