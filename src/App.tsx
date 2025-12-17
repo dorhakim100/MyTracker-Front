@@ -92,6 +92,32 @@ function App() {
   }, [prefs])
 
   useEffect(() => {
+    const themeColorMeta = document.querySelector<HTMLMetaElement>(
+      'meta[name="theme-color"]'
+    )
+    if (themeColorMeta) {
+      if (prefs.isDarkMode) {
+        // Map favorite colors to their dark-gray variants
+        const darkColors: Record<string, string> = {
+          primary: '#0b1415',
+          blue: '#0b0f17',
+          yellow: '#12120b',
+          red: '#120a0b',
+          orange: '#120e0a',
+          green: '#09100d',
+          deepPurple: '#0c0a12',
+          purple: '#0f0a10',
+          pink: '#120a0e',
+        }
+        themeColorMeta.content =
+          darkColors[prefs.favoriteColor || ''] || '#0b1415'
+      } else {
+        themeColorMeta.content = '#f5f5f5' // light mode
+      }
+    }
+  }, [prefs.isDarkMode, prefs.favoriteColor])
+
+  useEffect(() => {
     smoothScroll()
 
     const manifest = document.querySelector<HTMLLinkElement>('#pwa-manifest')
