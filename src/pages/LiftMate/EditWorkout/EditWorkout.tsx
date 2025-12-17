@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react'
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../store/store'
 import { debounce } from '../../../services/util.service'
@@ -10,7 +10,11 @@ import {
   showSuccessMsg,
 } from '../../../services/event-bus.service'
 import { messages } from '../../../assets/config/messages'
-import { exerciseSearch } from '../../../services/exersice-search/exersice-search'
+import {
+  exerciseSearch,
+  mapEquipmentToApiFormat,
+  mapMuscleGroupToMuscles,
+} from '../../../services/exersice-search/exersice-search'
 import { setIsLoading } from '../../../store/actions/system.actions'
 import { saveWorkout } from '../../../store/actions/workout.action'
 import { Instructions } from '../../../types/instructions/Instructions'
@@ -70,14 +74,53 @@ export function EditWorkout({
   })
   const [exerciseResults, setExerciseResults] = useState<Exercise[]>([])
 
+  const filteredExerciseResults = useMemo(() => {
+    const { muscleGroupValue, equipmentValue } = exerciseFilter
+    let exercises = exerciseResults
+    // Filter by muscle group using conversion function
+    if (muscleGroupValue !== 'All') {
+      const muscleNames = mapMuscleGroupToMuscles(muscleGroupValue)
+      exercises = exercises.filter((exercise: any) => {
+        // Check if any of the exercise's bodyParts/muscles match any of our mapped muscle names
+        const exerciseMuscles = exercise.muscleGroups
+        return muscleNames.some((muscleName) =>
+          exerciseMuscles.some((exMuscle: string) =>
+            exMuscle.toLowerCase().includes(muscleName.toLowerCase())
+          )
+        )
+      })
+    }
+
+    // Filter by equipment using conversion function
+    if (equipmentValue !== 'All') {
+      const equipmentNames = mapEquipmentToApiFormat(equipmentValue)
+      exercises = exercises.filter((exercise: any) => {
+        // Check if any of the exercise's equipment matches any of our mapped equipment names
+        const exerciseEquipment = exercise.equipments
+        const equipmentStr = Array.isArray(exerciseEquipment)
+          ? exerciseEquipment.join(' ').toLowerCase()
+          : exerciseEquipment.toLowerCase()
+        return equipmentNames.some((eqName) =>
+          equipmentStr.includes(eqName.toLowerCase())
+        )
+      })
+    }
+    return exercises
+  }, [exerciseResults, exerciseFilter])
+
   const handleSearch = useCallback(async () => {
     try {
-      if (!exerciseFilter.searchValue) {
+      if (
+        !exerciseFilter.searchValue &&
+        exerciseFilter.muscleGroupValue === 'All' &&
+        exerciseFilter.equipmentValue === 'All'
+      ) {
         setExerciseResults([])
         setIsLoading(false)
         return
       }
       setIsLoading(true)
+      console.log('exerciseFilter', exerciseFilter)
       const results = await exerciseSearch(exerciseFilter.searchValue)
       setExerciseResults(results)
     } catch (err) {
@@ -369,7 +412,7 @@ export function EditWorkout({
         workout={workout}
         onNameChange={onNameChange}
         exerciseFilter={exerciseFilter}
-        exerciseResults={exerciseResults}
+        exerciseResults={filteredExerciseResults}
         onExerciseFilterChange={onExerciseFilterChange}
         onAddExercise={onAddExercise}
         onDeleteExercise={onDeleteExercise}
@@ -377,7 +420,7 @@ export function EditWorkout({
         renderErrorImage={(exercise) =>
           imageService.renderErrorExerciseImage(
             exercise,
-            exerciseResults,
+            filteredExerciseResults,
             setExerciseResults
           )
         }

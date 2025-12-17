@@ -2,27 +2,33 @@ import axios from 'axios'
 import { Exercise } from '../../types/exercise/Exercise'
 import { MuscleGroup } from '../../types/muscleGroup/MuscleGroup'
 
-export const exerciseSearch = async (query: string) => {
+export const exerciseSearch = async (searchValue: string) => {
   const url = 'https://www.exercisedb.dev/api/v1/exercises/search'
 
   try {
     const { data } = await axios.get(url, {
-      params: { q: query, limit: 30 },
+      params: { q: searchValue, limit: 100 },
     })
 
-    const exercise = data.data
+    let exercises = data.data
 
-    if (!exercise) throw new Error('No exercises found')
-
-    const formattedData: Exercise[] = exercise.map((exercise: any) => {
+    if (!exercises) throw new Error('No exercises found')
+    console.log('exercises', exercises[0])
+    const formattedData: Exercise[] = exercises.map((exercise: any) => {
       return {
         name: exercise.name,
-        muscleGroups: exercise.bodyParts,
+        muscleGroups: [
+          ...exercise.bodyParts,
+          ...exercise.secondaryMuscles,
+          ...exercise.targetMuscles,
+        ],
         image: exercise.gifUrl,
         exerciseId: exercise.exerciseId,
+        equipments: exercise.equipments,
       }
     })
 
+    console.log('formattedData', formattedData)
     return formattedData
   } catch (err) {
     throw err
@@ -67,6 +73,67 @@ export const fetchMuscles = async () => {
   const data = await res.json()
   // data.results is an array of muscles
   return data
+}
+
+/**
+ * Maps UI muscle group names to API muscles format
+ * Returns array of related muscle names for better matching
+ * Based on exercisedb.dev API muscles values
+ */
+export function mapMuscleGroupToMuscles(muscleGroup: string): string[] {
+  const mapping: Record<string, string[]> = {
+    All: [],
+    Chest: ['chest', 'pectorals', 'upper chest'],
+    Lats: ['lats', 'latissimus dorsi'],
+    Quads: ['quads', 'quadriceps', 'upper legs'],
+    Shoulders: ['shoulders', 'deltoids', 'delts', 'rear deltoids'],
+    Glutes: ['glutes'],
+    Calves: ['calves', 'soleus'],
+    Hamstrings: ['hamstrings'],
+    Abs: ['abs', 'abdominals', 'lower abs', 'core', 'obliques'],
+    Triceps: ['triceps'],
+    Biceps: ['biceps', 'brachialis'],
+    Forearms: ['forearms', 'wrist extensors', 'wrist flexors', 'wrists'],
+    'Hip Adductors': ['adductors', 'inner thighs'],
+    'Lower Back': ['lower back'],
+    'Upper Back': [
+      'upper back',
+      'trapezius',
+      'traps',
+      'rhomboids',
+      'levator scapulae',
+    ],
+  }
+  return mapping[muscleGroup] || [muscleGroup.toLowerCase()]
+}
+
+/**
+ * Maps UI equipment names to API equipment format
+ * Returns array of equipment types for the selected equipment
+ * Based on exercisedb.dev API equipment values
+ */
+export function mapEquipmentToApiFormat(equipment: string): string[] {
+  const mapping: Record<string, string[]> = {
+    All: [],
+    Barbell: ['barbell', 'ez barbell', 'olympic barbell', 'trap bar'],
+    Dumbbell: ['dumbbell'],
+    Machine: [
+      'machine',
+      'leverage machine',
+      'smith machine',
+      'stepmill machine',
+      'elliptical machine',
+      'skierg machine',
+      'sled machine',
+      'upper body ergometer',
+      'stationary bike',
+    ],
+    Cable: ['cable'],
+    Bodyweight: ['body weight', 'weighted', 'assisted'],
+    Bands: ['band', 'resistance band'],
+    Kettlebell: ['kettlebell'],
+  }
+  return mapping[equipment] || [equipment.toLowerCase()]
 }
 
 /**
