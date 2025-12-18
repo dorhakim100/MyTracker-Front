@@ -14,6 +14,7 @@ import {
   exerciseSearch,
   mapEquipmentToApiFormat,
   mapMuscleGroupToMuscles,
+  getMostPopularExercises,
 } from '../../../services/exersice-search/exersice-search'
 import { setIsLoading } from '../../../store/actions/system.actions'
 import { saveWorkout } from '../../../store/actions/workout.action'
@@ -80,9 +81,11 @@ export function EditWorkout({
     // Filter by muscle group using conversion function
     if (muscleGroupValue !== 'All') {
       const muscleNames = mapMuscleGroupToMuscles(muscleGroupValue)
+      console.log('muscleNames', muscleNames)
       exercises = exercises.filter((exercise: any) => {
         // Check if any of the exercise's bodyParts/muscles match any of our mapped muscle names
         const exerciseMuscles = exercise.muscleGroups
+        console.log('exerciseMuscles', exerciseMuscles)
         return muscleNames.some((muscleName) =>
           exerciseMuscles.some((exMuscle: string) =>
             exMuscle.toLowerCase().includes(muscleName.toLowerCase())
@@ -105,18 +108,61 @@ export function EditWorkout({
         )
       })
     }
+
+    // Sort exercises: prioritize mainMuscles, then secondaryMuscles
+    if (muscleGroupValue !== 'All') {
+      const muscleNames = mapMuscleGroupToMuscles(muscleGroupValue)
+      exercises = exercises.sort((a: any, b: any) => {
+        const aMainMuscles = a.mainMuscles || []
+        const bMainMuscles = b.mainMuscles || []
+        const aSecondaryMuscles = a.secondaryMuscles || []
+        const bSecondaryMuscles = b.secondaryMuscles || []
+
+        // Check if muscle appears in main muscles
+        const aHasInMain = muscleNames.some((muscleName) =>
+          aMainMuscles.some((exMuscle: string) =>
+            exMuscle.toLowerCase().includes(muscleName.toLowerCase())
+          )
+        )
+        const bHasInMain = muscleNames.some((muscleName) =>
+          bMainMuscles.some((exMuscle: string) =>
+            exMuscle.toLowerCase().includes(muscleName.toLowerCase())
+          )
+        )
+
+        // Check if muscle appears in secondary muscles
+        const aHasInSecondary = muscleNames.some((muscleName) =>
+          aSecondaryMuscles.some((exMuscle: string) =>
+            exMuscle.toLowerCase().includes(muscleName.toLowerCase())
+          )
+        )
+        const bHasInSecondary = muscleNames.some((muscleName) =>
+          bSecondaryMuscles.some((exMuscle: string) =>
+            exMuscle.toLowerCase().includes(muscleName.toLowerCase())
+          )
+        )
+
+        // Sort priority: mainMuscles > secondaryMuscles > others
+        if (aHasInMain && !bHasInMain) return -1
+        if (!aHasInMain && bHasInMain) return 1
+        if (aHasInSecondary && !bHasInSecondary) return -1
+        if (!aHasInSecondary && bHasInSecondary) return 1
+        return 0
+      })
+    }
+
     return exercises
-  }, [exerciseResults, exerciseFilter])
+  }, [
+    exerciseResults,
+    exerciseFilter.muscleGroupValue,
+    exerciseFilter.equipmentValue,
+  ])
 
   const handleSearch = useCallback(async () => {
     try {
-      if (
-        !exerciseFilter.searchValue &&
-        exerciseFilter.muscleGroupValue === 'All' &&
-        exerciseFilter.equipmentValue === 'All'
-      ) {
-        setExerciseResults([])
-        setIsLoading(false)
+      if (!exerciseFilter.searchValue) {
+        const res = await getMostPopularExercises()
+        setExerciseResults(res)
         return
       }
       setIsLoading(true)
@@ -129,7 +175,7 @@ export function EditWorkout({
     } finally {
       setIsLoading(false)
     }
-  }, [exerciseFilter.searchValue])
+  }, [exerciseFilter])
 
   const latestHandleSearchRef = useRef(handleSearch)
   const debouncedRunSearch = useRef(

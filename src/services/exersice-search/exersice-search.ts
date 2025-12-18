@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { Exercise } from '../../types/exercise/Exercise'
 import { MuscleGroup } from '../../types/muscleGroup/MuscleGroup'
-
+import { POPULAR_EXERCISES } from '../../assets/config/popular-exercises'
 export const exerciseSearch = async (searchValue: string) => {
   const url = 'https://www.exercisedb.dev/api/v1/exercises/search'
 
@@ -22,15 +22,129 @@ export const exerciseSearch = async (searchValue: string) => {
           ...exercise.secondaryMuscles,
           ...exercise.targetMuscles,
         ],
+        mainMuscles: exercise.targetMuscles,
+        secondaryMuscles: exercise.secondaryMuscles,
         image: exercise.gifUrl,
         exerciseId: exercise.exerciseId,
         equipments: exercise.equipments,
       }
     })
 
-    console.log('formattedData', formattedData)
     return formattedData
   } catch (err) {
+    throw err
+  }
+}
+
+/**
+ * Array of popular exercise names to fetch
+ */
+export const POPULAR_EXERCISE_NAMES = [
+  'bench press barbell',
+  'bench press dumbbell',
+  'bent over row barbell',
+  'biceps curl dumbell',
+  'incline bench press dumbell',
+  'chest press machine',
+  'chest fly machine',
+  'chest press lever',
+  'chest fly lever',
+  'rear delt fly machine',
+  'rear delt fly lever',
+
+  'cable fly crossovers',
+  'deadlift barbell',
+  'face pull',
+  'hammer curl dumbell',
+  'squat',
+  'leg extension',
+  'shoulder press',
+  'lateral raises',
+  'hip thrust',
+  'calf raise',
+  'cable crunch',
+  'pull over',
+  'reverse fly',
+  'cable row',
+  'rows',
+  'lat pulldown cable',
+  'leg extension machine',
+  'lateral raises dumbell',
+  'leg press machine',
+  'lying leg curl machine',
+  'seated leg curl machine',
+  'seated cable row',
+  'seated leg curl machine',
+  'shoulder press dumbell',
+  'squat barbell',
+  'triceps pushdown cable',
+  'triceps rope pushdown',
+]
+
+export const getExercisesByIds = async (
+  exerciseIds: string[]
+): Promise<Exercise[]> => {
+  try {
+    const fetchPromises = exerciseIds.map(async (exerciseId) => {
+      try {
+        const url = `https://www.exercisedb.dev/api/v1/exercises/${exerciseId}`
+        const { data: exerciseData } = await axios.get(url)
+        const { data } = exerciseData
+
+        const exerciseEquipments = data.equipments || data.equipment || []
+        return {
+          name: data.name,
+          muscleGroups: [
+            ...(data.bodyParts || []),
+            ...(data.secondaryMuscles || []),
+            ...(data.targetMuscles || []),
+          ],
+          mainMuscles: data.targetMuscles || [],
+          secondaryMuscles: data.secondaryMuscles || [],
+          image: data.gifUrl || data.gif || data.image,
+          exerciseId: data.exerciseId || exerciseId,
+          equipment: Array.isArray(exerciseEquipments)
+            ? exerciseEquipments
+            : [exerciseEquipments],
+          equipments: Array.isArray(exerciseEquipments)
+            ? exerciseEquipments
+            : [exerciseEquipments],
+        }
+      } catch (err) {
+        console.warn(`Failed to fetch exercise with ID: ${exerciseId}`, err)
+        return null
+      }
+    })
+
+    const exercises = await Promise.all(fetchPromises)
+    return exercises.filter((ex) => ex !== null) as Exercise[]
+  } catch (err) {
+    console.error('Error bulk fetching exercises:', err)
+    throw err
+  }
+}
+
+export const getMostPopularExercises = (): Exercise[] => {
+  try {
+    return POPULAR_EXERCISES.map((exercise: any) => {
+      return {
+        name: exercise.name,
+        muscleGroups: [
+          ...exercise.bodyParts,
+          ...exercise.secondaryMuscles,
+          ...exercise.targetMuscles,
+        ],
+        image: exercise.gifUrl,
+        exerciseId: exercise.exerciseId,
+        equipment: exercise.equipments,
+        equipments: exercise.equipments,
+        mainMuscles: exercise.targetMuscles,
+        secondaryMuscles: exercise.secondaryMuscles,
+        instructions: exercise.instructions,
+      }
+    })
+  } catch (err) {
+    console.error('Error getting most popular exercises:', err)
     throw err
   }
 }
@@ -83,17 +197,23 @@ export const fetchMuscles = async () => {
 export function mapMuscleGroupToMuscles(muscleGroup: string): string[] {
   const mapping: Record<string, string[]> = {
     All: [],
-    Chest: ['chest', 'pectorals', 'upper chest'],
-    Lats: ['lats', 'latissimus dorsi'],
+    Chest: ['chest', 'pectorals'],
+    Lats: ['lats', 'back', 'upper back', 'rear delts'],
     Quads: ['quads', 'quadriceps', 'upper legs'],
-    Shoulders: ['shoulders', 'deltoids', 'delts', 'rear deltoids'],
-    Glutes: ['glutes'],
-    Calves: ['calves', 'soleus'],
+    Shoulders: ['shoulders', 'delts', 'rear delts', 'anterior delts'],
+    Glutes: [
+      'glutes',
+      'gluteus maximus',
+      'gluteus medius',
+      'gluteus minimus',
+      'butt',
+    ],
+    Calves: ['calves', 'soleus', 'gastrocnemius'],
     Hamstrings: ['hamstrings'],
     Abs: ['abs', 'abdominals', 'lower abs', 'core', 'obliques'],
     Triceps: ['triceps'],
     Biceps: ['biceps', 'brachialis'],
-    Forearms: ['forearms', 'wrist extensors', 'wrist flexors', 'wrists'],
+    Forearms: ['forearms'],
     'Hip Adductors': ['adductors', 'inner thighs'],
     'Lower Back': ['lower back'],
     'Upper Back': [

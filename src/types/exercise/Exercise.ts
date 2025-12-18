@@ -6,6 +6,9 @@ export interface Exercise {
   image: string
   equipment: string[]
   exerciseId: string
+  mainMuscles?: string[]
+  secondaryMuscles?: string[]
+  equipments?: string[]
   details?: ExerciseDetail
 }
 
