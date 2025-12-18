@@ -26,10 +26,10 @@ const equipmentsImgs = [
   { value: 'All', icon: <WidgetsIcon /> },
   { value: 'Barbell', icon: <Barbell /> },
   { value: 'Dumbbell', icon: <Dumbbell /> },
-  { value: 'Machine', src: '/public/equipments/machine.webp' },
-  { value: 'Bodyweight', src: '/public/equipments/body-weight.webp' },
-  { value: 'Cable', src: '/public/equipments/cable.webp' },
-  { value: 'Bands', src: '/public/equipments/bands.webp' },
+  { value: 'Machine', src: '/equipments/machine.webp' },
+  { value: 'Bodyweight', src: '/equipments/body-weight.webp' },
+  { value: 'Cable', src: '/equipments/cable.webp' },
+  { value: 'Bands', src: '/equipments/bands.webp' },
 ]
 
 export function ExercisesFilter({

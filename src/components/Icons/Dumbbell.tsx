@@ -15,11 +15,7 @@ export function Dumbbell({ className }: { className?: string }) {
           stroke="#000000"
         >
           <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
-          <g
-            id="SVGRepo_tracerCarrier"
-            strokeLinejoin="round"
-            strokeLinejoin="round"
-          ></g>
+          <g id="SVGRepo_tracerCarrier" strokeLinejoin="round"></g>
           <g id="SVGRepo_iconCarrier">
             {' '}
             <path
@@ -47,11 +43,7 @@ export function Dumbbell({ className }: { className?: string }) {
           stroke="#000000"
         >
           <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
-          <g
-            id="SVGRepo_tracerCarrier"
-            strokeLinejoin="round"
-            strokeLinejoin="round"
-          ></g>
+          <g id="SVGRepo_tracerCarrier" strokeLinejoin="round"></g>
           <g id="SVGRepo_iconCarrier">
             {' '}
             <path
