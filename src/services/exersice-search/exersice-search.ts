@@ -125,28 +125,23 @@ export const getExercisesByIds = async (
 }
 
 export const getMostPopularExercises = (): Exercise[] => {
-  try {
-    return POPULAR_EXERCISES.map((exercise: any) => {
-      return {
-        name: exercise.name,
-        muscleGroups: [
-          ...exercise.bodyParts,
-          ...exercise.secondaryMuscles,
-          ...exercise.targetMuscles,
-        ],
-        image: exercise.gifUrl,
-        exerciseId: exercise.exerciseId,
-        equipment: exercise.equipments,
-        equipments: exercise.equipments,
-        mainMuscles: exercise.targetMuscles,
-        secondaryMuscles: exercise.secondaryMuscles,
-        instructions: exercise.instructions,
-      }
-    })
-  } catch (err) {
-    console.error('Error getting most popular exercises:', err)
-    throw err
-  }
+  return POPULAR_EXERCISES.map((exercise: any) => {
+    return {
+      name: exercise.name,
+      muscleGroups: [
+        ...exercise.bodyParts,
+        ...exercise.secondaryMuscles,
+        ...exercise.targetMuscles,
+      ],
+      image: exercise.gifUrl,
+      exerciseId: exercise.exerciseId,
+      equipment: exercise.equipments,
+      equipments: exercise.equipments,
+      mainMuscles: exercise.targetMuscles,
+      secondaryMuscles: exercise.secondaryMuscles,
+      instructions: exercise.instructions,
+    }
+  })
 }
 
 export const getExerciseById = async (exerciseId: string) => {
