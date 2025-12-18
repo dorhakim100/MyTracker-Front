@@ -14,6 +14,7 @@ interface ExercisesStageProps {
   onDeleteExercise: (exercise: Exercise) => void
   onReorderExercises: (exercises: Exercise[]) => void
   renderErrorImage: (exercise: Exercise) => void
+  resultsMsg?: string
 }
 
 export function ExercisesStage({
@@ -25,6 +26,7 @@ export function ExercisesStage({
   onDeleteExercise,
   onReorderExercises,
   renderErrorImage,
+  resultsMsg,
 }: ExercisesStageProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -42,6 +44,7 @@ export function ExercisesStage({
         onReorderExercises={onReorderExercises}
         renderErrorImage={renderErrorImage}
         workout={workout}
+        resultsMsg={resultsMsg}
       />
     </div>
   )

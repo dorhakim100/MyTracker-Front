@@ -18,7 +18,7 @@ export function Dumbbell({ className }: { className?: string }) {
           <g
             id="SVGRepo_tracerCarrier"
             strokeLinejoin="round"
-            stroke-linejoin="round"
+            strokeLinejoin="round"
           ></g>
           <g id="SVGRepo_iconCarrier">
             {' '}
@@ -50,7 +50,7 @@ export function Dumbbell({ className }: { className?: string }) {
           <g
             id="SVGRepo_tracerCarrier"
             strokeLinejoin="round"
-            stroke-linejoin="round"
+            strokeLinejoin="round"
           ></g>
           <g id="SVGRepo_iconCarrier">
             {' '}

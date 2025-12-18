@@ -9,12 +9,17 @@ import { Dumbbell } from '../Icons/Dumbbell'
 import WidgetsIcon from '@mui/icons-material/Widgets'
 import { ExerciseFilter } from '../../types/exerciseFilter/ExerciseFilter'
 import { equipmentsValues } from '../../assets/config/equipments'
+import { workoutService } from '../../services/workout/workout.service'
+import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
+import FilterAltOffIcon from '@mui/icons-material/FilterAltOff'
+import { Typography } from '@mui/material'
 
 interface ExercisesFilterProps {
   exerciseFilter: ExerciseFilter
   onExerciseFilterChange: (exerciseFilter: ExerciseFilter) => void
   searchPlaceholder?: string
   className?: string
+  resultsMsg?: string
 }
 
 const equipmentsImgs = [
@@ -32,10 +37,18 @@ export function ExercisesFilter({
   onExerciseFilterChange,
   searchPlaceholder = 'Search for exercises',
   className = '',
+  resultsMsg,
 }: ExercisesFilterProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
+
+  const getIsDisabled = () => {
+    return (
+      JSON.stringify(exerciseFilter) ===
+      JSON.stringify(workoutService.getEmptyExerciseFilter())
+    )
+  }
 
   return (
     <div
@@ -72,6 +85,19 @@ export function ExercisesFilter({
         className={`${prefs.favoriteColor}`}
         imgs={equipmentsImgs}
       />
+      <div className="results-msg-container">
+        <Typography variant="h6" className="bold-header">
+          {resultsMsg}
+        </Typography>
+        <CustomButton
+          icon={<FilterAltOffIcon />}
+          isIcon={true}
+          onClick={() => {
+            onExerciseFilterChange(workoutService.getEmptyExerciseFilter())
+          }}
+          disabled={getIsDisabled()}
+        />
+      </div>
     </div>
   )
 }

@@ -64,6 +64,7 @@ interface NameExercisesProps {
 export function NameExercises({
   workout,
   onNameChange,
+
   exerciseFilter,
   exerciseResults,
   onExerciseFilterChange,
@@ -206,6 +207,11 @@ export function NameExercises({
             onDeleteExercise={onDeleteExercise}
             onReorderExercises={onReorderExercises}
             renderErrorImage={renderErrorImage}
+            resultsMsg={
+              !exerciseFilter.searchValue
+                ? 'Most Popular Exercises'
+                : `${exerciseResults.length} exercises found`
+            }
           />
         )
       case 'reorder':

@@ -68,11 +68,9 @@ export function EditWorkout({
     workoutId: workout._id || '',
   })
 
-  const [exerciseFilter, setExerciseFilter] = useState<ExerciseFilter>({
-    searchValue: '',
-    muscleGroupValue: 'All',
-    equipmentValue: 'All',
-  })
+  const [exerciseFilter, setExerciseFilter] = useState<ExerciseFilter>(
+    workoutService.getEmptyExerciseFilter()
+  )
   const [exerciseResults, setExerciseResults] = useState<Exercise[]>([])
 
   const filteredExerciseResults = useMemo(() => {
@@ -81,11 +79,9 @@ export function EditWorkout({
     // Filter by muscle group using conversion function
     if (muscleGroupValue !== 'All') {
       const muscleNames = mapMuscleGroupToMuscles(muscleGroupValue)
-      console.log('muscleNames', muscleNames)
       exercises = exercises.filter((exercise: any) => {
         // Check if any of the exercise's bodyParts/muscles match any of our mapped muscle names
         const exerciseMuscles = exercise.muscleGroups
-        console.log('exerciseMuscles', exerciseMuscles)
         return muscleNames.some((muscleName) =>
           exerciseMuscles.some((exMuscle: string) =>
             exMuscle.toLowerCase().includes(muscleName.toLowerCase())
@@ -161,12 +157,11 @@ export function EditWorkout({
   const handleSearch = useCallback(async () => {
     try {
       if (!exerciseFilter.searchValue) {
-        const res = await getMostPopularExercises()
+        const res = getMostPopularExercises()
         setExerciseResults(res)
         return
       }
       setIsLoading(true)
-      console.log('exerciseFilter', exerciseFilter)
       const results = await exerciseSearch(exerciseFilter.searchValue)
       setExerciseResults(results)
     } catch (err) {
@@ -222,7 +217,7 @@ export function EditWorkout({
 
   useEffect(() => {
     debouncedRunSearch()
-  }, [exerciseFilter.searchValue, debouncedRunSearch])
+  }, [exerciseFilter, debouncedRunSearch])
 
   useEffect(() => {
     getWorkoutInstructions()

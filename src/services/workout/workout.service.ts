@@ -1,6 +1,7 @@
 import { Workout } from '../../types/workout/Workout'
 import { httpService } from '../http.service'
 import { WorkoutFilter } from '../../types/workoutFilter/WorkoutFilter'
+import { ExerciseFilter } from '../../types/exerciseFilter/ExerciseFilter'
 
 const KEY = 'workout'
 
@@ -11,6 +12,7 @@ export const workoutService = {
   remove,
   getEmptyWorkout,
   getEmptyExerciseDetail,
+  getEmptyExerciseFilter,
 }
 
 async function query(filterBy: WorkoutFilter = { forUserId: '' }) {
@@ -60,6 +62,14 @@ function getEmptyWorkout(): Workout {
     muscleGroups: [],
     details: '',
     isActive: true,
+  }
+}
+
+function getEmptyExerciseFilter(): ExerciseFilter {
+  return {
+    searchValue: '',
+    muscleGroupValue: 'All',
+    equipmentValue: 'All',
   }
 }
 

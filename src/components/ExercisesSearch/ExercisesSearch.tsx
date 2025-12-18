@@ -24,6 +24,7 @@ interface ExercisesSearchProps {
   onDeleteExercise: (exercise: Exercise) => void
   onReorderExercises: (exercises: Exercise[]) => void
   renderErrorImage: (exercise: Exercise) => void
+  resultsMsg?: string
 }
 
 export function ExercisesSearch({
@@ -34,6 +35,7 @@ export function ExercisesSearch({
   results,
   onAddExercise,
   renderErrorImage,
+  resultsMsg,
 }: ExercisesSearchProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -62,6 +64,7 @@ export function ExercisesSearch({
         <ExercisesFilter
           exerciseFilter={exerciseFilter}
           onExerciseFilterChange={onExerciseFilterChange}
+          resultsMsg={resultsMsg}
         />
 
         <CustomList
