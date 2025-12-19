@@ -27,22 +27,17 @@ export async function loadWorkouts(filter: WorkoutFilter) {
 
 export async function saveWorkout(workout: Workout, timesPerWeek?: number) {
   try {
-    console.log('workout', workout)
-
     const savedWorkout = await workoutService.save(workout)
-    if (workout._id) {
-      store.dispatch({ type: UPDATE_WORKOUT, workout: savedWorkout })
-    } else {
-      store.dispatch({
-        type: ADD_WORKOUT,
-        workout: {
-          ...savedWorkout,
-          isNewInstructions: true,
-          timesPerWeek,
-          doneTimes: 0,
-        },
-      })
-    }
+    const action = workout._id ? UPDATE_WORKOUT : ADD_WORKOUT
+    store.dispatch({
+      type: action,
+      workout: {
+        ...savedWorkout,
+        isNewInstructions: true,
+        timesPerWeek,
+        doneTimes: 0,
+      },
+    })
     return savedWorkout
   } catch (err) {
     throw err
