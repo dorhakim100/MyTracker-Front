@@ -27,7 +27,6 @@ import { CustomSwipeAction } from '../CustomSwipeAction/CustomSwipeAction'
 
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline'
-import { setService } from '../../services/set/set.service'
 import { Instructions } from '../../types/instructions/Instructions'
 
 export interface ExerciseEditorProps {

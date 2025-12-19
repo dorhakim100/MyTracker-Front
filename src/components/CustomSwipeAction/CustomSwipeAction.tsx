@@ -1,7 +1,6 @@
 import { Typography } from '@mui/material'
 
 import { SwipeAction } from 'react-swipeable-list'
-import DeleteIcon from '@mui/icons-material/Delete'
 
 type Item<T> = T & { _id?: string }
 
