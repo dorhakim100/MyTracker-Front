@@ -176,7 +176,7 @@ export function WeightChart({
       })
     }
     fetchWeights()
-  }, [user?._id, range])
+  }, [user?._id, range, user?.lastWeight])
 
   const handleLineClick = (
     index: number,
@@ -219,48 +219,48 @@ export function WeightChart({
     <>
       <div className={`weight-chart ${className}`}>
         <Card
-          variant='outlined'
+          variant="outlined"
           className={`card weight   ${prefs.isDarkMode ? 'dark-mode' : ''}`}
         >
-          <div className='header'>
-            <div className='weight-container'>
-              <h3 className='title'>
+          <div className="header">
+            <div className="weight-container">
+              <h3 className="title">
                 {stats.isGoal ? <FlagIcon /> : <ScaleIcon />}
                 {stats.selectedWeight}
-                {stats.selectedWeight && <span className='kg'>kg</span>}
+                {stats.selectedWeight && <span className="kg">kg</span>}
               </h3>
 
               {stats.message && (
-                <Typography variant='caption' className='message'>
+                <Typography variant="caption" className="message">
                   <CircleIcon />
                   {stats.message}
                 </Typography>
               )}
             </div>
-            <div className='date-container'>
+            <div className="date-container">
               <CalendarTodayIcon />
               <TimesContainer
                 selectedDay={stats.selectedDate}
                 isClock={false}
               />
             </div>
-            <div className='setting-button-container'>
+            <div className="setting-button-container">
               <CustomButton
                 isIcon={true}
                 icon={<Settings />}
                 onClick={onOpenSettings}
-                backgroundColor='transparent'
+                backgroundColor="transparent"
               />
             </div>
           </div>
-          <div className='chart-container'>
+          <div className="chart-container">
             <LineChart
               data={data}
               interpolateGaps={true}
               spanGaps={true}
               onLineClick={handleLineClick}
               baseline={user?.currGoal?.targetWeight}
-              baselineLabel='Goal weight'
+              baselineLabel="Goal weight"
               isDarkMode={prefs.isDarkMode}
               movingAverageData={movingAverageData}
             />
@@ -273,7 +273,7 @@ export function WeightChart({
       <CustomAlertDialog
         open={openSettings}
         onClose={onCloseSettings}
-        title='Settings'
+        title="Settings"
       >
         <ModalWeightChartSettings />
       </CustomAlertDialog>
@@ -306,22 +306,22 @@ const ModalWeightChartSettings = () => {
   }
 
   return (
-    <div className='weight-chart-settings-container'>
+    <div className="weight-chart-settings-container">
       <div
-        className='display-moving-average-container'
+        className="display-moving-average-container"
         onClick={() =>
           onDisplayMovingAverage(!prefs.weightChartSettings.isMovingAverage)
         }
       >
-        <Typography variant='h6'>Display Weakly Average</Typography>
+        <Typography variant="h6">Display Weakly Average</Typography>
 
         <CustomIOSSwitch
           checked={prefs.weightChartSettings.isMovingAverage}
           color={prefs.favoriteColor}
         />
       </div>
-      <div className='color-picker-container'>
-        <Typography variant='h6'>Weakly Average Color</Typography>
+      <div className="color-picker-container">
+        <Typography variant="h6">Weakly Average Color</Typography>
         <ColorPicker
           pickedColor={prefs.weightChartSettings.movingAverageColor}
           onColorPick={onChangeMovingAverageColor}

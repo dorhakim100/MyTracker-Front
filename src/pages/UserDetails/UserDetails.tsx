@@ -28,7 +28,7 @@ import {
   APPROVED_STATUS,
   REJECTED_STATUS,
 } from '../../assets/config/request-statuses'
-
+import { Weight } from '../../types/weight/Weight'
 import { WeightChart } from '../../components/WeightChart/WeightChart'
 import { StatsCarousel } from '../../components/StatsCarousel/StatsCarousel'
 
@@ -42,6 +42,8 @@ export function UserDetails() {
   )
 
   const [requests, setRequests] = useState<TrainerRequest[]>([])
+
+  const [weights, setWeights] = useState<Weight[]>([])
 
   const acrodions = [
     user?.isTrainer
