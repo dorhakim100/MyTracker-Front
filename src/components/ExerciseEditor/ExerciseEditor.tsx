@@ -166,8 +166,24 @@ export function ExerciseEditor({
       isDone: stateToSet,
     }
 
-    const newSetsToSave = [...newSets]
-    newSetsToSave[index] = setToSave
+    let newSetsToSave = [...newSets]
+
+    // if isDone true, set all previous sets to true
+    if (stateToSet) {
+      newSetsToSave = newSetsToSave.map((set, i) => {
+        if (i === index) return setToSave
+        if (i < index) return { ...set, isDone: stateToSet }
+        return set
+      })
+      // if isDone false, set all next sets to false
+    } else {
+      newSetsToSave = newSetsToSave.map((set, i) => {
+        if (i === index) return setToSave
+        if (i > index) return { ...set, isDone: stateToSet }
+        return set
+      })
+    }
+
     try {
       await updateExercise({ ...exercise, sets: newSetsToSave }, index)
     } catch (err) {
