@@ -414,7 +414,8 @@ body.dark-mode {
   // color: white;
 }
 
-.swipeable-right-action {
+.swipeable-right-action,
+.swipeable-left-action {
   width: 80px;
   // height: 100%;
   display: flex;
@@ -424,8 +425,23 @@ body.dark-mode {
   gap: 0.2rem;
   // align-items: center;
   // justify-content: center;
+  min-width: fit-content;
+
+  p {
+    white-space: nowrap;
+  }
 
   &.delete {
+    background-color: $medium-red;
+    color: $white;
+  }
+
+  &.green {
+    background-color: $dark-gray-green;
+    color: $white;
+  }
+
+  &.red {
     background-color: $medium-red;
     color: $white;
   }

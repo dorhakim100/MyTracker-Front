@@ -40,7 +40,7 @@ interface ExerciseCardProps {
     setIndex: number,
     isNew: boolean,
     isRemove: boolean
-  ) => void
+  ) => Promise<void> | void
 }
 
 export function ExerciseCard({

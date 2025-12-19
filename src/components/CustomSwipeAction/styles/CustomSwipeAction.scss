@@ -1,0 +1,11 @@
+.swipeable-left-action {
+  &.green {
+    background-color: $success-color;
+    color: $white;
+  }
+
+  &.red {
+    background-color: $error-color;
+    color: $white;
+  }
+}

@@ -16,15 +16,39 @@
       // justify-items: start;
       justify-items: center;
 
-      padding: 1rem 0 0 0;
+      padding: 1.5rem 0 0 0;
+
+      .badges-container {
+        display: grid;
+      }
 
       .MuiBadge-root {
-        // position: absolute;
-        top: 1rem;
-        left: 0.2rem;
+        display: block;
+        align-self: center;
+        &.float {
+          top: 1rem;
+          left: 0.75rem;
+          position: absolute;
+        }
+
+        &.success {
+          span {
+            background-color: $success-color !important;
+          }
+        }
+
+        &.error {
+          span {
+            background-color: $error-color !important;
+          }
+        }
         span {
           font-weight: 700;
           font-size: 1.1rem;
+          left: -20px;
+
+          padding: 0px;
+          color: $white !important;
         }
       }
 

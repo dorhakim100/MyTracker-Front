@@ -58,6 +58,9 @@
   --picker-color-pink: #ff69b4;
   --picker-color-pink-dark: #c2185b;
   --picker-color-pink-darker: #8e0e44;
+
+  --success-color: #2e7d32;
+  --error-color: #d32f2f;
 }
 
 // Colors
@@ -110,6 +113,9 @@ $picker-color-pink: var(--picker-color-pink);
 $picker-color-pink-light: var(--picker-color-pink-light);
 $picker-color-pink-dark: var(--picker-color-pink-dark);
 $picker-color-pink-darker: var(--picker-color-pink-darker);
+
+$success-color: var(--success-color);
+$error-color: var(--error-color);
 
 // Shades of Red
 $light-red: #f28b82;

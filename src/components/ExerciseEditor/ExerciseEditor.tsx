@@ -21,6 +21,14 @@ import {
   pickerMinMaxValues,
 } from '../../assets/config/exercise-editor-pickers'
 
+import CheckIcon from '@mui/icons-material/Check'
+import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked'
+import { CustomSwipeAction } from '../CustomSwipeAction/CustomSwipeAction'
+
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline'
+import { setService } from '../../services/set/set.service'
+
 export interface ExerciseEditorProps {
   exercise: ExerciseInstructions
   isExpected?: boolean
@@ -29,7 +37,7 @@ export interface ExerciseEditorProps {
     setIndex?: number,
     isNew?: boolean,
     isRemove?: boolean
-  ) => void
+  ) => Promise<void> | void
 }
 
 interface EditSet extends Set {
@@ -60,7 +68,7 @@ export function ExerciseEditor({
   const [editSet, setEditSet] = useState<EditSet | null>(null)
   const [currentPickerValue, setCurrentPickerValue] = useState<number>(0)
 
-  const onAddSet = () => {
+  const onAddSet = async () => {
     const existingSet =
       exercise.sets[exercise.sets.length - 1] ||
       instructionsService.getEmptySet()
@@ -70,27 +78,35 @@ export function ExerciseEditor({
     }
 
     const newSets = [...exercise.sets, newSet]
-    updateExercise(
-      { ...exercise, sets: newSets },
-      newSets.length - 1,
-      isExpected ? false : true,
-      false
-    )
-    showSuccessMsg(messages.success.addSet)
+    try {
+      await updateExercise(
+        { ...exercise, sets: newSets },
+        newSets.length - 1,
+        isExpected ? false : true,
+        false
+      )
+      showSuccessMsg(messages.success.addSet)
+    } catch (err) {
+      showErrorMsg(messages.error.addSet)
+    }
   }
 
-  const onDeleteSet = (indexToRemove: number) => {
+  const onDeleteSet = async (indexToRemove: number) => {
     if (indexToRemove === 0 && exercise.sets.length === 1) {
       showErrorMsg(messages.error.deleteSet)
       return
     }
     const newSets = exercise.sets.filter((_, index) => index !== indexToRemove)
-    updateExercise(
-      { ...exercise, sets: newSets },
-      indexToRemove,
-      isExpected ? false : true,
-      true
-    )
+    try {
+      await updateExercise(
+        { ...exercise, sets: newSets },
+        indexToRemove,
+        isExpected ? false : true,
+        true
+      )
+    } catch (err) {
+      showErrorMsg(messages.error.deleteSet)
+    }
   }
 
   const onClosePicker = () => {
@@ -141,6 +157,30 @@ export function ExerciseEditor({
     return type === 'rpe' || type === 'weight'
   }
 
+  const onMarkAsDone = async (index: number) => {
+    const newSets = [...exercise.sets]
+    const stateToSet = !newSets[index].isDone
+
+    const setToSave = {
+      ...newSets[index],
+      isDone: stateToSet,
+    }
+
+    const newSetsToSave = [...newSets]
+    newSetsToSave[index] = setToSave
+    try {
+      await updateExercise({ ...exercise, sets: newSetsToSave }, index)
+    } catch (err) {
+      showErrorMsg(messages.error.updateSet)
+    }
+
+    try {
+      // await setService.save(newSets[index])
+    } catch (err) {
+      showErrorMsg(messages.error.updateSet)
+    }
+  }
+
   return (
     <>
       <div className="exercise-editor-container">
@@ -154,8 +194,20 @@ export function ExerciseEditor({
                     <Badge
                       badgeContent={index + 1}
                       color="primary"
-                      className={prefs.favoriteColor}
+                      className={`${prefs.favoriteColor} float`}
                     />
+                    <div className="badges-container">
+                      <Badge
+                        badgeContent={
+                          set.isDone ? (
+                            <CheckIcon />
+                          ) : (
+                            <RadioButtonUncheckedIcon />
+                          )
+                        }
+                        className={set.isDone ? 'success' : 'error'}
+                      />
+                    </div>
                     <div className="reps-container">
                       <PickerSelect
                         className={`${prefs.favoriteColor}`}
@@ -237,6 +289,24 @@ export function ExerciseEditor({
                   }
                 />
               ),
+              renderLeftSwipeActions: !isExpected
+                ? () => (
+                    <CustomSwipeAction
+                      item={set}
+                      onAction={() => onMarkAsDone(index)}
+                      destructive={false}
+                      icon={
+                        set.isDone ? (
+                          <RemoveCircleOutlineIcon />
+                        ) : (
+                          <CheckCircleOutlineIcon />
+                        )
+                      }
+                      text={set.isDone ? 'Not done' : 'Done'}
+                      className={set.isDone ? 'red' : 'green'}
+                    />
+                  )
+                : undefined,
             }))}
             listKey={`${exercise.exerciseId}-list-${exercise.sets.length}`}
             threshold={0.15}

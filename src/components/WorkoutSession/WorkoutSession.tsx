@@ -123,6 +123,14 @@ export function WorkoutSession({
     const exerciseIndex = newInstructions.exercises.findIndex(
       (e) => e.exerciseId === exercise.exerciseId
     )
+    console.log(
+      'newInstructions',
+      newInstructions.exercises[exerciseIndex].sets[0]
+    )
+    console.log(
+      'originalInstructions',
+      originalInstructions.exercises[exerciseIndex].sets[0]
+    )
     if (getIsStringifySame(originalInstructions, newInstructions)) return
     setSelectedSessionDay({
       ...sessionDay,
