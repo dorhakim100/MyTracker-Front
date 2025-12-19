@@ -187,10 +187,6 @@ export function Workouts() {
   }, [user, traineeUser, sessionFilter])
 
   useEffect(() => {
-    setIsPageLoading(true)
-  }, [])
-
-  useEffect(() => {
     if (traineeUser) {
       loadWorkouts({ forUserId: traineeUser._id })
     } else if (user) {

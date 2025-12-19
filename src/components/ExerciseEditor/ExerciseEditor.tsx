@@ -28,9 +28,12 @@ import { CustomSwipeAction } from '../CustomSwipeAction/CustomSwipeAction'
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline'
 import { Instructions } from '../../types/instructions/Instructions'
+import { setSelectedSessionDay } from '../../store/actions/workout.action'
+import { SessionDay } from '../../types/workout/SessionDay'
 
 export interface ExerciseEditorProps {
   exercise: ExerciseInstructions
+  exerciseSets?: Set[]
   previousInstructions?: Instructions | null
   isExpected?: boolean
   updateExercise: (
@@ -54,6 +57,7 @@ interface PickerOption {
 
 export function ExerciseEditor({
   exercise,
+  exerciseSets,
   previousInstructions,
   isExpected,
   updateExercise,
@@ -70,6 +74,9 @@ export function ExerciseEditor({
   const [editSet, setEditSet] = useState<EditSet | null>(null)
   const [currentPickerValue, setCurrentPickerValue] = useState<number>(0)
 
+  const sessionDay = useSelector(
+    (stateSelector: RootState) => stateSelector.workoutModule.sessionDay
+  )
   const onAddSet = async () => {
     const existingSet =
       exercise.sets[exercise.sets.length - 1] ||
@@ -154,6 +161,35 @@ export function ExerciseEditor({
     })
     updateExercise(newExercise, editSet.index)
   }, [editSet])
+
+  useEffect(() => {
+    if (!exerciseSets || !sessionDay || !sessionDay.instructions) return
+
+    const newSets = exercise.sets.map((setToUpdate, index) => {
+      const setToSet = exerciseSets.find(
+        (set) =>
+          set.exerciseId === exercise.exerciseId && set.setNumber === index + 1
+      )
+
+      return {
+        ...setToUpdate,
+        isDone: setToSet?.isDone || false,
+      }
+    })
+
+    setSelectedSessionDay({
+      ...sessionDay,
+      instructions: {
+        ...sessionDay.instructions,
+        exercises: sessionDay.instructions.exercises.map(
+          (ex: ExerciseInstructions) =>
+            ex.exerciseId === exercise.exerciseId
+              ? { ...ex, sets: newSets }
+              : ex
+        ),
+      },
+    })
+  }, [exerciseSets, exercise.exerciseId])
 
   const getIsAfterValue = (type: PickerType): boolean => {
     return type === 'rpe' || type === 'weight'
@@ -367,15 +403,17 @@ export function ExerciseEditor({
                   /> */}
                 </div>
               ),
-              renderRightSwipeActions: () => (
-                <DeleteAction
-                  item={set}
-                  onDeleteItem={() => onDeleteSet(index)}
-                  destructive={
-                    index === 0 && exercise.sets.length === 1 ? false : true
-                  }
-                />
-              ),
+              renderRightSwipeActions: isExpected
+                ? () => (
+                    <DeleteAction
+                      item={set}
+                      onDeleteItem={() => onDeleteSet(index)}
+                      destructive={
+                        index === 0 && exercise.sets.length === 1 ? false : true
+                      }
+                    />
+                  )
+                : undefined,
               renderLeftSwipeActions: !isExpected
                 ? () => (
                     <CustomSwipeAction

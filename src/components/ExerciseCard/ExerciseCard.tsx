@@ -87,6 +87,7 @@ export function ExerciseCard({
     })
   }
 
+  const [exerciseSets, setExerciseSets] = useState<Set[]>([])
   const [isOpen, setIsOpen] = useState(false)
   const [isEditNotesOpen, setIsEditNotesOpen] = useState(false)
 
@@ -205,6 +206,25 @@ export function ExerciseCard({
     getPreviousInstructions()
   }, [instructions])
 
+  useEffect(() => {
+    const getExerciseSets = async () => {
+      if (!sessionDay?._id) return
+      try {
+        console.log(sessionDay._id, exercise.exerciseId)
+        const sets = await setService.getSetsBySessionIdAndExerciseId(
+          sessionDay._id,
+          exercise.exerciseId
+        )
+
+        setExerciseSets(sets)
+      } catch (err) {
+        showErrorMsg(messages.error.getSets)
+      }
+    }
+
+    getExerciseSets()
+  }, [sessionDay?._id])
+
   async function getPreviousInstructions() {
     if (!instructions || instructions.weekNumber === 1) return null
     try {
@@ -303,6 +323,7 @@ export function ExerciseCard({
         </div>
         {exerciseInstructions && exerciseInstructions.sets && (
           <ExerciseEditor
+            exerciseSets={exerciseSets}
             previousInstructions={previousInstructions}
             exercise={exerciseInstructions}
             updateExercise={

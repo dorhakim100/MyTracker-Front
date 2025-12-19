@@ -32,6 +32,7 @@ export interface Set {
   createdAt?: Date
   sessionId?: string
   isDone?: Boolean
+  exerciseId?: string
 
   // just for editing
 }
