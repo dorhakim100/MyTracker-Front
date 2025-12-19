@@ -10,6 +10,12 @@
     color: $white;
   }
 
+  &.done {
+    // opacity: 0.8;
+    padding-left: 0.7rem;
+    border-left: 0.3rem solid $success-color;
+  }
+
   .exercise-card-content {
     display: grid;
     grid-template-columns: auto 1fr auto;

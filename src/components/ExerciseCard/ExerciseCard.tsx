@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Card, Typography, Divider, DialogActions } from '@mui/material'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
@@ -21,6 +21,8 @@ import SwitchLeftIcon from '@mui/icons-material/SwitchLeft'
 import { CustomAlertDialog } from '../../CustomMui/CustomAlertDialog/CustomAlertDialog'
 import { CustomInput } from '../../CustomMui/CustomInput/CustomInput'
 import DragHandleIcon from '@mui/icons-material/DragHandle'
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle'
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 
 interface ExerciseCardProps {
   exercise: Exercise
@@ -81,6 +83,11 @@ export function ExerciseCard({
       : exerciseInstructions?.notes?.actual
   )
 
+  const isDone = useMemo(() => {
+    if (!exerciseInstructions) return false
+    return getIsExerciseDone(exerciseInstructions)
+  }, [exerciseInstructions])
+
   const handleClick = () => {
     if (onClick) {
       onClick(exercise)
@@ -104,6 +111,14 @@ export function ExerciseCard({
         if (onSwitchRpeRir) {
           onSwitchRpeRir(exercise.exerciseId, modeToSet)
         }
+      },
+    },
+
+    !isExpected && {
+      title: isDone ? 'Mark as Not Done' : 'Mark as Done',
+      icon: isDone ? <RemoveCircleIcon /> : <CheckCircleIcon />,
+      onClick: () => {
+        onMarkAsDone(!isDone)
       },
     },
     {
@@ -138,12 +153,33 @@ export function ExerciseCard({
       null,
   ].filter((option) => option) as DropdownOption[]
 
+  function getIsExerciseDone(exerciseInstructions: ExerciseInstructions) {
+    return exerciseInstructions?.sets.every((set) => set.isDone)
+  }
+
+  function onMarkAsDone(isDoneToSet: boolean) {
+    if (!exerciseInstructions) return
+    if (updateExercise) {
+      const newExerciseInstructions: ExerciseInstructions = {
+        ...exerciseInstructions,
+        sets: exerciseInstructions.sets.map((set) => ({
+          ...set,
+          isDone: isDoneToSet,
+        })),
+      }
+
+      updateExercise(newExerciseInstructions, 0, false, true)
+    }
+  }
+
+  if (!exerciseInstructions) return null
+
   return (
     <>
       <Card
         className={`exercise-card-container ${className} ${
           prefs.isDarkMode ? 'dark-mode' : ''
-        } ${prefs.favoriteColor}`}
+        } ${prefs.favoriteColor} ${isDone ? 'done' : ''}`}
         onClick={handleClick}
       >
         <div className="exercise-card-content">

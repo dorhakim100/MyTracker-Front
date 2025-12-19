@@ -3,6 +3,7 @@
     ul {
       color: $white;
     }
+
     .option-menu-item {
       svg {
         fill: $white;
@@ -14,7 +15,12 @@
   .option-menu-item {
     display: flex;
     align-items: center;
+
     justify-content: space-between;
     gap: 1em;
+
+    .option-menu-item-icon {
+      display: flex;
+    }
   }
 }
