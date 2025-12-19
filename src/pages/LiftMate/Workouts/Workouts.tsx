@@ -43,6 +43,7 @@ import { DayController } from '../../../components/DayController/DayController'
 import { SlideAnimation } from '../../../components/SlideAnimation/SlideAnimation'
 import { WorkoutSession } from '../../../components/WorkoutSession/WorkoutSession'
 import { setIsLoading } from '../../../store/actions/system.actions'
+import CustomSkeleton from '../../../CustomMui/CustomSkeleton/CustomSkeleton'
 
 const EDIT = 'edit'
 const DETAILS = 'details'
@@ -98,7 +99,7 @@ export function Workouts() {
   const [selectedWorkout, setSelectedWorkout] = useState<Workout | null>(null)
 
   const [direction, setDirection] = useState(1)
-
+  const [isPageLoading, setIsPageLoading] = useState(false)
   const [selectedPastDate, setSelectedPastDate] = useState({
     from: getDateFromISO(
       new Date(new Date().getTime() - MONTH_IN_MS).toISOString()
@@ -178,6 +179,10 @@ export function Workouts() {
   }, [user, traineeUser, sessionFilter])
 
   useEffect(() => {
+    setIsPageLoading(true)
+  }, [])
+
+  useEffect(() => {
     if (traineeUser) {
       loadWorkouts({ forUserId: traineeUser._id })
     } else if (user) {
@@ -222,6 +227,7 @@ export function Workouts() {
   async function updateSessionDay() {
     try {
       if (!user) return
+
       const day = await handleSessionDayChange(
         sessionFilter.date,
         traineeUser || user
@@ -229,6 +235,8 @@ export function Workouts() {
       setSelectedSessionDay(day)
     } catch (err) {
       showErrorMsg(messages.error.getSessionDay)
+    } finally {
+      setIsPageLoading(false)
     }
   }
 
@@ -375,7 +383,32 @@ export function Workouts() {
     )
   }
 
-  if (!sessionDay || !sessionDay._id) return null
+  function renderSkeleton() {
+    return (
+      <div className="page-container workouts-container skeleton">
+        <DayController
+          selectedDay={selectedDay}
+          selectedDayDate={sessionFilter.date}
+          isToday={isToday}
+          onDayChange={onDayChange}
+          onDateChange={onDateChange}
+        />
+
+        {Array.from({ length: 7 }).map((_, index: number) => {
+          return (
+            <CustomSkeleton
+              key={index}
+              height={'300px'}
+              width="100%"
+              isDarkMode={prefs.isDarkMode}
+            />
+          )
+        })}
+      </div>
+    )
+  }
+
+  if (!sessionDay || !sessionDay._id || isPageLoading) return renderSkeleton()
   return (
     <>
       <div className={`page-container workouts-container`}>

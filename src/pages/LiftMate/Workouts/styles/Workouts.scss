@@ -1,4 +1,11 @@
 .workouts-container {
+  &.skeleton {
+    .MuiSkeleton-root {
+      // margin-bottom: 1rem;
+
+      margin-bottom: -25%;
+    }
+  }
   // padding: 1rem 0;
   text-align: start;
 
