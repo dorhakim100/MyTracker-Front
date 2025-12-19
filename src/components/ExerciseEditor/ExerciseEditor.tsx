@@ -175,14 +175,15 @@ export function ExerciseEditor({
     if (stateToSet) {
       newSetsToSave = newSetsToSave.map((set, i) => {
         if (i === index) return setToSave
-        if (i < index) return { ...set, isDone: stateToSet }
+        // if (i < index) return { ...set, isDone: stateToSet }
         return set
       })
+
       // if isDone false, set all next sets to false
     } else {
       newSetsToSave = newSetsToSave.map((set, i) => {
         if (i === index) return setToSave
-        if (i > index) return { ...set, isDone: stateToSet }
+        // if (i > index) return { ...set, isDone: stateToSet }
         return set
       })
     }

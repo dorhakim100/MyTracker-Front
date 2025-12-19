@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Card, Typography, Divider, DialogActions } from '@mui/material'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
-import { Exercise } from '../../types/exercise/Exercise'
+import { Exercise, Set } from '../../types/exercise/Exercise'
 import { capitalizeFirstLetter } from '../../services/util.service'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import { ExerciseInstructions } from '../../types/exercise/ExerciseInstructions'
@@ -24,6 +24,9 @@ import DragHandleIcon from '@mui/icons-material/DragHandle'
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import { instructionsService } from '../../services/instructions/instructions.service'
+import { showErrorMsg } from '../../services/event-bus.service'
+import { messages } from '../../assets/config/messages'
+import { setService } from '../../services/set/set.service'
 
 interface ExerciseCardProps {
   exercise: Exercise
@@ -66,6 +69,10 @@ export function ExerciseCard({
   )
   const { traineeUser, user } = useSelector(
     (stateSelector: RootState) => stateSelector.userModule
+  )
+
+  const sessionDay = useSelector(
+    (stateSelector: RootState) => stateSelector.workoutModule.sessionDay
   )
   const [previousInstructions, setPreviousInstructions] =
     useState<Instructions | null>(null)
@@ -112,7 +119,7 @@ export function ExerciseCard({
       icon: <SwitchLeftIcon />,
       onClick: () => {
         const modeToSet = exerciseInstructions?.sets[0]?.rpe ? 'rir' : 'rpe'
-        console.log('modeToSet', modeToSet)
+
         if (onSwitchRpeRir) {
           onSwitchRpeRir(exercise.exerciseId, modeToSet)
         }
@@ -130,7 +137,6 @@ export function ExerciseCard({
       title: 'Edit Notes',
       icon: <EditNoteIcon />,
       onClick: () => {
-        console.log('edit notes', exercise)
         setIsEditNotesOpen(true)
       },
     },
@@ -162,18 +168,34 @@ export function ExerciseCard({
     return exerciseInstructions?.sets.every((set) => set.isDone)
   }
 
-  function onMarkAsDone(isDoneToSet: boolean) {
+  async function onMarkAsDone(isDoneToSet: boolean) {
     if (!exerciseInstructions) return
-    if (updateExercise) {
-      const newExerciseInstructions: ExerciseInstructions = {
-        ...exerciseInstructions,
-        sets: exerciseInstructions.sets.map((set) => ({
+    if (!updateExercise || !sessionDay?._id) return
+    const newExerciseInstructions: ExerciseInstructions = {
+      ...exerciseInstructions,
+      sets: exerciseInstructions.sets.map((set) => ({
+        ...set,
+        isDone: isDoneToSet,
+      })),
+    }
+
+    try {
+      await updateExercise(newExerciseInstructions, 0, false, false)
+      const sets = await setService.getSetsBySessionIdAndExerciseId(
+        sessionDay._id,
+        exercise.exerciseId
+      )
+
+      const promises = sets.map(async (set: Set) => {
+        await setService.save({
           ...set,
           isDone: isDoneToSet,
-        })),
-      }
+        })
+      })
 
-      updateExercise(newExerciseInstructions, 0, false, true)
+      await Promise.all(promises)
+    } catch (err) {
+      showErrorMsg(messages.error.updateSet)
     }
   }
 

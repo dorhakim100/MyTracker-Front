@@ -11,6 +11,7 @@ export const setService = {
   remove,
   saveSetBySessionIdAndExerciseId,
   removeSetBySessionIdAndExerciseId,
+  getSetsBySessionIdAndExerciseId,
   getEmptySet,
 }
 
@@ -83,6 +84,21 @@ async function removeSetBySessionIdAndExerciseId(
       `${KEY}/session/${sessionId}/exercise/${exerciseId}/${setIndex}`,
       null
     )
+  } catch (err) {
+    throw err
+  }
+}
+
+async function getSetsBySessionIdAndExerciseId(
+  sessionId: string,
+  exerciseId: string
+) {
+  try {
+    const sets = await httpService.get(
+      `${KEY}/session/${sessionId}/exercise/${exerciseId}`,
+      {}
+    )
+    return sets
   } catch (err) {
     throw err
   }
