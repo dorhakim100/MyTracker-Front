@@ -29,7 +29,6 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline'
 import { Instructions } from '../../types/instructions/Instructions'
 import { setSelectedSessionDay } from '../../store/actions/workout.action'
-import { SessionDay } from '../../types/workout/SessionDay'
 
 export interface ExerciseEditorProps {
   exercise: ExerciseInstructions
