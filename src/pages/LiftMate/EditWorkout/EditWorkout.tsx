@@ -399,14 +399,28 @@ export function EditWorkout({
     })
   }
 
-  function clearActualNotes(instructions: Instructions) {
-    const newExercises = [...instructions.exercises]
-    newExercises.forEach((exercise) => {
-      exercise.notes.actual = ''
+  function modifyInstructionsForSave(instructions: Instructions) {
+    const modifiedExercises = instructions.exercises.map((exercise) => {
+      const newSets = exercise.sets.map((set) => {
+        if (instructions._id) return set
+        return {
+          ...set,
+          isDone: false,
+        }
+      })
+      return {
+        ...exercise,
+        notes: {
+          ...exercise.notes,
+          actual: '',
+        },
+        sets: newSets,
+      }
     })
+
     return {
       ...instructions,
-      exercises: newExercises,
+      exercises: modifiedExercises,
     }
   }
 
@@ -421,7 +435,7 @@ export function EditWorkout({
       workoutToSave.name = 'Untitled Workout'
     }
 
-    const instructionsToSave = clearActualNotes(instructions)
+    const instructionsToSave = modifyInstructionsForSave(instructions)
 
     try {
       setIsLoading(true)

@@ -31,6 +31,7 @@ export interface Set {
   setNumber?: number
   createdAt?: Date
   sessionId?: string
+  isDone?: Boolean
 
   // just for editing
 }
