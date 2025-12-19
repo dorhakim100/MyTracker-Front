@@ -304,7 +304,7 @@ export function Workouts() {
       case ROUTINES:
         return (
           <div className="dialog-routines-container">
-            {renderWorkoutLists()}
+            {renderWorkoutLists(false)}
           </div>
         )
       default:
@@ -326,7 +326,7 @@ export function Workouts() {
     }
   }
 
-  const renderWorkoutLists = () => {
+  const renderWorkoutLists = (isRenderStartButtons: boolean = true) => {
     const activeWorkouts = workouts.filter((workout) => workout.isActive)
     const inactiveWorkouts = workouts.filter((workout) => !workout.isActive)
 
@@ -354,6 +354,7 @@ export function Workouts() {
             className={`active-list`}
             onStartWorkout={onStartWorkout}
             selectedWorkoutId={selectedWorkoutId}
+            isRenderStartButtons={isRenderStartButtons}
           />
         </div>
         <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />

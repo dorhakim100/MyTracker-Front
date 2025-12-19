@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import { DialogActions, Typography } from '@mui/material'
+import { DialogActions, Divider, Typography } from '@mui/material'
 
 import { SessionDay } from '../../types/workout/SessionDay'
 import { Exercise } from '../../types/exercise/Exercise'
@@ -31,6 +31,7 @@ import { CustomAlertDialog } from '../../CustomMui/CustomAlertDialog/CustomAlert
 import NoteAddIcon from '@mui/icons-material/NoteAdd'
 import { CustomInput } from '../../CustomMui/CustomInput/CustomInput'
 import { ExerciseCard } from '../ExerciseCard/ExerciseCard'
+import { getWorkoutMuscles } from '../../services/exersice-search/exersice-search'
 interface WorkoutSessionProps {
   sessionDay: SessionDay
   onExerciseInfoClick: (exercise: Exercise) => void
@@ -308,9 +309,13 @@ export function WorkoutSession({
             {/* <CustomButton
               icon={allExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               onClick={toggleExpandAll}
-            /> */}
+              /> */}
           </div>
         </div>
+        <Typography variant="body1" className="bold-header">
+          {getWorkoutMuscles(sessionDay.workout).join(', ')}
+        </Typography>
+        <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
         <div className="exercises-container">
           {sessionDay.instructions.exercises.map((exercise) => {
             const isExpanded = expandedExercises.has(exercise.exerciseId)

@@ -7,6 +7,7 @@ interface WorkoutsListProps {
   className?: string
   onStartWorkout: (workout: Workout) => void
   selectedWorkoutId: string | null
+  isRenderStartButtons: boolean
 }
 
 export function WorkoutsList({
@@ -14,6 +15,7 @@ export function WorkoutsList({
   className,
   onStartWorkout,
   selectedWorkoutId,
+  isRenderStartButtons = true,
 }: WorkoutsListProps) {
   return (
     <CustomBasicList<Workout>
@@ -24,6 +26,7 @@ export function WorkoutsList({
           className="workout-card"
           onStartWorkout={onStartWorkout}
           selectedWorkoutId={selectedWorkoutId}
+          isRenderStartButtons={isRenderStartButtons}
         />
       )}
       getKey={(workout, index) => workout._id || `workout-${index}`}

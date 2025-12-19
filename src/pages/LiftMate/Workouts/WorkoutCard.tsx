@@ -38,11 +38,16 @@ import { EditWorkout } from '../EditWorkout/EditWorkout'
 import { Badge } from '@mui/material'
 
 import DoneAllIcon from '@mui/icons-material/DoneAll'
+import {
+  getWorkoutMuscles,
+  mapMuscleToMuscleGroup,
+} from '../../../services/exersice-search/exersice-search'
 interface WorkoutCardProps {
   workout: Workout
   className?: string
   onStartWorkout: (workout: Workout) => void
   selectedWorkoutId: string | null
+  isRenderStartButtons: boolean
 }
 
 export function WorkoutCard({
@@ -50,6 +55,7 @@ export function WorkoutCard({
   className,
   onStartWorkout,
   selectedWorkoutId,
+  isRenderStartButtons = true,
 }: WorkoutCardProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -204,9 +210,7 @@ export function WorkoutCard({
           variant="body1"
           className="muscle-groups-list hide-text-overflow"
         >
-          {workout.muscleGroups
-            .map((muscleGroup) => capitalizeFirstLetter(muscleGroup))
-            .join(', ')}
+          {getWorkoutMuscles(workout).join(', ')}
         </Typography>
         <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
         <Typography
@@ -217,8 +221,15 @@ export function WorkoutCard({
             .map((exercise) => capitalizeFirstLetter(exercise.name))
             .join(', ')}
         </Typography>
-        <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
-        {workout.isNewInstructions && renderAvailableWorkoutButton()}
+
+        {workout.isNewInstructions && isRenderStartButtons && (
+          <>
+            <Divider
+              className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+            />
+            {renderAvailableWorkoutButton()}
+          </>
+        )}
       </Card>
       <CustomAlertDialog
         open={isDeleteOpen}

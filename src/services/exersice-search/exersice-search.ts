@@ -2,6 +2,7 @@ import axios from 'axios'
 import { Exercise } from '../../types/exercise/Exercise'
 import { MuscleGroup } from '../../types/muscleGroup/MuscleGroup'
 import { POPULAR_EXERCISES } from '../../assets/config/popular-exercises'
+import { Workout } from '../../types/workout/Workout'
 export const exerciseSearch = async (searchValue: string) => {
   const url = 'https://www.exercisedb.dev/api/v1/exercises/search'
 
@@ -220,6 +221,68 @@ export function mapMuscleGroupToMuscles(muscleGroup: string): string[] {
     ],
   }
   return mapping[muscleGroup] || [muscleGroup.toLowerCase()]
+}
+
+/**
+ * Reversed map: Maps muscle names to their muscle groups
+ * Key: muscle name (e.g., "pectorals", "chest")
+ * Value: muscle group name (e.g., "Chest")
+ */
+export const MUSCLE_TO_MUSCLE_GROUP: Record<string, string> = {
+  chest: 'Chest',
+  pectorals: 'Chest',
+  lats: 'Lats',
+  back: 'Lats',
+  'upper back': 'Lats',
+  'rear delts': 'Lats', // Also in Shoulders, but Lats is first
+  quads: 'Quads',
+  quadriceps: 'Quads',
+  'upper legs': 'Quads',
+  shoulders: 'Shoulders',
+  delts: 'Shoulders',
+  'anterior delts': 'Shoulders',
+  glutes: 'Glutes',
+  'gluteus maximus': 'Glutes',
+  'gluteus medius': 'Glutes',
+  'gluteus minimus': 'Glutes',
+  butt: 'Glutes',
+  calves: 'Calves',
+  soleus: 'Calves',
+  gastrocnemius: 'Calves',
+  hamstrings: 'Hamstrings',
+  abs: 'Abs',
+  abdominals: 'Abs',
+  'lower abs': 'Abs',
+  core: 'Abs',
+  obliques: 'Abs',
+  triceps: 'Triceps',
+  biceps: 'Biceps',
+  brachialis: 'Biceps',
+  forearms: 'Forearms',
+  adductors: 'Hip Adductors',
+  'inner thighs': 'Hip Adductors',
+  'lower back': 'Lower Back',
+  trapezius: 'Upper Back',
+  traps: 'Upper Back',
+  rhomboids: 'Upper Back',
+  'levator scapulae': 'Upper Back',
+}
+
+/**
+ * Maps muscle names to their corresponding muscle groups (reverse of mapMuscleGroupToMuscles)
+ * Returns the muscle group name for a given muscle name
+ */
+export function mapMuscleToMuscleGroup(muscle: string): string | undefined {
+  return MUSCLE_TO_MUSCLE_GROUP[muscle.toLowerCase()]
+}
+
+export function getWorkoutMuscles(workout: Workout) {
+  const muscles = workout.exercises
+    .map((exercise) => exercise.mainMuscles)
+    .flat()
+    .filter((muscle): muscle is string => muscle !== undefined)
+  const uniqueMuscles = [...new Set(muscles)]
+  return uniqueMuscles.map((muscle) => mapMuscleToMuscleGroup(muscle))
 }
 
 /**
