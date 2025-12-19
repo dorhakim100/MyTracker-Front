@@ -32,6 +32,7 @@ import NoteAddIcon from '@mui/icons-material/NoteAdd'
 import { CustomInput } from '../../CustomMui/CustomInput/CustomInput'
 import { ExerciseCard } from '../ExerciseCard/ExerciseCard'
 import { getWorkoutMuscles } from '../../services/exersice-search/exersice-search'
+// import AddIcon from '@mui/icons-material/Add'
 interface WorkoutSessionProps {
   sessionDay: SessionDay
   onExerciseInfoClick: (exercise: Exercise) => void
@@ -316,6 +317,7 @@ export function WorkoutSession({
           {getWorkoutMuscles(sessionDay.workout).join(', ')}
         </Typography>
         <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
+        {/* <CustomButton text="Add Exercise" icon={<AddIcon />} /> */}
         <div className="exercises-container">
           {sessionDay.instructions.exercises.map((exercise) => {
             const isExpanded = expandedExercises.has(exercise.exerciseId)

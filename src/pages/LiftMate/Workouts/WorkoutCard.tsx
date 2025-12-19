@@ -38,10 +38,7 @@ import { EditWorkout } from '../EditWorkout/EditWorkout'
 import { Badge } from '@mui/material'
 
 import DoneAllIcon from '@mui/icons-material/DoneAll'
-import {
-  getWorkoutMuscles,
-  mapMuscleToMuscleGroup,
-} from '../../../services/exersice-search/exersice-search'
+import { getWorkoutMuscles } from '../../../services/exersice-search/exersice-search'
 interface WorkoutCardProps {
   workout: Workout
   className?: string

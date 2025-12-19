@@ -5,7 +5,48 @@
   }
   &.dark-mode {
     .MuiToggleButtonGroup-grouped.Mui-selected {
-      background-color: $very-dark-gray !important;
+      background-color: $dark-gray !important;
+    }
+
+    &.blue {
+      .MuiToggleButtonGroup-grouped.Mui-selected {
+        background-color: $dark-gray-blue !important;
+      }
+    }
+    &.red {
+      .MuiToggleButtonGroup-grouped.Mui-selected {
+        background-color: $dark-gray-red !important;
+      }
+    }
+    &.yellow {
+      .MuiToggleButtonGroup-grouped.Mui-selected {
+        background-color: $dark-gray-yellow !important;
+      }
+    }
+    &.green {
+      .MuiToggleButtonGroup-grouped.Mui-selected {
+        background-color: $dark-gray-green !important;
+      }
+    }
+    &.deepPurple {
+      .MuiToggleButtonGroup-grouped.Mui-selected {
+        background-color: $dark-gray-deep-purple !important;
+      }
+    }
+    &.purple {
+      .MuiToggleButtonGroup-grouped.Mui-selected {
+        background-color: $dark-gray-purple !important;
+      }
+    }
+    &.pink {
+      .MuiToggleButtonGroup-grouped.Mui-selected {
+        background-color: $dark-gray-pink !important;
+      }
+    }
+    &.orange {
+      .MuiToggleButtonGroup-grouped.Mui-selected {
+        background-color: $dark-gray-orange !important;
+      }
     }
   }
 }

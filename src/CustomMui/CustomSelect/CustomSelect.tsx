@@ -68,7 +68,9 @@ export function CustomSelect({
     <FormControl
       sx={{ m: 1, minWidth: 140 }}
       size="small"
-      className={`custom-select ${className}`}
+      className={`custom-select ${className} ${
+        prefs.isDarkMode ? 'dark-mode' : ''
+      }`}
     >
       <InputLabel id={`${label}-select-label`}>{label}</InputLabel>
       <Select

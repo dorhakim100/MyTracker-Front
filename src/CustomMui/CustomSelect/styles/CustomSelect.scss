@@ -45,6 +45,11 @@
 .MuiInputBase-root,
 .picker-select {
   &.primary {
+    &.dark-mode {
+      .MuiFormLabel-root {
+        background-color: $dark-gray !important;
+      }
+    }
     .MuiInputBase-colorPrimary,
     .MuiSelect-root {
       &.Mui-focused {
@@ -56,6 +61,12 @@
   }
 
   &.blue {
+    &.dark-mode {
+      .MuiFormLabel-root {
+        background-color: $dark-gray-blue !important;
+      }
+    }
+
     .MuiInputBase-colorBlue {
       &.Mui-focused {
         fieldset {
@@ -66,6 +77,11 @@
   }
 
   &.green {
+    &.dark-mode {
+      .MuiFormLabel-root {
+        background-color: $dark-gray-green !important;
+      }
+    }
     .MuiInputBase-colorGreen {
       &.Mui-focused {
         fieldset {
@@ -76,6 +92,11 @@
   }
 
   &.yellow {
+    &.dark-mode {
+      .MuiFormLabel-root {
+        background-color: $dark-gray-yellow !important;
+      }
+    }
     .MuiInputBase-colorYellow {
       &.Mui-focused {
         fieldset {
@@ -85,6 +106,11 @@
     }
   }
   &.red {
+    &.dark-mode {
+      .MuiFormLabel-root {
+        background-color: $dark-gray-red !important;
+      }
+    }
     .MuiInputBase-colorRed {
       &.Mui-focused {
         fieldset {
@@ -94,6 +120,11 @@
     }
   }
   &.orange {
+    &.dark-mode {
+      .MuiFormLabel-root {
+        background-color: $dark-gray-orange !important;
+      }
+    }
     .MuiInputBase-colorOrange {
       &.Mui-focused {
         fieldset {
@@ -103,6 +134,11 @@
     }
   }
   &.purple {
+    &.dark-mode {
+      .MuiFormLabel-root {
+        background-color: $dark-gray-purple !important;
+      }
+    }
     .MuiInputBase-colorPurple {
       &.Mui-focused {
         fieldset {
@@ -112,6 +148,11 @@
     }
   }
   &.pink {
+    &.dark-mode {
+      .MuiFormLabel-root {
+        background-color: $dark-gray-pink !important;
+      }
+    }
     .MuiInputBase-colorPink {
       &.Mui-focused {
         fieldset {
@@ -121,6 +162,11 @@
     }
   }
   &.deep-purple {
+    &.dark-mode {
+      .MuiFormLabel-root {
+        background-color: $dark-gray-deep-purple !important;
+      }
+    }
     .MuiInputBase-colorDeepPurple {
       &.Mui-focused {
         fieldset {
