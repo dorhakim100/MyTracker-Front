@@ -135,11 +135,21 @@ export function WorkoutSession({
     try {
       await saveNewInstructions(newInstructions)
       if (exerciseIndex !== -1 && !isRemove) {
+        let setToSave = { ...exercise.sets[setIndex] }
+        // Remove the unused RPE/RIR field - only keep the one that's actually used
+        if (setToSave.rir) {
+          const { rpe, ...setWithoutRpe } = setToSave
+          setToSave = setWithoutRpe
+        } else if (setToSave.rpe) {
+          const { rir, ...setWithoutRir } = setToSave
+          setToSave = setWithoutRir
+        }
+
         await setService.saveSetBySessionIdAndExerciseId(
           sessionDay._id,
           exercise.exerciseId,
           {
-            ...exercise.sets[setIndex],
+            ...setToSave,
             userId: sessionDay.workout.forUserId || '',
           },
           setIndex,

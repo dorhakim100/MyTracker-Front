@@ -171,10 +171,21 @@ export function ExerciseEditor({
           set.exerciseId === exercise.exerciseId && set.setNumber === index + 1
       )
 
-      return {
+      let cleanedSet = {
         ...setToUpdate,
         isDone: setToSet?.isDone || false,
       }
+
+      // Remove the unused RPE/RIR field - only keep the one that's actually used
+      if (cleanedSet.rir) {
+        const { rpe, ...setWithoutRpe } = cleanedSet
+        cleanedSet = setWithoutRpe
+      } else if (cleanedSet.rpe) {
+        const { rir, ...setWithoutRir } = cleanedSet
+        cleanedSet = setWithoutRir
+      }
+
+      return cleanedSet
     })
 
     setSelectedSessionDay({
@@ -384,7 +395,7 @@ export function ExerciseEditor({
                           setEditSet({ ...set, index })
 
                           setCurrentPickerValue(
-                            set.rpe ? set.rpe.actual : set.rir?.actual || 2
+                            set.rpe ? set.rpe.actual : set.rir?.actual ?? 2
                           )
                         }}
                         option={{
@@ -392,7 +403,7 @@ export function ExerciseEditor({
                           key: set.rpe ? 'rpe' : 'rir',
                           type: 'number',
                         }}
-                        value={set.rpe ? set.rpe.actual : set.rir?.actual || 2}
+                        value={set.rpe ? set.rpe.actual : set.rir?.actual ?? 2}
                         minWidth={70}
                         // isAutoWidth={true}
                       />

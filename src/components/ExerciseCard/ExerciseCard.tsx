@@ -189,10 +189,20 @@ export function ExerciseCard({
       )
 
       const promises = sets.map(async (set: Set) => {
-        await setService.save({
+        let cleanedSet: Set = {
           ...set,
           isDone: isDoneToSet,
-        })
+        }
+        // Remove the unused RPE/RIR field - only keep the one that's actually used
+        if (cleanedSet.rir) {
+          const { rpe, ...setWithoutRpe } = cleanedSet
+          cleanedSet = setWithoutRpe
+        } else if (cleanedSet.rpe) {
+          const { rir, ...setWithoutRir } = cleanedSet
+          cleanedSet = setWithoutRir
+        }
+
+        await setService.save(cleanedSet)
       })
 
       await Promise.all(promises)
