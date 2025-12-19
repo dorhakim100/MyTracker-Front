@@ -44,16 +44,22 @@ import { SlideAnimation } from '../../../components/SlideAnimation/SlideAnimatio
 import { WorkoutSession } from '../../../components/WorkoutSession/WorkoutSession'
 import { setIsLoading } from '../../../store/actions/system.actions'
 import CustomSkeleton from '../../../CustomMui/CustomSkeleton/CustomSkeleton'
+import { CustomAccordion } from '../../../CustomMui/CustomAccordion/CustomAccordion'
 
 const EDIT = 'edit'
 const DETAILS = 'details'
+const ROUTINES = 'routines'
 
 const EDIT_TITLE = 'Edit Workout'
 const CREATE_TITLE = 'Create Workout'
 const DETAILS_TITLE = 'Workout Details'
+const ROUTINES_TITLE = 'Routines'
+
+const WORKOUTS_TITLE = 'Workouts'
+
 const ADD_ROUTINE_BUTTON = 'Add New Routine'
 
-type dialogType = typeof EDIT | typeof DETAILS
+type dialogType = typeof EDIT | typeof DETAILS | typeof ROUTINES
 
 interface dialogOptions {
   open: boolean
@@ -285,24 +291,39 @@ export function Workouts() {
   }
 
   const getDialogComponent = () => {
-    if (dialogOptions.type === EDIT) {
-      return (
-        <EditWorkout
-          selectedWorkout={selectedWorkout}
-          closeDialog={closeEdit}
-        />
-      )
+    switch (dialogOptions.type) {
+      case EDIT:
+        return (
+          <EditWorkout
+            selectedWorkout={selectedWorkout}
+            closeDialog={closeEdit}
+          />
+        )
+      case DETAILS:
+        return <WorkoutDetails workout={selectedWorkout} />
+      case ROUTINES:
+        return (
+          <div className="dialog-routines-container">
+            {renderWorkoutLists()}
+          </div>
+        )
+      default:
+        return <></>
     }
-    return <WorkoutDetails workout={selectedWorkout} />
   }
 
   const getDialogTitle = () => {
-    if (dialogOptions.type === EDIT && selectedWorkout) {
-      return EDIT_TITLE
-    } else if (dialogOptions.type === EDIT && !selectedWorkout) {
-      return CREATE_TITLE
+    switch (dialogOptions.type) {
+      case EDIT:
+        return selectedWorkout ? EDIT_TITLE : CREATE_TITLE
+      case DETAILS:
+        return DETAILS_TITLE
+      case ROUTINES:
+        return ROUTINES_TITLE
+
+      default:
+        return WORKOUTS_TITLE
     }
-    return DETAILS_TITLE
   }
 
   const renderWorkoutLists = () => {
@@ -428,13 +449,38 @@ export function Workouts() {
             <Typography variant="h5" className="bold-header">
               Workout
             </Typography>
-            {!sessionDay.instructions && (
+            {!sessionDay.instructions ? (
               <CustomButton
                 text="Start Empty Workout"
                 // onClick={() => setDialogOptions({ open: true, type: EDIT })}
                 icon={<Add />}
                 className={`${prefs.favoriteColor} empty-workout-button`}
                 fullWidth={true}
+              />
+            ) : (
+              <CustomAccordion
+                title="Routines"
+                cmp={
+                  <div className="buttons-container">
+                    <CustomButton
+                      text="View Routines"
+                      onClick={() =>
+                        setDialogOptions({ open: true, type: ROUTINES })
+                      }
+                      className={`${prefs.favoriteColor} continue-workout-button`}
+                      fullWidth={true}
+                    />
+                    <CustomButton
+                      text="New Routine"
+                      onClick={() =>
+                        setDialogOptions({ open: true, type: EDIT })
+                      }
+                      icon={<Add />}
+                      className={`${prefs.favoriteColor} continue-workout-button`}
+                      fullWidth={true}
+                    />
+                  </div>
+                }
               />
             )}
           </div>
