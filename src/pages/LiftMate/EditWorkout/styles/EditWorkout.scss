@@ -94,7 +94,7 @@
   }
 
   .week-number-toggle {
-    overflow-x: auto;
+    overflow-x: scroll;
     max-width: calc(100vw - 2em);
     margin-bottom: 1rem;
   }

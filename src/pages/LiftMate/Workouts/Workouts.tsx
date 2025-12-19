@@ -158,6 +158,8 @@ export function Workouts() {
   )
 
   useEffect(() => {
+    console.log(traineeUser)
+
     if (traineeUser) {
       loadWorkouts({
         forUserId: traineeUser._id,

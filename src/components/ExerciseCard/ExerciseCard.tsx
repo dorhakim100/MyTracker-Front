@@ -27,6 +27,7 @@ import { instructionsService } from '../../services/instructions/instructions.se
 import { showErrorMsg } from '../../services/event-bus.service'
 import { messages } from '../../assets/config/messages'
 import { setService } from '../../services/set/set.service'
+import { setSelectedSessionDay } from '../../store/actions/workout.action'
 
 interface ExerciseCardProps {
   exercise: Exercise
@@ -219,7 +220,7 @@ export function ExerciseCard({
     }
   }
 
-  if (!exerciseInstructions) return null
+  if (!exerciseInstructions || !exercise) return null
 
   return (
     <>

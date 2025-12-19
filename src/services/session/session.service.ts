@@ -2,6 +2,7 @@ import { httpService } from '../http.service'
 import { SessionDay } from '../../types/workout/SessionDay'
 import { workoutService } from '../workout/workout.service'
 import { instructionsService } from '../instructions/instructions.service'
+import { ExerciseInstructions } from '../../types/exercise/ExerciseInstructions'
 
 const KEY = 'session'
 
@@ -67,21 +68,36 @@ async function save(sessionDay: SessionDay) {
 
 async function playWorkout(sessionDay: SessionDay, userId: string) {
   try {
-    console.log('sessionDay', sessionDay)
     const session = await httpService.put(`${KEY}/play/${sessionDay._id}`, {
       workoutId: sessionDay.workoutId,
       userId: userId,
     })
-    console.log('session', session)
 
     const instructionsWithDetails =
       await instructionsService.getExercisesFromInstructions(
         session.instructions
       )
 
+    const instructionsWithFreshExercises = {
+      ...instructionsWithDetails,
+      exercises: session.instructions.exercises.map(
+        (exercise: ExerciseInstructions) => {
+          return {
+            ...exercise,
+            sets: exercise.sets.map((set) => {
+              return {
+                ...set,
+                isDone: false,
+              }
+            }),
+          }
+        }
+      ),
+    }
+
     return {
       ...session,
-      instructions: instructionsWithDetails,
+      instructions: instructionsWithFreshExercises,
     }
   } catch (err) {
     throw err
