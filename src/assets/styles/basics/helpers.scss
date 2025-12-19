@@ -252,7 +252,7 @@ body.dark-mode {
     background-color: $darker-gray-pink !important;
   }
 
-  .MuiPaper-root {
+  .MuiPaper-root:not(.MuiAppBar-positionFixed) {
     background-color: $darker-gray !important;
 
     &.MuiAlert-root {
@@ -1475,4 +1475,8 @@ body.dark-mode {
       stroke: $picker-color-pink;
     }
   }
+}
+
+.MuiAppBar-positionFixed {
+  background-color: transparent !important;
 }
