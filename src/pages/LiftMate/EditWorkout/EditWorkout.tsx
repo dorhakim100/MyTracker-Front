@@ -402,7 +402,6 @@ export function EditWorkout({
   function modifyInstructionsForSave(instructions: Instructions) {
     const modifiedExercises = instructions.exercises.map((exercise) => {
       const newSets = exercise.sets.map((set) => {
-        if (instructions._id) return set
         return {
           ...set,
           isDone: false,

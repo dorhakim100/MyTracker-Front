@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Card, Typography, Divider, DialogActions } from '@mui/material'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
@@ -23,6 +23,7 @@ import { CustomInput } from '../../CustomMui/CustomInput/CustomInput'
 import DragHandleIcon from '@mui/icons-material/DragHandle'
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
+import { instructionsService } from '../../services/instructions/instructions.service'
 
 interface ExerciseCardProps {
   exercise: Exercise
@@ -63,7 +64,11 @@ export function ExerciseCard({
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
-
+  const { traineeUser, user } = useSelector(
+    (stateSelector: RootState) => stateSelector.userModule
+  )
+  const [previousInstructions, setPreviousInstructions] =
+    useState<Instructions | null>(null)
   const updateExerciseInInstructions = (exercise: ExerciseInstructions) => {
     if (!setInstructions) return
     setInstructions({
@@ -172,6 +177,26 @@ export function ExerciseCard({
     }
   }
 
+  useEffect(() => {
+    if (!isExpected) return
+    getPreviousInstructions()
+  }, [instructions])
+
+  async function getPreviousInstructions() {
+    if (!instructions || instructions.weekNumber === 1) return null
+    try {
+      const previousInstructions = await instructionsService.getByWorkoutId({
+        workoutId: instructions.workoutId,
+        forUserId: traineeUser?._id || user?._id || '',
+        weekNumber: instructions.weekNumber - 1,
+      })
+
+      setPreviousInstructions(previousInstructions)
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
   if (!exerciseInstructions) return null
 
   return (
@@ -255,6 +280,7 @@ export function ExerciseCard({
         </div>
         {exerciseInstructions && exerciseInstructions.sets && (
           <ExerciseEditor
+            previousInstructions={previousInstructions}
             exercise={exerciseInstructions}
             updateExercise={
               isExpected

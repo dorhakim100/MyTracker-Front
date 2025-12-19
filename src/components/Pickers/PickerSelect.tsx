@@ -18,6 +18,7 @@ interface PickerSelectProps {
   minWidth?: number
   isAutoWidth?: boolean
   className?: string
+  afterString?: string
 }
 
 export function PickerSelect({
@@ -27,6 +28,7 @@ export function PickerSelect({
   minWidth,
   isAutoWidth = false,
   className,
+  afterString,
 }: PickerSelectProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -35,7 +37,7 @@ export function PickerSelect({
   return (
     <FormControl
       sx={{ m: 1, minWidth: isAutoWidth ? 'auto' : minWidth || 150 }}
-      size='small'
+      size="small"
       onClick={openClock}
       className={`picker-select ${className}`}
     >
@@ -47,7 +49,9 @@ export function PickerSelect({
         value={value}
         open={false}
         onOpen={() => {}}
-        renderValue={(selected) => `${selected}`}
+        renderValue={(selected) =>
+          `${selected} ${afterString ? ` ${afterString}` : ''}`
+        }
       >
         <MenuItem
           sx={{

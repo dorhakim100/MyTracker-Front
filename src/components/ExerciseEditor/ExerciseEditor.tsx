@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { Badge } from '@mui/material'
+import { Badge, Divider } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 
 import { RootState } from '../../store/store'
@@ -28,9 +28,11 @@ import { CustomSwipeAction } from '../CustomSwipeAction/CustomSwipeAction'
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline'
 import { setService } from '../../services/set/set.service'
+import { Instructions } from '../../types/instructions/Instructions'
 
 export interface ExerciseEditorProps {
   exercise: ExerciseInstructions
+  previousInstructions?: Instructions | null
   isExpected?: boolean
   updateExercise: (
     exercise: ExerciseInstructions,
@@ -53,6 +55,7 @@ interface PickerOption {
 
 export function ExerciseEditor({
   exercise,
+  previousInstructions,
   isExpected,
   updateExercise,
 }: ExerciseEditorProps) {
@@ -206,25 +209,50 @@ export function ExerciseEditor({
               id: `${exercise.exerciseId}-set-${index}`,
               content: (
                 <div className="set-container">
-                  <div className="set-editor-container">
+                  <div
+                    className={`set-editor-container ${
+                      previousInstructions ? 'with-previous-set' : ''
+                    }`}
+                  >
                     <Badge
                       badgeContent={index + 1}
                       color="primary"
                       className={`${prefs.favoriteColor} float`}
                     />
                     <div className="badges-container">
-                      <Badge
-                        badgeContent={
-                          set.isDone ? (
-                            <CheckIcon />
-                          ) : (
-                            <RadioButtonUncheckedIcon />
-                          )
-                        }
-                        className={set.isDone ? 'success' : 'error'}
-                      />
+                      {(previousInstructions || !isExpected) && (
+                        <Badge
+                          badgeContent={
+                            set.isDone ? (
+                              <CheckIcon />
+                            ) : (
+                              <RadioButtonUncheckedIcon />
+                            )
+                          }
+                          className={set.isDone ? 'success' : 'error'}
+                        />
+                      )}
                     </div>
+                    {previousInstructions && (
+                      <span className="previous-set-label">Previous week:</span>
+                    )}
                     <div className="reps-container">
+                      {previousInstructions && (
+                        <>
+                          <span>
+                            {previousInstructions?.exercises.find(
+                              (e) => e.exerciseId === exercise.exerciseId
+                            )?.sets[index]?.reps?.actual || 'N/A'}{' '}
+                            reps
+                          </span>
+                          <Divider
+                            orientation="horizontal"
+                            className={`divider ${
+                              prefs.isDarkMode ? 'dark-mode' : ''
+                            }`}
+                          />
+                        </>
+                      )}
                       <PickerSelect
                         className={`${prefs.favoriteColor}`}
                         openClock={() => {
@@ -246,6 +274,22 @@ export function ExerciseEditor({
                       />
                     </div>
                     <div className="weight-container">
+                      {previousInstructions && (
+                        <>
+                          <span>
+                            {previousInstructions?.exercises.find(
+                              (e) => e.exerciseId === exercise.exerciseId
+                            )?.sets[index]?.weight?.actual || 'N/A'}{' '}
+                            kg
+                          </span>
+                          <Divider
+                            orientation="horizontal"
+                            className={`divider ${
+                              prefs.isDarkMode ? 'dark-mode' : ''
+                            }`}
+                          />
+                        </>
+                      )}
                       <PickerSelect
                         className={`${prefs.favoriteColor}`}
                         openClock={() => {
@@ -263,10 +307,37 @@ export function ExerciseEditor({
                         }}
                         value={set.weight.actual}
                         minWidth={100}
+                        afterString="kg"
                         // isAutoWidth={true}
                       />
                     </div>
                     <div className="rpe-rir-container">
+                      {previousInstructions && (
+                        <>
+                          {' '}
+                          <span>
+                            {previousInstructions?.exercises.find(
+                              (e) => e.exerciseId === exercise.exerciseId
+                            )?.sets[index]?.rpe?.actual ||
+                              'N/A' ||
+                              previousInstructions?.exercises.find(
+                                (e) => e.exerciseId === exercise.exerciseId
+                              )?.sets[index]?.rir?.actual ||
+                              'N/A'}{' '}
+                            {previousInstructions?.exercises.find(
+                              (e) => e.exerciseId === exercise.exerciseId
+                            )?.sets[0].rpe?.actual
+                              ? 'RPE'
+                              : 'RIR'}
+                          </span>
+                          <Divider
+                            orientation="horizontal"
+                            className={`divider ${
+                              prefs.isDarkMode ? 'dark-mode' : ''
+                            }`}
+                          />
+                        </>
+                      )}
                       <PickerSelect
                         className={`${prefs.favoriteColor}`}
                         openClock={() => {

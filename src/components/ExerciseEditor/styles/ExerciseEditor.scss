@@ -21,7 +21,6 @@
       .badges-container {
         display: grid;
       }
-
       .MuiBadge-root {
         display: block;
         align-self: center;
@@ -50,6 +49,43 @@
           padding: 0px;
           color: $white !important;
         }
+      }
+      &.with-previous-set {
+        padding: 2rem 0 0 0;
+
+        .reps-container,
+        .weight-container,
+        .rpe-rir-container {
+          display: grid;
+
+          span {
+            margin-top: 0.3rem;
+          }
+
+          .divider {
+            margin: 0.3rem 0 1rem 0;
+          }
+        }
+        .badges-container {
+          align-self: start;
+          margin-top: 1.2rem;
+          margin-inline-start: 3px;
+        }
+
+        .MuiBadge-root.float {
+          // top: 0.6rem;
+          top: 10px;
+        }
+      }
+
+      .previous-set-label {
+        font-weight: 700;
+        font-size: 1.1rem;
+        left: -20px;
+        padding: 0px;
+        position: absolute;
+        top: 0;
+        left: 30px;
       }
 
       .MuiFormLabel-root {
