@@ -1,4 +1,4 @@
-import myTrackerLogo from '../../../public/logo-square.png'
+import myTrackerLogo from '../../../public/original-logo.png'
 import liftMateLogo from '../../../public/lift-mate-logo-square.png'
 import { App } from '../../types/app/App'
 
