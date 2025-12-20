@@ -127,7 +127,6 @@ export function WorkoutSession({
     )
 
     if (getIsStringifySame(originalInstructions, newInstructions)) return
-    console.log(newInstructions)
     setSelectedSessionDay({
       ...sessionDay,
       instructions: { ...newInstructions },

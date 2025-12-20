@@ -14,7 +14,6 @@ export const exerciseSearch = async (searchValue: string) => {
     let exercises = data.data
 
     if (!exercises) throw new Error('No exercises found')
-    console.log('exercises', exercises[0])
     const formattedData: Exercise[] = exercises.map((exercise: any) => {
       return {
         name: exercise.name,

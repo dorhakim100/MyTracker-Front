@@ -219,7 +219,6 @@ export function ExerciseCard({
     const getExerciseSets = async () => {
       if (!sessionDay?._id) return
       try {
-        console.log(sessionDay._id, exercise.exerciseId)
         const sets = await setService.getSetsBySessionIdAndExerciseId(
           sessionDay._id,
           exercise.exerciseId

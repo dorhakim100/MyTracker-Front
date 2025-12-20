@@ -59,6 +59,7 @@ export function WeightChart({
   const [range, setRange] = useState<LineChartRangeKey>('1M')
 
   const [weights, setWeights] = useState<Weight[]>([])
+  const [previousWeights, setPreviousWeights] = useState<Weight[]>([])
 
   const [stats, setStats] = useState<Stats>({
     selectedDate: new Date(),
@@ -75,7 +76,9 @@ export function WeightChart({
       weights.map((weight) => ({
         createdAt: new Date(weight.createdAt),
         value: weight.kg,
-      })) as (Weight & { createdAt: string; value: number })[]
+      })) as (Weight & { createdAt: string; value: number })[],
+      false,
+      range
     )
     const labelsToShow = series?.labels
     const kgs = series?.data ?? []
@@ -101,9 +104,33 @@ export function WeightChart({
       weights.map((weight) => ({
         createdAt: new Date(weight.createdAt),
         value: weight.kg,
-      })) as (Weight & { createdAt: string; value: number })[]
+      })) as (Weight & { createdAt: string; value: number })[],
+      false,
+      range
     )
     const data = series?.data ?? []
+
+    const previousWeightsToSend = previousWeights.map((weight) => {
+      const weightToSend = {
+        createdAt: new Date(weight.createdAt),
+        value: weight.kg,
+      }
+
+      return weightToSend
+    })
+
+    const previousSeries = prepareSeries(
+      '7D',
+      previousWeightsToSend as (Weight & {
+        createdAt: string
+        value: number
+      })[],
+      true,
+      range
+    )
+    const previousData = previousSeries?.data ?? []
+
+    const combinedData = [...previousData, ...data]
 
     const calcPeriod = (array: number[] | null[]) => {
       return +(
@@ -114,8 +141,11 @@ export function WeightChart({
       ).toFixed(1)
     }
 
-    const res = data.map((_, index, array) => {
-      const period = array.slice(index - DEFAULT_MOVING_AVERAGE_PERIOD, index)
+    const res = data.map((_, index) => {
+      const period = combinedData.slice(
+        index,
+        index + DEFAULT_MOVING_AVERAGE_PERIOD
+      )
 
       if (
         period.includes(null) ||
@@ -127,7 +157,7 @@ export function WeightChart({
     })
 
     return res
-  }, [weights, range])
+  }, [weights, previousWeights, range])
 
   useEffect(() => {
     const fetchWeights = async () => {
@@ -167,7 +197,22 @@ export function WeightChart({
         toDate: toDate ? toDate.toISOString() : null,
       })
 
+      const fromDateMinusWeek = fromDate
+        ? new Date(fromDate.getTime() - 86400000 * 7).toISOString()
+        : null
+      const toDateMinusWeek = fromDate
+        ? new Date(fromDate.getTime()).toISOString()
+        : null
+
+      const previousWeight = await weightService.query({
+        userId: user?._id,
+        fromDate: fromDateMinusWeek,
+        toDate: toDateMinusWeek,
+      })
+
       setWeights(weights)
+      setPreviousWeights(previousWeight)
+
       setStats({
         selectedDate: new Date(),
         selectedWeight: weights[0].kg,

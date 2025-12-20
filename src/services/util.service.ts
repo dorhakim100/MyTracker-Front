@@ -309,15 +309,33 @@ export function getColor(color: string): string {
 
 export function prepareSeries<T extends { createdAt: string }>(
   range: LineChartRangeKey,
-  items: (T & { createdAt: Date; value: number })[]
+  items: (T & { createdAt: Date; value: number })[],
+  isPrevious: boolean = false,
+  rangeToSubtract: LineChartRangeKey
 ) {
   const sorted = [...items].sort(
     (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
   )
+  const daysMap: Record<'1M' | '3M' | '6M' | '1Y' | '7D', number> = {
+    '1M': 30,
+    '3M': 90,
+    '6M': 180,
+    '1Y': 365,
+    '7D': 7,
+  }
+
+  const daysToSubtract =
+    daysMap[rangeToSubtract as '1M' | '3M' | '6M' | '1Y' | '7D']
 
   const startOfDay = (d: Date) =>
     new Date(d.getFullYear(), d.getMonth(), d.getDate())
-  const today = startOfDay(new Date())
+  const today = startOfDay(
+    new Date(
+      isPrevious
+        ? new Date().getTime() - 86400000 * daysToSubtract
+        : new Date().getTime()
+    )
+  )
 
   const pad = (n: number) => (n < 10 ? `0${n}` : `${n}`)
   const dayKey = (d: Date) =>
@@ -334,16 +352,12 @@ export function prepareSeries<T extends { createdAt: string }>(
   let start: Date
   if (range === 'ALL') {
     if (sorted.length === 0) return { labels: [], data: [] }
-    start = startOfDay(new Date(sorted[0].createdAt))
+    start = startOfDay(
+      new Date(isPrevious ? sorted[0].createdAt.getTime() : sorted[0].createdAt)
+    )
   } else {
-    const daysMap: Record<'1M' | '3M' | '6M' | '1Y', number> = {
-      '1M': 30,
-      '3M': 90,
-      '6M': 180,
-      '1Y': 365,
-    }
-    const count = daysMap[range as '1M' | '3M' | '6M' | '1Y']
-    start = new Date(today)
+    const count = daysMap[range as '1M' | '3M' | '6M' | '1Y' | '7D']
+    start = new Date(today.getTime())
     start.setDate(start.getDate() - (count - 1))
   }
 
@@ -352,6 +366,7 @@ export function prepareSeries<T extends { createdAt: string }>(
   const cursor = new Date(start)
   while (cursor <= today) {
     const key = dayKey(cursor)
+
     labels.push(dayToLabel(cursor))
     data.push(lastOfDayMap.get(key) ?? null)
     cursor.setDate(cursor.getDate() + 1)
