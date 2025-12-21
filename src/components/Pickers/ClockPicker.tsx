@@ -87,6 +87,8 @@ export function ClockPicker({
 
   function onSave() {
     onClose()
+    const newValue = pickerValue.numberOfServings + pickerValue.afterValue
+    onChange('numberOfServings', newValue)
   }
 
   return (

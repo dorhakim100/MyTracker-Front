@@ -129,6 +129,10 @@ export function ExerciseEditor({
 
     let newSet = { ...editSet }
 
+    if (pickerOptions.type === 'rir') {
+      value = Math.floor(value)
+    }
+
     const type = pickerOptions.type as keyof Set
     if (isExpected) {
       newSet = {
