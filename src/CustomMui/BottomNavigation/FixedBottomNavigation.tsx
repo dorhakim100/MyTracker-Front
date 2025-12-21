@@ -121,6 +121,7 @@ export function FixedBottomNavigation(props: {
   function onScanClick() {
     setModalType(modalTypes.scan)
     setSearchModalOpen(true)
+    setIsAddModal(false)
   }
 
   function onSearchClick(ev: React.MouseEvent<HTMLButtonElement>) {
@@ -129,6 +130,7 @@ export function FixedBottomNavigation(props: {
 
     setModalType(modalTypes.search)
     setSearchModalOpen(true)
+    setIsAddModal(false)
   }
 
   function closeSearchModal() {

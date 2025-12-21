@@ -27,6 +27,7 @@ import { instructionsService } from '../../services/instructions/instructions.se
 import { showErrorMsg } from '../../services/event-bus.service'
 import { messages } from '../../assets/config/messages'
 import { setService } from '../../services/set/set.service'
+// import TimerIcon from '@mui/icons-material/Timer'
 
 interface ExerciseCardProps {
   exercise: Exercise
@@ -140,8 +141,14 @@ export function ExerciseCard({
       onClick: () => {
         setIsEditNotesOpen(true)
       },
-      isBadge: exerciseInstructions?.notes.expected ? true : false,
     },
+    // {
+    //   title: 'Edit Resting Timer',
+    //   icon: <TimerIcon />,
+    //   onClick: () => {
+    //     setIsEditNotesOpen(true)
+    //   },
+    // },
 
     isExpected
       ? {
