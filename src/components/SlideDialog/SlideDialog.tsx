@@ -56,6 +56,7 @@ export function SlideDialog({
 
   const y = useMotionValue(0)
   const opacity = useTransform(y, [0, 300], [1, 0])
+  const borderRadius = useTransform(y, [0, 300], [0, 10])
   const headerRef = React.useRef<HTMLDivElement>(null)
   const contentRef = React.useRef<HTMLDivElement>(null)
   const isScrolling = React.useRef(false)
@@ -210,7 +211,8 @@ export function SlideDialog({
             height: type === 'half' ? '800px' : '100%',
             paddingBottom: '1.5em',
             overflow: 'hidden',
-            // backgroundColor: 'transparent',
+            backgroundColor: 'transparent !important',
+            // background: 'transparent !important',
           },
         }}
         slots={{

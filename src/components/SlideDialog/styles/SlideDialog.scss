@@ -10,8 +10,12 @@
 
 .MuiDialog-container,
 .MuiDialog-root {
+  background-color: transparent !important;
   border-top-right-radius: 10px;
   border-top-left-radius: 10px;
+  .MuiPaper-root {
+    background-color: transparent !important;
+  }
 }
 
 .MuiAppBar-positionFixed {
@@ -22,6 +26,7 @@
 .slide-dialog {
   border-top-right-radius: 10px;
   border-top-left-radius: 10px;
+
   &.MuiPaper-root {
     .slide-drag-handle {
       cursor: grab;
@@ -95,31 +100,8 @@
     }
 
     // Dialog background colors based on favorite color
-    &.blue.MuiPaper-root {
-      background-color: $dark-gray-blue !important;
-    }
-    &.yellow.MuiPaper-root {
-      background-color: $dark-gray-yellow !important;
-    }
-    &.red.MuiPaper-root {
-      background-color: $dark-gray-red !important;
-    }
-    &.orange.MuiPaper-root {
-      background-color: $dark-gray-orange !important;
-    }
-    &.green.MuiPaper-root {
-      background-color: $dark-gray-green !important;
-    }
-    &.deepPurple.MuiPaper-root {
-      background-color: $dark-gray-deep-purple !important;
-    }
-    &.purple.MuiPaper-root {
-      background-color: $dark-gray-purple !important;
-    }
-    &.pink.MuiPaper-root {
-      background-color: $dark-gray-pink !important;
-    }
-    // Default for primary (when no favorite color or primary)
+    background-color: transparent !important;
+
     &:not(.blue):not(.yellow):not(.red):not(.orange):not(.green):not(
         .deepPurple
       ):not(.purple):not(.pink).MuiPaper-root {
@@ -136,11 +118,33 @@
 }
 
 .slide-dialog-content {
+  background-color: $white !important;
+
+  &.dark-mode {
+    background-color: $dark-gray !important;
+  }
   // Native mobile scrolling
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
   // Smooth scrolling
   scroll-behavior: smooth;
   // Prevent pull-to-refresh interference
+
   overscroll-behavior-y: contain;
+}
+
+body.dark-mode {
+  .slide-dialog-content {
+    background-color: $dark-gray !important;
+  }
+}
+
+.slide-dialog.dark-mode:not(.blue):not(.yellow):not(.red):not(.orange):not(
+    .green
+  ):not(.deepPurple):not(.purple):not(.pink).MuiPaper-root {
+  background-color: transparent !important;
+}
+
+.slide-dialog.dark-mode.MuiPaper-root {
+  background-color: transparent !important;
 }

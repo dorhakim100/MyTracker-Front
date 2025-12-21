@@ -171,27 +171,33 @@ export function NameExercises({
   }
 
   const renderExercises = () => {
-    return workout.exercises.map((exercise) => {
-      return (
-        <ExerciseCard
-          key={exercise.exerciseId}
-          exercise={exercise}
-          onDelete={onDeleteExercise}
-          onEditExerciseNotes={onEditExerciseNotes}
-          setInstructions={setInstructions}
-          onSwitchRpeRir={onSwitchRpeRir}
-          setIsReorderExercisesOpen={(isOpen: boolean) => {
-            if (isOpen) openDialog('reorder')
-          }}
-          showEquipment={true}
-          instructions={instructions}
-          exerciseInstructions={instructions.exercises.find(
-            (i) => i.exerciseId === exercise.exerciseId
-          )}
-          isExpected={true}
-        />
-      )
-    })
+    return (
+      <div
+        className={`exercises-container ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+      >
+        {workout.exercises.map((exercise) => {
+          return (
+            <ExerciseCard
+              key={exercise.exerciseId}
+              exercise={exercise}
+              onDelete={onDeleteExercise}
+              onEditExerciseNotes={onEditExerciseNotes}
+              setInstructions={setInstructions}
+              onSwitchRpeRir={onSwitchRpeRir}
+              setIsReorderExercisesOpen={(isOpen: boolean) => {
+                if (isOpen) openDialog('reorder')
+              }}
+              showEquipment={true}
+              instructions={instructions}
+              exerciseInstructions={instructions.exercises.find(
+                (i) => i.exerciseId === exercise.exerciseId
+              )}
+              isExpected={true}
+            />
+          )
+        })}
+      </div>
+    )
   }
 
   const getDialogComponent = () => {

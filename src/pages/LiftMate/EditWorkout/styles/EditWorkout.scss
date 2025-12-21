@@ -13,6 +13,9 @@
       & > .divider {
         margin-bottom: 0.5rem;
       }
+      .exercises-container {
+        overflow-y: auto;
+      }
       .exercise-card-container {
         margin: 0.5rem 0;
       }

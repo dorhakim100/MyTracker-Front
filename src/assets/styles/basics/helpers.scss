@@ -252,7 +252,9 @@ body.dark-mode {
     background-color: $darker-gray-pink !important;
   }
 
-  .MuiPaper-root:not(.MuiAppBar-positionFixed) {
+  .MuiPaper-root:not(.MuiAppBar-positionFixed):not(.MuiDialog-paper):not(
+      .slide-dialog
+    ) {
     background-color: $darker-gray !important;
 
     &.MuiAlert-root {
@@ -266,7 +268,10 @@ body.dark-mode {
   }
 
   // MuiPaper background colors (excluding menus)
-  &.blue .MuiPaper-root:not(:has(.MuiMenu-list)):not(.slide-dialog) {
+  &.blue
+    .MuiPaper-root:not(:has(.MuiMenu-list)):not(.slide-dialog):not(
+      .MuiDialog-paper
+    ) {
     background-color: $darker-gray-blue !important;
 
     &.MuiAlert-root {
@@ -277,7 +282,10 @@ body.dark-mode {
       }
     }
   }
-  &.yellow .MuiPaper-root:not(:has(.MuiMenu-list)):not(.slide-dialog) {
+  &.yellow
+    .MuiPaper-root:not(:has(.MuiMenu-list)):not(.slide-dialog):not(
+      .MuiDialog-paper
+    ) {
     background-color: $darker-gray-yellow !important;
 
     &.MuiAlert-root {
@@ -288,7 +296,10 @@ body.dark-mode {
       }
     }
   }
-  &.red .MuiPaper-root:not(:has(.MuiMenu-list)):not(.slide-dialog) {
+  &.red
+    .MuiPaper-root:not(:has(.MuiMenu-list)):not(.slide-dialog):not(
+      .MuiDialog-paper
+    ) {
     background-color: $darker-gray-red !important;
 
     &.MuiAlert-root {
@@ -299,7 +310,10 @@ body.dark-mode {
       }
     }
   }
-  &.orange .MuiPaper-root:not(:has(.MuiMenu-list)):not(.slide-dialog) {
+  &.orange
+    .MuiPaper-root:not(:has(.MuiMenu-list)):not(.slide-dialog):not(
+      .MuiDialog-paper
+    ) {
     background-color: $darker-gray-orange !important;
 
     &.MuiAlert-root {
@@ -310,7 +324,10 @@ body.dark-mode {
       }
     }
   }
-  &.green .MuiPaper-root:not(:has(.MuiMenu-list)):not(.slide-dialog) {
+  &.green
+    .MuiPaper-root:not(:has(.MuiMenu-list)):not(.slide-dialog):not(
+      .MuiDialog-paper
+    ) {
     background-color: $darker-gray-green !important;
 
     &.MuiAlert-root {
@@ -321,7 +338,10 @@ body.dark-mode {
       }
     }
   }
-  &.deepPurple .MuiPaper-root:not(:has(.MuiMenu-list)):not(.slide-dialog) {
+  &.deepPurple
+    .MuiPaper-root:not(:has(.MuiMenu-list)):not(.slide-dialog):not(
+      .MuiDialog-paper
+    ) {
     background-color: $darker-gray-deep-purple !important;
 
     &.MuiAlert-root {
@@ -332,7 +352,10 @@ body.dark-mode {
       }
     }
   }
-  &.purple .MuiPaper-root:not(:has(.MuiMenu-list)):not(.slide-dialog) {
+  &.purple
+    .MuiPaper-root:not(:has(.MuiMenu-list)):not(.slide-dialog):not(
+      .MuiDialog-paper
+    ) {
     background-color: $darker-gray-purple !important;
 
     &.MuiAlert-root {
@@ -343,7 +366,10 @@ body.dark-mode {
       }
     }
   }
-  &.pink .MuiPaper-root:not(:has(.MuiMenu-list)):not(.slide-dialog) {
+  &.pink
+    .MuiPaper-root:not(:has(.MuiMenu-list)):not(.slide-dialog):not(
+      .MuiDialog-paper
+    ) {
     background-color: $darker-gray-pink !important;
 
     &.MuiAlert-root {
