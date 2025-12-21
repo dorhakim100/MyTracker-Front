@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Card, Typography, Divider, DialogActions, Badge } from '@mui/material'
+import { Card, Typography, Divider, DialogActions } from '@mui/material'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { Exercise, Set } from '../../types/exercise/Exercise'

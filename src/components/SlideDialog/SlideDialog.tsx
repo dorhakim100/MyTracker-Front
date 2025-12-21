@@ -1,5 +1,4 @@
 import * as React from 'react'
-// import { useRef, useEffect } from 'react'
 import Dialog from '@mui/material/Dialog'
 import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
@@ -13,7 +12,6 @@ import { motion, useMotionValue, useTransform, PanInfo } from 'framer-motion'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import CircularProgress from '@mui/material/CircularProgress'
-// import DragHandleIcon from '@mui/icons-material/DragHandle'
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -56,7 +54,6 @@ export function SlideDialog({
 
   const y = useMotionValue(0)
   const opacity = useTransform(y, [0, 300], [1, 0])
-  const borderRadius = useTransform(y, [0, 300], [0, 10])
   const headerRef = React.useRef<HTMLDivElement>(null)
   const contentRef = React.useRef<HTMLDivElement>(null)
   const isScrolling = React.useRef(false)
