@@ -524,13 +524,13 @@ export function ItemDetails({
         }`}
       >
         {(!isCustomLog && (item as Log).source !== searchTypes.custom && (
-          <div className='header' onClick={openImageModal}>
-            <div className='image box-shadow white-outline'>
+          <div className="header" onClick={openImageModal}>
+            <div className="image box-shadow white-outline">
               {(item.image && (
                 <img
                   src={item.image}
                   alt={item.name}
-                  referrerPolicy='no-referrer'
+                  referrerPolicy="no-referrer"
                   onError={async (e) => {
                     renderErrorImage()
                     await imageService.fetchOnError(e, item as Item)
@@ -539,20 +539,20 @@ export function ItemDetails({
                 />
               )) || (
                 <CustomSkeleton
-                  variant='circular'
+                  variant="circular"
                   width={60}
                   height={60}
                   isDarkMode={prefs.isDarkMode}
                 />
               )}
             </div>
-            <div className='title'>{item.name}</div>
-            <div className='subtitle'>{`${(+item.macros?.calories).toFixed(
+            <div className="title">{item.name}</div>
+            <div className="subtitle">{`${(+item.macros?.calories).toFixed(
               0
             )} kcal for ${!_hasItems(item) ? '100g' : 'serving'}`}</div>
 
             {!noEdit && !_hasItems(item) && (
-              <div className='favorite-container' onClick={onFavoriteClick}>
+              <div className="favorite-container" onClick={onFavoriteClick}>
                 <FavoriteButton
                   isFavorite={
                     searchService.isFavorite(searchedItem, user) || false
@@ -565,13 +565,13 @@ export function ItemDetails({
           <CustomInput
             value={editItem.name || ''}
             onChange={(value) => onEditItemChange('name', value)}
-            placeholder='Name'
+            placeholder="Name"
             className={`${prefs.favoriteColor}`}
           />
         )}
 
-        <div className='content'>
-          <div className='macros-container'>
+        <div className="content">
+          <div className="macros-container">
             <MacrosDonut
               protein={editItem.totalMacros?.protein}
               carbs={editItem.totalMacros?.carbs}
@@ -586,8 +586,8 @@ export function ItemDetails({
           </div>
         </div>
 
-        <div className='edit'>
-          <div className='selects-container'>
+        <div className="edit">
+          <div className="selects-container">
             {!noEdit &&
               editOptions.map((option) => {
                 if (onAddToMealClick && option.key === 'meal') return null
@@ -605,7 +605,7 @@ export function ItemDetails({
                     }`}
                     key={option.label}
                   >
-                    <Typography variant='h6'>{option.label}</Typography>
+                    <Typography variant="h6">{option.label}</Typography>
                     {option.type === 'select' && option.values && (
                       <CustomSelect
                         label={option.label}
@@ -636,6 +636,7 @@ export function ItemDetails({
                             <ClockPicker
                               value={editItem.numberOfServings}
                               onChange={onEditItemChange}
+                              onClose={closeClock}
                             />
                           }
                           title={option.label}
@@ -645,7 +646,7 @@ export function ItemDetails({
                     {option.type === 'macros' && (
                       <>
                         <CustomButton
-                          text='Edit Macros'
+                          text="Edit Macros"
                           onClick={openMacros}
                           icon={<EditIcon />}
                         />
@@ -676,7 +677,7 @@ export function ItemDetails({
           <CustomButton
             text={editMealItem ? 'Edit Meal' : 'Add to Meal'}
             icon={!editMealItem && <AddIcon sx={{ mr: 1 }} />}
-            size='large'
+            size="large"
             fullWidth
             className={`add-to-meal-button ${prefs.favoriteColor}`}
             onClick={getOnClick()}
@@ -689,12 +690,12 @@ export function ItemDetails({
           onClose={closeImageModal}
           title={item.name || ''}
         >
-          <div className='modal-image-container'>
+          <div className="modal-image-container">
             <img
               src={item.image}
               alt={item.name}
               className={`box-shadow white-outline`}
-              referrerPolicy='no-referrer'
+              referrerPolicy="no-referrer"
               onError={async (e) => {
                 await imageService.fetchOnError(e, item as Item)
                 loadItems()
@@ -702,7 +703,7 @@ export function ItemDetails({
             />
           </div>
           <CustomButton
-            text='Cancel'
+            text="Cancel"
             fullWidth
             onClick={closeImageModal}
             className={`${prefs.favoriteColor}`}

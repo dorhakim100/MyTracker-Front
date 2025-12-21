@@ -479,6 +479,7 @@ export function ExerciseEditor({
                 pickerOptions.type as keyof typeof pickerMinMaxValues
               ].max
             }
+            onClose={onClosePicker}
           />
         }
       />

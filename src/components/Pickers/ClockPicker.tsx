@@ -2,11 +2,11 @@ import Picker from 'react-mobile-picker'
 import { EditItem } from '../../types/editItem/editItem'
 
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
-import { Divider, Typography } from '@mui/material'
+import { DialogActions, Divider, Typography } from '@mui/material'
 
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { getArrayOfNumbers } from '../../services/util.service'
 
 export function ClockPicker({
@@ -17,6 +17,8 @@ export function ClockPicker({
   minValue = 0,
   maxValue = 150,
   isButtonsVisible = true,
+  onClose,
+  isSaveCancelButtonsVisible = true,
 }: {
   value: number
   onChange: (key: keyof EditItem, value: number) => void
@@ -25,9 +27,16 @@ export function ClockPicker({
   minValue?: number
   maxValue?: number
   isButtonsVisible?: boolean
+  onClose: () => void
+  isSaveCancelButtonsVisible?: boolean
 }) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
+  )
+
+  const originalValue = useRef(Math.floor(value))
+  const originalAfterValue = useRef(
+    Math.round((value - originalValue.current) * 10) / 10
   )
 
   const [pickerValue, setPickerValue] = useState<{
@@ -69,12 +78,25 @@ export function ClockPicker({
   }, [value])
 
   useEffect(() => {
-    const newValue = pickerValue.numberOfServings + pickerValue.afterValue
-    onChange('numberOfServings', newValue)
+    console.log('pickerValue', pickerValue)
   }, [pickerValue])
 
+  function onCancel() {
+    setPickerValue({
+      numberOfServings: originalValue.current,
+      afterValue: originalAfterValue.current,
+    })
+    onClose()
+  }
+
+  function onSave() {
+    const newValue = pickerValue.numberOfServings + pickerValue.afterValue
+    onChange('numberOfServings', newValue)
+    onClose()
+  }
+
   return (
-    <div className='picker-container'>
+    <div className="picker-container">
       <Picker
         value={pickerValue}
         // wheelMode='normal'
@@ -84,12 +106,12 @@ export function ClockPicker({
           )
         }
       >
-        <Picker.Column name='numberOfServings'>
+        <Picker.Column name="numberOfServings">
           {values.map((number) => (
             <Picker.Item key={number} value={number}>
               {({ selected }) => (
                 <Typography
-                  variant='h5'
+                  variant="h5"
                   className={`${selected ? 'selected' : ''}`}
                 >
                   {number}
@@ -101,16 +123,16 @@ export function ClockPicker({
         {isAfterValue && (
           <>
             <Divider
-              orientation='vertical'
+              orientation="vertical"
               flexItem
               className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
             />
-            <Picker.Column name='afterValue'>
+            <Picker.Column name="afterValue">
               {afterValues.map((number) => (
                 <Picker.Item key={number} value={number}>
                   {({ selected }) => (
                     <Typography
-                      variant='h5'
+                      variant="h5"
                       className={`${selected ? 'selected' : ''}`}
                     >
                       {number}
@@ -123,7 +145,7 @@ export function ClockPicker({
         )}
       </Picker>
       {isButtonsVisible && (
-        <div className='buttons-container'>
+        <div className="buttons-container">
           {buttons.map((button) => (
             <CustomButton
               key={`${button.value}-button`}
@@ -134,6 +156,22 @@ export function ClockPicker({
             />
           ))}
         </div>
+      )}
+      {isSaveCancelButtonsVisible && (
+        <DialogActions className="save-cancel-container">
+          <CustomButton
+            text="Cancel"
+            onClick={onCancel}
+            className="delete-account-button"
+            fullWidth
+          />
+          <CustomButton
+            text="Save"
+            onClick={onSave}
+            className={`${prefs.favoriteColor} save-button`}
+            fullWidth
+          />
+        </DialogActions>
       )}
     </div>
   )
