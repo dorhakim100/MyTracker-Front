@@ -77,10 +77,6 @@ export function ClockPicker({
     }))
   }, [value])
 
-  useEffect(() => {
-    console.log('pickerValue', pickerValue)
-  }, [pickerValue])
-
   function onCancel() {
     setPickerValue({
       numberOfServings: originalValue.current,
@@ -90,8 +86,6 @@ export function ClockPicker({
   }
 
   function onSave() {
-    const newValue = pickerValue.numberOfServings + pickerValue.afterValue
-    onChange('numberOfServings', newValue)
     onClose()
   }
 

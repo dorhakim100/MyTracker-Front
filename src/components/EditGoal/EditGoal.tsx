@@ -368,7 +368,7 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
       case 'macros':
         return 'Macros Distribution'
       case 'weight':
-        return 'Target Weight'
+        return 'Target Weight (kg)'
       case 'dates':
         return 'Goal Dates'
       default:
