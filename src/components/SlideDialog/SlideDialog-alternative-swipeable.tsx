@@ -1,3 +1,7 @@
+// ALTERNATIVE IMPLEMENTATION 3: Using react-swipeable (if you want to use the same library)
+// Note: This requires installing: npm install react-swipeable
+// You already have react-swipeable-list, but this is a different package
+
 import * as React from 'react'
 import Dialog from '@mui/material/Dialog'
 import AppBar from '@mui/material/AppBar'
@@ -7,12 +11,12 @@ import Typography from '@mui/material/Typography'
 import CloseIcon from '@mui/icons-material/Close'
 import Slide from '@mui/material/Slide'
 import { TransitionProps } from '@mui/material/transitions'
-import { motion, useMotionValue, useTransform, PanInfo } from 'framer-motion'
+// import { useSwipeable } from 'react-swipeable' // Uncomment if you install react-swipeable
 
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import CircularProgress from '@mui/material/CircularProgress'
-import DragHandleIcon from '@mui/icons-material/DragHandle'
+import { useSwipeable } from 'react-swipeable'
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -33,9 +37,6 @@ interface SlideDialogProps {
   enableSwipeToClose?: boolean
 }
 
-const SWIPE_THRESHOLD = 100 // Minimum distance to trigger close
-const VELOCITY_THRESHOLD = 500 // Minimum velocity to trigger close
-
 export function SlideDialog({
   open,
   onClose,
@@ -53,8 +54,16 @@ export function SlideDialog({
     (stateSelector: RootState) => stateSelector.systemModule.isLoading
   )
 
-  const y = useMotionValue(0)
-  const opacity = useTransform(y, [0, 300], [1, 0])
+  // Uncomment if using react-swipeable:
+  const handlers = useSwipeable({
+    onSwipedDown: () => {
+      if (enableSwipeToClose) {
+        onClose()
+      }
+    },
+    trackMouse: true,
+    delta: 50, // Minimum distance
+  })
 
   const handleSave = async () => {
     try {
@@ -62,21 +71,6 @@ export function SlideDialog({
       onClose()
     } catch (err) {
       console.log('err', err)
-    }
-  }
-
-  const handleDragEnd = (
-    _: MouseEvent | TouchEvent | PointerEvent,
-    info: PanInfo
-  ) => {
-    const shouldClose =
-      info.offset.y > SWIPE_THRESHOLD || info.velocity.y > VELOCITY_THRESHOLD
-
-    if (shouldClose && enableSwipeToClose) {
-      onClose()
-    } else {
-      // Reset position
-      y.set(0)
     }
   }
 
@@ -88,13 +82,9 @@ export function SlideDialog({
         open={open}
         onClose={handleSave}
         sx={{
-          // bottom: 20,
-
           '& .MuiDialog-paper': {
             height: type === 'half' ? '800px' : '100%',
             paddingBottom: '1.5em',
-            overflow: 'hidden',
-            backgroundColor: 'transparent',
           },
         }}
         slots={{
@@ -105,26 +95,13 @@ export function SlideDialog({
             className: `slide-dialog ${prefs.isDarkMode ? 'dark-mode' : ''} ${
               prefs.favoriteColor || ''
             }`,
-            style: {
-              borderTopRightRadius: '10px',
-              borderTopLeftRadius: '10px',
-            },
           },
         }}
       >
-        <motion.div
-          drag={enableSwipeToClose ? 'y' : false}
-          // drag={false}
-          dragConstraints={{ top: 0, bottom: 0 }}
-          dragElastic={0.2}
-          onDragEnd={handleDragEnd}
-          style={{
-            y,
-            opacity,
-            height: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-          }}
+        {/* Add {...handlers} to the div below if using react-swipeable */}
+        <div
+          {...handlers}
+          style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
         >
           <AppBar sx={{ position: 'relative' }}>
             <Toolbar className={`${prefs.favoriteColor}`}>
@@ -139,21 +116,11 @@ export function SlideDialog({
               <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
                 {title}
               </Typography>
-              <div className="slide-drag-handle"></div>
-              {/* <DragHandleIcon
-                sx={{ color: '#fff' }}
-                className="slide-drag-handle"
-              /> */}
               {isLoading && <CircularProgress size={20} color="inherit" />}
             </Toolbar>
           </AppBar>
-          <div
-            className="slide-dialog-content"
-            style={{ flex: 1, overflow: 'auto', touchAction: 'pan-y' }}
-          >
-            {component}
-          </div>
-        </motion.div>
+          <div className="slide-dialog-content">{component}</div>
+        </div>
       </Dialog>
     </React.Fragment>
   )

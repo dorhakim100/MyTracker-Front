@@ -76,7 +76,9 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
     }))
     const series = prepareSeries(
       range,
-      dateToSend as (Set & { createdAt: string; value: number })[]
+      dateToSend as (Set & { createdAt: string; value: number })[],
+      false,
+      range
     )
     const labelsToShow = series?.labels
     const kgs = series?.data ?? []

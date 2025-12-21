@@ -23,7 +23,22 @@
   border-top-right-radius: 10px;
   border-top-left-radius: 10px;
   &.MuiPaper-root {
+    .slide-drag-handle {
+      cursor: grab;
+      position: absolute;
+      top: 8px;
+
+      width: 30%;
+      height: 3px;
+      background-color: $light-gray;
+      border-radius: 12px;
+
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+    }
     .MuiToolbar-root {
+      padding: 1em;
       border-top-right-radius: 10px;
       border-top-left-radius: 10px;
     }
@@ -118,4 +133,14 @@
       background-color: $dark-gray-blue !important;
     }
   }
+}
+
+.slide-dialog-content {
+  // Native mobile scrolling
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  // Smooth scrolling
+  scroll-behavior: smooth;
+  // Prevent pull-to-refresh interference
+  overscroll-behavior-y: contain;
 }

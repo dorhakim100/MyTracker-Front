@@ -1,3 +1,6 @@
+// ALTERNATIVE IMPLEMENTATION 2: Using Native Touch Events
+// This is a lightweight option with no additional dependencies
+
 import * as React from 'react'
 import Dialog from '@mui/material/Dialog'
 import AppBar from '@mui/material/AppBar'
@@ -7,7 +10,6 @@ import Typography from '@mui/material/Typography'
 import CloseIcon from '@mui/icons-material/Close'
 import Slide from '@mui/material/Slide'
 import { TransitionProps } from '@mui/material/transitions'
-import { motion, useMotionValue, useTransform, PanInfo } from 'framer-motion'
 
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
@@ -33,8 +35,8 @@ interface SlideDialogProps {
   enableSwipeToClose?: boolean
 }
 
-const SWIPE_THRESHOLD = 100 // Minimum distance to trigger close
-const VELOCITY_THRESHOLD = 500 // Minimum velocity to trigger close
+const SWIPE_THRESHOLD = 100
+const VELOCITY_THRESHOLD = 0.5
 
 export function SlideDialog({
   open,
@@ -53,8 +55,10 @@ export function SlideDialog({
     (stateSelector: RootState) => stateSelector.systemModule.isLoading
   )
 
-  const y = useMotionValue(0)
-  const opacity = useTransform(y, [0, 300], [1, 0])
+  const [touchStart, setTouchStart] = React.useState<number | null>(null)
+  const [touchEnd, setTouchEnd] = React.useState<number | null>(null)
+  const [dragY, setDragY] = React.useState(0)
+  const [isDragging, setIsDragging] = React.useState(false)
 
   const handleSave = async () => {
     try {
@@ -65,20 +69,75 @@ export function SlideDialog({
     }
   }
 
-  const handleDragEnd = (
-    _: MouseEvent | TouchEvent | PointerEvent,
-    info: PanInfo
-  ) => {
-    const shouldClose =
-      info.offset.y > SWIPE_THRESHOLD || info.velocity.y > VELOCITY_THRESHOLD
+  const minSwipeDistance = SWIPE_THRESHOLD
 
-    if (shouldClose && enableSwipeToClose) {
-      onClose()
-    } else {
-      // Reset position
-      y.set(0)
+  const onTouchStart = (e: React.TouchEvent) => {
+    if (!enableSwipeToClose) return
+    setTouchEnd(null)
+    setTouchStart(e.touches[0].clientY)
+    setIsDragging(true)
+  }
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    if (!enableSwipeToClose || touchStart === null) return
+    const currentY = e.touches[0].clientY
+    const diff = currentY - touchStart
+    if (diff > 0) {
+      // Only allow downward swipes
+      setDragY(diff)
     }
   }
+
+  const onTouchEnd = () => {
+    if (!enableSwipeToClose || touchStart === null || touchEnd === null) {
+      setIsDragging(false)
+      setDragY(0)
+      return
+    }
+
+    const distance = touchStart - touchEnd
+    const isDownSwipe = distance < -minSwipeDistance
+
+    if (isDownSwipe) {
+      onClose()
+    }
+
+    setIsDragging(false)
+    setDragY(0)
+    setTouchStart(null)
+    setTouchEnd(null)
+  }
+
+  const onMouseDown = (e: React.MouseEvent) => {
+    if (!enableSwipeToClose) return
+    setTouchEnd(null)
+    setTouchStart(e.clientY)
+    setIsDragging(true)
+  }
+
+  const onMouseMove = (e: React.MouseEvent) => {
+    if (!enableSwipeToClose || touchStart === null) return
+    const diff = e.clientY - touchStart
+    if (diff > 0) {
+      setDragY(diff)
+    }
+  }
+
+  const onMouseUp = () => {
+    if (!enableSwipeToClose || touchStart === null) return
+
+    if (dragY > minSwipeDistance) {
+      onClose()
+    }
+
+    setIsDragging(false)
+    setDragY(0)
+    setTouchStart(null)
+    setTouchEnd(null)
+  }
+
+  const opacity = isDragging ? Math.max(0.3, 1 - dragY / 300) : 1
+  const transform = isDragging ? `translateY(${dragY}px)` : 'translateY(0)'
 
   return (
     <React.Fragment>
@@ -88,13 +147,10 @@ export function SlideDialog({
         open={open}
         onClose={handleSave}
         sx={{
-          // bottom: 20,
-
           '& .MuiDialog-paper': {
             height: type === 'half' ? '800px' : '100%',
             paddingBottom: '1.5em',
             overflow: 'hidden',
-            backgroundColor: 'transparent',
           },
         }}
         slots={{
@@ -105,26 +161,26 @@ export function SlideDialog({
             className: `slide-dialog ${prefs.isDarkMode ? 'dark-mode' : ''} ${
               prefs.favoriteColor || ''
             }`,
-            style: {
-              borderTopRightRadius: '10px',
-              borderTopLeftRadius: '10px',
-            },
           },
         }}
       >
-        <motion.div
-          drag={enableSwipeToClose ? 'y' : false}
-          // drag={false}
-          dragConstraints={{ top: 0, bottom: 0 }}
-          dragElastic={0.2}
-          onDragEnd={handleDragEnd}
+        <div
           style={{
-            y,
-            opacity,
             height: '100%',
             display: 'flex',
             flexDirection: 'column',
+            opacity,
+            transform,
+            transition: isDragging ? 'none' : 'opacity 0.2s, transform 0.2s',
+            touchAction: 'pan-y',
           }}
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+          onMouseDown={onMouseDown}
+          onMouseMove={onMouseMove}
+          onMouseUp={onMouseUp}
+          onMouseLeave={onMouseUp}
         >
           <AppBar sx={{ position: 'relative' }}>
             <Toolbar className={`${prefs.favoriteColor}`}>
@@ -139,21 +195,17 @@ export function SlideDialog({
               <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
                 {title}
               </Typography>
-              <div className="slide-drag-handle"></div>
-              {/* <DragHandleIcon
-                sx={{ color: '#fff' }}
-                className="slide-drag-handle"
-              /> */}
+              <DragHandleIcon sx={{ color: '#fff' }} />
               {isLoading && <CircularProgress size={20} color="inherit" />}
             </Toolbar>
           </AppBar>
           <div
             className="slide-dialog-content"
-            style={{ flex: 1, overflow: 'auto', touchAction: 'pan-y' }}
+            style={{ flex: 1, overflow: 'auto' }}
           >
             {component}
           </div>
-        </motion.div>
+        </div>
       </Dialog>
     </React.Fragment>
   )
