@@ -36,7 +36,7 @@ interface SlideDialogProps {
 }
 
 const SWIPE_THRESHOLD = 100
-const VELOCITY_THRESHOLD = 0.5
+// const VELOCITY_THRESHOLD = 0.5
 
 export function SlideDialog({
   open,

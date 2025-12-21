@@ -1,4 +1,5 @@
 import * as React from 'react'
+// import { useRef, useEffect } from 'react'
 import Dialog from '@mui/material/Dialog'
 import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
@@ -12,7 +13,7 @@ import { motion, useMotionValue, useTransform, PanInfo } from 'framer-motion'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import CircularProgress from '@mui/material/CircularProgress'
-import DragHandleIcon from '@mui/icons-material/DragHandle'
+// import DragHandleIcon from '@mui/icons-material/DragHandle'
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -34,7 +35,7 @@ interface SlideDialogProps {
 }
 
 const SWIPE_THRESHOLD = 100 // Minimum distance to trigger close
-const VELOCITY_THRESHOLD = 500 // Minimum velocity to trigger close
+const VELOCITY_THRESHOLD = 750 // Minimum velocity to trigger close
 
 export function SlideDialog({
   open,
@@ -55,6 +56,13 @@ export function SlideDialog({
 
   const y = useMotionValue(0)
   const opacity = useTransform(y, [0, 300], [1, 0])
+  const headerRef = React.useRef<HTMLDivElement>(null)
+  const contentRef = React.useRef<HTMLDivElement>(null)
+  const isScrolling = React.useRef(false)
+  const scrollTimeout = React.useRef<ReturnType<typeof setTimeout> | null>(null)
+  const isDraggingEnabled = React.useRef(false)
+  const touchStartY = React.useRef<number | null>(null)
+  const touchStartElement = React.useRef<HTMLElement | null>(null)
 
   const handleSave = async () => {
     try {
@@ -65,10 +73,92 @@ export function SlideDialog({
     }
   }
 
+  // Handle pointer/touch start to detect if it's from header
+  const handlePointerDown = (e: React.PointerEvent | React.TouchEvent) => {
+    if (!enableSwipeToClose || !headerRef.current || isScrolling.current) {
+      isDraggingEnabled.current = false
+      return
+    }
+
+    const target = e.target as HTMLElement
+    touchStartElement.current = target
+
+    // Check if touch started from header area
+    const isFromHeader = headerRef.current.contains(target)
+
+    // Store touch start position
+    if ('touches' in e && e.touches[0]) {
+      touchStartY.current = e.touches[0].clientY
+    } else if ('clientY' in e) {
+      touchStartY.current = e.clientY
+    }
+
+    isDraggingEnabled.current = isFromHeader
+  }
+
+  const handleDragStart = (
+    event: MouseEvent | TouchEvent | PointerEvent
+    // info: PanInfo
+  ) => {
+    // Check if drag started from header area
+    if (!enableSwipeToClose || !headerRef.current || isScrolling.current) {
+      isDraggingEnabled.current = false
+      return
+    }
+
+    // Get the target element from the event
+    const target = (event.target || (event as any).currentTarget) as HTMLElement
+
+    // Check if drag started from header area
+    const isFromHeader = headerRef.current.contains(target)
+
+    // Store touch start position if available
+    if (event instanceof TouchEvent && event.touches[0]) {
+      touchStartY.current = event.touches[0].clientY
+    } else if ('clientY' in event) {
+      touchStartY.current = event.clientY
+    }
+
+    isDraggingEnabled.current = isFromHeader
+
+    // If not from header, prevent drag
+    if (!isFromHeader) {
+      isDraggingEnabled.current = false
+    }
+  }
+
+  const handleDrag = (
+    _: MouseEvent | TouchEvent | PointerEvent,
+    info: PanInfo
+  ) => {
+    if (!isDraggingEnabled.current) {
+      y.set(0)
+      return
+    }
+
+    // Only allow downward swipes (positive offset.y)
+    if (info.offset.y < 0) {
+      // Upward movement - cancel drag
+      isDraggingEnabled.current = false
+      y.set(0)
+      return
+    }
+  }
+
   const handleDragEnd = (
     _: MouseEvent | TouchEvent | PointerEvent,
     info: PanInfo
   ) => {
+    touchStartY.current = null
+    touchStartElement.current = null
+
+    // Don't close if user was scrolling or drag wasn't enabled
+    if (isScrolling.current || !isDraggingEnabled.current) {
+      y.set(0)
+      isDraggingEnabled.current = false
+      return
+    }
+
     const shouldClose =
       info.offset.y > SWIPE_THRESHOLD || info.velocity.y > VELOCITY_THRESHOLD
 
@@ -78,7 +168,33 @@ export function SlideDialog({
       // Reset position
       y.set(0)
     }
+
+    isDraggingEnabled.current = false
   }
+
+  // Detect scrolling in content area
+  const handleContentScroll = () => {
+    isScrolling.current = true
+
+    // Clear existing timeout
+    if (scrollTimeout.current) {
+      clearTimeout(scrollTimeout.current)
+    }
+
+    // Reset scrolling flag after scroll ends
+    scrollTimeout.current = setTimeout(() => {
+      isScrolling.current = false
+    }, 150)
+  }
+
+  // Cleanup timeout on unmount
+  React.useEffect(() => {
+    return () => {
+      if (scrollTimeout.current) {
+        clearTimeout(scrollTimeout.current)
+      }
+    }
+  }, [])
 
   return (
     <React.Fragment>
@@ -94,7 +210,7 @@ export function SlideDialog({
             height: type === 'half' ? '800px' : '100%',
             paddingBottom: '1.5em',
             overflow: 'hidden',
-            backgroundColor: 'transparent',
+            // backgroundColor: 'transparent',
           },
         }}
         slots={{
@@ -114,9 +230,11 @@ export function SlideDialog({
       >
         <motion.div
           drag={enableSwipeToClose ? 'y' : false}
-          // drag={false}
           dragConstraints={{ top: 0, bottom: 0 }}
           dragElastic={0.2}
+          dragMomentum={false}
+          onDragStart={handleDragStart}
+          onDrag={handleDrag}
           onDragEnd={handleDragEnd}
           style={{
             y,
@@ -126,30 +244,46 @@ export function SlideDialog({
             flexDirection: 'column',
           }}
         >
-          <AppBar sx={{ position: 'relative' }}>
-            <Toolbar className={`${prefs.favoriteColor}`}>
-              <IconButton
-                edge="start"
-                color="inherit"
-                onClick={onClose}
-                aria-label="close"
-              >
-                <CloseIcon sx={{ color: '#fff' }} />
-              </IconButton>
-              <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-                {title}
-              </Typography>
-              <div className="slide-drag-handle"></div>
-              {/* <DragHandleIcon
-                sx={{ color: '#fff' }}
-                className="slide-drag-handle"
-              /> */}
-              {isLoading && <CircularProgress size={20} color="inherit" />}
-            </Toolbar>
-          </AppBar>
           <div
+            ref={headerRef}
+            onPointerDown={handlePointerDown}
+            onTouchStart={handlePointerDown}
+            style={{
+              touchAction: 'none', // Prevent scrolling on header
+            }}
+          >
+            <AppBar sx={{ position: 'relative' }}>
+              <Toolbar className={`${prefs.favoriteColor}`}>
+                <IconButton
+                  edge="start"
+                  color="inherit"
+                  onClick={onClose}
+                  aria-label="close"
+                >
+                  <CloseIcon sx={{ color: '#fff' }} />
+                </IconButton>
+                <Typography
+                  sx={{ ml: 2, flex: 1 }}
+                  variant="h6"
+                  component="div"
+                >
+                  {title}
+                </Typography>
+                <div className="slide-drag-handle"></div>
+                {isLoading && <CircularProgress size={20} color="inherit" />}
+              </Toolbar>
+            </AppBar>
+          </div>
+          <div
+            ref={contentRef}
             className="slide-dialog-content"
-            style={{ flex: 1, overflow: 'auto', touchAction: 'pan-y' }}
+            onScroll={handleContentScroll}
+            style={{
+              flex: 1,
+              overflow: 'auto',
+              touchAction: 'pan-y',
+              WebkitOverflowScrolling: 'touch',
+            }}
           >
             {component}
           </div>
