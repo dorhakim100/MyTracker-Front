@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Card, Typography, Divider, DialogActions } from '@mui/material'
+import { Card, Typography, Divider, DialogActions, Badge } from '@mui/material'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { Exercise, Set } from '../../types/exercise/Exercise'
@@ -140,6 +140,7 @@ export function ExerciseCard({
       onClick: () => {
         setIsEditNotesOpen(true)
       },
+      isBadge: exerciseInstructions?.notes.expected ? true : false,
     },
 
     isExpected
@@ -269,6 +270,7 @@ export function ExerciseCard({
               }}
             />
           )}
+
           <CustomOptionsMenu
             className="more-options-container"
             options={menuOptions}
@@ -282,6 +284,7 @@ export function ExerciseCard({
               />
             }
           />
+
           <div className="exercise-card-info">
             <Typography variant="h6" className="exercise-card-name">
               {capitalizeFirstLetter(exercise.name)}
