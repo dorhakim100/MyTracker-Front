@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { Divider, Typography } from '@mui/material'
@@ -6,6 +7,7 @@ import { Divider, Typography } from '@mui/material'
 import { CustomLinearProgress } from '../../CustomMui/CustomLinearProgress/CustomLinearProgress'
 import { formatTime } from '../../services/util.service'
 import { SECOND_IN_MS } from '../../assets/config/times'
+import { routes } from '../../assets/routes/routes'
 
 const colorMap: Record<string, string> = {
   primary: 'var(--primary-color)',
@@ -20,6 +22,7 @@ const colorMap: Record<string, string> = {
 }
 
 export function Timer() {
+  const location = useLocation()
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
 
   const currentExercise = useSelector(
@@ -55,7 +58,12 @@ export function Timer() {
     setSecondsPassedState(0)
   }, [currentExercise])
 
-  if (!currentExercise || !currentExercise.restingTime) return null
+  if (
+    !currentExercise ||
+    !currentExercise.restingTime ||
+    location.pathname !== '/lift-mate/workouts'
+  )
+    return null
 
   return (
     <div

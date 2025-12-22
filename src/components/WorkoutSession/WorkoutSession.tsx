@@ -34,7 +34,7 @@ import NoteAddIcon from '@mui/icons-material/NoteAdd'
 import { CustomInput } from '../../CustomMui/CustomInput/CustomInput'
 import { ExerciseCard } from '../ExerciseCard/ExerciseCard'
 import { getWorkoutMuscles } from '../../services/exersice-search/exersice-search'
-// import AddIcon from '@mui/icons-material/Add'
+import CircleIcon from '@mui/icons-material/Circle'
 interface WorkoutSessionProps {
   sessionDay: SessionDay
   onExerciseInfoClick: (exercise: Exercise) => void
@@ -341,10 +341,16 @@ export function WorkoutSession({
     <>
       <div className="workout-container">
         <div className="workout-header-container">
-          <Typography variant="h5" className="bold-header">
-            {getWorkoutName()} -{' '}
-            {sessionDay.instructions.isFinished ? 'Finished' : 'Not Finished'}
-          </Typography>
+          <div className="workout-name-container">
+            {sessionDay.instructions.isFinished ? (
+              <CircleIcon color="success" />
+            ) : (
+              <CircleIcon color="error" />
+            )}
+            <Typography variant="h5" className="bold-header">
+              {getWorkoutName()}{' '}
+            </Typography>
+          </div>
           <div className="actions-container">
             <CustomButton
               icon={<DeleteIcon />}
