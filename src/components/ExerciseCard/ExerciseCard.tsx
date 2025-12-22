@@ -3,7 +3,7 @@ import { Card, Typography, Divider, DialogActions } from '@mui/material'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { Exercise, Set } from '../../types/exercise/Exercise'
-import { capitalizeFirstLetter } from '../../services/util.service'
+import { capitalizeFirstLetter, formatTime } from '../../services/util.service'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import { ExerciseInstructions } from '../../types/exercise/ExerciseInstructions'
 import { ExerciseEditor } from '../ExerciseEditor/ExerciseEditor'
@@ -29,6 +29,7 @@ import { messages } from '../../assets/config/messages'
 import { setService } from '../../services/set/set.service'
 import TimerIcon from '@mui/icons-material/Timer'
 import { RestingTimerEdit } from '../RestingTimerEdit/RestingTimerEdit'
+import { DEFAULT_RESTING_TIME } from '../../assets/config/times'
 
 interface SlideDialogOptions {
   title: string
@@ -288,7 +289,7 @@ export function ExerciseCard({
       case 'exercise-details':
         return capitalizeFirstLetter(exercise.name)
       case 'resting-timer':
-        return 'Resting Timer'
+        return 'Edit Resting Time'
       default:
         return ''
     }
@@ -299,7 +300,20 @@ export function ExerciseCard({
       case 'exercise-details':
         return <ExerciseDetails exercise={exercise} />
       case 'resting-timer':
-        return <RestingTimerEdit />
+        return (
+          <RestingTimerEdit
+            restingTime={
+              exerciseInstructions?.restingTime || DEFAULT_RESTING_TIME
+            }
+            updateRestingTime={updateRestingTime}
+            onClose={() => {
+              setSlideDialogOptions({
+                ...slideDialogOptions,
+                open: false,
+              })
+            }}
+          />
+        )
       default:
         return <></>
     }
@@ -314,6 +328,18 @@ export function ExerciseCard({
       default:
         return 'full'
     }
+  }
+
+  function updateRestingTime(restingTime: number) {
+    if (!exerciseInstructions || !setInstructions) return
+    setInstructions({
+      ...instructions,
+      exercises: instructions.exercises.map((e) =>
+        e.exerciseId === exercise.exerciseId
+          ? { ...e, restingTime: restingTime }
+          : e
+      ),
+    })
   }
 
   if (!exerciseInstructions || !exercise) return null
@@ -399,7 +425,12 @@ export function ExerciseCard({
                 <Divider
                   className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
                 />
-                <span>Resting timer: 00:00</span>
+                <span>
+                  Resting time:{' '}
+                  {formatTime(
+                    exerciseInstructions.restingTime || DEFAULT_RESTING_TIME
+                  )}
+                </span>
               </>
             )}
           </div>

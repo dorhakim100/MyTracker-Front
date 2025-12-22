@@ -4,6 +4,7 @@ import { LineChartRangeKey } from '../components/LineChart/LineChartControls'
 import { App } from '../types/app/App'
 import { User } from '../types/user/User'
 import debounceLib from 'debounce'
+import { MINUTE_IN_MS } from '../assets/config/times'
 
 export function makeId(length: number = 6): string {
   let txt = ''
@@ -373,4 +374,10 @@ export function prepareSeries<T extends { createdAt: string }>(
   }
 
   return { labels, data }
+}
+
+export function formatTime(time: number): string {
+  const minutes = Math.floor(time / MINUTE_IN_MS)
+  const seconds = Math.floor((time % MINUTE_IN_MS) / 1000)
+  return `${minutes}:${seconds.toString().padStart(2, '0')} minutes`
 }

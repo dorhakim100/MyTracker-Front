@@ -19,6 +19,8 @@ export function ClockPicker({
   isButtonsVisible = true,
   onClose,
   isSaveCancelButtonsVisible = true,
+  valuesToDisplay,
+  isRounded = true,
 }: {
   value: number
   onChange: (key: keyof EditItem, value: number) => void
@@ -29,6 +31,8 @@ export function ClockPicker({
   isButtonsVisible?: boolean
   onClose: () => void
   isSaveCancelButtonsVisible?: boolean
+  valuesToDisplay?: number[]
+  isRounded?: boolean
 }) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -47,7 +51,8 @@ export function ClockPicker({
     afterValue: 0,
   })
 
-  const values = getArrayOfNumbers(isAfterValue ? 0 : minValue, maxValue)
+  const values =
+    valuesToDisplay || getArrayOfNumbers(isAfterValue ? 0 : minValue, maxValue)
   const afterValues = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
 
   const buttons = buttonsValues.map((value) => ({
@@ -64,7 +69,7 @@ export function ClockPicker({
 
   // Keep picker in sync with external value
   useEffect(() => {
-    const firstValue = Math.floor(value)
+    const firstValue = isRounded ? Math.floor(value) : value
     let secondValue = Math.round((value - firstValue) * 10) / 10
     if (firstValue === 0 && secondValue === 0) {
       secondValue = 0.1
