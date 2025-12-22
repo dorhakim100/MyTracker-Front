@@ -27,9 +27,9 @@ export function Timer() {
   )
 
   const [secondsPassedState, setSecondsPassedState] = useState<number>(0)
-  if (!currentExercise || !currentExercise.restingTime) return null
 
   const percentage = useMemo(() => {
+    if (!currentExercise || !currentExercise.restingTime) return 0
     return (
       ((secondsPassedState * SECOND_IN_MS) / currentExercise.restingTime!) * 100
     )
@@ -55,6 +55,8 @@ export function Timer() {
     setSecondsPassedState(0)
   }, [currentExercise])
 
+  if (!currentExercise || !currentExercise.restingTime) return null
+
   return (
     <div
       className={`timer-container ${prefs.isDarkMode ? 'dark-mode' : ''} ${
@@ -64,7 +66,7 @@ export function Timer() {
       <img src={currentExercise?.image} alt="timer" className="timer-image" />
       <div className="text-container">
         <Typography variant="h6" className="bold-header">
-          Set: {doneSets} / {totalSets}
+          Done Sets: {doneSets} / {totalSets}
         </Typography>
         <div className="times-container">
           <Typography variant="body1">
