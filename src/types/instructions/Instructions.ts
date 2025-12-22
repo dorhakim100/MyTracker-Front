@@ -9,4 +9,5 @@ export interface Instructions {
   weekNumber: number
   timesPerWeek: number
   isDone: boolean
+  isFinished?: boolean
 }

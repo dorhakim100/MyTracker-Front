@@ -132,7 +132,13 @@ export function WorkoutSession({
       instructions: { ...newInstructions },
     })
     try {
-      await saveNewInstructions(newInstructions)
+      const savedInstructions = await saveNewInstructions(newInstructions)
+      if (savedInstructions) {
+        setSelectedSessionDay({
+          ...sessionDay,
+          instructions: savedInstructions,
+        })
+      }
       if (exerciseIndex !== -1 && !isRemove) {
         let setToSave = { ...exercise.sets[setIndex] }
         // Remove the unused RPE/RIR field - only keep the one that's actually used
@@ -172,7 +178,8 @@ export function WorkoutSession({
   async function saveNewInstructions(newInstructions: Instructions) {
     try {
       setIsLoading(true)
-      await instructionsService.save(newInstructions)
+      const savedInstructions = await instructionsService.save(newInstructions)
+      return savedInstructions
     } catch (err) {
       showErrorMsg(messages.error.updateSet)
     } finally {
@@ -302,7 +309,8 @@ export function WorkoutSession({
       <div className="workout-container">
         <div className="workout-header-container">
           <Typography variant="h5" className="bold-header">
-            {getWorkoutName()}
+            {getWorkoutName()} -{' '}
+            {sessionDay.instructions.isFinished ? 'Finished' : 'Not Finished'}
           </Typography>
           <div className="actions-container">
             <CustomButton
