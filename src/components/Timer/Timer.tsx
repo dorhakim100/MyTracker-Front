@@ -4,6 +4,8 @@ import { RootState } from '../../store/store'
 import { Divider, Typography } from '@mui/material'
 
 import { CustomLinearProgress } from '../../CustomMui/CustomLinearProgress/CustomLinearProgress'
+import { formatTime } from '../../services/util.service'
+import { SECOND_IN_MS } from '../../assets/config/times'
 
 const colorMap: Record<string, string> = {
   primary: 'var(--primary-color)',
@@ -17,9 +19,6 @@ const colorMap: Record<string, string> = {
   pink: 'var(--picker-color-pink)',
 }
 
-// 150 seconds
-const CONSTANT_RESTING_TIME = 150 * 1000
-
 export function Timer() {
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
 
@@ -27,18 +26,34 @@ export function Timer() {
     (state: RootState) => state.workoutModule.currentExercise
   )
 
-  const [percentage, setPercentage] = useState(0)
+  const [secondsPassedState, setSecondsPassedState] = useState<number>(0)
+  if (!currentExercise || !currentExercise.restingTime) return null
+
+  const percentage = useMemo(() => {
+    return (
+      ((secondsPassedState * SECOND_IN_MS) / currentExercise.restingTime!) * 100
+    )
+  }, [currentExercise, secondsPassedState])
+
+  const doneSets = useMemo(() => {
+    return currentExercise?.sets.filter((set) => set.isDone).length
+  }, [currentExercise])
+
+  const totalSets = useMemo(() => {
+    return currentExercise?.sets.length
+  }, [currentExercise])
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (percentage >= 100) {
-        clearInterval(interval)
-        return
-      }
-      setPercentage((prev) => prev + 0.01)
-    }, 10)
+      setSecondsPassedState((prev) => prev + 0.1)
+    }, SECOND_IN_MS / 10)
     return () => clearInterval(interval)
   }, [])
+
+  useEffect(() => {
+    if (!currentExercise || !currentExercise.restingTime) return
+    setSecondsPassedState(0)
+  }, [currentExercise])
 
   return (
     <div
@@ -46,23 +61,31 @@ export function Timer() {
         prefs.favoriteColor
       }`}
     >
-      <img
-        src="https://static.exercisedb.dev/media/wQ2c4XD.gif"
-        alt="timer"
-        className="timer-image"
-      />
+      <img src={currentExercise?.image} alt="timer" className="timer-image" />
       <div className="text-container">
         <Typography variant="h6" className="bold-header">
-          Set: 2 / 3
+          Set: {doneSets} / {totalSets}
         </Typography>
         <div className="times-container">
-          <Typography variant="body1">Rested Time: 00:00</Typography>
+          <Typography variant="body1">
+            Rested Time: {formatTime(secondsPassedState * SECOND_IN_MS, false)}
+          </Typography>
           <Divider
             orientation="vertical"
             flexItem
             className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
           />
-          <Typography variant="body1">Time Left: 00:00</Typography>
+          <Typography variant="body1">
+            Time Left:{' '}
+            {currentExercise?.restingTime &&
+            secondsPassedState * SECOND_IN_MS < currentExercise?.restingTime
+              ? formatTime(
+                  currentExercise?.restingTime -
+                    secondsPassedState * SECOND_IN_MS,
+                  false
+                )
+              : '00:00'}
+          </Typography>
         </div>
       </div>
       <CustomLinearProgress

@@ -6,6 +6,7 @@ import { Exercise } from '../../types/exercise/Exercise'
 import { capitalizeFirstLetter } from '../../services/util.service'
 import {
   removeSessionDay,
+  setCurrentExercise,
   setSelectedSessionDay,
 } from '../../store/actions/workout.action'
 
@@ -150,6 +151,22 @@ export function WorkoutSession({
           setToSave = setWithoutRir
         }
 
+        let currentExerciseToSet = { ...exercise, setIndex }
+
+        const isExerciseDone = (exerciseToCheck: ExerciseInstructions) => {
+          return exerciseToCheck.sets.every((set) => set.isDone)
+        }
+
+        if (isExerciseDone(exercise)) {
+          const nextExercise = sessionDay.instructions.exercises.find(
+            (e, index) => !isExerciseDone(e) && index > exerciseIndex
+          )
+          nextExercise
+            ? (currentExerciseToSet = { ...nextExercise, setIndex: 0 })
+            : null
+        }
+
+        setCurrentExercise(currentExerciseToSet)
         await setService.saveSetBySessionIdAndExerciseId(
           sessionDay._id,
           exercise.exerciseId,

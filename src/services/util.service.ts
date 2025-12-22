@@ -376,8 +376,10 @@ export function prepareSeries<T extends { createdAt: string }>(
   return { labels, data }
 }
 
-export function formatTime(time: number): string {
+export function formatTime(time: number, isMinutes: boolean = true): string {
   const minutes = Math.floor(time / MINUTE_IN_MS)
   const seconds = Math.floor((time % MINUTE_IN_MS) / 1000)
-  return `${minutes}:${seconds.toString().padStart(2, '0')} minutes`
+  return `${minutes}:${seconds.toString().padStart(2, '0')} ${
+    isMinutes ? 'minutes' : ''
+  }`
 }

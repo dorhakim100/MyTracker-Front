@@ -8,3 +8,4 @@ export const DAY_IN_MS = 24 * 60 * 60 * 1000
 export const MONTH_IN_MS = 30 * DAY_IN_MS
 export const MINUTE_IN_MS = 60 * 1000
 export const DEFAULT_RESTING_TIME = MINUTE_IN_MS * 2.5
+export const SECOND_IN_MS = 1000

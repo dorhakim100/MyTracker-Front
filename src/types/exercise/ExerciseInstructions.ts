@@ -5,6 +5,7 @@ export interface ExerciseInstructions {
   sets: Set[]
 
   restingTime?: number
+  setIndex?: number
 
   notes: ExpectedActual<string>
   name?: string
