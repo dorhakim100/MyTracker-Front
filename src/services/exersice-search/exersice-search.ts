@@ -13,8 +13,6 @@ export const exerciseSearch = async (searchValue: string) => {
 
     let exercises = data.data
 
-    console.log('exercises', exercises)
-
     if (!exercises) throw new Error('No exercises found')
     const formattedData: Exercise[] = exercises.map((exercise: any) => {
       return {
@@ -278,7 +276,6 @@ export function mapMuscleToMuscleGroup(muscle: string): string | undefined {
 }
 
 export function getWorkoutMuscles(workout: Workout) {
-  console.log('workout', workout)
   const muscles = workout.exercises
     .map((exercise) => exercise.mainMuscles)
     .flat()
