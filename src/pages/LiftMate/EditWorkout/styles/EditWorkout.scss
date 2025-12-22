@@ -86,53 +86,55 @@
   }
 
   .end-buttons-container {
-    position: fixed;
-    bottom: 20px;
-    left: 0;
-    right: 0;
-    padding: 1rem;
-    margin-top: 1rem;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 1rem;
-    background: $white;
-    border-top: 1px solid $light-gray;
-    z-index: 1000;
-    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+    &.has-exercises {
+      position: fixed;
+      bottom: 20px;
+      left: 0;
+      right: 0;
+      padding: 1rem;
+      margin-top: 1rem;
+      background: $white;
+      border-top: 1px solid $light-gray;
+      z-index: 1000;
+      box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
 
-    &.dark-mode {
-      background: $dark-gray;
-      border-top: 1px solid $white;
-      border-color: $dark-mode-border;
+      &.dark-mode {
+        background: $dark-gray;
+        border-top: 1px solid $white;
+        border-color: $dark-mode-border;
 
-      &.blue {
-        background: $dark-gray-blue;
-        border-color: $dark-mode-border;
-      }
-      &.red {
-        background: $dark-gray-red;
-        border-color: $dark-mode-border;
-      }
-      &.yellow {
-        background: $dark-gray-yellow;
-        border-color: $dark-mode-border;
-      }
-      &.green {
-        background: $dark-gray-green;
-        border-color: $dark-mode-border;
-      }
-      &.deepPurple {
-        background: $dark-gray-deep-purple;
-        border-color: $dark-mode-border;
-      }
-      &.purple {
-        background: $dark-gray-purple;
-        border-color: $dark-mode-border;
-      }
-      &.pink {
-        background: $dark-gray-pink;
-        border-color: $dark-mode-border;
+        &.blue {
+          background: $dark-gray-blue;
+          border-color: $dark-mode-border;
+        }
+        &.red {
+          background: $dark-gray-red;
+          border-color: $dark-mode-border;
+        }
+        &.yellow {
+          background: $dark-gray-yellow;
+          border-color: $dark-mode-border;
+        }
+        &.green {
+          background: $dark-gray-green;
+          border-color: $dark-mode-border;
+        }
+        &.deepPurple {
+          background: $dark-gray-deep-purple;
+          border-color: $dark-mode-border;
+        }
+        &.purple {
+          background: $dark-gray-purple;
+          border-color: $dark-mode-border;
+        }
+        &.pink {
+          background: $dark-gray-pink;
+          border-color: $dark-mode-border;
+        }
       }
     }
   }

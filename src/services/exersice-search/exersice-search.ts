@@ -278,6 +278,7 @@ export function mapMuscleToMuscleGroup(muscle: string): string | undefined {
 }
 
 export function getWorkoutMuscles(workout: Workout) {
+  console.log('workout', workout)
   const muscles = workout.exercises
     .map((exercise) => exercise.mainMuscles)
     .flat()

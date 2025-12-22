@@ -27,7 +27,16 @@ import { instructionsService } from '../../services/instructions/instructions.se
 import { showErrorMsg } from '../../services/event-bus.service'
 import { messages } from '../../assets/config/messages'
 import { setService } from '../../services/set/set.service'
-// import TimerIcon from '@mui/icons-material/Timer'
+import TimerIcon from '@mui/icons-material/Timer'
+import { RestingTimerEdit } from '../RestingTimerEdit/RestingTimerEdit'
+
+interface SlideDialogOptions {
+  title: string
+  component: React.ReactNode
+  type: 'resting-timer' | 'exercise-details'
+  open: boolean
+  height?: 'full' | 'half'
+}
 
 interface ExerciseCardProps {
   exercise: Exercise
@@ -88,8 +97,15 @@ export function ExerciseCard({
   }
 
   const [exerciseSets, setExerciseSets] = useState<Set[]>([])
-  const [isOpen, setIsOpen] = useState(false)
   const [isEditNotesOpen, setIsEditNotesOpen] = useState(false)
+
+  const [slideDialogOptions, setSlideDialogOptions] =
+    useState<SlideDialogOptions>({
+      title: '',
+      component: null,
+      type: 'exercise-details',
+      open: false,
+    })
 
   const [editNotes, setEditNotes] = useState(
     isExpected
@@ -113,7 +129,12 @@ export function ExerciseCard({
       title: 'View Details',
       icon: <InfoOutlineIcon />,
       onClick: () => {
-        setIsOpen(true)
+        setSlideDialogOptions({
+          title: capitalizeFirstLetter(exercise.name),
+          component: <ExerciseDetails exercise={exercise} />,
+          type: 'exercise-details',
+          open: true,
+        })
       },
     },
     isExpected && {
@@ -125,6 +146,19 @@ export function ExerciseCard({
         if (onSwitchRpeRir) {
           onSwitchRpeRir(exercise.exerciseId, modeToSet)
         }
+      },
+    },
+    isExpected && {
+      title: 'Edit Resting Timer',
+      icon: <TimerIcon />,
+      onClick: () => {
+        setSlideDialogOptions((prev) => {
+          return {
+            ...prev,
+            type: 'resting-timer',
+            open: true,
+          }
+        })
       },
     },
 
@@ -142,13 +176,6 @@ export function ExerciseCard({
         setIsEditNotesOpen(true)
       },
     },
-    // {
-    //   title: 'Edit Resting Timer',
-    //   icon: <TimerIcon />,
-    //   onClick: () => {
-    //     setIsEditNotesOpen(true)
-    //   },
-    // },
 
     isExpected
       ? {
@@ -256,6 +283,39 @@ export function ExerciseCard({
     }
   }
 
+  function getSlideDialogTitle() {
+    switch (slideDialogOptions.type) {
+      case 'exercise-details':
+        return capitalizeFirstLetter(exercise.name)
+      case 'resting-timer':
+        return 'Resting Timer'
+      default:
+        return ''
+    }
+  }
+
+  function getSlideDialogComponent() {
+    switch (slideDialogOptions.type) {
+      case 'exercise-details':
+        return <ExerciseDetails exercise={exercise} />
+      case 'resting-timer':
+        return <RestingTimerEdit />
+      default:
+        return <></>
+    }
+  }
+
+  function getSlideDialogHeight() {
+    switch (slideDialogOptions.type) {
+      case 'exercise-details':
+        return 'full'
+      case 'resting-timer':
+        return 'half'
+      default:
+        return 'full'
+    }
+  }
+
   if (!exerciseInstructions || !exercise) return null
 
   return (
@@ -360,11 +420,19 @@ export function ExerciseCard({
         )}
       </Card>
       <SlideDialog
-        open={isOpen}
-        onClose={() => setIsOpen(false)}
-        title={capitalizeFirstLetter(exercise.name)}
-        component={<ExerciseDetails exercise={exercise} />}
-        type="full"
+        open={slideDialogOptions.open}
+        onClose={() =>
+          setSlideDialogOptions({
+            ...slideDialogOptions,
+            open: false,
+            component: null,
+            type: 'exercise-details',
+            title: '',
+          })
+        }
+        title={getSlideDialogTitle()}
+        component={getSlideDialogComponent()}
+        type={getSlideDialogHeight()}
       />
       <CustomAlertDialog
         open={isEditNotesOpen}

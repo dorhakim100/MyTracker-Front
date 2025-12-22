@@ -321,7 +321,9 @@ export function NameExercises({
       <div
         className={`end-buttons-container ${
           prefs.isDarkMode ? 'dark-mode' : ''
-        } ${prefs.favoriteColor}`}
+        } ${prefs.favoriteColor} ${
+          workout.exercises.length > 0 ? 'has-exercises' : ''
+        }`}
       >
         <CustomButton
           text="Add Exercise"
