@@ -8,6 +8,6 @@ export interface Instructions {
   exercises: ExerciseInstructions[]
   weekNumber: number
   timesPerWeek: number
-  isDone: boolean
-  isFinished?: boolean
+  isDone: boolean // isDone is used to mark the session as done, not the exercises
+  isFinished?: boolean // isFinished is used to mark the session as finished, including all exercises
 }

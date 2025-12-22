@@ -23,6 +23,10 @@ const CONSTANT_RESTING_TIME = 150 * 1000
 export function Timer() {
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
 
+  const currentExercise = useSelector(
+    (state: RootState) => state.workoutModule.currentExercise
+  )
+
   const [percentage, setPercentage] = useState(0)
 
   useEffect(() => {

@@ -8,12 +8,15 @@ import {
   REMOVE_WORKOUT,
   SET_SELECTED_SESSION_DAY,
   REMOVE_SESSION_DAY,
+  REMOVE_CURRENT_EXERCISE,
+  SET_CURRENT_EXERCISE,
 } from '../reducers/workout.reducer'
 import { Workout } from '../../types/workout/Workout'
 import { WorkoutFilter } from '../../types/workoutFilter/WorkoutFilter'
 import { User } from '../../types/user/User'
 import { SessionDay } from '../../types/workout/SessionDay'
 import { sessionService } from '../../services/session/session.service'
+import { ExerciseInstructions } from '../../types/exercise/ExerciseInstructions'
 
 export async function loadWorkouts(filter: WorkoutFilter) {
   try {
@@ -122,4 +125,12 @@ export async function removeSessionDay(sessionDayId: string) {
   } catch (err) {
     throw err
   }
+}
+
+export function setCurrentExercise(exercise: ExerciseInstructions) {
+  store.dispatch({ type: SET_CURRENT_EXERCISE, exercise })
+}
+
+export function removeCurrentExercise() {
+  store.dispatch({ type: REMOVE_CURRENT_EXERCISE })
 }
