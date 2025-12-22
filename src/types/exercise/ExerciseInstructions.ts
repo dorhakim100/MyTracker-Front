@@ -4,6 +4,8 @@ export interface ExerciseInstructions {
   exerciseId: string
   sets: Set[]
 
+  restingTime?: number
+
   notes: ExpectedActual<string>
   name?: string
   image?: string

@@ -384,9 +384,6 @@ export function ExerciseCard({
               exercise.equipment &&
               exercise.equipment.length > 0 && (
                 <>
-                  <Divider
-                    className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-                  />
                   <Typography
                     variant="body2"
                     className="exercise-card-equipment"
@@ -397,6 +394,14 @@ export function ExerciseCard({
                   </Typography>
                 </>
               )}
+            {isExpected && (
+              <>
+                <Divider
+                  className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+                />
+                <span>Resting timer: 00:00</span>
+              </>
+            )}
           </div>
         </div>
         {exerciseInstructions && exerciseInstructions.sets && (

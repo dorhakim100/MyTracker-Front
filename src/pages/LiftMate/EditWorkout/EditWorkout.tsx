@@ -29,6 +29,7 @@ import { ExerciseInstructions } from '../../../types/exercise/ExerciseInstructio
 import { ExerciseFilter } from '../../../types/exerciseFilter/ExerciseFilter'
 import { ExpectedActual } from '../../../types/expectedActual/ExpectedActual'
 // import { useKeyboardHeight } from '../../../hooks/useKeyboardHeight'
+import { MINUTE_IN_MS } from '../../../assets/config/times'
 
 interface EditWorkoutProps {
   selectedWorkout?: Workout | null
@@ -260,6 +261,7 @@ export function EditWorkout({
           expected: string
           actual: string
         },
+        restingTime: MINUTE_IN_MS * 2.5, //  2.5 minutes as default
       }
     })
 
