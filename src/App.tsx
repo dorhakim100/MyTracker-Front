@@ -28,6 +28,7 @@ import { getDefaultsPrefs } from './services/system/system.service.ts'
 import { PwaInstall } from './pages/PwaInstall/PwaInstall.tsx'
 import { TraineeUserCard } from './components/TraineeUserCard/TraineeUserCard.tsx'
 import { AppHeader } from './components/AppHeader/AppHeader.tsx'
+import { Timer } from './components/Timer/Timer.tsx'
 
 const isProd = import.meta.env.PROD
 
@@ -234,8 +235,8 @@ function App() {
             </Routes>
           )}
         </SlideAnimation>
+        <Timer />
       </main>
-
       {user && <FixedBottomNavigation routes={filteredRoutes} />}
     </>
   )

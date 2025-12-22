@@ -458,7 +458,7 @@ export function EditWorkout({
 
   return (
     <div
-      className={`page-container edit-workout-container ${
+      className={`edit-workout-container ${
         prefs.isDarkMode ? 'dark-mode' : ''
       }`}
     >

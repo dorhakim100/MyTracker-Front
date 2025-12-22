@@ -113,7 +113,7 @@
 .MuiDialog-container {
   &:has(.blue) {
     .MuiPaper-root {
-      background-color: $dark-gray-blue !important;
+      // background-color: $dark-gray-blue !important;
     }
   }
 }

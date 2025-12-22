@@ -171,33 +171,27 @@ export function NameExercises({
   }
 
   const renderExercises = () => {
-    return (
-      <div
-        className={`exercises-container ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-      >
-        {workout.exercises.map((exercise) => {
-          return (
-            <ExerciseCard
-              key={exercise.exerciseId}
-              exercise={exercise}
-              onDelete={onDeleteExercise}
-              onEditExerciseNotes={onEditExerciseNotes}
-              setInstructions={setInstructions}
-              onSwitchRpeRir={onSwitchRpeRir}
-              setIsReorderExercisesOpen={(isOpen: boolean) => {
-                if (isOpen) openDialog('reorder')
-              }}
-              showEquipment={true}
-              instructions={instructions}
-              exerciseInstructions={instructions.exercises.find(
-                (i) => i.exerciseId === exercise.exerciseId
-              )}
-              isExpected={true}
-            />
-          )
-        })}
-      </div>
-    )
+    return workout.exercises.map((exercise) => {
+      return (
+        <ExerciseCard
+          key={exercise.exerciseId}
+          exercise={exercise}
+          onDelete={onDeleteExercise}
+          onEditExerciseNotes={onEditExerciseNotes}
+          setInstructions={setInstructions}
+          onSwitchRpeRir={onSwitchRpeRir}
+          setIsReorderExercisesOpen={(isOpen: boolean) => {
+            if (isOpen) openDialog('reorder')
+          }}
+          showEquipment={true}
+          instructions={instructions}
+          exerciseInstructions={instructions.exercises.find(
+            (i) => i.exerciseId === exercise.exerciseId
+          )}
+          isExpected={true}
+        />
+      )
+    })
   }
 
   const getDialogComponent = () => {
@@ -323,30 +317,34 @@ export function NameExercises({
             />
           </>
         )}
-        <div className="end-buttons-container">
-          <CustomButton
-            text="Add Exercise"
-            onClick={() => openDialog('add')}
-            icon={<AddIcon />}
-            fullWidth={true}
-          />
+      </div>
+      <div
+        className={`end-buttons-container ${
+          prefs.isDarkMode ? 'dark-mode' : ''
+        } ${prefs.favoriteColor}`}
+      >
+        <CustomButton
+          text="Add Exercise"
+          onClick={() => openDialog('add')}
+          icon={<AddIcon />}
+          fullWidth={true}
+        />
 
-          {workout.exercises.length > 0 && (
-            <>
-              <Divider
-                className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-                orientation="vertical"
-                flexItem={true}
-              />
-              <CustomButton
-                text="Save Workout"
-                onClick={onSaveWorkout}
-                icon={<BeenhereIcon />}
-                fullWidth={true}
-              />
-            </>
-          )}
-        </div>
+        {workout.exercises.length > 0 && (
+          <>
+            <Divider
+              className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+              orientation="vertical"
+              flexItem={true}
+            />
+            <CustomButton
+              text="Save Workout"
+              onClick={onSaveWorkout}
+              icon={<BeenhereIcon />}
+              fullWidth={true}
+            />
+          </>
+        )}
       </div>
       <SlideDialog
         open={dialogState.open}

@@ -170,12 +170,10 @@ export function FixedBottomNavigation(props: {
           className={`${prefs.isDarkMode ? 'dark-mode' : ''} ${
             prefs.favoriteColor
           }`}
-          sx={
-            {
-              // position: 'absolute',
-              // opacity: 0,
-            }
-          }
+          sx={{
+            display: location.pathname === '/lift-mate/workouts' ? 'none' : '',
+            // position: 'absolute',
+          }}
         >
           {speedDialActions.map((action) => (
             <SpeedDialAction
