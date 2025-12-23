@@ -27,6 +27,7 @@ import { setSelectedDiaryDay } from '../../store/actions/user.actions'
 import { messages } from '../../assets/config/messages'
 import { showErrorMsg } from '../../services/event-bus.service'
 import { BarcodeScanner } from '../../components/BarcodeScanner/BarcodeScanner'
+import { smoothScroll } from '../../services/util.service'
 // import { searchTypes } from '../../assets/config/search-types'
 
 type ModalType = 'search' | 'scan'
@@ -238,7 +239,10 @@ export function FixedBottomNavigation(props: {
                       setSlideDirection(index < currIndex ? -1 : 1)
 
                       setNavigateTo(route.path)
-                      navigate(route.path)
+
+                      if (route.path === location.pathname) {
+                        smoothScroll()
+                      } else navigate(route.path)
                     }}
                     className={`${prefs.favoriteColor}`}
                   />
@@ -259,7 +263,10 @@ export function FixedBottomNavigation(props: {
                       setSlideDirection(
                         index + leftRoutes.length > currIndex ? 1 : -1
                       )
-                      navigate(route.path)
+
+                      if (route.path === location.pathname) {
+                        smoothScroll()
+                      } else navigate(route.path)
                     }}
                     className={`${prefs.favoriteColor}`}
                   />
