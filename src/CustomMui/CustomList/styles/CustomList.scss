@@ -85,6 +85,13 @@
       border-bottom: 2px solid $picker-color-pink;
     }
   }
+
+  .loading-more-items-container {
+    align-self: start;
+    .results {
+      height: fit-content;
+    }
+  }
 }
 
 .item-image {

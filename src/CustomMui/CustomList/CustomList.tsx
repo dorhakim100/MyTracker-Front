@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import List from '@mui/material/List'
 import ListItemButton from '@mui/material/ListItemButton'
@@ -82,32 +82,88 @@ CustomListProps<T>) {
   const listContainerRef = useRef<HTMLDivElement>(null)
   const [isLoadingMoreItems, setIsLoadingMoreItems] = useState<boolean>(false)
 
+  const handleLoadMore = useCallback(async () => {
+    if (!onLoadMore) return
+    try {
+      setIsLoadingMoreItems(true)
+      await onLoadMore()
+    } catch (error) {
+      console.error(error)
+    } finally {
+      // setIsLoadingMoreItems(false)
+    }
+  }, [onLoadMore])
+
   useEffect(() => {
     setReorderedItems([...items])
   }, [items])
 
   useEffect(() => {
+    if (!onLoadMore) return
+
     const handleScroll = () => {
-      if (listContainerRef.current) {
-        const scrollTop = listContainerRef.current.scrollTop
-        const scrollHeight = listContainerRef.current.scrollHeight
-        const clientHeight = listContainerRef.current.clientHeight
-        if (scrollTop + clientHeight >= scrollHeight) {
+      const container = listContainerRef.current
+      if (!container) return
+
+      // Find the actual scrollable element (could be container or a parent)
+      let scrollableElement: HTMLElement | null = container
+
+      // Check if container itself is scrollable
+      const hasScroll = container.scrollHeight > container.clientHeight
+
+      if (!hasScroll) {
+        // Find the scrollable parent
+        let parent = container.parentElement
+        while (parent && parent !== document.body) {
+          if (parent.scrollHeight > parent.clientHeight) {
+            scrollableElement = parent
+            break
+          }
+          parent = parent.parentElement
+        }
+      }
+
+      if (scrollableElement) {
+        const scrollTop = scrollableElement.scrollTop
+        const scrollHeight = scrollableElement.scrollHeight
+        const clientHeight = scrollableElement.clientHeight
+
+        // Trigger when within 50px of bottom
+        if (scrollTop + clientHeight >= scrollHeight - 50) {
           handleLoadMore()
         }
       }
     }
 
-    if (listContainerRef.current) {
-      listContainerRef.current.addEventListener('scroll', handleScroll)
-    }
+    const container = listContainerRef.current
+    if (!container) return
 
-    return () => {
-      if (listContainerRef.current) {
-        listContainerRef.current.removeEventListener('scroll', handleScroll)
+    // Try to find scrollable element
+    let scrollableElement: HTMLElement | null = container
+
+    // Check if container itself is scrollable
+    if (container.scrollHeight <= container.clientHeight) {
+      // Find scrollable parent
+      let parent = container.parentElement
+      while (parent && parent !== document.body) {
+        if (parent.scrollHeight > parent.clientHeight) {
+          scrollableElement = parent
+          break
+        }
+        parent = parent.parentElement
       }
     }
-  }, [items, listContainerRef.current])
+
+    if (scrollableElement) {
+      scrollableElement.addEventListener('scroll', handleScroll, {
+        passive: true,
+      })
+
+      return () => {
+        scrollableElement?.removeEventListener('scroll', handleScroll)
+      }
+    }
+  }, [onLoadMore, handleLoadMore, items])
 
   const leadingActions = (item: T) =>
     renderLeftSwipeActions ? (
@@ -137,18 +193,6 @@ CustomListProps<T>) {
     console.log(result)
   }
 
-  async function handleLoadMore() {
-    if (!onLoadMore) return
-    try {
-      setIsLoadingMoreItems(true)
-      await onLoadMore()
-    } catch (error) {
-      console.error(error)
-    } finally {
-      setIsLoadingMoreItems(false)
-    }
-  }
-
   const renderList = (item: T, dragProvided: DraggableProvided) => {
     return (
       <ListItemButton
@@ -156,7 +200,7 @@ CustomListProps<T>) {
         onClick={onItemClick ? () => onItemClick(item) : undefined}
       >
         {renderLeft ? (
-          <div className='left-content'>{renderLeft(item)}</div>
+          <div className="left-content">{renderLeft(item)}</div>
         ) : null}
         <ListItemText
           primary={renderPrimaryText ? renderPrimaryText(item) : undefined}
@@ -166,7 +210,7 @@ CustomListProps<T>) {
         />
         {renderRight ? (
           <div
-            className='right-content'
+            className="right-content"
             onClick={
               onRightClick
                 ? (event) => {
@@ -183,7 +227,7 @@ CustomListProps<T>) {
         {isDragable && (
           <span
             {...dragProvided.dragHandleProps}
-            className='drag-handle'
+            className="drag-handle"
             onClick={(e) => e.stopPropagation()}
           >
             ⋮⋮
@@ -202,7 +246,7 @@ CustomListProps<T>) {
 
   if (!reorderedItems.length) {
     return (
-      <div className='no-results-container'>
+      <div className="no-results-container">
         <span>{noResultsMessage}</span>
       </div>
     )
@@ -215,7 +259,7 @@ CustomListProps<T>) {
     >
       <List>
         <DragDropContext onDragEnd={onDragEnd} onDragStart={onDragStart}>
-          <Droppable droppableId='droppable'>
+          <Droppable droppableId="droppable">
             {(provided) => (
               <div ref={provided.innerRef} {...provided.droppableProps}>
                 {reorderedItems.map((item, index) => {
@@ -286,7 +330,7 @@ CustomListProps<T>) {
           </Droppable>
         </DragDropContext>
         {isLoadingMoreItems && (
-          <div className='loading-more-items-container'>
+          <div className="loading-more-items-container">
             {/* <CircularProgress /> */}
             <SkeletonList SKELETON_NUMBER={3} />
           </div>
