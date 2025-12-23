@@ -79,7 +79,7 @@ export async function setPrefs(prefs: Prefs): Promise<void> {
 export function getDefaultsPrefs(): Prefs {
   return {
     app: 'my-tracker',
-    isDarkMode: false,
+    isDarkMode: true,
     isEnglish: false,
     favoriteColor: 'primary',
     weightChartSettings: {

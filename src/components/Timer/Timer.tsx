@@ -10,6 +10,7 @@ import { SECOND_IN_MS } from '../../assets/config/times'
 import { showErrorMsg } from '../../services/event-bus.service'
 import { messages } from '../../assets/config/messages'
 import { setTimer } from '../../store/actions/workout.action'
+import { SlideAnimation } from '../SlideAnimation/SlideAnimation'
 
 const colorMap: Record<string, string> = {
   primary: 'var(--primary-color)',
@@ -91,18 +92,24 @@ export function Timer() {
     return null
 
   return (
-    <div
+    <SlideAnimation
+      motionKey={doneSets || 0}
+      direction={1}
+      duration={0.25}
       className={`timer-container ${prefs.isDarkMode ? 'dark-mode' : ''} ${
         prefs.favoriteColor
       }`}
     >
+      {/* <div className={`timer-container ${prefs.isDarkMode ? 'dark-mode' : ''} ${
+        prefs.favoriteColor
+      }`}> */}
       <img src={currentExercise?.image} alt="timer" className="timer-image" />
       <div className="text-container">
         <Typography variant="h6" className="bold-header">
           Done Sets: {doneSets} / {totalSets}
         </Typography>
         <div className="times-container">
-          <Typography variant="body1">
+          <Typography variant="body1" className="bold-header opacity-1">
             Rested Time: {formatTime(secondsPassedState * SECOND_IN_MS, false)}
           </Typography>
           <Divider
@@ -110,7 +117,10 @@ export function Timer() {
             flexItem
             className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
           />
-          <Typography variant="body1">
+          <Typography
+            variant="body1"
+            className="bold-header opacity-1 time-left"
+          >
             Time Left:{' '}
             {currentExercise?.restingTime &&
             secondsPassedState * SECOND_IN_MS < currentExercise?.restingTime
@@ -119,7 +129,7 @@ export function Timer() {
                     secondsPassedState * SECOND_IN_MS,
                   false
                 )
-              : '00:00'}
+              : '0:00'}
           </Typography>
         </div>
       </div>
@@ -127,6 +137,7 @@ export function Timer() {
         value={percentage}
         color={colorMap[prefs.favoriteColor]}
       />
-    </div>
+      {/* </div> */}
+    </SlideAnimation>
   )
 }
