@@ -54,5 +54,6 @@ export const messages = {
     deleteSession: 'Failed to delete session',
     getNotes: 'Failed to get notes',
     getSets: 'Failed to get sets',
+    startTimer: 'Failed to start timer',
   },
 }

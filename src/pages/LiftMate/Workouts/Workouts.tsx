@@ -79,6 +79,8 @@ export function Workouts() {
     (stateSelector: RootState) => stateSelector.userModule.traineeUser
   )
 
+  const timer = useSelector((state: RootState) => state.workoutModule.timer)
+
   const workouts = useSelector(
     (stateSelector: RootState) => stateSelector.workoutModule.workouts
   )
@@ -429,7 +431,11 @@ export function Workouts() {
   if (!sessionDay || !sessionDay._id || isPageLoading) return renderSkeleton()
   return (
     <>
-      <div className={`page-container workouts-container`}>
+      <div
+        className={`page-container workouts-container ${
+          timer ? 'has-timer' : ''
+        }`}
+      >
         <DayController
           selectedDay={selectedDay}
           selectedDayDate={sessionFilter.date}

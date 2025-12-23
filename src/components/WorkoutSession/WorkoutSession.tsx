@@ -9,6 +9,7 @@ import {
   removeCurrentExercise,
   setCurrentExercise,
   setSelectedSessionDay,
+  removeTimer,
 } from '../../store/actions/workout.action'
 
 import { ExerciseEditor } from '../../components/ExerciseEditor/ExerciseEditor'
@@ -35,6 +36,7 @@ import { CustomInput } from '../../CustomMui/CustomInput/CustomInput'
 import { ExerciseCard } from '../ExerciseCard/ExerciseCard'
 import { getWorkoutMuscles } from '../../services/exersice-search/exersice-search'
 import CircleIcon from '@mui/icons-material/Circle'
+import { indexedDbService } from '../../services/indexeddb.service'
 interface WorkoutSessionProps {
   sessionDay: SessionDay
   onExerciseInfoClick: (exercise: Exercise) => void
@@ -57,6 +59,8 @@ export function WorkoutSession({
   const workouts = useSelector(
     (state: RootState) => state.workoutModule.workouts
   )
+
+  const timer = useSelector((state: RootState) => state.workoutModule.timer)
 
   const [alertDialogOptions, setAlertDialogOptions] = useState<{
     open: boolean
@@ -179,6 +183,7 @@ export function WorkoutSession({
             instructions: { ...savedInstructions, isFinished: true },
           })
           removeCurrentExercise()
+          await removeTimer(timer?._id)
         } else {
           setCurrentExercise(currentExerciseToSet)
         }

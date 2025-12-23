@@ -12,12 +12,14 @@ export const SET_SELECTED_SESSION_DAY = 'SET_SELECTED_SESSION_DAY'
 export const REMOVE_SESSION_DAY = 'REMOVE_SESSION_DAY'
 export const SET_CURRENT_EXERCISE = 'SET_CURRENT_EXERCISE'
 export const REMOVE_CURRENT_EXERCISE = 'REMOVE_CURRENT_EXERCISE'
-
+export const SET_TIMER = 'SET_TIMER'
+export const REMOVE_TIMER = 'REMOVE_TIMER'
 export interface WorkoutState {
   workouts: Workout[]
   workout: Workout
   sessionDay: SessionDay | null
   currentExercise: ExerciseInstructions | null
+  timer: any | null
 }
 
 const initialState: WorkoutState = {
@@ -25,6 +27,7 @@ const initialState: WorkoutState = {
   workout: workoutService.getEmptyWorkout(),
   sessionDay: null,
   currentExercise: null,
+  timer: null,
 }
 
 export function workoutReducer(state = initialState, action: any) {
@@ -66,6 +69,12 @@ export function workoutReducer(state = initialState, action: any) {
       break
     case REMOVE_CURRENT_EXERCISE:
       newState = { ...state, currentExercise: null }
+      break
+    case SET_TIMER:
+      newState = { ...state, timer: action.timer }
+      break
+    case REMOVE_TIMER:
+      newState = { ...state, timer: null }
       break
     default:
   }

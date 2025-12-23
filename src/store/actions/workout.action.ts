@@ -10,6 +10,8 @@ import {
   REMOVE_SESSION_DAY,
   REMOVE_CURRENT_EXERCISE,
   SET_CURRENT_EXERCISE,
+  REMOVE_TIMER,
+  SET_TIMER,
 } from '../reducers/workout.reducer'
 import { Workout } from '../../types/workout/Workout'
 import { WorkoutFilter } from '../../types/workoutFilter/WorkoutFilter'
@@ -17,6 +19,7 @@ import { User } from '../../types/user/User'
 import { SessionDay } from '../../types/workout/SessionDay'
 import { sessionService } from '../../services/session/session.service'
 import { ExerciseInstructions } from '../../types/exercise/ExerciseInstructions'
+import { indexedDbService } from '../../services/indexeddb.service'
 
 export async function loadWorkouts(filter: WorkoutFilter) {
   try {
@@ -133,4 +136,22 @@ export function setCurrentExercise(exercise: ExerciseInstructions) {
 
 export function removeCurrentExercise() {
   store.dispatch({ type: REMOVE_CURRENT_EXERCISE })
+}
+
+export async function setTimer(timer: any) {
+  try {
+    const savedTimer = await indexedDbService.post('timer', timer)
+    store.dispatch({ type: SET_TIMER, timer: savedTimer })
+  } catch (err) {
+    throw err
+  }
+}
+
+export async function removeTimer(timerId: string) {
+  try {
+    await indexedDbService.remove('timer', timerId)
+    store.dispatch({ type: REMOVE_TIMER })
+  } catch (err) {
+    throw err
+  }
 }

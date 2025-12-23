@@ -7,6 +7,9 @@ import { Divider, Typography } from '@mui/material'
 import { CustomLinearProgress } from '../../CustomMui/CustomLinearProgress/CustomLinearProgress'
 import { formatTime } from '../../services/util.service'
 import { SECOND_IN_MS } from '../../assets/config/times'
+import { showErrorMsg } from '../../services/event-bus.service'
+import { messages } from '../../assets/config/messages'
+import { setTimer } from '../../store/actions/workout.action'
 
 const colorMap: Record<string, string> = {
   primary: 'var(--primary-color)',
@@ -30,6 +33,8 @@ export function Timer() {
 
   const [secondsPassedState, setSecondsPassedState] = useState<number>(0)
 
+  const timer = useSelector((state: RootState) => state.workoutModule.timer)
+
   const percentage = useMemo(() => {
     if (!currentExercise || !currentExercise.restingTime) return 0
     return (
@@ -47,15 +52,36 @@ export function Timer() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setSecondsPassedState((prev) => prev + 0.1)
+      if (timer) {
+        setSecondsPassedState(
+          (new Date().getTime() - timer.startTime) / SECOND_IN_MS
+        )
+      }
     }, SECOND_IN_MS / 10)
-    return () => clearInterval(interval)
-  }, [])
+    return () => {
+      clearInterval(interval)
+    }
+  }, [timer])
 
   useEffect(() => {
-    if (!currentExercise || !currentExercise.restingTime) return
-    setSecondsPassedState(0)
+    startSet()
   }, [currentExercise])
+
+  async function startSet() {
+    try {
+      if (!currentExercise || !currentExercise.restingTime) return
+
+      setSecondsPassedState(0)
+
+      await setTimer({
+        currentExercise: currentExercise,
+        startTime: new Date().getTime(),
+      })
+    } catch (err) {
+      console.error(err)
+      showErrorMsg(messages.error.startTimer)
+    }
+  }
 
   if (
     !currentExercise ||
