@@ -158,11 +158,18 @@ function App() {
     const loadFavoriteItems = async () => {
       const favoriteIDs = user?.favoriteItems
       if (!favoriteIDs || !favoriteIDs.length) return
-      const favoriteItems = await searchService.searchFavoriteItems(
-        favoriteIDs || []
+
+      // Get cached results immediately and set them
+      const cachedItems = await searchService.searchFavoriteItems(
+        favoriteIDs || [],
+        // Callback when background fetch completes
+        (completeItems) => {
+          setFavoriteItems(completeItems)
+        }
       )
 
-      setFavoriteItems(favoriteItems)
+      // Set cached items immediately (user can see them right away)
+      setFavoriteItems(cachedItems)
     }
     loadFavoriteItems()
   }, [user])

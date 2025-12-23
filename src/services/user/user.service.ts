@@ -150,9 +150,17 @@ async function login(userCred: UserCred) {
     }
 
     const favoriteIDs = user.favoriteItems
-    const favoriteItems = await searchService.searchFavoriteItems(favoriteIDs)
+    // Get cached results immediately and set them
+    const cachedItems = await searchService.searchFavoriteItems(
+      favoriteIDs,
+      // Callback when background fetch completes
+      (completeItems) => {
+        setFavoriteItems(completeItems)
+      }
+    )
 
-    setFavoriteItems(favoriteItems)
+    // Set cached items immediately (user can see them right away)
+    setFavoriteItems(cachedItems)
 
     const LONGEST_FOOD_ID_LENGTH = 10
 

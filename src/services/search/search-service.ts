@@ -164,12 +164,15 @@ function filterDuplicates(res: Item[]) {
   )
 }
 
-async function searchFavoriteItems(favoriteItems: string[]) {
+async function searchFavoriteItems(
+  favoriteItems: string[],
+  onComplete?: (completeItems: Item[]) => void
+) {
   try {
     const res: Item[] = []
     const cached = await indexedDbService.query<Item>(FAVORITE_CACHE, 0)
 
-    const favoriteCopy = [...favoriteItems]
+    const favoriteCopy = favoriteItems.slice()
 
     const favoriteFoods =
       favoriteItems.filter((id) => id.length <= LONGEST_FOOD_ID_LENGTH) || []
@@ -181,64 +184,106 @@ async function searchFavoriteItems(favoriteItems: string[]) {
         const indexToRemove = favoriteCopy.findIndex(
           (id) => id === item.searchId
         )
+        if (indexToRemove === -1) return
 
-        if (indexToRemove !== -1) {
-          favoriteCopy.splice(indexToRemove, 1)
-          const indexToAdd = favoriteItems.findIndex(
-            (id) => id === item.searchId
+        favoriteCopy.splice(indexToRemove, 1)
+        const indexToAdd = favoriteItems.findIndex((id) => id === item.searchId)
+        res[indexToAdd] = item
+
+        if (favoriteFoods.includes(item.searchId as string)) {
+          favoriteFoods.splice(
+            favoriteFoods.indexOf(item.searchId as string),
+            1,
+            ''
           )
-          res[indexToAdd] = item
-
-          if (favoriteFoods.includes(item.searchId as string)) {
-            favoriteFoods.splice(
-              favoriteFoods.indexOf(item.searchId as string),
-              1,
-              ''
-            )
-          }
-          if (favoriteProducts.includes(item.searchId as string)) {
-            favoriteProducts.splice(
-              favoriteProducts.indexOf(item.searchId as string),
-              1,
-              ''
-            )
-          }
+        }
+        if (favoriteProducts.includes(item.searchId as string)) {
+          favoriteProducts.splice(
+            favoriteProducts.indexOf(item.searchId as string),
+            1,
+            ''
+          )
         }
       })
     }
 
-    if (favoriteItems.every((id, idx) => id === res[idx]?.searchId)) return res
+    // Filter out empty strings to get actual missing items
+    const missingFoods = favoriteFoods.filter((id) => id !== '')
+    const missingProducts = favoriteProducts.filter((id) => id !== '')
 
-    const promises = [
-      getFoodsByIds(favoriteFoods),
-      getProductsByIds(favoriteProducts),
-    ]
+    // Build result array maintaining order (res is sparse, so map over favoriteItems indices)
+    const cachedResults = favoriteItems
+      .map((_, idx) => res[idx])
+      .filter((item): item is Item => item !== undefined)
 
-    const [foods, products] = await Promise.all(promises)
+    // If all items are cached, return immediately
+    if (missingFoods.length === 0 && missingProducts.length === 0) {
+      return cachedResults
+    }
 
-    foods.forEach((item) => {
-      const originalIndex = favoriteItems.findIndex(
-        (id) => id === item.searchId
-      )
-      if (originalIndex !== -1) {
-        res[originalIndex] = item as Item
+    // Start background fetch for missing items
+    const backgroundFetch = async () => {
+      try {
+        const promises = [
+          getFoodsByIds(missingFoods),
+          getProductsByIds(missingProducts),
+        ]
+
+        const [foods, products] = await Promise.all(promises)
+
+        const completeRes = [...res]
+
+        foods.forEach((item) => {
+          const originalIndex = favoriteItems.findIndex(
+            (id) => id === item.searchId
+          )
+          if (originalIndex !== -1) {
+            completeRes[originalIndex] = item as Item
+          }
+        })
+        products.forEach((item) => {
+          const originalIndex = favoriteItems.findIndex(
+            (id) => id === item.searchId
+          )
+
+          if (originalIndex !== -1) {
+            completeRes[originalIndex] = item as Item
+          }
+        })
+
+        // Build final result maintaining order (completeRes is sparse, so map over favoriteItems indices)
+        const finalRes = favoriteItems
+          .map((_, idx) => completeRes[idx])
+          .filter((item): item is Item => item !== undefined)
+
+        // Batch cache operations - run in background without blocking
+        Promise.all(
+          finalRes.map((item) => addToCache(item as Item, FAVORITE_CACHE))
+        ).catch((err) => {
+          console.error('Error caching favorite items:', err)
+        })
+
+        // Call callback with complete results if provided
+        if (onComplete) {
+          onComplete(finalRes)
+        }
+
+        return finalRes
+      } catch (err) {
+        console.error('Error fetching favorite items in background:', err)
+        // Call callback with cached results even if background fetch fails
+        if (onComplete) {
+          onComplete(cachedResults)
+        }
+        throw err
       }
-    })
-    products.forEach((item) => {
-      const originalIndex = favoriteItems.findIndex(
-        (id) => id === item.searchId
-      )
+    }
 
-      if (originalIndex !== -1) {
-        res[originalIndex] = item as Item
-      }
-    })
+    // Start background fetch (don't await)
+    backgroundFetch()
 
-    // Batch cache operations
-    await Promise.all(
-      res.map((item) => addToCache(item as Item, FAVORITE_CACHE))
-    )
-    return res
+    // Return cached results immediately (maintaining order)
+    return cachedResults
   } catch (err) {
     throw err
   }
