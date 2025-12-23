@@ -20,6 +20,9 @@ import { SessionDay } from '../../types/workout/SessionDay'
 import { sessionService } from '../../services/session/session.service'
 import { ExerciseInstructions } from '../../types/exercise/ExerciseInstructions'
 import { indexedDbService } from '../../services/indexeddb.service'
+import { setService } from '../../services/set/set.service'
+import { Set } from '../../types/exercise/Exercise'
+import { instructionsService } from '../../services/instructions/instructions.service'
 
 export async function loadWorkouts(filter: WorkoutFilter) {
   try {
@@ -152,6 +155,95 @@ export async function removeTimer(timerId: string) {
     await indexedDbService.remove('timer', timerId)
     store.dispatch({ type: REMOVE_TIMER })
   } catch (err) {
+    throw err
+  }
+}
+
+export async function markAsDoneSession(isBulkSetUpdate: boolean = false) {
+  try {
+    const sessionDay = store.getState().workoutModule.sessionDay
+    if (!sessionDay) return
+    const timer = store.getState().workoutModule.timer
+    if (timer) {
+      await removeTimer(timer._id)
+    }
+    removeCurrentExercise()
+    const newExercises = sessionDay.instructions.exercises.map(
+      (exercise: ExerciseInstructions) => {
+        return {
+          ...exercise,
+          isDone: true,
+          sets: exercise.sets.map((set: Set) => {
+            return {
+              ...set,
+              isDone: true,
+            }
+          }),
+        }
+      }
+    )
+    const newInstructions = {
+      ...sessionDay.instructions,
+      isFinished: true,
+      exercises: newExercises,
+    }
+    const newSessionDay = {
+      ...sessionDay,
+      instructions: newInstructions,
+    }
+    const savedInstructions = await instructionsService.save(newInstructions)
+
+    store.dispatch({
+      type: SET_SELECTED_SESSION_DAY,
+      sessionDay: newSessionDay,
+    })
+    if (!isBulkSetUpdate) return
+    const promises = savedInstructions.exercises.map(
+      async (exercise: ExerciseInstructions) => {
+        await markExerciseAsDone(exercise.exerciseId, true)
+      }
+    )
+    await Promise.all(promises)
+    console.log('savedInstructions', savedInstructions)
+  } catch (err) {
+    console.error(err)
+    throw err
+  }
+}
+
+export async function markExerciseAsDone(
+  exerciseId: string,
+  isDoneToSet: boolean
+) {
+  try {
+    const sessionDay = store.getState().workoutModule.sessionDay
+    if (!sessionDay) return
+    if (!sessionDay._id) return
+    const sets = await setService.getSetsBySessionIdAndExerciseId(
+      sessionDay._id,
+      exerciseId
+    )
+
+    const promises = sets.map(async (set: Set) => {
+      let cleanedSet: Set = {
+        ...set,
+        isDone: isDoneToSet,
+      }
+      // Remove the unused RPE/RIR field - only keep the one that's actually used
+      if (cleanedSet.rir) {
+        const { rpe, ...setWithoutRpe } = cleanedSet
+        cleanedSet = setWithoutRpe
+      } else if (cleanedSet.rpe) {
+        const { rir, ...setWithoutRir } = cleanedSet
+        cleanedSet = setWithoutRir
+      }
+
+      await setService.save(cleanedSet)
+    })
+
+    await Promise.all(promises)
+  } catch (err) {
+    console.error(err)
     throw err
   }
 }

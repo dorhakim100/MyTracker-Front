@@ -10,6 +10,7 @@ import {
   setCurrentExercise,
   setSelectedSessionDay,
   removeTimer,
+  markAsDoneSession,
 } from '../../store/actions/workout.action'
 
 import { ExerciseEditor } from '../../components/ExerciseEditor/ExerciseEditor'
@@ -23,7 +24,7 @@ import InfoOutlineIcon from '@mui/icons-material/InfoOutline'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { ExerciseInstructions } from '../../types/exercise/ExerciseInstructions'
-import { showErrorMsg } from '../../services/event-bus.service'
+import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
 import { messages } from '../../assets/config/messages'
 import { instructionsService } from '../../services/instructions/instructions.service'
 import { setIsLoading } from '../../store/actions/system.actions'
@@ -36,7 +37,7 @@ import { CustomInput } from '../../CustomMui/CustomInput/CustomInput'
 import { ExerciseCard } from '../ExerciseCard/ExerciseCard'
 import { getWorkoutMuscles } from '../../services/exersice-search/exersice-search'
 import CircleIcon from '@mui/icons-material/Circle'
-import { indexedDbService } from '../../services/indexeddb.service'
+import DoneAllIcon from '@mui/icons-material/DoneAll'
 interface WorkoutSessionProps {
   sessionDay: SessionDay
   onExerciseInfoClick: (exercise: Exercise) => void
@@ -178,12 +179,7 @@ export function WorkoutSession({
               : isExerciseDone(e)
         )
         if (isAllExercisesDone) {
-          setSelectedSessionDay({
-            ...sessionDay,
-            instructions: { ...savedInstructions, isFinished: true },
-          })
-          removeCurrentExercise()
-          await removeTimer(timer?._id)
+          await markAsDoneSession()
         } else {
           setCurrentExercise(currentExerciseToSet)
         }
@@ -328,6 +324,42 @@ export function WorkoutSession({
                 saveExerciseNotes(alertDialogOptions.exerciseId, exerciseNotes)
               }
               className={`${prefs.favoriteColor}`}
+              disabled={sessionDay.instructions.isFinished}
+            />
+          </DialogActions>
+        </div>
+      )
+    }
+
+    if (alertDialogOptions.component === 'mark-as-done') {
+      return (
+        <div className="modal-mark-as-done-container">
+          <Typography variant="h6">
+            Are you sure you want to mark this workout as done?
+          </Typography>
+          <DialogActions>
+            <CustomButton
+              text="Cancel"
+              fullWidth
+              onClick={closeAlertDialog}
+              className={`${prefs.favoriteColor}`}
+            />
+            <CustomButton
+              text="Mark as Done"
+              fullWidth
+              onClick={async () => {
+                try {
+                  setIsLoading(true)
+                  await markAsDoneSession(true)
+                  closeAlertDialog()
+                  showSuccessMsg(messages.success.markAsDone)
+                } catch (error) {
+                  showErrorMsg(messages.error.updateSet)
+                } finally {
+                  setIsLoading(false)
+                }
+              }}
+              className={`${prefs.favoriteColor}`}
             />
           </DialogActions>
         </div>
@@ -364,6 +396,18 @@ export function WorkoutSession({
                   open: true,
                   title: 'Delete Workout',
                   component: 'delete',
+                  exerciseId: '',
+                })
+              }}
+              isIcon={true}
+            />
+            <CustomButton
+              icon={<DoneAllIcon />}
+              onClick={() => {
+                setAlertDialogOptions({
+                  open: true,
+                  title: 'Mark as Done',
+                  component: 'mark-as-done',
                   exerciseId: '',
                 })
               }}

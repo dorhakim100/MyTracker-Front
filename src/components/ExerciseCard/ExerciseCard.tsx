@@ -10,7 +10,7 @@ import { ExerciseEditor } from '../ExerciseEditor/ExerciseEditor'
 import { CustomOptionsMenu } from '../../CustomMui/CustomOptionsMenu/CustomOptionsMenu'
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
 import { Instructions } from '../../types/instructions/Instructions'
-
+import { markExerciseAsDone } from '../../store/actions/workout.action'
 import EditNoteIcon from '@mui/icons-material/EditNote'
 import DeleteIcon from '@mui/icons-material/Delete'
 import InfoOutlineIcon from '@mui/icons-material/InfoOutline'
@@ -218,29 +218,8 @@ export function ExerciseCard({
 
     try {
       await updateExercise(newExerciseInstructions, 0, false, false)
-      const sets = await setService.getSetsBySessionIdAndExerciseId(
-        sessionDay._id,
-        exercise.exerciseId
-      )
 
-      const promises = sets.map(async (set: Set) => {
-        let cleanedSet: Set = {
-          ...set,
-          isDone: isDoneToSet,
-        }
-        // Remove the unused RPE/RIR field - only keep the one that's actually used
-        if (cleanedSet.rir) {
-          const { rpe, ...setWithoutRpe } = cleanedSet
-          cleanedSet = setWithoutRpe
-        } else if (cleanedSet.rpe) {
-          const { rir, ...setWithoutRir } = cleanedSet
-          cleanedSet = setWithoutRir
-        }
-
-        await setService.save(cleanedSet)
-      })
-
-      await Promise.all(promises)
+      await markExerciseAsDone(exercise.exerciseId, isDoneToSet)
     } catch (err) {
       showErrorMsg(messages.error.updateSet)
     }
@@ -267,7 +246,7 @@ export function ExerciseCard({
     }
 
     getExerciseSets()
-  }, [sessionDay?._id])
+  }, [sessionDay?._id, sessionDay?.instructions.isFinished])
 
   async function getPreviousInstructions() {
     if (!instructions || instructions.weekNumber === 1) return null
