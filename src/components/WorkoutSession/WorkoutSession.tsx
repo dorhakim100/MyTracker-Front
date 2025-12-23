@@ -36,7 +36,6 @@ import { CustomInput } from '../../CustomMui/CustomInput/CustomInput'
 import { ExerciseCard } from '../ExerciseCard/ExerciseCard'
 import { getWorkoutMuscles } from '../../services/exersice-search/exersice-search'
 import CircleIcon from '@mui/icons-material/Circle'
-import { indexedDbService } from '../../services/indexeddb.service'
 interface WorkoutSessionProps {
   sessionDay: SessionDay
   onExerciseInfoClick: (exercise: Exercise) => void
