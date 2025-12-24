@@ -145,7 +145,7 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
   }, [handleSearch])
 
   const debouncedRunSearch = useRef(
-    debounce(() => latestHandleSearchRef.current(), 300)
+    debounce(() => latestHandleSearchRef.current(), 500)
   ).current
 
   useEffect(() => {

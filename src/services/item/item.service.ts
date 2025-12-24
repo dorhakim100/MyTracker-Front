@@ -14,7 +14,6 @@ export const itemService = {
   remove,
   getEmptyItem,
   getDefaultFilter,
-  getMaxPage,
 
   // Search-related operations
   searchByTerm,
@@ -40,7 +39,7 @@ async function query(
   }
 }
 
-async function getById(itemId, filter) {
+async function getById(itemId: string, filter: ItemFilter) {
   try {
     const res = await httpService.get(`${KEY}/${itemId}`, filter)
     return res
@@ -49,15 +48,15 @@ async function getById(itemId, filter) {
   }
 }
 
-async function remove(itemId) {
+async function remove(itemId: string) {
   try {
-    return await httpService.delete(`${KEY}/${itemId}`)
+    return await httpService.delete(`${KEY}/${itemId}`, null)
   } catch (err) {
     throw err
   }
 }
 
-async function save(item) {
+async function save(item: Item) {
   try {
     let savedItem
     if (item._id) {
@@ -72,11 +71,10 @@ async function save(item) {
 }
 
 // Search-related operations
-async function searchByTerm(searchTerm, options = {}) {
+async function searchByTerm(searchTerm: string) {
   try {
     const items = await httpService.get(`${KEY}/search`, {
-      term: searchTerm,
-      ...options,
+      searchTerm,
     })
     return items
   } catch (err) {
@@ -84,10 +82,11 @@ async function searchByTerm(searchTerm, options = {}) {
   }
 }
 
-async function hasCachedResults(searchTerm) {
+async function hasCachedResults(searchTerm: string) {
   try {
+    console.log('searchTerm', searchTerm)
     const result = await httpService.get(`${KEY}/search/check`, {
-      term: searchTerm,
+      searchTerm,
     })
     return result
   } catch (err) {
@@ -95,11 +94,11 @@ async function hasCachedResults(searchTerm) {
   }
 }
 
-async function saveSearchResults(searchTerm, items) {
+async function saveSearchResults(searchTerm: string, items: Item[]) {
   try {
     const result = await httpService.post(`${KEY}/search`, {
-      term: searchTerm,
-      items: items,
+      searchTerm,
+      items,
     })
     return result
   } catch (err) {
@@ -109,7 +108,7 @@ async function saveSearchResults(searchTerm, items) {
 
 async function clearSearchCache() {
   try {
-    return await httpService.delete(`${KEY}/search/cache`)
+    return await httpService.delete(`${KEY}/search/cache`, null)
   } catch (err) {
     throw err
   }
@@ -117,7 +116,7 @@ async function clearSearchCache() {
 
 async function getCachedSearchTerms() {
   try {
-    const terms = await httpService.get(`${KEY}/search/terms`)
+    const terms = await httpService.get(`${KEY}/search/terms`, null)
     return terms
   } catch (err) {
     throw err
@@ -125,7 +124,7 @@ async function getCachedSearchTerms() {
 }
 
 // Item lookup operations
-async function getBySearchId(searchId) {
+async function getBySearchId(searchId: string) {
   try {
     const item = await httpService.get(`${KEY}/search-id`, { searchId })
     return item
@@ -134,11 +133,10 @@ async function getBySearchId(searchId) {
   }
 }
 
-async function searchByName(name, options = {}) {
+async function searchByName(name: string) {
   try {
     const items = await httpService.get(`${KEY}/search-name`, {
       name,
-      ...options,
     })
     return items
   } catch (err) {
@@ -161,14 +159,4 @@ function getDefaultFilter() {
     sortDir: '',
     pageIdx: 0,
   }
-}
-
-async function getMaxPage(filterBy) {
-  const PAGE_SIZE = 20
-  try {
-    const items = await query({ ...filterBy, isAll: true })
-    let maxPage = items.length / PAGE_SIZE
-    maxPage = Math.ceil(maxPage)
-    return maxPage
-  } catch (err) {}
 }

@@ -16,6 +16,9 @@ import { Log } from '../../types/log/Log'
 import { sourceTypes } from '../../assets/config/source.types'
 import { translateService } from '../translate/translate.service'
 import { imageService } from '../image/image.service'
+
+import { itemService } from '../item/item.service'
+
 const {
   OPEN_FOOD_FACTS_API_URL,
   OPEN_FOOD_FACTS_API_URL_BY_ID,
@@ -71,6 +74,9 @@ async function search(filter: SearchFilter) {
     // const { food, product } = favoriteItems || { food: [], product: [] }
     // const isFavoriteItems = food.length > 0 || product.length > 0
 
+    console.log('txt', txt)
+    console.log('favoriteItems', favoriteItems)
+
     if (!txt && favoriteItems && favoriteItems.length > 0) {
       res = await searchFavoriteItems(favoriteItems)
       return res
@@ -96,6 +102,14 @@ async function search(filter: SearchFilter) {
         translatedTxt
       )
       return cachedRes
+    }
+
+    const hasBackendResults = await itemService.hasCachedResults(translatedTxt)
+    console.log('hasBackendResults', hasBackendResults)
+    if (hasBackendResults) {
+      const backendRes = await itemService.searchByTerm(translatedTxt)
+      res = handleResSorting(backendRes, safeTxt, favoriteItems, translatedTxt)
+      return res
     }
 
     // Fetch both sources in parallel, tolerate failures
@@ -136,6 +150,9 @@ async function search(filter: SearchFilter) {
     }
 
     res = handleResSorting(res, safeTxt, favoriteItems, translatedTxt)
+    console.log('res', res)
+
+    await itemService.saveSearchResults(safeTxt, res)
 
     return res
   } catch (err) {
@@ -751,3 +768,89 @@ function computeRelevanceScore(
 
   return score
 }
+
+// import termsData from '../../../search-terms.json'
+// interface SearchTerms {
+//   highPriority: string[]
+//   proteins: Record<string, string[]>
+//   carbohydrates: Record<string, string[]>
+//   vegetables: Record<string, string[]>
+//   fruits: Record<string, string[]>
+//   dairy: Record<string, string[]>
+//   nutsSeeds: string[]
+//   fatsOils: string[]
+//   meals: Record<string, string[]>
+//   snacks: string[]
+//   beverages: string[]
+//   condiments: string[]
+//   hebrew: string[]
+// }
+
+// // Helper function to flatten all search terms
+// function getAllSearchTerms(data: SearchTerms): string[] {
+//   const terms: string[] = []
+
+//   // Add high priority first
+//   terms.push(...data.highPriority)
+
+//   // Add all other categories
+//   Object.values(data.proteins).forEach((arr) => terms.push(...arr))
+//   Object.values(data.carbohydrates).forEach((arr) => terms.push(...arr))
+//   Object.values(data.vegetables).forEach((arr) => terms.push(...arr))
+//   Object.values(data.fruits).forEach((arr) => terms.push(...arr))
+//   Object.values(data.dairy).forEach((arr) => terms.push(...arr))
+//   terms.push(...data.nutsSeeds)
+//   terms.push(...data.fatsOils)
+//   Object.values(data.meals).forEach((arr) => terms.push(...arr))
+//   terms.push(...data.snacks)
+//   terms.push(...data.beverages)
+//   terms.push(...data.condiments)
+//   terms.push(...data.hebrew)
+
+//   // Remove duplicates and empty strings
+//   return [...new Set(terms)].filter((term) => term.trim().length > 0)
+// }
+
+// async function main() {
+//   console.log('🚀 Starting database population script...\n')
+
+//   // Load search terms
+
+//   let counter = 0
+//   const allTerms = getAllSearchTerms(termsData)
+//   console.log('allTerms', allTerms)
+
+//   for (const term of allTerms) {
+//     const items = await search({ txt: term, favoriteItems: [] })
+//     console.log('items', items)
+//     counter++
+//     console.log(`Statistics: ${counter}/${allTerms.length} - ${term}`)
+//   }
+
+//   console.log(`📋 Found ${allTerms.length} total search terms`)
+//   console.log(`📊 High priority terms: ${termsData.highPriority.length}\n`)
+
+//   // Statistics
+//   const stats = {
+//     processed: 0,
+//     skipped: 0,
+//     failed: 0,
+//   }
+
+//   // Process each batch
+
+//   // Final summary
+//   console.log('\n' + '='.repeat(50))
+//   console.log('📊 Final Statistics:')
+//   console.log(`   ✓ Processed: ${stats.processed}`)
+//   console.log(`   ⊘ Skipped (cached): ${stats.skipped}`)
+//   console.log(`   ✗ Failed: ${stats.failed}`)
+//   console.log(`   📈 Total: ${stats.processed + stats.skipped + stats.failed}`)
+//   console.log('='.repeat(50))
+//   console.log('\n✨ Done!')
+// }
+
+// // Run the script
+// main().catch((error) => {
+//   console.error('Fatal error:', error)
+// })
