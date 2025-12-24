@@ -20,6 +20,8 @@ import { SessionDay } from '../../types/workout/SessionDay'
 import { sessionService } from '../../services/session/session.service'
 import { ExerciseInstructions } from '../../types/exercise/ExerciseInstructions'
 import { indexedDbService } from '../../services/indexeddb.service'
+import { Timer } from '../../types/timer/Timer'
+import { DEFAULT_RESTING_TIME } from '../../assets/config/times'
 
 export async function loadWorkouts(filter: WorkoutFilter) {
   try {
@@ -138,8 +140,11 @@ export function removeCurrentExercise() {
   store.dispatch({ type: REMOVE_CURRENT_EXERCISE })
 }
 
-export async function setTimer(timer: any) {
+export async function setTimer(timer: Timer) {
   try {
+    // If the resting time is not set, make sure to set it to the default resting time
+    timer.currentExercise.restingTime =
+      timer.currentExercise.restingTime || DEFAULT_RESTING_TIME
     const savedTimer = await indexedDbService.post('timer', timer)
     store.dispatch({ type: SET_TIMER, timer: savedTimer })
   } catch (err) {

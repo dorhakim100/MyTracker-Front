@@ -10,6 +10,7 @@ import {
   setCurrentExercise,
   setSelectedSessionDay,
   removeTimer,
+  setTimer,
 } from '../../store/actions/workout.action'
 
 import { ExerciseEditor } from '../../components/ExerciseEditor/ExerciseEditor'
@@ -185,6 +186,10 @@ export function WorkoutSession({
           await removeTimer(timer?._id)
         } else {
           setCurrentExercise(currentExerciseToSet)
+          await setTimer({
+            currentExercise: currentExerciseToSet,
+            startTime: new Date().getTime(),
+          })
         }
 
         await setService.saveSetBySessionIdAndExerciseId(
