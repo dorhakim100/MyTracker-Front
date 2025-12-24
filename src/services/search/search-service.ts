@@ -74,9 +74,6 @@ async function search(filter: SearchFilter) {
     // const { food, product } = favoriteItems || { food: [], product: [] }
     // const isFavoriteItems = food.length > 0 || product.length > 0
 
-    console.log('txt', txt)
-    console.log('favoriteItems', favoriteItems)
-
     if (!txt && favoriteItems && favoriteItems.length > 0) {
       res = await searchFavoriteItems(favoriteItems)
       return res
@@ -105,13 +102,16 @@ async function search(filter: SearchFilter) {
     }
 
     const hasBackendResults = await itemService.hasCachedResults(translatedTxt)
-    console.log('hasBackendResults', hasBackendResults)
+    const hasBackendResultsSafeTxt = await itemService.hasCachedResults(safeTxt)
+    const promises = []
+
     if (hasBackendResults) {
-      const promises = []
       promises.push(itemService.searchByTerm(translatedTxt))
-      if (!isEnglishWord) {
-        promises.push(itemService.searchByTerm(safeTxt))
-      }
+    }
+    if (hasBackendResultsSafeTxt) {
+      promises.push(itemService.searchByTerm(safeTxt))
+    }
+    if (promises.length > 0) {
       const backendResults = await Promise.all(promises)
       const backendRes = backendResults.flat()
 
