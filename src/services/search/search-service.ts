@@ -159,7 +159,6 @@ async function search(filter: SearchFilter) {
     }
 
     res = handleResSorting(res, safeTxt, favoriteItems, translatedTxt)
-    console.log('res', res)
 
     await itemService.saveSearchResults(safeTxt, res)
 

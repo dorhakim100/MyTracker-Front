@@ -85,7 +85,6 @@ async function searchByTerm(searchTerm: string) {
 
 async function hasCachedResults(searchTerm: string) {
   try {
-    console.log('searchTerm', searchTerm)
     const result = await httpService.get(`${KEY}/search/check`, {
       searchTerm,
     })
