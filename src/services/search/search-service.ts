@@ -102,22 +102,16 @@ async function search(filter: SearchFilter) {
     }
 
     const hasBackendResults = await itemService.hasCachedResults(translatedTxt)
-    const hasBackendResultsSafeTxt = await itemService.hasCachedResults(safeTxt)
-    const promises = []
 
     if (hasBackendResults) {
-      promises.push(itemService.searchByTerm(translatedTxt))
-    }
-    if (hasBackendResultsSafeTxt) {
-      promises.push(itemService.searchByTerm(safeTxt))
-    }
-    if (promises.length > 0) {
-      const backendResults = await Promise.all(promises)
-      const backendRes = backendResults.flat()
+      const backendResults = await itemService.searchByTerm(translatedTxt)
 
-      const resToSort = filterDuplicates(backendRes)
-
-      res = handleResSorting(resToSort, safeTxt, favoriteItems, translatedTxt)
+      res = handleResSorting(
+        backendResults,
+        safeTxt,
+        favoriteItems,
+        translatedTxt
+      )
       return res
     }
 
