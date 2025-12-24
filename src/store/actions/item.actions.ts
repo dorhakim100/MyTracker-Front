@@ -1,4 +1,4 @@
-import { itemService } from '../../services/item/item.service'
+import { itemService } from '../../services/item/item.cache.service'
 import { store } from '../store'
 import {
   SET_ITEMS,

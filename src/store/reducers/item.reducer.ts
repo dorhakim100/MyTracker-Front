@@ -1,4 +1,4 @@
-import { itemService } from '../../services/item/item.service'
+import { itemService } from '../../services/item/item.cache.service'
 
 import { Item } from '../../types/item/Item'
 import { ItemFilter } from '../../types/itemFilter/ItemFilter'

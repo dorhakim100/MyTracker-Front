@@ -75,7 +75,6 @@ function getDefaultFilter(): ItemFilter {
   return {
     txt: '',
     sortDir: 1,
-    pageIdx: 0,
     isAll: false,
   }
 }

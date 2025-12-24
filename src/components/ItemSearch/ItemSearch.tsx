@@ -42,7 +42,7 @@ import { debounce } from '../../services/util.service'
 import { User } from '../../types/user/User'
 import { SkeletonList } from '../SkeletonList/SkeletonList'
 import { MealItem } from '../../types/mealItem/MealItem'
-import { itemService } from '../../services/item/item.service'
+import { itemService } from '../../services/item/item.cache.service'
 
 import DinnerDiningIcon from '@mui/icons-material/DinnerDining'
 
@@ -211,9 +211,9 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
 
   const renderNoResults = () => {
     return (
-      <Box className='results'>
+      <Box className="results">
         <Typography
-          variant='h6'
+          variant="h6"
           className={`no-results ${prefs.isDarkMode ? 'dark-mode' : ''}`}
         >
           No results...
@@ -224,12 +224,12 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
 
   const renderSearchFirst = () => {
     return (
-      <Box className='results'>
+      <Box className="results">
         <Lottie
           animationData={prefs.isDarkMode ? searchDark : searchLight}
           loop={true}
         />
-        <Typography variant='h6' className='search-first'>
+        <Typography variant="h6" className="search-first">
           Search for an item first...
         </Typography>
       </Box>
@@ -257,7 +257,7 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
     }
 
     return (
-      <Box className='results'>
+      <Box className="results">
         <CustomList<Item>
           items={results}
           getKey={(item) => item.searchId || item._id || ''}
@@ -265,19 +265,19 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
             prefs.isDarkMode ? 'dark-mode' : ''
           }`}
           renderLeft={(item) => (
-            <div className='left-content macros-image-container'>
+            <div className="left-content macros-image-container">
               <MacrosDonut
                 protein={item.macros?.protein}
                 carbs={item.macros?.carbs}
                 fats={item.macros?.fat}
               />
-              <ListItemIcon className='item-image-container'>
+              <ListItemIcon className="item-image-container">
                 {(item.image && (
                   <img
                     src={item.image}
                     alt={item.name}
-                    className='item-image'
-                    referrerPolicy='no-referrer'
+                    className="item-image"
+                    referrerPolicy="no-referrer"
                     onError={async (e) => {
                       renderErrorImage(item)
                       await imageService.fetchOnError(e, item)
@@ -286,7 +286,7 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
                   />
                 )) || (
                   <CustomSkeleton
-                    variant='circular'
+                    variant="circular"
                     width={40}
                     height={40}
                     isDarkMode={prefs.isDarkMode}
@@ -296,7 +296,7 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
             </div>
           )}
           renderPrimaryText={(item) => (
-            <div className='hide-text-overflow'>{item.name}</div>
+            <div className="hide-text-overflow">{item.name}</div>
           )}
           renderSecondaryText={(item) => {
             let caloriesToDisplay
@@ -329,15 +329,15 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
   return (
     <>
       <Box className={`item-search ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
-        <Box className='search-container'>
-          <div className='input-container'>
+        <Box className="search-container">
+          <div className="input-container">
             <CustomInput
               value={filter.txt}
               onChange={(val) => setFilter((prev) => ({ ...prev, txt: val }))}
-              placeholder='Search items...'
+              placeholder="Search items..."
               startIconFn={() => <SearchIcon />}
               endIconFn={() => (
-                <IconButton aria-label='close' onClick={onClearQuery}>
+                <IconButton aria-label="close" onClick={onClearQuery}>
                   <CloseIcon />
                 </IconButton>
               )}
@@ -354,13 +354,13 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
             className={`source-toggle ${prefs.isDarkMode ? 'dark-mode' : ''} ${
               prefs.favoriteColor
             }`}
-            ariaLabel='data source'
+            ariaLabel="data source"
           />
           <CustomButton
             onClick={onCustomLog}
-            text='Custom'
+            text="Custom"
             icon={<AddIcon />}
-            className='custom-add-button'
+            className="custom-add-button"
           />
         </Box>
 
@@ -377,7 +377,7 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
           />
         }
         title={isCustomLog ? 'Custom Log' : 'Item'}
-        type='full'
+        type="full"
       />
     </>
   )

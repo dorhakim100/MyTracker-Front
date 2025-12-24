@@ -1,6 +1,9 @@
 import { httpService } from '../http.service'
 import { makeId } from '../util.service'
 
+import { Item } from '../../types/item/Item'
+import { ItemFilter } from '../../types/itemFilter/ItemFilter'
+
 const KEY = 'item'
 
 export const itemService = {
