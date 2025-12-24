@@ -107,8 +107,17 @@ async function search(filter: SearchFilter) {
     const hasBackendResults = await itemService.hasCachedResults(translatedTxt)
     console.log('hasBackendResults', hasBackendResults)
     if (hasBackendResults) {
-      const backendRes = await itemService.searchByTerm(translatedTxt)
-      res = handleResSorting(backendRes, safeTxt, favoriteItems, translatedTxt)
+      const promises = []
+      promises.push(itemService.searchByTerm(translatedTxt))
+      if (!isEnglishWord) {
+        promises.push(itemService.searchByTerm(safeTxt))
+      }
+      const backendResults = await Promise.all(promises)
+      const backendRes = backendResults.flat()
+
+      const resToSort = filterDuplicates(backendRes)
+
+      res = handleResSorting(resToSort, safeTxt, favoriteItems, translatedTxt)
       return res
     }
 
