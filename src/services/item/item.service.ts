@@ -21,6 +21,7 @@ export const itemService = {
   saveSearchResults,
   clearSearchCache,
   getCachedSearchTerms,
+  getBulkBySearchIds,
 
   // Item lookup operations
   getBySearchId,
@@ -114,6 +115,14 @@ async function clearSearchCache() {
   }
 }
 
+async function getBulkBySearchIds(searchIds: string[]) {
+  try {
+    const items = await httpService.get(`${KEY}/search-id/bulk`, { searchIds })
+    return items
+  } catch (err) {
+    throw err
+  }
+}
 async function getCachedSearchTerms() {
   try {
     const terms = await httpService.get(`${KEY}/search/terms`, null)

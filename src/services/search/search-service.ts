@@ -317,10 +317,32 @@ async function searchBulkIds(logs: Log[]) {
 
     if (!productsIds.length && !foodsIds.length) return []
 
-    const promises = [getProductsByIds(productsIds), getFoodsByIds(foodsIds)]
+    const backendRes = await itemService.getBulkBySearchIds(
+      productsIds.concat(foodsIds)
+    )
+
+    if (backendRes.length === productsIds.length + foodsIds.length) {
+      return backendRes
+    }
+
+    const missingIds = productsIds
+      .concat(foodsIds)
+      .filter((id) => !backendRes.some((item: Item) => item.searchId === id))
+
+    const missingProducts = missingIds.filter(
+      (id) => id.length <= LONGEST_FOOD_ID_LENGTH
+    )
+    const missingFoods = missingIds.filter(
+      (id) => id.length >= LONGEST_FOOD_ID_LENGTH
+    )
+
+    const promises = [
+      getProductsByIds(missingProducts),
+      getFoodsByIds(missingFoods),
+    ]
 
     const [products, foods] = await Promise.all(promises)
-    const res = [...products, ...foods]
+    const res = [...backendRes, ...products, ...foods]
 
     // Batch cache operations
     await Promise.all(res.map((item) => addToCache(item as Item, ITEMS_CACHE)))
