@@ -7,6 +7,7 @@ import { ItemFilter } from '../../types/itemFilter/ItemFilter'
 const KEY = 'item'
 
 export const itemService = {
+  // Main CRUD operations
   query,
   getById,
   save,
@@ -14,8 +15,20 @@ export const itemService = {
   getEmptyItem,
   getDefaultFilter,
   getMaxPage,
+
+  // Search-related operations
+  searchByTerm,
+  hasCachedResults,
+  saveSearchResults,
+  clearSearchCache,
+  getCachedSearchTerms,
+
+  // Item lookup operations
+  getBySearchId,
+  searchByName,
 }
 
+// Main CRUD operations
 async function query(
   filterBy = { txt: '', sortDir: '', pageIdx: 0, isAll: false }
 ) {
@@ -43,6 +56,7 @@ async function remove(itemId) {
     throw err
   }
 }
+
 async function save(item) {
   try {
     let savedItem
@@ -52,6 +66,81 @@ async function save(item) {
       savedItem = await httpService.post(KEY, item)
     }
     return savedItem
+  } catch (err) {
+    throw err
+  }
+}
+
+// Search-related operations
+async function searchByTerm(searchTerm, options = {}) {
+  try {
+    const items = await httpService.get(`${KEY}/search`, {
+      term: searchTerm,
+      ...options,
+    })
+    return items
+  } catch (err) {
+    throw err
+  }
+}
+
+async function hasCachedResults(searchTerm) {
+  try {
+    const result = await httpService.get(`${KEY}/search/check`, {
+      term: searchTerm,
+    })
+    return result
+  } catch (err) {
+    throw err
+  }
+}
+
+async function saveSearchResults(searchTerm, items) {
+  try {
+    const result = await httpService.post(`${KEY}/search`, {
+      term: searchTerm,
+      items: items,
+    })
+    return result
+  } catch (err) {
+    throw err
+  }
+}
+
+async function clearSearchCache() {
+  try {
+    return await httpService.delete(`${KEY}/search/cache`)
+  } catch (err) {
+    throw err
+  }
+}
+
+async function getCachedSearchTerms() {
+  try {
+    const terms = await httpService.get(`${KEY}/search/terms`)
+    return terms
+  } catch (err) {
+    throw err
+  }
+}
+
+// Item lookup operations
+async function getBySearchId(searchId) {
+  try {
+    const item = await httpService.get(`${KEY}/search-id`, { searchId })
+    return item
+  } catch (err) {
+    throw err
+  }
+}
+
+async function searchByName(name, options = {}) {
+  try {
+    const items = await httpService.get(`${KEY}/search-name`, {
+      name,
+      ...options,
+    })
+    return items
   } catch (err) {
     throw err
   }
