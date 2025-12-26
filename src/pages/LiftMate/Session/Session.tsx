@@ -116,6 +116,8 @@ export function Session() {
       )
       setSelectedSessionDay(day)
     } catch (err) {
+      console.log(err)
+
       showErrorMsg(messages.error.getSessionDay)
     }
   }
@@ -166,7 +168,7 @@ export function Session() {
   const renderStartWorkoutIcon = (workout: Workout) => {
     return (
       <PlayCircleFilledWhiteIcon
-        className='icon start'
+        className="icon start"
         onClick={(ev) => {
           ev.stopPropagation()
           onStartWorkout(workout)
@@ -189,8 +191,8 @@ export function Session() {
     const filteredWorkouts = workouts.filter((workout) => workout.isActive)
 
     return (
-      <div className='no-session-container'>
-        <Typography variant='h5' className='bold-header'>
+      <div className="no-session-container">
+        <Typography variant="h5" className="bold-header">
           Select Your Workout
         </Typography>
         <CustomList
@@ -213,7 +215,7 @@ export function Session() {
               renderAvailableWorkoutButton(workout)
             ) : (
               <AddCircleOutlineIcon
-                className='icon add'
+                className="icon add"
                 onClick={(ev) => {
                   ev.stopPropagation()
                   navigate(`/lift-mate/workouts`)
@@ -224,14 +226,14 @@ export function Session() {
           }}
           renderLeft={(workout) => {
             return !workout.isNewInstructions ? (
-              <CheckCircleOutlineIcon className='icon check' />
+              <CheckCircleOutlineIcon className="icon check" />
             ) : (
               <span>
                 {workout.doneTimes} / {workout.timesPerWeek}
               </span>
             )
           }}
-          noResultsMessage='No active workouts found'
+          noResultsMessage="No active workouts found"
         />
       </div>
     )
@@ -259,7 +261,7 @@ export function Session() {
 
   return (
     <>
-      <div className='page-container session-container'>
+      <div className="page-container session-container">
         <DayController
           selectedDay={selectedDay}
           selectedDayDate={sessionFilter.date}
@@ -270,7 +272,7 @@ export function Session() {
         <SlideAnimation
           motionKey={sessionDay._id}
           direction={direction}
-          className='session-container-animation'
+          className="session-container-animation"
         >
           {!sessionDay.workoutId || !sessionDay.instructions ? (
             renderNoSession()
@@ -291,7 +293,7 @@ export function Session() {
           }}
           component={getDialogComponent() as React.ReactElement}
           title={capitalizeFirstLetter(dialogOptions.item?.name || '')}
-          type='full'
+          type="full"
         />
       )}
     </>

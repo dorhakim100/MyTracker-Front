@@ -25,12 +25,13 @@ async function query(
     const session = await httpService.get(KEY, filterBy)
     if (!session.instructions) return session
 
-    const instructionsWithDetails =
-      await instructionsService.getExercisesFromInstructions(
-        session.instructions
-      )
+    // const instructionsWithDetails =
+    //   await instructionsService.getExercisesFromInstructions(
+    //     session.instructions
+    //   )
 
-    return { ...session, instructions: instructionsWithDetails }
+    return session
+    // return { ...session, instructions: instructionsWithDetails }
   } catch (err) {
     throw err
   }

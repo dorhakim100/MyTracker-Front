@@ -3,6 +3,7 @@ import { Exercise } from '../../types/exercise/Exercise'
 import { MuscleGroup } from '../../types/muscleGroup/MuscleGroup'
 import { POPULAR_EXERCISES } from '../../assets/config/popular-exercises'
 import { Workout } from '../../types/workout/Workout'
+import { indexedDbService } from '../indexeddb.service'
 export const exerciseSearch = async (searchValue: string) => {
   const url = 'https://www.exercisedb.dev/api/v1/exercises/search'
 
@@ -146,6 +147,11 @@ export const getMostPopularExercises = (): Exercise[] => {
 
 export const getExerciseById = async (exerciseId: string) => {
   try {
+    const exercise = await indexedDbService.get('exercises', exerciseId)
+    if (exercise) {
+      return exercise
+    }
+
     const url = `https://www.exercisedb.dev/api/v1/exercises/${exerciseId}`
     const { data: exerciseData } = await axios.get(url)
     const { data } = exerciseData
@@ -155,8 +161,23 @@ export const getExerciseById = async (exerciseId: string) => {
       gifUrl: image,
       bodyParts: muscleGroups,
       equipments,
+      targetMuscles,
+      secondaryMuscles,
     } = data
-    return { name, image, muscleGroups, equipments, instructions }
+
+    const exerciseToSend = {
+      name,
+      image,
+      muscleGroups,
+      equipments,
+      instructions,
+      exerciseId,
+      mainMuscles: targetMuscles,
+      secondaryMuscles,
+    }
+
+    await indexedDbService.post('exercises', exerciseToSend)
+    return exerciseToSend
   } catch (err) {
     throw err
   }

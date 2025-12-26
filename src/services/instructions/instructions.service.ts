@@ -111,11 +111,14 @@ async function getExercisesFromInstructions(instructions: Instructions) {
 
     const exercisesWithDetails = await Promise.all(
       exercises.map(async (exercise) => {
+        console.log('exercise', exercise)
         const fullExercise = await getExerciseById(exercise.exerciseId)
+        console.log('fullExercise', fullExercise)
         return { ...exercise, ...fullExercise }
       })
     )
 
+    // return { ...instructions, exercises }
     return { ...instructions, exercises: exercisesWithDetails }
   } catch (err) {
     throw err
