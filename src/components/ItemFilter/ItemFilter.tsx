@@ -62,7 +62,9 @@ export function ItemFilter({
         onChange={(val) => onFilterChange({ ...filter, sortBy: val })}
         label="Sort by"
         values={sortByOptions}
-        className={`${prefs.favoriteColor}`}
+        className={`${prefs.favoriteColor} ${
+          prefs.isDarkMode ? 'dark-mode' : ''
+        }`}
       />
 
       <CustomButton

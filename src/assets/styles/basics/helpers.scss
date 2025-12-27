@@ -261,6 +261,31 @@ body.dark-mode {
     ) {
     background-color: $darker-gray !important;
 
+    &.blue {
+      background-color: $darker-gray-blue !important;
+    }
+    &.yellow {
+      background-color: $darker-gray-yellow !important;
+    }
+    &.red {
+      background-color: $darker-gray-red !important;
+    }
+    &.orange {
+      background-color: $darker-gray-orange !important;
+    }
+    &.green {
+      background-color: $darker-gray-green !important;
+    }
+    &.deepPurple {
+      background-color: $darker-gray-deep-purple !important;
+    }
+    &.purple {
+      background-color: $darker-gray-purple !important;
+    }
+    &.pink {
+      background-color: $darker-gray-pink !important;
+    }
+
     &.MuiAlert-root {
       background-color: $menu-bg !important;
 

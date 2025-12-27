@@ -82,7 +82,9 @@ export function CustomSelect({
         onChange={handleChange}
         MenuProps={{
           PaperProps: {
-            className: `${prefs.isDarkMode ? 'dark-mode' : ''} ${className}`,
+            className: `${
+              prefs.isDarkMode ? 'dark-mode' : ''
+            } ${className} select-paper`,
           },
         }}
       >

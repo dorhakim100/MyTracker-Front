@@ -127,6 +127,7 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
       } catch (err) {
         console.error(err)
         showErrorMsg(messages.error.getExerciseSummary)
+        setExerciseInstructions(['No instructions found'])
       }
     }
 

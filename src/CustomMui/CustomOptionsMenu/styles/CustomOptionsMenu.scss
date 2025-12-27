@@ -25,3 +25,50 @@
     }
   }
 }
+
+.options-menu-paper {
+  &.dark-mode {
+    outline: 1px solid rgba(255, 255, 255, 0.3) !important;
+
+    &.blue {
+      li {
+        background-color: $darker-gray-blue !important;
+      }
+    }
+    &.green {
+      li {
+        background-color: $darker-gray-green !important;
+      }
+    }
+    &.yellow {
+      li {
+        background-color: $darker-gray-yellow !important;
+      }
+    }
+    &.red {
+      li {
+        background-color: $darker-gray-red !important;
+      }
+    }
+    &.orange {
+      li {
+        background-color: $darker-gray-orange !important;
+      }
+    }
+    &.purple {
+      li {
+        background-color: $darker-gray-purple !important;
+      }
+    }
+    &.pink {
+      li {
+        background-color: $darker-gray-pink !important;
+      }
+    }
+    &.deep-purple {
+      li {
+        background-color: $darker-gray-deep-purple !important;
+      }
+    }
+  }
+}

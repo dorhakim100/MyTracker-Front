@@ -1,3 +1,47 @@
+.select-paper.dark-mode {
+  outline: 1px solid rgba(255, 255, 255, 0.3) !important;
+
+  &.blue {
+    li {
+      background-color: $darker-gray-blue !important;
+    }
+  }
+  &.green {
+    li {
+      background-color: $darker-gray-green !important;
+    }
+  }
+  &.yellow {
+    li {
+      background-color: $darker-gray-yellow !important;
+    }
+  }
+  &.red {
+    li {
+      background-color: $darker-gray-red !important;
+    }
+  }
+  &.orange {
+    li {
+      background-color: $darker-gray-orange !important;
+    }
+  }
+  &.purple {
+    li {
+      background-color: $darker-gray-purple !important;
+    }
+  }
+  &.pink {
+    li {
+      background-color: $darker-gray-pink !important;
+    }
+  }
+  &.deep-purple {
+    li {
+      background-color: $darker-gray-deep-purple !important;
+    }
+  }
+}
 .MuiMenu-list {
   max-height: 350px;
 
@@ -67,7 +111,7 @@
       }
     }
 
-    .MuiInputBase-colorBlue {
+    .MuiOutlinedInput-root {
       &.Mui-focused {
         fieldset {
           border-color: $picker-color-blue !important;
@@ -82,7 +126,7 @@
         background-color: $dark-gray-green !important;
       }
     }
-    .MuiInputBase-colorGreen {
+    .MuiOutlinedInput-root {
       &.Mui-focused {
         fieldset {
           border-color: $picker-color-green !important;
@@ -97,7 +141,7 @@
         background-color: $dark-gray-yellow !important;
       }
     }
-    .MuiInputBase-colorYellow {
+    .MuiOutlinedInput-root {
       &.Mui-focused {
         fieldset {
           border-color: $picker-color-yellow !important;
@@ -111,7 +155,7 @@
         background-color: $dark-gray-red !important;
       }
     }
-    .MuiInputBase-colorRed {
+    .MuiOutlinedInput-root {
       &.Mui-focused {
         fieldset {
           border-color: $picker-color-red !important;
@@ -125,7 +169,7 @@
         background-color: $dark-gray-orange !important;
       }
     }
-    .MuiInputBase-colorOrange {
+    .MuiOutlinedInput-root {
       &.Mui-focused {
         fieldset {
           border-color: $picker-color-orange !important;
@@ -139,7 +183,7 @@
         background-color: $dark-gray-purple !important;
       }
     }
-    .MuiInputBase-colorPurple {
+    .MuiOutlinedInput-root {
       &.Mui-focused {
         fieldset {
           border-color: $picker-color-purple !important;
@@ -153,7 +197,8 @@
         background-color: $dark-gray-pink !important;
       }
     }
-    .MuiInputBase-colorPink {
+
+    .MuiOutlinedInput-root {
       &.Mui-focused {
         fieldset {
           border-color: $picker-color-pink !important;
@@ -167,7 +212,7 @@
         background-color: $dark-gray-deep-purple !important;
       }
     }
-    .MuiInputBase-colorDeepPurple {
+    .MuiOutlinedInput-root {
       &.Mui-focused {
         fieldset {
           border-color: $picker-color-deep-purple !important;

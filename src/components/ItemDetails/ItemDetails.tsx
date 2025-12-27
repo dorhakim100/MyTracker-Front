@@ -625,7 +625,9 @@ export function ItemDetails({
                     {option.type === 'clock' && (
                       <>
                         <PickerSelect
-                          className={`${prefs.favoriteColor}`}
+                          className={`${prefs.favoriteColor} picker-select ${
+                            prefs.isDarkMode ? 'dark-mode' : ''
+                          }`}
                           openClock={openClock}
                           option={option}
                           value={editItem.numberOfServings}
@@ -676,7 +678,7 @@ export function ItemDetails({
         </div>
         {!noEdit && (
           <CustomButton
-            text={editMealItem ? 'Edit Meal' : 'Add to Meal'}
+            text={editMealItem ? 'Update Meal' : 'Add to Meal'}
             icon={!editMealItem && <AddIcon sx={{ mr: 1 }} />}
             size="large"
             fullWidth

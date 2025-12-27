@@ -102,6 +102,11 @@ export function CustomOptionsMenu({
         open={open}
         onClose={handleClose}
         slotProps={{
+          paper: {
+            className: `${
+              prefs.isDarkMode ? 'dark-mode' : ''
+            } options-menu-paper ${prefs.favoriteColor}`,
+          },
           list: {
             'aria-labelledby': 'basic-button',
           },
