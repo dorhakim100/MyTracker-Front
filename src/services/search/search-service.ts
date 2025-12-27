@@ -43,6 +43,7 @@ export const searchService = {
   searchFavoriteItems,
   handleResSorting,
   handleImageError,
+  getSortedResults,
 }
 
 const LONGEST_FOOD_ID_LENGTH = 10
@@ -105,8 +106,6 @@ async function search(filter: SearchFilter) {
 
     if (hasBackendResults) {
       const backendResults = await itemService.searchByTerm(translatedTxt)
-
-      console.log('backendResults', backendResults)
 
       res = handleResSorting(
         backendResults,
@@ -812,6 +811,30 @@ async function getImageFromQuery(query: string) {
     console.error('Error getting image from query:', err)
     return searchUrls.DEFAULT_IMAGE
   }
+}
+
+function getSortedResults(results: Item[], sortBy: string): Item[] {
+  return results.sort((a, b) => {
+    switch (sortBy) {
+      case 'calories (high to low)':
+        return b.macros?.calories - a.macros?.calories
+      case 'calories (low to high)':
+        return a.macros?.calories - b.macros?.calories
+      case 'protein (high to low)':
+        return b.macros?.protein - a.macros?.protein
+      case 'protein (low to high)':
+        return a.macros?.protein - b.macros?.protein
+      case 'carbs (high to low)':
+        return b.macros?.carbs - a.macros?.carbs
+      case 'carbs (low to high)':
+        return a.macros?.carbs - b.macros?.carbs
+      case 'fat (high to low)':
+        return b.macros?.fat - a.macros?.fat
+      case 'fat (low to high)':
+        return a.macros?.fat - b.macros?.fat
+    }
+    return 0
+  })
 }
 
 // import termsData from '../../../search-terms.json'

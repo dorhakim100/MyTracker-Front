@@ -3,24 +3,20 @@ import IconButton from '@mui/material/IconButton'
 import SearchIcon from '@mui/icons-material/Search'
 import CloseIcon from '@mui/icons-material/Close'
 import AddIcon from '@mui/icons-material/Add'
-import DinnerDiningIcon from '@mui/icons-material/DinnerDining'
 
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { CustomInput } from '../../CustomMui/CustomInput/CustomInput'
-import {
-  CustomToggle,
-  ToggleOption,
-} from '../../CustomMui/CustomToggle/CustomToggle'
+
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
-import { searchTypes } from '../../assets/config/search-types'
 import { CustomSelect } from '../../CustomMui/CustomSelect/CustomSelect'
+import { Filter } from '../ItemSearch/ItemSearch'
 
 type UiSearchSource = 'search' | 'meal'
 
 interface ItemFilterProps {
-  filter: { txt: string; source: UiSearchSource }
-  onFilterChange: (filter: { txt: string; source: UiSearchSource }) => void
+  filter: Filter
+  onFilterChange: (filter: Filter) => void
   onClearQuery: () => void
   onCustomLog: () => void
 }
@@ -33,13 +29,16 @@ export function ItemFilter({
 }: ItemFilterProps) {
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
 
-  const toggleOptions: ToggleOption[] = [
-    {
-      value: searchTypes.search,
-      label: 'Food',
-      icon: <SearchIcon />,
-    },
-    { value: searchTypes.meal, label: 'My Meals', icon: <DinnerDiningIcon /> },
+  const sortByOptions = [
+    'relevance',
+    'calories (high to low)',
+    'calories (low to high)',
+    'protein (high to low)',
+    'protein (low to high)',
+    'carbs (high to low)',
+    'carbs (low to high)',
+    'fat (high to low)',
+    'fat (low to high)',
   ]
 
   return (
@@ -60,17 +59,14 @@ export function ItemFilter({
         />
       </div>
 
-      {filter.txt && (
-        <CustomSelect
-          value={filter.source}
-          onChange={(val) =>
-            onFilterChange({ ...filter, source: val as UiSearchSource })
-          }
-          label="Sort by"
-          values={toggleOptions.map((opt) => opt.value)}
-          className={`${prefs.favoriteColor}`}
-        />
-      )}
+      <CustomSelect
+        value={filter.sortBy}
+        onChange={(val) => onFilterChange({ ...filter, sortBy: val })}
+        label="Sort by"
+        values={sortByOptions}
+        className={`${prefs.favoriteColor}`}
+      />
+
       <CustomButton
         onClick={onCustomLog}
         text="Custom"

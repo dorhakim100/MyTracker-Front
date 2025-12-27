@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box'
 import ListItemIcon from '@mui/material/ListItemIcon'
 
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 
 import { searchService } from '../../services/search/search-service'
@@ -48,6 +48,13 @@ interface ItemSearchProps {
   onAddToMealClick?: (item: MealItem) => void
 }
 
+type UiSearchSource = 'search' | 'meal'
+export interface Filter {
+  txt: string
+  source: UiSearchSource
+  sortBy: string
+}
+
 export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
 
@@ -60,11 +67,11 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
   const [results, setResults] = useState<Item[]>([])
   const [resultsDragable, setResultsDragable] = useState(false)
 
-  // Keep a single filter object for both query and source
-  type UiSearchSource = 'search' | 'meal'
-  const [filter, setFilter] = useState<{ txt: string; source: UiSearchSource }>(
-    { txt: '', source: searchTypes.search as UiSearchSource }
-  )
+  const [filter, setFilter] = useState<Filter>({
+    txt: '',
+    source: searchTypes.search as UiSearchSource,
+    sortBy: 'relevance',
+  })
 
   const [isItemSelected, setIsItemSelected] = useState(false)
   const [isCustomLog, setIsCustomLog] = useState(false)
@@ -72,6 +79,19 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
   const isLoading = useSelector(
     (state: RootState) => state.systemModule.isLoading
   )
+
+  const sortedResults = useMemo(() => {
+    if (!results.length) return []
+
+    if (filter.sortBy === 'relevance') {
+      return results
+    }
+
+    const resCopy = [...results]
+    const sorted = searchService.getSortedResults(resCopy, filter.sortBy)
+
+    return [...sorted]
+  }, [results, filter.sortBy])
 
   const handleSearch = useCallback(async () => {
     setIsLoading(true)
@@ -117,7 +137,7 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
     } finally {
       setIsLoading(false)
     }
-  }, [filter, user, favoriteItems])
+  }, [filter.txt, user, favoriteItems])
 
   const latestHandleSearchRef = useRef(handleSearch)
   useEffect(() => {
@@ -130,7 +150,7 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
 
   useEffect(() => {
     debouncedRunSearch()
-  }, [filter, user, debouncedRunSearch])
+  }, [filter.txt, user, debouncedRunSearch])
 
   useEffect(() => {
     if (!filter.txt) {
@@ -222,6 +242,8 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
     const meals =
       user?.meals.map((meal) => itemService.convertMealToItem(meal)) || []
 
+    const sortedMeals = searchService.getSortedResults(meals, filter.sortBy)
+
     if (!results.length && isLoading) {
       return <SkeletonList />
     } else if (!results.length && filter.txt) {
@@ -247,7 +269,7 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
               Meals
             </Typography>
             <CustomList<Item>
-              items={meals}
+              items={sortedMeals}
               getKey={(item) => item.searchId || item._id || ''}
               itemClassName={`search-item-container ${
                 prefs.isDarkMode ? 'dark-mode' : ''
@@ -314,7 +336,7 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
           </>
         )}
         <CustomList<Item>
-          items={results}
+          items={sortedResults}
           getKey={(item) => item.searchId || item._id || ''}
           itemClassName={`search-item-container ${
             prefs.isDarkMode ? 'dark-mode' : ''
