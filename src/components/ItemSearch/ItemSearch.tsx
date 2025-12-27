@@ -1,8 +1,5 @@
 import Box from '@mui/material/Box'
-import IconButton from '@mui/material/IconButton'
 import ListItemIcon from '@mui/material/ListItemIcon'
-import SearchIcon from '@mui/icons-material/Search'
-import CloseIcon from '@mui/icons-material/Close'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useSelector } from 'react-redux'
@@ -12,11 +9,7 @@ import { searchTypes } from '../../assets/config/search-types'
 import { messages } from '../../assets/config/messages'
 
 import { RootState } from '../../store/store'
-import {
-  CustomToggle,
-  ToggleOption,
-} from '../../CustomMui/CustomToggle/CustomToggle'
-import { CustomInput } from '../../CustomMui/CustomInput/CustomInput'
+import { ItemFilter } from '../ItemFilter/ItemFilter'
 import { showErrorMsg } from '../../services/event-bus.service'
 import { setIsLoading } from '../../store/actions/system.actions'
 import { MacrosDonut } from '../MacrosDonut/MacrosDonut'
@@ -44,17 +37,12 @@ import { SkeletonList } from '../SkeletonList/SkeletonList'
 import { MealItem } from '../../types/mealItem/MealItem'
 import { itemService } from '../../services/item/item.cache.service'
 
-import DinnerDiningIcon from '@mui/icons-material/DinnerDining'
-
 import Lottie from 'lottie-react'
 import searchLight from '../../../public/searching.json'
 import searchDark from '../../../public/searching-dark.json'
-import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
-import AddIcon from '@mui/icons-material/Add'
 
 import { imageService } from '../../services/image/image.service'
 import CustomSkeleton from '../../CustomMui/CustomSkeleton/CustomSkeleton'
-import { searchUrls } from '../../assets/config/search.urls'
 
 interface ItemSearchProps {
   onAddToMealClick?: (item: MealItem) => void
@@ -84,15 +72,6 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
   const isLoading = useSelector(
     (state: RootState) => state.systemModule.isLoading
   )
-
-  const toggleOptions: ToggleOption[] = [
-    {
-      value: searchTypes.search,
-      label: 'Food',
-      icon: <SearchIcon />,
-    },
-    { value: searchTypes.meal, label: 'My Meals', icon: <DinnerDiningIcon /> },
-  ]
 
   const handleSearch = useCallback(async () => {
     setIsLoading(true)
@@ -330,40 +309,12 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
   return (
     <>
       <Box className={`item-search ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
-        <Box className="search-container">
-          <div className="input-container">
-            <CustomInput
-              value={filter.txt}
-              onChange={(val) => setFilter((prev) => ({ ...prev, txt: val }))}
-              placeholder="Search items..."
-              startIconFn={() => <SearchIcon />}
-              endIconFn={() => (
-                <IconButton aria-label="close" onClick={onClearQuery}>
-                  <CloseIcon />
-                </IconButton>
-              )}
-              autoFocus
-              className={`${prefs.favoriteColor}`}
-            />
-          </div>
-          <CustomToggle
-            value={filter.source}
-            options={toggleOptions}
-            onChange={(val) =>
-              setFilter((prev) => ({ ...prev, source: val as UiSearchSource }))
-            }
-            className={`source-toggle ${prefs.isDarkMode ? 'dark-mode' : ''} ${
-              prefs.favoriteColor
-            }`}
-            ariaLabel="data source"
-          />
-          <CustomButton
-            onClick={onCustomLog}
-            text="Custom"
-            icon={<AddIcon />}
-            className="custom-add-button"
-          />
-        </Box>
+        <ItemFilter
+          filter={filter}
+          onFilterChange={setFilter}
+          onClearQuery={onClearQuery}
+          onCustomLog={onCustomLog}
+        />
 
         {renderList()}
       </Box>

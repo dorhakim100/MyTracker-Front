@@ -1,0 +1,49 @@
+.item-search {
+  .search-container {
+    position: sticky;
+    top: 0;
+    background: $white;
+    z-index: 1;
+    padding-top: 4px;
+    padding: 1rem;
+
+    display: grid;
+    align-items: start;
+    grid-template-rows: repeat(3, auto);
+    grid-template-columns: 1fr auto;
+    gap: 1rem;
+
+    &.dark-mode {
+      background: $darker-gray;
+    }
+
+    .input-container {
+      grid-column: 1/-1;
+    }
+
+    .custom-button-wrapper {
+      grid-column: 2/3;
+      align-self: center;
+    }
+  }
+
+  &.dark-mode {
+    .search-container {
+      background: $darker-gray;
+      border-bottom: 1px solid white;
+
+      .MuiInputBase-root {
+        // border: 1px solid $white !important;
+        // outline: 1px solid $white !important;
+      }
+
+      input {
+        color: $white;
+      }
+    }
+
+    svg {
+      color: $white;
+    }
+  }
+}
