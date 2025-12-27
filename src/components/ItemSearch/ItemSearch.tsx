@@ -29,7 +29,7 @@ import {
   updateUser,
 } from '../../store/actions/user.actions'
 import { SearchFilter } from '../../types/searchFilter/SearchFilter'
-import { Typography } from '@mui/material'
+import { Divider, Typography } from '@mui/material'
 import { debounce } from '../../services/util.service'
 
 import { User } from '../../types/user/User'
@@ -153,7 +153,8 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
   const onFavoriteClick = async (item: Item) => {
     try {
       if (!user) return showErrorMsg(messages.error.favorite)
-      if (!item.searchId) return showErrorMsg(messages.error.favorite)
+      if (!item.searchId && !item.items)
+        return showErrorMsg(messages.error.favorite)
 
       await handleFavorite(item, user)
     } catch {
@@ -218,6 +219,8 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
 
   const renderList = () => {
     // const hasFavorite = user?.favoriteItems?.length !== 0
+    const meals =
+      user?.meals.map((meal) => itemService.convertMealToItem(meal)) || []
 
     if (!results.length && isLoading) {
       return <SkeletonList />
@@ -238,6 +241,78 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
 
     return (
       <Box className="results">
+        {!filter.txt && (
+          <>
+            <Typography variant="h6" className="bold-header search-header">
+              Meals
+            </Typography>
+            <CustomList<Item>
+              items={meals}
+              getKey={(item) => item.searchId || item._id || ''}
+              itemClassName={`search-item-container ${
+                prefs.isDarkMode ? 'dark-mode' : ''
+              }`}
+              renderLeft={(item) => (
+                <div className="left-content macros-image-container">
+                  <MacrosDonut
+                    protein={item.macros?.protein}
+                    carbs={item.macros?.carbs}
+                    fats={item.macros?.fat}
+                  />
+                  <ListItemIcon className="item-image-container">
+                    {(item.image && (
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="item-image"
+                        referrerPolicy="no-referrer"
+                        onError={async (e) => {
+                          renderErrorImage(item)
+                          await imageService.fetchOnError(e, item)
+                          loadItems()
+                        }}
+                      />
+                    )) || (
+                      <CustomSkeleton
+                        variant="circular"
+                        width={40}
+                        height={40}
+                        isDarkMode={prefs.isDarkMode}
+                      />
+                    )}
+                  </ListItemIcon>
+                </div>
+              )}
+              renderPrimaryText={(item) => (
+                <div className="hide-text-overflow">{item.name}</div>
+              )}
+              renderSecondaryText={(item) => {
+                let caloriesToDisplay
+                const itemCalories = item.macros.calories
+
+                if (itemCalories) {
+                  caloriesToDisplay = +itemCalories
+                  caloriesToDisplay = caloriesToDisplay.toFixed(0)
+                }
+
+                return `${caloriesToDisplay || 0} kcal`
+              }}
+              renderRight={(item) => (
+                <FavoriteButton
+                  isFavorite={searchService.isFavorite(item, user) || false}
+                />
+              )}
+              onItemClick={onItemClick}
+              onRightClick={onFavoriteClick}
+            />
+            <Divider
+              className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+            />
+            <Typography variant="h6" className="bold-header search-header">
+              Favorite Items
+            </Typography>
+          </>
+        )}
         <CustomList<Item>
           items={results}
           getKey={(item) => item.searchId || item._id || ''}

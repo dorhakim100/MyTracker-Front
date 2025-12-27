@@ -14,6 +14,7 @@ import {
 } from '../../CustomMui/CustomToggle/CustomToggle'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import { searchTypes } from '../../assets/config/search-types'
+import { CustomSelect } from '../../CustomMui/CustomSelect/CustomSelect'
 
 type UiSearchSource = 'search' | 'meal'
 
@@ -58,17 +59,18 @@ export function ItemFilter({
           className={`${prefs.favoriteColor}`}
         />
       </div>
-      <CustomToggle
-        value={filter.source}
-        options={toggleOptions}
-        onChange={(val) =>
-          onFilterChange({ ...filter, source: val as UiSearchSource })
-        }
-        className={`source-toggle ${prefs.isDarkMode ? 'dark-mode' : ''} ${
-          prefs.favoriteColor
-        }`}
-        ariaLabel="data source"
-      />
+
+      {filter.txt && (
+        <CustomSelect
+          value={filter.source}
+          onChange={(val) =>
+            onFilterChange({ ...filter, source: val as UiSearchSource })
+          }
+          label="Sort by"
+          values={toggleOptions.map((opt) => opt.value)}
+          className={`${prefs.favoriteColor}`}
+        />
+      )}
       <CustomButton
         onClick={onCustomLog}
         text="Custom"

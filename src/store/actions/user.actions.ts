@@ -206,9 +206,24 @@ export async function loadUser(userId: string) {
 
 export async function handleFavorite(item: Item, user: User) {
   try {
-    if (!item.searchId) throw new Error('Item not found')
-
     let favoriteArray = user.favoriteItems || []
+
+    if (item.items) {
+      const hasMeal = user.meals.some((meal: Meal) => meal._id === item._id)
+
+      const newMeals = hasMeal
+        ? user.meals.filter((meal: Meal) => meal._id !== item._id)
+        : [...user.meals, item]
+      const userToSave = {
+        ...user,
+        meals: newMeals,
+      }
+
+      await updateUser(userToSave as User)
+      return
+    }
+
+    if (!item.searchId) return
 
     if (favoriteArray.includes(item.searchId)) {
       favoriteArray = favoriteArray.filter((id: string) => id !== item.searchId)
@@ -227,6 +242,7 @@ export async function handleFavorite(item: Item, user: User) {
 
     await updateUser(userToSave)
   } catch (err) {
+    console.log('err', err)
     throw err
   }
 }

@@ -106,6 +106,8 @@ async function search(filter: SearchFilter) {
     if (hasBackendResults) {
       const backendResults = await itemService.searchByTerm(translatedTxt)
 
+      console.log('backendResults', backendResults)
+
       res = handleResSorting(
         backendResults,
         safeTxt,
@@ -733,7 +735,10 @@ async function getFoodsByIds(ids: string[]) {
 // Utils functions related to the search service
 
 function isFavorite(item: Item, user: User | null) {
-  return user?.favoriteItems?.includes(item.searchId || '')
+  return (
+    user?.favoriteItems?.includes(item.searchId || '') ||
+    user?.meals.some((meal) => meal._id === item._id)
+  )
 }
 
 function normalizeText(s: string) {
