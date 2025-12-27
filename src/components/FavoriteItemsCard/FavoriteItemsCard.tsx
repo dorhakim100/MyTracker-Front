@@ -22,6 +22,10 @@ export function FavoriteItemsCard() {
     (storeState: RootState) => storeState.userModule.user
   )
 
+  const isLoading = useSelector(
+    (storeState: RootState) => storeState.systemModule.isLoading
+  )
+
   const favoriteItems = useSelector(
     (storeState: RootState) => storeState.itemModule.favoriteItems
   )
@@ -48,8 +52,16 @@ export function FavoriteItemsCard() {
     }
   }
 
-  if (!favoriteItems.length) {
+  if (!favoriteItems.length && isLoading) {
     return <SkeletonList />
+  }
+
+  if (!favoriteItems.length) {
+    return (
+      <div className="no-results-container">
+        <span>No favorite items found</span>
+      </div>
+    )
   }
 
   return (
@@ -59,14 +71,14 @@ export function FavoriteItemsCard() {
         dragOffsetY={-64}
         renderPrimaryText={(item) => item.name}
         renderLeft={(item) => (
-          <div className='left-content macros-image-container'>
+          <div className="left-content macros-image-container">
             <MacrosDonut
               protein={item.macros?.protein}
               carbs={item.macros?.carbs}
               fats={item.macros?.fat}
             />
-            <ListItemIcon className='item-image-container'>
-              <img src={item.image} alt={item.name} className='item-image' />
+            <ListItemIcon className="item-image-container">
+              <img src={item.image} alt={item.name} className="item-image" />
             </ListItemIcon>
           </div>
         )}
@@ -88,8 +100,8 @@ export function FavoriteItemsCard() {
         open={isItemSelected}
         onClose={onCloseItemDetails}
         component={<ItemDetails />}
-        title='Item'
-        type='full'
+        title="Item"
+        type="full"
       />
     </>
   )

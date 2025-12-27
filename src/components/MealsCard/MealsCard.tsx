@@ -124,13 +124,15 @@ export function MealsCard() {
   return (
     <>
       <CustomButton
-        text='Add Meal'
+        text="Add Meal"
         icon={<AddIcon />}
         fullWidth
         onClick={onAddMeal}
       />
       {!user?.meals?.length && (
-        <Typography variant='h6'>No meals added yet</Typography>
+        <div className="no-results-container">
+          <span>No meals added yet</span>
+        </div>
       )}
       {user?.meals && user?.meals.length > 0 && (
         <CustomList
@@ -139,13 +141,13 @@ export function MealsCard() {
           className={`${prefs.isDarkMode ? 'dark-mode' : ''}`}
           renderPrimaryText={(meal) => meal.name}
           renderLeft={(meal) => (
-            <div className='left-content macros-image-container'>
+            <div className="left-content macros-image-container">
               <MacrosDonut
                 protein={meal.macros?.protein}
                 carbs={meal.macros?.carbs}
                 fats={meal.macros?.fat}
               />
-              <ListItemIcon className='item-image-container'>
+              <ListItemIcon className="item-image-container">
                 <img
                   src={
                     meal.image ||
@@ -153,7 +155,7 @@ export function MealsCard() {
                     searchUrls.DEFAULT_IMAGE
                   }
                   alt={meal.name}
-                  className='item-image'
+                  className="item-image"
                 />
               </ListItemIcon>
             </div>
@@ -175,7 +177,7 @@ export function MealsCard() {
         onClose={onCloseMealDetails}
         component={<EditMeal saveMeal={saveMeal} selectedMeal={selectedMeal} />}
         title={selectedMeal ? 'Edit Meal' : 'Add Meal'}
-        type='full'
+        type="full"
       />
     </>
   )

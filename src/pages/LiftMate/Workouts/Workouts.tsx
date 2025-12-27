@@ -282,23 +282,26 @@ export function Workouts() {
   }
 
   const onStartWorkout = async (workout: Workout) => {
-    if (!workout._id || !todaySessionDay) return
+    if (!workout._id || !sessionDay) return
     try {
       setIsLoading(true)
 
-      if (!todaySessionDay._id) return
+      if (!sessionDay._id) return
       setSelectedWorkoutId(workout._id)
 
       await playWorkout(
         {
-          ...todaySessionDay,
+          ...sessionDay,
           workoutId: workout._id,
         },
         traineeUser?._id || user?._id || ''
       )
-      setSlideDirection(-1)
 
-      navigate('/')
+      if (isToday) {
+        setSlideDirection(-1)
+
+        navigate('/')
+      }
 
       // await saveSessionDay()
     } catch (err) {
@@ -387,34 +390,35 @@ export function Workouts() {
 
         <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
 
-        <CustomList
-          items={inactiveWorkouts}
-          className={`workouts-list inactive-list ${
-            prefs.isDarkMode ? 'dark-mode' : ''
-          }`}
-          renderPrimaryText={(workout) => workout.name}
-          renderSecondaryText={(workout) =>
-            capitalizeFirstLetter(workout.muscleGroups.join(', '))
-          }
-          isDefaultLoader={false}
-          onItemClick={(workout) => onOpenDetails(workout)}
-          renderRight={(workout) => (
-            <CustomOptionsMenu
-              options={pastWorkoutOptions}
-              triggerElement={
-                <CustomButton isIcon={true} icon={<MoreHorizIcon />} />
-              }
-              onClick={() => {
-                setSelectedWorkoutForOptions(workout)
-              }}
-            />
-          )}
-          isSwipeable={true}
-          renderRightSwipeActions={(workout) => (
-            <DeleteAction item={workout} onDeleteItem={onDeleteWorkout} />
-          )}
-        />
-        {inactiveWorkouts.length === 0 && (
+        {inactiveWorkouts.length > 0 ? (
+          <CustomList
+            items={inactiveWorkouts}
+            className={`workouts-list inactive-list ${
+              prefs.isDarkMode ? 'dark-mode' : ''
+            }`}
+            renderPrimaryText={(workout) => workout.name}
+            renderSecondaryText={(workout) =>
+              capitalizeFirstLetter(workout.muscleGroups.join(', '))
+            }
+            isDefaultLoader={false}
+            onItemClick={(workout) => onOpenDetails(workout)}
+            renderRight={(workout) => (
+              <CustomOptionsMenu
+                options={pastWorkoutOptions}
+                triggerElement={
+                  <CustomButton isIcon={true} icon={<MoreHorizIcon />} />
+                }
+                onClick={() => {
+                  setSelectedWorkoutForOptions(workout)
+                }}
+              />
+            )}
+            isSwipeable={true}
+            renderRightSwipeActions={(workout) => (
+              <DeleteAction item={workout} onDeleteItem={onDeleteWorkout} />
+            )}
+          />
+        ) : (
           <Typography variant="body1" className="no-past-workouts-message">
             No past routines found...
           </Typography>
@@ -475,7 +479,7 @@ export function Workouts() {
         </>
 
         {renderWorkoutLists(
-          !todaySessionDay?.workoutId || !todaySessionDay?.instructions
+          !sessionDay?.workoutId || !sessionDay?.instructions
         )}
         <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
         <div className="workouts-header">

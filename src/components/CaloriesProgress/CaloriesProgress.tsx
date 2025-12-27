@@ -101,7 +101,9 @@ export function CaloriesProgress({
         className={`card calories-progress ${prefs.isDarkMode ? 'dark' : ''}`}
         // onClick={onChangeDisplay}
       >
-        <Typography variant="h6">{label}</Typography>
+        <Typography variant="h6" className="bold-header">
+          {label}
+        </Typography>
         <EditIcon onClick={edit} />
         <div className="goal-container">
           <GoalBanner

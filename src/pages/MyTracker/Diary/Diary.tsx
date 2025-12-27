@@ -205,7 +205,9 @@ export function Diary() {
                   <div className="header">
                     <div className="label-container">
                       {meal.icon}
-                      <Typography variant="h6">{meal.label}</Typography>
+                      <Typography variant="h6" className="bold-header">
+                        {meal.label}
+                      </Typography>
                     </div>
                     <Typography variant="body2" className="period">
                       {meal.rangeLabel}

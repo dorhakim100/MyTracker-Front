@@ -26,10 +26,12 @@ import {
   setTodaySessionDay,
 } from '../../../store/actions/workout.action'
 import { messages } from '../../../assets/config/messages'
+import { CustomAccordion } from '../../../CustomMui/CustomAccordion/CustomAccordion'
 
 const CHECK_INTERVAL = 1000 * 60 // minute
 
 export function Dashboard() {
+  const prefs = useSelector((state: RootState) => state.systemModule.prefs)
   const user = useSelector((state: RootState) => state.userModule.user)
   const traineeUser = useSelector(
     (state: RootState) => state.userModule.traineeUser
@@ -184,7 +186,7 @@ export function Dashboard() {
   }
 
   const renderSession = () => {
-    if (sessionDay)
+    if (sessionDay?.workout)
       return (
         <div className="dashboard-session-container">
           <Typography variant="h5" className="bold-header">
@@ -206,10 +208,15 @@ export function Dashboard() {
         timer ? 'has-timer' : ''
       }`}
     >
-      <TimesContainer />
+      <TimesContainer
+        className={`${prefs.isDarkMode ? 'dark-mode' : ''} ${
+          prefs.favoriteColor
+        }`}
+      />
       <StatsCarousel items={statsCarouselItems} showSkeleton={!user} />
 
       {renderNoSession()}
+      {/* <CustomAccordion title="Workout Session" cmp={renderSession()} /> */}
       {renderSession()}
     </div>
   )

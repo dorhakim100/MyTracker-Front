@@ -82,7 +82,11 @@ export function CustomAccordion({
           id={`${summaryId}-header`}
         >
           <span className="accordion-icon">{icon}</span>
-          {typeof title === 'string' ? <Typography>{title}</Typography> : title}
+          {typeof title === 'string' ? (
+            <Typography className="bold-header">{title}</Typography>
+          ) : (
+            title
+          )}
         </AccordionSummary>
         <AccordionDetails>
           <div className="accordion-content">{cmp}</div>

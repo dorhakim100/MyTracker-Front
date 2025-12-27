@@ -3,11 +3,13 @@ import { useEffect, useState } from 'react'
 interface TimesContainerProps {
   isClock?: boolean
   selectedDay?: Date
+  className?: string
 }
 
 export function TimesContainer({
   isClock = true,
   selectedDay = new Date(),
+  className = '',
 }: TimesContainerProps) {
   const [timeString, setTimeString] = useState(
     new Date().toLocaleTimeString('he', {
@@ -58,10 +60,10 @@ export function TimesContainer({
   }, [selectedDay])
 
   return (
-    <div className='times-container'>
-      <div className='time-date-container'>
-        {isClock && <span className='time'>{timeString}</span>}{' '}
-        <span className='date'>{dateString}</span>
+    <div className={`times-container ${className}`}>
+      <div className="time-date-container">
+        {isClock && <span className="time">{timeString}</span>}{' '}
+        <span className="date">{dateString}</span>
       </div>
     </div>
   )

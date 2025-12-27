@@ -83,7 +83,9 @@ export function MacrosDistribution({
         } ${className}`}
       >
         {!hideEditAndHeader && (
-          <Typography variant="h6">Distribution</Typography>
+          <Typography variant="h6" className="bold-header">
+            Distribution
+          </Typography>
         )}
         {!hideEditAndHeader && <EditIcon onClick={edit} />}
         <MacrosDonut protein={protein} carbs={carbs} fats={fats} />

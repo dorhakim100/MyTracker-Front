@@ -4,6 +4,43 @@
   align-items: start;
   grid-template-rows: auto minmax(310px, 1fr) 1fr;
 
+  .times-container {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background-color: $neutral-gray;
+    padding: 0.5rem;
+
+    &.dark-mode {
+      background-color: $dark-gray;
+
+      &.blue {
+        background-color: $dark-gray-blue;
+      }
+      &.yellow {
+        background-color: $dark-gray-yellow;
+      }
+      &.red {
+        background-color: $dark-gray-red;
+      }
+      &.orange {
+        background-color: $dark-gray-orange;
+      }
+      &.green {
+        background-color: $dark-gray-green;
+      }
+      &.deepPurple {
+        background-color: $dark-gray-deep-purple;
+      }
+      &.purple {
+        background-color: $dark-gray-purple;
+      }
+      &.pink {
+        background-color: $dark-gray-pink;
+      }
+    }
+  }
+
   .dashboard-session-container {
     margin-top: 0.5rem;
     .bold-header {
