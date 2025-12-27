@@ -125,8 +125,8 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
         const instructions = await getExerciseSummary(exerciseId)
         setExerciseInstructions(instructions)
       } catch (err) {
-        console.error(err)
-        showErrorMsg(messages.error.getExerciseSummary)
+        // console.error(err)
+        // showErrorMsg(messages.error.getExerciseSummary)
         setExerciseInstructions(['No instructions found'])
       }
     }
