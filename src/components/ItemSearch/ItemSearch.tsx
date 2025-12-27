@@ -54,6 +54,7 @@ import AddIcon from '@mui/icons-material/Add'
 
 import { imageService } from '../../services/image/image.service'
 import CustomSkeleton from '../../CustomMui/CustomSkeleton/CustomSkeleton'
+import { searchUrls } from '../../assets/config/search.urls'
 
 interface ItemSearchProps {
   onAddToMealClick?: (item: MealItem) => void

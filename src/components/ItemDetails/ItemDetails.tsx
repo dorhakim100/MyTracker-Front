@@ -534,6 +534,7 @@ export function ItemDetails({
                   onError={async (e) => {
                     renderErrorImage()
                     await imageService.fetchOnError(e, item as Item)
+
                     loadItems()
                   }}
                 />

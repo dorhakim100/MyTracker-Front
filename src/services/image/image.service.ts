@@ -112,6 +112,8 @@ async function fetchOnError(
     const newItem = { ...item, image: next }
 
     await searchService.handleImageError(newItem)
+
+    return newItem
   } catch {
     img.src = searchUrls.DEFAULT_IMAGE
   }
@@ -133,4 +135,8 @@ function getFormattedExercise(exercise: Exercise | ExerciseInstructions) {
     ...exercise,
     image: exerciseImage.ERROR_IMAGE,
   }
+}
+
+function getImageFromQuery(query: string) {
+  return 'https://www.licious.in/blog/wp-content/uploads/2022/01/eggs-1.jpg'
 }

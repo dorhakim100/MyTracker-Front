@@ -88,18 +88,18 @@ async function search(filter: SearchFilter) {
       translatedTxt = await translateService.translate(safeTxt)
     } else translatedTxt = safeTxt
 
-    let cachedRes = await indexedDbService.query<Item>(translatedTxt, 0)
+    // let cachedRes = await indexedDbService.query<Item>(translatedTxt, 0)
 
-    if (cachedRes.length > 0) {
-      cachedRes = filterDuplicates(cachedRes)
-      cachedRes = handleResSorting(
-        cachedRes,
-        safeTxt,
-        favoriteItems,
-        translatedTxt
-      )
-      return cachedRes
-    }
+    // if (cachedRes.length > 0) {
+    //   cachedRes = filterDuplicates(cachedRes)
+    //   cachedRes = handleResSorting(
+    //     cachedRes,
+    //     safeTxt,
+    //     favoriteItems,
+    //     translatedTxt
+    //   )
+    //   return Promise.all(cachedRes.map((item) => modifyItemImage(item)))
+    // }
 
     const hasBackendResults = await itemService.hasCachedResults(translatedTxt)
 
@@ -112,7 +112,7 @@ async function search(filter: SearchFilter) {
         favoriteItems,
         translatedTxt
       )
-      return res
+      return Promise.all(res.map((item) => modifyItemImage(item)))
     }
 
     // Fetch both sources in parallel, tolerate failures
@@ -156,7 +156,7 @@ async function search(filter: SearchFilter) {
 
     await itemService.saveSearchResults(safeTxt, res)
 
-    return res
+    return Promise.all(res.map((item) => modifyItemImage(item)))
   } catch (err) {
     console.error(err)
     throw err
@@ -791,6 +791,22 @@ function computeRelevanceScore(
   if (favoriteIds?.includes(item.searchId || '')) score += 20
 
   return score
+}
+
+async function modifyItemImage(item: Item) {
+  if (item.image) return item
+  const image = await getImageFromQuery(item.name)
+  return { ...item, image: image }
+}
+
+async function getImageFromQuery(query: string) {
+  try {
+    const image = await imageService.getSingleImage(query)
+    return image || searchUrls.DEFAULT_IMAGE
+  } catch (err) {
+    console.error('Error getting image from query:', err)
+    return searchUrls.DEFAULT_IMAGE
+  }
 }
 
 // import termsData from '../../../search-terms.json'
