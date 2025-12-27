@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useLocation } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { Divider, Typography } from '@mui/material'
@@ -25,7 +24,6 @@ const colorMap: Record<string, string> = {
 }
 
 export function Timer() {
-  const location = useLocation()
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
 
   const currentExercise = useSelector(
@@ -86,12 +84,7 @@ export function Timer() {
 
   if (!timer) return null
 
-  if (
-    !currentExercise ||
-    !currentExercise.restingTime
-    // || location.pathname !== '/lift-mate/workouts'
-  )
-    return null
+  if (!currentExercise || !currentExercise.restingTime) return null
 
   return (
     <SlideAnimation

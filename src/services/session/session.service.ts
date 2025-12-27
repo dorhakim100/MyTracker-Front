@@ -1,7 +1,6 @@
 import { httpService } from '../http.service'
 import { SessionDay } from '../../types/workout/SessionDay'
 import { workoutService } from '../workout/workout.service'
-import { instructionsService } from '../instructions/instructions.service'
 import { ExerciseInstructions } from '../../types/exercise/ExerciseInstructions'
 
 const KEY = 'session'

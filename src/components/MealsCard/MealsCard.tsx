@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useSelector } from 'react-redux'
-import { ListItemIcon, Typography } from '@mui/material'
+import { ListItemIcon } from '@mui/material'
 import { RootState } from '../../store/store'
 import {
   optimisticUpdateUser,

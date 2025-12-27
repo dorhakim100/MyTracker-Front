@@ -12,8 +12,6 @@ import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import { CustomSelect } from '../../CustomMui/CustomSelect/CustomSelect'
 import { Filter } from '../ItemSearch/ItemSearch'
 
-type UiSearchSource = 'search' | 'meal'
-
 interface ItemFilterProps {
   filter: Filter
   onFilterChange: (filter: Filter) => void

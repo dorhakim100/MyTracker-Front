@@ -48,8 +48,6 @@ import {
   setSlideDirection,
 } from '../../../store/actions/system.actions'
 import CustomSkeleton from '../../../CustomMui/CustomSkeleton/CustomSkeleton'
-import { CustomAccordion } from '../../../CustomMui/CustomAccordion/CustomAccordion'
-import { SessionDay } from '../../../types/workout/SessionDay'
 
 const EDIT = 'edit'
 const DETAILS = 'details'
@@ -93,10 +91,6 @@ export function Workouts() {
 
   const sessionDay = useSelector(
     (state: RootState) => state.workoutModule.sessionDay
-  )
-
-  const todaySessionDay = useSelector(
-    (state: RootState) => state.workoutModule.todaySessionDay
   )
 
   const [selectedDay, setSelectedDay] = useState(new Date())

@@ -136,7 +136,3 @@ function getFormattedExercise(exercise: Exercise | ExerciseInstructions) {
     image: exerciseImage.ERROR_IMAGE,
   }
 }
-
-function getImageFromQuery(query: string) {
-  return 'https://www.licious.in/blog/wp-content/uploads/2022/01/eggs-1.jpg'
-}

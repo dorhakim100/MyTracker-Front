@@ -26,7 +26,6 @@ import {
   setTodaySessionDay,
 } from '../../../store/actions/workout.action'
 import { messages } from '../../../assets/config/messages'
-import { CustomAccordion } from '../../../CustomMui/CustomAccordion/CustomAccordion'
 
 const CHECK_INTERVAL = 1000 * 60 // minute
 
