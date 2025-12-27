@@ -89,18 +89,18 @@ async function search(filter: SearchFilter) {
       translatedTxt = await translateService.translate(safeTxt)
     } else translatedTxt = safeTxt
 
-    // let cachedRes = await indexedDbService.query<Item>(translatedTxt, 0)
+    let cachedRes = await indexedDbService.query<Item>(safeTxt, 0)
 
-    // if (cachedRes.length > 0) {
-    //   cachedRes = filterDuplicates(cachedRes)
-    //   cachedRes = handleResSorting(
-    //     cachedRes,
-    //     safeTxt,
-    //     favoriteItems,
-    //     translatedTxt
-    //   )
-    //   return Promise.all(cachedRes.map((item) => modifyItemImage(item)))
-    // }
+    if (cachedRes.length > 0) {
+      cachedRes = filterDuplicates(cachedRes)
+      cachedRes = handleResSorting(
+        cachedRes,
+        safeTxt,
+        favoriteItems,
+        translatedTxt
+      )
+      return Promise.all(cachedRes.map((item) => modifyItemImage(item)))
+    }
 
     const hasBackendResults = await itemService.hasCachedResults(translatedTxt)
 
@@ -113,6 +113,7 @@ async function search(filter: SearchFilter) {
         favoriteItems,
         translatedTxt
       )
+      await itemService.saveSearchResults(safeTxt, res)
       return Promise.all(res.map((item) => modifyItemImage(item)))
     }
 
