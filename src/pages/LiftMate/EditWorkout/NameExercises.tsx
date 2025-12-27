@@ -259,15 +259,14 @@ export function NameExercises({
         ref={editWorkoutRef}
       >
         <div className="settings-controls-container">
-          {!instructions._id && (
-            <CustomInput
-              value={workout.name}
-              onChange={onNameChange}
-              placeholder="Enter workout name"
-              isRemoveIcon={true}
-              className={`${prefs.favoriteColor}`}
-            />
-          )}
+          <CustomInput
+            value={workout.name}
+            onChange={onNameChange}
+            placeholder="Enter workout name"
+            isRemoveIcon={true}
+            className={`${prefs.favoriteColor}`}
+          />
+
           {instructions._id && (
             <CustomToggle
               value={instructionsFilter.weekNumber.toString()}

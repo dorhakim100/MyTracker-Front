@@ -74,13 +74,13 @@ async function playWorkout(sessionDay: SessionDay, userId: string) {
       userId: userId,
     })
 
-    const instructionsWithDetails =
-      await instructionsService.getExercisesFromInstructions(
-        session.instructions
-      )
+    // const instructionsWithDetails =
+    //   await instructionsService.getExercisesFromInstructions(
+    //     session.instructions
+    //   )
 
     const instructionsWithFreshExercises = {
-      ...instructionsWithDetails,
+      ...session.instructions,
       exercises: session.instructions.exercises.map(
         (exercise: ExerciseInstructions) => {
           return {

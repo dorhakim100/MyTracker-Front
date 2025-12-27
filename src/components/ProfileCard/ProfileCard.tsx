@@ -56,25 +56,25 @@ export function ProfileCard() {
   return (
     <>
       <Card
-        variant='outlined'
+        variant="outlined"
         className={`card user-details ${prefs.isDarkMode ? 'dark-mode' : ''}`}
       >
         <EditIcon onClick={onOpenEditUser} />
-        <div className='profile-container' onClick={onOpenAlertDialog}>
+        <div className="profile-container" onClick={onOpenAlertDialog}>
           <img
-            className='profile-avatar  box-shadow white-outline'
+            className="profile-avatar  box-shadow white-outline"
             src={user?.details?.imgUrl || '/logo-square.png'}
-            alt='Profile'
+            alt="Profile"
           />
-          <div className='profile-info'>
-            <Typography variant='h5'>
+          <div className="profile-info">
+            <Typography variant="h5" className="text-overflow">
               {user?.details?.fullname || 'User Profile'}
             </Typography>
 
-            <Typography variant='body1'>
+            <Typography variant="body1">
               {user?.details?.height || 0} cm
             </Typography>
-            <Typography variant='body1'>
+            <Typography variant="body1">
               {new Date(user?.details?.birthdate || 0).toLocaleDateString('he')}
             </Typography>
           </div>
@@ -84,23 +84,23 @@ export function ProfileCard() {
         open={isEditUserOpen}
         onClose={onCloseEditUser}
         component={<EditUser onSave={onSaveEditUser} />}
-        title='Edit User'
+        title="Edit User"
         onSave={() => onSaveEditUser(user as User)}
-        type='full'
+        type="full"
       />
       <CustomAlertDialog
         open={openAlertDialog}
         onClose={onCloseAlertDialog}
-        title='Profile Picture'
+        title="Profile Picture"
       >
-        <div className='modal-profile-picture-container'>
+        <div className="modal-profile-picture-container">
           <img
             src={user?.details?.imgUrl || '/logo-square.png'}
-            alt='Profile'
+            alt="Profile"
             className={`profile-picture box-shadow white-outline`}
           />
           <CustomButton
-            text='Cancel'
+            text="Cancel"
             fullWidth
             onClick={onCloseAlertDialog}
             className={`${prefs.favoriteColor}`}

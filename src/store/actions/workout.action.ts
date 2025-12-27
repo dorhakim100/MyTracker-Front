@@ -12,6 +12,8 @@ import {
   SET_CURRENT_EXERCISE,
   REMOVE_TIMER,
   SET_TIMER,
+  REMOVE_TODAY_SESSION_DAY,
+  SET_TODAY_SESSION_DAY,
 } from '../reducers/workout.reducer'
 import { Workout } from '../../types/workout/Workout'
 import { WorkoutFilter } from '../../types/workoutFilter/WorkoutFilter'
@@ -100,10 +102,8 @@ export async function playWorkout(sessionDay: SessionDay, userId: string) {
       sessionDay,
       userId
     )
-    store.dispatch({
-      type: SET_SELECTED_SESSION_DAY,
-      sessionDay: sessionWithInstructions,
-    })
+    setSelectedSessionDay(sessionWithInstructions)
+    setTodaySessionDay(sessionWithInstructions)
 
     return sessionWithInstructions
   } catch (err) {
@@ -159,4 +159,12 @@ export async function removeTimer(timerId: string) {
   } catch (err) {
     throw err
   }
+}
+
+export function setTodaySessionDay(todaySessionDay: SessionDay) {
+  store.dispatch({ type: SET_TODAY_SESSION_DAY, todaySessionDay })
+}
+
+export function removeTodaySessionDay() {
+  store.dispatch({ type: REMOVE_TODAY_SESSION_DAY })
 }

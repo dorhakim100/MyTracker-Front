@@ -14,11 +14,13 @@ interface AddItemButtonProps {
 export const AddItemButton = ({ mealPeriod }: AddItemButtonProps) => {
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
 
+  const timer = useSelector((state: RootState) => state.workoutModule.timer)
+
   return (
     <CustomButton
-      text='Add Item'
+      text="Add Item"
       icon={<AddIcon />}
-      size='small'
+      size="small"
       onClick={(e) => {
         e.stopPropagation()
         e.preventDefault()
@@ -26,6 +28,7 @@ export const AddItemButton = ({ mealPeriod }: AddItemButtonProps) => {
         setSelectedMeal(capitalizeFirstLetter(mealPeriod as MealPeriod))
       }}
       className={`${prefs.favoriteColor}`}
+      disabled={timer}
     />
   )
 }

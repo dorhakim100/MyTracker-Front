@@ -1,6 +1,13 @@
 .dashboard-container {
-  overflow-y: hidden !important;
   display: grid;
-  // grid-template-rows: auto 1fr;
-  // gap: 1rem;
+  gap: 0.8rem;
+  align-items: start;
+  grid-template-rows: auto minmax(310px, 1fr) 1fr;
+
+  .dashboard-session-container {
+    margin-top: 0.5rem;
+    .bold-header {
+      text-align: start;
+    }
+  }
 }

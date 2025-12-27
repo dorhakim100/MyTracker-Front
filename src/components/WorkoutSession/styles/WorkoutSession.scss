@@ -27,8 +27,21 @@
 }
 
 .workout-container {
+  display: grid;
+  gap: 1rem;
+  .bold-header {
+    text-align: start;
+  }
   .exercises-container {
     display: grid;
+    gap: 1rem;
+  }
+
+  .buttons-container {
+    display: flex !important;
+    align-items: center;
+    // justify-content: center;
+    justify-content: space-between;
     gap: 1rem;
   }
 }

@@ -1,8 +1,8 @@
 .profile-container {
   display: grid;
-  grid-template-columns: 120px 1fr;
+  grid-template-columns: 120px 1fr 30px;
   justify-items: center;
-  gap: 1.5rem;
+  gap: 1rem;
 
   .profile-avatar {
     width: 120px;
@@ -14,6 +14,8 @@
   .profile-info {
     align-self: center;
     justify-self: start;
+    max-width: 100%;
+    overflow: hidden;
   }
 }
 

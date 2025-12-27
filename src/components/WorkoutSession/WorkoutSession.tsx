@@ -37,6 +37,8 @@ import { CustomInput } from '../../CustomMui/CustomInput/CustomInput'
 import { ExerciseCard } from '../ExerciseCard/ExerciseCard'
 import { getWorkoutMuscles } from '../../services/exersice-search/exersice-search'
 import CircleIcon from '@mui/icons-material/Circle'
+import AddIcon from '@mui/icons-material/Add'
+import CheckIcon from '@mui/icons-material/Check'
 interface WorkoutSessionProps {
   sessionDay: SessionDay
   onExerciseInfoClick: (exercise: Exercise) => void
@@ -362,6 +364,17 @@ export function WorkoutSession({
           </div>
           <div className="actions-container">
             <CustomButton
+              // text="Finish Workout"
+              isIcon={true}
+              icon={<CheckIcon />}
+              disabled={!timer}
+              size="small"
+              onClick={() => {
+                if (!timer) return
+                removeTimer(timer._id)
+              }}
+            />
+            <CustomButton
               icon={<DeleteIcon />}
               onClick={() => {
                 setAlertDialogOptions({
@@ -458,6 +471,24 @@ export function WorkoutSession({
               />
             )
           })}
+        </div>
+        <div className="buttons-container">
+          <CustomButton text="Add Exercise" icon={<AddIcon />} fullWidth />
+          <Divider
+            className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+            orientation="vertical"
+            flexItem={true}
+          />
+          <CustomButton
+            text="Finish Workout"
+            icon={<CheckIcon />}
+            fullWidth
+            disabled={!timer}
+            onClick={() => {
+              if (!timer) return
+              removeTimer(timer._id)
+            }}
+          />
         </div>
       </div>
       <CustomAlertDialog

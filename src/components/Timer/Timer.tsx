@@ -84,10 +84,12 @@ export function Timer() {
     }
   }
 
+  if (!timer) return null
+
   if (
     !currentExercise ||
-    !currentExercise.restingTime ||
-    location.pathname !== '/lift-mate/workouts'
+    !currentExercise.restingTime
+    // || location.pathname !== '/lift-mate/workouts'
   )
     return null
 

@@ -67,6 +67,10 @@ export function FixedBottomNavigation(props: {
     (stateSelector: RootState) => stateSelector.userModule.selectedDay
   )
 
+  const timer = useSelector(
+    (stateSelector: RootState) => stateSelector.workoutModule.timer
+  )
+
   const [searchModalOpen, setSearchModalOpen] = useState(false)
   const [modalType, setModalType] = useState<ModalType>(modalTypes.search)
 
@@ -172,7 +176,7 @@ export function FixedBottomNavigation(props: {
             prefs.favoriteColor
           }`}
           sx={{
-            display: location.pathname === '/lift-mate/workouts' ? 'none' : '',
+            display: timer ? 'none' : '',
             // position: 'absolute',
           }}
         >

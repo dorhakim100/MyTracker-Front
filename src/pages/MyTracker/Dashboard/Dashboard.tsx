@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../store/store'
 
 import { TimesContainer } from '../../../components/TimesContainer/TimesContainer'
 import { StatsCarousel } from '../../../components/StatsCarousel/StatsCarousel'
-import { CurrMeal } from '../../../components/CurrMeal/CurrMeal'
+
 import { CaloriesProgress } from '../../../components/CaloriesProgress/CaloriesProgress'
 import { MacrosDistribution } from '../../../components/MacrosDistribution/MacrosDistribution'
 import { MacrosProgress } from '../../../components/MacrosProgress/MacrosProgress'
@@ -13,11 +14,37 @@ import {
   setSelectedDiaryDay,
 } from '../../../store/actions/user.actions'
 import { getDateFromISO } from '../../../services/util.service'
+import { Typography } from '@mui/material'
+import PlayArrowIcon from '@mui/icons-material/PlayArrow'
+import { CustomButton } from '../../../CustomMui/CustomButton/CustomButton'
+import { setSlideDirection } from '../../../store/actions/system.actions'
+import { WorkoutSession } from '../../../components/WorkoutSession/WorkoutSession'
+import { showErrorMsg } from '../../../services/event-bus.service'
+import {
+  handleSessionDayChange,
+  setSelectedSessionDay,
+  setTodaySessionDay,
+} from '../../../store/actions/workout.action'
+import { messages } from '../../../assets/config/messages'
 
 const CHECK_INTERVAL = 1000 * 60 // minute
 
 export function Dashboard() {
   const user = useSelector((state: RootState) => state.userModule.user)
+  const traineeUser = useSelector(
+    (state: RootState) => state.userModule.traineeUser
+  )
+  const sessionDay = useSelector(
+    (state: RootState) => state.workoutModule.sessionDay
+  )
+
+  const todaySessionDay = useSelector(
+    (state: RootState) => state.workoutModule.todaySessionDay
+  )
+
+  const timer = useSelector((state: RootState) => state.workoutModule.timer)
+
+  const navigate = useNavigate()
 
   const [macros, setMacros] = useState({
     protein: { percentage: 0, gram: 0 },
@@ -107,6 +134,12 @@ export function Dashboard() {
     setCalories(newCalories)
   }, [user?.loggedToday?.calories])
 
+  useEffect(() => {
+    if (!todaySessionDay) return
+
+    setSelectedSessionDay(todaySessionDay)
+  }, [user, traineeUser, todaySessionDay])
+
   function getPercentage(value: number, goal: number) {
     return (value / goal) * 100
   }
@@ -117,11 +150,67 @@ export function Dashboard() {
     handleDiaryDayChange(dateToCheck, user)
   }
 
+  async function updateSessionDay() {
+    try {
+      if (!user) return
+      const day = await handleSessionDayChange(
+        getDateFromISO(new Date().toISOString()),
+        traineeUser || user
+      )
+      setTodaySessionDay(day)
+    } catch (err) {
+      console.log(err)
+
+      showErrorMsg(messages.error.getSessionDay)
+    }
+  }
+  const renderNoSession = () => {
+    if (!todaySessionDay?.workout)
+      return (
+        <div className="no-session-container">
+          <Typography variant="h6" className="bold-header">
+            No workout session today
+          </Typography>
+          <CustomButton
+            text="Choose Workout"
+            icon={<PlayArrowIcon />}
+            onClick={() => {
+              setSlideDirection(1)
+              navigate('/lift-mate/workouts')
+            }}
+          />
+        </div>
+      )
+  }
+
+  const renderSession = () => {
+    if (sessionDay)
+      return (
+        <div className="dashboard-session-container">
+          <Typography variant="h5" className="bold-header">
+            Workout Session
+          </Typography>
+
+          <WorkoutSession
+            sessionDay={sessionDay}
+            onExerciseInfoClick={() => {}}
+            updateSessionDay={updateSessionDay}
+          />
+        </div>
+      )
+  }
+
   return (
-    <div className="page-container dashboard-container">
+    <div
+      className={`page-container dashboard-container ${
+        timer ? 'has-timer' : ''
+      }`}
+    >
       <TimesContainer />
       <StatsCarousel items={statsCarouselItems} showSkeleton={!user} />
-      <CurrMeal />
+
+      {renderNoSession()}
+      {renderSession()}
     </div>
   )
 }

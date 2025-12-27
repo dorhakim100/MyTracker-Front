@@ -1,4 +1,5 @@
 .workouts-container {
+  padding-top: 1rem;
   &.skeleton {
     .MuiSkeleton-root {
       // margin-bottom: 1rem;
@@ -46,6 +47,9 @@
   padding: 1rem;
 }
 .workouts-lists-container {
+  display: grid;
+  gap: 1rem;
+  padding-top: 1rem;
   .past-controller {
     display: flex;
     flex-direction: column;
