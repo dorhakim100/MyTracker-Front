@@ -111,7 +111,8 @@ export function WorkoutSession({
   const getWorkoutName = () => {
     const workoutId = sessionDay.instructions.workoutId
 
-    const workout = workouts.find((w) => w._id === workoutId)
+    const workout =
+      workouts.find((w) => w._id === workoutId) || sessionDay.workout
     return workout?.name
   }
 

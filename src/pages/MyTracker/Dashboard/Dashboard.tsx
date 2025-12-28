@@ -162,7 +162,6 @@ export function Dashboard() {
         getDateFromISO(new Date().toISOString()),
         traineeUser || user
       )
-      console.log('day', day)
 
       setTodaySessionDay(day)
     } catch (err) {

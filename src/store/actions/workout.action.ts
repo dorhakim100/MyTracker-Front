@@ -98,13 +98,10 @@ export function setSelectedSessionDay(sessionDay: SessionDay) {
 
 export async function playWorkout(sessionDay: SessionDay, userId: string) {
   try {
-    console.log('playWorkout', sessionDay, userId)
-
     const sessionWithInstructions = await sessionService.playWorkout(
       sessionDay,
       userId
     )
-    console.log('sessionWithInstructions', sessionWithInstructions)
 
     setSelectedSessionDay(sessionWithInstructions)
     setTodaySessionDay(sessionWithInstructions)
