@@ -56,6 +56,7 @@ async function processWithConcurrencyLimit<T, R>(
   limit: number = MAX_CONCURRENT_OPERATIONS
 ): Promise<R[]> {
   const results: R[] = []
+  if (!items || !items.length) return results
   for (let i = 0; i < items.length; i += limit) {
     const batch = items.slice(i, i + limit)
     const batchResults = await Promise.all(batch.map(processor))
@@ -233,7 +234,6 @@ async function searchFavoriteItems(
     const missingProducts = favoriteProducts.filter((id) => id !== '')
 
     res = res.filter((item): item is Item => item !== undefined)
-    console.log(res)
 
     // Build result array maintaining order (res is sparse, so map over favoriteItems indices)
     const cachedResults = favoriteItems
@@ -324,7 +324,10 @@ async function searchFavoriteItems(
 async function searchBulkIds(logs: Log[]) {
   try {
     const productsIds = logs
-      .filter((log) => log.source === sourceTypes.product)
+      .filter(
+        (log) =>
+          log.source === sourceTypes.product || log.source === 'open-food-facts'
+      )
       .map((log) => log.itemId)
     const foodsIds = logs
       .filter((log) => log.source === sourceTypes.food)
@@ -332,11 +335,19 @@ async function searchBulkIds(logs: Log[]) {
 
     if (!productsIds.length && !foodsIds.length) return []
 
-    const backendRes = await itemService.getBulkBySearchIds(
+    let backendRes = await itemService.getBulkBySearchIds(
       productsIds.concat(foodsIds)
     )
 
+    backendRes = filterDuplicates(backendRes)
+
     if (backendRes.length === productsIds.length + foodsIds.length) {
+      await Promise.all(
+        backendRes.map(async (item: Item) => {
+          await addToCache(item as Item, ITEMS_CACHE)
+        })
+      )
+
       return backendRes
     }
 
@@ -345,10 +356,10 @@ async function searchBulkIds(logs: Log[]) {
       .filter((id) => !backendRes.some((item: Item) => item.searchId === id))
 
     const missingProducts = missingIds.filter(
-      (id) => id.length <= LONGEST_FOOD_ID_LENGTH
+      (id) => id.length >= LONGEST_FOOD_ID_LENGTH
     )
     const missingFoods = missingIds.filter(
-      (id) => id.length >= LONGEST_FOOD_ID_LENGTH
+      (id) => id.length <= LONGEST_FOOD_ID_LENGTH
     )
 
     const promises = [
@@ -360,7 +371,7 @@ async function searchBulkIds(logs: Log[]) {
     const res = [...backendRes, ...products, ...foods]
 
     // Batch cache operations
-    await Promise.all(res.map((item) => addToCache(item as Item, ITEMS_CACHE)))
+    // await Promise.all(res.map((item) => addToCache(item as Item, ITEMS_CACHE)))
     return res
   } catch (err) {
     throw err
@@ -510,7 +521,7 @@ async function searchOpenFoodFacts(query: string) {
   }
 }
 
-getProductById('7290119370955')
+// getProductById('7290119370955')
 
 async function getProductById(id: string) {
   try {
@@ -560,9 +571,9 @@ async function getProductById(id: string) {
       type: 'product',
     }
 
-    console.log('modifiedItem', modifiedItem)
-
     await itemService.save(modifiedItem as Item)
+
+    await addToCache(modifiedItem as Item, ITEMS_CACHE)
 
     return modifiedItem
   } catch (err) {
@@ -604,21 +615,9 @@ async function getProductsByIds(ids: string[]) {
       //headers: { 'User-Agent': 'MyTracker/1.0 (you@example.com)' },
     })
 
-    const isEnglishWord = translateService.isEnglishWord(
-      data.products[0].product_name
-    )
-    let translatedTxt = data.products[0].product_name
-
-    if (!isEnglishWord) {
-      translatedTxt = await translateService.translate(translatedTxt)
-    }
-
-    const images = await imageService.getImage(translatedTxt)
-    let currImageIdx = 0
-
     const products: OFFProduct[] = data.products || []
 
-    return products.map((product: OFFProduct) => {
+    const modifiedProducts = products.map((product: OFFProduct) => {
       const proteins = +(product.nutriments?.proteins_100g ?? 0)
       const carbs = +(product.nutriments?.carbohydrates_100g ?? 0)
       const fats = +(product.nutriments?.fat_100g ?? 0)
@@ -628,11 +627,6 @@ async function getProductsByIds(ids: string[]) {
         +calculateCaloriesFromMacros({ protein: proteins, carbs, fats }).total
 
       let image = product.image_small_url
-      if (!image) {
-        image = images[currImageIdx].webformatURL || DEFAULT_IMAGE
-
-        currImageIdx++
-      }
 
       return {
         searchId: product.code,
@@ -644,6 +638,24 @@ async function getProductsByIds(ids: string[]) {
         type: 'product',
       }
     })
+
+    await Promise.all(
+      modifiedProducts.map(async (product: any) => {
+        await itemService.save(product as Item)
+        await addToCache(product as Item, ITEMS_CACHE)
+      })
+    )
+
+    return Promise.all(
+      modifiedProducts.map(async (product: any) => {
+        return {
+          ...product,
+          image:
+            product.image ||
+            (await imageService.getSingleImage(product.name || '')),
+        }
+      })
+    )
   } catch (err) {
     throw err
   }
@@ -801,6 +813,8 @@ async function getFoodsByIds(ids: string[]) {
     const foods: FDCFood[] = Array.isArray(data)
       ? (data as FDCFood[])
       : data.foods
+
+    if (!data || !foods || !foods.length) return []
 
     // Process images with concurrency limit to avoid too many parallel API calls
     const images = await processWithConcurrencyLimit(
