@@ -79,7 +79,9 @@ export function Dashboard() {
       />,
     ]
   }, [user, calories, macros])
-
+  useEffect(() => {
+    updateSessionDay()
+  }, [user, traineeUser])
   useEffect(() => {
     if (!user) return
     setSelectedDiaryDay(user.loggedToday)
@@ -158,6 +160,8 @@ export function Dashboard() {
         getDateFromISO(new Date().toISOString()),
         traineeUser || user
       )
+      console.log('day', day)
+
       setTodaySessionDay(day)
     } catch (err) {
       console.log(err)

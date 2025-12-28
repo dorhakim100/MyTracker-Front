@@ -236,6 +236,7 @@ export function WorkoutSession({
       if (!sessionDay._id) return showErrorMsg(messages.error.deleteSession)
       setIsLoading(true)
       await removeSessionDay(sessionDay._id)
+      if (timer?._id) await removeTimer(timer?._id)
       updateSessionDay()
       closeAlertDialog()
     } catch (err) {

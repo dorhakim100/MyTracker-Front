@@ -9,6 +9,7 @@ import {
   setSelectedSessionDay,
   playWorkout,
   setTodaySessionDay,
+  removeTimer,
 } from '../../../store/actions/workout.action'
 
 import { SlideDialog } from '../../../components/SlideDialog/SlideDialog'
@@ -268,6 +269,7 @@ export function Workouts() {
       } else {
         await workoutService.remove(workout._id)
       }
+
       showSuccessMsg(messages.success.deleteWorkout)
     } catch (err) {
       console.error(err)
