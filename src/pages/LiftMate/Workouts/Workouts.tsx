@@ -9,7 +9,6 @@ import {
   setSelectedSessionDay,
   playWorkout,
   setTodaySessionDay,
-  removeTimer,
 } from '../../../store/actions/workout.action'
 
 import { SlideDialog } from '../../../components/SlideDialog/SlideDialog'
