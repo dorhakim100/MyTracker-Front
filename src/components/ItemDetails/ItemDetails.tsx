@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 
 import { RootState } from '../../store/store'
@@ -103,7 +103,10 @@ export function ItemDetails({
     (stateSelector: RootState) => stateSelector.userModule.selectedDay
   )
 
-  const item: Item | Meal | Log = editMealItem ? editMealItem : searchedItem
+  const item: Item | Meal | Log = useMemo(
+    () => (editMealItem ? editMealItem : searchedItem),
+    [editMealItem, searchedItem]
+  )
 
   const [editItem, setEditItem] = useState<EditItem>({
     totalMacros: isCustomLog ? _getDefaultMacros() : item.macros,
@@ -148,6 +151,15 @@ export function ItemDetails({
     loadItems()
   }, [])
 
+  useEffect(() => {
+    setEditItem({
+      totalMacros: isCustomLog ? _getDefaultMacros() : item.macros,
+      servingSize: editMealItem?.servingSize || 100,
+      numberOfServings: editMealItem?.numberOfServings || 1,
+      meal: editMealItem?.meal || selectedMeal || getCurrMeal(),
+      name: isCustomLog ? '' : editMealItem?.name || searchedItem.name,
+    })
+  }, [editMealItem, searchedItem, isCustomLog, selectedMeal])
   const closeClock = () => {
     setClockOpen(false)
   }

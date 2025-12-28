@@ -99,8 +99,6 @@ export function ExerciseEditor({
     }
   }
 
-  console.log(exercise)
-
   const onDeleteSet = async (indexToRemove: number) => {
     if (indexToRemove === 0 && exercise.sets.length === 1) {
       showErrorMsg(messages.error.deleteSet)

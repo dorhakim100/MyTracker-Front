@@ -132,6 +132,7 @@ export function LoggedList({ mealPeriod }: { mealPeriod: MealPeriod }) {
 
     try {
       const cachedItem = cachedItems.find((i) => i.searchId === mealItem.itemId)
+
       if (cachedItem) {
         mealItem.name = cachedItem.name
         mealItem.image = cachedItem.image
@@ -139,7 +140,10 @@ export function LoggedList({ mealPeriod }: { mealPeriod: MealPeriod }) {
       } else {
         const searchedItem = await searchService.searchById(
           mealItem.itemId,
-          searchTypes.openFoodFacts
+          mealItem.source ||
+            (mealItem.searchId && mealItem.searchId.length >= 10)
+            ? searchTypes.openFoodFacts
+            : searchTypes.usda
         )
         mealItem.name = searchedItem?.name || 'Unknown'
         mealItem.image = searchedItem?.image || searchUrls.DEFAULT_IMAGE
@@ -158,9 +162,8 @@ export function LoggedList({ mealPeriod }: { mealPeriod: MealPeriod }) {
         return
       }
 
+      setEditMealItem({ ...mealItem })
       setItem(itemToSet as Item)
-
-      setEditMealItem(mealItem)
     } catch (err) {
       console.error(err)
       showErrorMsg(messages.error.editMeal)
