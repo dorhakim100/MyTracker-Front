@@ -29,6 +29,7 @@ import { MealPeriod } from '../../types/mealPeriod/MealPeriod'
 import { CustomSkeleton } from '../../CustomMui/CustomSkeleton/CustomSkeleton'
 import { AddItemButton } from '../AddItemButton/AddItemButton'
 import { DeleteAction } from '../DeleteAction/DeleteAction'
+import { imageService } from '../../services/image/image.service'
 
 export function LoggedList({ mealPeriod }: { mealPeriod: MealPeriod }) {
   const user = useSelector((state: RootState) => state.userModule.user)
@@ -130,15 +131,27 @@ export function LoggedList({ mealPeriod }: { mealPeriod: MealPeriod }) {
     }
 
     try {
-      const searchedItem = await searchService.searchById(
-        mealItem.itemId,
-        searchTypes.openFoodFacts
-      )
-      mealItem.name = searchedItem?.name || 'Unknown'
-      mealItem.image = searchedItem?.image || searchUrls.DEFAULT_IMAGE
-      itemToSet = searchedItem
-
+      const cachedItem = cachedItems.find((i) => i.searchId === mealItem.itemId)
+      if (cachedItem) {
+        mealItem.name = cachedItem.name
+        mealItem.image = cachedItem.image
+        itemToSet = cachedItem
+      } else {
+        const searchedItem = await searchService.searchById(
+          mealItem.itemId,
+          searchTypes.openFoodFacts
+        )
+        mealItem.name = searchedItem?.name || 'Unknown'
+        mealItem.image = searchedItem?.image || searchUrls.DEFAULT_IMAGE
+        itemToSet = searchedItem
+      }
       mealItem.searchId = mealItem.itemId
+
+      if (!itemToSet.image) {
+        const image = await imageService.getSingleImage(itemToSet.name)
+        itemToSet.image = image
+        mealItem.image = image
+      }
 
       if (!itemToSet) {
         showErrorMsg(messages.error.editMeal)
