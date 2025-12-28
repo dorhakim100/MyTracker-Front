@@ -244,6 +244,8 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
 
     const sortedMeals = searchService.getSortedResults(meals, filter.sortBy)
 
+    const isShowMeals = !filter.txt && meals.length > 0
+
     if (!results.length && isLoading) {
       return <SkeletonList />
     } else if (!results.length && filter.txt) {
@@ -263,7 +265,7 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
 
     return (
       <Box className="results">
-        {!filter.txt && (
+        {isShowMeals && (
           <>
             <Typography variant="h6" className="bold-header search-header">
               Meals

@@ -76,9 +76,9 @@ export function LoggedList({ mealPeriod }: { mealPeriod: MealPeriod }) {
 
   if (!user || !logs?.length)
     return (
-      <div className='logged-items'>
-        <div className='placeholder-container'>
-          <div className='placeholder'>No items logged yet</div>
+      <div className="logged-items">
+        <div className="placeholder-container">
+          <div className="placeholder">No items logged yet</div>
           <AddItemButton mealPeriod={mealPeriod} />
         </div>
       </div>
@@ -93,8 +93,8 @@ export function LoggedList({ mealPeriod }: { mealPeriod: MealPeriod }) {
     return (
       cachedItem?.name || (
         <CustomSkeleton
-          variant='text'
-          width='100%'
+          variant="text"
+          width="100%"
           height={20}
           isDarkMode={prefs.isDarkMode}
         />
@@ -112,8 +112,8 @@ export function LoggedList({ mealPeriod }: { mealPeriod: MealPeriod }) {
       `${caloriesToReturn.toFixed(0)} kcal`
     ) : (
       <CustomSkeleton
-        variant='text'
-        width='25%'
+        variant="text"
+        width="25%"
         height={20}
         isDarkMode={prefs.isDarkMode}
       />
@@ -130,20 +130,14 @@ export function LoggedList({ mealPeriod }: { mealPeriod: MealPeriod }) {
     }
 
     try {
-      const cachedItem = cachedItems.find((i) => i.searchId === mealItem.itemId)
-      if (cachedItem) {
-        mealItem.name = cachedItem.name
-        mealItem.image = cachedItem.image
-        itemToSet = cachedItem
-      } else {
-        const searchedItem = await searchService.searchById(
-          mealItem.itemId,
-          searchTypes.openFoodFacts
-        )
-        mealItem.name = searchedItem?.name || 'Unknown'
-        mealItem.image = searchedItem?.image || searchUrls.DEFAULT_IMAGE
-        itemToSet = searchedItem
-      }
+      const searchedItem = await searchService.searchById(
+        mealItem.itemId,
+        searchTypes.openFoodFacts
+      )
+      mealItem.name = searchedItem?.name || 'Unknown'
+      mealItem.image = searchedItem?.image || searchUrls.DEFAULT_IMAGE
+      itemToSet = searchedItem
+
       mealItem.searchId = mealItem.itemId
 
       if (!itemToSet) {
@@ -216,10 +210,10 @@ export function LoggedList({ mealPeriod }: { mealPeriod: MealPeriod }) {
       <SlideDialog
         open={isEditOpen}
         onClose={closeEdit}
-        title='Edit Meal'
+        title="Edit Meal"
         component={<ItemDetails />}
         onSave={closeEdit}
-        type='full'
+        type="full"
       />
     </>
   )

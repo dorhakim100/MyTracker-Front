@@ -21,6 +21,7 @@ import DonutLargeIcon from '@mui/icons-material/DonutLarge'
 import WbTwilightIcon from '@mui/icons-material/WbTwilight'
 import LightModeIcon from '@mui/icons-material/LightMode'
 import BedtimeIcon from '@mui/icons-material/Bedtime'
+import IcecreamIcon from '@mui/icons-material/Icecream'
 
 import { getDateFromISO } from '../../../services/util.service'
 import { DAY_IN_MS } from '../../../assets/config/times'
@@ -68,6 +69,12 @@ export function Diary() {
       rangeLabel: '18:00 – 00:00',
       icon: <BedtimeIcon />,
     },
+    {
+      label: 'Snacks',
+      period: 'snacks',
+      rangeLabel: 'During the day',
+      icon: <IcecreamIcon />,
+    },
   ]
 
   const totalBreakfastCalories = useMemo(() => {
@@ -78,6 +85,9 @@ export function Diary() {
   }, [selectedDayDiary])
   const totalDinnerCalories = useMemo(() => {
     return getTotalCalories('dinner')
+  }, [selectedDayDiary])
+  const totalSnacksCalories = useMemo(() => {
+    return getTotalCalories('snacks')
   }, [selectedDayDiary])
 
   useEffect(() => {
@@ -120,6 +130,9 @@ export function Diary() {
         break
       case 'dinner':
         caloriesToSet = totalDinnerCalories
+        break
+      case 'snacks':
+        caloriesToSet = totalSnacksCalories
         break
       default:
         caloriesToSet = 0

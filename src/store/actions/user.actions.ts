@@ -208,7 +208,7 @@ export async function handleFavorite(item: Item, user: User) {
   try {
     let favoriteArray = user.favoriteItems || []
 
-    if (item.items) {
+    if (item.items && item.items.length > 0) {
       const hasMeal = user.meals.some((meal: Meal) => meal._id === item._id)
 
       const newMeals = hasMeal
@@ -227,10 +227,10 @@ export async function handleFavorite(item: Item, user: User) {
 
     if (favoriteArray.includes(item.searchId)) {
       favoriteArray = favoriteArray.filter((id: string) => id !== item.searchId)
-      await searchService.removeFromCache(item, FAVORITE_CACHE)
+      // await searchService.removeFromCache(item, FAVORITE_CACHE)
       removeFavoriteItem(item)
     } else {
-      await searchService.addToCache(item, FAVORITE_CACHE)
+      // await searchService.addToCache(item, FAVORITE_CACHE)
       favoriteArray.push(item.searchId)
       addFavoriteItem(item)
     }

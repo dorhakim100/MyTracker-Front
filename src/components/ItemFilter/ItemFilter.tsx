@@ -40,7 +40,7 @@ export function ItemFilter({
   ]
 
   return (
-    <Box className="search-container">
+    <Box className={`search-container ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
       <div className="input-container">
         <CustomInput
           value={filter.txt}
@@ -64,7 +64,7 @@ export function ItemFilter({
         values={sortByOptions}
         className={`${prefs.favoriteColor} ${
           prefs.isDarkMode ? 'dark-mode' : ''
-        }`}
+        } item-filter-select`}
       />
 
       <CustomButton

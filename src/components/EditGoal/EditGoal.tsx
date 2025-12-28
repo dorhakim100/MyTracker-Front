@@ -169,6 +169,25 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
     },
   ]
 
+  const weightButtons = [
+    {
+      text: '60 kg',
+      onClick: () => setEditGoal((prev) => ({ ...prev, targetWeight: 60 })),
+    },
+    {
+      text: '70 kg',
+      onClick: () => setEditGoal((prev) => ({ ...prev, targetWeight: 70 })),
+    },
+    {
+      text: '80 kg',
+      onClick: () => setEditGoal((prev) => ({ ...prev, targetWeight: 80 })),
+    },
+    {
+      text: '90 kg',
+      onClick: () => setEditGoal((prev) => ({ ...prev, targetWeight: 90 })),
+    },
+  ]
+
   useEffect(() => {
     if (!editGoal.macros) return
     const totalCalories = getTotalCalories(editGoal.macros)
@@ -445,6 +464,16 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
             }
             isHideSaveButton={true}
           />
+          <div className="weight-buttons-container">
+            {weightButtons.map((button) => (
+              <CustomButton
+                text={button.text}
+                onClick={button.onClick}
+                key={button.text}
+                className={`${prefs.favoriteColor}`}
+              />
+            ))}
+          </div>
         </div>
       </div>
     )
@@ -454,16 +483,22 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
     return (
       <>
         <div className="stage-container macros-stage-container">
-          <MacrosDonut
-            protein={editGoal.macros?.protein || 0}
-            carbs={editGoal.macros?.carbs || 0}
-            fats={editGoal.macros?.fat || 0}
-          />
-          <Macros
-            protein={editGoal.macros?.protein || 0}
-            carbs={editGoal.macros?.carbs || 0}
-            fats={editGoal.macros?.fat || 0}
-          />
+          <div onClick={() => onCaloriesOpenClick()}>
+            <MacrosDonut
+              protein={editGoal.macros?.protein || 0}
+              carbs={editGoal.macros?.carbs || 0}
+              fats={editGoal.macros?.fat || 0}
+            />
+          </div>
+
+          <div onClick={() => onMacrosOpenClick()} className="macros-container">
+            <Macros
+              protein={editGoal.macros?.protein || 0}
+              carbs={editGoal.macros?.carbs || 0}
+              fats={editGoal.macros?.fat || 0}
+            />
+          </div>
+
           <div className="edit-header-container">
             <Typography variant="h5">Edit Macros</Typography>
             <Divider

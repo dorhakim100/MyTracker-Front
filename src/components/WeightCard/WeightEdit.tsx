@@ -43,7 +43,7 @@ export function WeightEdit({
       firstValue: firstValue,
       secondValue: secondValue,
     })
-  }, [])
+  }, [value])
 
   const onUpdateClick = () => {
     onChange(pickerWeight.firstValue + pickerWeight.secondValue / 10)

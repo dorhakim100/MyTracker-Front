@@ -63,7 +63,7 @@ interface EditOption {
 const MEAL_INPUT = {
   label: 'Meal',
   key: 'meal',
-  values: ['Breakfast', 'Lunch', 'Dinner'],
+  values: ['Breakfast', 'Lunch', 'Dinner', 'Snacks'],
   type: 'select',
   extra: '',
 }
@@ -243,6 +243,7 @@ export function ItemDetails({
   const onFavoriteClick = async (e: React.MouseEvent<HTMLDivElement>) => {
     try {
       e.stopPropagation()
+
       if (!user) return showErrorMsg(messages.error.favorite)
       if (!searchedItem.searchId) return showErrorMsg(messages.error.favorite)
 
@@ -361,8 +362,8 @@ export function ItemDetails({
       }
       delete itemToCache._id
 
-      if (!isCustomLog)
-        await searchService.addToCache(itemToCache, cache.ITEMS_CACHE)
+      // if (!isCustomLog)
+      // await searchService.addToCache(itemToCache, cache.ITEMS_CACHE)
 
       const newLog = {
         itemId: isCustomLog ? '' : item.searchId,
@@ -666,6 +667,8 @@ export function ItemDetails({
                               carbs={editItem.totalMacros?.carbs || 0}
                               fats={editItem.totalMacros?.fat || 0}
                               editCustomLog={onEditCustomLog}
+                              onCancel={closeMacros}
+                              onSave={closeMacros}
                             />
                           }
                         />
