@@ -16,9 +16,7 @@ import {
 import { UserFilter } from '../../types/userFilter/UserFilter'
 import { UserCred } from '../../types/userCred/UserCred'
 import { User } from '../../types/user/User'
-import { searchService } from '../../services/search/search-service'
 import { Item } from '../../types/item/Item'
-import { cache } from '../../assets/config/cache'
 import { Log } from '../../types/log/Log'
 import { LoggedToday } from '../../types/loggedToday/LoggedToday'
 import { dayService } from '../../services/day/day.service'
@@ -29,8 +27,6 @@ import { ActivityLevel, Gender } from '../../services/bmr/bmr.service'
 import { Goal } from '../../types/goal/Goal'
 import { goalService } from '../../services/goal/goal.service'
 import { setIsFirstLoading } from './system.actions'
-
-const { FAVORITE_CACHE } = cache
 
 export async function loadUsers(filter: UserFilter) {
   try {

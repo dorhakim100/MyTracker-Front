@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux'
 
 import { RootState } from '../../store/store'
 import { Item } from '../../types/item/Item'
-import { cache } from '../../assets/config/cache'
 
 import { Macros } from '../Macros/Macros'
 import { MacrosDonut } from '../MacrosDonut/MacrosDonut'
@@ -361,9 +360,6 @@ export function ItemDetails({
         ...searchedItem,
       }
       delete itemToCache._id
-
-      // if (!isCustomLog)
-      // await searchService.addToCache(itemToCache, cache.ITEMS_CACHE)
 
       const newLog = {
         itemId: isCustomLog ? '' : item.searchId,
