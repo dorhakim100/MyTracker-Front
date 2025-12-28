@@ -190,8 +190,8 @@ async function searchFavoriteItems(
   onComplete?: (completeItems: Item[]) => void
 ) {
   try {
-    const res: Item[] = []
-    const cached = await indexedDbService.query<Item>(FAVORITE_CACHE, 0)
+    let res: Item[] = []
+    const cached = await indexedDbService.query<Item>(ITEMS_CACHE, 0)
 
     const favoriteCopy = favoriteItems.slice()
 
@@ -232,14 +232,25 @@ async function searchFavoriteItems(
     const missingFoods = favoriteFoods.filter((id) => id !== '')
     const missingProducts = favoriteProducts.filter((id) => id !== '')
 
+    res = res.filter((item): item is Item => item !== undefined)
+    console.log(res)
+
     // Build result array maintaining order (res is sparse, so map over favoriteItems indices)
     const cachedResults = favoriteItems
-      .map((_, idx) => res[idx])
+      .map((searchId) => res.find((item: Item) => item.searchId === searchId))
       .filter((item): item is Item => item !== undefined)
 
     // If all items are cached, return immediately
     if (missingFoods.length === 0 && missingProducts.length === 0) {
-      return cachedResults
+      return Promise.all(
+        cachedResults.map(async (item: Item) => ({
+          ...item,
+          image:
+            item.image ||
+            (await imageService.getSingleImage(item.name || '')) ||
+            DEFAULT_IMAGE,
+        }))
+      )
     }
 
     // Start background fetch for missing items
@@ -254,7 +265,7 @@ async function searchFavoriteItems(
 
         const completeRes = [...res]
 
-        foods.forEach((item) => {
+        foods.forEach((item: Item) => {
           const originalIndex = favoriteItems.findIndex(
             (id) => id === item.searchId
           )
@@ -262,7 +273,7 @@ async function searchFavoriteItems(
             completeRes[originalIndex] = item as Item
           }
         })
-        products.forEach((item) => {
+        products.forEach((item: Item) => {
           const originalIndex = favoriteItems.findIndex(
             (id) => id === item.searchId
           )
@@ -278,11 +289,11 @@ async function searchFavoriteItems(
           .filter((item): item is Item => item !== undefined)
 
         // Batch cache operations - run in background without blocking
-        Promise.all(
-          finalRes.map((item) => addToCache(item as Item, FAVORITE_CACHE))
-        ).catch((err) => {
-          console.error('Error caching favorite items:', err)
-        })
+        // Promise.all(
+        //   finalRes.map((item) => addToCache(item as Item, FAVORITE_CACHE))
+        // ).catch((err) => {
+        //   console.error('Error caching favorite items:', err)
+        // })
 
         // Call callback with complete results if provided
         if (onComplete) {
@@ -371,6 +382,18 @@ async function searchById(id: string, source: string) {
 
     if (res) {
       await addToCache(res as Item, ITEMS_CACHE)
+    }
+
+    if (!res?.image) {
+      const isEnglishWord = translateService.isEnglishWord(res?.name || '')
+      let translatedTxt = res?.name || ''
+      if (!isEnglishWord) {
+        translatedTxt = await translateService.translate(translatedTxt)
+      }
+
+      const image =
+        (await imageService.getSingleImage(translatedTxt)) || DEFAULT_IMAGE
+      res.image = image
     }
 
     return res
@@ -487,26 +510,39 @@ async function searchOpenFoodFacts(query: string) {
   }
 }
 
+getProductById('7290119370955')
+
 async function getProductById(id: string) {
   try {
+    const cached = await indexedDbService.query<Item>(ITEMS_CACHE, 0)
+    const cachedItem = cached.find((item: Item) => item.searchId === id)
+    if (cachedItem) {
+      return cachedItem
+    }
+
+    const res = await itemService.getBySearchId(id)
+    if (res) {
+      return res
+    }
+
     const { data } = await axios.get(
       `${OPEN_FOOD_FACTS_API_URL_BY_ID}${id}.json`
     )
     const product: OFFProduct = data.product
 
-    let image = product.image_small_url
-    if (!image) {
-      const isEnglishWord = translateService.isEnglishWord(product.product_name)
-      let translatedTxt = product.product_name
-      if (!isEnglishWord) {
-        translatedTxt = await translateService.translate(translatedTxt)
-      }
+    let image = product.image_small_url || null
+    // if (!image) {
+    //   const isEnglishWord = translateService.isEnglishWord(product.product_name)
+    //   let translatedTxt = product.product_name
+    //   if (!isEnglishWord) {
+    //     translatedTxt = await translateService.translate(translatedTxt)
+    //   }
 
-      image =
-        (await imageService.getSingleImage(translatedTxt)) || DEFAULT_IMAGE
-    }
+    //   image =
+    //     (await imageService.getSingleImage(translatedTxt)) || DEFAULT_IMAGE
+    // }
 
-    return {
+    const modifiedItem = {
       searchId: product.code,
       name: product.product_name,
       macros: (() => {
@@ -523,6 +559,12 @@ async function getProductById(id: string) {
       image: image,
       type: 'product',
     }
+
+    console.log('modifiedItem', modifiedItem)
+
+    await itemService.save(modifiedItem as Item)
+
+    return modifiedItem
   } catch (err) {
     throw err
   }
@@ -535,6 +577,24 @@ async function getProductsByIds(ids: string[]) {
     const filteredIds = ids.filter((id) => id !== '')
 
     if (filteredIds.length === 0) return []
+
+    const backendRes = await itemService.getBulkBySearchIds(filteredIds)
+
+    await Promise.all(
+      backendRes.map((item: Item) => addToCache(item as Item, ITEMS_CACHE))
+    )
+
+    if (backendRes.length === filteredIds.length) {
+      return Promise.all(
+        backendRes.map(async (item: Item) => ({
+          ...item,
+          image:
+            item.image ||
+            (await imageService.getSingleImage(item.name || '')) ||
+            DEFAULT_IMAGE,
+        }))
+      )
+    }
 
     const { data } = await axios.get(OPEN_FOOD_FACTS_BATCH_URL, {
       params: {
@@ -629,6 +689,17 @@ async function searchRawUSDA(query: string) {
 
 async function getFoodById(id: string) {
   try {
+    const cached = await indexedDbService.query<Item>(ITEMS_CACHE, 0)
+    const cachedItem = cached.find((item: Item) => item.searchId === id)
+    if (cachedItem) {
+      return cachedItem
+    }
+
+    const res = await itemService.getBySearchId(id)
+    if (res) {
+      return res
+    }
+
     const { data } = await axios.get(USDA_FOODS_URL, {
       params: {
         api_key: USDA_API_KEY,
@@ -647,13 +718,17 @@ async function getFoodById(id: string) {
     const image = images[currImageIdx].webformatURL || DEFAULT_IMAGE
     currImageIdx++
 
-    return {
+    const modifiedItem = {
       searchId: food.fdcId + '',
       name: food.description,
       macros,
       image: image,
       type: 'food',
     }
+
+    await itemService.save(modifiedItem as Item)
+
+    return modifiedItem
   } catch (err) {
     throw err
   }
@@ -697,6 +772,25 @@ async function getFoodsByIds(ids: string[]) {
     const filteredIds = ids.filter((id) => id !== '')
 
     if (filteredIds.length === 0) return []
+
+    const backendRes = await itemService.getBulkBySearchIds(filteredIds)
+
+    await Promise.all(
+      backendRes.map((item: Item) => addToCache(item as Item, ITEMS_CACHE))
+    )
+
+    if (backendRes.length === filteredIds.length) {
+      return Promise.all(
+        backendRes.map(async (item: Item) => ({
+          ...item,
+          image:
+            item.image ||
+            (await imageService.getSingleImage(item.name || '')) ||
+            DEFAULT_IMAGE,
+        }))
+      )
+    }
+
     const { data } = await axios.get(USDA_FOODS_URL, {
       params: {
         api_key: USDA_API_KEY,
