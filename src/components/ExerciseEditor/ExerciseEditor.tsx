@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { Badge, Divider } from '@mui/material'
+import { Badge, Divider, Typography } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 
 import { RootState } from '../../store/store'
@@ -98,6 +98,8 @@ export function ExerciseEditor({
       showErrorMsg(messages.error.addSet)
     }
   }
+
+  console.log(exercise)
 
   const onDeleteSet = async (indexToRemove: number) => {
     if (indexToRemove === 0 && exercise.sets.length === 1) {
@@ -284,7 +286,9 @@ export function ExerciseEditor({
                       )}
                     </div>
                     {previousInstructions && (
-                      <span className="previous-set-label">Previous week:</span>
+                      <span className="previous-set-label">
+                        Previous week expected:
+                      </span>
                     )}
                     <div className="reps-container">
                       {previousInstructions && (
@@ -292,7 +296,7 @@ export function ExerciseEditor({
                           <span>
                             {previousInstructions?.exercises.find(
                               (e) => e.exerciseId === exercise.exerciseId
-                            )?.sets[index]?.reps?.actual || 'N/A'}{' '}
+                            )?.sets[index]?.reps?.expected || 'N/A'}{' '}
                             reps
                           </span>
                           <Divider
@@ -301,6 +305,14 @@ export function ExerciseEditor({
                               prefs.isDarkMode ? 'dark-mode' : ''
                             }`}
                           />
+                          {previousInstructions && (
+                            <Typography
+                              variant="body1"
+                              className="previous-set-actual-label bold-header"
+                            >
+                              Actual:
+                            </Typography>
+                          )}
                         </>
                       )}
                       <PickerSelect
@@ -329,7 +341,7 @@ export function ExerciseEditor({
                           <span>
                             {previousInstructions?.exercises.find(
                               (e) => e.exerciseId === exercise.exerciseId
-                            )?.sets[index]?.weight?.actual || 'N/A'}{' '}
+                            )?.sets[index]?.weight?.expected || 'N/A'}{' '}
                             kg
                           </span>
                           <Divider
@@ -338,6 +350,9 @@ export function ExerciseEditor({
                               prefs.isDarkMode ? 'dark-mode' : ''
                             }`}
                           />
+                          {previousInstructions && (
+                            <span className="previous-set-actual-label"></span>
+                          )}
                         </>
                       )}
                       <PickerSelect
@@ -368,15 +383,16 @@ export function ExerciseEditor({
                           <span>
                             {previousInstructions?.exercises.find(
                               (e) => e.exerciseId === exercise.exerciseId
-                            )?.sets[index]?.rpe?.actual ||
-                              'N/A' ||
-                              previousInstructions?.exercises.find(
-                                (e) => e.exerciseId === exercise.exerciseId
-                              )?.sets[index]?.rir?.actual ||
-                              'N/A'}{' '}
+                            )?.sets[index]?.rpe?.expected
+                              ? previousInstructions?.exercises.find(
+                                  (e) => e.exerciseId === exercise.exerciseId
+                                )?.sets[index]?.rpe?.expected
+                              : previousInstructions?.exercises.find(
+                                  (e) => e.exerciseId === exercise.exerciseId
+                                )?.sets[index]?.rir?.expected}{' '}
                             {previousInstructions?.exercises.find(
                               (e) => e.exerciseId === exercise.exerciseId
-                            )?.sets[0].rpe?.actual
+                            )?.sets[0].rpe?.expected
                               ? 'RPE'
                               : 'RIR'}
                           </span>
@@ -386,8 +402,12 @@ export function ExerciseEditor({
                               prefs.isDarkMode ? 'dark-mode' : ''
                             }`}
                           />
+                          {previousInstructions && (
+                            <span className="previous-set-actual-label"></span>
+                          )}
                         </>
                       )}
+
                       <PickerSelect
                         className={`${prefs.favoriteColor}`}
                         openClock={() => {

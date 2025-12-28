@@ -57,13 +57,17 @@
         .weight-container,
         .rpe-rir-container {
           display: grid;
+          gap: 0.3rem;
 
+          .previous-set-actual-label {
+            min-height: 22px;
+          }
           span {
-            margin-top: 0.3rem;
+            // margin-top: 0.3rem;
           }
 
           .divider {
-            margin: 0.3rem 0 1rem 0;
+            // margin: 0.3rem 0 1rem 0;
           }
         }
         .badges-container {
