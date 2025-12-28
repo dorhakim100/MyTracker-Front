@@ -1,6 +1,11 @@
 .trainer-request-card-content {
   display: grid;
+  grid-template-columns: 1fr auto;
   gap: 1rem;
+}
+
+.trainer-requests-header {
+  text-align: start;
 }
 
 .trainer-request-card {
