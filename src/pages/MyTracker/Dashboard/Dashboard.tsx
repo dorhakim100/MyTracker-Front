@@ -26,6 +26,8 @@ import {
   setTodaySessionDay,
 } from '../../../store/actions/workout.action'
 import { messages } from '../../../assets/config/messages'
+import Lottie from 'lottie-react'
+import workoutAnimation from '../../../../public/gain-weight.json'
 
 const CHECK_INTERVAL = 1000 * 60 // minute
 
@@ -174,8 +176,11 @@ export function Dashboard() {
       return (
         <div className="no-session-container">
           <Typography variant="h6" className="bold-header">
-            No workout session today
+            No workout today
           </Typography>
+          <div className="animation-container">
+            <Lottie animationData={workoutAnimation} loop={true} />
+          </div>
           <CustomButton
             text="Choose Workout"
             icon={<PlayArrowIcon />}
@@ -183,6 +188,7 @@ export function Dashboard() {
               setSlideDirection(1)
               navigate('/lift-mate/workouts')
             }}
+            // fullWidth
           />
         </div>
       )

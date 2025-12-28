@@ -88,7 +88,9 @@
 .custom-select,
 .MuiInputBase-root,
 .picker-select {
-  text-align: center;
+  &.picker-select {
+    text-align: center !important;
+  }
   &.primary {
     &.dark-mode {
       .MuiFormLabel-root {
