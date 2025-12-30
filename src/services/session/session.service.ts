@@ -110,8 +110,6 @@ async function playEmptyWorkout(userId: string) {
       userId: userId,
     })
 
-    console.log('session', session)
-
     return session
   } catch (err) {
     throw err

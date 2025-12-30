@@ -238,12 +238,7 @@ export function ExerciseEditor({
     }
 
     try {
-      console.log(exercise)
-
-      await updateExercise(
-        { ...exercise, sets: newSetsToSave, image: exercise.image },
-        index
-      )
+      await updateExercise({ ...exercise, sets: newSetsToSave }, index)
     } catch (err) {
       showErrorMsg(messages.error.updateSet)
     }

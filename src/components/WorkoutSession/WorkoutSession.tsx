@@ -229,8 +229,6 @@ export function WorkoutSession({
 
   const onDeleteExercise = async (exercise: Exercise) => {
     try {
-      console.log('exercise', exercise)
-
       const newExercises = sessionDay.instructions.exercises.filter(
         (e) => e.exerciseId !== exercise.exerciseId
       )
@@ -309,8 +307,6 @@ export function WorkoutSession({
     isNew: boolean,
     isRemove: boolean
   ) => {
-    console.log('exercise', exercise)
-
     if (!sessionDay._id) return showErrorMsg(messages.error.updateSet)
 
     const originalInstructions = sessionDay.instructions
@@ -359,7 +355,11 @@ export function WorkoutSession({
             (e, index) => !isExerciseDone(e) && index > exerciseIndex
           )
           nextExercise
-            ? (currentExerciseToSet = { ...nextExercise, setIndex: 0 })
+            ? (currentExerciseToSet = {
+                ...nextExercise,
+                setIndex: 0,
+                image: nextExercise.image,
+              })
             : null
         }
 
