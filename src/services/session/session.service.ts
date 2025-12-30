@@ -11,6 +11,7 @@ export const sessionService = {
   save,
   remove,
   playWorkout,
+  playEmptyWorkout,
   getEmptySessionDay,
   getDefaultFilter,
 }
@@ -99,6 +100,19 @@ async function playWorkout(sessionDay: SessionDay, userId: string) {
       ...session,
       instructions: instructionsWithFreshExercises,
     }
+  } catch (err) {
+    throw err
+  }
+}
+async function playEmptyWorkout(userId: string) {
+  try {
+    const session = await httpService.put(`${KEY}/play/empty`, {
+      userId: userId,
+    })
+
+    console.log('session', session)
+
+    return session
   } catch (err) {
     throw err
   }

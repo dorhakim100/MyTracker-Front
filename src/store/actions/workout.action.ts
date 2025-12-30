@@ -112,6 +112,16 @@ export async function playWorkout(sessionDay: SessionDay, userId: string) {
   }
 }
 
+export async function playEmptyWorkout(userId: string) {
+  try {
+    const session = await sessionService.playEmptyWorkout(userId)
+    setSelectedSessionDay(session)
+    setTodaySessionDay(session)
+    return session
+  } catch (err) {
+    throw err
+  }
+}
 export async function saveSessionDay(sessionDay: SessionDay) {
   try {
     const savedSessionDay = await sessionService.save(sessionDay)

@@ -9,6 +9,7 @@ import {
   setSelectedSessionDay,
   playWorkout,
   setTodaySessionDay,
+  playEmptyWorkout,
 } from '../../../store/actions/workout.action'
 
 import { SlideDialog } from '../../../components/SlideDialog/SlideDialog'
@@ -30,7 +31,7 @@ import {
   showSuccessMsg,
 } from '../../../services/event-bus.service'
 import { WorkoutDetails } from '../../../components/WorkoutDetails/WorkoutDetails'
-import { Divider, Typography } from '@mui/material'
+import { CircularProgress, Divider, Typography } from '@mui/material'
 import { Add, Delete, Edit } from '@mui/icons-material'
 import { workoutService } from '../../../services/workout/workout.service'
 import { DAY_IN_MS, MONTH_IN_MS } from '../../../assets/config/times'
@@ -110,7 +111,7 @@ export function Workouts() {
     type: null,
   })
   const [selectedWorkout, setSelectedWorkout] = useState<Workout | null>(null)
-
+  const [emptyWorkoutLoading, setEmptyWorkoutLoading] = useState(false)
   const [direction, setDirection] = useState(1)
   const [isPageLoading, setIsPageLoading] = useState(false)
   const [selectedPastDate, setSelectedPastDate] = useState({
@@ -447,6 +448,19 @@ export function Workouts() {
     )
   }
 
+  async function onPlayEmptyWorkout() {
+    try {
+      setEmptyWorkoutLoading(true)
+      await playEmptyWorkout(traineeUser?._id || user?._id || '')
+      setSlideDirection(-1)
+      navigate('/')
+    } catch (err) {
+      showErrorMsg(messages.error.playEmptyWorkout)
+    } finally {
+      setEmptyWorkoutLoading(false)
+    }
+  }
+
   if (!sessionDay || !sessionDay._id || isPageLoading) return renderSkeleton()
   return (
     <>
@@ -484,8 +498,14 @@ export function Workouts() {
           {!sessionDay.instructions && (
             <CustomButton
               text="Start Empty Workout"
-              // onClick={() => setDialogOptions({ open: true, type: EDIT })}
-              icon={<Add />}
+              onClick={onPlayEmptyWorkout}
+              icon={
+                emptyWorkoutLoading ? (
+                  <CircularProgress size={20} color="inherit" />
+                ) : (
+                  <Add />
+                )
+              }
               className={`${prefs.favoriteColor} empty-workout-button`}
               fullWidth={true}
             />
