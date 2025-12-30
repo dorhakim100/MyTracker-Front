@@ -1,5 +1,5 @@
-import { useCallback, useState } from 'react'
-import { DialogActions, Divider, Typography } from '@mui/material'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { debounce, DialogActions, Divider, Typography } from '@mui/material'
 
 import { SessionDay } from '../../types/workout/SessionDay'
 import { Exercise } from '../../types/exercise/Exercise'
@@ -35,10 +35,19 @@ import { CustomAlertDialog } from '../../CustomMui/CustomAlertDialog/CustomAlert
 import NoteAddIcon from '@mui/icons-material/NoteAdd'
 import { CustomInput } from '../../CustomMui/CustomInput/CustomInput'
 import { ExerciseCard } from '../ExerciseCard/ExerciseCard'
-import { getWorkoutMuscles } from '../../services/exersice-search/exersice-search'
+import {
+  filterExercises,
+  getMostPopularExercises,
+  getWorkoutMuscles,
+  exerciseSearch,
+} from '../../services/exersice-search/exersice-search'
 import CircleIcon from '@mui/icons-material/Circle'
 import AddIcon from '@mui/icons-material/Add'
 import CheckIcon from '@mui/icons-material/Check'
+import { SlideDialog } from '../SlideDialog/SlideDialog'
+import { ExercisesStage } from '../../pages/LiftMate/EditWorkout/ExercisesStage'
+import { ExerciseFilter } from '../../types/exerciseFilter/ExerciseFilter'
+import { imageService } from '../../services/image/image.service'
 interface WorkoutSessionProps {
   sessionDay: SessionDay
   onExerciseInfoClick: (exercise: Exercise) => void
@@ -62,6 +71,14 @@ export function WorkoutSession({
     (state: RootState) => state.workoutModule.workouts
   )
 
+  const [exerciseFilter, setExerciseFilter] = useState<ExerciseFilter>({
+    searchValue: '',
+    muscleGroupValue: 'All',
+    equipmentValue: 'All',
+  })
+
+  const [exerciseResults, setExerciseResults] = useState<Exercise[]>([])
+
   const timer = useSelector((state: RootState) => state.workoutModule.timer)
 
   const [alertDialogOptions, setAlertDialogOptions] = useState<{
@@ -77,6 +94,73 @@ export function WorkoutSession({
   })
 
   const [exerciseNotes, setExerciseNotes] = useState<string>('')
+
+  const [exerciseDialogOptions, setExerciseDialogOptions] = useState<{
+    open: boolean
+    title: string
+    component: React.ReactNode
+  }>({
+    open: false,
+    title: '',
+    component: null,
+  })
+
+  const filteredExerciseResults = useMemo(() => {
+    return filterExercises(exerciseFilter, exerciseResults)
+  }, [
+    exerciseResults,
+    exerciseFilter.muscleGroupValue,
+    exerciseFilter.equipmentValue,
+  ])
+
+  const handleSearch = useCallback(async () => {
+    try {
+      if (!exerciseFilter.searchValue) {
+        const res = getMostPopularExercises()
+        setExerciseResults(res)
+        return
+      }
+      setIsLoading(true)
+      const results = await exerciseSearch(exerciseFilter.searchValue)
+      setExerciseResults(results)
+    } catch (err) {
+      showErrorMsg(messages.error.search)
+      setExerciseResults([])
+    } finally {
+      setIsLoading(false)
+    }
+  }, [exerciseFilter])
+
+  const latestHandleSearchRef = useRef(handleSearch)
+  const debouncedRunSearch = useRef(
+    debounce(() => latestHandleSearchRef.current(), 300)
+  ).current
+
+  useEffect(() => {
+    latestHandleSearchRef.current = handleSearch
+  }, [handleSearch])
+
+  useEffect(() => {
+    debouncedRunSearch()
+  }, [exerciseFilter, debouncedRunSearch])
+
+  const onExerciseFilterChange = (exerciseFilter: ExerciseFilter) => {
+    setExerciseFilter(exerciseFilter)
+  }
+
+  const onAddExercise = (exercise: Exercise) => {
+    console.log('exercise', exercise)
+  }
+
+  const onDeleteExercise = (exercise: Exercise) => {
+    console.log('exercise', exercise)
+  }
+
+  const onReorderExercises = (exercises: Exercise[]) => {
+    console.log('exercises', exercises)
+  }
+
+  const resultsMsg = 'No exercises found'
 
   const handleAccordionChange = useCallback(
     (exerciseId: string) =>
@@ -288,6 +372,27 @@ export function WorkoutSession({
     )
   }
 
+  function closeExerciseDialog() {
+    setExerciseDialogOptions({
+      open: false,
+      title: '',
+      component: null,
+    })
+    setExerciseFilter({
+      searchValue: '',
+      muscleGroupValue: 'All',
+      equipmentValue: 'All',
+    })
+  }
+
+  function openExerciseDialog() {
+    setExerciseDialogOptions({
+      open: true,
+      title: 'Add Exercise',
+      component: null,
+    })
+  }
+
   const getAlertDialogComponent = () => {
     if (alertDialogOptions.component === 'delete')
       return (
@@ -475,7 +580,12 @@ export function WorkoutSession({
           })}
         </div>
         <div className="buttons-container">
-          <CustomButton text="Add Exercise" icon={<AddIcon />} fullWidth />
+          <CustomButton
+            text="Add Exercise"
+            icon={<AddIcon />}
+            fullWidth
+            onClick={openExerciseDialog}
+          />
           <Divider
             className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
             orientation="vertical"
@@ -493,6 +603,32 @@ export function WorkoutSession({
           />
         </div>
       </div>
+      <SlideDialog
+        open={exerciseDialogOptions.open}
+        onClose={closeExerciseDialog}
+        title={exerciseDialogOptions.title}
+        component={
+          <ExercisesStage
+            workout={sessionDay.workout}
+            exerciseFilter={exerciseFilter}
+            exerciseResults={filteredExerciseResults}
+            onExerciseFilterChange={onExerciseFilterChange}
+            onAddExercise={onAddExercise}
+            onDeleteExercise={onDeleteExercise}
+            onReorderExercises={onReorderExercises}
+            renderErrorImage={(exercise) =>
+              imageService.renderErrorExerciseImage(
+                exercise,
+                filteredExerciseResults,
+
+                setExerciseResults
+              )
+            }
+            resultsMsg={resultsMsg}
+          />
+        }
+        type="full"
+      />
       <CustomAlertDialog
         open={alertDialogOptions.open}
         onClose={closeAlertDialog}
