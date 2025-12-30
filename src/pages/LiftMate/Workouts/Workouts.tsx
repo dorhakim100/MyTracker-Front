@@ -396,7 +396,6 @@ export function Workouts() {
             renderSecondaryText={(workout) =>
               capitalizeFirstLetter(workout.muscleGroups.join(', '))
             }
-            isDefaultLoader={false}
             onItemClick={(workout) => onOpenDetails(workout)}
             renderRight={(workout) => (
               <CustomOptionsMenu

@@ -88,7 +88,7 @@ export function ExerciseEditor({
     const newSets = [...exercise.sets, newSet]
     try {
       await updateExercise(
-        { ...exercise, sets: newSets },
+        { ...exercise, sets: newSets, image: exercise.image },
         newSets.length - 1,
         isExpected ? false : true,
         false
@@ -238,7 +238,12 @@ export function ExerciseEditor({
     }
 
     try {
-      await updateExercise({ ...exercise, sets: newSetsToSave }, index)
+      console.log(exercise)
+
+      await updateExercise(
+        { ...exercise, sets: newSetsToSave, image: exercise.image },
+        index
+      )
     } catch (err) {
       showErrorMsg(messages.error.updateSet)
     }

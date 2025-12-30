@@ -56,5 +56,6 @@ export const messages = {
     getSets: 'Failed to get sets',
     startTimer: 'Failed to start timer',
     playEmptyWorkout: 'Failed to play empty workout',
+    addExercise: 'Failed to add exercise',
   },
 }

@@ -201,7 +201,6 @@ export function Session() {
           renderSecondaryText={(workout) =>
             capitalizeFirstLetter(workout.muscleGroups.join(', '))
           }
-          isDefaultLoader={false}
           className={`${
             prefs.isDarkMode ? 'dark-mode' : ''
           } selected-workout-list`}

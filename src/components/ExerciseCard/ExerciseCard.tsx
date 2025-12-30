@@ -214,6 +214,7 @@ export function ExerciseCard({
         ...set,
         isDone: isDoneToSet,
       })),
+      image: exercise.image,
     }
 
     try {
@@ -443,9 +444,9 @@ export function ExerciseCard({
             updateExercise={
               isExpected
                 ? updateExerciseInInstructions
-                : (exercise, setIndex, isNew, isRemove) =>
+                : (exerciseToUpdate, setIndex, isNew, isRemove) =>
                     updateExercise?.(
-                      exercise,
+                      { ...exerciseToUpdate, image: exercise.image },
                       setIndex || 0,
                       isNew || false,
                       isRemove || false

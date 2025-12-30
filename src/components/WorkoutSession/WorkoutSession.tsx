@@ -11,6 +11,7 @@ import {
   setSelectedSessionDay,
   removeTimer,
   setTimer,
+  saveWorkout,
 } from '../../store/actions/workout.action'
 
 import { ExerciseEditor } from '../../components/ExerciseEditor/ExerciseEditor'
@@ -19,8 +20,6 @@ import { CustomAccordion } from '../../CustomMui/CustomAccordion/CustomAccordion
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 
 import InfoOutlineIcon from '@mui/icons-material/InfoOutline'
-// import ExpandLessIcon from '@mui/icons-material/ExpandLess'
-// import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { ExerciseInstructions } from '../../types/exercise/ExerciseInstructions'
@@ -48,6 +47,7 @@ import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { ExercisesStage } from '../../pages/LiftMate/EditWorkout/ExercisesStage'
 import { ExerciseFilter } from '../../types/exerciseFilter/ExerciseFilter'
 import { imageService } from '../../services/image/image.service'
+import { DEFAULT_RESTING_TIME } from '../../assets/config/times'
 interface WorkoutSessionProps {
   sessionDay: SessionDay
   onExerciseInfoClick: (exercise: Exercise) => void
@@ -148,12 +148,115 @@ export function WorkoutSession({
     setExerciseFilter(exerciseFilter)
   }
 
-  const onAddExercise = (exercise: Exercise) => {
-    console.log('exercise', exercise)
+  const onAddExercise = async (exercise: Exercise) => {
+    try {
+      if (!sessionDay._id) return showErrorMsg(messages.error.addExercise)
+      const instructions = sessionDay.instructions
+      const isExerciseAlreadyAdded = instructions.exercises.find(
+        (e) => e.exerciseId === exercise.exerciseId
+      )
+      const newSet = {
+        ...instructionsService.getEmptySet(),
+        setIndex: 0,
+        userId: sessionDay.workout.forUserId || '',
+      }
+      const newExercises = isExerciseAlreadyAdded
+        ? instructions.exercises.filter(
+            (e) => e.exerciseId !== exercise.exerciseId
+          )
+        : [
+            ...instructions.exercises,
+            {
+              exerciseId: exercise.exerciseId,
+              sets: [newSet],
+              notes: { expected: '', actual: '' },
+              restingTime: DEFAULT_RESTING_TIME,
+            },
+          ]
+
+      const newInstructions = {
+        ...instructions,
+        exercises: newExercises,
+      }
+
+      const workout = sessionDay.workout
+
+      const newWorkoutExercises = isExerciseAlreadyAdded
+        ? workout.exercises.filter((e) => e.exerciseId !== exercise.exerciseId)
+        : [...workout.exercises, exercise]
+
+      const newWorkout = {
+        ...workout,
+        exercises: newWorkoutExercises,
+      }
+
+      const promises = [
+        saveNewInstructions(newInstructions),
+        saveWorkout(newWorkout),
+        !isExerciseAlreadyAdded
+          ? setService.saveSetBySessionIdAndExerciseId(
+              sessionDay._id,
+              exercise.exerciseId,
+              newSet,
+              0,
+              true
+            )
+          : Promise.resolve(null),
+      ]
+
+      const [savedInstructions, savedWorkout, savedSet] = await Promise.all(
+        promises
+      )
+
+      if (savedSet) {
+        setCurrentExercise({
+          ...exercise,
+          sets: [savedSet],
+          notes: { expected: '', actual: '' },
+          restingTime: DEFAULT_RESTING_TIME,
+        })
+      }
+
+      setSelectedSessionDay({
+        ...sessionDay,
+        instructions: savedInstructions,
+        workout: savedWorkout,
+      })
+    } catch (err) {
+      showErrorMsg(messages.error.addExercise)
+    }
   }
 
-  const onDeleteExercise = (exercise: Exercise) => {
-    console.log('exercise', exercise)
+  const onDeleteExercise = async (exercise: Exercise) => {
+    try {
+      console.log('exercise', exercise)
+
+      const newExercises = sessionDay.instructions.exercises.filter(
+        (e) => e.exerciseId !== exercise.exerciseId
+      )
+      const newInstructions = {
+        ...sessionDay.instructions,
+        exercises: newExercises,
+      }
+      const newWorkout = {
+        ...sessionDay.workout,
+        exercises: sessionDay.workout.exercises.filter(
+          (e) => e.exerciseId !== exercise.exerciseId
+        ),
+      }
+      const promises = [
+        saveNewInstructions(newInstructions),
+        saveWorkout(newWorkout),
+      ]
+      const [savedInstructions, savedWorkout] = await Promise.all(promises)
+      setSelectedSessionDay({
+        ...sessionDay,
+        instructions: savedInstructions,
+        workout: savedWorkout,
+      })
+    } catch (err) {
+      showErrorMsg(messages.error.deleteExercise)
+    }
   }
 
   const onReorderExercises = (exercises: Exercise[]) => {
@@ -206,6 +309,8 @@ export function WorkoutSession({
     isNew: boolean,
     isRemove: boolean
   ) => {
+    console.log('exercise', exercise)
+
     if (!sessionDay._id) return showErrorMsg(messages.error.updateSet)
 
     const originalInstructions = sessionDay.instructions

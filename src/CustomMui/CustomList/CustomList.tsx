@@ -68,7 +68,7 @@ export function CustomList<T>({
   onLoadMore,
   onReorder,
   dragOffsetY = 0,
-  isDefaultLoader = true,
+  isDefaultLoader = false,
 }: // onDragStart,
 CustomListProps<T>) {
   const [reorderedItems, setReorderedItems] = useState<T[]>(items || [])
