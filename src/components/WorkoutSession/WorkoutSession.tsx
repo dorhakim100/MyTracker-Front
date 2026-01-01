@@ -171,6 +171,7 @@ export function WorkoutSession({
               sets: [newSet],
               notes: { expected: '', actual: '' },
               restingTime: DEFAULT_RESTING_TIME,
+              image: exercise.image,
             },
           ]
 
@@ -354,11 +355,18 @@ export function WorkoutSession({
           const nextExercise = sessionDay.instructions.exercises.find(
             (e, index) => !isExerciseDone(e) && index > exerciseIndex
           )
+
+          const imageToSet = nextExercise?.image
+            ? nextExercise.image
+            : sessionDay.workout.exercises.find(
+                (e) => e.exerciseId === nextExercise?.exerciseId
+              )?.image
+
           nextExercise
             ? (currentExerciseToSet = {
                 ...nextExercise,
                 setIndex: 0,
-                image: nextExercise.image,
+                image: imageToSet,
               })
             : null
         }
@@ -378,6 +386,7 @@ export function WorkoutSession({
           await removeTimer(timer?._id)
         } else {
           setCurrentExercise(currentExerciseToSet)
+
           await setTimer({
             currentExercise: currentExerciseToSet,
             startTime: new Date().getTime(),

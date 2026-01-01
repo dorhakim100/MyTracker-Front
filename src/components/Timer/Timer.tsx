@@ -101,7 +101,7 @@ export function Timer() {
       <img src={currentExercise?.image} alt="timer" className="timer-image" />
       <div className="text-container">
         <Typography variant="h6" className="bold-header">
-          Done Sets: {doneSets} / {totalSets}
+          Sets: {doneSets} / {totalSets}
         </Typography>
         <div className="times-container">
           <Typography variant="body1" className="bold-header opacity-1">
