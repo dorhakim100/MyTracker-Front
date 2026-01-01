@@ -7,6 +7,7 @@ interface SlideAnimationProps {
   duration?: number
   distance?: number
   className?: string
+  onClick?: () => void
 }
 
 export function SlideAnimation({
@@ -16,6 +17,7 @@ export function SlideAnimation({
   duration = 0.25,
   distance = 360,
   className,
+  onClick,
 }: PropsWithChildren<SlideAnimationProps>) {
   const variants: Variants = {
     enter: (dir: number) => ({ x: dir > 0 ? distance : -distance, opacity: 0 }),
@@ -24,14 +26,14 @@ export function SlideAnimation({
   }
 
   return (
-    <AnimatePresence initial={false} custom={direction} mode='wait'>
+    <AnimatePresence initial={false} custom={direction} mode="wait">
       <motion.div
         key={motionKey}
         custom={direction}
         variants={variants}
-        initial='enter'
-        animate='center'
-        exit='exit'
+        initial="enter"
+        animate="center"
+        exit="exit"
         transition={{ type: 'tween', duration }}
         className={className}
         style={{
@@ -40,6 +42,7 @@ export function SlideAnimation({
           position: 'relative',
           zIndex: 0,
         }}
+        onClick={() => onClick?.()}
       >
         {children}
       </motion.div>
