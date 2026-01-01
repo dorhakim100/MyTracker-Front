@@ -148,6 +148,11 @@ export function ItemDetails({
         ]
 
   useEffect(() => {
+    // console.log(isCustomLog)
+    // console.log(item)
+    console.log(editMealItem)
+    console.log(searchedItem)
+
     loadItems()
   }, [])
 
@@ -159,7 +164,7 @@ export function ItemDetails({
       meal: editMealItem?.meal || selectedMeal || getCurrMeal(),
       name: isCustomLog ? '' : editMealItem?.name || searchedItem.name,
     })
-  }, [editMealItem, searchedItem, isCustomLog, selectedMeal])
+  }, [item.macros])
   const closeClock = () => {
     setClockOpen(false)
   }
@@ -184,28 +189,52 @@ export function ItemDetails({
 
   const onEditItemChange = (key: string, value: string | number) => {
     let totalMacrosToSet = searchedItem.macros
+
+    let caloriesBaseline = searchedItem.macros.calories
+    let proteinBaseline = searchedItem.macros.protein
+    let carbsBaseline = searchedItem.macros.carbs
+    let fatBaseline = searchedItem.macros.fat
+
+    if (searchedItem.type === searchTypes.custom) {
+      const normalizedMacros = {
+        calories:
+          (editItem.totalMacros.calories * editItem.servingSize) /
+          100 /
+          editItem.numberOfServings,
+        protein:
+          (editItem.totalMacros.protein * editItem.servingSize) /
+          100 /
+          editItem.numberOfServings,
+        carbs:
+          (editItem.totalMacros.carbs * editItem.servingSize) /
+          100 /
+          editItem.numberOfServings,
+        fat:
+          (editItem.totalMacros.fat * editItem.servingSize) /
+          100 /
+          editItem.numberOfServings,
+      }
+
+      caloriesBaseline = normalizedMacros.calories
+      proteinBaseline = normalizedMacros.protein
+      carbsBaseline = normalizedMacros.carbs
+      fatBaseline = normalizedMacros.fat
+    }
+
     switch (key) {
       case 'servingSize':
         totalMacrosToSet = {
           calories: Math.round(
-            (+value / 100) *
-              searchedItem.macros?.calories *
-              editItem.numberOfServings
+            (+value / 100) * caloriesBaseline * editItem.numberOfServings
           ),
           protein: Math.round(
-            (+value / 100) *
-              searchedItem.macros?.protein *
-              editItem.numberOfServings
+            (+value / 100) * proteinBaseline * editItem.numberOfServings
           ),
           carbs: Math.round(
-            (+value / 100) *
-              searchedItem.macros?.carbs *
-              editItem.numberOfServings
+            (+value / 100) * carbsBaseline * editItem.numberOfServings
           ),
           fat: Math.round(
-            (+value / 100) *
-              searchedItem.macros?.fat *
-              editItem.numberOfServings
+            (+value / 100) * fatBaseline * editItem.numberOfServings
           ),
         }
 
@@ -214,18 +243,15 @@ export function ItemDetails({
       case 'numberOfServings':
         totalMacrosToSet = {
           calories: Math.round(
-            (+value * searchedItem.macros?.calories * editItem.servingSize) /
-              100
+            (+value * caloriesBaseline * editItem.servingSize) / 100
           ),
           protein: Math.round(
-            (+value * searchedItem.macros?.protein * editItem.servingSize) / 100
+            (+value * proteinBaseline * editItem.servingSize) / 100
           ),
           carbs: Math.round(
-            (+value * searchedItem.macros?.carbs * editItem.servingSize) / 100
+            (+value * carbsBaseline * editItem.servingSize) / 100
           ),
-          fat: Math.round(
-            (+value * searchedItem.macros?.fat * editItem.servingSize) / 100
-          ),
+          fat: Math.round((+value * fatBaseline * editItem.servingSize) / 100),
         }
         break
 

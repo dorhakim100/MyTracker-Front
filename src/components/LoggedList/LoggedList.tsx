@@ -127,6 +127,10 @@ export function LoggedList({ mealPeriod }: { mealPeriod: MealPeriod }) {
 
     if (mealItem.source === searchTypes.custom) {
       setEditMealItem(mealItem)
+      setItem({
+        ...mealItem,
+        type: searchTypes.custom,
+      } as Item)
       return
     }
 
