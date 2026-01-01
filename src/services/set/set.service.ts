@@ -64,13 +64,11 @@ async function saveSetBySessionIdAndExerciseId(
   isNew: boolean
 ) {
   try {
-    console.log('set', set)
-    console.log('isNew', isNew)
     const savedSet = await httpService[isNew ? 'post' : 'put'](
       `${KEY}/session/${sessionId}/exercise/${exerciseId}/${setIndex}`,
       set
     )
-    console.log('savedSet', savedSet)
+
     return savedSet
   } catch (err) {
     throw err

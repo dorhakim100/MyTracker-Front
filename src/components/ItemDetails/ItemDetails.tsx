@@ -148,11 +148,6 @@ export function ItemDetails({
         ]
 
   useEffect(() => {
-    // console.log(isCustomLog)
-    // console.log(item)
-    console.log(editMealItem)
-    console.log(searchedItem)
-
     loadItems()
   }, [])
 
