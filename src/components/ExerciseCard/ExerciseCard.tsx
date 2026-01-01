@@ -129,14 +129,7 @@ export function ExerciseCard({
     {
       title: 'View Details',
       icon: <InfoOutlineIcon />,
-      onClick: () => {
-        setSlideDialogOptions({
-          title: capitalizeFirstLetter(exercise.name),
-          component: <ExerciseDetails exercise={exercise} />,
-          type: 'exercise-details',
-          open: true,
-        })
-      },
+      onClick: openDetailsDialog,
     },
     isExpected && {
       title: `Toggle to ${exerciseInstructions?.sets[0]?.rpe ? 'RIR' : 'RPE'}`,
@@ -270,6 +263,15 @@ export function ExerciseCard({
     getExerciseSets()
   }, [sessionDay?._id])
 
+  function openDetailsDialog() {
+    setSlideDialogOptions({
+      title: capitalizeFirstLetter(exercise.name),
+      component: <ExerciseDetails exercise={exercise} />,
+      type: 'exercise-details',
+      open: true,
+    })
+  }
+
   async function getPreviousInstructions() {
     if (!instructions || instructions.weekNumber === 1) return null
     try {
@@ -353,7 +355,7 @@ export function ExerciseCard({
         } ${prefs.favoriteColor} ${isDone ? 'done' : ''}`}
         onClick={handleClick}
       >
-        <div className="exercise-card-content">
+        <div className="exercise-card-content" onClick={openDetailsDialog}>
           {exercise.image && (
             <img
               src={exercise.image}
