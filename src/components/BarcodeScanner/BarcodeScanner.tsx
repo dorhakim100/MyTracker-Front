@@ -81,15 +81,17 @@ export function BarcodeScanner({
 
   async function onDetected(code: string) {
     try {
+      console.log('code', code)
+
       setIsItemDetected(true)
-      const res = await searchService.getProductsByIds([code])
+      const res = await searchService.getProductById(code)
 
       //   setIsItemFound(true)
-      if (!res.length) {
+      if (!res) {
         showErrorMsg(messages.error.noResults)
         return
       }
-      setItem(res[0] as Item)
+      setItem(res as Item)
       setIsItemFound(true)
 
       //onClose()
@@ -105,21 +107,21 @@ export function BarcodeScanner({
   return (
     <>
       {!isItemDetected && (
-        <div className='barcode-scanner-container'>
-          <div className='barcode-scanner'>
+        <div className="barcode-scanner-container">
+          <div className="barcode-scanner">
             <video
               ref={videoRef}
               autoPlay
               playsInline
               muted
-              className='preview'
+              className="preview"
             />
-            <div className='animation-container'>
-              <img src={scanAnimation} alt='scanner' />
+            <div className="animation-container">
+              <img src={scanAnimation} alt="scanner" />
             </div>
           </div>
           <CustomButton
-            text='Custom Log'
+            text="Custom Log"
             onClick={onCustomLog}
             icon={<AddIcon />}
             fullWidth
@@ -127,7 +129,7 @@ export function BarcodeScanner({
         </div>
       )}
       {isItemDetected && (
-        <div className='searching-animation-container'>
+        <div className="searching-animation-container">
           <Lottie
             animationData={
               prefs.isDarkMode ? searchingAnimationDark : searchingAnimation
@@ -148,7 +150,7 @@ export function BarcodeScanner({
           />
         }
         title={isCustomLog ? 'Custom Log' : 'Barcode Scanned'}
-        type='full'
+        type="full"
       />
     </>
   )

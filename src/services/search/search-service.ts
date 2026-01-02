@@ -36,6 +36,7 @@ export const searchService = {
   searchBulkIds,
   searchById,
   getProductsByIds,
+  getProductById,
   getFoodsByIds,
   isFavorite,
   addToCache,
@@ -532,6 +533,7 @@ async function getProductById(id: string) {
     }
 
     const res = await itemService.getBySearchId(id)
+
     if (res) {
       return res
     }
