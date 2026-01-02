@@ -377,21 +377,6 @@ export function WorkoutSession({
               ? isExerciseDone(exercise)
               : isExerciseDone(e)
         )
-        if (isAllExercisesDone) {
-          setSelectedSessionDay({
-            ...sessionDay,
-            instructions: { ...savedInstructions, isFinished: true },
-          })
-          removeCurrentExercise()
-          await removeTimer(timer?._id)
-        } else {
-          setCurrentExercise(currentExerciseToSet)
-
-          await setTimer({
-            currentExercise: currentExerciseToSet,
-            startTime: new Date().getTime(),
-          })
-        }
 
         await setService.saveSetBySessionIdAndExerciseId(
           sessionDay._id,
@@ -403,6 +388,23 @@ export function WorkoutSession({
           setIndex,
           isNew
         )
+        if (isAllExercisesDone) {
+          setSelectedSessionDay({
+            ...sessionDay,
+            instructions: { ...savedInstructions, isFinished: true },
+          })
+          removeCurrentExercise()
+          if (timer) {
+            await removeTimer(timer?._id)
+          }
+        } else {
+          setCurrentExercise(currentExerciseToSet)
+
+          await setTimer({
+            currentExercise: currentExerciseToSet,
+            startTime: new Date().getTime(),
+          })
+        }
       } else if (exerciseIndex !== -1 && isRemove) {
         await setService.removeSetBySessionIdAndExerciseId(
           sessionDay._id,

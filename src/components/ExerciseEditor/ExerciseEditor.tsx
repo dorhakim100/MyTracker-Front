@@ -83,6 +83,7 @@ export function ExerciseEditor({
 
     const newSet = {
       ...existingSet,
+      setIndex: exercise.sets.length,
     }
 
     const newSets = [...exercise.sets, newSet]

@@ -159,7 +159,7 @@ export function ItemDetails({
       meal: editMealItem?.meal || selectedMeal || getCurrMeal(),
       name: isCustomLog ? '' : editMealItem?.name || searchedItem.name,
     })
-  }, [item.macros])
+  }, [item])
   const closeClock = () => {
     setClockOpen(false)
   }
