@@ -190,7 +190,7 @@ export function ItemDetails({
     let carbsBaseline = searchedItem.macros.carbs
     let fatBaseline = searchedItem.macros.fat
 
-    if (searchedItem.type === searchTypes.custom) {
+    if (isCustomLog || searchedItem.type === searchTypes.custom) {
       const normalizedMacros = {
         calories:
           (editItem.totalMacros.calories * editItem.servingSize) /
