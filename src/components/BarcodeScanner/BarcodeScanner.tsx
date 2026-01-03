@@ -81,8 +81,6 @@ export function BarcodeScanner({
 
   async function onDetected(code: string) {
     try {
-      console.log('code', code)
-
       setIsItemDetected(true)
       const res = await searchService.getProductById(code)
 
