@@ -85,11 +85,11 @@ async function search(filter: SearchFilter) {
     const safeTxt = txt ?? ''
 
     const isEnglishWord = translateService.isEnglishWord(safeTxt)
-    let translatedTxt = ''
+    let englishWord = ''
 
     if (!isEnglishWord) {
-      translatedTxt = await translateService.translate(safeTxt)
-    } else translatedTxt = safeTxt
+      englishWord = await translateService.translate(safeTxt)
+    } else englishWord = safeTxt
 
     let cachedRes = await indexedDbService.query<Item>(safeTxt, 0)
 
@@ -99,23 +99,27 @@ async function search(filter: SearchFilter) {
         cachedRes,
         safeTxt,
         favoriteItems,
-        translatedTxt
+        englishWord
       )
       return Promise.all(cachedRes.map((item) => modifyItemImage(item)))
     }
 
-    const hasBackendResults = await itemService.hasCachedResults(translatedTxt)
+    const hasBackendResults = await itemService.hasCachedResults(englishWord)
 
     if (hasBackendResults) {
-      const backendResults = await itemService.searchByTerm(translatedTxt)
+      const backendResults = await itemService.searchByTerm(englishWord)
 
       res = handleResSorting(
         backendResults,
         safeTxt,
         favoriteItems,
-        translatedTxt
+        englishWord
       )
-      await itemService.saveSearchResults(safeTxt, res)
+      await Promise.all(
+        res.map(async (item) => {
+          await addToCache(item as Item, englishWord)
+        })
+      )
       return Promise.all(res.map((item) => modifyItemImage(item)))
     }
 
@@ -124,8 +128,8 @@ async function search(filter: SearchFilter) {
       await Promise.allSettled([
         searchOpenFoodFacts(safeTxt),
         searchRawUSDA(safeTxt),
-        searchOpenFoodFacts(translatedTxt),
-        searchRawUSDA(translatedTxt),
+        searchOpenFoodFacts(englishWord),
+        searchRawUSDA(englishWord),
       ])
 
     const openFoodFacts: Item[] =
@@ -150,13 +154,13 @@ async function search(filter: SearchFilter) {
       // Batch cache operations instead of sequential forEach
       await Promise.all(
         res.flatMap((item) => [
-          addToCache(item as Item, translatedTxt),
+          addToCache(item as Item, englishWord),
           addToCache(item as Item, ITEMS_CACHE),
         ])
       )
     }
 
-    res = handleResSorting(res, safeTxt, favoriteItems, translatedTxt)
+    res = handleResSorting(res, safeTxt, favoriteItems, englishWord)
 
     await itemService.saveSearchResults(safeTxt, res)
 
