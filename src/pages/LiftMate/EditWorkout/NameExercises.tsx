@@ -252,6 +252,7 @@ export function NameExercises({
         return ''
     }
   }
+
   return (
     <>
       <div

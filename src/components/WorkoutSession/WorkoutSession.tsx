@@ -121,7 +121,7 @@ export function WorkoutSession({
         return
       }
       setIsLoading(true)
-      const results = await exerciseSearch(exerciseFilter.searchValue)
+      const results = await exerciseSearch(exerciseFilter)
       setExerciseResults(results)
     } catch (err) {
       showErrorMsg(messages.error.search)
@@ -129,7 +129,7 @@ export function WorkoutSession({
     } finally {
       setIsLoading(false)
     }
-  }, [exerciseFilter])
+  }, [exerciseFilter.searchValue])
 
   const latestHandleSearchRef = useRef(handleSearch)
   const debouncedRunSearch = useRef(
@@ -142,7 +142,7 @@ export function WorkoutSession({
 
   useEffect(() => {
     debouncedRunSearch()
-  }, [exerciseFilter, debouncedRunSearch])
+  }, [exerciseFilter.searchValue, debouncedRunSearch])
 
   const onExerciseFilterChange = (exerciseFilter: ExerciseFilter) => {
     setExerciseFilter(exerciseFilter)

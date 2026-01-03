@@ -5,10 +5,22 @@ import { POPULAR_EXERCISES } from '../../assets/config/popular-exercises'
 import { Workout } from '../../types/workout/Workout'
 import { indexedDbService } from '../indexeddb.service'
 import { ExerciseFilter } from '../../types/exerciseFilter/ExerciseFilter'
-export const exerciseSearch = async (searchValue: string) => {
-  const url = 'https://www.exercisedb.dev/api/v1/exercises/search'
+
+export const exerciseSearch = async (filter: ExerciseFilter) => {
+  const { searchValue } = filter
 
   try {
+    // const backendRes = await httpService.get('exercise/search', {
+    //   q: searchValue,
+    //   muscleGroup: muscleGroupValue,
+    //   equipment: equipmentValue,
+    // })
+
+    // console.log('backendRes', backendRes)
+
+    // return backendRes
+
+    const url = 'https://www.exercisedb.dev/api/v1/exercises/search'
     const { data } = await axios.get(url, {
       params: { q: searchValue, limit: 100 },
     })
@@ -29,6 +41,7 @@ export const exerciseSearch = async (searchValue: string) => {
         image: exercise.gifUrl,
         exerciseId: exercise.exerciseId,
         equipments: exercise.equipments,
+        instructions: exercise.instructions,
       }
     })
 
@@ -485,6 +498,7 @@ export function filterExercises(
 ) {
   const { muscleGroupValue, equipmentValue } = exerciseFilter
   let exercises = exerciseResults
+  let muscleNames: string[] = []
   // Filter by muscle group using conversion function
   if (muscleGroupValue !== 'All') {
     const muscleNames = mapMuscleGroupToMuscles(muscleGroupValue)
@@ -516,45 +530,45 @@ export function filterExercises(
 
   // Sort exercises: prioritize mainMuscles, then secondaryMuscles
   if (muscleGroupValue !== 'All') {
-    const muscleNames = mapMuscleGroupToMuscles(muscleGroupValue)
-    exercises = exercises.sort((a: any, b: any) => {
-      const aMainMuscles = a.mainMuscles || []
-      const bMainMuscles = b.mainMuscles || []
-      const aSecondaryMuscles = a.secondaryMuscles || []
-      const bSecondaryMuscles = b.secondaryMuscles || []
-
-      // Check if muscle appears in main muscles
-      const aHasInMain = muscleNames.some((muscleName) =>
-        aMainMuscles.some((exMuscle: string) =>
-          exMuscle.toLowerCase().includes(muscleName.toLowerCase())
-        )
-      )
-      const bHasInMain = muscleNames.some((muscleName) =>
-        bMainMuscles.some((exMuscle: string) =>
-          exMuscle.toLowerCase().includes(muscleName.toLowerCase())
-        )
-      )
-
-      // Check if muscle appears in secondary muscles
-      const aHasInSecondary = muscleNames.some((muscleName) =>
-        aSecondaryMuscles.some((exMuscle: string) =>
-          exMuscle.toLowerCase().includes(muscleName.toLowerCase())
-        )
-      )
-      const bHasInSecondary = muscleNames.some((muscleName) =>
-        bSecondaryMuscles.some((exMuscle: string) =>
-          exMuscle.toLowerCase().includes(muscleName.toLowerCase())
-        )
-      )
-
-      // Sort priority: mainMuscles > secondaryMuscles > others
-      if (aHasInMain && !bHasInMain) return -1
-      if (!aHasInMain && bHasInMain) return 1
-      if (aHasInSecondary && !bHasInSecondary) return -1
-      if (!aHasInSecondary && bHasInSecondary) return 1
-      return 0
-    })
+    muscleNames = mapMuscleGroupToMuscles(muscleGroupValue)
   }
+  exercises = exercises.sort((a: any, b: any) => {
+    const aMainMuscles = a.mainMuscles || []
+    const bMainMuscles = b.mainMuscles || []
+    const aSecondaryMuscles = a.secondaryMuscles || []
+    const bSecondaryMuscles = b.secondaryMuscles || []
+
+    // Check if muscle appears in main muscles
+    const aHasInMain = muscleNames.some((muscleName) =>
+      aMainMuscles.some((exMuscle: string) =>
+        exMuscle.toLowerCase().includes(muscleName.toLowerCase())
+      )
+    )
+    const bHasInMain = muscleNames.some((muscleName) =>
+      bMainMuscles.some((exMuscle: string) =>
+        exMuscle.toLowerCase().includes(muscleName.toLowerCase())
+      )
+    )
+
+    // Check if muscle appears in secondary muscles
+    const aHasInSecondary = muscleNames.some((muscleName) =>
+      aSecondaryMuscles.some((exMuscle: string) =>
+        exMuscle.toLowerCase().includes(muscleName.toLowerCase())
+      )
+    )
+    const bHasInSecondary = muscleNames.some((muscleName) =>
+      bSecondaryMuscles.some((exMuscle: string) =>
+        exMuscle.toLowerCase().includes(muscleName.toLowerCase())
+      )
+    )
+
+    // Sort priority: mainMuscles > secondaryMuscles > others
+    if (aHasInMain && !bHasInMain) return -1
+    if (!aHasInMain && bHasInMain) return 1
+    if (aHasInSecondary && !bHasInSecondary) return -1
+    if (!aHasInSecondary && bHasInSecondary) return 1
+    return 0
+  })
 
   return exercises
 }

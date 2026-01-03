@@ -53,7 +53,11 @@ export function Progress() {
         return
       }
       setIsLoading(true)
-      const results = await exerciseSearch(searchValue)
+      const results = await exerciseSearch({
+        searchValue,
+        muscleGroupValue: 'All',
+        equipmentValue: 'All',
+      })
       setExerciseResults(results)
     } catch (err) {
       showErrorMsg(messages.error.search)
@@ -82,12 +86,12 @@ export function Progress() {
 
   return (
     <>
-      <div className='page-container progress-container'>
-        <div className='filters-container'>
+      <div className="page-container progress-container">
+        <div className="filters-container">
           <CustomInput
             value={searchValue}
             onChange={setSearchValue}
-            placeholder='Search exercises...'
+            placeholder="Search exercises..."
             startIconFn={() => <SearchIcon />}
             isRemoveIcon={true}
             className={`${prefs.favoriteColor}`}
@@ -123,7 +127,7 @@ export function Progress() {
         }
         component={<ExerciseDetails exercise={slideOptions.exercise} />}
         title={capitalizeFirstLetter(slideOptions.exercise?.name || '')}
-        type='full'
+        type="full"
       />
     </>
   )
