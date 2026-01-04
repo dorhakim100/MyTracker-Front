@@ -146,6 +146,11 @@ export function WorkoutSession({
   }, [exerciseFilter.searchValue, debouncedRunSearch])
 
   useEffect(() => {
+    if (
+      !sessionDay.instructions.exercises ||
+      sessionDay.instructions.isFinished
+    )
+      return
     const isExerciseDone = (exercise: ExerciseInstructions) => {
       return exercise.sets.every((set) => set.isDone)
     }
