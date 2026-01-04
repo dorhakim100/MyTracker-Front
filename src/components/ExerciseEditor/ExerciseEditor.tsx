@@ -41,6 +41,7 @@ export interface ExerciseEditorProps {
     isNew?: boolean,
     isRemove?: boolean
   ) => Promise<void> | void
+  isOpen?: boolean
 }
 
 interface EditSet extends Set {
@@ -60,6 +61,7 @@ export function ExerciseEditor({
   previousInstructions,
   isExpected,
   updateExercise,
+  isOpen = true,
 }: ExerciseEditorProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -253,7 +255,9 @@ export function ExerciseEditor({
 
   return (
     <>
-      <div className="exercise-editor-container">
+      <div
+        className={`exercise-editor-container ${isOpen ? 'open' : 'closed'}`}
+      >
         {exercise.sets && exercise.sets.length > 0 && (
           <SwipeableWrapper
             items={exercise.sets.map((set, index) => ({

@@ -374,6 +374,8 @@ export function WorkoutSession({
                 image: imageToSet,
               })
             : null
+          handleOpenChange(exercise.exerciseId || '', false)
+          handleOpenChange(nextExercise?.exerciseId || '', true)
         }
 
         const isAllExercisesDone = sessionDay.instructions.exercises.every(

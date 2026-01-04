@@ -126,6 +126,10 @@ export function ExerciseCard({
   }, [exerciseInstructions])
 
   const handleClick = () => {
+    if (!isOpen && onOpenChange) {
+      onOpenChange()
+      return
+    }
     if (onClick) {
       onClick(exercise)
     }
@@ -247,11 +251,6 @@ export function ExerciseCard({
   }
 
   useEffect(() => {
-    // if (!isOpen) return
-    console.log('isOpen', isOpen)
-  }, [isOpen])
-
-  useEffect(() => {
     if (!isExpected) return
     getPreviousInstructions()
   }, [instructions])
@@ -366,7 +365,16 @@ export function ExerciseCard({
         } ${prefs.favoriteColor} ${isDone ? 'done' : ''}`}
         onClick={handleClick}
       >
-        <div className="exercise-card-content" onClick={openDetailsDialog}>
+        <div
+          className="exercise-card-content"
+          onClick={() => {
+            if (!isOpen && onOpenChange) {
+              onOpenChange()
+              return
+            }
+            openDetailsDialog()
+          }}
+        >
           {exercise.image && (
             <img
               src={exercise.image}
@@ -467,6 +475,7 @@ export function ExerciseCard({
             exerciseSets={exerciseSets}
             previousInstructions={previousInstructions}
             exercise={exerciseInstructions}
+            isOpen={isOpen}
             updateExercise={
               isExpected
                 ? updateExerciseInInstructions
