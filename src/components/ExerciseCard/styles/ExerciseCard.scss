@@ -19,6 +19,10 @@
     border-left: 0.3rem solid $success-color;
   }
 
+  &.closed {
+    gap: 0;
+  }
+
   .exercise-card-content {
     display: grid;
     grid-template-columns: auto 1fr auto;

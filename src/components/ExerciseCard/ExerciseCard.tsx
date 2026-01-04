@@ -362,7 +362,9 @@ export function ExerciseCard({
       <Card
         className={`exercise-card-container ${className} ${
           prefs.isDarkMode ? 'dark-mode' : ''
-        } ${prefs.favoriteColor} ${isDone ? 'done' : ''}`}
+        } ${prefs.favoriteColor} ${isDone ? 'done' : ''} ${
+          isOpen ? 'open' : 'closed'
+        }`}
         onClick={handleClick}
       >
         <div
