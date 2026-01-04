@@ -3,7 +3,6 @@ import { debounce, DialogActions, Divider, Typography } from '@mui/material'
 
 import { SessionDay } from '../../types/workout/SessionDay'
 import { Exercise } from '../../types/exercise/Exercise'
-import { capitalizeFirstLetter } from '../../services/util.service'
 import {
   removeSessionDay,
   removeCurrentExercise,
@@ -14,12 +13,8 @@ import {
   saveWorkout,
 } from '../../store/actions/workout.action'
 
-import { ExerciseEditor } from '../../components/ExerciseEditor/ExerciseEditor'
-
-import { CustomAccordion } from '../../CustomMui/CustomAccordion/CustomAccordion'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 
-import InfoOutlineIcon from '@mui/icons-material/InfoOutline'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { ExerciseInstructions } from '../../types/exercise/ExerciseInstructions'
@@ -31,7 +26,6 @@ import { setService } from '../../services/set/set.service'
 import { Instructions } from '../../types/instructions/Instructions'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { CustomAlertDialog } from '../../CustomMui/CustomAlertDialog/CustomAlertDialog'
-import NoteAddIcon from '@mui/icons-material/NoteAdd'
 import { CustomInput } from '../../CustomMui/CustomInput/CustomInput'
 import { ExerciseCard } from '../ExerciseCard/ExerciseCard'
 import {
@@ -50,15 +44,14 @@ import { imageService } from '../../services/image/image.service'
 import { DEFAULT_RESTING_TIME } from '../../assets/config/times'
 import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import { WorkoutDetails } from '../WorkoutDetails/WorkoutDetails'
 interface WorkoutSessionProps {
   sessionDay: SessionDay
-  onExerciseInfoClick: (exercise: Exercise) => void
   updateSessionDay: () => void
 }
 
 export function WorkoutSession({
   sessionDay,
-  onExerciseInfoClick,
   updateSessionDay,
 }: WorkoutSessionProps) {
   if (!sessionDay.instructions) return null
@@ -101,14 +94,16 @@ export function WorkoutSession({
 
   const [exerciseNotes, setExerciseNotes] = useState<string>('')
 
-  const [exerciseDialogOptions, setExerciseDialogOptions] = useState<{
+  const [slideDialogOptions, setSlideDialogOptions] = useState<{
     open: boolean
     title: string
     component: React.ReactNode
+    type: 'details' | 'edit' | null
   }>({
     open: false,
     title: '',
     component: null,
+    type: null,
   })
 
   const filteredExerciseResults = useMemo(() => {
@@ -149,6 +144,18 @@ export function WorkoutSession({
   useEffect(() => {
     debouncedRunSearch()
   }, [exerciseFilter.searchValue, debouncedRunSearch])
+
+  useEffect(() => {
+    const isExerciseDone = (exercise: ExerciseInstructions) => {
+      return exercise.sets.every((set) => set.isDone)
+    }
+    const firstExerciseToOpen = sessionDay.instructions.exercises.find(
+      (e) => !isExerciseDone(e)
+    )
+    if (firstExerciseToOpen) {
+      handleOpenChange(firstExerciseToOpen.exerciseId, true)
+    }
+  }, [sessionDay.instructions.exercises])
 
   const onExerciseFilterChange = (exerciseFilter: ExerciseFilter) => {
     setExerciseFilter(exerciseFilter)
@@ -495,11 +502,12 @@ export function WorkoutSession({
     )
   }
 
-  function closeExerciseDialog() {
-    setExerciseDialogOptions({
+  function closeSlideDialog() {
+    setSlideDialogOptions({
       open: false,
       title: '',
       component: null,
+      type: null,
     })
     setExerciseFilter({
       searchValue: '',
@@ -508,14 +516,56 @@ export function WorkoutSession({
     })
   }
 
+  function getSlideDialogComponent() {
+    const type = slideDialogOptions.type
+    switch (type) {
+      case 'edit':
+        return (
+          <ExercisesStage
+            workout={sessionDay.workout}
+            exerciseFilter={exerciseFilter}
+            exerciseResults={filteredExerciseResults}
+            onExerciseFilterChange={onExerciseFilterChange}
+            onAddExercise={onAddExercise}
+            onDeleteExercise={onDeleteExercise}
+            onReorderExercises={onReorderExercises}
+            renderErrorImage={(exercise) =>
+              imageService.renderErrorExerciseImage(
+                exercise,
+                filteredExerciseResults,
+
+                setExerciseResults
+              )
+            }
+            resultsMsg={resultsMsg}
+          />
+        )
+      case 'details':
+        return <WorkoutDetails workout={sessionDay.workout} />
+
+      default:
+        return null
+        break
+    }
+    return null
+  }
+
   function openExerciseDialog() {
-    setExerciseDialogOptions({
+    setSlideDialogOptions({
       open: true,
       title: 'Add Exercise',
       component: null,
+      type: 'edit',
     })
   }
-
+  const onOpenWorkoutDetails = () => {
+    setSlideDialogOptions({
+      open: true,
+      title: 'Workout Details',
+      component: <WorkoutDetails workout={sessionDay.workout} />,
+      type: 'details',
+    })
+  }
   const getAlertDialogComponent = () => {
     if (alertDialogOptions.component === 'delete')
       return (
@@ -575,7 +625,10 @@ export function WorkoutSession({
     <>
       <div className="workout-container">
         <div className="workout-header-container">
-          <div className="workout-name-container">
+          <div
+            className="workout-name-container"
+            onClick={onOpenWorkoutDetails}
+          >
             {sessionDay.instructions.isFinished ? (
               <CircleIcon color="success" />
             ) : (
@@ -679,29 +732,10 @@ export function WorkoutSession({
         </div>
       </div>
       <SlideDialog
-        open={exerciseDialogOptions.open}
-        onClose={closeExerciseDialog}
-        title={exerciseDialogOptions.title}
-        component={
-          <ExercisesStage
-            workout={sessionDay.workout}
-            exerciseFilter={exerciseFilter}
-            exerciseResults={filteredExerciseResults}
-            onExerciseFilterChange={onExerciseFilterChange}
-            onAddExercise={onAddExercise}
-            onDeleteExercise={onDeleteExercise}
-            onReorderExercises={onReorderExercises}
-            renderErrorImage={(exercise) =>
-              imageService.renderErrorExerciseImage(
-                exercise,
-                filteredExerciseResults,
-
-                setExerciseResults
-              )
-            }
-            resultsMsg={resultsMsg}
-          />
-        }
+        open={slideDialogOptions.open}
+        onClose={closeSlideDialog}
+        title={slideDialogOptions.title}
+        component={getSlideDialogComponent() as React.ReactElement}
         type="full"
       />
       <CustomAlertDialog
