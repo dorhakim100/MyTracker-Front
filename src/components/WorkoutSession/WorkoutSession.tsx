@@ -48,6 +48,8 @@ import { ExercisesStage } from '../../pages/LiftMate/EditWorkout/ExercisesStage'
 import { ExerciseFilter } from '../../types/exerciseFilter/ExerciseFilter'
 import { imageService } from '../../services/image/image.service'
 import { DEFAULT_RESTING_TIME } from '../../assets/config/times'
+import ExpandLessIcon from '@mui/icons-material/ExpandLess'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 interface WorkoutSessionProps {
   sessionDay: SessionDay
   onExerciseInfoClick: (exercise: Exercise) => void
@@ -63,9 +65,7 @@ export function WorkoutSession({
 
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
 
-  const [expandedExercises, setExpandedExercises] = useState<Set<string>>(
-    new Set()
-  )
+  const [openExercises, setOpenExercises] = useState<Set<string>>(new Set())
 
   const workouts = useSelector(
     (state: RootState) => state.workoutModule.workouts
@@ -92,6 +92,12 @@ export function WorkoutSession({
     component: null,
     exerciseId: '',
   })
+  const allExerciseIds = sessionDay.instructions.exercises.map(
+    (ex) => ex.exerciseId
+  )
+  const allExpanded =
+    allExerciseIds.length > 0 &&
+    allExerciseIds.every((id) => openExercises.has(id))
 
   const [exerciseNotes, setExerciseNotes] = useState<string>('')
 
@@ -264,35 +270,34 @@ export function WorkoutSession({
 
   const resultsMsg = 'No exercises found'
 
-  const handleAccordionChange = useCallback(
-    (exerciseId: string) =>
-      (_event: React.SyntheticEvent, isExpanded: boolean) => {
-        setExpandedExercises((prev) => {
-          const newSet = new Set(prev)
-          if (isExpanded) {
-            newSet.add(exerciseId)
-          } else {
-            newSet.delete(exerciseId)
-          }
-          return newSet
-        })
-      },
+  const handleOpenChange = useCallback(
+    (exerciseId: string, openToSet: boolean) => {
+      setOpenExercises((prev) => {
+        const newSet = new Set(prev)
+        if (openToSet) {
+          newSet.add(exerciseId)
+        } else {
+          newSet.delete(exerciseId)
+        }
+        return newSet
+      })
+    },
     []
   )
 
-  // const toggleExpandAll = () => {
-  //   if (!sessionDay?.workout?.exercises) return
-  //   const allExerciseIds = sessionDay.workout.exercises.map(
-  //     (ex) => ex.exerciseId
-  //   )
-  //   const allExpanded = allExerciseIds.every((id) => expandedExercises.has(id))
+  const toggleExpandAll = () => {
+    if (!sessionDay?.workout?.exercises) return
+    const allExerciseIds = sessionDay.workout.exercises.map(
+      (ex) => ex.exerciseId
+    )
+    const allExpanded = allExerciseIds.every((id) => openExercises.has(id))
 
-  //   if (allExpanded) {
-  //     setExpandedExercises(new Set())
-  //   } else {
-  //     setExpandedExercises(new Set(allExerciseIds))
-  //   }
-  // }
+    if (allExpanded) {
+      setOpenExercises(new Set())
+    } else {
+      setOpenExercises(new Set(allExerciseIds))
+    }
+  }
 
   const getWorkoutName = () => {
     const workoutId = sessionDay.instructions.workoutId
@@ -564,13 +569,6 @@ export function WorkoutSession({
     }
   }
 
-  // const allExerciseIds = sessionDay.instructions.exercises.map(
-  //   (ex) => ex.exerciseId
-  // )
-  // const allExpanded =
-  //   allExerciseIds.length > 0 &&
-  //   allExerciseIds.every((id) => expandedExercises.has(id))
-
   return (
     <>
       <div className="workout-container">
@@ -586,6 +584,11 @@ export function WorkoutSession({
             </Typography>
           </div>
           <div className="actions-container">
+            <CustomButton
+              icon={allExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+              onClick={toggleExpandAll}
+              isIcon={true}
+            />
             <CustomButton
               // text="Finish Workout"
               isIcon={true}
@@ -609,10 +612,6 @@ export function WorkoutSession({
               }}
               isIcon={true}
             />
-            {/* <CustomButton
-              icon={allExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-              onClick={toggleExpandAll}
-              /> */}
           </div>
         </div>
         <Typography variant="body1" className="bold-header">
@@ -622,7 +621,7 @@ export function WorkoutSession({
         {/* <CustomButton text="Add Exercise" icon={<AddIcon />} /> */}
         <div className="exercises-container">
           {sessionDay.instructions.exercises.map((exercise) => {
-            const isExpanded = expandedExercises.has(exercise.exerciseId)
+            const isOpen = openExercises.has(exercise.exerciseId)
 
             const workoutExercise = sessionDay.workout.exercises.find(
               (e) => e.exerciseId === exercise.exerciseId
@@ -645,51 +644,9 @@ export function WorkoutSession({
                 onEditExerciseNotes={(exerciseId, notes) =>
                   saveExerciseNotes(exerciseId, notes)
                 }
-              />
-            )
-
-            return (
-              <CustomAccordion
-                key={`${exercise.exerciseId}-${sessionDay._id}`}
-                title={capitalizeFirstLetter(exercise.name || '')}
-                cmp={
-                  <ExerciseEditor
-                    exercise={exercise}
-                    updateExercise={(exercise, setIndex, isNewSet, isRemove) =>
-                      updateExercise(
-                        exercise,
-                        setIndex || 0,
-                        isNewSet || false,
-                        isRemove || false
-                      )
-                    }
-                  />
-                }
-                expanded={isExpanded}
-                onChange={handleAccordionChange(exercise.exerciseId)}
-                icon={
-                  <div className="exercise-info-container">
-                    <InfoOutlineIcon
-                      onClick={(ev) => {
-                        ev.stopPropagation()
-                        onExerciseInfoClick(exercise as Exercise)
-                      }}
-                    />
-                    <NoteAddIcon
-                      onClick={(ev) => {
-                        ev.stopPropagation()
-                        setAlertDialogOptions({
-                          open: true,
-                          title: `${capitalizeFirstLetter(
-                            exercise.name || ''
-                          )} Notes`,
-                          component: 'note',
-                          exerciseId: exercise.exerciseId,
-                        })
-                        setExerciseNotes(exercise.notes?.actual || '')
-                      }}
-                    />
-                  </div>
+                isOpen={isOpen}
+                onOpenChange={() =>
+                  handleOpenChange(exercise.exerciseId, !isOpen)
                 }
               />
             )

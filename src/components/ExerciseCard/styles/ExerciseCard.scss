@@ -26,6 +26,13 @@
       grid-column: 3/4;
       justify-self: end;
     }
+    .exercise-card-actions {
+      // display: grid;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      grid-template-columns: 1fr;
+    }
   }
 
   .exercise-card-image {

@@ -30,6 +30,8 @@ import { setService } from '../../services/set/set.service'
 import TimerIcon from '@mui/icons-material/Timer'
 import { RestingTimerEdit } from '../RestingTimerEdit/RestingTimerEdit'
 import { DEFAULT_RESTING_TIME } from '../../assets/config/times'
+import ExpandLessIcon from '@mui/icons-material/ExpandLess'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 
 interface SlideDialogOptions {
   title: string
@@ -58,6 +60,8 @@ interface ExerciseCardProps {
     isNew: boolean,
     isRemove: boolean
   ) => Promise<void> | void
+  isOpen?: boolean
+  onOpenChange?: () => void
 }
 
 export function ExerciseCard({
@@ -74,6 +78,8 @@ export function ExerciseCard({
   onSwitchRpeRir,
   setIsReorderExercisesOpen,
   updateExercise,
+  isOpen = true,
+  onOpenChange,
 }: ExerciseCardProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -241,6 +247,11 @@ export function ExerciseCard({
   }
 
   useEffect(() => {
+    // if (!isOpen) return
+    console.log('isOpen', isOpen)
+  }, [isOpen])
+
+  useEffect(() => {
     if (!isExpected) return
     getPreviousInstructions()
   }, [instructions])
@@ -367,19 +378,32 @@ export function ExerciseCard({
             />
           )}
 
-          <CustomOptionsMenu
-            className="more-options-container"
-            options={menuOptions}
-            triggerElement={
+          <div className="exercise-card-actions">
+            <CustomOptionsMenu
+              className="more-options-container"
+              options={menuOptions}
+              triggerElement={
+                <CustomButton
+                  isIcon={true}
+                  icon={<MoreHorizIcon />}
+                  className={`more-options ${prefs.favoriteColor} ${
+                    prefs.isDarkMode ? 'dark-mode' : ''
+                  }`}
+                />
+              }
+            />
+
+            {onOpenChange && (
               <CustomButton
+                icon={isOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onOpenChange?.()
+                }}
                 isIcon={true}
-                icon={<MoreHorizIcon />}
-                className={`more-options ${prefs.favoriteColor} ${
-                  prefs.isDarkMode ? 'dark-mode' : ''
-                }`}
               />
-            }
-          />
+            )}
+          </div>
 
           <div className="exercise-card-info">
             <Typography variant="h6" className="exercise-card-name">
