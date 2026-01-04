@@ -203,7 +203,6 @@ export function Dashboard() {
 
           <WorkoutSession
             sessionDay={sessionDay}
-            onExerciseInfoClick={() => {}}
             updateSessionDay={updateSessionDay}
           />
         </div>

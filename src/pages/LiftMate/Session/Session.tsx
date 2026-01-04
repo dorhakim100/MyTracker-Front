@@ -238,14 +238,6 @@ export function Session() {
     )
   }
 
-  const handleExerciseInfoClick = (exercise: Exercise) => {
-    setDialogOptions({
-      open: true,
-      item: exercise,
-      type: EXERCISE,
-    })
-  }
-
   const getDialogComponent = () => {
     if (dialogOptions.type === WORKOUT) {
       return <WorkoutDetails workout={dialogOptions.item as Workout} />
@@ -278,7 +270,6 @@ export function Session() {
           ) : (
             <WorkoutSession
               sessionDay={sessionDay}
-              onExerciseInfoClick={handleExerciseInfoClick}
               updateSessionDay={updateSessionDay}
             />
           )}

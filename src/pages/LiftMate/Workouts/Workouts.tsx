@@ -532,7 +532,6 @@ export function Workouts() {
 
           <WorkoutSession
             sessionDay={sessionDay}
-            onExerciseInfoClick={() => {}}
             updateSessionDay={updateSessionDay}
           />
         </SlideAnimation>
