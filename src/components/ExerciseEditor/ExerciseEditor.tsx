@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { Badge, Divider, Typography } from '@mui/material'
+import { Badge, Checkbox, Divider, Typography } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 
 import { RootState } from '../../store/store'
@@ -276,15 +276,13 @@ export function ExerciseEditor({
                     />
                     <div className="badges-container">
                       {(previousInstructions || !isExpected) && (
-                        <Badge
-                          badgeContent={
-                            set.isDone ? (
-                              <CheckIcon />
-                            ) : (
-                              <RadioButtonUncheckedIcon />
-                            )
+                        <Checkbox
+                          icon={
+                            <RadioButtonUncheckedIcon className="not-finished" />
                           }
-                          className={set.isDone ? 'success' : 'error'}
+                          checkedIcon={<CheckIcon className="finished" />}
+                          checked={set.isDone ? true : false}
+                          onChange={() => onMarkAsDone(index)}
                         />
                       )}
                     </div>

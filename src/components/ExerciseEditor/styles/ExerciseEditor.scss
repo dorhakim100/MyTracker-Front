@@ -28,6 +28,16 @@
       .badges-container {
         display: grid;
       }
+      .finished,
+      .not-finished {
+        border-radius: 50%;
+      }
+      .not-finished {
+        background-color: $error-color;
+      }
+      .finished {
+        background-color: $success-color;
+      }
       .MuiBadge-root {
         display: block;
         align-self: center;
