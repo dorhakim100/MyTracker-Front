@@ -85,8 +85,6 @@ export function BarcodeScanner({
     try {
       setIsItemDetected(true)
       const res = await searchService.getProductById(code)
-      console.log('res', res)
-      //   setIsItemFound(true)
       if (!res) {
         showErrorMsg(messages.error.noResults)
         setIsTryAgain(true)
