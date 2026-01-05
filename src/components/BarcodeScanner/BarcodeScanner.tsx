@@ -18,6 +18,7 @@ import scanAnimation from '../../../public/scanning.gif'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import AddIcon from '@mui/icons-material/Add'
 import { MealItem } from '../../types/mealItem/MealItem'
+import { Refresh } from '@mui/icons-material'
 
 interface BarcodeScannerProps {
   onClose: () => void
@@ -36,10 +37,11 @@ export function BarcodeScanner({
 
   const [isItemDetected, setIsItemDetected] = useState(false)
   const [isItemFound, setIsItemFound] = useState(false)
-
+  const [isTryAgain, setIsTryAgain] = useState(false)
   const [isCustomLog, setIsCustomLog] = useState(false)
 
   useEffect(() => {
+    if (isItemDetected) return
     const hints = new Map<DecodeHintType, unknown>()
     hints.set(DecodeHintType.POSSIBLE_FORMATS, [
       BarcodeFormat.EAN_13,
@@ -83,10 +85,11 @@ export function BarcodeScanner({
     try {
       setIsItemDetected(true)
       const res = await searchService.getProductById(code)
-
+      console.log('res', res)
       //   setIsItemFound(true)
       if (!res) {
         showErrorMsg(messages.error.noResults)
+        setIsTryAgain(true)
         return
       }
       setItem(res as Item)
@@ -126,7 +129,18 @@ export function BarcodeScanner({
           />
         </div>
       )}
-      {isItemDetected && (
+      {isItemDetected && !isItemFound && isTryAgain && (
+        <CustomButton
+          text="Try Again"
+          onClick={() => {
+            setIsItemDetected(false)
+            setIsTryAgain(false)
+          }}
+          icon={<Refresh />}
+          fullWidth
+        />
+      )}
+      {isItemDetected && !isTryAgain && (
         <div className="searching-animation-container">
           <Lottie
             animationData={

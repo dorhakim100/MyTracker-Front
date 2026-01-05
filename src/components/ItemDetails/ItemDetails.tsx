@@ -152,6 +152,7 @@ export function ItemDetails({
   }, [])
 
   useEffect(() => {
+    console.log('item', item)
     setEditItem({
       totalMacros: isCustomLog ? _getDefaultMacros() : item.macros,
       servingSize: editMealItem?.servingSize || 100,
