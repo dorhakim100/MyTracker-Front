@@ -35,13 +35,12 @@ export function BarcodeScanner({
 
   const videoRef = useRef<HTMLVideoElement | null>(null)
 
-  const [isItemDetected, setIsItemDetected] = useState(false)
+  const isItemDetected = useRef(false)
   const [isItemFound, setIsItemFound] = useState(false)
   const [isTryAgain, setIsTryAgain] = useState(false)
   const [isCustomLog, setIsCustomLog] = useState(false)
 
   useEffect(() => {
-    if (isItemDetected) return
     const hints = new Map<DecodeHintType, unknown>()
     hints.set(DecodeHintType.POSSIBLE_FORMATS, [
       BarcodeFormat.EAN_13,
@@ -83,7 +82,8 @@ export function BarcodeScanner({
 
   async function onDetected(code: string) {
     try {
-      setIsItemDetected(true)
+      if (isItemDetected.current) return
+      isItemDetected.current = true
       const res = await searchService.getProductById(code)
       if (!res) {
         showErrorMsg(messages.error.noResults)
@@ -93,7 +93,7 @@ export function BarcodeScanner({
       setItem(res as Item)
       setIsItemFound(true)
 
-      //onClose()
+      // onClose()
     } catch (err) {
       showErrorMsg(messages.error.scan)
     }
@@ -105,7 +105,7 @@ export function BarcodeScanner({
 
   return (
     <>
-      {!isItemDetected && (
+      {!isItemDetected.current && (
         <div className="barcode-scanner-container">
           <div className="barcode-scanner">
             <video
@@ -127,18 +127,18 @@ export function BarcodeScanner({
           />
         </div>
       )}
-      {isItemDetected && !isItemFound && isTryAgain && (
+      {isItemDetected.current && !isItemFound && isTryAgain && (
         <CustomButton
           text="Try Again"
           onClick={() => {
-            setIsItemDetected(false)
+            isItemDetected.current = false
             setIsTryAgain(false)
           }}
           icon={<Refresh />}
           fullWidth
         />
       )}
-      {isItemDetected && !isTryAgain && (
+      {isItemDetected.current && !isTryAgain && (
         <div className="searching-animation-container">
           <Lottie
             animationData={
