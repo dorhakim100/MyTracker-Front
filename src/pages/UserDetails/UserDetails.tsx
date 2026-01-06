@@ -137,7 +137,11 @@ export function UserDetails() {
       <ProfileCard />
 
       <div className="content-container">
-        <StatsCarousel items={statsCarouselItems} showSkeleton={!user} />
+        <StatsCarousel
+          items={statsCarouselItems}
+          showSkeleton={!user}
+          direction="vertical"
+        />
 
         {requests.length > 0 && (
           <TrainerRequestCard

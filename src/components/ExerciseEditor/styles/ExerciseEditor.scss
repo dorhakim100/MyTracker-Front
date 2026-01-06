@@ -27,6 +27,7 @@
       .finished,
       .not-finished {
         border-radius: 50%;
+        color: $white !important;
       }
       .not-finished {
         background-color: $error-color;

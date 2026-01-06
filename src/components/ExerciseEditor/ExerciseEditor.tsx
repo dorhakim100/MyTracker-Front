@@ -278,9 +278,17 @@ export function ExerciseEditor({
                       {(previousInstructions || !isExpected) && (
                         <Checkbox
                           icon={
-                            <RadioButtonUncheckedIcon className="not-finished" />
+                            <RadioButtonUncheckedIcon
+                              className="not-finished"
+                              sx={{ color: 'white' }}
+                            />
                           }
-                          checkedIcon={<CheckIcon className="finished" />}
+                          checkedIcon={
+                            <CheckIcon
+                              className="finished"
+                              sx={{ color: 'white' }}
+                            />
+                          }
                           checked={set.isDone ? true : false}
                           onChange={() => onMarkAsDone(index)}
                         />

@@ -15,6 +15,7 @@ interface StatsCarouselProps {
   showSkeleton?: boolean
   skeletonComponent?: ReactNode
   className?: string
+  direction?: 'horizontal' | 'vertical'
 }
 
 export function StatsCarousel({
@@ -22,6 +23,7 @@ export function StatsCarousel({
   showSkeleton = false,
   skeletonComponent,
   className = '',
+  direction = 'horizontal',
 }: StatsCarouselProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -69,7 +71,8 @@ export function StatsCarousel({
       spaceBetween={30}
       pagination={{ clickable: true }}
       modules={[Pagination]}
-      className={`stats-carousel ${className}`}
+      className={`stats-carousel ${className} ${direction}`}
+      direction={direction}
     >
       {items.map((item, index) => (
         <SwiperSlide key={index}>{item}</SwiperSlide>
