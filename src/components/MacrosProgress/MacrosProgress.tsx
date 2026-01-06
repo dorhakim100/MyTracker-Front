@@ -129,7 +129,7 @@ export function MacrosProgress({ protein, carbs, fats }: MacrosProgressProps) {
         onClose={onClose}
         component={<EditMacros onCancel={onClose} onSave={onSave} />}
         title="Edit Macros"
-        onSave={onSave}
+        // onSave={onSave}
       />
     </>
   )

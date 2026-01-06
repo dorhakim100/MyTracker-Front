@@ -98,7 +98,7 @@ export function MacrosDistribution({
         component={
           <MacrosDistributionEdit onCancel={onClose} onSave={onSave} />
         }
-        onSave={onSave}
+        // onSave={onSave}
       />
     </>
   )
