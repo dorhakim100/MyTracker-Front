@@ -68,7 +68,7 @@ export function FavoriteItemsCard() {
     <>
       <CustomList
         items={favoriteItems || []}
-        dragOffsetY={-64}
+        // dragOffsetY={-64}
         renderPrimaryText={(item) => item.name}
         renderLeft={(item) => (
           <div className="left-content macros-image-container">

@@ -137,7 +137,7 @@ export function MealsCard() {
       {user?.meals && user?.meals.length > 0 && (
         <CustomList
           items={user.meals}
-          dragOffsetY={-64}
+          // dragOffsetY={-64}
           className={`${prefs.isDarkMode ? 'dark-mode' : ''}`}
           renderPrimaryText={(meal) => meal.name}
           renderLeft={(meal) => (
