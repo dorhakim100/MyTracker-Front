@@ -85,7 +85,7 @@ export function ProfileCard() {
         onClose={onCloseEditUser}
         component={<EditUser onSave={onSaveEditUser} />}
         title="Edit User"
-        onSave={() => onSaveEditUser(user as User)}
+        // onSave={() => onSaveEditUser(user as User)}
         type="full"
       />
       <CustomAlertDialog
