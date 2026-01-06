@@ -215,7 +215,7 @@ export function WeightChart({
 
       setStats({
         selectedDate: new Date(),
-        selectedWeight: weights[0].kg,
+        selectedWeight: weights[0]?.kg || 0,
         message: '',
         isGoal: false,
       })

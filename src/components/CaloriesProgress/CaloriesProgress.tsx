@@ -122,7 +122,7 @@ export function CaloriesProgress({
         onClose={onClose}
         component={<CaloriesEdit onCancel={onClose} onSave={onSave} />}
         title="Edit Calories"
-        onSave={onSave}
+        // onSave={onSave}
       />
     </>
   )
