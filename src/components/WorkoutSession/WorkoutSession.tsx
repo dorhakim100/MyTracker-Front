@@ -319,32 +319,101 @@ export function WorkoutSession({
     return workout?.name
   }
 
-  const updateExercise = async (
-    exercise: ExerciseInstructions,
-    setIndex: number,
-    isNew: boolean,
-    isRemove: boolean,
-    isMark: boolean = false
-  ) => {
-    if (!sessionDay._id) return showErrorMsg(messages.error.updateSet)
+  // Helper function to check if exercise is done
+  const isExerciseDone = (exerciseToCheck: ExerciseInstructions): boolean => {
+    return exerciseToCheck.sets.every((set) => set.isDone)
+  }
 
-    const originalInstructions = sessionDay.instructions
-    const newInstructions = {
+  // Helper function to clean set (remove unused RPE/RIR field)
+  const cleanSet = (set: any) => {
+    let cleanedSet = { ...set }
+    if (cleanedSet.rir) {
+      const { rpe, ...setWithoutRpe } = cleanedSet
+      cleanedSet = setWithoutRpe
+    } else if (cleanedSet.rpe) {
+      const { rir, ...setWithoutRir } = cleanedSet
+      cleanedSet = setWithoutRir
+    }
+    return cleanedSet
+  }
+
+  // Updates exercise in instructions state
+  const updateExerciseInInstructions = (
+    exercise: ExerciseInstructions
+  ): Instructions => {
+    return {
       ...sessionDay.instructions,
       exercises: sessionDay.instructions.exercises.map((e) =>
         e.exerciseId === exercise.exerciseId ? exercise : e
       ),
     }
-    const exerciseIndex = newInstructions.exercises.findIndex(
-      (e) => e.exerciseId === exercise.exerciseId
+  }
+
+  // Handles moving to next exercise when current is completed
+  const handleMoveToNextExercise = (
+    completedExercise: ExerciseInstructions,
+    exerciseIndex: number
+  ) => {
+    const nextExercise = sessionDay.instructions.exercises.find(
+      (e, index) => !isExerciseDone(e) && index > exerciseIndex
     )
 
+    if (!nextExercise) return null
+
+    const imageToSet = nextExercise?.image
+      ? nextExercise.image
+      : sessionDay.workout.exercises.find(
+          (e) => e.exerciseId === nextExercise?.exerciseId
+        )?.image
+
+    const currentExerciseToSet = {
+      ...nextExercise,
+      setIndex: 0,
+      image: imageToSet,
+    }
+
+    handleOpenChange(completedExercise.exerciseId || '', false)
+    handleOpenChange(nextExercise?.exerciseId || '', true)
+
+    return currentExerciseToSet
+  }
+
+  // Handles when all exercises are completed
+  const handleAllExercisesCompleted = async (
+    savedInstructions: Instructions
+  ) => {
+    setSelectedSessionDay({
+      ...sessionDay,
+      instructions: { ...savedInstructions, isFinished: true },
+    })
+    removeCurrentExercise()
+
+    if (timer) {
+      await removeTimer(timer?._id)
+    }
+  }
+
+  // Updates exercise values (reps, weight, RPE/RIR) and saves instructions
+  const updateExercise = async (exercise: ExerciseInstructions) => {
+    if (!sessionDay._id) {
+      showErrorMsg(messages.error.updateSet)
+      return
+    }
+
+    const originalInstructions = sessionDay.instructions
+    const newInstructions = updateExerciseInInstructions(exercise)
+
+    // Skip if nothing changed
     if (getIsStringifySame(originalInstructions, newInstructions)) return
+
+    // Update state immediately
     setSelectedSessionDay({
       ...sessionDay,
       instructions: { ...newInstructions },
     })
+
     try {
+      // Save instructions to backend
       const savedInstructions = await saveNewInstructions(newInstructions)
       if (savedInstructions) {
         setSelectedSessionDay({
@@ -352,92 +421,218 @@ export function WorkoutSession({
           instructions: savedInstructions,
         })
       }
-      if (exerciseIndex !== -1 && !isRemove) {
-        let setToSave = { ...exercise.sets[setIndex] }
-        // Remove the unused RPE/RIR field - only keep the one that's actually used
-        if (setToSave.rir) {
-          const { rpe, ...setWithoutRpe } = setToSave
-          setToSave = setWithoutRpe
-        } else if (setToSave.rpe) {
-          const { rir, ...setWithoutRir } = setToSave
-          setToSave = setWithoutRir
-        }
 
-        let currentExerciseToSet = { ...exercise, setIndex }
+      // Save the updated set values to backend
+      const exerciseIndex = newInstructions.exercises.findIndex(
+        (e) => e.exerciseId === exercise.exerciseId
+      )
 
-        const isExerciseDone = (exerciseToCheck: ExerciseInstructions) => {
-          return exerciseToCheck.sets.every((set) => set.isDone)
-        }
-
-        if (isExerciseDone(exercise)) {
-          const nextExercise = sessionDay.instructions.exercises.find(
-            (e, index) => !isExerciseDone(e) && index > exerciseIndex
+      if (exerciseIndex !== -1) {
+        // Save all sets that have been updated
+        for (let setIndex = 0; setIndex < exercise.sets.length; setIndex++) {
+          const setToSave = cleanSet(exercise.sets[setIndex])
+          await setService.saveSetBySessionIdAndExerciseId(
+            sessionDay._id,
+            exercise.exerciseId,
+            {
+              ...setToSave,
+              userId: sessionDay.workout.forUserId || '',
+            },
+            setIndex,
+            false // isNew - updating existing set
           )
-
-          const imageToSet = nextExercise?.image
-            ? nextExercise.image
-            : sessionDay.workout.exercises.find(
-                (e) => e.exerciseId === nextExercise?.exerciseId
-              )?.image
-
-          nextExercise
-            ? (currentExerciseToSet = {
-                ...nextExercise,
-                setIndex: 0,
-                image: imageToSet,
-              })
-            : null
-          handleOpenChange(exercise.exerciseId || '', false)
-          handleOpenChange(nextExercise?.exerciseId || '', true)
         }
-
-        const isAllExercisesDone = sessionDay.instructions.exercises.every(
-          (e) =>
-            e.exerciseId === exercise.exerciseId
-              ? isExerciseDone(exercise)
-              : isExerciseDone(e)
-        )
-
-        await setService.saveSetBySessionIdAndExerciseId(
-          sessionDay._id,
-          exercise.exerciseId,
-          {
-            ...setToSave,
-            userId: sessionDay.workout.forUserId || '',
-          },
-          setIndex,
-          isNew
-        )
-        console.log('isMark', isMark)
-        if (isAllExercisesDone) {
-          setSelectedSessionDay({
-            ...sessionDay,
-            instructions: { ...savedInstructions, isFinished: true },
-          })
-          removeCurrentExercise()
-          if (timer) {
-            await removeTimer(timer?._id)
-          }
-        } else if (isMark) {
-          setCurrentExercise(currentExerciseToSet)
-
-          await setTimer({
-            currentExercise: currentExerciseToSet,
-            startTime: new Date().getTime(),
-          })
-        }
-      } else if (exerciseIndex !== -1 && isRemove) {
-        await setService.removeSetBySessionIdAndExerciseId(
-          sessionDay._id,
-          exercise.exerciseId,
-          setIndex
-        )
       }
     } catch (err) {
+      // Rollback on error
       setSelectedSessionDay({
         ...sessionDay,
         instructions: originalInstructions,
       })
+      showErrorMsg(messages.error.updateSet)
+    }
+  }
+
+  // Adds a new set to an exercise
+  const addSet = async (
+    exercise: ExerciseInstructions,
+    setIndex: number
+  ): Promise<void> => {
+    if (!sessionDay._id) {
+      showErrorMsg(messages.error.updateSet)
+      return
+    }
+
+    const originalInstructions = sessionDay.instructions
+    const newInstructions = updateExerciseInInstructions(exercise)
+
+    // Update state immediately
+    setSelectedSessionDay({
+      ...sessionDay,
+      instructions: { ...newInstructions },
+    })
+
+    try {
+      // Save instructions to backend
+      const savedInstructions = await saveNewInstructions(newInstructions)
+      if (savedInstructions) {
+        setSelectedSessionDay({
+          ...sessionDay,
+          instructions: savedInstructions,
+        })
+      }
+
+      // Save the new set to backend
+      const setToSave = cleanSet(exercise.sets[setIndex])
+      await setService.saveSetBySessionIdAndExerciseId(
+        sessionDay._id,
+        exercise.exerciseId,
+        {
+          ...setToSave,
+          userId: sessionDay.workout.forUserId || '',
+        },
+        setIndex,
+        true // isNew
+      )
+    } catch (err) {
+      // Rollback on error
+      setSelectedSessionDay({
+        ...sessionDay,
+        instructions: originalInstructions,
+      })
+      showErrorMsg(messages.error.updateSet)
+    }
+  }
+
+  // Removes a set from an exercise
+  const removeSet = async (
+    exercise: ExerciseInstructions,
+    setIndex: number
+  ): Promise<void> => {
+    if (!sessionDay._id) {
+      showErrorMsg(messages.error.updateSet)
+      return
+    }
+
+    const originalInstructions = sessionDay.instructions
+    const newInstructions = updateExerciseInInstructions(exercise)
+
+    // Update state immediately
+    setSelectedSessionDay({
+      ...sessionDay,
+      instructions: { ...newInstructions },
+    })
+
+    try {
+      // Remove set from backend
+      await setService.removeSetBySessionIdAndExerciseId(
+        sessionDay._id,
+        exercise.exerciseId,
+        setIndex
+      )
+
+      // Save instructions to backend
+      const savedInstructions = await saveNewInstructions(newInstructions)
+      if (savedInstructions) {
+        setSelectedSessionDay({
+          ...sessionDay,
+          instructions: savedInstructions,
+        })
+      }
+    } catch (err) {
+      // Rollback on error
+      setSelectedSessionDay({
+        ...sessionDay,
+        instructions: originalInstructions,
+      })
+      showErrorMsg(messages.error.updateSet)
+    }
+  }
+
+  // Marks a set as done and handles timer/exercise completion
+  const markSetAsDone = async (
+    exercise: ExerciseInstructions,
+    setIndex: number
+  ): Promise<void> => {
+    if (!sessionDay._id) {
+      showErrorMsg(messages.error.updateSet)
+      return
+    }
+
+    const originalInstructions = sessionDay.instructions
+    const newInstructions = updateExerciseInInstructions(exercise)
+    const exerciseIndex = newInstructions.exercises.findIndex(
+      (e) => e.exerciseId === exercise.exerciseId
+    )
+
+    // Update state immediately
+    setSelectedSessionDay({
+      ...sessionDay,
+      instructions: { ...newInstructions },
+    })
+
+    try {
+      // Save instructions to backend
+      const savedInstructions = await saveNewInstructions(newInstructions)
+      if (savedInstructions) {
+        setSelectedSessionDay({
+          ...sessionDay,
+          instructions: savedInstructions,
+        })
+      }
+
+      // Save the updated set to backend
+      const setToSave = cleanSet(exercise.sets[setIndex])
+      await setService.saveSetBySessionIdAndExerciseId(
+        sessionDay._id,
+        exercise.exerciseId,
+        {
+          ...setToSave,
+          userId: sessionDay.workout.forUserId || '',
+        },
+        setIndex,
+        false // isNew
+      )
+
+      const currentExerciseToSet = { ...exercise, setIndex }
+
+      // Check if exercise is done
+      if (isExerciseDone(exercise)) {
+        const nextExercise = handleMoveToNextExercise(exercise, exerciseIndex)
+        if (nextExercise) {
+          setCurrentExercise(nextExercise)
+          await setTimer({
+            currentExercise: nextExercise,
+            startTime: new Date().getTime(),
+          })
+        }
+      } else {
+        // Just update timer for current exercise
+        setCurrentExercise(currentExerciseToSet)
+        await setTimer({
+          currentExercise: currentExerciseToSet,
+          startTime: new Date().getTime(),
+        })
+      }
+
+      // Check if all exercises are done
+      const isAllExercisesDone = sessionDay.instructions.exercises.every((e) =>
+        e.exerciseId === exercise.exerciseId
+          ? isExerciseDone(exercise)
+          : isExerciseDone(e)
+      )
+
+      if (isAllExercisesDone) {
+        await handleAllExercisesCompleted(savedInstructions || newInstructions)
+        handleOpenChange(exercise.exerciseId, false)
+      }
+    } catch (err) {
+      // Rollback on error
+      setSelectedSessionDay({
+        ...sessionDay,
+        instructions: originalInstructions,
+      })
+      showErrorMsg(messages.error.updateSet)
     }
   }
 
@@ -693,21 +888,10 @@ export function WorkoutSession({
               <ExerciseCard
                 key={`${exercise.exerciseId}-${sessionDay._id}`}
                 exercise={workoutExercise as Exercise}
-                updateExercise={(
-                  exercise,
-                  setIndex,
-                  isNewSet,
-                  isRemove,
-                  isMark
-                ) =>
-                  updateExercise(
-                    exercise,
-                    setIndex || 0,
-                    isNewSet || false,
-                    isRemove || false,
-                    isMark || false
-                  )
-                }
+                updateExercise={updateExercise}
+                addSet={addSet}
+                removeSet={removeSet}
+                markSetAsDone={markSetAsDone}
                 instructions={sessionDay.instructions}
                 exerciseInstructions={exercise}
                 onEditExerciseNotes={(exerciseId, notes) =>
