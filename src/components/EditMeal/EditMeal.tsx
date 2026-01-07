@@ -27,6 +27,7 @@ import { searchTypes } from '../../assets/config/search-types'
 import SearchIcon from '@mui/icons-material/Search'
 import QrCode2Icon from '@mui/icons-material/QrCode2'
 import { BarcodeScanner } from '../BarcodeScanner/BarcodeScanner'
+import { itemService } from '../../services/item/item.service'
 
 const stages = ['name', 'items']
 
@@ -126,14 +127,14 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
   const renderStageContent = () => {
     if (stage === 'name')
       return (
-        <div className='stage-container'>
+        <div className="stage-container">
           <CustomInput
             value={editMeal.name}
             onChange={(value) => onEditMeal('name', value)}
-            placeholder='Meal Name'
+            placeholder="Meal Name"
             className={`${prefs.favoriteColor}`}
           />
-          <div className='animation-container'>
+          <div className="animation-container">
             <Lottie animationData={foodAnimation} loop={false} />
           </div>
         </div>
@@ -141,7 +142,7 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
     if (stage === 'items')
       return (
         <>
-          <div className='stage-container'>
+          <div className="stage-container">
             <MacrosDistribution
               protein={editMeal.macros.protein}
               carbs={editMeal.macros.carbs}
@@ -149,15 +150,15 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
               hideEditAndHeader={true}
               className={`edit-meal-macros-distribution`}
             />
-            <div className='buttons-container'>
+            <div className="buttons-container">
               <CustomButton
-                text='Search Item'
+                text="Search Item"
                 fullWidth
                 onClick={onAddItem}
                 icon={<SearchIcon />}
               />
               <CustomButton
-                text='Scan Item'
+                text="Scan Item"
                 fullWidth
                 onClick={onScanItem}
                 icon={<QrCode2Icon />}
@@ -175,7 +176,7 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
               }}
               renderLeft={(item) => (
                 <img
-                  className='item-image'
+                  className="item-image"
                   src={item.image || searchUrls.DEFAULT_IMAGE}
                   alt={item.name}
                 />
@@ -206,7 +207,7 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
             open={isOpenModal}
             onClose={onCloseItemDetails}
             component={getModelType()}
-            title='Item'
+            title="Item"
             type={modalType === 'scan' ? 'half' : 'full'}
           />
         </>
@@ -247,7 +248,15 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
     setIsOpenModal(false)
   }
 
-  function onAddToMealClick(item: MealItem) {
+  async function onAddToMealClick(item: MealItem) {
+    try {
+      const isImageNative = await itemService.isImageNative(item.searchId || '')
+      if (!isImageNative) {
+        item.image = undefined
+      }
+    } catch (err) {
+      console.log('err', err)
+    }
     let newItems = []
     const hasIndex = editMeal.items.findIndex(
       (i) => i.searchId === item.searchId
@@ -307,7 +316,7 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
   }
 
   return (
-    <div className='page-container edit-meal-container'>
+    <div className="page-container edit-meal-container">
       <CustomStepper
         stages={stages}
         activeStage={stage}
@@ -315,7 +324,7 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
         renderStage={renderStageContent}
         direction={direction}
         onFinish={onFinish}
-        finishText='Save'
+        finishText="Save"
         title={getStageTitle}
         getIsNextDisabled={getIsNextDisabled}
       />

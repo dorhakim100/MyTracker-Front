@@ -44,6 +44,7 @@ import { loadItems, setSelectedMeal } from '../../store/actions/item.actions'
 import { ClockPicker } from '../Pickers/ClockPicker'
 import { PickerSelect } from '../Pickers/PickerSelect'
 import CustomSkeleton from '../../CustomMui/CustomSkeleton/CustomSkeleton'
+import { itemService } from '../../services/item/item.service'
 
 interface ItemDetailsProps {
   onAddToMealClick?: (item: MealItem) => void
