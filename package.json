@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@capacitor/core": "^8.0.0",
     "@chakra-ui/react": "^2.10.7",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
@@ -48,6 +49,7 @@
     "vite-plugin-svgr": "^4.5.0"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.0.0",
     "@eslint/js": "^9.21.0",
     "@types/node": "^24.5.2",
     "@types/prop-types": "^15.7.15",
