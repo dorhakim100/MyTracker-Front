@@ -39,7 +39,8 @@ export interface ExerciseEditorProps {
     exercise: ExerciseInstructions,
     setIndex?: number,
     isNew?: boolean,
-    isRemove?: boolean
+    isRemove?: boolean,
+    isMark?: boolean
   ) => Promise<void> | void
   isOpen?: boolean
 }
@@ -94,6 +95,7 @@ export function ExerciseEditor({
         { ...exercise, sets: newSets, image: exercise.image },
         newSets.length - 1,
         isExpected ? false : true,
+        false,
         false
       )
       showSuccessMsg(messages.success.addSet)
@@ -165,7 +167,7 @@ export function ExerciseEditor({
       if (editSet.index < index && isExpected) return editSet
       return set
     })
-    updateExercise(newExercise, editSet.index)
+    updateExercise(newExercise, editSet.index, false, false, false)
   }, [editSet])
 
   useEffect(() => {
@@ -241,7 +243,13 @@ export function ExerciseEditor({
     }
 
     try {
-      await updateExercise({ ...exercise, sets: newSetsToSave }, index)
+      await updateExercise(
+        { ...exercise, sets: newSetsToSave },
+        index,
+        false,
+        false,
+        true
+      )
     } catch (err) {
       showErrorMsg(messages.error.updateSet)
     }

@@ -323,7 +323,8 @@ export function WorkoutSession({
     exercise: ExerciseInstructions,
     setIndex: number,
     isNew: boolean,
-    isRemove: boolean
+    isRemove: boolean,
+    isMark: boolean = false
   ) => {
     if (!sessionDay._id) return showErrorMsg(messages.error.updateSet)
 
@@ -407,6 +408,7 @@ export function WorkoutSession({
           setIndex,
           isNew
         )
+        console.log('isMark', isMark)
         if (isAllExercisesDone) {
           setSelectedSessionDay({
             ...sessionDay,
@@ -416,7 +418,7 @@ export function WorkoutSession({
           if (timer) {
             await removeTimer(timer?._id)
           }
-        } else {
+        } else if (isMark) {
           setCurrentExercise(currentExerciseToSet)
 
           await setTimer({
@@ -691,12 +693,19 @@ export function WorkoutSession({
               <ExerciseCard
                 key={`${exercise.exerciseId}-${sessionDay._id}`}
                 exercise={workoutExercise as Exercise}
-                updateExercise={(exercise, setIndex, isNewSet, isRemove) =>
+                updateExercise={(
+                  exercise,
+                  setIndex,
+                  isNewSet,
+                  isRemove,
+                  isMark
+                ) =>
                   updateExercise(
                     exercise,
                     setIndex || 0,
                     isNewSet || false,
-                    isRemove || false
+                    isRemove || false,
+                    isMark || false
                   )
                 }
                 instructions={sessionDay.instructions}

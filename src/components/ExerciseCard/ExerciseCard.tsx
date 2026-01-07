@@ -58,7 +58,8 @@ interface ExerciseCardProps {
     exercise: ExerciseInstructions,
     setIndex: number,
     isNew: boolean,
-    isRemove: boolean
+    isRemove: boolean,
+    isMark?: boolean
   ) => Promise<void> | void
   isOpen?: boolean
   onOpenChange?: () => void
@@ -221,7 +222,7 @@ export function ExerciseCard({
     }
 
     try {
-      await updateExercise(newExerciseInstructions, 0, false, false)
+      await updateExercise(newExerciseInstructions, 0, false, false, true)
       const sets = await setService.getSetsBySessionIdAndExerciseId(
         sessionDay._id,
         exercise.exerciseId
@@ -481,12 +482,13 @@ export function ExerciseCard({
             updateExercise={
               isExpected
                 ? updateExerciseInInstructions
-                : (exerciseToUpdate, setIndex, isNew, isRemove) =>
+                : (exerciseToUpdate, setIndex, isNew, isRemove, isMark) =>
                     updateExercise?.(
                       { ...exerciseToUpdate, image: exercise.image },
                       setIndex || 0,
                       isNew || false,
-                      isRemove || false
+                      isRemove || false,
+                      isMark || false
                     )
             }
             isExpected={isExpected}
