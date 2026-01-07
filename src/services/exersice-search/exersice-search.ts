@@ -5,21 +5,21 @@ import { POPULAR_EXERCISES } from '../../assets/config/popular-exercises'
 import { Workout } from '../../types/workout/Workout'
 import { indexedDbService } from '../indexeddb.service'
 import { ExerciseFilter } from '../../types/exerciseFilter/ExerciseFilter'
+import { httpService } from '../http.service'
 
 export const exerciseSearch = async (filter: ExerciseFilter) => {
-  const { searchValue } = filter
+  const { searchValue, muscleGroupValue, equipmentValue } = filter
 
   try {
-    // const backendRes = await httpService.get('exercise/search', {
-    //   q: searchValue,
-    //   muscleGroup: muscleGroupValue,
-    //   equipment: equipmentValue,
-    // })
+    const backendRes = await httpService.get('exercise/search', {
+      q: searchValue,
+      muscleGroup: muscleGroupValue,
+      equipment: equipmentValue,
+    })
 
-    // console.log('backendRes', backendRes)
+    return backendRes
 
-    // return backendRes
-
+    // Connect to actual api and modify data, not relevant for now
     const url = 'https://www.exercisedb.dev/api/v1/exercises/search'
     const { data } = await axios.get(url, {
       params: { q: searchValue, limit: 100 },
