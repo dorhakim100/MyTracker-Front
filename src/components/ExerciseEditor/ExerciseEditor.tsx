@@ -35,11 +35,18 @@ export interface ExerciseEditorProps {
   exerciseSets?: Set[]
   previousInstructions?: Instructions | null
   isExpected?: boolean
-  updateExercise: (
+  updateExercise: (exercise: ExerciseInstructions) => Promise<void> | void
+  addSet?: (
     exercise: ExerciseInstructions,
-    setIndex?: number,
-    isNew?: boolean,
-    isRemove?: boolean
+    setIndex: number
+  ) => Promise<void> | void
+  removeSet?: (
+    exercise: ExerciseInstructions,
+    setIndex: number
+  ) => Promise<void> | void
+  markSetAsDone?: (
+    exercise: ExerciseInstructions,
+    setIndex: number
   ) => Promise<void> | void
   isOpen?: boolean
 }
@@ -61,6 +68,9 @@ export function ExerciseEditor({
   previousInstructions,
   isExpected,
   updateExercise,
+  addSet,
+  removeSet,
+  markSetAsDone,
   isOpen = true,
 }: ExerciseEditorProps) {
   const prefs = useSelector(
@@ -89,13 +99,18 @@ export function ExerciseEditor({
     }
 
     const newSets = [...exercise.sets, newSet]
+    const updatedExercise = {
+      ...exercise,
+      sets: newSets,
+      image: exercise.image,
+    }
+
     try {
-      await updateExercise(
-        { ...exercise, sets: newSets, image: exercise.image },
-        newSets.length - 1,
-        isExpected ? false : true,
-        false
-      )
+      if (isExpected) {
+        await updateExercise(updatedExercise)
+      } else if (addSet) {
+        await addSet(updatedExercise, newSets.length - 1)
+      }
       showSuccessMsg(messages.success.addSet)
     } catch (err) {
       showErrorMsg(messages.error.addSet)
@@ -108,13 +123,14 @@ export function ExerciseEditor({
       return
     }
     const newSets = exercise.sets.filter((_, index) => index !== indexToRemove)
+    const updatedExercise = { ...exercise, sets: newSets }
+
     try {
-      await updateExercise(
-        { ...exercise, sets: newSets },
-        indexToRemove,
-        isExpected ? false : true,
-        true
-      )
+      if (isExpected) {
+        await updateExercise(updatedExercise)
+      } else if (removeSet) {
+        await removeSet(updatedExercise, indexToRemove)
+      }
     } catch (err) {
       showErrorMsg(messages.error.deleteSet)
     }
@@ -165,7 +181,7 @@ export function ExerciseEditor({
       if (editSet.index < index && isExpected) return editSet
       return set
     })
-    updateExercise(newExercise, editSet.index)
+    updateExercise(newExercise)
   }, [editSet])
 
   useEffect(() => {
@@ -241,13 +257,12 @@ export function ExerciseEditor({
     }
 
     try {
-      await updateExercise({ ...exercise, sets: newSetsToSave }, index)
-    } catch (err) {
-      showErrorMsg(messages.error.updateSet)
-    }
-
-    try {
-      // await setService.save(newSets[index])
+      const updatedExercise = { ...exercise, sets: newSetsToSave }
+      if (isExpected) {
+        await updateExercise(updatedExercise)
+      } else if (markSetAsDone) {
+        await markSetAsDone(updatedExercise, index)
+      }
     } catch (err) {
       showErrorMsg(messages.error.updateSet)
     }

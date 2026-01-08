@@ -26,6 +26,9 @@ export const itemService = {
   // Item lookup operations
   getBySearchId,
   searchByName,
+
+  // Item image operations
+  isImageNative,
 }
 
 // Main CRUD operations
@@ -147,6 +150,15 @@ async function searchByName(name: string) {
       name,
     })
     return items
+  } catch (err) {
+    throw err
+  }
+}
+
+async function isImageNative(searchId: string) {
+  try {
+    const isNative = await httpService.get(`${KEY}/image-native`, { searchId })
+    return isNative
   } catch (err) {
     throw err
   }

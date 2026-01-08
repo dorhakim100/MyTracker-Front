@@ -10,15 +10,12 @@ import { httpService } from '../http.service'
 export const exerciseSearch = async (filter: ExerciseFilter) => {
   const { searchValue, muscleGroupValue, equipmentValue } = filter
 
-  console.log('filter', filter)
   try {
     const backendRes = await httpService.get('exercise/search', {
       q: searchValue,
       muscleGroup: muscleGroupValue,
       equipment: equipmentValue,
     })
-
-    console.log('backendRes', backendRes)
 
     return backendRes
 

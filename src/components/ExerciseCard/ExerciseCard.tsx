@@ -54,11 +54,18 @@ interface ExerciseCardProps {
   instructions: Instructions
   onSwitchRpeRir?: (exerciseId: string, value: 'rpe' | 'rir') => void
   setIsReorderExercisesOpen?: (isOpen: boolean) => void
-  updateExercise?: (
+  updateExercise?: (exercise: ExerciseInstructions) => Promise<void> | void
+  addSet?: (
     exercise: ExerciseInstructions,
-    setIndex: number,
-    isNew: boolean,
-    isRemove: boolean
+    setIndex: number
+  ) => Promise<void> | void
+  removeSet?: (
+    exercise: ExerciseInstructions,
+    setIndex: number
+  ) => Promise<void> | void
+  markSetAsDone?: (
+    exercise: ExerciseInstructions,
+    setIndex: number
   ) => Promise<void> | void
   isOpen?: boolean
   onOpenChange?: () => void
@@ -78,6 +85,9 @@ export function ExerciseCard({
   onSwitchRpeRir,
   setIsReorderExercisesOpen,
   updateExercise,
+  addSet,
+  removeSet,
+  markSetAsDone,
   isOpen = true,
   onOpenChange,
 }: ExerciseCardProps) {
@@ -210,7 +220,7 @@ export function ExerciseCard({
 
   async function onMarkAsDone(isDoneToSet: boolean) {
     if (!exerciseInstructions) return
-    if (!updateExercise || !sessionDay?._id) return
+    if (!markSetAsDone || !sessionDay?._id) return
     const newExerciseInstructions: ExerciseInstructions = {
       ...exerciseInstructions,
       sets: exerciseInstructions.sets.map((set) => ({
@@ -221,7 +231,13 @@ export function ExerciseCard({
     }
 
     try {
-      await updateExercise(newExerciseInstructions, 0, false, false)
+      // Find the first undone set index, or use 0 if all are done
+      const setIndex = newExerciseInstructions.sets.findIndex(
+        (set) => set.isDone === isDoneToSet
+      )
+      const indexToUse = setIndex !== -1 ? setIndex : 0
+
+      await markSetAsDone(newExerciseInstructions, indexToUse)
       const sets = await setService.getSetsBySessionIdAndExerciseId(
         sessionDay._id,
         exercise.exerciseId
@@ -481,12 +497,37 @@ export function ExerciseCard({
             updateExercise={
               isExpected
                 ? updateExerciseInInstructions
-                : (exerciseToUpdate, setIndex, isNew, isRemove) =>
-                    updateExercise?.(
+                : (exerciseToUpdate) =>
+                    updateExercise?.({
+                      ...exerciseToUpdate,
+                      image: exercise.image,
+                    })
+            }
+            addSet={
+              isExpected
+                ? undefined
+                : (exerciseToUpdate, setIndex) =>
+                    addSet?.(
                       { ...exerciseToUpdate, image: exercise.image },
-                      setIndex || 0,
-                      isNew || false,
-                      isRemove || false
+                      setIndex
+                    )
+            }
+            removeSet={
+              isExpected
+                ? undefined
+                : (exerciseToUpdate, setIndex) =>
+                    removeSet?.(
+                      { ...exerciseToUpdate, image: exercise.image },
+                      setIndex
+                    )
+            }
+            markSetAsDone={
+              isExpected
+                ? undefined
+                : (exerciseToUpdate, setIndex) =>
+                    markSetAsDone?.(
+                      { ...exerciseToUpdate, image: exercise.image },
+                      setIndex
                     )
             }
             isExpected={isExpected}
