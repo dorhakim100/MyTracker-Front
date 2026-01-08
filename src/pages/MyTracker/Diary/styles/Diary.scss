@@ -18,6 +18,10 @@
     padding: 10px 0;
     background-color: $neutral-gray;
     border-radius: 5px;
+
+    .linear-progress-container {
+      padding: 0;
+    }
   }
 
   &.dark-mode {
