@@ -17,7 +17,7 @@
     z-index: 100;
     padding: 10px 0;
     background-color: $neutral-gray;
-    border-radius: 5px;
+    // border-radius: 5px;
 
     .linear-progress-container {
       padding: 0;
@@ -27,7 +27,6 @@
   &.dark-mode {
     .macros-accordion-container {
       background-color: $dark-gray;
-      border-radius: 5px;
       // border-bottom: 1px solid $dark-mode-border;
     }
   }
