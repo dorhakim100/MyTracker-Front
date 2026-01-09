@@ -30,6 +30,10 @@ body {
       background-color: transparent !important;
       z-index: -10;
     }
+
+    &:has(.pwa-install-container) {
+      background-color: $white !important;
+    }
   }
 
   &:has(.MuiDialog-root),
