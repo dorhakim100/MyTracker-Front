@@ -91,7 +91,9 @@ export function ExercisesSearch({
             prefs.isDarkMode ? 'dark-mode' : ''
           } ${prefs.favoriteColor}`}
           getKey={(exercise) => exercise.exerciseId}
-          className={`exercise-list ${prefs.isDarkMode ? 'dark-mode' : ''} `}
+          className={`exercise-list exercise-item-grid ${
+            prefs.isDarkMode ? 'dark-mode' : ''
+          } `}
           renderRight={(exercise) => (
             <CustomButton
               icon={isExerciseAdded(exercise) ? <RemoveIcon /> : <AddIcon />}

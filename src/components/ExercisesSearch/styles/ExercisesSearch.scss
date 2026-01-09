@@ -16,9 +16,6 @@
     }
 
     .exercise-item {
-      display: grid;
-      grid-template-columns: 50px 1fr auto;
-      gap: 1rem;
       &:has(.added) {
         border-left: 2px solid $primary-color;
 

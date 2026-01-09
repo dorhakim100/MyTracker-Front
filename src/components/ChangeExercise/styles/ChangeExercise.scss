@@ -1,0 +1,11 @@
+.change-exercise-container {
+  padding: 1rem;
+  display: grid;
+  gap: 0.5rem;
+  .bold-header {
+    font-weight: 600;
+  }
+  .divider {
+    margin-bottom: 1rem;
+  }
+}

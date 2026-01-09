@@ -50,6 +50,17 @@ export const exerciseSearch = async (filter: ExerciseFilter) => {
   }
 }
 
+export async function getAlternateExercises(exercise: Exercise) {
+  try {
+    const backendRes = await httpService.get('exercise/alternate', {
+      exerciseToChange: exercise,
+    })
+    return backendRes
+  } catch (err) {
+    throw err
+  }
+}
+
 /**
  * Array of popular exercise names to fetch
  */

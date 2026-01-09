@@ -190,7 +190,7 @@ export function ExerciseCard({
         setIsEditNotesOpen(true)
       },
     },
-    {
+    !isExpected && {
       title: 'Change Exercise',
       icon: <AltRouteIcon />,
       onClick: () => {
@@ -330,7 +330,7 @@ export function ExerciseCard({
       case 'resting-timer':
         return 'Edit Resting Time'
       case 'change-exercise':
-        return 'Change Exercise'
+        return capitalizeFirstLetter(exercise.name)
       default:
         return ''
     }
