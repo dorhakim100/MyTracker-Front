@@ -10,6 +10,7 @@ import { ExerciseEditor } from '../ExerciseEditor/ExerciseEditor'
 import { CustomOptionsMenu } from '../../CustomMui/CustomOptionsMenu/CustomOptionsMenu'
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
 import { Instructions } from '../../types/instructions/Instructions'
+import { ChangeExercise } from '../ChangeExercise/ChangeExercise'
 
 import EditNoteIcon from '@mui/icons-material/EditNote'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -32,11 +33,11 @@ import { RestingTimerEdit } from '../RestingTimerEdit/RestingTimerEdit'
 import { DEFAULT_RESTING_TIME } from '../../assets/config/times'
 import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import AltRouteIcon from '@mui/icons-material/AltRoute'
 
 interface SlideDialogOptions {
   title: string
-  component: React.ReactNode
-  type: 'resting-timer' | 'exercise-details'
+  type: 'resting-timer' | 'exercise-details' | 'change-exercise'
   open: boolean
   height?: 'full' | 'half'
 }
@@ -119,7 +120,6 @@ export function ExerciseCard({
   const [slideDialogOptions, setSlideDialogOptions] =
     useState<SlideDialogOptions>({
       title: '',
-      component: null,
       type: 'exercise-details',
       open: false,
     })
@@ -188,6 +188,17 @@ export function ExerciseCard({
       icon: <EditNoteIcon />,
       onClick: () => {
         setIsEditNotesOpen(true)
+      },
+    },
+    {
+      title: 'Change Exercise',
+      icon: <AltRouteIcon />,
+      onClick: () => {
+        setSlideDialogOptions({
+          title: 'Change Exercise',
+          type: 'change-exercise',
+          open: true,
+        })
       },
     },
 
@@ -292,7 +303,6 @@ export function ExerciseCard({
   function openDetailsDialog() {
     setSlideDialogOptions({
       title: capitalizeFirstLetter(exercise.name),
-      component: <ExerciseDetails exercise={exercise} />,
       type: 'exercise-details',
       open: true,
     })
@@ -319,6 +329,8 @@ export function ExerciseCard({
         return capitalizeFirstLetter(exercise.name)
       case 'resting-timer':
         return 'Edit Resting Time'
+      case 'change-exercise':
+        return 'Change Exercise'
       default:
         return ''
     }
@@ -343,6 +355,8 @@ export function ExerciseCard({
             }}
           />
         )
+      case 'change-exercise':
+        return <ChangeExercise exerciseToChange={exercise} />
       default:
         return <></>
     }
@@ -540,7 +554,6 @@ export function ExerciseCard({
           setSlideDialogOptions({
             ...slideDialogOptions,
             open: false,
-            component: null,
             type: 'exercise-details',
             title: '',
           })
