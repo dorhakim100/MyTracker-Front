@@ -4,15 +4,12 @@ import { CustomInput } from '../../CustomMui/CustomInput/CustomInput'
 import { CustomSelect } from '../../CustomMui/CustomSelect/CustomSelect'
 import { musclesValues, musclesImgs } from '../../assets/config/muscles'
 
-import { Barbell } from '../Icons/Barbell'
-import { Dumbbell } from '../Icons/Dumbbell'
-import WidgetsIcon from '@mui/icons-material/Widgets'
 import { ExerciseFilter } from '../../types/exerciseFilter/ExerciseFilter'
-import { equipmentsValues } from '../../assets/config/equipments'
 import { workoutService } from '../../services/workout/workout.service'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import FilterAltOffIcon from '@mui/icons-material/FilterAltOff'
 import { Typography } from '@mui/material'
+import { EquipmentSelect } from './EquipmentSelect'
 
 interface ExercisesFilterProps {
   exerciseFilter: ExerciseFilter
@@ -21,16 +18,6 @@ interface ExercisesFilterProps {
   className?: string
   resultsMsg?: string
 }
-
-const equipmentsImgs = [
-  { value: 'All', icon: <WidgetsIcon /> },
-  { value: 'Barbell', icon: <Barbell /> },
-  { value: 'Dumbbell', icon: <Dumbbell /> },
-  { value: 'Machine', src: '/equipments/machine.webp' },
-  { value: 'Bodyweight', src: '/equipments/body-weight.webp' },
-  { value: 'Cable', src: '/equipments/cable.webp' },
-  { value: 'Bands', src: '/equipments/bands.webp' },
-]
 
 export function ExercisesFilter({
   exerciseFilter,
@@ -75,15 +62,10 @@ export function ExercisesFilter({
         className={`${prefs.favoriteColor}`}
         imgs={musclesImgs}
       />
-      <CustomSelect
-        value={exerciseFilter.equipmentValue}
-        onChange={(value) =>
-          onExerciseFilterChange({ ...exerciseFilter, equipmentValue: value })
-        }
-        label="Equipment"
-        values={equipmentsValues}
-        className={`${prefs.favoriteColor}`}
-        imgs={equipmentsImgs}
+
+      <EquipmentSelect
+        exerciseFilter={exerciseFilter}
+        onExerciseFilterChange={onExerciseFilterChange}
       />
       <div className="results-msg-container">
         <Typography variant="h6" className="bold-header">

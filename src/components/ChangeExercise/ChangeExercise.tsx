@@ -10,6 +10,9 @@ import { getAlternateExercises } from '../../services/exersice-search/exersice-s
 import { CustomList } from '../../CustomMui/CustomList/CustomList'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { ExerciseDetails } from '../ExerciseDetails/ExerciseDetails'
+import { setIsLoading } from '../../store/actions/system.actions'
+import { EquipmentSelect } from '../ExercisesFilter/EquipmentSelect'
+import { ExerciseFilter } from '../../types/exerciseFilter/ExerciseFilter'
 
 interface ChangeExerciseProps {
   exerciseToChange: Exercise
@@ -36,17 +39,27 @@ export function ChangeExercise({ exerciseToChange }: ChangeExerciseProps) {
     type: 'full',
   })
 
+  const [exerciseFilter, setExerciseFilter] = useState<ExerciseFilter>({
+    equipmentValue: 'All',
+    searchValue: '',
+    muscleGroupValue: 'All',
+  })
+
   useEffect(() => {
     getExercises()
   }, [exerciseToChange.exerciseId])
 
   async function getExercises() {
     try {
+      setIsLoading(true)
+
       const exercises = await getAlternateExercises(exerciseToChange)
-      console.log(exercises)
+
       setSuggestedExercises(exercises)
     } catch (err) {
       showErrorMsg(messages.error.getExercises)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -59,13 +72,27 @@ export function ChangeExercise({ exerciseToChange }: ChangeExerciseProps) {
     })
   }
 
+  const onExerciseFilterChange = (exerciseFilter: ExerciseFilter) => {
+    setExerciseFilter(exerciseFilter)
+  }
+
   return (
     <>
       <div className="change-exercise-container">
+        <div className="filters-container">
+          <Typography variant="h6" className="bold-header">
+            Equipment:
+          </Typography>
+          <EquipmentSelect
+            exerciseFilter={exerciseFilter}
+            onExerciseFilterChange={onExerciseFilterChange}
+          />
+        </div>
+        <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
         <Typography variant="h6" className="bold-header">
           Change to:
         </Typography>
-        <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
+        {/* <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} /> */}
         <CustomList
           items={suggestedExercises}
           renderPrimaryText={(exercise) => capitalizeFirstLetter(exercise.name)}
@@ -79,6 +106,7 @@ export function ChangeExercise({ exerciseToChange }: ChangeExerciseProps) {
           className={`exercise-list ${prefs.isDarkMode ? 'dark-mode' : ''}`}
           itemClassName={`exercise-item-grid`}
           onItemClick={(exercise) => onExerciseClick(exercise)}
+          isDefaultLoader={true}
         />
       </div>
       <SlideDialog

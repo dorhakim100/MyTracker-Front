@@ -1,11 +1,14 @@
 .change-exercise-container {
   padding: 1rem;
   display: grid;
-  gap: 0.5rem;
-  .bold-header {
-    font-weight: 600;
+  gap: 1rem;
+  .filters-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    align-items: center;
   }
+
   .divider {
-    margin-bottom: 1rem;
+    // margin-bottom: 1rem;
   }
 }

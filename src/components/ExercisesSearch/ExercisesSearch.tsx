@@ -87,13 +87,11 @@ export function ExercisesSearch({
               }`}
             />
           )}
-          itemClassName={`exercise-item ${
+          itemClassName={`exercise-item exercise-item-grid ${
             prefs.isDarkMode ? 'dark-mode' : ''
           } ${prefs.favoriteColor}`}
           getKey={(exercise) => exercise.exerciseId}
-          className={`exercise-list exercise-item-grid ${
-            prefs.isDarkMode ? 'dark-mode' : ''
-          } `}
+          className={`exercise-list ${prefs.isDarkMode ? 'dark-mode' : ''} `}
           renderRight={(exercise) => (
             <CustomButton
               icon={isExerciseAdded(exercise) ? <RemoveIcon /> : <AddIcon />}
