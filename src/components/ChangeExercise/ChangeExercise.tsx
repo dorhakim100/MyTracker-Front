@@ -20,6 +20,7 @@ import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 
 import SwitchAccessShortcutAddIcon from '@mui/icons-material/SwitchAccessShortcutAdd'
 import { exerciseImage } from '../../assets/config/exercise-image'
+import { chatGPTService } from '../../services/chatGPT/chat.gpt.service'
 
 interface ChangeExerciseProps {
   exerciseToChange: Exercise
@@ -110,6 +111,10 @@ export function ChangeExercise({ exerciseToChange }: ChangeExerciseProps) {
           return exercise
         }),
       }
+
+      const chatGPTResponse = await chatGPTService.getChatGPTResponse(
+        'Hello world'
+      )
     } catch (err) {
       showErrorMsg(messages.error.changeExercise)
     }
