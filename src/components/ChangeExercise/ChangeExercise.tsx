@@ -3,16 +3,23 @@ import { Exercise } from '../../types/exercise/Exercise'
 import { Divider, Typography } from '@mui/material'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { showErrorMsg } from '../../services/event-bus.service'
 import { messages } from '../../assets/config/messages'
-import { getAlternateExercises } from '../../services/exersice-search/exersice-search'
+import {
+  filterExercises,
+  getAlternateExercises,
+} from '../../services/exersice-search/exersice-search'
 import { CustomList } from '../../CustomMui/CustomList/CustomList'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { ExerciseDetails } from '../ExerciseDetails/ExerciseDetails'
 import { setIsLoading } from '../../store/actions/system.actions'
 import { EquipmentSelect } from '../ExercisesFilter/EquipmentSelect'
 import { ExerciseFilter } from '../../types/exerciseFilter/ExerciseFilter'
+import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
+
+import SwitchAccessShortcutAddIcon from '@mui/icons-material/SwitchAccessShortcutAdd'
+import { exerciseImage } from '../../assets/config/exercise-image'
 
 interface ChangeExerciseProps {
   exerciseToChange: Exercise
@@ -30,6 +37,10 @@ export function ChangeExercise({ exerciseToChange }: ChangeExerciseProps) {
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
 
+  const sessionDay = useSelector(
+    (stateSelector: RootState) => stateSelector.workoutModule.sessionDay
+  )
+
   const [suggestedExercises, setSuggestedExercises] = useState<Exercise[]>([])
   const [dialogOptions, setDialogOptions] = useState<SlideDialogOptions>({
     open: false,
@@ -44,6 +55,10 @@ export function ChangeExercise({ exerciseToChange }: ChangeExerciseProps) {
     searchValue: '',
     muscleGroupValue: 'All',
   })
+
+  const filteredSuggestedExercises = useMemo(() => {
+    return filterExercises(exerciseFilter, suggestedExercises)
+  }, [suggestedExercises, exerciseFilter.equipmentValue])
 
   useEffect(() => {
     getExercises()
@@ -76,6 +91,30 @@ export function ChangeExercise({ exerciseToChange }: ChangeExerciseProps) {
     setExerciseFilter(exerciseFilter)
   }
 
+  const onChangeExercise = async (newExercise: Exercise) => {
+    console.log('sessionDay', sessionDay)
+    if (!sessionDay) return showErrorMsg(messages.error.getSessionDay)
+
+    try {
+      const newInstructions = {
+        ...sessionDay.instructions,
+        exercises: sessionDay.instructions.exercises.map((exercise) => {
+          if (exercise.exerciseId === exerciseToChange.exerciseId) {
+            return {
+              ...newExercise,
+              notes: exercise.notes,
+              restingTime: exercise.restingTime,
+              sets: exercise.sets,
+            }
+          }
+          return exercise
+        }),
+      }
+    } catch (err) {
+      showErrorMsg(messages.error.changeExercise)
+    }
+  }
+
   return (
     <>
       <div className="change-exercise-container">
@@ -92,21 +131,36 @@ export function ChangeExercise({ exerciseToChange }: ChangeExerciseProps) {
         <Typography variant="h6" className="bold-header">
           Change to:
         </Typography>
-        {/* <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} /> */}
         <CustomList
-          items={suggestedExercises}
+          items={filteredSuggestedExercises}
           renderPrimaryText={(exercise) => capitalizeFirstLetter(exercise.name)}
           renderSecondaryText={(exercise) =>
             capitalizeFirstLetter(exercise.muscleGroups.join(', '))
           }
           renderLeft={(exercise) => (
-            <img src={exercise.image} alt={exercise.name} />
+            <img
+              src={exercise.image}
+              alt={exercise.name}
+              onError={(ev) => {
+                ev.currentTarget.src = exerciseImage.ERROR_IMAGE
+              }}
+            />
           )}
           getKey={(exercise) => exercise.exerciseId}
           className={`exercise-list ${prefs.isDarkMode ? 'dark-mode' : ''}`}
           itemClassName={`exercise-item-grid`}
           onItemClick={(exercise) => onExerciseClick(exercise)}
           isDefaultLoader={true}
+          renderRight={(exercise) => (
+            <CustomButton
+              icon={<SwitchAccessShortcutAddIcon />}
+              onClick={(ev) => {
+                ev.stopPropagation()
+                onChangeExercise(exercise)
+              }}
+              isIcon={true}
+            />
+          )}
         />
       </div>
       <SlideDialog

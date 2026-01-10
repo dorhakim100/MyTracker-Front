@@ -58,5 +58,6 @@ export const messages = {
     playEmptyWorkout: 'Failed to play empty workout',
     addExercise: 'Failed to add exercise',
     getExercises: 'Failed to get exercises',
+    changeExercise: 'Failed to change exercise',
   },
 }

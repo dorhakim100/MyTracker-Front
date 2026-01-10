@@ -2,10 +2,18 @@
   padding: 1rem;
   display: grid;
   gap: 1rem;
+
   .filters-container {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     align-items: center;
+  }
+
+  .MuiListItemText-primary {
+    max-width: calc(100vw - 9rem - 50px);
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
   }
 
   .divider {

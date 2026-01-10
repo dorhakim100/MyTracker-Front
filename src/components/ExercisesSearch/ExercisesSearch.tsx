@@ -12,6 +12,7 @@ import RemoveIcon from '@mui/icons-material/Remove'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { ExerciseDetails } from '../ExerciseDetails/ExerciseDetails'
 import { useState } from 'react'
+import { exerciseImage } from '../../assets/config/exercise-image'
 
 interface ExercisesSearchProps {
   workout: Workout
@@ -79,8 +80,8 @@ export function ExercisesSearch({
             <img
               src={exercise.image}
               alt={exercise.name}
-              onError={() => {
-                renderErrorImage(exercise)
+              onError={(ev) => {
+                ev.currentTarget.src = exerciseImage.ERROR_IMAGE
               }}
               className={`exercise-image ${
                 isExerciseAdded(exercise) ? 'added' : ''
