@@ -40,7 +40,6 @@ import CheckIcon from '@mui/icons-material/Check'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { ExercisesStage } from '../../pages/LiftMate/EditWorkout/ExercisesStage'
 import { ExerciseFilter } from '../../types/exerciseFilter/ExerciseFilter'
-import { imageService } from '../../services/image/image.service'
 import { DEFAULT_RESTING_TIME } from '../../assets/config/times'
 import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
@@ -731,14 +730,6 @@ export function WorkoutSession({
             onAddExercise={onAddExercise}
             onDeleteExercise={onDeleteExercise}
             onReorderExercises={onReorderExercises}
-            renderErrorImage={(exercise) =>
-              imageService.renderErrorExerciseImage(
-                exercise,
-                filteredExerciseResults,
-
-                setExerciseResults
-              )
-            }
             resultsMsg={resultsMsg}
           />
         )
@@ -880,9 +871,19 @@ export function WorkoutSession({
           {sessionDay.instructions.exercises.map((exercise) => {
             const isOpen = openExercises.has(exercise.exerciseId)
 
-            const workoutExercise = sessionDay.workout.exercises.find(
+            let workoutExercise = sessionDay.workout.exercises.find(
               (e) => e.exerciseId === exercise.exerciseId
             )
+
+            if (!workoutExercise) {
+              workoutExercise = {
+                equipments: exercise.equipments || [],
+                name: exercise.name || '',
+                muscleGroups: exercise.muscleGroups || [],
+                image: exercise.image || '',
+                exerciseId: exercise.exerciseId,
+              }
+            }
 
             return (
               <ExerciseCard

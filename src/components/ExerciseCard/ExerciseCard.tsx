@@ -474,14 +474,14 @@ export function ExerciseCard({
               </Typography>
             )}
             {showEquipment &&
-              exercise.equipment &&
-              exercise.equipment.length > 0 && (
+              exercise.equipments &&
+              exercise.equipments.length > 0 && (
                 <>
                   <Typography
                     variant="body2"
                     className="exercise-card-equipment"
                   >
-                    {exercise.equipment
+                    {exercise.equipments
                       .map((eq) => capitalizeFirstLetter(eq))
                       .join(', ')}
                   </Typography>

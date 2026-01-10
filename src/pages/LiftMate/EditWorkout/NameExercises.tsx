@@ -42,7 +42,6 @@ interface NameExercisesProps {
   onAddExercise: (exercise: Exercise) => void
   onDeleteExercise: (exercise: Exercise) => void
   onReorderExercises: (exercises: Exercise[]) => void
-  renderErrorImage: (exercise: Exercise) => void
   instructions: Instructions
   weeksStatus: WeekNumberStatus[]
   instructionsFilter: {
@@ -71,7 +70,6 @@ export function NameExercises({
   onAddExercise,
   onDeleteExercise,
   onReorderExercises,
-  renderErrorImage,
   instructions,
   weeksStatus,
   instructionsFilter,
@@ -206,7 +204,6 @@ export function NameExercises({
             onAddExercise={onAddExercise}
             onDeleteExercise={onDeleteExercise}
             onReorderExercises={onReorderExercises}
-            renderErrorImage={renderErrorImage}
             resultsMsg={
               !exerciseFilter.searchValue
                 ? 'Most Popular Exercises'

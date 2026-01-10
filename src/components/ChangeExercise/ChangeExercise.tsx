@@ -21,6 +21,11 @@ import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import SwitchAccessShortcutAddIcon from '@mui/icons-material/SwitchAccessShortcutAdd'
 import { exerciseImage } from '../../assets/config/exercise-image'
 import { chatGPTService } from '../../services/chatGPT/chat.gpt.service'
+import { SkeletonList } from '../SkeletonList/SkeletonList'
+import { instructionsService } from '../../services/instructions/instructions.service'
+import { setSelectedSessionDay } from '../../store/actions/workout.action'
+import { setService } from '../../services/set/set.service'
+import { workoutService } from '../../services/workout/workout.service'
 
 interface ChangeExerciseProps {
   exerciseToChange: Exercise
@@ -42,7 +47,12 @@ export function ChangeExercise({ exerciseToChange }: ChangeExerciseProps) {
     (stateSelector: RootState) => stateSelector.workoutModule.sessionDay
   )
 
+  const isLoading = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.isLoading
+  )
+
   const [suggestedExercises, setSuggestedExercises] = useState<Exercise[]>([])
+  const [isListLoading, setIsListLoading] = useState(false)
   const [dialogOptions, setDialogOptions] = useState<SlideDialogOptions>({
     open: false,
 
@@ -58,8 +68,14 @@ export function ChangeExercise({ exerciseToChange }: ChangeExerciseProps) {
   })
 
   const filteredSuggestedExercises = useMemo(() => {
-    return filterExercises(exerciseFilter, suggestedExercises)
-  }, [suggestedExercises, exerciseFilter.equipmentValue])
+    return filterExercises(exerciseFilter, suggestedExercises).filter(
+      (exercise) => !isInInstructions(exercise)
+    )
+  }, [
+    suggestedExercises,
+    exerciseFilter.equipmentValue,
+    sessionDay?.instructions.exercises,
+  ])
 
   useEffect(() => {
     getExercises()
@@ -67,6 +83,7 @@ export function ChangeExercise({ exerciseToChange }: ChangeExerciseProps) {
 
   async function getExercises() {
     try {
+      setIsListLoading(true)
       setIsLoading(true)
 
       const exercises = await getAlternateExercises(exerciseToChange)
@@ -75,6 +92,7 @@ export function ChangeExercise({ exerciseToChange }: ChangeExerciseProps) {
     } catch (err) {
       showErrorMsg(messages.error.getExercises)
     } finally {
+      setIsListLoading(false)
       setIsLoading(false)
     }
   }
@@ -93,10 +111,23 @@ export function ChangeExercise({ exerciseToChange }: ChangeExerciseProps) {
   }
 
   const onChangeExercise = async (newExercise: Exercise) => {
-    console.log('sessionDay', sessionDay)
-    if (!sessionDay) return showErrorMsg(messages.error.getSessionDay)
+    if (!sessionDay || !sessionDay.instructions._id)
+      return showErrorMsg(messages.error.getSessionDay)
+    const oldExerciseInstructions = sessionDay.instructions.exercises.find(
+      (exercise) => exercise.exerciseId === exerciseToChange.exerciseId
+    )
+    if (!oldExerciseInstructions)
+      return showErrorMsg(messages.error.changeExercise)
 
     try {
+      setIsLoading(true)
+
+      // const chatGPTResponse = await chatGPTService.changeExercise(
+      //   oldExerciseInstructions,
+      //   newExercise,
+      //   sessionDay.instructions._id
+      // )
+      // console.log('chatGPTResponse', chatGPTResponse)
       const newInstructions = {
         ...sessionDay.instructions,
         exercises: sessionDay.instructions.exercises.map((exercise) => {
@@ -111,15 +142,51 @@ export function ChangeExercise({ exerciseToChange }: ChangeExerciseProps) {
           return exercise
         }),
       }
+      const setsToSave = oldExerciseInstructions.sets.map((s, index) => {
+        return {
+          ...s,
+          exerciseId: newExercise.exerciseId,
+          sessionId: sessionDay._id,
+          userId: sessionDay.workout.forUserId,
+          setNumber: s.setNumber || index + 1,
+          isDone: s.isDone || false,
+        }
+      })
+      const newWorkout = {
+        ...sessionDay.workout,
+        exercises: sessionDay.workout.exercises.map((e) => {
+          if (e.exerciseId === exerciseToChange.exerciseId) {
+            return newExercise
+          }
+          return e
+        }),
+      }
 
-      const chatGPTResponse = await chatGPTService.getChatGPTResponse(
-        'Hello world'
-      )
+      const savedInstructions = await instructionsService.save(newInstructions)
+
+      setSelectedSessionDay({
+        ...sessionDay,
+        instructions: savedInstructions,
+      })
+
+      const promises = [
+        setService.saveSets(setsToSave),
+        workoutService.save(newWorkout),
+      ]
+
+      await Promise.all(promises)
     } catch (err) {
       showErrorMsg(messages.error.changeExercise)
+    } finally {
+      setIsLoading(false)
     }
   }
 
+  function isInInstructions(exercise: Exercise) {
+    return sessionDay?.instructions.exercises.find(
+      (e) => e.exerciseId === exercise.exerciseId
+    )
+  }
   return (
     <>
       <div className="change-exercise-container">
@@ -136,37 +203,42 @@ export function ChangeExercise({ exerciseToChange }: ChangeExerciseProps) {
         <Typography variant="h6" className="bold-header">
           Change to:
         </Typography>
-        <CustomList
-          items={filteredSuggestedExercises}
-          renderPrimaryText={(exercise) => capitalizeFirstLetter(exercise.name)}
-          renderSecondaryText={(exercise) =>
-            capitalizeFirstLetter(exercise.muscleGroups.join(', '))
-          }
-          renderLeft={(exercise) => (
-            <img
-              src={exercise.image}
-              alt={exercise.name}
-              onError={(ev) => {
-                ev.currentTarget.src = exerciseImage.ERROR_IMAGE
-              }}
-            />
-          )}
-          getKey={(exercise) => exercise.exerciseId}
-          className={`exercise-list ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-          itemClassName={`exercise-item-grid`}
-          onItemClick={(exercise) => onExerciseClick(exercise)}
-          isDefaultLoader={true}
-          renderRight={(exercise) => (
-            <CustomButton
-              icon={<SwitchAccessShortcutAddIcon />}
-              onClick={(ev) => {
-                ev.stopPropagation()
-                onChangeExercise(exercise)
-              }}
-              isIcon={true}
-            />
-          )}
-        />
+        {isListLoading && isLoading ? (
+          <SkeletonList />
+        ) : (
+          <CustomList
+            items={filteredSuggestedExercises}
+            renderPrimaryText={(exercise) =>
+              capitalizeFirstLetter(exercise.name)
+            }
+            renderSecondaryText={(exercise) =>
+              capitalizeFirstLetter(exercise.muscleGroups.join(', '))
+            }
+            renderLeft={(exercise) => (
+              <img
+                src={exercise.image}
+                alt={exercise.name}
+                onError={(ev) => {
+                  ev.currentTarget.src = exerciseImage.ERROR_IMAGE
+                }}
+              />
+            )}
+            getKey={(exercise) => exercise.exerciseId}
+            className={`exercise-list ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+            itemClassName={`exercise-item-grid`}
+            onItemClick={(exercise) => onExerciseClick(exercise)}
+            renderRight={(exercise) => (
+              <CustomButton
+                icon={<SwitchAccessShortcutAddIcon />}
+                onClick={(ev) => {
+                  ev.stopPropagation()
+                  onChangeExercise(exercise)
+                }}
+                isIcon={true}
+              />
+            )}
+          />
+        )}
       </div>
       <SlideDialog
         open={dialogOptions.open}

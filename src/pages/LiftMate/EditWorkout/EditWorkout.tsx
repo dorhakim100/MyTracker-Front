@@ -399,13 +399,6 @@ export function EditWorkout({
         onAddExercise={onAddExercise}
         onDeleteExercise={onDeleteExercise}
         onReorderExercises={onReorderExercises}
-        renderErrorImage={(exercise) =>
-          imageService.renderErrorExerciseImage(
-            exercise,
-            filteredExerciseResults,
-            setExerciseResults
-          )
-        }
         instructions={instructions}
         weeksStatus={weeksStatus}
         instructionsFilter={instructionsFilter}

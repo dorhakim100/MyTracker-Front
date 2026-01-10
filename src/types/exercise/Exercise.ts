@@ -4,11 +4,10 @@ export interface Exercise {
   name: string
   muscleGroups: string[]
   image: string
-  equipment: string[]
+  equipments: string[]
   exerciseId: string
   mainMuscles?: string[]
   secondaryMuscles?: string[]
-  equipments?: string[]
   details?: ExerciseDetail
 }
 

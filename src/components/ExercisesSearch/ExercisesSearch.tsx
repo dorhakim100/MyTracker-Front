@@ -24,7 +24,7 @@ interface ExercisesSearchProps {
   onAddExercise: (exercise: Exercise) => void
   onDeleteExercise: (exercise: Exercise) => void
   onReorderExercises: (exercises: Exercise[]) => void
-  renderErrorImage: (exercise: Exercise) => void
+  // renderErrorImage: (exercise: Exercise) => void
   resultsMsg?: string
 }
 
@@ -35,7 +35,7 @@ export function ExercisesSearch({
   className = '',
   results,
   onAddExercise,
-  renderErrorImage,
+  // renderErrorImage,
   resultsMsg,
 }: ExercisesSearchProps) {
   const prefs = useSelector(

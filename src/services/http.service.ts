@@ -6,10 +6,6 @@ const getBaseUrl = (): string => {
   const isNative = Capacitor.isNativePlatform()
   const isProd = import.meta.env.PROD
 
-  console.log(isNative)
-  console.log(isProd)
-  console.log(import.meta.env.VITE_API_URL)
-
   // Production: Use environment variable or default to relative path for web, full URL for native
   if (isProd) {
     const prodUrl =

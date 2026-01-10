@@ -8,6 +8,7 @@ export const setService = {
   query,
   getById,
   save,
+  saveSets,
   remove,
   saveSetBySessionIdAndExerciseId,
   removeSetBySessionIdAndExerciseId,
@@ -51,6 +52,15 @@ async function save(set: Set & { _id?: string }) {
       savedSet = await httpService.post(KEY, set)
     }
     return savedSet
+  } catch (err) {
+    throw err
+  }
+}
+
+async function saveSets(sets: Set[]) {
+  try {
+    const savedSets = await httpService.post(`${KEY}/bulk-save`, sets)
+    return savedSets
   } catch (err) {
     throw err
   }

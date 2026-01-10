@@ -11,6 +11,6 @@ export interface ExerciseInstructions {
   name?: string
   image?: string
   muscleGroups?: string[]
-  equipment?: string[]
+  equipments?: string[]
   instructions?: string[]
 }
