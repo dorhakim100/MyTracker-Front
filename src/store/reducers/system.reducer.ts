@@ -17,6 +17,7 @@ export const SET_SHOWED_UPDATE_MESSAGE = 'SET_SHOWED_UPDATE_MESSAGE'
 export const SET_SLIDE_DIRECTION = 'SET_SLIDE_DIRECTION'
 export const SET_NAVIGATE_TO = 'SET_NAVIGATE_TO'
 export const SET_APP = 'SET_APP'
+export const SET_IS_NATIVE = 'SET_IS_NATIVE'
 export interface SystemState {
   isLoading: boolean
   prefs: Prefs
@@ -28,6 +29,7 @@ export interface SystemState {
   modalMessage: string
   slideDirection: number
   navigateTo: string
+  isNative: boolean
 }
 
 const initialState: SystemState = {
@@ -41,6 +43,7 @@ const initialState: SystemState = {
   modalMessage: '',
   slideDirection: 1,
   navigateTo: '',
+  isNative: false,
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -72,6 +75,8 @@ export function systemReducer(state = initialState, action: any = {}) {
       return { ...state, navigateTo: action.navigateTo }
     case SET_APP:
       return { ...state, app: action.app }
+    case SET_IS_NATIVE:
+      return { ...state, isNative: action.isNative }
     default:
       return state
   }

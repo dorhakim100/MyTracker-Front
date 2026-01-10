@@ -15,6 +15,7 @@ import {
   // SET_SHOWED_UPDATE_MESSAGE,
   SET_NAVIGATE_TO,
   SET_IS_FIRST_LOADING,
+  SET_IS_NATIVE,
 } from '../reducers/system.reducer'
 
 export function setIsLoading(stateToSet: boolean) {
@@ -68,4 +69,7 @@ export function setIsFirstLoading(isFirstLoadingToSet: boolean) {
 }
 export function onClosePrefsHeader() {
   setIsPrefs(false)
+}
+export function setIsNative(isNativeToSet: boolean) {
+  store.dispatch({ type: SET_IS_NATIVE, isNative: isNativeToSet })
 }

@@ -19,7 +19,7 @@ import { RootState } from './store/store.ts'
 import './App.css'
 import { handleFirstGoal, setRemembered } from './store/actions/user.actions.ts'
 import { setFavoriteItems } from './store/actions/item.actions.ts'
-import { loadPrefs } from './store/actions/system.actions.ts'
+import { loadPrefs, setIsNative } from './store/actions/system.actions.ts'
 import { SignIn } from './CustomMui/SignIn/SignIn.tsx'
 import { searchService } from './services/search/search-service.ts'
 import { EditGoal } from './components/EditGoal/EditGoal.tsx'
@@ -29,6 +29,7 @@ import { PwaInstall } from './pages/PwaInstall/PwaInstall.tsx'
 import { TraineeUserCard } from './components/TraineeUserCard/TraineeUserCard.tsx'
 import { AppHeader } from './components/AppHeader/AppHeader.tsx'
 import { Timer } from './components/Timer/Timer.tsx'
+import { Capacitor } from '@capacitor/core'
 
 const isProd = import.meta.env.PROD
 
@@ -50,6 +51,10 @@ function App() {
 
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
+  )
+
+  const isNative = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.isNative
   )
 
   const user = useSelector(
@@ -91,6 +96,10 @@ function App() {
       prefs.favoriteColor || defaultPrefs.favoriteColor
     )
   }, [prefs])
+
+  useEffect(() => {
+    setIsNative(Capacitor.isNativePlatform())
+  }, [])
 
   useEffect(() => {
     const themeColorMeta = document.querySelector<HTMLMetaElement>(
@@ -174,7 +183,7 @@ function App() {
     loadFavoriteItems()
   }, [user])
 
-  if (shouldShowInstallGuide && isProd) {
+  if (shouldShowInstallGuide && isProd && !isNative) {
     return (
       <main className={`main ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
         {/* <AppHeader /> */}
