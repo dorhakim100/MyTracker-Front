@@ -23,7 +23,6 @@ import { WeekNumberStatus } from '../../../types/weekNumberStatus/WeekNumberStat
 
 import { NameExercises } from './NameExercises'
 
-import { imageService } from '../../../services/image/image.service'
 import { ExerciseInstructions } from '../../../types/exercise/ExerciseInstructions'
 import { ExerciseFilter } from '../../../types/exerciseFilter/ExerciseFilter'
 import { ExpectedActual } from '../../../types/expectedActual/ExpectedActual'

@@ -20,7 +20,7 @@ import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 
 import SwitchAccessShortcutAddIcon from '@mui/icons-material/SwitchAccessShortcutAdd'
 import { exerciseImage } from '../../assets/config/exercise-image'
-import { chatGPTService } from '../../services/chatGPT/chat.gpt.service'
+// import { chatGPTService } from '../../services/chatGPT/chat.gpt.service'
 import { SkeletonList } from '../SkeletonList/SkeletonList'
 import { instructionsService } from '../../services/instructions/instructions.service'
 import { setSelectedSessionDay } from '../../store/actions/workout.action'
