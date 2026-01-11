@@ -9,7 +9,8 @@
     align-items: center;
   }
 
-  .MuiListItemText-primary {
+  .MuiListItemText-primary,
+  .MuiListItemText-secondary {
     max-width: calc(100vw - 9rem - 50px);
     text-overflow: ellipsis;
     overflow: hidden;
@@ -18,5 +19,11 @@
 
   .divider {
     // margin-bottom: 1rem;
+  }
+
+  .exercise-item-grid {
+    img {
+      height: 50px !important;
+    }
   }
 }

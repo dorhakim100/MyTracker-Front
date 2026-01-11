@@ -225,7 +225,7 @@ export function ChangeExercise({ exerciseToChange }: ChangeExerciseProps) {
             )}
             getKey={(exercise) => exercise.exerciseId}
             className={`exercise-list ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-            itemClassName={`exercise-item-grid`}
+            itemClassName={`exercise-item-grid `}
             onItemClick={(exercise) => onExerciseClick(exercise)}
             renderRight={(exercise) => (
               <CustomButton

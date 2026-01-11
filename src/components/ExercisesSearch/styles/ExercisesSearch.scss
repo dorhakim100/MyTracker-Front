@@ -9,7 +9,8 @@
     // height: 100%;
     overflow-y: auto;
 
-    .MuiListItemText-primary {
+    .MuiListItemText-primary,
+    .MuiListItemText-secondary {
       text-overflow: ellipsis;
       overflow: hidden;
       white-space: nowrap;
