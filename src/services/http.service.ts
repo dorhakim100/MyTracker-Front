@@ -1,5 +1,9 @@
 import Axios from 'axios'
 import { Capacitor } from '@capacitor/core'
+import { indexedDbService } from './indexeddb.service'
+
+const REMEMBER_STORE = 'remember'
+const STORAGE_KEY_REMEMBERED_USER = 'rememberedUser'
 
 // Get API URL from environment variables or use defaults
 const getBaseUrl = (): string => {
@@ -41,9 +45,20 @@ const getBaseUrl = (): string => {
 
 const BASE_URL = getBaseUrl()
 
-console.log('BASE_URL', BASE_URL)
-
 const axios = Axios.create({ withCredentials: true })
+
+axios.interceptors.request.use(
+  async (config) => {
+    const token = await getLoginToken()
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
+
+    return config
+  },
+  (error) => Promise.reject(error)
+)
 
 export const httpService = {
   get(endpoint: string, data: any) {
@@ -75,6 +90,21 @@ async function ajax(endpoint: string, method = 'GET', data = null) {
       sessionStorage.clear()
       window.location.assign('/')
     }
+    throw err
+  }
+}
+
+async function getLoginToken() {
+  try {
+    const rememberedUserObject = await indexedDbService.get(
+      REMEMBER_STORE,
+      STORAGE_KEY_REMEMBERED_USER
+    )
+    if (!rememberedUserObject) return null
+    const { token } = rememberedUserObject as { token: string | null }
+    if (!token) return null
+    return token
+  } catch (err) {
     throw err
   }
 }

@@ -138,7 +138,12 @@ async function updateRequest(
 }
 async function login(userCred: UserCred) {
   try {
-    const user = await httpService.post('auth/login', userCred)
+    const { user, loginToken } = await httpService.post('auth/login', userCred)
+    await indexedDbService.put(REMEMBER_STORE, {
+      _id: REMEMBER_RECORD_ID,
+      userId: user._id,
+      token: loginToken,
+    })
 
     if (!user) {
       const err = new Error('User credentials do not match.')
@@ -146,7 +151,7 @@ async function login(userCred: UserCred) {
       throw err
     }
     if (userCred.isRemember) {
-      saveRememberedUser(user)
+      saveRememberedUser(user, loginToken)
     }
 
     const favoriteIDs = user.favoriteItems
@@ -199,10 +204,10 @@ async function signup(userCred: UserCred) {
 
     userCred.details = userDetails
 
-    const user = await httpService.post('auth/signup', userCred)
+    const { user, loginToken } = await httpService.post('auth/signup', userCred)
 
     if (userCred.isRemember) {
-      saveRememberedUser(user)
+      await saveRememberedUser(user, loginToken)
     }
 
     return saveLoggedinUser(user)
@@ -245,7 +250,7 @@ async function getLoggedinUser(): Promise<User | null> {
     throw err
   }
 }
-function saveLoggedinUser(user: User) {
+async function saveLoggedinUser(user: User) {
   try {
     user = {
       _id: user._id,
@@ -322,11 +327,12 @@ async function getRememberedUser() {
   }
 }
 
-async function saveRememberedUser(user: User) {
+async function saveRememberedUser(user: User, token: string) {
   try {
     await indexedDbService.put(REMEMBER_STORE, {
       _id: REMEMBER_RECORD_ID,
       userId: user._id,
+      token: token,
     })
   } catch (err) {
     throw err
