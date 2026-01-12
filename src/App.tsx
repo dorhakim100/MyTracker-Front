@@ -17,12 +17,12 @@ import { SlideAnimation } from './components/SlideAnimation/SlideAnimation.tsx'
 import { RootState } from './store/store.ts'
 
 import './App.css'
-import { handleFirstGoal, setRemembered } from './store/actions/user.actions.ts'
+import { setRemembered } from './store/actions/user.actions.ts'
 import { setFavoriteItems } from './store/actions/item.actions.ts'
 import { loadPrefs, setIsNative } from './store/actions/system.actions.ts'
 import { SignIn } from './CustomMui/SignIn/SignIn.tsx'
 import { searchService } from './services/search/search-service.ts'
-import { EditGoal } from './components/EditGoal/EditGoal.tsx'
+import { FirstGoalEdit } from './components/FirstGoalEdit/FirstGoalEdit.tsx'
 import { ScreenLoader } from './components/ScreenLoader/ScreenLoader.tsx'
 import { getDefaultsPrefs } from './services/system/system.service.ts'
 import { PwaInstall } from './pages/PwaInstall/PwaInstall.tsx'
@@ -181,7 +181,7 @@ function App() {
       setFavoriteItems(cachedItems)
     }
     loadFavoriteItems()
-  }, [user])
+  }, [user?._id])
 
   if (shouldShowInstallGuide && isProd && !isNative) {
     return (
@@ -204,12 +204,7 @@ function App() {
     return (
       <>
         <UserMsg />
-        <main className={`main ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
-          {/* <AppHeader /> */}
-          <div className="first-time-edit-goal-container">
-            <EditGoal saveGoal={(goal) => handleFirstGoal(goal, user)} />
-          </div>
-        </main>
+        <FirstGoalEdit />
       </>
     )
   }
@@ -220,8 +215,6 @@ function App() {
       <Prefs />
 
       {traineeUser && <TraineeUserCard />}
-
-      {/* <PrefsButton /> */}
 
       <main
         className={`main ${prefs.isDarkMode ? 'dark-mode' : ''} ${
