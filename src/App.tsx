@@ -200,7 +200,9 @@ function App() {
     )
   }
 
-  return <TrainerDashboard />
+  if (user && user.isTrainer && platform === 'desktop') {
+    return <TrainerDashboard />
+  }
 
   if (isFirstLoading) return <ScreenLoader />
 
@@ -229,6 +231,7 @@ function App() {
           motionKey={location.pathname}
           direction={slideDirection}
           duration={0.25}
+          overflow={user ? 'hidden' : 'scroll'}
         >
           {!user ? (
             <div className="page-container login-sign-up-container">

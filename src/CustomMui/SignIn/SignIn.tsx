@@ -226,11 +226,11 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
     >
       <AppTheme {...props}>
         <CssBaseline enableColorScheme />
-        <SignInContainer direction='column' justifyContent='space-between'>
+        <SignInContainer direction="column" justifyContent="space-between">
           {/* <ColorModeSelect
           sx={{ position: 'fixed', top: '1rem', right: '1rem' }}
         /> */}
-          <Card variant='outlined'>
+          <Card variant="outlined">
             {/* <SitemarkIcon /> */}
             {/* <img
               src={logoSrc}
@@ -243,14 +243,14 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
               className='logo-img'
             /> */}
             <Typography
-              component='h1'
-              variant='h4'
+              component="h1"
+              variant="h4"
               sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
             >
               {isSignup ? 'Sign up' : 'Sign in'}
             </Typography>
             <Box
-              component='form'
+              component="form"
               onSubmit={handleSubmit}
               noValidate
               sx={{
@@ -262,87 +262,87 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
             >
               {isSignup && (
                 <FormControl>
-                  <FormLabel htmlFor='fullname'>Full Name</FormLabel>
+                  <FormLabel htmlFor="fullname">Full Name</FormLabel>
                   <TextField
                     error={fullnameError}
                     helperText={fullnameErrorMessage}
-                    id='fullname'
-                    type='fullname'
-                    name='fullname'
-                    placeholder='Your full name'
-                    autoComplete='name'
+                    id="fullname"
+                    type="fullname"
+                    name="fullname"
+                    placeholder="Your full name"
+                    autoComplete="name"
                     autoFocus
                     required
                     fullWidth
-                    variant='outlined'
+                    variant="outlined"
                     color={fullnameError ? 'error' : 'primary'}
                   />
                 </FormControl>
               )}
               <FormControl>
-                <FormLabel htmlFor='email'>Email</FormLabel>
+                <FormLabel htmlFor="email">Email</FormLabel>
                 <TextField
                   error={emailError}
                   helperText={emailErrorMessage}
-                  id='email'
-                  type='email'
-                  name='email'
-                  placeholder='your@email.com'
-                  autoComplete='email'
+                  id="email"
+                  type="email"
+                  name="email"
+                  placeholder="your@email.com"
+                  autoComplete="email"
                   autoFocus
                   required
                   fullWidth
-                  variant='outlined'
+                  variant="outlined"
                   color={emailError ? 'error' : 'primary'}
                 />
               </FormControl>
               <FormControl>
-                <FormLabel htmlFor='password'>Password</FormLabel>
+                <FormLabel htmlFor="password">Password</FormLabel>
                 <TextField
                   error={passwordError}
                   helperText={passwordErrorMessage}
-                  name='password'
-                  placeholder='••••••'
-                  type='password'
-                  id='password'
-                  autoComplete='current-password'
+                  name="password"
+                  placeholder="••••••"
+                  type="password"
+                  id="password"
+                  autoComplete="current-password"
                   autoFocus
                   required
                   fullWidth
-                  variant='outlined'
+                  variant="outlined"
                   color={passwordError ? 'error' : 'primary'}
                 />
               </FormControl>
               {isSignup && (
                 <FormControl>
-                  <FormLabel htmlFor='password'>Validate Password</FormLabel>
+                  <FormLabel htmlFor="password">Validate Password</FormLabel>
                   <TextField
                     error={validatePasswordError}
                     helperText={validatePasswordMessage}
-                    name='validate-password'
-                    placeholder='••••••'
-                    type='password'
-                    id='validate-password'
-                    autoComplete='current-password'
+                    name="validate-password"
+                    placeholder="••••••"
+                    type="password"
+                    id="validate-password"
+                    autoComplete="current-password"
                     autoFocus
                     required
                     fullWidth
-                    variant='outlined'
+                    variant="outlined"
                     color={passwordError ? 'error' : 'primary'}
                   />
                 </FormControl>
               )}
               <FormControlLabel
-                control={<Checkbox value='remember' color='primary' />}
-                label='Remember me'
+                control={<Checkbox value="remember" color="primary" />}
+                label="Remember me"
                 onChange={toggleRememberMe}
               />
               <ForgotPassword open={open} handleClose={handleClose} />
               <Button
-                className='login-button'
-                type='submit'
+                className="login-button"
+                type="submit"
                 fullWidth
-                variant='contained'
+                variant="contained"
                 onClick={validateInputs}
               >
                 {isSignup ? 'Sign up' : 'Sign in'}
@@ -375,10 +375,10 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
               >
               Sign in with Facebook
             </Button> */}
-              <div className='sign-up-button-container' onClick={handleSignup}>
+              <div className="sign-up-button-container" onClick={handleSignup}>
                 {isSignup ? (
                   <Typography
-                    variant='body2'
+                    variant="body2"
                     sx={{ textAlign: 'center', cursor: 'pointer' }}
                   >
                     Already have an account?{' '}
@@ -386,7 +386,7 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
                   </Typography>
                 ) : (
                   <Typography
-                    variant='body2'
+                    variant="body2"
                     sx={{ textAlign: 'center', cursor: 'pointer' }}
                   >
                     Don&apos;t have an account?{' '}

@@ -8,6 +8,7 @@ interface SlideAnimationProps {
   distance?: number
   className?: string
   onClick?: () => void
+  overflow?: 'hidden' | 'scroll'
 }
 
 export function SlideAnimation({
@@ -17,6 +18,7 @@ export function SlideAnimation({
   duration = 0.25,
   distance = 360,
   className,
+  overflow = 'hidden',
   onClick,
 }: PropsWithChildren<SlideAnimationProps>) {
   const variants: Variants = {
@@ -37,7 +39,7 @@ export function SlideAnimation({
         transition={{ type: 'tween', duration }}
         className={className}
         style={{
-          overflow: 'hidden',
+          overflow,
           willChange: 'transform',
           position: 'relative',
           zIndex: 0,

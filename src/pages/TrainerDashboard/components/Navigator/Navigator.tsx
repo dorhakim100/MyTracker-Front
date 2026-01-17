@@ -1,3 +1,4 @@
+import { useNavigate, useLocation } from 'react-router'
 import Divider from '@mui/material/Divider'
 import Drawer, { DrawerProps } from '@mui/material/Drawer'
 import List from '@mui/material/List'
@@ -6,32 +7,9 @@ import ListItem from '@mui/material/ListItem'
 import ListItemButton from '@mui/material/ListItemButton'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
-import HomeIcon from '@mui/icons-material/Home'
-import PeopleIcon from '@mui/icons-material/People'
-import FitnessCenterIcon from '@mui/icons-material/FitnessCenter'
-import FeaturedPlayListIcon from '@mui/icons-material/FeaturedPlayList'
-import SettingsIcon from '@mui/icons-material/Settings'
 
 import { apps } from '../../../../assets/config/apps'
-
-const categories = [
-  {
-    id: 'Dashboard',
-    children: [
-      {
-        id: 'Home',
-        icon: <HomeIcon />,
-        active: true,
-      },
-      { id: 'Workouts', icon: <FeaturedPlayListIcon /> },
-      { id: 'Trainees', icon: <PeopleIcon /> },
-      { id: 'Exercises', icon: <FitnessCenterIcon /> },
-      { id: 'Settings', icon: <SettingsIcon /> },
-
-      //   { id: 'Messages', icon: <ChatIcon /> },
-    ],
-  },
-]
+import { trainerRoutes } from '../../../../assets/routes/trainerRoutes'
 
 const item = {
   py: '2px',
@@ -50,6 +28,12 @@ const itemCategory = {
 
 export default function Navigator(props: DrawerProps) {
   const { ...other } = props
+  const navigate = useNavigate()
+  const location = useLocation()
+
+  const handleNavigation = (path: string) => {
+    navigate(path)
+  }
 
   return (
     <Drawer
@@ -65,22 +49,31 @@ export default function Navigator(props: DrawerProps) {
           MyTracker
         </ListItem>
 
-        {categories.map(({ id, children }) => (
-          <Box key={id} sx={{ bgcolor: '#101F33' }}>
-            <ListItem sx={{ py: 2, px: 3 }}>
-              <ListItemText sx={{ color: '#fff' }}>{id}</ListItemText>
-            </ListItem>
-            {children.map(({ id: childId, icon, active }) => (
-              <ListItem disablePadding key={childId}>
-                <ListItemButton selected={active} sx={item}>
-                  <ListItemIcon>{icon}</ListItemIcon>
-                  <ListItemText>{childId}</ListItemText>
+        <Box sx={{ bgcolor: '#101F33' }}>
+          <ListItem sx={{ py: 2, px: 3 }}>
+            <ListItemText sx={{ color: '#fff' }}>Navigation</ListItemText>
+          </ListItem>
+          {trainerRoutes.map((route) => {
+            const isActive = location.pathname === route.path
+            const Icon = route.icon
+
+            return (
+              <ListItem disablePadding key={route.path}>
+                <ListItemButton
+                  selected={isActive}
+                  sx={item}
+                  onClick={() => handleNavigation(route.path)}
+                >
+                  <ListItemIcon>
+                    <Icon />
+                  </ListItemIcon>
+                  <ListItemText>{route.title}</ListItemText>
                 </ListItemButton>
               </ListItem>
-            ))}
-            <Divider sx={{ mt: 2 }} />
-          </Box>
-        ))}
+            )
+          })}
+          <Divider sx={{ mt: 2 }} />
+        </Box>
       </List>
     </Drawer>
   )

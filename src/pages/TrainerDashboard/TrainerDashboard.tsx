@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { Routes, Route, Navigate } from 'react-router'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import CssBaseline from '@mui/material/CssBaseline'
@@ -6,8 +7,8 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 
 import Navigator from './components/Navigator/Navigator'
-import Content from './components/Content/Content'
 import Header from './components/Header/Header'
+import { trainerRoutes } from '../../assets/routes/trainerRoutes'
 
 function Copyright() {
   return (
@@ -196,7 +197,16 @@ export function TrainerDashboard() {
         <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
           <Header onDrawerToggle={handleDrawerToggle} />
           <Box component="main" sx={{ flex: 1, py: 6, px: 4 }}>
-            <Content />
+            <Routes>
+              {trainerRoutes.map((route) => (
+                <Route
+                  key={route.path}
+                  path={route.path}
+                  element={<route.element />}
+                />
+              ))}
+              <Route path="*" element={<Navigate to="/trainer" replace />} />
+            </Routes>
           </Box>
           <Box component="footer" sx={{ p: 2 }}>
             <Copyright />
