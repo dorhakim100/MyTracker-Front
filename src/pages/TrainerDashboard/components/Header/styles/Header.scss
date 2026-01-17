@@ -1,1 +1,61 @@
 // Header component styles
+.tabs-container {
+  background-color: $primary-color !important;
+
+  button {
+    padding-inline: 1em;
+  }
+
+  &.dark-mode {
+    button {
+      background-color: transparent !important;
+      //   margin-inline: 0px;
+    }
+    .MuiTabs-indicator {
+      background-color: $primary-color !important;
+      //   padding-inline: 1em !important;
+    }
+
+    &.blue {
+      .MuiTabs-indicator {
+        background-color: $primary-color !important;
+      }
+    }
+
+    &.green {
+      .MuiTabs-indicator {
+        background-color: $primary-color !important;
+      }
+    }
+
+    &.yellow {
+      .MuiTabs-indicator {
+        background-color: $primary-color !important;
+      }
+    }
+
+    &.orange {
+      .MuiTabs-indicator {
+        background-color: $primary-color !important;
+      }
+    }
+
+    &.deepPurple {
+      .MuiTabs-indicator {
+        background-color: $primary-color !important;
+      }
+    }
+  }
+
+  &.purple {
+    .MuiTabs-indicator {
+      background-color: $primary-color !important;
+    }
+  }
+
+  &.pink {
+    .MuiTabs-indicator {
+      background-color: $primary-color !important;
+    }
+  }
+}

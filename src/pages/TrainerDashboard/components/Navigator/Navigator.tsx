@@ -8,40 +8,27 @@ import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 import HomeIcon from '@mui/icons-material/Home'
 import PeopleIcon from '@mui/icons-material/People'
-import DnsRoundedIcon from '@mui/icons-material/DnsRounded'
-import PermMediaOutlinedIcon from '@mui/icons-material/PhotoSizeSelectActual'
-import PublicIcon from '@mui/icons-material/Public'
-import SettingsEthernetIcon from '@mui/icons-material/SettingsEthernet'
-import SettingsInputComponentIcon from '@mui/icons-material/SettingsInputComponent'
-import TimerIcon from '@mui/icons-material/Timer'
+import FitnessCenterIcon from '@mui/icons-material/FitnessCenter'
+import FeaturedPlayListIcon from '@mui/icons-material/FeaturedPlayList'
 import SettingsIcon from '@mui/icons-material/Settings'
-import PhonelinkSetupIcon from '@mui/icons-material/PhonelinkSetup'
+
+import { apps } from '../../../../assets/config/apps'
 
 const categories = [
   {
-    id: 'Build',
+    id: 'Dashboard',
     children: [
       {
-        id: 'Authentication',
-        icon: <PeopleIcon />,
+        id: 'Home',
+        icon: <HomeIcon />,
         active: true,
       },
-      { id: 'Database', icon: <DnsRoundedIcon /> },
-      { id: 'Storage', icon: <PermMediaOutlinedIcon /> },
-      { id: 'Hosting', icon: <PublicIcon /> },
-      { id: 'Functions', icon: <SettingsEthernetIcon /> },
-      {
-        id: 'Machine learning',
-        icon: <SettingsInputComponentIcon />,
-      },
-    ],
-  },
-  {
-    id: 'Quality',
-    children: [
-      { id: 'Analytics', icon: <SettingsIcon /> },
-      { id: 'Performance', icon: <TimerIcon /> },
-      { id: 'Test Lab', icon: <PhonelinkSetupIcon /> },
+      { id: 'Workouts', icon: <FeaturedPlayListIcon /> },
+      { id: 'Trainees', icon: <PeopleIcon /> },
+      { id: 'Exercises', icon: <FitnessCenterIcon /> },
+      { id: 'Settings', icon: <SettingsIcon /> },
+
+      //   { id: 'Messages', icon: <ChatIcon /> },
     ],
   },
 ]
@@ -65,19 +52,19 @@ export default function Navigator(props: DrawerProps) {
   const { ...other } = props
 
   return (
-    <Drawer variant="permanent" {...other}>
+    <Drawer
+      variant="permanent"
+      {...other}
+      className="trainer-dashboard-navigator-container"
+    >
       <List disablePadding>
         <ListItem
           sx={{ ...item, ...itemCategory, fontSize: 22, color: '#fff' }}
         >
-          Paperbase
+          <img src={apps.myTracker.logo} alt="logo" className="logo" />
+          MyTracker
         </ListItem>
-        <ListItem sx={{ ...item, ...itemCategory }}>
-          <ListItemIcon>
-            <HomeIcon />
-          </ListItemIcon>
-          <ListItemText>Project Overview</ListItemText>
-        </ListItem>
+
         {categories.map(({ id, children }) => (
           <Box key={id} sx={{ bgcolor: '#101F33' }}>
             <ListItem sx={{ py: 2, px: 3 }}>

@@ -1,4 +1,6 @@
 import * as React from 'react'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../../../store/store'
 import AppBar from '@mui/material/AppBar'
 import Avatar from '@mui/material/Avatar'
 import Button from '@mui/material/Button'
@@ -23,8 +25,9 @@ interface HeaderProps {
 export default function Header(props: HeaderProps) {
   const { onDrawerToggle } = props
 
+  const prefs = useSelector((state: RootState) => state.systemModule.prefs)
   return (
-    <React.Fragment>
+    <div className="trainer-dashboard-header-container box-shadow">
       <AppBar color="primary" position="sticky" elevation={0}>
         <Toolbar>
           <Grid container spacing={1} sx={{ alignItems: 'center' }}>
@@ -110,6 +113,9 @@ export default function Header(props: HeaderProps) {
         position="static"
         elevation={0}
         sx={{ zIndex: 0 }}
+        className={`tabs-container ${prefs.isDarkMode ? 'dark-mode' : ''} ${
+          prefs.favoriteColor
+        }`}
       >
         <Tabs value={0} textColor="inherit">
           <Tab label="Users" />
@@ -118,6 +124,6 @@ export default function Header(props: HeaderProps) {
           <Tab label="Usage" />
         </Tabs>
       </AppBar>
-    </React.Fragment>
+    </div>
   )
 }

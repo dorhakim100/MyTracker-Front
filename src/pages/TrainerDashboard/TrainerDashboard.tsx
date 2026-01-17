@@ -162,7 +162,7 @@ theme = {
   },
 }
 
-const drawerWidth = 256
+const drawerWidth = 280
 
 export function TrainerDashboard() {
   const [mobileOpen, setMobileOpen] = React.useState(false)

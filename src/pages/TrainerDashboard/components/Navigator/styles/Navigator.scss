@@ -1,1 +1,14 @@
 // Navigator component styles
+
+.trainer-dashboard-navigator-container {
+  li:first-of-type {
+    padding: 0.5em;
+    gap: 0.5em;
+  }
+
+  .logo {
+    width: 3em;
+    height: 3em;
+    padding: 0em;
+  }
+}
