@@ -1,6 +1,6 @@
 import { Typography, Box } from '@mui/material'
 
-export function TrainerNutrition() {
+export function TrainerExercises() {
   return (
     <Box>
       <Typography variant="h4" gutterBottom>

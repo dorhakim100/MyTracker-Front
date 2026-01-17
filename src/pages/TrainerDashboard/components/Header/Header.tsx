@@ -24,6 +24,8 @@ interface HeaderProps {
 export default function Header(props: HeaderProps) {
   const { onDrawerToggle } = props
 
+  const user = useSelector((state: RootState) => state.userModule.user)
+
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
   return (
     <div className="trainer-dashboard-header-container box-shadow">
@@ -67,7 +69,10 @@ export default function Header(props: HeaderProps) {
             </Grid>
             <Grid item>
               <IconButton color="inherit" sx={{ p: 0.5 }}>
-                <Avatar src="/static/images/avatar/1.jpg" alt="My Avatar" />
+                <Avatar
+                  src={user?.details?.imgUrl || '/logo-square.png'}
+                  alt={user?.details?.fullname || 'Trainer Profile'}
+                />
               </IconButton>
             </Grid>
           </Grid>
