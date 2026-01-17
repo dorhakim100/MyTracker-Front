@@ -1,24 +1,22 @@
-import * as React from 'react';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import CssBaseline from '@mui/material/CssBaseline';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Link from '@mui/material/Link';
-import Navigator from './Navigator';
-import Content from './Content';
-import Header from './Header';
+import * as React from 'react'
+import { createTheme, ThemeProvider } from '@mui/material/styles'
+import useMediaQuery from '@mui/material/useMediaQuery'
+import CssBaseline from '@mui/material/CssBaseline'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
+
+import Navigator from './Navigator'
+import Content from './Content'
+import Header from './Header'
 
 function Copyright() {
   return (
     <Typography variant="body2" align="center" sx={{ color: 'text.secondary' }}>
       {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{' '}
+      MyTracker Trainer Dashboard
       {new Date().getFullYear()}.
     </Typography>
-  );
+  )
 }
 
 let theme = createTheme({
@@ -51,7 +49,7 @@ let theme = createTheme({
       minHeight: 48,
     },
   },
-});
+})
 
 theme = {
   ...theme,
@@ -162,17 +160,17 @@ theme = {
       },
     },
   },
-};
+}
 
-const drawerWidth = 256;
+const drawerWidth = 256
 
-export default function Paperbase() {
-  const [mobileOpen, setMobileOpen] = React.useState(false);
-  const isSmUp = useMediaQuery(theme.breakpoints.up('sm'));
+export function TrainerDashboard() {
+  const [mobileOpen, setMobileOpen] = React.useState(false)
+  const isSmUp = useMediaQuery(theme.breakpoints.up('sm'))
 
   const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
-  };
+    setMobileOpen(!mobileOpen)
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -197,14 +195,14 @@ export default function Paperbase() {
         </Box>
         <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
           <Header onDrawerToggle={handleDrawerToggle} />
-          <Box component="main" sx={{ flex: 1, py: 6, px: 4, bgcolor: '#eaeff1' }}>
+          <Box component="main" sx={{ flex: 1, py: 6, px: 4 }}>
             <Content />
           </Box>
-          <Box component="footer" sx={{ p: 2, bgcolor: '#eaeff1' }}>
+          <Box component="footer" sx={{ p: 2 }}>
             <Copyright />
           </Box>
         </Box>
       </Box>
     </ThemeProvider>
-  );
+  )
 }

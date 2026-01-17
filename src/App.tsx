@@ -16,7 +16,6 @@ import { SlideAnimation } from './components/SlideAnimation/SlideAnimation.tsx'
 
 import { RootState } from './store/store.ts'
 
-import './App.css'
 import { setRemembered } from './store/actions/user.actions.ts'
 import { setFavoriteItems } from './store/actions/item.actions.ts'
 import { loadPrefs, setIsNative } from './store/actions/system.actions.ts'
@@ -30,6 +29,9 @@ import { TraineeUserCard } from './components/TraineeUserCard/TraineeUserCard.ts
 import { AppHeader } from './components/AppHeader/AppHeader.tsx'
 import { Timer } from './components/Timer/Timer.tsx'
 import { Capacitor } from '@capacitor/core'
+import { TrainerDashboard } from './pages/TrainerDashboard/TrainerDashboard.tsx'
+
+import './App.css'
 
 const isProd = import.meta.env.PROD
 
@@ -197,6 +199,8 @@ function App() {
       </main>
     )
   }
+
+  return <TrainerDashboard />
 
   if (isFirstLoading) return <ScreenLoader />
 
