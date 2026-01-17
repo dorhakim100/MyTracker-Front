@@ -17,6 +17,9 @@
 @import '../../pages/UserDetails/styles/UserDetails.scss';
 @import '../../pages/PwaInstall/styles/PwaInstall.scss';
 @import '../../pages/LiftMate/EditWorkout/styles/EditWorkout.scss';
+@import '../../pages/TrainerDashboard/components/Header/styles/Header.scss';
+@import '../../pages/TrainerDashboard/components/Content/styles/Content.scss';
+@import '../../pages/TrainerDashboard/components/Navigator/styles/Navigator.scss';
 
 @import '../../components/AppHeader/styles/AppHeader.scss';
 @import '../../components/AppFooter/styles/AppFooter.scss';
@@ -85,6 +88,12 @@
 @import '../../components/ExercisesSearch/styles/ExercisesSearch.scss';
 @import '../../pages/LiftMate/EditWorkout/styles/ExercisesStage.scss';
 @import '../../components/ExercisesFilter/styles/ExercisesFilter.scss';
+
+@import '../../pages/TrainerDashboard/styles/TrainerDashboard.scss';
+
+@import '../../pages/TrainerDashboard/components/Header/styles/Header.scss';
+@import '../../pages/TrainerDashboard/components/Content/styles/Content.scss';
+@import '../../pages/TrainerDashboard/components/Navigator/styles/Navigator.scss';
 
 @import '../../CustomMui/SignIn/styles/SignIn.scss';
 @import '../../CustomMui/BottomNavigation/styles/FixedBottomNavigation.scss';
