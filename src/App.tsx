@@ -101,8 +101,8 @@ function App() {
     document.body.classList.add(
       prefs.favoriteColor || defaultPrefs.favoriteColor
     )
-    
-    if(isDashboard){
+
+    if (isDashboard) {
       document.body.classList.add(
         'dashboard'
       )
@@ -122,7 +122,7 @@ function App() {
   }, [])
 
   useEffect(() => {
-    if(user && user.isTrainer && platform === 'desktop'){
+    if (user && user.isTrainer && platform === 'desktop') {
       setIsDashboard(true)
     }
   }, [user, platform])
@@ -247,9 +247,8 @@ function App() {
       {traineeUser && <TraineeUserCard />}
 
       <main
-        className={`main ${prefs.isDarkMode ? 'dark-mode' : ''} ${
-          user ? '' : 'no-user'
-        } ${prefs.favoriteColor || ''}`}
+        className={`main ${prefs.isDarkMode ? 'dark-mode' : ''} ${user ? '' : 'no-user'
+          } ${prefs.favoriteColor || ''}`}
       >
         <SlideAnimation
           motionKey={location.pathname}

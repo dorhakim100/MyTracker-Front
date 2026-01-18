@@ -1,3 +1,14 @@
+.trainees-tabs-container {
+    display: flex;
+    // align-items: center;
+    // justify-content: center;
+    // gap: 0.5rem;
+    .divider {
+        margin: 0.5rem 0;
+    }
+}
+
+
 .trainee-tab {
     display: flex;
     align-items: center;

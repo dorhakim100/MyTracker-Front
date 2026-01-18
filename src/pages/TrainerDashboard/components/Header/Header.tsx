@@ -58,6 +58,9 @@ export default function Header(props: HeaderProps) {
       )
 
 
+      trainees.unshift(user)
+
+
       let traineesOrder: string[] = JSON.parse(localStorage.getItem(TRAINEE_ORDER_STORE_NAME) || '[]')
 
 

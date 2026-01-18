@@ -1,6 +1,6 @@
-import { Tab, Tabs } from '@mui/material'
+import { Divider, Tab, Tabs } from '@mui/material'
 import { User } from '../../../../types/user/User'
-import { setTraineeUser } from '../../../../store/actions/user.actions'
+import { removeTraineeUser, setTraineeUser } from '../../../../store/actions/user.actions'
 import { useMemo, useState, useEffect } from 'react'
 import { RootState } from '../../../../store/store'
 import { useSelector } from 'react-redux'
@@ -26,7 +26,7 @@ interface TraineesTabsProps {
 export function TraineesTabs({ trainees }: TraineesTabsProps) {
 
   const traineeUser = useSelector((state: RootState) => state.userModule.traineeUser)
-
+  const user = useSelector((state: RootState) => state.userModule.user)
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
 
   const [reorderedTrainees, setReorderedTrainees] = useState<User[]>(trainees)
@@ -56,43 +56,47 @@ export function TraineesTabs({ trainees }: TraineesTabsProps) {
   }
 
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
-      <Droppable droppableId="trainees-tabs" direction="horizontal">
-        {(provided) => (
-          <div ref={provided.innerRef} {...provided.droppableProps}>
+    <div className='trainees-tabs-container'>
 
-            <Tabs
-              ref={provided.innerRef}
-              {...provided.droppableProps}
-              value={selectedTabIndex}
-              onChange={(_event, newValue) => {
-                if (reorderedTrainees[newValue]) {
-                  setTraineeUser(reorderedTrainees[newValue])
+
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Droppable droppableId="trainees-tabs" direction="horizontal">
+          {(provided) => (
+            <div ref={provided.innerRef} {...provided.droppableProps}>
+
+              <Tabs
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+                value={selectedTabIndex}
+                onChange={(_event, newValue) => {
+                  if (reorderedTrainees[newValue]) {
+                    setTraineeUser(reorderedTrainees[newValue])
+                  }
+                }}
+                textColor="inherit"
+              >
+
+                {
+                  reorderedTrainees.map((trainee, index) => (
+                    <Draggable key={trainee._id} draggableId={trainee._id} index={index}>
+                      {(provided: DraggableProvided, snapshot: DraggableStateSnapshot) => (
+
+                        <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} onClick={() => setTraineeUser(trainee)}
+                          className={`trainee-tab ${snapshot.isDragging ? 'dragging' : ''} ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
+                          {trainee.details.fullname} {trainee._id === user?._id ? ' (Me)' : ''}
+                        </div>
+
+                      )}
+                    </Draggable>
+                  ))
                 }
-              }}
-              textColor="inherit"
-            >
 
-              {
-                reorderedTrainees.map((trainee, index) => (
-                  <Draggable key={trainee._id} draggableId={trainee._id} index={index}>
-                    {(provided: DraggableProvided, snapshot: DraggableStateSnapshot) => (
-
-                      <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} onClick={() => setTraineeUser(trainee)}
-                        className={`trainee-tab ${snapshot.isDragging ? 'dragging' : ''} ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
-                        {trainee.details.fullname}
-                      </div>
-
-                    )}
-                  </Draggable>
-                ))
-              }
-
-              {provided.placeholder}
-            </Tabs>
-          </div>
-        )}
-      </Droppable>
-    </DragDropContext>
+                {provided.placeholder}
+              </Tabs>
+            </div>
+          )}
+        </Droppable>
+      </DragDropContext>
+    </div>
   )
 }
