@@ -1,15 +1,20 @@
+import { useSelector } from 'react-redux'
+import { RootState } from '../../../../store/store'
+
 import { Typography, Box } from '@mui/material'
 import { PreferencesCard } from '../../../../components/PreferencesCard/PreferencesCard'
 
 export function TrainerSettings() {
+  const prefs = useSelector(
+    (storeState: RootState) => storeState.systemModule.prefs
+  )
+
   return (
-    <Box className='trainer-settings-container'>
-      <Typography variant="h4" gutterBottom>
+    <Box className={`trainer-settings-container ${prefs.isDarkMode ? 'dark-mode' : ''} ${prefs.favoriteColor}`}>
+      <Typography variant="h4" className='bold-header' >
         Settings
       </Typography>
-      <Typography variant="body1" color="text.secondary">
-        Manage your trainer account settings here.
-      </Typography>
+
       <PreferencesCard />
     </Box>
   )

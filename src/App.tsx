@@ -18,7 +18,7 @@ import { RootState } from './store/store.ts'
 
 import { setRemembered } from './store/actions/user.actions.ts'
 import { setFavoriteItems } from './store/actions/item.actions.ts'
-import { loadPrefs, setIsNative } from './store/actions/system.actions.ts'
+import { loadPrefs, setIsNative, setIsDashboard } from './store/actions/system.actions.ts'
 import { SignIn } from './CustomMui/SignIn/SignIn.tsx'
 import { searchService } from './services/search/search-service.ts'
 import { FirstGoalEdit } from './components/FirstGoalEdit/FirstGoalEdit.tsx'
@@ -101,7 +101,15 @@ function App() {
 
   useEffect(() => {
     setIsNative(Capacitor.isNativePlatform())
+
+
   }, [])
+
+  useEffect(() => {
+    if(user && user.isTrainer && platform === 'desktop'){
+      setIsDashboard(true)
+    }
+  }, [user, platform])
 
   useEffect(() => {
     const themeColorMeta = document.querySelector<HTMLMetaElement>(

@@ -1,0 +1,10 @@
+.trainer-exercises-container {
+  padding: 0rem;
+  height: calc(100vh - $dashboard-header-height - 1rem);
+  overflow-y: auto;
+
+  .exercise-list{
+    overflow-y: auto;
+    // height: 100%;
+  }
+}

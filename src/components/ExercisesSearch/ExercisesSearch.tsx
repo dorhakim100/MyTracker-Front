@@ -15,15 +15,15 @@ import { useState } from 'react'
 import { exerciseImage } from '../../assets/config/exercise-image'
 
 interface ExercisesSearchProps {
-  workout: Workout
+  workout?: Workout | null
   exerciseFilter: ExerciseFilter
   onExerciseFilterChange: (exerciseFilter: ExerciseFilter) => void
   placeholder?: string
   className?: string
   results: Exercise[] | []
-  onAddExercise: (exercise: Exercise) => void
-  onDeleteExercise: (exercise: Exercise) => void
-  onReorderExercises: (exercises: Exercise[]) => void
+  onAddExercise?: (exercise: Exercise) => void
+  onDeleteExercise?: (exercise: Exercise) => void
+  onReorderExercises?: (exercises: Exercise[]) => void
   // renderErrorImage: (exercise: Exercise) => void
   resultsMsg?: string
 }
@@ -41,11 +41,15 @@ export function ExercisesSearch({
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
+  const isDashboard = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.isDashboard
+  )
 
   const [openModal, setOpenModal] = useState(false)
   const [exercise, setExercise] = useState<Exercise | null>(null)
 
   const isExerciseAdded = (exercise: Exercise) => {
+    if (!onAddExercise || !workout) return false
     return workout.exercises.some((e) => e.exerciseId === exercise.exerciseId)
   }
 
@@ -90,19 +94,21 @@ export function ExercisesSearch({
           )}
           itemClassName={`exercise-item exercise-item-grid ${
             prefs.isDarkMode ? 'dark-mode' : ''
-          } ${prefs.favoriteColor}`}
+          } ${prefs.favoriteColor} ${isDashboard ? 'dashboard' : ''}`}
           getKey={(exercise) => exercise.exerciseId}
           className={`exercise-list ${prefs.isDarkMode ? 'dark-mode' : ''} `}
-          renderRight={(exercise) => (
-            <CustomButton
+          renderRight={(exercise) => {
+            if (!onAddExercise || !workout) return null
+
+            return <CustomButton
               icon={isExerciseAdded(exercise) ? <RemoveIcon /> : <AddIcon />}
               onClick={(ev) => {
                 ev.stopPropagation()
-                onAddExercise(exercise)
+                onAddExercise?.(exercise)
               }}
               className={isExerciseAdded(exercise) ? 'red' : ''}
-            />
-          )}
+            />}
+          }
           noResultsMessage="No exercises found..."
           onItemClick={(exercise) => onOpenModal(exercise)}
         />

@@ -30,7 +30,7 @@ export default function Header(props: HeaderProps) {
   return (
     <div className="trainer-dashboard-header-container box-shadow">
       <AppBar color="primary" position="sticky" elevation={0}>
-        <Toolbar>
+        <Toolbar  className={`${prefs.isDarkMode ? 'dark-mode' : ''} ${prefs.favoriteColor}`} >
           <Grid container spacing={1} sx={{ alignItems: 'center' }}>
             <Grid sx={{ display: { sm: 'none', xs: 'block' } }} item>
               <IconButton
@@ -85,7 +85,7 @@ export default function Header(props: HeaderProps) {
         elevation={0}
         sx={{ zIndex: 0 }}
       >
-        <Toolbar>
+        <Toolbar className={`${prefs.isDarkMode ? 'dark-mode' : ''} ${prefs.favoriteColor}`}>
           <Grid container spacing={1} sx={{ alignItems: 'center' }}>
             <Grid item xs>
               <Typography color="inherit" variant="h5" component="h1">

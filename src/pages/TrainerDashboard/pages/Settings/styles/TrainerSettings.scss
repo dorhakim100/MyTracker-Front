@@ -1,9 +1,13 @@
 .trainer-settings-container{
+    margin: 0 auto;
     display: grid;
     gap: 1em;
+    max-width: $max-width;
 
 
     .color-options{
+        display: flex;
+
         svg{
             max-width: 20px;
             max-height: 20px;

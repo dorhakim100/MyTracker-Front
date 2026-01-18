@@ -16,6 +16,7 @@ import {
   SET_NAVIGATE_TO,
   SET_IS_FIRST_LOADING,
   SET_IS_NATIVE,
+  SET_IS_DASHBOARD,
 } from '../reducers/system.reducer'
 
 export function setIsLoading(stateToSet: boolean) {
@@ -72,4 +73,7 @@ export function onClosePrefsHeader() {
 }
 export function setIsNative(isNativeToSet: boolean) {
   store.dispatch({ type: SET_IS_NATIVE, isNative: isNativeToSet })
+}
+export function setIsDashboard(isDashboardToSet: boolean) {
+  store.dispatch({ type: SET_IS_DASHBOARD, isDashboard: isDashboardToSet })
 }
