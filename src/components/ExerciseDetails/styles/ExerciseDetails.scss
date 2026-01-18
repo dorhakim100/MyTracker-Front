@@ -3,6 +3,37 @@
   gap: 1rem;
   padding: 1rem 1rem 2rem 1rem;
 
+  &.dashboard {
+    grid-template-columns: auto 1fr;
+
+    img{
+      grid-column: 1/2;
+      grid-row: 1/1;
+      width: 300px;
+      height: 300px;
+
+
+
+    }
+    .line-chart-container{
+      grid-column: 2/3;
+      grid-row: 1/1;
+    }
+
+
+    .divider, .sets-table, .new, .past-sessions, .instructions-accordion{
+      grid-column: 1/-1;
+    }
+    .past-sessions{
+
+      grid-row: 2/3;
+    }
+    .sets-table,.new{
+      grid-row: 3/4;
+    }
+
+  }
+
   &.dark-mode {
     // background-color: $dark-gray !important;
   }

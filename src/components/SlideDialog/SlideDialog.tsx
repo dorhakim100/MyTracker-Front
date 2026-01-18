@@ -12,6 +12,7 @@ import { motion, useMotionValue, useTransform, PanInfo } from 'framer-motion'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import CircularProgress from '@mui/material/CircularProgress'
+import { stylesVariables } from '../../assets/config/styles.variables'
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -50,6 +51,10 @@ export function SlideDialog({
 
   const isLoading = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.isLoading
+  )
+
+  const isDashboard = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.isDashboard
   )
 
   const y = useMotionValue(0)
@@ -198,7 +203,7 @@ export function SlideDialog({
     <React.Fragment>
       <Dialog
         fullScreen
-        className={`${type === 'half' ? 'half-dialog' : 'full-dialog'}`}
+        className={`${type === 'half' ? 'half-dialog' : 'full-dialog'} ${isDashboard ? 'dashboard' : ''}`}
         open={open}
         onClose={handleSave}
         sx={{
@@ -206,10 +211,14 @@ export function SlideDialog({
 
           '& .MuiDialog-paper': {
             height: type === 'half' ? '800px' : '100%',
-            paddingBottom: '1.5em',
+            paddingBottom: isDashboard ? '0' : '1.5em',
             overflow: 'hidden',
             backgroundColor: 'transparent !important',
             // background: 'transparent !important',
+            // left: isDashboard ? `${stylesVariables.dashboardDialogLeft}px` : '0',
+            width: `calc(100vw - ${stylesVariables.dashboardDialogLeft}px)`,
+
+            marginLeft: isDashboard ? `${stylesVariables.dashboardDialogLeft}px` : '0',
           },
         }}
         slots={{

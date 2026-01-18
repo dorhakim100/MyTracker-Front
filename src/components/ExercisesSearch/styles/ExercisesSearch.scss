@@ -31,12 +31,12 @@
       &.dashboard{
 
         span{
-          font-size: 1rem;
+          font-size: 0.875rem;
         }
-        grid-template-columns: 80px 1fr auto;
+        grid-template-columns: 70px 1fr auto;
         .exercise-image {
-          width: 80px;
-          height: 80px;
+          width: 70px;
+          height: 70px;
 
         }
       }

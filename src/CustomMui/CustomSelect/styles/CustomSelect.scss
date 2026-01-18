@@ -1,4 +1,20 @@
-.select-paper.dark-mode {
+body.dashboard {
+  .select-paper {
+    .custom-select-img,.custom-select-icon  {
+      width: 60px;
+      height: 60px;
+ 
+    }
+  
+
+  }
+}
+
+.select-paper {
+
+
+
+&.dark-mode {
   outline: 1px solid rgba(255, 255, 255, 0.3) !important;
 
   &.blue {
@@ -42,6 +58,9 @@
     }
   }
 }
+}
+
+
 .MuiMenu-list {
   max-height: 350px;
 
@@ -63,8 +82,16 @@
     align-items: center;
     justify-content: center;
   }
+  &.dashboard {
+    .custom-select-img, 
+    .custom-select-icon {
+      width: 50px;
+      height: 50px;
+    }
+  }
 }
 .MuiInputBase-root.with-imgs {
+
   .MuiSelect-select {
     display: flex;
     align-items: center;
@@ -75,12 +102,25 @@
       object-fit: cover;
       border-radius: 50%;
     }
+    
     .custom-select-icon {
       width: 40px;
       height: 40px;
       display: flex;
       align-items: center;
       justify-content: center;
+    }
+    
+    
+  }
+  &.dashboard {
+    img {
+      width: 60px;
+      height: 60px;
+    }
+    .custom-select-icon {
+      width: 60px;
+      height: 60px;
     }
   }
 }

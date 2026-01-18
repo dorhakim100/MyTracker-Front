@@ -97,7 +97,15 @@ function App() {
     document.body.classList.add(
       prefs.favoriteColor || defaultPrefs.favoriteColor
     )
-  }, [prefs])
+    
+    if(platform === 'desktop' && user && user.isTrainer){
+      document.body.classList.add(
+        'dashboard'
+      )
+
+    }
+
+  }, [prefs, platform, user?._id])
 
   useEffect(() => {
     setIsNative(Capacitor.isNativePlatform())

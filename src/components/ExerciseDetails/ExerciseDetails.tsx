@@ -43,6 +43,10 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
     (stateSelector: RootState) => stateSelector.userModule.traineeUser
   )
 
+  const isDashboard = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.isDashboard
+  )
+
   const [exerciseInstructions, setExerciseInstructions] = useState<
     string[] | null
   >(null)
@@ -167,7 +171,7 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
     <div
       className={`exercise-details-container ${
         prefs.isDarkMode ? 'dark-mode' : ''
-      }`}
+      } ${isDashboard ? 'dashboard' : ''}`}
     >
       <img
         src={exerciseImage}
@@ -175,7 +179,7 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
         onError={() => setExerciseImage(exerciseImageObject.ERROR_IMAGE)}
       />
       <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
-      <div className="exercise-details">
+      {/* <div className="exercise-details"> */}
         {exercise?.notes?.expected && (
           <>
             <Typography variant="h5" className="bold-header">
@@ -195,6 +199,7 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
           title="Instructions"
           cmp={exerciseInstructions?.map(renderExerciseInstructions)}
           icon={<AutoStoriesIcon />}
+          className='instructions-accordion'
         />
         <div className="line-chart-container">
           <Typography variant="h5" className="bold-header">
@@ -208,7 +213,7 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
           />
           <LineChartControls value={range} onChange={(val) => setRange(val)} />
         </div>
-        <Typography variant="h5" className="bold-header">
+        <Typography variant="h5" className="bold-header past-sessions">
           Past Sessions
         </Typography>
         {/* {exerciseSets.length === 0} */}
@@ -224,6 +229,6 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
           }
         />
       </div>
-    </div>
+    // </div>
   )
 }

@@ -30,6 +30,10 @@ export function ExercisesFilter({
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
 
+  const isDashboard = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.isDashboard
+  )
+
   const getIsDisabled = () => {
     return (
       JSON.stringify(exerciseFilter) ===
@@ -41,7 +45,7 @@ export function ExercisesFilter({
     <div
       className={`exercises-filter-container ${className} ${
         prefs.isDarkMode ? 'dark-mode' : ''
-      }`}
+      } ${isDashboard ? 'dashboard' : ''}`}
     >
       <CustomInput
         value={exerciseFilter.searchValue}

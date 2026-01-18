@@ -9,6 +9,7 @@ import Typography from '@mui/material/Typography'
 import Navigator from './components/Navigator/Navigator'
 import Header from './components/Header/Header'
 import { trainerRoutes } from '../../assets/routes/trainerRoutes'
+import { stylesVariables } from '../../assets/config/styles.variables'
 
 function Copyright() {
   return (
@@ -163,7 +164,7 @@ theme = {
   },
 }
 
-const drawerWidth = 280
+const drawerWidth = stylesVariables.dashboardDialogLeft
 
 export function TrainerDashboard() {
   const [mobileOpen, setMobileOpen] = React.useState(false)

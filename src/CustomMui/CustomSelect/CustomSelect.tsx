@@ -28,6 +28,9 @@ export function CustomSelect({
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
+  const isDashboard = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.isDashboard
+  )
 
   const handleChange = (event: SelectChangeEvent) => {
     onChange(event.target.value)
@@ -70,14 +73,14 @@ export function CustomSelect({
       size="small"
       className={`custom-select ${className} ${
         prefs.isDarkMode ? 'dark-mode' : ''
-      }`}
+      } ${isDashboard ? 'dashboard' : ''}`}
     >
       <InputLabel id={`${label}-select-label`}>{label}</InputLabel>
       <Select
         labelId={`${label}-select-label`}
         id={`${label}-select`}
         value={value}
-        className={`${imgs ? 'with-imgs' : ''}`}
+        className={`${imgs ? 'with-imgs' : ''} ${isDashboard ? 'dashboard' : ''}`}
         label={label}
         onChange={handleChange}
         MenuProps={{

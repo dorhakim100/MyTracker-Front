@@ -72,7 +72,9 @@ export function TrainerExercises() {
         placeholder="Search for exercises"
         className={`${prefs.favoriteColor}`}
         results={filteredExerciseResults}
-
+        resultsMsg={!exerciseFilter.searchValue
+          ? 'Most Popular Exercises'
+          : `${filteredExerciseResults.length} exercises found`}
         />
     </Box>
   )

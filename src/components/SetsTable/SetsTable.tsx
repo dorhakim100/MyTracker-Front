@@ -23,6 +23,7 @@ import { messages } from '../../assets/config/messages'
 import { instructionsService } from '../../services/instructions/instructions.service'
 import { NotesDisplay } from '../NotesDisplay/NotesDisplay'
 import { ExpectedActual } from '../../types/expectedActual/ExpectedActual'
+import Divider from '@mui/material/Divider'
 
 function Row(props: {
   sets: (Set & { exerciseId: string })[]
@@ -30,9 +31,11 @@ function Row(props: {
     open: boolean
     notes: ExpectedActual<string>
     date: string
+
   }) => void
+  divider?: boolean
 }) {
-  const { sets, setAlertDialogOptions } = props
+  const { sets, setAlertDialogOptions, divider = true } = props
   const [open, setOpen] = React.useState(false)
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -57,6 +60,9 @@ function Row(props: {
       <TableRow
         // sx={{ '& > *': { borderBottom: 'unset' } }}
         onClick={() => setOpen(!open)}
+        className='pointer'
+
+
       >
         <TableCell component='th' scope='row'>
           {sets[0].createdAt
@@ -87,7 +93,7 @@ function Row(props: {
           sx={{
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
+            justifyContent: 'end',
           }}
         >
           <CustomButton
@@ -114,11 +120,11 @@ function Row(props: {
             paddingRight: 0,
             paddingLeft: 0,
           }}
-          colSpan={6}
+          colSpan={4}
         >
           <Collapse in={open} timeout='auto' unmountOnExit>
             <Box sx={{ margin: 0, padding: 1 }}>
-              <Table size='small' aria-label='purchases'>
+              <Table size='small' aria-label='sets'>
                 <TableHead>
                   <TableRow>
                     <TableCell align='center'>Set</TableCell>
@@ -153,8 +159,10 @@ function Row(props: {
               </Table>
             </Box>
           </Collapse>
+         {divider && <Divider sx={{marginInline: '0.5rem'}} className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />}
         </TableCell>
       </TableRow>
+
     </React.Fragment>
   )
 }
@@ -186,23 +194,25 @@ export default function SetsTable({
           component={Paper}
           className={`sets-table ${prefs.isDarkMode ? 'dark-mode' : ''}`}
         >
-          <Table aria-label='collapsible table'>
+          <Table aria-label='collapsible table '>
             <TableHead>
               <TableRow>
                 <TableCell>Date</TableCell>
-                <TableCell>Top weight</TableCell>
-                <TableCell>Top Reps</TableCell>
+                <TableCell sx={{ textAlign: 'center' }}>Top weight</TableCell>
+                <TableCell sx={{ textAlign: 'center' }}>Top Reps</TableCell>
                 <TableCell></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {entries.length > 0 ? (
-                entries.map(([date, sets]) => (
+                entries.map(([date, sets], index) => (
                   <React.Fragment key={date}>
                     <Row
                       sets={sets}
                       setAlertDialogOptions={setAlertDialogOptions}
+                      divider={index !== entries.length - 1}
                     />
+
                   </React.Fragment>
                 ))
               ) : (
