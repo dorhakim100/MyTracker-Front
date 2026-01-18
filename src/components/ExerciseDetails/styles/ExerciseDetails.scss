@@ -4,7 +4,9 @@
   padding: 1rem 1rem 2rem 1rem;
 
   &.dashboard {
-    grid-template-columns: auto 1fr;
+    grid-template-columns: 300px 1fr;
+    padding: 2rem;
+    gap: 2rem 4rem;
 
     img{
       grid-column: 1/2;

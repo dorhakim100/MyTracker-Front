@@ -75,6 +75,10 @@ function App() {
     (stateSelector: RootState) => stateSelector.systemModule.isFirstLoading
   )
 
+  const isDashboard = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.isDashboard
+  )
+
   const filteredRoutes = useMemo(() => {
     if (user) {
       return routes.filter((route) => route.path !== '/signin')
@@ -98,14 +102,18 @@ function App() {
       prefs.favoriteColor || defaultPrefs.favoriteColor
     )
     
-    if(platform === 'desktop' && user && user.isTrainer){
+    if(isDashboard){
       document.body.classList.add(
         'dashboard'
       )
 
+    } else {
+      document.body.classList.remove(
+        'dashboard'
+      )
     }
 
-  }, [prefs, platform, user?._id])
+  }, [prefs, isDashboard])
 
   useEffect(() => {
     setIsNative(Capacitor.isNativePlatform())
@@ -216,7 +224,7 @@ function App() {
     )
   }
 
-  if (user && user.isTrainer && platform === 'desktop') {
+  if (isDashboard) {
     return <TrainerDashboard />
   }
 

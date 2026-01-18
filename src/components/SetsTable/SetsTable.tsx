@@ -64,13 +64,13 @@ function Row(props: {
 
 
       >
-        <TableCell component='th' scope='row'>
+        <TableCell component='th' scope='row' sx={{ width: '30%' }}>
           {sets[0].createdAt
             ? new Date(sets[0].createdAt).toLocaleDateString('he')
             : ''}
         </TableCell>
 
-        <TableCell align='center'>
+        <TableCell align='center' sx={{ width: '25%' }}>
           {
             sets.find(
               (set) =>
@@ -80,7 +80,7 @@ function Row(props: {
           }{' '}
           kg
         </TableCell>
-        <TableCell align='center'>
+        <TableCell align='center' sx={{ width: '25%' }}>
           {
             sets.find(
               (set) =>
@@ -94,6 +94,7 @@ function Row(props: {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'end',
+            // width: '20%',
           }}
         >
           <CustomButton
@@ -124,13 +125,13 @@ function Row(props: {
         >
           <Collapse in={open} timeout='auto' unmountOnExit>
             <Box sx={{ margin: 0, padding: 1 }}>
-              <Table size='small' aria-label='sets'>
+              <Table size='small' aria-label='sets' sx={{ tableLayout: 'fixed', width: '100%' }}>
                 <TableHead>
                   <TableRow>
-                    <TableCell align='center'>Set</TableCell>
-                    <TableCell align='center'>Weight</TableCell>
-                    <TableCell align='center'>Reps</TableCell>
-                    <TableCell align='center'>
+                    <TableCell align='center' sx={{ width: '30%' }}>Set</TableCell>
+                    <TableCell align='center' sx={{ width: '25%' }}>Weight</TableCell>
+                    <TableCell align='center' sx={{ width: '25%' }}>Reps</TableCell>
+                    <TableCell align='center' sx={{ width: '20%' }}>
                       {sets[0].rpe ? 'RPE' : 'RIR'}
                     </TableCell>
                   </TableRow>
@@ -140,17 +141,17 @@ function Row(props: {
                     .sort((a, b) => (a.setNumber || 0) - (b.setNumber || 0))
                     .map((set) => (
                       <TableRow key={set._id}>
-                        <TableCell align='center'>
+                        <TableCell align='center' sx={{ width: '30%' }}>
                           <Badge
                             badgeContent={set.setNumber}
                             className={prefs.favoriteColor}
                           ></Badge>
                         </TableCell>
-                        <TableCell align='center'>
+                        <TableCell align='center' sx={{ width: '25%' }}>
                           {set.weight.actual} kg
                         </TableCell>
-                        <TableCell align='center'>{set.reps.actual}</TableCell>
-                        <TableCell align='center'>
+                        <TableCell align='center' sx={{ width: '25%' }}>{set.reps.actual}</TableCell>
+                        <TableCell align='center' sx={{ width: '20%' }}>
                           {set.rpe?.actual ? set.rpe.actual : set.rir?.actual}
                         </TableCell>
                       </TableRow>
@@ -194,13 +195,13 @@ export default function SetsTable({
           component={Paper}
           className={`sets-table ${prefs.isDarkMode ? 'dark-mode' : ''}`}
         >
-          <Table aria-label='collapsible table '>
+          <Table aria-label='collapsible table ' sx={{ tableLayout: 'fixed' }}>
             <TableHead>
               <TableRow>
-                <TableCell>Date</TableCell>
-                <TableCell sx={{ textAlign: 'center' }}>Top weight</TableCell>
-                <TableCell sx={{ textAlign: 'center' }}>Top Reps</TableCell>
-                <TableCell></TableCell>
+                <TableCell sx={{ width: '30%' }}>Date</TableCell>
+                <TableCell sx={{ textAlign: 'center', width: '25%' }}>Top weight</TableCell>
+                <TableCell sx={{ textAlign: 'center', width: '25%' }}>Top Reps</TableCell>
+                <TableCell sx={{ width: '20%' }}></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>

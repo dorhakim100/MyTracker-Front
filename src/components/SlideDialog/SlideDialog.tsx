@@ -216,7 +216,7 @@ export function SlideDialog({
             backgroundColor: 'transparent !important',
             // background: 'transparent !important',
             // left: isDashboard ? `${stylesVariables.dashboardDialogLeft}px` : '0',
-            width: `calc(100vw - ${stylesVariables.dashboardDialogLeft}px)`,
+            width: isDashboard ? `calc(100vw - ${stylesVariables.dashboardDialogLeft}px)` : '100%',
 
             marginLeft: isDashboard ? `${stylesVariables.dashboardDialogLeft}px` : '0',
           },

@@ -29,17 +29,16 @@
       }
     }
   }
-  .MuiTableRow-root {
-    th {
-      //   border-bottom: 1px solid $medium-gray !important;
-    }
-  }
-
-  .MuiBadge-root {
-    // right: 0.5rem;
-    span {
-      //   font-weight: 700;
-      //   font-size: 1.1rem;
+  // Ensure nested table columns align with main table columns
+  .MuiCollapse-root {
+    .MuiTable-root {
+      width: 100%;
+      
+      // Match the column widths of the main table
+      .MuiTableCell-root {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
     }
   }
 }
