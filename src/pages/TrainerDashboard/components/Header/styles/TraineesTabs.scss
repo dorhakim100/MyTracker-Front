@@ -1,0 +1,16 @@
+.trainee-tab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    opacity: 0.6;
+    font-weight: 600;
+    transition: all 0.3s ease;
+
+
+
+  &.dragging {
+    // opacity: 0.5;
+  }
+}
