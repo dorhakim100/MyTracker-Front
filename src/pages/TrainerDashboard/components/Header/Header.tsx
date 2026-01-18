@@ -1,5 +1,8 @@
+import { useEffect, useState, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../../store/store'
+import { setIsLoading } from '../../../../store/actions/system.actions'
+import { setTraineeUser } from '../../../../store/actions/user.actions'
 import AppBar from '@mui/material/AppBar'
 import Avatar from '@mui/material/Avatar'
 import Button from '@mui/material/Button'
@@ -14,6 +17,11 @@ import Tabs from '@mui/material/Tabs'
 import Toolbar from '@mui/material/Toolbar'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
+import { TrainerRequest } from '../../../../types/trainerRequest/TrainerRequest'
+import { userService } from '../../../../services/user/user.service'
+import { messages } from '../../../../assets/config/messages'
+import { showErrorMsg } from '../../../../services/event-bus.service'
+import { User } from '../../../../types/user/User'
 
 const lightColor = 'rgba(255, 255, 255, 0.7)'
 
@@ -25,8 +33,43 @@ export default function Header(props: HeaderProps) {
   const { onDrawerToggle } = props
 
   const user = useSelector((state: RootState) => state.userModule.user)
+  const traineeUser = useSelector((state: RootState) => state.userModule.traineeUser)
 
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
+
+  const [trainees, setTrainees] = useState<User[]>([])
+
+  // Find the index of the selected trainee
+  const selectedTabIndex = useMemo(() => {
+    if (!traineeUser || trainees.length === 0) return 0
+    const index = trainees.findIndex((t) => t._id === traineeUser._id)
+    return index >= 0 ? index : 0
+  }, [traineeUser, trainees])
+
+  useEffect(() => {
+    getTrainees()
+  }, [user])
+
+  async function getTrainees() {
+    try {
+      if (!user )        return
+
+      setIsLoading(true)
+      const requests = await userService.getRequests(user._id)
+
+      const trainees = requests.map(
+        (request: TrainerRequest) => request.trainee
+      )
+
+      setTrainees(trainees)
+    } catch (err) {
+      showErrorMsg(messages.error.getRequests)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+
   return (
     <div className="trainer-dashboard-header-container box-shadow">
       <AppBar color="primary" position="sticky" elevation={0}>
@@ -121,11 +164,18 @@ export default function Header(props: HeaderProps) {
           prefs.favoriteColor
         }`}
       >
-        <Tabs value={0} textColor="inherit">
-          <Tab label="Users" />
-          <Tab label="Sign-in method" />
-          <Tab label="Templates" />
-          <Tab label="Usage" />
+        <Tabs
+          value={selectedTabIndex}
+          onChange={(_event, newValue) => {
+            if (trainees[newValue]) {
+              setTraineeUser(trainees[newValue])
+            }
+          }}
+          textColor="inherit"
+        >
+          {trainees.map((trainee) => (
+            <Tab key={trainee._id} label={trainee.details.fullname} />
+          ))}
         </Tabs>
       </AppBar>
     </div>
