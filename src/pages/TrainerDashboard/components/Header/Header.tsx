@@ -23,6 +23,8 @@ import { messages } from '../../../../assets/config/messages'
 import { showErrorMsg } from '../../../../services/event-bus.service'
 import { User } from '../../../../types/user/User'
 import { TraineesTabs } from './TraineesTabs'
+import { indexedDbService } from '../../../../services/indexeddb.service'
+import { TRAINEE_ORDER_STORE_NAME } from '../../../../constants/store.constants'
 
 const lightColor = 'rgba(255, 255, 255, 0.7)'
 
@@ -46,7 +48,7 @@ export default function Header(props: HeaderProps) {
 
   async function getTrainees() {
     try {
-      if (!user )        return
+      if (!user) return
 
       setIsLoading(true)
       const requests = await userService.getRequests(user._id)
@@ -55,7 +57,25 @@ export default function Header(props: HeaderProps) {
         (request: TrainerRequest) => request.trainee
       )
 
-      setTrainees(trainees)
+
+      let traineesOrder: string[] = JSON.parse(localStorage.getItem(TRAINEE_ORDER_STORE_NAME) || '[]')
+
+
+      if (!traineesOrder.length) {
+        traineesOrder = trainees.map((trainee: User) => trainee._id)
+        localStorage.setItem(TRAINEE_ORDER_STORE_NAME, JSON.stringify(traineesOrder))
+        setTrainees(trainees)
+        return
+      }
+
+      const orderedTrainees = trainees.sort((a: User, b: User) => {
+        const aIndex = traineesOrder.indexOf(a._id)
+        const bIndex = traineesOrder.indexOf(b._id)
+        return aIndex - bIndex
+      })
+
+      setTrainees(orderedTrainees)
+
     } catch (err) {
       showErrorMsg(messages.error.getRequests)
     } finally {
@@ -67,7 +87,7 @@ export default function Header(props: HeaderProps) {
   return (
     <div className="trainer-dashboard-header-container box-shadow">
       <AppBar color="primary" position="sticky" elevation={0}>
-        <Toolbar  className={`${prefs.isDarkMode ? 'dark-mode' : ''} ${prefs.favoriteColor}`} >
+        <Toolbar className={`${prefs.isDarkMode ? 'dark-mode' : ''} ${prefs.favoriteColor}`} >
           <Grid container spacing={1} sx={{ alignItems: 'center' }}>
             <Grid sx={{ display: { sm: 'none', xs: 'block' } }} item>
               <IconButton
@@ -154,9 +174,8 @@ export default function Header(props: HeaderProps) {
         position="static"
         elevation={0}
         sx={{ zIndex: 0 }}
-        className={`tabs-container ${prefs.isDarkMode ? 'dark-mode' : ''} ${
-          prefs.favoriteColor
-        }`}
+        className={`tabs-container ${prefs.isDarkMode ? 'dark-mode' : ''} ${prefs.favoriteColor
+          }`}
       >
 
         <TraineesTabs trainees={trainees} />

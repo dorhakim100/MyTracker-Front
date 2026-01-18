@@ -14,7 +14,9 @@ import {
   DraggableProvided,
   DraggableStateSnapshot,
 } from '@hello-pangea/dnd'
-import { getArrayOfNumbers } from '../../../../services/util.service'
+import { indexedDbService } from '../../../../services/indexeddb.service'
+import { TRAINEE_ORDER_STORE_NAME } from '../../../../constants/store.constants'
+
 
 interface TraineesTabsProps {
   trainees: User[]
@@ -24,6 +26,9 @@ interface TraineesTabsProps {
 export function TraineesTabs({ trainees }: TraineesTabsProps) {
 
   const traineeUser = useSelector((state: RootState) => state.userModule.traineeUser)
+
+  const prefs = useSelector((state: RootState) => state.systemModule.prefs)
+
   const [reorderedTrainees, setReorderedTrainees] = useState<User[]>(trainees)
 
   useEffect(() => {
@@ -36,13 +41,18 @@ export function TraineesTabs({ trainees }: TraineesTabsProps) {
     return index >= 0 ? index : 0
   }, [traineeUser, reorderedTrainees])
 
-  const onDragEnd = ({ destination, source }: DropResult) => {
+  const onDragEnd = async ({ destination, source }: DropResult) => {
     if (!destination || destination.index === source.index) return
+
     const newTrainees = [...reorderedTrainees]
     const [moved] = newTrainees.splice(source.index, 1)
+
     newTrainees.splice(destination.index, 0, moved)
     setReorderedTrainees(newTrainees)
     setTraineeUser(newTrainees[destination.index])
+
+    const traineesOrder = newTrainees.map((trainee) => trainee._id)
+    localStorage.setItem(TRAINEE_ORDER_STORE_NAME, JSON.stringify(traineesOrder))
   }
 
   return (
@@ -69,7 +79,7 @@ export function TraineesTabs({ trainees }: TraineesTabsProps) {
                     {(provided: DraggableProvided, snapshot: DraggableStateSnapshot) => (
 
                       <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} onClick={() => setTraineeUser(trainee)}
-                        className={`trainee-tab ${snapshot.isDragging ? 'dragging' : ''}`}>
+                        className={`trainee-tab ${snapshot.isDragging ? 'dragging' : ''} ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
                         {trainee.details.fullname}
                       </div>
 
