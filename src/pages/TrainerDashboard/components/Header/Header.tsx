@@ -22,6 +22,7 @@ import { userService } from '../../../../services/user/user.service'
 import { messages } from '../../../../assets/config/messages'
 import { showErrorMsg } from '../../../../services/event-bus.service'
 import { User } from '../../../../types/user/User'
+import { TraineesTabs } from './TraineesTabs'
 
 const lightColor = 'rgba(255, 255, 255, 0.7)'
 
@@ -38,13 +39,6 @@ export default function Header(props: HeaderProps) {
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
 
   const [trainees, setTrainees] = useState<User[]>([])
-
-  // Find the index of the selected trainee
-  const selectedTabIndex = useMemo(() => {
-    if (!traineeUser || trainees.length === 0) return 0
-    const index = trainees.findIndex((t) => t._id === traineeUser._id)
-    return index >= 0 ? index : 0
-  }, [traineeUser, trainees])
 
   useEffect(() => {
     getTrainees()
@@ -164,19 +158,9 @@ export default function Header(props: HeaderProps) {
           prefs.favoriteColor
         }`}
       >
-        <Tabs
-          value={selectedTabIndex}
-          onChange={(_event, newValue) => {
-            if (trainees[newValue]) {
-              setTraineeUser(trainees[newValue])
-            }
-          }}
-          textColor="inherit"
-        >
-          {trainees.map((trainee) => (
-            <Tab key={trainee._id} label={trainee.details.fullname} />
-          ))}
-        </Tabs>
+
+        <TraineesTabs trainees={trainees} />
+
       </AppBar>
     </div>
   )

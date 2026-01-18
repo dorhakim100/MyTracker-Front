@@ -43,7 +43,7 @@ async function getById(userId: string) {
 
 async function remove(userId: string) {
   try {
-    return await storageService.remove('user', userId)
+   return await storageService.remove('user', userId)
   } catch (err) {
     throw err
   }
