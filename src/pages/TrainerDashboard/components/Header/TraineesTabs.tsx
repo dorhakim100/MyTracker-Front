@@ -55,6 +55,7 @@ export function TraineesTabs({ trainees }: TraineesTabsProps) {
     localStorage.setItem(TRAINEE_ORDER_STORE_NAME, JSON.stringify(traineesOrder))
   }
 
+
   return (
     <div className='trainees-tabs-container'>
 
@@ -81,7 +82,14 @@ export function TraineesTabs({ trainees }: TraineesTabsProps) {
                     <Draggable key={trainee._id} draggableId={trainee._id} index={index}>
                       {(provided: DraggableProvided, snapshot: DraggableStateSnapshot) => (
 
-                        <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} onClick={() => setTraineeUser(trainee)}
+                        <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} onClick={() => {
+
+                          if (trainee._id === user?._id) {
+                            removeTraineeUser()
+                          } else {
+                            setTraineeUser(trainee)
+                          }
+                        }}
                           className={`trainee-tab ${snapshot.isDragging ? 'dragging' : ''} ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
                           {trainee.details.fullname} {trainee._id === user?._id ? ' (Me)' : ''}
                         </div>

@@ -300,28 +300,35 @@ export function setSelectedDiaryDay(selectedDay: LoggedToday | null) {
   })
 }
 
-export async function handleDiaryDayChange(dateToCheck: string, user: User) {
+export async function handleDiaryDayChange(dateToCheck: string, user: User, traineeUser: User | null) {
   try {
+    const userToCheck = traineeUser ? traineeUser : user
     const filter = {
       date: dateToCheck,
-      userId: user._id,
+      userId: userToCheck._id,
     }
 
     if (!user) return
 
-    const diaryDay = user?.loggedToday?.date
+    const diaryDay = traineeUser ? traineeUser?.loggedToday?.date : user?.loggedToday?.date
+
 
     if (diaryDay === dateToCheck) return
 
     const diaryDayChange = await dayService.query(filter)
 
-    const newUser = {
-      ...user,
-      loggedToday: diaryDayChange,
-    }
 
     setSelectedDiaryDay(diaryDayChange)
-    optimisticUpdateUser(newUser)
+    const newUser = {
+      ...userToCheck,
+      loggedToday: diaryDayChange,
+    }
+    if (!traineeUser) {
+      optimisticUpdateUser(newUser)
+    } else {
+      setTraineeUser(newUser)
+    }
+
   } catch (err) {
     throw err
   }

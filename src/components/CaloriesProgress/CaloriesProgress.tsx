@@ -28,6 +28,7 @@ interface CaloriesProgressProps {
   current: number
   goal: number
   label?: string
+
 }
 
 export function CaloriesProgress({
@@ -35,6 +36,7 @@ export function CaloriesProgress({
   current,
   // goal,
   label = 'Calories',
+  goal,
 }: CaloriesProgressProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -99,7 +101,7 @@ export function CaloriesProgress({
     <>
       <Card
         className={`card calories-progress ${prefs.isDarkMode ? 'dark' : ''}`}
-        // onClick={onChangeDisplay}
+      // onClick={onChangeDisplay}
       >
         <Typography variant="h6" className="bold-header">
           {label}
@@ -108,7 +110,7 @@ export function CaloriesProgress({
         <div className="goal-container">
           <GoalBanner
             current={currentValue}
-            goal={roundToNearest50(user?.currGoal?.dailyCalories || 0)}
+            goal={roundToNearest50(goal || 0)}
           />
         </div>
         <CircularProgress
@@ -122,7 +124,7 @@ export function CaloriesProgress({
         onClose={onClose}
         component={<CaloriesEdit onCancel={onClose} onSave={onSave} />}
         title="Edit Calories"
-        // onSave={onSave}
+      // onSave={onSave}
       />
     </>
   )

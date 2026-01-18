@@ -57,15 +57,21 @@ export function Dashboard() {
 
   const [calories, setCalories] = useState(user?.loggedToday?.calories || 0)
 
+  const userToCheck = useMemo(() => {
+    return traineeUser || user
+  }, [user, traineeUser])
+
+
   const statsCarouselItems = useMemo(() => {
-    if (!user) return []
+    if (!userToCheck) return []
+
 
     return [
       <CaloriesProgress
         key="calories"
-        percentageValue={calories / user.currGoal?.dailyCalories}
+        percentageValue={calories / userToCheck.currGoal?.dailyCalories}
         current={calories}
-        goal={user.currGoal?.dailyCalories}
+        goal={userToCheck.currGoal?.dailyCalories}
       />,
       <MacrosProgress
         key="macros-progress"
@@ -80,7 +86,7 @@ export function Dashboard() {
         fats={macros.fats.gram}
       />,
     ]
-  }, [user, calories, macros])
+  }, [userToCheck, calories, macros])
   useEffect(() => {
     updateSessionDay()
   }, [user, traineeUser])
@@ -97,47 +103,51 @@ export function Dashboard() {
   }, [user])
 
   useEffect(() => {
+    if (!user) return
+
     checkDiaryDayChange()
-  }, [user])
+
+
+  }, [userToCheck])
 
   useEffect(() => {
-    if (!user || !user?.loggedToday) return
+    if (!userToCheck || !userToCheck?.loggedToday.date) return
 
-    const protein = user?.loggedToday?.logs.reduce(
+    const protein = userToCheck?.loggedToday?.logs.reduce(
       (acc, log) => acc + log.macros.protein,
       0
     )
-    const carbs = user?.loggedToday?.logs.reduce(
+    const carbs = userToCheck?.loggedToday?.logs.reduce(
       (acc, log) => acc + log.macros.carbs,
       0
     )
-    const fats = user?.loggedToday?.logs.reduce(
+    const fats = userToCheck?.loggedToday?.logs.reduce(
       (acc, log) => acc + log.macros.fat,
       0
     )
     const macrosToSet = {
       protein: {
-        percentage: getPercentage(protein, user?.currGoal?.macros.protein),
-        gram: user?.currGoal?.macros.protein,
+        percentage: getPercentage(protein, userToCheck?.currGoal?.macros.protein),
+        gram: userToCheck?.currGoal?.macros.protein,
       },
       carbs: {
-        percentage: getPercentage(carbs, user?.currGoal?.macros.carbs),
-        gram: user?.currGoal?.macros.carbs,
+        percentage: getPercentage(carbs, userToCheck?.currGoal?.macros.carbs),
+        gram: userToCheck?.currGoal?.macros.carbs,
       },
       fats: {
-        percentage: getPercentage(fats, user?.currGoal?.macros.fat),
-        gram: user?.currGoal?.macros.fat,
+        percentage: getPercentage(fats, userToCheck?.currGoal?.macros.fat),
+        gram: userToCheck?.currGoal?.macros.fat,
       },
     }
     setMacros(macrosToSet)
-  }, [user])
+  }, [userToCheck])
 
   useEffect(() => {
-    const caloriesToSet = user?.loggedToday?.calories
+    const caloriesToSet = userToCheck?.loggedToday?.calories
     if (!caloriesToSet && caloriesToSet !== 0) return
     const newCalories = caloriesToSet
     setCalories(newCalories)
-  }, [user?.loggedToday?.calories])
+  }, [userToCheck?.loggedToday?.calories])
 
   useEffect(() => {
     if (!todaySessionDay) return
@@ -149,10 +159,10 @@ export function Dashboard() {
     return (value / goal) * 100
   }
 
-  function checkDiaryDayChange() {
+  async function checkDiaryDayChange() {
     if (!user) return
     const dateToCheck = getDateFromISO(new Date().toISOString())
-    handleDiaryDayChange(dateToCheck, user)
+    await handleDiaryDayChange(dateToCheck, user, traineeUser)
   }
 
   async function updateSessionDay() {
@@ -187,7 +197,7 @@ export function Dashboard() {
               setSlideDirection(1)
               navigate('/lift-mate/workouts')
             }}
-            // fullWidth
+          // fullWidth
           />
         </div>
       )
@@ -211,14 +221,12 @@ export function Dashboard() {
 
   return (
     <div
-      className={`page-container dashboard-container ${
-        timer ? 'has-timer' : ''
-      }`}
+      className={`page-container dashboard-container ${timer ? 'has-timer' : ''
+        }`}
     >
       <TimesContainer
-        className={`${prefs.isDarkMode ? 'dark-mode' : ''} ${
-          prefs.favoriteColor
-        }`}
+        className={`${prefs.isDarkMode ? 'dark-mode' : ''} ${prefs.favoriteColor
+          }`}
       />
       <StatsCarousel items={statsCarouselItems} showSkeleton={!user} />
 

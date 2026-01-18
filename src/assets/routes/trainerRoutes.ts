@@ -13,7 +13,7 @@ import { Trainees } from '../../pages/TrainerDashboard/pages/Trainees/Trainees'
 import { TrainerWorkouts } from '../../pages/TrainerDashboard/pages/Workouts/TrainerWorkouts'
 import { TrainerExercises } from '../../pages/TrainerDashboard/pages/Exercises/TrainerExercises'
 import { TrainerSettings } from '../../pages/TrainerDashboard/pages/Settings/TrainerSettings'
-
+import { Dashboard } from '../../pages/MyTracker/Dashboard/Dashboard'
 export interface TrainerRoute {
   title: string
   path: string
@@ -25,7 +25,7 @@ export const trainerRoutes: TrainerRoute[] = [
   {
     title: 'Dashboard',
     path: '/trainer',
-    element: TrainerDashboardOverview,
+    element: Dashboard,
     icon: DashboardIcon,
   },
   {
