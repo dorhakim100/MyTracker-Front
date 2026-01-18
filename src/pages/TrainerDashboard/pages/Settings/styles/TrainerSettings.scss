@@ -1,0 +1,12 @@
+.trainer-settings-container{
+    display: grid;
+    gap: 1em;
+
+
+    .color-options{
+        svg{
+            max-width: 20px;
+            max-height: 20px;
+        }
+    }
+}
