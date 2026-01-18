@@ -138,6 +138,7 @@ export function CaloriesEdit({
                 setPickerCalories({ calories: next.calories as number })
               }
               height={150}
+              wheelMode='normal'
             >
               <Picker.Column name="calories">
                 {options.map((calorie) => (

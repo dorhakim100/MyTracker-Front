@@ -53,6 +53,7 @@ export function CircularProgress({
           trailColor: '#e6e6e6',
           textSize: '1.8rem',
 
+
           // textStyle: {
           //   fontWeight: 700,
           // },

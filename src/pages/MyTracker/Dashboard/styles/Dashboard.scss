@@ -50,6 +50,13 @@
     }
   }
 
+  .dashboard-items-container{
+    display: grid;
+    // max-width: 400px;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 1rem;
+  }
+
   .dashboard-session-container {
     margin-top: 0.5rem;
     .bold-header {

@@ -32,9 +32,9 @@ interface CaloriesProgressProps {
 }
 
 export function CaloriesProgress({
-  // percentageValue,
+
   current,
-  // goal,
+
   label = 'Calories',
   goal,
 }: CaloriesProgressProps) {
@@ -50,15 +50,7 @@ export function CaloriesProgress({
     (stateSelector: RootState) => stateSelector.userModule.userToEdit
   )
 
-  // const [valueToShow, setValueToShow] = useState<number | string>(current)
-  // const [isPercentage, setIsPercentage] = useState(false)
 
-  // const onChangeDisplay = () => {
-  //   const stateToSet = !isPercentage
-  //   setIsPercentage(stateToSet)
-
-  //   setValueToShow(stateToSet ? current : `${percentageValue}%`)
-  // }
   const [openModal, setOpenModal] = useState(false)
 
   const currentValue = useMemo(() => {
@@ -91,10 +83,8 @@ export function CaloriesProgress({
   }
 
   function getPercentageValue() {
-    return (currentValue / (user?.currGoal?.dailyCalories || 1)) * 100
-    // return user?.currGoal?.dailyCalories
-    //   ? (current / user?.currGoal?.dailyCalories) * 100
-    //   : 0
+    return (currentValue / (goal || 1)) * 100
+
   }
 
   return (

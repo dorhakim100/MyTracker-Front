@@ -77,6 +77,7 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
   const data = useMemo(() => {
     const key = viewBy === 'Weight' ? 'weight' : 'reps'
 
+
     const dateToSend = setsData.map((set) => ({
       createdAt: set?.createdAt as unknown as string,
       value: set?.[key]?.actual as number,

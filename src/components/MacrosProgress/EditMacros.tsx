@@ -84,24 +84,24 @@ export function EditMacros({
   const [pickerValue, setPickerValue] = useState<PickerValue>({
     carbs: getFixedNumber(
       (isCustomLog && carbs) ||
-        goalToEdit?.macros?.carbs ||
-        userToEdit?.currGoal?.macros.carbs ||
-        user?.currGoal?.macros.carbs ||
-        0
+      goalToEdit?.macros?.carbs ||
+      userToEdit?.currGoal?.macros.carbs ||
+      user?.currGoal?.macros.carbs ||
+      0
     ),
     protein: getFixedNumber(
       (isCustomLog && protein) ||
-        goalToEdit?.macros?.protein ||
-        userToEdit?.currGoal?.macros.protein ||
-        user?.currGoal?.macros.protein ||
-        0
+      goalToEdit?.macros?.protein ||
+      userToEdit?.currGoal?.macros.protein ||
+      user?.currGoal?.macros.protein ||
+      0
     ),
     fats: getFixedNumber(
       (isCustomLog && fats) ||
-        goalToEdit?.macros?.fat ||
-        userToEdit?.currGoal?.macros.fat ||
-        user?.currGoal?.macros.fat ||
-        0
+      goalToEdit?.macros?.fat ||
+      userToEdit?.currGoal?.macros.fat ||
+      user?.currGoal?.macros.fat ||
+      0
     ),
   })
 
@@ -188,6 +188,7 @@ export function EditMacros({
           value={pickerValue}
           onChange={(next) => setPickerValue(next as unknown as PickerValue)}
           height={150}
+          wheelMode='normal'
         >
           {macroKeys.map((name) => {
             const macroName = name as string

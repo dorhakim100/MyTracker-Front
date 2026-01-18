@@ -29,10 +29,18 @@ button {
   }
 }
 
+body.dashboard {
+  .card {
+    height: auto !important;
+  }
+}
+
 .card {
   height: $card-height;
   padding: 0.8rem 1rem;
   position: relative;
+
+
 
   h6 {
     grid-column: 1 / -1;

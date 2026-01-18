@@ -41,11 +41,15 @@ export function Dashboard() {
     (state: RootState) => state.workoutModule.sessionDay
   )
 
+
+
   const todaySessionDay = useSelector(
     (state: RootState) => state.workoutModule.todaySessionDay
   )
 
   const timer = useSelector((state: RootState) => state.workoutModule.timer)
+
+  const isDashboard = useSelector((state: RootState) => state.systemModule.isDashboard)
 
   const navigate = useNavigate()
 
@@ -224,11 +228,19 @@ export function Dashboard() {
       className={`page-container dashboard-container ${timer ? 'has-timer' : ''
         }`}
     >
-      <TimesContainer
+      {!isDashboard && <TimesContainer
         className={`${prefs.isDarkMode ? 'dark-mode' : ''} ${prefs.favoriteColor
           }`}
-      />
-      <StatsCarousel items={statsCarouselItems} showSkeleton={!user} />
+      />}
+      {!isDashboard ? <StatsCarousel items={statsCarouselItems} showSkeleton={!user} /> :
+
+        <div className="dashboard-items-container">
+          {/* <Typography variant="h5" className="bold-header">Dashboard</Typography> */}
+          {statsCarouselItems.map((item) => item)}
+
+        </div>
+
+      }
 
       {renderNoSession()}
       {/* <CustomAccordion title="Workout Session" cmp={renderSession()} /> */}

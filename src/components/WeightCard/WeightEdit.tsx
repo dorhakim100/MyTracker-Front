@@ -64,6 +64,7 @@ export function WeightEdit({
             secondValue: next.secondValue,
           })
         }
+        wheelMode='normal'
       >
         <Picker.Column name='firstValue'>
           {getArrayOfNumbers(30, 150).map((number) => (
