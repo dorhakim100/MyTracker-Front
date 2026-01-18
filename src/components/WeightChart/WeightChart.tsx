@@ -307,7 +307,8 @@ export function WeightChart({
               baseline={user?.currGoal?.targetWeight}
               baselineLabel="Goal weight"
               isDarkMode={prefs.isDarkMode}
-              movingAverageData={movingAverageData}
+              secondData={movingAverageData}
+              secondDataLabel="Weekly Average"
             />
           </div>
         </Card>

@@ -35,6 +35,7 @@ ChartJS.register(
 type SeriesValue = number | null
 
 export interface LineChartProps {
+
   data: {
     labels: string[]
     datasets: {
@@ -55,8 +56,9 @@ export interface LineChartProps {
     estimatedValue: number,
     isBaseline?: boolean
   ) => void
-  movingAverageData?: (number | null)[]
-  movingAverageLabel?: string
+  secondData?: (number | null)[]
+  secondDataLabel?: string
+  isDisplaySecondLine?: boolean
 }
 
 const DARK_MODE_WHITE = '#fff'
@@ -70,8 +72,9 @@ export default function LineChart({
   baselineLabel = 'Baseline',
   isDarkMode = false,
   onLineClick,
-  movingAverageData,
-  movingAverageLabel = 'Weakly Average',
+  secondData,
+  secondDataLabel = 'Weekly Average',
+  isDisplaySecondLine = true,
 }: LineChartProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -139,7 +142,7 @@ export default function LineChart({
         label: ds.label,
         data: ds.data,
         borderColor: isDarkMode
-          ? lightenColor(ds.borderColor, 0.25)
+          ? lightenColor(ds.borderColor as string, 0.25)
           : ds.borderColor,
         tension: ds.tension,
         borderWidth: isDarkMode ? 2 : undefined,
@@ -158,8 +161,8 @@ export default function LineChart({
     }
 
     if (
-      movingAverageData &&
-      movingAverageData.length &&
+      secondData &&
+      secondData.length &&
       chartSettings.isMovingAverage
     ) {
       const movingAverageColor = getColor(chartSettings.movingAverageColor)
@@ -177,8 +180,8 @@ export default function LineChart({
       }
 
       baseDatasets.push({
-        label: movingAverageLabel,
-        data: movingAverageData,
+        label: secondDataLabel,
+        data: secondData,
         borderColor: maColor,
         borderWidth: 2,
         tension: 0.2,
@@ -210,9 +213,9 @@ export default function LineChart({
     baselineLabel,
     isDarkMode,
     interpolateSeries,
-    movingAverageData,
+    secondData,
     chartSettings,
-    movingAverageLabel,
+    secondDataLabel,
   ])
 
   const options: ChartOptions<'line'> = {
@@ -345,7 +348,7 @@ export default function LineChart({
 
         const labelOrIndex =
           Array.isArray(chart.data.labels) &&
-          chart.data.labels[clickedIndex] != null
+            chart.data.labels[clickedIndex] != null
             ? chart.data.labels[clickedIndex]
             : clickedIndex
 

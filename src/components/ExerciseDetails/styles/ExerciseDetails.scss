@@ -4,17 +4,21 @@
   padding: 1rem 1rem 2rem 1rem;
 
   &.dashboard {
-    grid-template-columns: 300px 1fr;
+    grid-template-columns: auto 1fr;
     padding: 2rem;
     gap: 2rem 4rem;
+    max-width: $max-width;
+    margin: 0 auto;
 
     img{
       grid-column: 1/2;
       grid-row: 1/1;
-      width: 300px;
-      height: 300px;
+      width: 20vw;
+      height: calc(20vw);
+      object-fit: cover;
 
-
+      max-width: 300px;
+      max-height: 300px;
 
     }
     .line-chart-container{
@@ -46,6 +50,12 @@
     object-fit: cover;
     border-radius: 8px;
     justify-self: center;
+  }
+  .chart-header-container {
+    display: grid;
+    grid-template-columns: 1fr auto;
+
+    align-items: center;
   }
 
   .notes-container {

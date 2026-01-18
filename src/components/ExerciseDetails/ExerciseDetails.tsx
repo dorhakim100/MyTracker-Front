@@ -12,7 +12,7 @@ import { CustomAccordion } from '../../CustomMui/CustomAccordion/CustomAccordion
 import AutoStoriesIcon from '@mui/icons-material/AutoStories'
 import { setService } from '../../services/set/set.service'
 import { Set } from '../../types/exercise/Exercise'
-import { getDateFromISO, prepareSeries } from '../../services/util.service'
+import { capitalizeFirstLetter, getDateFromISO, prepareSeries } from '../../services/util.service'
 import SetsTable from '../SetsTable/SetsTable'
 import LineChart from '../LineChart/LineChart'
 import {
@@ -20,6 +20,7 @@ import {
   LineChartRangeKey,
 } from '../LineChart/LineChartControls'
 import { colors } from '../../assets/config/colors'
+import { CustomSelect } from '../../CustomMui/CustomSelect/CustomSelect'
 export interface ExerciseWithDetails extends Exercise {
   notes?: ExpectedActual<string>
   rpe?: ExpectedActual<number>
@@ -58,7 +59,7 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
   const [exerciseSets, setExerciseSets] = useState<Set[]>([])
   const [groupedSets, setGroupedSets] = useState<Record<string, Set[]>>({})
   const [range, setRange] = useState<LineChartRangeKey>('ALL')
-
+  const [viewBy, setViewBy] = useState<string>('Weight')
   const setsData = useMemo(() => {
     return Object.values(groupedSets)
       .reverse()
@@ -72,34 +73,73 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
       )
   }, [groupedSets])
 
+
   const data = useMemo(() => {
+    const key = viewBy === 'Weight' ? 'weight' : 'reps'
+
     const dateToSend = setsData.map((set) => ({
       createdAt: set?.createdAt as unknown as string,
-      value: set?.weight.actual as number,
+      value: set?.[key]?.actual as number,
     }))
     const series = prepareSeries(
       range,
       dateToSend as (Set & { createdAt: string; value: number })[],
       false,
       range
-    )
-    const labelsToShow = series?.labels
-    const kgs = series?.data ?? []
 
-    return {
+    )
+
+    const labelsToShow = series?.labels
+    const firstData = series?.data ?? []
+
+
+
+    const dataToSend = {
       labels: labelsToShow,
       datasets: [
         {
-          label: 'Weight',
-          data: kgs,
+          label: [viewBy],
+          data: firstData,
           borderColor:
             colors[prefs.favoriteColor as keyof typeof colors] ||
             colors.primary,
           tension: 0.3,
         },
+
+
       ],
     }
-  }, [setsData, range])
+
+    const secondKey = viewBy === 'Weight' ? 'reps' : 'weight'
+
+    const secondDateToSend = setsData.map((set) => ({
+      createdAt: set?.createdAt as unknown as string,
+      value: set?.[secondKey]?.actual as number,
+    }))
+
+
+    const secondSeries = prepareSeries(
+      range,
+      secondDateToSend as (Set & { createdAt: string; value: number })[],
+      false,
+      range
+    )
+
+
+
+    if (secondSeries?.data?.length) {
+      dataToSend.datasets.push({
+        label: [capitalizeFirstLetter(secondKey)],
+        data: secondSeries?.data ?? [],
+        borderColor: 'transparent',
+        tension: 0,
+      })
+    }
+
+    return dataToSend
+  }, [setsData, range, viewBy])
+
+
 
   useEffect(() => {
     const getExerciseSets = async () => {
@@ -169,9 +209,8 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
 
   return (
     <div
-      className={`exercise-details-container ${
-        prefs.isDarkMode ? 'dark-mode' : ''
-      } ${isDashboard ? 'dashboard' : ''}`}
+      className={`exercise-details-container ${prefs.isDarkMode ? 'dark-mode' : ''
+        } ${isDashboard ? 'dashboard' : ''}`}
     >
       <img
         src={exerciseImage}
@@ -180,55 +219,68 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
       />
       <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
       {/* <div className="exercise-details"> */}
-        {exercise?.notes?.expected && (
-          <>
-            <Typography variant="h5" className="bold-header">
-              Notes
-            </Typography>
-            <div
-              className={`notes-container ${getNotesClass(
-                exercise?.notes?.expected || ''
-              )}`}
-            >
-              {exercise?.notes?.expected}
-            </div>
-          </>
-        )}
-
-        <CustomAccordion
-          title="Instructions"
-          cmp={exerciseInstructions?.map(renderExerciseInstructions)}
-          icon={<AutoStoriesIcon />}
-          className='instructions-accordion'
-        />
-        <div className="line-chart-container">
+      {exercise?.notes?.expected && (
+        <>
           <Typography variant="h5" className="bold-header">
-            Max Weight Progress
+            Notes
           </Typography>
-          <LineChart
-            data={data}
-            isDarkMode={prefs.isDarkMode}
-            interpolateGaps={true}
-            spanGaps={true}
+          <div
+            className={`notes-container ${getNotesClass(
+              exercise?.notes?.expected || ''
+            )}`}
+          >
+            {exercise?.notes?.expected}
+          </div>
+        </>
+      )}
+
+      <CustomAccordion
+        title="Instructions"
+        cmp={exerciseInstructions?.map(renderExerciseInstructions)}
+        icon={<AutoStoriesIcon />}
+        className='instructions-accordion'
+      />
+      <div className="line-chart-container">
+        <div className="chart-header-container">
+
+          <Typography variant="h5" className="bold-header">
+            Max Progress
+          </Typography>
+          <CustomSelect
+            label="View by"
+            values={['Weight', 'Reps']}
+            value={viewBy}
+            onChange={(val) => setViewBy(val)}
+            className={`${prefs.favoriteColor}`}
           />
-          <LineChartControls value={range} onChange={(val) => setRange(val)} />
         </div>
-        <Typography variant="h5" className="bold-header past-sessions">
-          Past Sessions
-        </Typography>
-        {/* {exerciseSets.length === 0} */}
-        {exerciseSets.length === 0 && (
-          <Badge
-            badgeContent={'New'}
-            className={`${prefs.favoriteColor} new`}
-          ></Badge>
-        )}
-        <SetsTable
-          groupedSets={
-            groupedSets as Record<string, (Set & { exerciseId: string })[]>
-          }
+        <LineChart
+          data={data as any}
+          isDarkMode={prefs.isDarkMode}
+          interpolateGaps={true}
+          spanGaps={true}
+
+          isDisplaySecondLine={false}
+          secondDataLabel={viewBy === 'Weight' ? 'Reps' : 'Weight'}
         />
+        <LineChartControls value={range} onChange={(val) => setRange(val)} />
       </div>
+      <Typography variant="h5" className="bold-header past-sessions">
+        Past Sessions
+      </Typography>
+      {/* {exerciseSets.length === 0} */}
+      {exerciseSets.length === 0 && (
+        <Badge
+          badgeContent={'New'}
+          className={`${prefs.favoriteColor} new`}
+        ></Badge>
+      )}
+      <SetsTable
+        groupedSets={
+          groupedSets as Record<string, (Set & { exerciseId: string })[]>
+        }
+      />
+    </div>
     // </div>
   )
 }
