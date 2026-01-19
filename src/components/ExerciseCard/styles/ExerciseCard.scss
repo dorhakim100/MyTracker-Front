@@ -34,7 +34,11 @@
           word-break: break-word;
         }
 
-
+        .resting-time-container {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
       }
     }
 

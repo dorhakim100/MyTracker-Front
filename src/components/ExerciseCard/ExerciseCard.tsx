@@ -35,6 +35,8 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import AltRouteIcon from '@mui/icons-material/AltRoute'
 import { useWindowDimentions } from '../../hooks/useWindowDimentions'
+import AccessAlarmIcon from '@mui/icons-material/AccessAlarm';
+
 
 interface SlideDialogOptions {
   title: string
@@ -172,7 +174,7 @@ export function ExerciseCard({
     },
     isExpected && {
       title: 'Edit Resting Timer',
-      icon: <TimerIcon />,
+      icon: <AccessAlarmIcon />,
       onClick: () => {
         setSlideDialogOptions((prev) => {
           return {
@@ -500,12 +502,16 @@ export function ExerciseCard({
                 <Divider
                   className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
                 />
-                <span>
-                  Resting time:{' '}
-                  {formatTime(
-                    exerciseInstructions.restingTime || DEFAULT_RESTING_TIME
-                  )}
-                </span>
+                <div className="resting-time-container">
+                  <AccessAlarmIcon />
+                  <span>Resting time:</span>
+                  <span>
+
+                    {formatTime(
+                      exerciseInstructions.restingTime || DEFAULT_RESTING_TIME
+                    )}
+                  </span>
+                </div>
               </>
             )}
           </div>

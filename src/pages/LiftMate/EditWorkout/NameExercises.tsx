@@ -25,8 +25,12 @@ import CheckIcon from '@mui/icons-material/Check'
 import { WeekNumberStatus } from '../../../types/weekNumberStatus/WeekNumberStatus'
 import BeenhereIcon from '@mui/icons-material/Beenhere'
 import { CustomList } from '../../../CustomMui/CustomList/CustomList'
+import { CustomAlertDialog } from '../../../CustomMui/CustomAlertDialog/CustomAlertDialog'
+import { SaveCancel } from '../../../components/SaveCancel/SaveCancel'
+import { showErrorMsg } from '../../../services/event-bus.service'
+import { messages } from '../../../assets/config/messages'
 
-type DialogType = 'add' | 'reorder' | null
+type DialogType = 'add' | 'reorder' | 'alert' | null
 
 interface DialogState {
   type: DialogType
@@ -56,7 +60,7 @@ interface NameExercisesProps {
   }) => void
   setInstructions: (instructions: Instructions) => void
   onEditExerciseNotes: (exerciseId: string, notes: string) => void
-  onSaveWorkout: () => void
+  onSaveWorkout: (isClose?: boolean) => void
   onSwitchRpeRir: (exerciseId: string, value: 'rpe' | 'rir') => void
 }
 
@@ -92,7 +96,24 @@ export function NameExercises({
     open: false,
   })
 
+  const originalInstructions = useRef<Instructions>(instructions)
+
+  const [isSaved, setIsSaved] = useState(JSON.stringify(instructions) === JSON.stringify(originalInstructions.current))
+  const [desiredWeekNumber, setDesiredWeekNumber] = useState<number>(instructionsFilter.weekNumber)
+
+
   const editWorkoutRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    setIsSaved(JSON.stringify(instructions) === JSON.stringify(originalInstructions.current))
+  }, [instructions])
+
+  useEffect(() => {
+    originalInstructions.current = instructions
+    setIsSaved(JSON.stringify(instructions) === JSON.stringify(originalInstructions.current))
+  }, [instructions._id])
+
+
 
   useEffect(() => {
     if (!dialogState.open && editWorkoutRef.current) {
@@ -253,6 +274,20 @@ export function NameExercises({
     }
   }
 
+  const handleSaveOnWeekNumberChange = async () => {
+    try {
+      onSaveWorkout(false)
+      onInstructionsFilterChange({
+        ...instructionsFilter,
+        weekNumber: desiredWeekNumber,
+      })
+      closeDialog()
+
+    } catch (err) {
+      showErrorMsg(messages.error.saveWorkout)
+    }
+  }
+
   return (
     <>
       <div
@@ -271,11 +306,19 @@ export function NameExercises({
           {instructions._id && (
             <CustomToggle
               value={instructionsFilter.weekNumber.toString()}
-              onChange={(weekNumber: string) =>
+              onChange={(weekNumber: string) => {
+
+                if (!isSaved) {
+
+                  openDialog('alert')
+                  setDesiredWeekNumber(+weekNumber)
+                  return
+                }
                 onInstructionsFilterChange({
                   ...instructionsFilter,
                   weekNumber: +weekNumber,
                 })
+              }
               }
               options={getArrayOfNumbers(1, 10).map((weekNumber) => ({
                 label: `Week`,
@@ -339,7 +382,7 @@ export function NameExercises({
             />
             <CustomButton
               text="Save Workout"
-              onClick={onSaveWorkout}
+              onClick={() => onSaveWorkout(false)}
               icon={<BeenhereIcon />}
               fullWidth={true}
             />
@@ -347,12 +390,22 @@ export function NameExercises({
         )}
       </div>
       <SlideDialog
-        open={dialogState.open}
+        open={dialogState.open && dialogState.type !== 'alert'}
         onClose={closeDialog}
         component={getDialogComponent()}
         title={getDialogTitle()}
         type="full"
       />
+      <CustomAlertDialog
+        open={dialogState.open && dialogState.type === 'alert'}
+        onClose={closeDialog}
+        title="Change Week Number"
+
+
+      >
+        <span>You have unsaved changes. Do you want to save before changing the week number?</span>
+        <SaveCancel onCancel={closeDialog} onSave={handleSaveOnWeekNumberChange} />
+      </CustomAlertDialog>
     </>
   )
 }

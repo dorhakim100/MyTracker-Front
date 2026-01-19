@@ -161,9 +161,9 @@ export function EditWorkout({
     const newExercises =
       exerciseIndex === -1
         ? [
-            ...workout.exercises,
-            { ...exercise, details: workoutService.getEmptyExerciseDetail() },
-          ]
+          ...workout.exercises,
+          { ...exercise, details: workoutService.getEmptyExerciseDetail() },
+        ]
         : workout.exercises.filter((e) => e.exerciseId !== exercise.exerciseId)
 
     const notes = instructionsService.getEmptyExpectedActual('notes')
@@ -350,7 +350,7 @@ export function EditWorkout({
     }
   }
 
-  const onFinish = async () => {
+  const onFinish = async (isClose: boolean = true) => {
     const workoutToSave = {
       ...workout,
       forUserId:
@@ -379,15 +379,16 @@ export function EditWorkout({
       showErrorMsg(messages.error.saveWorkout)
     } finally {
       setIsLoading(false)
-      closeDialog()
+      if (isClose) {
+        closeDialog()
+      }
     }
   }
 
   return (
     <div
-      className={`edit-workout-container ${
-        prefs.isDarkMode ? 'dark-mode' : ''
-      }`}
+      className={`edit-workout-container ${prefs.isDarkMode ? 'dark-mode' : ''
+        }`}
     >
       <NameExercises
         workout={workout}
@@ -405,7 +406,7 @@ export function EditWorkout({
         setInstructions={setInstructions}
         onEditExerciseNotes={onEditExerciseNotes}
         onSwitchRpeRir={onSwitchRpeRir}
-        onSaveWorkout={onFinish}
+        onSaveWorkout={(isClose?: boolean) => onFinish(isClose)}
       />
     </div>
   )
