@@ -495,7 +495,7 @@ export function Workouts() {
           <Typography variant="h5" className="bold-header">
             Workout by date
           </Typography>
-          {!sessionDay.instructions && (
+          {!sessionDay.instructions && !isDashboard && (
             <CustomButton
               text="Start Empty Workout"
               onClick={onPlayEmptyWorkout}
