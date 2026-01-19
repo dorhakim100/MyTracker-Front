@@ -246,6 +246,12 @@ export default function LineChart({
       y: {
         ticks: { color: isDarkMode ? DARK_MODE_WHITE : undefined },
         grid: { color: isDarkMode ? 'rgba(255,255,255,0.08)' : undefined },
+
+
+        min: Math.floor(Math.min(...data.datasets[0].data.filter((data): data is number => data !== null)) - Math.max(...data.datasets[0].data.filter((data): data is number => data !== null)) / 25),
+        max: Math.ceil(Math.max(...data.datasets[0].data.filter((data): data is number => data !== null)) + Math.max(...data.datasets[0].data.filter((data): data is number => data !== null)) / 25),
+
+
       },
     },
   }
