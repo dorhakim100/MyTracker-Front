@@ -11,6 +11,8 @@ import Header from './components/Header/Header'
 import { trainerRoutes } from '../../assets/routes/trainerRoutes'
 import { stylesVariables } from '../../assets/config/styles.variables'
 
+import { Dashboard } from '../MyTracker/Dashboard/Dashboard'
+
 function Copyright() {
   return (
     <Typography variant="body2" align="center" sx={{ color: 'text.secondary' }}>
@@ -197,7 +199,7 @@ export function TrainerDashboard() {
         </Box>
         <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
           <Header onDrawerToggle={handleDrawerToggle} />
-          <Box component="main" sx={{ flex: 1}} className="trainer-dashboard-content-container">
+          <Box component="main" sx={{ flex: 1 }} className="trainer-dashboard-content-container">
             <Routes>
               {trainerRoutes.map((route) => (
                 <Route

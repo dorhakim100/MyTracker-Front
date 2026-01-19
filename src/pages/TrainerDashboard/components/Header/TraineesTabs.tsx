@@ -14,8 +14,8 @@ import {
   DraggableProvided,
   DraggableStateSnapshot,
 } from '@hello-pangea/dnd'
-import { indexedDbService } from '../../../../services/indexeddb.service'
-import { TRAINEE_ORDER_STORE_NAME } from '../../../../constants/store.constants'
+
+import { TRAINEE_ORDER_STORE_NAME, LAST_TRAINEE_STORE_NAME } from '../../../../constants/store.constants'
 
 
 interface TraineesTabsProps {
@@ -40,6 +40,16 @@ export function TraineesTabs({ trainees }: TraineesTabsProps) {
     const index = reorderedTrainees.findIndex((t) => t._id === traineeUser._id)
     return index >= 0 ? index : 0
   }, [traineeUser, reorderedTrainees])
+
+  useEffect(() => {
+    const lastTraineeId = localStorage.getItem(LAST_TRAINEE_STORE_NAME)
+    if (lastTraineeId) {
+      const index = reorderedTrainees.findIndex((t) => t._id === lastTraineeId)
+      if (index >= 0) {
+        setTraineeUser(reorderedTrainees[index])
+      }
+    }
+  }, [reorderedTrainees])
 
   const onDragEnd = async ({ destination, source }: DropResult) => {
     if (!destination || destination.index === source.index) return
@@ -89,6 +99,7 @@ export function TraineesTabs({ trainees }: TraineesTabsProps) {
                           } else {
                             setTraineeUser(trainee)
                           }
+                          localStorage.setItem(LAST_TRAINEE_STORE_NAME, trainee._id)
                         }}
                           className={`trainee-tab ${snapshot.isDragging ? 'dragging' : ''} ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
                           {trainee.details.fullname} {trainee._id === user?._id ? ' (Me)' : ''}

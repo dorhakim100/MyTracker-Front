@@ -80,6 +80,18 @@ export default function LineChart({
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
 
+  const min = useMemo(() => {
+
+    if (data.datasets[0].data.length === 0) return 0
+    return Math.floor(Math.min(...data.datasets[0].data.filter((data): data is number => data !== null)) - Math.max(...data.datasets[0].data.filter((data): data is number => data !== null)) / 25) || 0
+  },
+
+    [data])
+  const max = useMemo(() => {
+    if (data.datasets[0].data.length === 0) return 100
+    return Math.ceil(Math.max(...data.datasets[0].data.filter((data): data is number => data !== null)) + Math.max(...data.datasets[0].data.filter((data): data is number => data !== null)) / 25)
+  }, [data])
+
   const chartSettings = useMemo(() => prefs.weightChartSettings, [prefs])
 
   const chartRef = useRef<ChartJS<'line'>>(null)
@@ -248,8 +260,8 @@ export default function LineChart({
         grid: { color: isDarkMode ? 'rgba(255,255,255,0.08)' : undefined },
 
 
-        min: Math.floor(Math.min(...data.datasets[0].data.filter((data): data is number => data !== null)) - Math.max(...data.datasets[0].data.filter((data): data is number => data !== null)) / 25),
-        max: Math.ceil(Math.max(...data.datasets[0].data.filter((data): data is number => data !== null)) + Math.max(...data.datasets[0].data.filter((data): data is number => data !== null)) / 25),
+        min: min,
+        max: max,
 
 
       },

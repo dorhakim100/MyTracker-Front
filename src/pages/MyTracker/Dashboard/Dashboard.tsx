@@ -230,12 +230,15 @@ export function Dashboard() {
   return (
     <div
       className={`page-container dashboard-container ${timer ? 'has-timer' : ''
-        }`}
+        } ${isDashboard ? 'dashboard' : ''}`}
     >
       {!isDashboard && <TimesContainer
         className={`${prefs.isDarkMode ? 'dark-mode' : ''} ${prefs.favoriteColor
           }`}
       />}
+      {isDashboard && <Typography variant="h4" className='bold-header' >
+        Dashboard
+      </Typography>}
       {/* <Typography variant="h5" className="bold-header">Dashboard</Typography> */}
       {showStatsCarousel ? <StatsCarousel items={statsCarouselItems} showSkeleton={!user} /> :
 

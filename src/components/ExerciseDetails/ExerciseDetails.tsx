@@ -92,7 +92,6 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
 
     const labelsToShow = series?.labels
     const firstData = series?.data ?? []
-    console.log('firstData', firstData);
 
 
 

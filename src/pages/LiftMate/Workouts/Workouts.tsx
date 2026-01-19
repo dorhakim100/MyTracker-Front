@@ -455,11 +455,14 @@ export function Workouts() {
   if (!sessionDay || !sessionDay._id || isPageLoading) return renderSkeleton()
   return (
     <>
+
       <div
         className={`page-container workouts-container ${timer ? 'has-timer' : ''
           } ${isDashboard ? 'dashboard' : ''}`}
       >
-
+        {isDashboard && <Typography variant="h4" className='bold-header' style={{ textAlign: 'center' }} >
+          Workouts
+        </Typography>}
         <>
           <div className="workouts-header routines">
             <Typography variant="h5" className="bold-header">
@@ -490,7 +493,7 @@ export function Workouts() {
         <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
         <div className="workouts-header">
           <Typography variant="h5" className="bold-header">
-            Workout
+            Workout by date
           </Typography>
           {!sessionDay.instructions && (
             <CustomButton

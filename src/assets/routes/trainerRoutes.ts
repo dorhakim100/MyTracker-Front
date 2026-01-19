@@ -10,11 +10,11 @@ import FeaturedPlayListIcon from '@mui/icons-material/FeaturedPlayList'
 // Placeholder components - will be created
 
 import { Trainees } from '../../pages/TrainerDashboard/pages/Trainees/Trainees'
+import { TrainerDashboardOverview } from '../../pages/TrainerDashboard/pages/Dashboard/TrainerDashboardOverview'
 import { TrainerWorkouts } from '../../pages/TrainerDashboard/pages/Workouts/TrainerWorkouts'
 import { TrainerExercises } from '../../pages/TrainerDashboard/pages/Exercises/TrainerExercises'
 import { TrainerSettings } from '../../pages/TrainerDashboard/pages/Settings/TrainerSettings'
-import { Dashboard } from '../../pages/MyTracker/Dashboard/Dashboard'
-import { Workouts } from '../../pages/LiftMate/Workouts/Workouts'
+
 export interface TrainerRoute {
   title: string
   path: string
@@ -26,7 +26,7 @@ export const trainerRoutes: TrainerRoute[] = [
   {
     title: 'Dashboard',
     path: '/trainer',
-    element: Dashboard,
+    element: TrainerDashboardOverview,
     icon: DashboardIcon,
   },
   {
@@ -38,7 +38,7 @@ export const trainerRoutes: TrainerRoute[] = [
   {
     title: 'Workouts',
     path: '/trainer/workouts',
-    element: Workouts,
+    element: TrainerWorkouts,
     icon: FeaturedPlayListIcon,
   },
   {

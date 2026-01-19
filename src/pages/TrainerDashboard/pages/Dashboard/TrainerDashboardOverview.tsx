@@ -1,14 +1,16 @@
 import { Typography, Box } from '@mui/material'
 
+import { Dashboard } from '../../../MyTracker/Dashboard/Dashboard'
+import { RootState } from '../../../../store/store'
+import { useSelector } from 'react-redux'
+
 export function TrainerDashboardOverview() {
+  const prefs = useSelector((state: RootState) => state.systemModule.prefs)
   return (
-    <Box>
-      <Typography variant="h4" gutterBottom>
-        Dashboard Overview
-      </Typography>
-      <Typography variant="body1" color="text.secondary">
-        Welcome to your trainer dashboard. This is the overview page.
-      </Typography>
-    </Box>
+
+
+
+    <Dashboard />
+
   )
 }
