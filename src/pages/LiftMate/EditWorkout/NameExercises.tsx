@@ -83,6 +83,10 @@ export function NameExercises({
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
 
+  const isDashboard = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.isDashboard
+  )
+
   const [dialogState, setDialogState] = useState<DialogState>({
     type: null,
     open: false,
@@ -225,9 +229,8 @@ export function NameExercises({
               <img src={exercise.image} alt={exercise.name} />
             )}
             getKey={(exercise) => `${exercise.exerciseId}-selected`}
-            className={`reorder-exercise-list ${
-              prefs.isDarkMode ? 'dark-mode' : ''
-            }`}
+            className={`reorder-exercise-list ${prefs.isDarkMode ? 'dark-mode' : ''
+              }`}
             noResultsMessage="No exercises added yet"
             isDragable={true}
             onReorder={onReorderExercises}
@@ -285,9 +288,8 @@ export function NameExercises({
               }))}
               isBadge={true}
               isReversedIcon={true}
-              className={`week-number-toggle ${
-                prefs.isDarkMode ? 'dark-mode' : ''
-              }`}
+              className={`week-number-toggle ${prefs.isDarkMode ? 'dark-mode' : ''
+                }`}
             />
           )}
           {!instructions._id && (
@@ -316,11 +318,10 @@ export function NameExercises({
         )}
       </div>
       <div
-        className={`end-buttons-container ${
-          prefs.isDarkMode ? 'dark-mode' : ''
-        } ${prefs.favoriteColor} ${
-          workout.exercises.length > 0 ? 'has-exercises' : ''
-        }`}
+        className={`end-buttons-container ${prefs.isDarkMode ? 'dark-mode' : ''
+          } ${prefs.favoriteColor} ${workout.exercises.length > 0 ? 'has-exercises' : ''
+          } ${isDashboard ? 'dashboard' : ''
+          }`}
       >
         <CustomButton
           text="Add Exercise"

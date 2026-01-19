@@ -1,6 +1,18 @@
 .workouts-list-container {
   display: grid;
   gap: 1rem;
+  
+  
+  
+  &.dashboard {
+      .workouts-list-container{
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1rem;
+
+
+    }
+  }
 
   &.dark-mode {
     color: $white;

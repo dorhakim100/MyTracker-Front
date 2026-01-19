@@ -90,6 +90,7 @@
     align-items: center;
     justify-content: center;
     gap: 1rem;
+
     &.has-exercises {
       position: fixed;
       bottom: 20px;
@@ -101,7 +102,12 @@
       border-top: 1px solid $light-gray;
       z-index: 1000;
       box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
-
+    &.dashboard {
+      left: $left-menu-width;
+      right: 15px;
+      bottom: 0px;
+      justify-content: space-around;
+    }
       &.dark-mode {
         background: $dark-gray;
         border-top: 1px solid $white;

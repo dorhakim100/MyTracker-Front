@@ -174,26 +174,15 @@ export function Workouts() {
   )
 
   useEffect(() => {
-    if (traineeUser) {
-      loadWorkouts({
-        forUserId: traineeUser._id,
-        from: selectedPastDate?.from,
-        to: selectedPastDate?.to,
-      })
-    } else if (user) {
-      loadWorkouts({
-        forUserId: user._id,
-        from: selectedPastDate?.from,
-        to: selectedPastDate?.to,
-      })
-    }
-    return () => {
-      loadWorkouts({
-        forUserId: traineeUser?._id || user?._id || '',
-        from: selectedPastDate?.from,
-        to: selectedPastDate?.to,
-      })
-    }
+    if (!user) return
+
+    loadWorkouts({
+      forUserId: traineeUser?._id || user?._id,
+      from: selectedPastDate?.from,
+      to: selectedPastDate?.to,
+    })
+
+
   }, [user, traineeUser, selectedPastDate])
 
   useEffect(() => {
@@ -364,7 +353,7 @@ export function Workouts() {
         )}
 
         <div
-          className={`workouts-list-container ${prefs.isDarkMode ? 'dark-mode' : ''
+          className={`workouts-list-container ${isDashboard ? 'dashboard' : ''} ${prefs.isDarkMode ? 'dark-mode' : ''
             } active`}
         >
           <WorkoutsList

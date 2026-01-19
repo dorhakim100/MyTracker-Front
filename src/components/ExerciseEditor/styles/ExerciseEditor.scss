@@ -29,10 +29,12 @@
       &.dashboard {
         width: calc(100vw - $left-menu-width - 3rem);
         padding-inline:1rem;
+
       }
     }
     .set-editor-container {
       width: 100%;
+      padding-right: 2rem !important;
 
       display: grid;
       grid-template-columns: 23px 1fr 1fr 1fr;
@@ -40,6 +42,11 @@
       @media (min-width: 600px) {
         grid-template-columns: auto 1fr 1fr 1fr;
         padding: 2rem 0 0 0;
+        justify-items: start;
+        &.dashboard {
+          grid-template-columns: auto auto auto auto auto;
+
+        }
       }
       justify-items: center;
 
@@ -64,6 +71,7 @@
         &.float {
           top: 1rem;
           left: 1.75rem;
+          margin-top: 0.5rem;
           position: absolute;
           @media (min-width: 800px) {
             span{
@@ -71,6 +79,7 @@
               width: 1.5rem;
               height: 1.5rem;
               border-radius: 50%;
+
 
             }
 
@@ -118,6 +127,10 @@
             // margin: 0.3rem 0 1rem 0;
           }
         }
+
+        .delete-set-button{
+          align-self: end;
+        }
         .badges-container {
           align-self: start;
           margin-top: 1.2rem;
@@ -133,11 +146,15 @@
       .previous-set-label {
         font-weight: 700;
         font-size: 1.1rem;
-        left: -20px;
+
         padding: 0px;
         position: absolute;
         top: 0;
-        left: 30px;
+        inset-inline-start: 30px;
+        &.dashboard {
+          top: 5px;
+          inset-inline-start: 65px;
+        }
       }
 
       .MuiFormLabel-root {

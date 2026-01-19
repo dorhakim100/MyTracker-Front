@@ -154,6 +154,11 @@ button {
   }
 }
 
+.MuiCard-root:not(.dark-mode){
+  background-color: $neutral-gray !important;
+
+}
+
 .MuiPaper-root:has(.MuiMenu-list).dark-mode {
   color: $white;
 }

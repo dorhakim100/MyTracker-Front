@@ -39,6 +39,7 @@ import { Badge } from '@mui/material'
 
 import DoneAllIcon from '@mui/icons-material/DoneAll'
 import { getWorkoutMuscles } from '../../../services/exersice-search/exersice-search'
+import EditIcon from '@mui/icons-material/Edit';
 interface WorkoutCardProps {
   workout: Workout
   className?: string
@@ -60,6 +61,10 @@ export function WorkoutCard({
 
   const isLoading = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.isLoading
+  )
+
+  const isDashboard = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.isDashboard
   )
 
   const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false)
@@ -186,9 +191,8 @@ export function WorkoutCard({
   return (
     <>
       <Card
-        className={`workout-card-container ${className} ${
-          prefs.isDarkMode ? 'dark-mode' : ''
-        }`}
+        className={`workout-card-container pointer ${className} ${prefs.isDarkMode ? 'dark-mode' : ''
+          }`}
         onClick={onViewDetails}
       >
         <div className="header-container">
@@ -227,6 +231,22 @@ export function WorkoutCard({
             {renderAvailableWorkoutButton()}
           </>
         )}
+        {
+          isDashboard && (
+            <div className="dashboard-actions-container">
+              <CustomButton
+                text="Edit Block"
+                fullWidth={true}
+                onClick={(ev) => {
+                  ev.stopPropagation()
+                  onEdit()
+                }}
+                className="start-workout-button"
+                icon={<EditIcon />}
+              />
+            </div>
+          )
+        }
       </Card>
       <CustomAlertDialog
         open={isDeleteOpen}

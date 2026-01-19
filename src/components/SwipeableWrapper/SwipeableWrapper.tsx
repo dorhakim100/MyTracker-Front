@@ -28,6 +28,7 @@ export interface SwipeableWrapperProps {
   listKey?: string | number
   threshold?: number
   scrollStartThreshold?: number
+  disableSwipe?: boolean
 }
 
 export function SwipeableWrapper({
@@ -39,6 +40,7 @@ export function SwipeableWrapper({
   listKey,
   threshold = 0.25,
   scrollStartThreshold = 20,
+  disableSwipe = false,
 }: SwipeableWrapperProps) {
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
   // List mode: render multiple items
@@ -51,13 +53,13 @@ export function SwipeableWrapper({
         key={listKey}
       >
         {items.map((item) => {
-          const leadingActions = item.renderLeftSwipeActions ? (
+          const leadingActions = disableSwipe ? null : item.renderLeftSwipeActions ? (
             <LeadingActions>{item.renderLeftSwipeActions()}</LeadingActions>
           ) : renderLeftSwipeActions ? (
             <LeadingActions>{renderLeftSwipeActions()}</LeadingActions>
           ) : null
 
-          const trailingActions = item.renderRightSwipeActions ? (
+          const trailingActions = disableSwipe ? null : item.renderRightSwipeActions ? (
             <TrailingActions>{item.renderRightSwipeActions()}</TrailingActions>
           ) : renderRightSwipeActions ? (
             <TrailingActions>{renderRightSwipeActions()}</TrailingActions>

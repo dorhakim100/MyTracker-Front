@@ -196,6 +196,9 @@ export function ExerciseCard({
       icon: <EditNoteIcon />,
       onClick: () => {
         setIsEditNotesOpen(true)
+        setEditNotes(isExpected
+          ? exerciseInstructions?.notes?.expected
+          : exerciseInstructions?.notes?.actual)
       },
     },
     !isExpected && {

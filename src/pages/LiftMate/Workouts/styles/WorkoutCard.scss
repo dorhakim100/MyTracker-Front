@@ -4,12 +4,17 @@
   border-radius: 0.5rem;
   box-shadow: 0 0 0.5rem 0 rgba(0, 0, 0, 0.1);
 
+
   width: calc(100vw - 2rem);
 
   @media (min-width: 600px) {
+    max-width: 100%;
+    height: 100%;
+    align-items: start;
     width: calc(100vw - $left-menu-width - 2rem);
     .workout-card-container{
       width: calc(100vw - $left-menu-width - 2rem);
+
 
     }
   }
@@ -44,5 +49,12 @@
       padding: 0.5rem 1rem;
       // top: 0;
     }
+  }
+
+  .dashboard-actions-container {
+    margin-top: 0.5rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
   }
 }

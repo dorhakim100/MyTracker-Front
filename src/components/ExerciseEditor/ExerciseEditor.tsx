@@ -30,6 +30,7 @@ import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline'
 import { Instructions } from '../../types/instructions/Instructions'
 import { setSelectedSessionDay } from '../../store/actions/workout.action'
 import { useWindowDimentions } from '../../hooks/useWindowDimentions'
+import DeleteIcon from '@mui/icons-material/Delete'
 
 export interface ExerciseEditorProps {
   exercise: ExerciseInstructions
@@ -280,13 +281,14 @@ export function ExerciseEditor({
       >
         {exercise.sets && exercise.sets.length > 0 && (
           <SwipeableWrapper
+            disableSwipe={isDashboard}
             items={exercise.sets.map((set, index) => ({
               id: `${exercise.exerciseId}-set-${index}`,
               content: (
                 <div className={`set-container ${isDashboard ? 'dashboard' : ''}`}>
                   <div
                     className={`set-editor-container ${previousInstructions ? 'with-previous-set' : ''
-                      }`}
+                      } ${isDashboard ? 'dashboard' : ''}`}
                   >
                     <Badge
                       badgeContent={index + 1}
@@ -296,6 +298,7 @@ export function ExerciseEditor({
                     <div className="badges-container">
                       {(previousInstructions || !isExpected) && (
                         <Checkbox
+                          disabled={isExpected}
                           icon={
                             <RadioButtonUncheckedIcon
                               className="not-finished"
@@ -314,7 +317,7 @@ export function ExerciseEditor({
                       )}
                     </div>
                     {previousInstructions && (
-                      <span className="previous-set-label">
+                      <span className={`previous-set-label ${isDashboard ? 'dashboard' : ''}`}>
                         Previous week expected:
                       </span>
                     )}
@@ -457,6 +460,12 @@ export function ExerciseEditor({
                       // isAutoWidth={true}
                       />
                     </div>
+                    {isDashboard && <CustomButton
+                      className="delete-set-button"
+                      text="Delete Set"
+                      onClick={() => onDeleteSet(index)}
+                      icon={<DeleteIcon />}
+                    />}
                   </div>{' '}
                   {/* <Divider
                     className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
