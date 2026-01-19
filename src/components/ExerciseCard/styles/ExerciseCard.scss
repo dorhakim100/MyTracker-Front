@@ -26,6 +26,14 @@
         align-self: start;
          grid-column: 1/-1;
          grid-row: 2/3;
+        max-width: 300px;
+
+        .exercise-card-name, .exercise-card-muscle-groups, .exercise-card-equipment {
+          white-space: normal;
+          overflow-wrap: break-word;
+          word-break: break-word;
+        }
+
 
       }
     }

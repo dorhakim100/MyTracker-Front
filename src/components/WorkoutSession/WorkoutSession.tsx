@@ -57,6 +57,10 @@ export function WorkoutSession({
 
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
 
+  const isDashboard = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.isDashboard
+  )
+
   const [openExercises, setOpenExercises] = useState<Set<string>>(new Set())
 
   const workouts = useSelector(
@@ -145,6 +149,14 @@ export function WorkoutSession({
   }, [exerciseFilter.searchValue, debouncedRunSearch])
 
   useEffect(() => {
+
+    if (isDashboard) {
+      setOpenExercises(new Set(sessionDay.workout.exercises.map(
+        (ex) => ex.exerciseId
+      )))
+      return
+    }
+
     if (
       !sessionDay.instructions.exercises ||
       sessionDay.instructions.isFinished
@@ -179,18 +191,18 @@ export function WorkoutSession({
       }
       const newExercises = isExerciseAlreadyAdded
         ? instructions.exercises.filter(
-            (e) => e.exerciseId !== exercise.exerciseId
-          )
+          (e) => e.exerciseId !== exercise.exerciseId
+        )
         : [
-            ...instructions.exercises,
-            {
-              exerciseId: exercise.exerciseId,
-              sets: [newSet],
-              notes: { expected: '', actual: '' },
-              restingTime: DEFAULT_RESTING_TIME,
-              image: exercise.image,
-            },
-          ]
+          ...instructions.exercises,
+          {
+            exerciseId: exercise.exerciseId,
+            sets: [newSet],
+            notes: { expected: '', actual: '' },
+            restingTime: DEFAULT_RESTING_TIME,
+            image: exercise.image,
+          },
+        ]
 
       const newInstructions = {
         ...instructions,
@@ -213,12 +225,12 @@ export function WorkoutSession({
         saveWorkout(newWorkout),
         !isExerciseAlreadyAdded
           ? setService.saveSetBySessionIdAndExerciseId(
-              sessionDay._id,
-              exercise.exerciseId,
-              newSet,
-              0,
-              true
-            )
+            sessionDay._id,
+            exercise.exerciseId,
+            newSet,
+            0,
+            true
+          )
           : Promise.resolve(null),
       ]
 
@@ -296,6 +308,7 @@ export function WorkoutSession({
     []
   )
 
+
   const toggleExpandAll = () => {
     if (!sessionDay?.workout?.exercises) return
     const allExerciseIds = sessionDay.workout.exercises.map(
@@ -362,8 +375,8 @@ export function WorkoutSession({
     const imageToSet = nextExercise?.image
       ? nextExercise.image
       : sessionDay.workout.exercises.find(
-          (e) => e.exerciseId === nextExercise?.exerciseId
-        )?.image
+        (e) => e.exerciseId === nextExercise?.exerciseId
+      )?.image
 
     const currentExerciseToSet = {
       ...nextExercise,
@@ -670,9 +683,9 @@ export function WorkoutSession({
         exercises: sessionDay.instructions.exercises.map((e) =>
           e.exerciseId === exerciseId
             ? {
-                ...e,
-                notes: { expected: e.notes?.expected || '', actual: notes },
-              }
+              ...e,
+              notes: { expected: e.notes?.expected || '', actual: notes },
+            }
             : e
         ),
       })
