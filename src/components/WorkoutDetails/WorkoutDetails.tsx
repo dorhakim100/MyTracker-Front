@@ -26,6 +26,10 @@ export function WorkoutDetails({ workout }: WorkoutDetailsProps) {
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
 
+  const isDashboard = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.isDashboard
+  )
+
   const [exersiceDialogOptions, setExersiceDialogOptions] =
     useState<ExerciseDialogOptions>({
       open: false,
@@ -44,12 +48,15 @@ export function WorkoutDetails({ workout }: WorkoutDetailsProps) {
     )
   }
 
+
+
   return (
     <>
       <div className='workout-details-container'>
         <div className='header-container'>
           <Typography variant='h4' className='name-container bold-header'>
             {workout.name}
+
           </Typography>
           {workout.muscleGroups && workout.muscleGroups.length > 0 && (
             <Typography variant='body1' className='muscle-groups-container'>
@@ -67,7 +74,7 @@ export function WorkoutDetails({ workout }: WorkoutDetailsProps) {
           renderSecondaryText={(exercise) =>
             capitalizeFirstLetter(exercise.muscleGroups.join(', '))
           }
-          className={`exercises-list ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+          className={`exercises-list  ${prefs.isDarkMode ? 'dark-mode' : ''} ${isDashboard ? 'dashboard' : ''}`}
           renderLeft={(exercise) => (
             <img src={exercise.image} alt={exercise.name} />
           )}
