@@ -43,14 +43,7 @@ export function UserDetails() {
   const [requests, setRequests] = useState<TrainerRequest[]>([])
 
   const acrodions = [
-    user?.isTrainer
-      ? {
-          title: 'My Trainees',
-          cmp: <MyTraineeCard />,
-          icon: <PersonAddIcon />,
-          key: 'my-trainees',
-        }
-      : null,
+
     {
       title: 'Meals',
       cmp: <MealsCard />,
@@ -130,9 +123,8 @@ export function UserDetails() {
 
   return (
     <div
-      className={`page-container user-page ${
-        prefs.isDarkMode ? 'dark-mode' : ''
-      }`}
+      className={`page-container user-page ${prefs.isDarkMode ? 'dark-mode' : ''
+        }`}
     >
       <ProfileCard />
 

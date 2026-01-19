@@ -49,6 +49,9 @@ import {
   setSlideDirection,
 } from '../../../store/actions/system.actions'
 import CustomSkeleton from '../../../CustomMui/CustomSkeleton/CustomSkeleton'
+import { MyTraineeCard } from '../../../components/MyTraineeCard/MyTraineeCard'
+import { CustomAccordion } from '../../../CustomMui/CustomAccordion/CustomAccordion'
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 
 const EDIT = 'edit'
 const DETAILS = 'details'
@@ -456,6 +459,7 @@ export function Workouts() {
         className={`page-container workouts-container ${timer ? 'has-timer' : ''
           } ${isDashboard ? 'dashboard' : ''}`}
       >
+
         <>
           <div className="workouts-header routines">
             <Typography variant="h5" className="bold-header">
@@ -473,7 +477,13 @@ export function Workouts() {
             className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
           />
         </>
-
+        {user?.isTrainer && !isDashboard &&
+          <CustomAccordion
+            title="My Trainees"
+            cmp={<MyTraineeCard />}
+            icon={<PersonAddIcon />}
+          />
+        }
         {renderWorkoutLists(
           !sessionDay?.workoutId || !sessionDay?.instructions
         )}
