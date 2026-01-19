@@ -60,16 +60,24 @@
     gap: 1rem;
     .card{
       width: 100%;
+
       max-width: 500px;
-      min-height: 360px;
+
 
     }
-  }
 
+  }
+  
   .dashboard-session-container {
     margin-top: 0.5rem;
     .bold-header {
       text-align: start;
     }
+  }
+}
+
+body.dashboard {
+  .card {
+    min-height: 390px !important;
   }
 }

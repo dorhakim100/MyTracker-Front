@@ -28,6 +28,7 @@ import {
 import { messages } from '../../../assets/config/messages'
 import Lottie from 'lottie-react'
 import workoutAnimation from '../../../../public/gain-weight.json'
+import { useWindowDimentions } from '../../../hooks/useWindowDimentions'
 
 const CHECK_INTERVAL = 1000 * 60 // minute
 
@@ -41,7 +42,7 @@ export function Dashboard() {
     (state: RootState) => state.workoutModule.sessionDay
   )
 
-
+  const { width } = useWindowDimentions()
 
   const todaySessionDay = useSelector(
     (state: RootState) => state.workoutModule.todaySessionDay
@@ -65,6 +66,9 @@ export function Dashboard() {
     return traineeUser || user
   }, [user, traineeUser])
 
+  const showStatsCarousel = useMemo(() => {
+    return width < 1100
+  }, [width])
 
   const statsCarouselItems = useMemo(() => {
     if (!userToCheck) return []
@@ -201,7 +205,7 @@ export function Dashboard() {
               setSlideDirection(1)
               navigate('/lift-mate/workouts')
             }}
-          // fullWidth
+
           />
         </div>
       )
@@ -232,10 +236,10 @@ export function Dashboard() {
         className={`${prefs.isDarkMode ? 'dark-mode' : ''} ${prefs.favoriteColor
           }`}
       />}
-      {!isDashboard ? <StatsCarousel items={statsCarouselItems} showSkeleton={!user} /> :
+      {/* <Typography variant="h5" className="bold-header">Dashboard</Typography> */}
+      {showStatsCarousel ? <StatsCarousel items={statsCarouselItems} showSkeleton={!user} /> :
 
         <div className="dashboard-items-container">
-          {/* <Typography variant="h5" className="bold-header">Dashboard</Typography> */}
           {statsCarouselItems.map((item) => item)}
 
         </div>
