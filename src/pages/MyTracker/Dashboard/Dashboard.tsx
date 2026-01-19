@@ -198,7 +198,7 @@ export function Dashboard() {
           <div className="animation-container">
             <Lottie animationData={workoutAnimation} loop={true} />
           </div>
-          <CustomButton
+          {!isDashboard && <CustomButton
             text="Choose Workout"
             icon={<PlayArrowIcon />}
             onClick={() => {
@@ -206,7 +206,7 @@ export function Dashboard() {
               navigate('/lift-mate/workouts')
             }}
 
-          />
+          />}
         </div>
       )
   }

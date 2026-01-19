@@ -38,22 +38,27 @@ export function CustomButton({
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
 
+  const isDashboard = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.isDashboard
+  )
+
   // const resolvedBg = backgroundColor || prefs.favoriteColor || undefined
   const resolvedBg = backgroundColor || undefined
 
+
+
   return (
     <ClickAnimation
-      disabled={disabled}
-      className={`custom-button-wrapper ${
-        prefs.isDarkMode ? 'dark-mode' : ''
-      } ${disabled ? 'disabled' : ''} ${prefs.favoriteColor || ''}`}
+      disabled={isDashboard ? true : disabled}
+      className={`custom-button-wrapper ${prefs.isDarkMode ? 'dark-mode' : ''
+        } ${disabled ? 'disabled' : ''} ${prefs.favoriteColor || ''}`}
     >
       {isIcon ? (
         <IconButton
           aria-label={ariaLabel || (typeof text === 'string' ? text : 'button')}
           onClick={onClick}
           disabled={disabled}
-          className={`custom-button ${className || ''}`}
+          className={`custom-button ${className || ''} `}
           sx={{
             backgroundColor: resolvedBg,
             color: resolvedBg ? '#fff' : undefined,
@@ -81,11 +86,9 @@ export function CustomButton({
           aria-label={ariaLabel || (typeof text === 'string' ? text : 'button')}
           onClick={onClick}
           disabled={disabled}
-          className={`custom-button ${className || ''} ${
-            prefs.favoriteColor || ''
-          } ${disabled ? 'disabled' : ''} ${
-            prefs.isDarkMode ? 'dark-mode' : ''
-          }`}
+          className={`custom-button ${className || ''} ${prefs.favoriteColor || ''
+            } ${disabled ? 'disabled' : ''} ${prefs.isDarkMode ? 'dark-mode' : ''
+            } ${isDashboard ? 'dashboard' : ''}`}
         >
           {icon && isIconReverse && icon}
           {text}

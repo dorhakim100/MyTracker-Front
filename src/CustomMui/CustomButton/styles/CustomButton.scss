@@ -5,6 +5,8 @@
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
   user-select: none;
+
+
 }
 
 .custom-button {
@@ -27,6 +29,12 @@
   &.MuiIconButton-root {
     // width: 44px;
     // height: 44px;
+  }
+
+  &.dashboard {
+    &:hover {
+      filter: brightness(0.85);
+    }
   }
 }
 
