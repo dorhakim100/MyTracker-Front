@@ -145,7 +145,7 @@ export function WorkoutCard({
   }
 
   function renderAvailableWorkoutButton() {
-    return (
+    if (!isDashboard) return (
       <CustomButton
         text="Start Routine"
         fullWidth={true}

@@ -70,8 +70,12 @@
         align-self: center;
         &.float {
           top: 1rem;
-          left: 1.75rem;
-          margin-top: 0.5rem;
+          left: 0.75rem;
+          &.dashboard {
+
+            margin-top: 0.5rem;
+            left: 1.75rem;
+          }
           position: absolute;
           @media (min-width: 800px) {
             span{

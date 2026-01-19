@@ -146,7 +146,7 @@ export function NameExercises({
         }, 150)
       }
     }
-  }, [dialogState.open])
+  }, [dialogState.open, weeksStatus])
 
   const getWeekNumberIcon = (weekNumber: number) => {
     if (!weeksStatus) return <CloseIcon />
@@ -158,6 +158,8 @@ export function NameExercises({
   }
 
   const getIsWeekNumberDisabled = (weekNumber: number) => {
+    return weekNumber > weeksStatus.length + 1
+
     if (weekNumber === 1) return false
 
     const previousStatus = weeksStatus.find(
@@ -294,7 +296,7 @@ export function NameExercises({
         className="edit-workout-stage name-exercises-stage"
         ref={editWorkoutRef}
       >
-        <div className="settings-controls-container">
+        <div className={`settings-controls-container ${prefs.isDarkMode ? 'dark-mode' : ''} ${isDashboard ? 'dashboard' : ''}`}>
           <CustomInput
             value={workout.name}
             onChange={onNameChange}
@@ -326,6 +328,7 @@ export function NameExercises({
                 icon: <span>{weekNumber}</span>,
                 badgeIcon: getWeekNumberIcon(+weekNumber),
                 getDisabled: () => {
+                  // return false
                   return getIsWeekNumberDisabled(+weekNumber)
                 },
               }))}
@@ -349,8 +352,8 @@ export function NameExercises({
               />
             </div>
           )}
+          <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
         </div>
-        <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
         {(workout.exercises.length === 0 && renderNoExercises()) || (
           <>
             {renderExercises()}
@@ -382,7 +385,7 @@ export function NameExercises({
             />
             <CustomButton
               text="Save Workout"
-              onClick={() => onSaveWorkout(false)}
+              onClick={() => onSaveWorkout(true)}
               icon={<BeenhereIcon />}
               fullWidth={true}
             />

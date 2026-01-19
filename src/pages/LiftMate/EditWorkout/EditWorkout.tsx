@@ -16,7 +16,7 @@ import {
   filterExercises,
 } from '../../../services/exersice-search/exersice-search'
 import { setIsLoading } from '../../../store/actions/system.actions'
-import { saveWorkout } from '../../../store/actions/workout.action'
+import { loadWorkouts, saveWorkout } from '../../../store/actions/workout.action'
 import { Instructions } from '../../../types/instructions/Instructions'
 import { instructionsService } from '../../../services/instructions/instructions.service'
 import { WeekNumberStatus } from '../../../types/weekNumberStatus/WeekNumberStatus'
@@ -373,7 +373,10 @@ export function EditWorkout({
       await instructionsService.save({
         ...instructionsToSave,
       })
+      const statuses = await instructionsService.getWeekNumberDone(savedWorkout._id)
+      await loadWorkouts({ forUserId: traineeUser?._id || user?._id || '' })
 
+      setWeeksStatus(statuses)
       showSuccessMsg(messages.success.saveWorkout)
     } catch (err) {
       showErrorMsg(messages.error.saveWorkout)
@@ -406,7 +409,9 @@ export function EditWorkout({
         setInstructions={setInstructions}
         onEditExerciseNotes={onEditExerciseNotes}
         onSwitchRpeRir={onSwitchRpeRir}
-        onSaveWorkout={(isClose?: boolean) => onFinish(isClose)}
+        onSaveWorkout={(isClose?: boolean) =>
+
+          onFinish(isClose)}
       />
     </div>
   )

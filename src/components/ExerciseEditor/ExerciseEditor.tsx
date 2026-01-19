@@ -293,7 +293,7 @@ export function ExerciseEditor({
                     <Badge
                       badgeContent={index + 1}
                       color="primary"
-                      className={`${prefs.favoriteColor} float`}
+                      className={`${prefs.favoriteColor} float ${isDashboard ? 'dashboard' : ''}`}
                     />
                     <div className="badges-container">
                       {(previousInstructions || !isExpected) && (
@@ -460,8 +460,8 @@ export function ExerciseEditor({
                       // isAutoWidth={true}
                       />
                     </div>
-                    {isDashboard && <CustomButton
-                      className="delete-set-button"
+                    {isDashboard && isExpected && <CustomButton
+                      className="delete-set-button red"
                       text="Delete Set"
                       onClick={() => onDeleteSet(index)}
                       icon={<DeleteIcon />}
