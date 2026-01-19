@@ -51,10 +51,19 @@
   }
 
   .dashboard-items-container{
+
     display: grid;
     // max-width: 400px;
-    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+
+    justify-items: center;
     gap: 1rem;
+    .card{
+      width: 100%;
+      max-width: 500px;
+      min-height: 360px;
+
+    }
   }
 
   .dashboard-session-container {
