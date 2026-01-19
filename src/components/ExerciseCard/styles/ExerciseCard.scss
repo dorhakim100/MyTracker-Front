@@ -1,5 +1,36 @@
 .exercise-card-container {
   display: grid;
+    position: relative;
+  &.dashboard {
+    @media (min-width: 1050px) {
+      grid-template-columns: auto 1fr;
+    }
+    @media (max-width: 1050px) {
+      grid-template-columns: 1fr;
+    }
+    .exercise-card-content{
+      grid-template-columns: 1fr;
+      grid-template-rows: auto 1fr;
+      img{
+        grid-column: 1/2;
+        grid-row: 1/2;
+        width: 20vw;
+        height: calc(20vw);
+        max-width: 300px;
+        max-height: 300px;
+        // align-self: start;
+        
+        
+      }
+      .exercise-card-info{
+        align-self: start;
+         grid-column: 1/-1;
+         grid-row: 2/3;
+
+      }
+    }
+
+  }
 
   padding: 1rem;
   border-radius: 0.5rem;
@@ -25,20 +56,26 @@
 
   .exercise-card-content {
     display: grid;
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: auto 1fr 60px;
     gap: 1rem;
     align-items: start;
     .more-options-container {
       grid-column: 3/4;
       justify-self: end;
     }
-    .exercise-card-actions {
-      // display: grid;
-      display: flex;
-      flex-direction: column;
-      // gap: 0.5rem;
-      grid-template-columns: 1fr;
-    }
+  }
+  .exercise-card-actions {
+    // display: grid;
+    display: flex;
+    flex-direction: column;
+    display: flex;
+    flex-direction: row;
+    // gap: 0.5rem;
+    grid-template-columns: 1fr;
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    z-index: 2;
   }
 
   .exercise-card-image {

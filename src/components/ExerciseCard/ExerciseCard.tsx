@@ -34,6 +34,7 @@ import { DEFAULT_RESTING_TIME } from '../../assets/config/times'
 import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import AltRouteIcon from '@mui/icons-material/AltRoute'
+import { useWindowDimentions } from '../../hooks/useWindowDimentions'
 
 interface SlideDialogOptions {
   title: string
@@ -102,6 +103,13 @@ export function ExerciseCard({
   const sessionDay = useSelector(
     (stateSelector: RootState) => stateSelector.workoutModule.sessionDay
   )
+
+  const isDashboard = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.isDashboard
+  )
+
+  const { width: windowWidth } = useWindowDimentions()
+
   const [previousInstructions, setPreviousInstructions] =
     useState<Instructions | null>(null)
   const updateExerciseInInstructions = (exercise: ExerciseInstructions) => {
@@ -204,14 +212,14 @@ export function ExerciseCard({
 
     isExpected
       ? {
-          title: 'Reorder Exercises',
-          icon: <DragHandleIcon />,
-          onClick: () => {
-            if (setIsReorderExercisesOpen) {
-              setIsReorderExercisesOpen(true)
-            }
-          },
-        }
+        title: 'Reorder Exercises',
+        icon: <DragHandleIcon />,
+        onClick: () => {
+          if (setIsReorderExercisesOpen) {
+            setIsReorderExercisesOpen(true)
+          }
+        },
+      }
       : null,
     (isExpected && {
       title: 'Delete',
@@ -222,7 +230,7 @@ export function ExerciseCard({
         }
       },
     }) ||
-      null,
+    null,
   ].filter((option) => option) as DropdownOption[]
 
   function getIsExerciseDone(exerciseInstructions: ExerciseInstructions) {
@@ -390,13 +398,36 @@ export function ExerciseCard({
   return (
     <>
       <Card
-        className={`exercise-card-container ${className} ${
-          prefs.isDarkMode ? 'dark-mode' : ''
-        } ${prefs.favoriteColor} ${isDone ? 'done' : ''} ${
-          isOpen ? 'open' : 'closed'
-        }`}
+        className={`exercise-card-container ${className} ${prefs.isDarkMode ? 'dark-mode' : ''
+          } ${prefs.favoriteColor} ${isDone ? 'done' : ''} ${isOpen ? 'open' : 'closed'
+          } ${isDashboard ? 'dashboard' : ''} ${windowWidth < 900 ? 'mobile' : 'desktop'}`}
         onClick={handleClick}
       >
+        <div className="exercise-card-actions">
+          <CustomOptionsMenu
+            className="more-options-container"
+            options={menuOptions}
+            triggerElement={
+              <CustomButton
+                isIcon={true}
+                icon={<MoreHorizIcon />}
+                className={`more-options ${prefs.favoriteColor} ${prefs.isDarkMode ? 'dark-mode' : ''
+                  }`}
+              />
+            }
+          />
+
+          {onOpenChange && (
+            <CustomButton
+              icon={isOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+              onClick={(e) => {
+                e.stopPropagation()
+                onOpenChange?.()
+              }}
+              isIcon={true}
+            />
+          )}
+        </div>
         <div
           className="exercise-card-content"
           onClick={() => {
@@ -418,32 +449,7 @@ export function ExerciseCard({
             />
           )}
 
-          <div className="exercise-card-actions">
-            <CustomOptionsMenu
-              className="more-options-container"
-              options={menuOptions}
-              triggerElement={
-                <CustomButton
-                  isIcon={true}
-                  icon={<MoreHorizIcon />}
-                  className={`more-options ${prefs.favoriteColor} ${
-                    prefs.isDarkMode ? 'dark-mode' : ''
-                  }`}
-                />
-              }
-            />
 
-            {onOpenChange && (
-              <CustomButton
-                icon={isOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-                onClick={(e) => {
-                  e.stopPropagation()
-                  onOpenChange?.()
-                }}
-                isIcon={true}
-              />
-            )}
-          </div>
 
           <div className="exercise-card-info">
             <Typography variant="h6" className="exercise-card-name">
@@ -462,9 +468,8 @@ export function ExerciseCard({
             {/* if expected is false and expected notes are empty, don't show expected notes */}
             {!isExpected && !exerciseInstructions?.notes?.expected ? null : (
               <Typography variant="body2" className="exercise-card-notes">
-                {`Expected Notes: ${
-                  exerciseInstructions?.notes?.expected || ''
-                }`}
+                {`Expected Notes: ${exerciseInstructions?.notes?.expected || ''
+                  }`}
               </Typography>
             )}
             {/* if there are actual notes, show them */}
@@ -512,37 +517,37 @@ export function ExerciseCard({
               isExpected
                 ? updateExerciseInInstructions
                 : (exerciseToUpdate) =>
-                    updateExercise?.({
-                      ...exerciseToUpdate,
-                      image: exercise.image,
-                    })
+                  updateExercise?.({
+                    ...exerciseToUpdate,
+                    image: exercise.image,
+                  })
             }
             addSet={
               isExpected
                 ? undefined
                 : (exerciseToUpdate, setIndex) =>
-                    addSet?.(
-                      { ...exerciseToUpdate, image: exercise.image },
-                      setIndex
-                    )
+                  addSet?.(
+                    { ...exerciseToUpdate, image: exercise.image },
+                    setIndex
+                  )
             }
             removeSet={
               isExpected
                 ? undefined
                 : (exerciseToUpdate, setIndex) =>
-                    removeSet?.(
-                      { ...exerciseToUpdate, image: exercise.image },
-                      setIndex
-                    )
+                  removeSet?.(
+                    { ...exerciseToUpdate, image: exercise.image },
+                    setIndex
+                  )
             }
             markSetAsDone={
               isExpected
                 ? undefined
                 : (exerciseToUpdate, setIndex) =>
-                    markSetAsDone?.(
-                      { ...exerciseToUpdate, image: exercise.image },
-                      setIndex
-                    )
+                  markSetAsDone?.(
+                    { ...exerciseToUpdate, image: exercise.image },
+                    setIndex
+                  )
             }
             isExpected={isExpected}
           />

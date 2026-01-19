@@ -6,6 +6,14 @@
 
   width: calc(100vw - 2rem);
 
+  @media (min-width: 600px) {
+    width: calc(100vw - $left-menu-width - 2rem);
+    .workout-card-container{
+      width: calc(100vw - $left-menu-width - 2rem);
+
+    }
+  }
+
   .header-container {
     display: flex;
     justify-content: space-between;

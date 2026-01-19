@@ -1,5 +1,11 @@
 .workouts-container {
   padding-top: 1rem;
+  &.dashboard {
+    @media (min-width: 600px) {
+      width: calc(100vw - $left-menu-width - 2rem);
+
+    }
+  }
   &.skeleton {
     .MuiSkeleton-root {
       // margin-bottom: 1rem;

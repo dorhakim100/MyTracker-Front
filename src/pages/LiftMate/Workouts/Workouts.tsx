@@ -94,6 +94,8 @@ export function Workouts() {
     (state: RootState) => state.workoutModule.sessionDay
   )
 
+  const isDashboard = useSelector((state: RootState) => state.systemModule.isDashboard)
+
   const [selectedDay, setSelectedDay] = useState(new Date())
   const [selectedDayDate] = useState(new Date().toISOString())
 
@@ -362,9 +364,8 @@ export function Workouts() {
         )}
 
         <div
-          className={`workouts-list-container ${
-            prefs.isDarkMode ? 'dark-mode' : ''
-          } active`}
+          className={`workouts-list-container ${prefs.isDarkMode ? 'dark-mode' : ''
+            } active`}
         >
           <WorkoutsList
             workouts={activeWorkouts}
@@ -389,9 +390,8 @@ export function Workouts() {
         {inactiveWorkouts.length > 0 ? (
           <CustomList
             items={inactiveWorkouts}
-            className={`workouts-list inactive-list ${
-              prefs.isDarkMode ? 'dark-mode' : ''
-            }`}
+            className={`workouts-list inactive-list ${prefs.isDarkMode ? 'dark-mode' : ''
+              }`}
             renderPrimaryText={(workout) => workout.name}
             renderSecondaryText={(workout) =>
               capitalizeFirstLetter(workout.muscleGroups.join(', '))
@@ -464,9 +464,8 @@ export function Workouts() {
   return (
     <>
       <div
-        className={`page-container workouts-container ${
-          timer ? 'has-timer' : ''
-        }`}
+        className={`page-container workouts-container ${timer ? 'has-timer' : ''
+          } ${isDashboard ? 'dashboard' : ''}`}
       >
         <>
           <div className="workouts-header routines">

@@ -5,6 +5,9 @@
   max-height: 1000px;
   overflow: hidden !important;
   transition: max-height 0.3s ease-in-out;
+
+
+
   &.closed {
     max-height: 0;
   }
@@ -12,14 +15,34 @@
   .set-container {
     position: relative;
     width: 100%;
+
+    @media (max-width: 700px) {
+      width: calc(100vw - 3rem);
+    }
+
+    @media (min-width: 700px) {
+      width: calc(100vw - 5rem - 500px);
+      padding-inline:1rem;
+
+    }
+    @media (max-width: 1050px) {
+      &.dashboard {
+        width: calc(100vw - $left-menu-width - 3rem);
+        padding-inline:1rem;
+      }
+    }
     .set-editor-container {
       width: 100%;
 
       display: grid;
       grid-template-columns: 23px 1fr 1fr 1fr;
+      padding: 1.5rem 0 0 0;
+      @media (min-width: 600px) {
+        grid-template-columns: auto 1fr 1fr 1fr;
+        padding: 2rem 0 0 0;
+      }
       justify-items: center;
 
-      padding: 1.5rem 0 0 0;
 
       .badges-container {
         display: grid;
@@ -40,8 +63,19 @@
         align-self: center;
         &.float {
           top: 1rem;
-          left: 0.75rem;
+          left: 1.75rem;
           position: absolute;
+          @media (min-width: 800px) {
+            span{
+              font-size: 1.2rem;
+              width: 1.5rem;
+              height: 1.5rem;
+              border-radius: 50%;
+
+            }
+
+
+          }
         }
 
         &.success {
