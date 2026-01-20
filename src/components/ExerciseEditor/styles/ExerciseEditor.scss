@@ -53,6 +53,13 @@
 
       .badges-container {
         display: grid;
+        input{
+          padding: 0 !important;
+        }
+        .MuiCheckbox-root{
+          height: 49px;
+          width: 49px;
+        }
       }
       .finished,
       .not-finished {
@@ -139,6 +146,8 @@
           align-self: start;
           margin-top: 1.2rem;
           margin-inline-start: 3px;
+
+  
         }
 
         .MuiBadge-root.float {
