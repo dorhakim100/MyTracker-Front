@@ -1,5 +1,6 @@
 .workouts-container {
 
+
   &:not(.dashboard) {
 
     padding-top: 1rem;
@@ -52,6 +53,22 @@
     align-items: center;
     gap: 0.5rem;
   }
+
+
+  .workouts-header{
+
+    h6{
+      text-align: center;
+    }
+    .animation-container{
+      min-width: 220px;
+      min-height: 220px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
 }
 .dialog-routines-container {
   padding: 1rem;
@@ -83,4 +100,6 @@
     margin-bottom: 1rem;
     opacity: 0.7;
   }
+
+
 }

@@ -52,6 +52,9 @@ import CustomSkeleton from '../../../CustomMui/CustomSkeleton/CustomSkeleton'
 import { MyTraineeCard } from '../../../components/MyTraineeCard/MyTraineeCard'
 import { CustomAccordion } from '../../../CustomMui/CustomAccordion/CustomAccordion'
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import workoutAnimation from '../../../../public/gain-weight.json'
+import Lottie from 'lottie-react'
+
 
 const EDIT = 'edit'
 const DETAILS = 'details'
@@ -518,16 +521,22 @@ export function Workouts() {
           onDayChange={onDayChange}
           onDateChange={onDateChange}
         />
+
         <SlideAnimation
           motionKey={sessionDay._id}
           direction={direction}
-          className="session-container-animation"
+
+
         >
           {!sessionDay.instructions && (
             <div className="workouts-header">
-              <Typography variant="body1" className="bold-header">
-                No workout session today
+              <Typography variant="h6" className="bold-header">
+                No workout session this day
               </Typography>
+              <div className="animation-container">
+
+                <Lottie animationData={workoutAnimation} loop={true} />
+              </div>
             </div>
           )}
 
