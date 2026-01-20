@@ -15,13 +15,21 @@ import { messages } from '../../assets/config/messages'
 import { CustomAlertDialog } from '../../CustomMui/CustomAlertDialog/CustomAlertDialog'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 
-export function ProfileCard() {
+interface ProfileCardProps {
+  userToDisplay?: User
+}
+
+export function ProfileCard({ userToDisplay }: ProfileCardProps) {
   const prefs = useSelector(
     (storeState: RootState) => storeState.systemModule.prefs
   )
 
-  const user = useSelector(
+  const user = userToDisplay || useSelector(
     (storeState: RootState) => storeState.userModule.user
+  )
+
+  const traineeUser = useSelector(
+    (storeState: RootState) => storeState.userModule.traineeUser
   )
 
   const [isEditUserOpen, setIsEditUserOpen] = useState<boolean>(false)
@@ -57,7 +65,7 @@ export function ProfileCard() {
     <>
       <Card
         variant="outlined"
-        className={`card user-details ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+        className={`card user-details ${prefs.isDarkMode ? 'dark-mode' : ''} ${traineeUser?._id === userToDisplay?._id ? 'selected' : ''} ${prefs.favoriteColor}`}
       >
         <EditIcon onClick={onOpenEditUser} />
         <div className="profile-container" onClick={onOpenAlertDialog}>
@@ -83,7 +91,7 @@ export function ProfileCard() {
       <SlideDialog
         open={isEditUserOpen}
         onClose={onCloseEditUser}
-        component={<EditUser onSave={onSaveEditUser} />}
+        component={<EditUser onSave={onSaveEditUser} selectedUser={user} />}
         title="Edit User"
         // onSave={() => onSaveEditUser(user as User)}
         type="full"

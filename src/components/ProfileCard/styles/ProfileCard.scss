@@ -19,6 +19,8 @@
     max-width: 100%;
     overflow: hidden;
   }
+
+  
 }
 
 .modal-profile-picture-container {
@@ -35,5 +37,47 @@
     height: 250px;
     object-fit: cover;
     border-radius: 50%;
+  }
+}
+
+.user-details{
+  border-left: 8px solid transparent !important;
+  
+  &.selected {
+    border-left: 8px solid $primary-color !important;
+  }
+
+  &.blue {
+    border-left: 8px solid $picker-color-blue !important;
+  }
+
+  &.red {
+    border-left: 8px solid $picker-color-red !important;
+  }
+  
+  &.yellow {
+    border-left: 8px solid $picker-color-yellow !important;
+  }
+
+  &.green {
+    border-left: 8px solid $picker-color-green !important;
+  }
+  
+  
+  &.orange {
+    border-left: 8px solid $picker-color-orange !important;
+  }
+
+  &.deepPurple {
+    border-left: 8px solid $picker-color-deep-purple !important;
+  }
+  
+  
+  &.purple {
+    border-left: 8px solid $picker-color-purple !important;
+  }
+
+  &.pink {
+    border-left: 8px solid $picker-color-pink !important;
   }
 }

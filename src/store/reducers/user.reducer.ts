@@ -14,6 +14,7 @@ export const SET_USER_TO_EDIT = 'SET_USER_TO_EDIT'
 export const SET_SELECTED_DAY = 'SET_SELECTED_DAY'
 export const SET_TRAINEE_USER = 'SET_TRAINEE_USER'
 export const REMOVE_TRAINEE_USER = 'REMOVE_TRAINEE_USER'
+export const SET_TRAINEE_USERS = 'SET_TRAINEE_USERS'
 export interface UserState {
   users: User[]
   user: User | null
@@ -22,6 +23,7 @@ export interface UserState {
   // filter: UserFilter
   lastRemovedUser?: User
   traineeUser: User | null
+  trainees: User[]
 }
 
 const initialState: UserState = {
@@ -31,6 +33,7 @@ const initialState: UserState = {
   selectedDay: null,
   // filter: userService.getDefaultFilter(),
   traineeUser: null,
+  trainees: [],
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -72,6 +75,10 @@ export function userReducer(state = initialState, action: any): UserState {
 
     case REMOVE_TRAINEE_USER:
       newState = { ...state, traineeUser: null }
+      break
+
+    case SET_TRAINEE_USERS:
+      newState = { ...state, trainees: action.trainees }
       break
 
     // case SET_USER_FILTER:

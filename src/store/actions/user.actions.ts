@@ -10,6 +10,7 @@ import {
   SET_SELECTED_DAY,
   SET_TRAINEE_USER,
   REMOVE_TRAINEE_USER,
+  SET_TRAINEE_USERS,
   // SET_USER_FILTER,
 } from '../reducers/user.reducer'
 
@@ -362,4 +363,8 @@ export function setTraineeUser(traineeUser: User) {
 
 export function removeTraineeUser() {
   store.dispatch({ type: REMOVE_TRAINEE_USER })
+}
+
+export function setTrainees(trainees: User[]) {
+  store.dispatch({ type: SET_TRAINEE_USERS, trainees })
 }
