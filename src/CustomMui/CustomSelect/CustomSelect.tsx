@@ -5,6 +5,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { capitalizeFirstLetter } from '../../services/util.service'
+import { Tooltip } from '@mui/material'
 
 interface CustomSelectProps {
   label: string
@@ -14,6 +15,7 @@ interface CustomSelectProps {
   onChange: (value: string) => void
   className?: string
   imgs?: { value: string; src?: string; icon?: React.ReactNode }[]
+  tooltipTitle?: string
 }
 
 export function CustomSelect({
@@ -24,6 +26,7 @@ export function CustomSelect({
   onChange,
   className,
   imgs,
+  tooltipTitle,
 }: CustomSelectProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -68,39 +71,40 @@ export function CustomSelect({
   }
 
   return (
-    <FormControl
-      sx={{ m: 1, minWidth: 140 }}
-      size="small"
-      className={`custom-select ${className} ${
-        prefs.isDarkMode ? 'dark-mode' : ''
-      } ${isDashboard ? 'dashboard' : ''}`}
-    >
-      <InputLabel id={`${label}-select-label`}>{label}</InputLabel>
-      <Select
-        labelId={`${label}-select-label`}
-        id={`${label}-select`}
-        value={value}
-        className={`${imgs ? 'with-imgs' : ''} ${isDashboard ? 'dashboard' : ''}`}
-        label={label}
-        onChange={handleChange}
-        MenuProps={{
-          PaperProps: {
-            className: `${
-              prefs.isDarkMode ? 'dark-mode' : ''
-            } ${className} select-paper`,
-          },
-        }}
+    <Tooltip title={tooltipTitle} disableHoverListener={isDashboard && tooltipTitle ? false : true}>
+
+      <FormControl
+        sx={{ m: 1, minWidth: 140 }}
+        size="small"
+        className={`custom-select ${className} ${prefs.isDarkMode ? 'dark-mode' : ''
+          } ${isDashboard ? 'dashboard' : ''}`}
       >
-        {/* <MenuItem value=''>
+        <InputLabel id={`${label}-select-label`}>{label}</InputLabel>
+        <Select
+          labelId={`${label}-select-label`}
+          id={`${label}-select`}
+          value={value}
+          className={`${imgs ? 'with-imgs' : ''} ${isDashboard ? 'dashboard' : ''}`}
+          label={label}
+          onChange={handleChange}
+          MenuProps={{
+            PaperProps: {
+              className: `${prefs.isDarkMode ? 'dark-mode' : ''
+                } ${className} select-paper`,
+            },
+          }}
+        >
+          {/* <MenuItem value=''>
           <em>None</em>
-        </MenuItem> */}
-        {values.map((value) => (
-          <MenuItem key={`${label}-${value}-select`} value={value}>
-            {getImg(value)}
-            {capitalizeFirstLetter(value)} {extra}
-          </MenuItem>
-        ))}
-      </Select>
-    </FormControl>
+          </MenuItem> */}
+          {values.map((value) => (
+            <MenuItem key={`${label}-${value}-select`} value={value}>
+              {getImg(value)}
+              {capitalizeFirstLetter(value)} {extra}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+    </Tooltip>
   )
 }

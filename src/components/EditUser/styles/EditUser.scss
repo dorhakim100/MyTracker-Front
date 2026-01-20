@@ -1,6 +1,17 @@
 .edit-user-container {
   padding: 1rem;
 
+  &.dashboard {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    align-items: start;
+
+    .buttons-container {
+      align-self: end;
+    }
+  }
+
   input,
   .MuiSelect-select {
     font-size: 1.2rem !important;

@@ -209,6 +209,7 @@ export function DetailsStage({
       <div className='times-per-week-container'>
         <span className='bold-header'>Times per week</span>
         <CustomSelect
+          tooltipTitle="Edit Times per week"
           label='Times'
           values={getArrayOfNumbers(1, 7).map(
             (timesNumber) => timesNumber + ''

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../../store/store'
 import { setIsLoading } from '../../../../store/actions/system.actions'
@@ -21,6 +21,9 @@ import { showErrorMsg } from '../../../../services/event-bus.service'
 import { User } from '../../../../types/user/User'
 import { TraineesTabs } from './TraineesTabs'
 import { TRAINEE_ORDER_STORE_NAME } from '../../../../constants/store.constants'
+import { CustomOptionsMenu } from '../../../../CustomMui/CustomOptionsMenu/CustomOptionsMenu'
+import { logout } from '../../../../store/actions/user.actions'
+import { useNavigate } from 'react-router-dom'
 
 const lightColor = 'rgba(255, 255, 255, 0.7)'
 
@@ -36,6 +39,25 @@ export default function Header(props: HeaderProps) {
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
 
   const [trainees, setTrainees] = useState<User[]>([])
+
+  const navigate = useNavigate()
+
+  const options = useMemo(() => {
+    return [
+      {
+        title: 'View Profile',
+        onClick: () => {
+          navigate('/trainer/user')
+        }
+      },
+      {
+        title: 'Logout',
+        onClick: () => {
+          logout()
+        }
+      }
+    ]
+  }, [user])
 
   useEffect(() => {
     getTrainees()
@@ -98,37 +120,23 @@ export default function Header(props: HeaderProps) {
               </IconButton>
             </Grid>
             <Grid item xs />
+
+
             <Grid item>
-              <Link
-                href="/"
-                variant="body2"
-                sx={{
-                  textDecoration: 'none',
-                  color: lightColor,
-                  '&:hover': {
-                    color: 'common.white',
-                  },
-                }}
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                Go to docs
-              </Link>
-            </Grid>
-            <Grid item>
-              <Tooltip title="Alerts • No alerts">
-                <IconButton color="inherit">
-                  <NotificationsIcon />
-                </IconButton>
-              </Tooltip>
-            </Grid>
-            <Grid item>
-              <IconButton color="inherit" sx={{ p: 0.5 }}>
-                <Avatar
-                  src={user?.details?.imgUrl || '/logo-square.png'}
-                  alt={user?.details?.fullname || 'Trainer Profile'}
-                />
-              </IconButton>
+              <CustomOptionsMenu
+                className={`${prefs.favoriteColor}`}
+                triggerElement={
+                  <IconButton color="inherit" sx={{ p: 0.5 }}>
+                    <Avatar
+                      src={user?.details?.imgUrl || '/logo-square.png'}
+                      alt={user?.details?.fullname || 'Trainer Profile'}
+                    />
+                  </IconButton>
+                }
+                options={options}
+
+
+              />
             </Grid>
           </Grid>
         </Toolbar>
@@ -144,26 +152,10 @@ export default function Header(props: HeaderProps) {
           <Grid container spacing={1} sx={{ alignItems: 'center' }}>
             <Grid item xs>
               <Typography color="inherit" variant="h5" component="h1">
-                Authentication
+                {`${user?.details?.fullname} ${user?.isTrainer ? '• Trainer' : ''}`}
               </Typography>
             </Grid>
-            <Grid item>
-              <Button
-                sx={{ borderColor: lightColor }}
-                variant="outlined"
-                color="inherit"
-                size="small"
-              >
-                Web setup
-              </Button>
-            </Grid>
-            <Grid item>
-              <Tooltip title="Help">
-                <IconButton color="inherit">
-                  <HelpIcon />
-                </IconButton>
-              </Tooltip>
-            </Grid>
+
           </Grid>
         </Toolbar>
       </AppBar>

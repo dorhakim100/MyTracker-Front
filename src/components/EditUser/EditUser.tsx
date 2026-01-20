@@ -30,7 +30,7 @@ interface EditUserProps {
   onSave: (user: User) => void
 }
 
-const DEFAULT_BIRTHDATE = 951955200000
+const DEFAULT_BIRTHDATE = 946684800000
 const DEFAULT_HEIGHT = 170
 const DEFAULT_IMG_URL =
   'https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_1280.png'
@@ -48,14 +48,18 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
     (stateSelector: RootState) => stateSelector.systemModule.isLoading
   )
 
+  const isDashboard = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.isDashboard
+  )
+
   // Local form model keeping only editable fields; merged on save
   const [fullname, setFullname] = useState<string>(
     selectedUser?.details?.fullname || user?.details?.fullname || ''
   )
   const [birthdate, setBirthdate] = useState<number>(
     selectedUser?.details?.birthdate ||
-      user?.details?.birthdate ||
-      DEFAULT_BIRTHDATE
+    user?.details?.birthdate ||
+    DEFAULT_BIRTHDATE
   )
 
   const [height, setHeight] = useState<number>(
@@ -69,8 +73,8 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
   )
   const [activity, setActivity] = useState(
     selectedUser?.details?.activity ||
-      user?.details?.activity ||
-      DEFAULT_ACTIVITY_LEVEL
+    user?.details?.activity ||
+    DEFAULT_ACTIVITY_LEVEL
   )
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false)
 
@@ -199,7 +203,7 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
 
   return (
     <>
-      <div className='edit-user-container'>
+      <div className={`edit-user-container ${isDashboard ? 'dashboard' : ''}`}>
         <div className='form-grid'>
           {inputs.map((input) => {
             if (input.type === 'image')
@@ -217,9 +221,8 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
                       )}
                     </div>
                     <label
-                      className={`upload-button ${
-                        prefs.isDarkMode ? 'dark-mode' : ''
-                      }`}
+                      className={`upload-button ${prefs.isDarkMode ? 'dark-mode' : ''
+                        }`}
                     >
                       <input
                         type='file'
@@ -247,6 +250,7 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
             if (input.type === 'select')
               return (
                 <CustomSelect
+                  tooltipTitle={`Edit ${input.label}`}
                   key={`${input.key}-edit-user`}
                   label={input.label}
                   values={getArrayOfNumbers(100, 250, true) as string[]}

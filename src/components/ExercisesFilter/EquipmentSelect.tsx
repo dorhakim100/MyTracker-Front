@@ -32,6 +32,7 @@ export function EquipmentSelect({
 
   return (
     <CustomSelect
+      tooltipTitle="Edit Equipment"
       value={exerciseFilter.equipmentValue}
       onChange={(value) =>
         onExerciseFilterChange({ ...exerciseFilter, equipmentValue: value })

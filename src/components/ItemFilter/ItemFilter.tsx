@@ -58,13 +58,13 @@ export function ItemFilter({
       </div>
 
       <CustomSelect
+        tooltipTitle="Edit Sort by"
         value={filter.sortBy}
         onChange={(val) => onFilterChange({ ...filter, sortBy: val })}
         label="Sort by"
         values={sortByOptions}
-        className={`${prefs.favoriteColor} ${
-          prefs.isDarkMode ? 'dark-mode' : ''
-        } item-filter-select`}
+        className={`${prefs.favoriteColor} ${prefs.isDarkMode ? 'dark-mode' : ''
+          } item-filter-select`}
       />
 
       <CustomButton

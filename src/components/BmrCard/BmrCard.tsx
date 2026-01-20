@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Divider, Typography } from '@mui/material'
+import { Divider, Tooltip, Typography } from '@mui/material'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { CustomToggle } from '../../CustomMui/CustomToggle/CustomToggle'
@@ -49,10 +49,14 @@ export function BmrCard() {
     (storeState: RootState) => storeState.userModule.user
   )
 
+  const isDashboard = useSelector(
+    (storeState: RootState) => storeState.systemModule.isDashboard
+  )
+
   const calculatedAge = useMemo(() => {
     return user?.details?.birthdate
       ? new Date().getFullYear() -
-          new Date(user.details.birthdate).getFullYear()
+      new Date(user.details.birthdate).getFullYear()
       : DEFAULT_AGE
   }, [user?.details?.birthdate])
 
@@ -168,7 +172,11 @@ export function BmrCard() {
                 className={`select-container ${option.className}`}
                 key={`${option.key}-${option.label}`}
               >
+
+
+
                 <CustomSelect
+                  tooltipTitle={`Edit ${option.label}`}
                   label={option.label}
                   values={option.values as string[]}
                   value={form[option.key as keyof BmrFormState]}
@@ -178,6 +186,7 @@ export function BmrCard() {
                   extra={option.extra}
                   className={`${option.className} ${prefs.favoriteColor}`}
                 />
+
               </div>
             )
 

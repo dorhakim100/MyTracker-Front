@@ -56,6 +56,7 @@ export function ExercisesFilter({
         className={`${prefs.favoriteColor}`}
       />
       <CustomSelect
+        tooltipTitle="Edit Muscle Group"
         value={exerciseFilter.muscleGroupValue}
         onChange={(value) =>
           onExerciseFilterChange({ ...exerciseFilter, muscleGroupValue: value })

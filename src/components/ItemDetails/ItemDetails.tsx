@@ -124,28 +124,28 @@ export function ItemDetails({
   const editOptions: EditOption[] =
     !isCustomLog && (item as Log).source !== searchTypes.custom
       ? [
-          {
-            label: 'Serving Size',
-            key: 'servingSize',
-            values: [1, 25, 30, 50, 100, 150],
-            extra: 'gram',
-            type: 'select',
-          },
-          NUMBER_OF_SERVINGS_INPUT,
-          MEAL_INPUT,
-        ]
+        {
+          label: 'Serving Size',
+          key: 'servingSize',
+          values: [1, 25, 30, 50, 100, 150],
+          extra: 'gram',
+          type: 'select',
+        },
+        NUMBER_OF_SERVINGS_INPUT,
+        MEAL_INPUT,
+      ]
       : [
-          {
-            label: 'Macros',
-            key: 'custom-log-macros',
+        {
+          label: 'Macros',
+          key: 'custom-log-macros',
 
-            type: 'macros',
-            extra: '',
-            values: [],
-          },
-          NUMBER_OF_SERVINGS_INPUT,
-          MEAL_INPUT,
-        ]
+          type: 'macros',
+          extra: '',
+          values: [],
+        },
+        NUMBER_OF_SERVINGS_INPUT,
+        MEAL_INPUT,
+      ]
 
   useEffect(() => {
     loadItems()
@@ -336,8 +336,8 @@ export function ItemDetails({
                 isCustomLog || item.source === searchTypes.custom
                   ? searchTypes.custom
                   : item.searchId.length < LONGEST_FOOD_ID_LENGTH
-                  ? searchTypes.usda
-                  : searchTypes.openFoodFacts,
+                    ? searchTypes.usda
+                    : searchTypes.openFoodFacts,
               createdBy: user._id,
               name:
                 isCustomLog || item.source === searchTypes.custom
@@ -549,9 +549,8 @@ export function ItemDetails({
   return (
     <>
       <div
-        className={`item-details ${noEdit ? 'no-edit' : ''} ${
-          isCustomLog ? 'custom-log' : ''
-        }`}
+        className={`item-details ${noEdit ? 'no-edit' : ''} ${isCustomLog ? 'custom-log' : ''
+          }`}
       >
         {(!isCustomLog && (item as Log).source !== searchTypes.custom && (
           <div className="header" onClick={openImageModal}>
@@ -569,13 +568,13 @@ export function ItemDetails({
                   }}
                 />
               )) || (
-                <CustomSkeleton
-                  variant="circular"
-                  width={60}
-                  height={60}
-                  isDarkMode={prefs.isDarkMode}
-                />
-              )}
+                  <CustomSkeleton
+                    variant="circular"
+                    width={60}
+                    height={60}
+                    isDarkMode={prefs.isDarkMode}
+                  />
+                )}
             </div>
             <div className="title">{item.name}</div>
             <div className="subtitle">{`${(+item.macros?.calories).toFixed(
@@ -593,13 +592,13 @@ export function ItemDetails({
             )}
           </div>
         )) || (
-          <CustomInput
-            value={editItem.name || ''}
-            onChange={(value) => onEditItemChange('name', value)}
-            placeholder="Name"
-            className={`${prefs.favoriteColor}`}
-          />
-        )}
+            <CustomInput
+              value={editItem.name || ''}
+              onChange={(value) => onEditItemChange('name', value)}
+              placeholder="Name"
+              className={`${prefs.favoriteColor}`}
+            />
+          )}
 
         <div className="content">
           <div className="macros-container">
@@ -631,14 +630,14 @@ export function ItemDetails({
                   return null
                 return (
                   <div
-                    className={`select-container ${
-                      prefs.isDarkMode ? 'dark-mode' : ''
-                    }`}
+                    className={`select-container ${prefs.isDarkMode ? 'dark-mode' : ''
+                      }`}
                     key={option.label}
                   >
                     <Typography variant="h6">{option.label}</Typography>
                     {option.type === 'select' && option.values && (
                       <CustomSelect
+                        tooltipTitle={`Edit ${option.label}`}
                         label={option.label}
                         values={option.values.map((value) => value.toString())}
                         extra={option.extra}
@@ -655,9 +654,8 @@ export function ItemDetails({
                     {option.type === 'clock' && (
                       <>
                         <PickerSelect
-                          className={`${prefs.favoriteColor} picker-select ${
-                            prefs.isDarkMode ? 'dark-mode' : ''
-                          }`}
+                          className={`${prefs.favoriteColor} picker-select ${prefs.isDarkMode ? 'dark-mode' : ''
+                            }`}
                           openClock={openClock}
                           option={option}
                           value={editItem.numberOfServings}

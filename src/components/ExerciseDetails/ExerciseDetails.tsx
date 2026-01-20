@@ -248,6 +248,7 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
             Max Progress
           </Typography>
           <CustomSelect
+            tooltipTitle="View by"
             label="View by"
             values={['Weight', 'Reps']}
             value={viewBy}
