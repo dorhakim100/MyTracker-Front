@@ -26,10 +26,12 @@ import { ColorPicker } from '../ColorPicker/ColorPicker'
 import { setPrefs } from '../../store/actions/system.actions'
 import { CustomIOSSwitch } from '../../CustomMui/CustomIOSSwitch/CustomIOSSwitch'
 import { prepareSeries } from '../../services/util.service'
+import { User } from '../../types/user/User'
 
 interface WeightChartProps {
   className?: string
   setSelectedDate?: (date: Date) => void
+  sentUser: User | undefined
 }
 
 interface Stats {
@@ -47,6 +49,7 @@ const DEFAULT_MOVING_AVERAGE_PERIOD = 7
 export function WeightChart({
   className = '',
   setSelectedDate,
+  sentUser,
 }: WeightChartProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -192,7 +195,7 @@ export function WeightChart({
       }
 
       const weights = await weightService.query({
-        userId: user?._id,
+        userId: sentUser?._id || user?._id,
         fromDate: fromDate ? fromDate.toISOString() : null,
         toDate: toDate ? toDate.toISOString() : null,
       })
@@ -205,7 +208,7 @@ export function WeightChart({
         : null
 
       const previousWeight = await weightService.query({
-        userId: user?._id,
+        userId: sentUser?._id || user?._id,
         fromDate: fromDateMinusWeek,
         toDate: toDateMinusWeek,
       })
@@ -221,7 +224,7 @@ export function WeightChart({
       })
     }
     fetchWeights()
-  }, [user?._id, range, user?.lastWeight])
+  }, [sentUser?._id, user?._id, range, user?.lastWeight])
 
   const handleLineClick = (
     index: number,
@@ -236,7 +239,7 @@ export function WeightChart({
 
     if (isBaseline) {
       messageToSet = 'Goal weight'
-      weight = user?.currGoal.targetWeight || GOAL_WEIGHT
+      weight = sentUser?.currGoal.targetWeight || user?.currGoal.targetWeight || GOAL_WEIGHT
     } else if (!weight && estimatedValue) {
       messageToSet = 'Estimated weight'
     } else if (!weight && !estimatedValue) {
@@ -305,7 +308,7 @@ export function WeightChart({
               interpolateGaps={true}
               spanGaps={true}
               onLineClick={handleLineClick}
-              baseline={user?.currGoal?.targetWeight}
+              baseline={sentUser?.currGoal?.targetWeight || user?.currGoal?.targetWeight}
               baselineLabel="Goal weight"
               isDarkMode={prefs.isDarkMode}
               secondData={movingAverageData}

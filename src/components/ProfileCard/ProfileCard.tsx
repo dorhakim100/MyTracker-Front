@@ -7,13 +7,14 @@ import { RootState } from '../../store/store'
 import { EditUser } from '../EditUser/EditUser'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { User } from '../../types/user/User'
-import { optimisticUpdateUser, setTrainees } from '../../store/actions/user.actions'
+import { optimisticUpdateUser, setTrainees, setTraineeUser } from '../../store/actions/user.actions'
 import { updateUser } from '../../store/actions/user.actions'
 import { showSuccessMsg } from '../../services/event-bus.service'
 import { showErrorMsg } from '../../services/event-bus.service'
 import { messages } from '../../assets/config/messages'
 import { CustomAlertDialog } from '../../CustomMui/CustomAlertDialog/CustomAlertDialog'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
+import { useLocation, useNavigate } from 'react-router'
 
 interface ProfileCardProps {
   userToDisplay?: User
@@ -35,6 +36,14 @@ export function ProfileCard({ userToDisplay }: ProfileCardProps) {
   const trainees = useSelector(
     (storeState: RootState) => storeState.userModule.trainees
   )
+
+  const isDashboard = useSelector(
+    (storeState: RootState) => storeState.systemModule.isDashboard
+  )
+
+  const navigate = useNavigate()
+
+  const location = useLocation()
 
   const userToEdit = useMemo(() => {
     return userToDisplay || user
@@ -83,6 +92,13 @@ export function ProfileCard({ userToDisplay }: ProfileCardProps) {
       }
     }
   }
+
+  const handleViewProfile = () => {
+    if (!userToDisplay) return
+    setTraineeUser(userToDisplay)
+
+    navigate(`/trainer/user`)
+  }
   return (
     <>
       <Card
@@ -109,6 +125,17 @@ export function ProfileCard({ userToDisplay }: ProfileCardProps) {
             </Typography>
           </div>
         </div>
+
+        {isDashboard && location.pathname !== '/trainer/user' && (
+          <div className="dashboard-actions-container">
+            <CustomButton
+              text="View Profile"
+              onClick={handleViewProfile}
+              className={`${prefs.favoriteColor}`}
+              disabled={!userToDisplay}
+            />
+          </div>
+        )}
       </Card>
       <SlideDialog
         open={isEditUserOpen}

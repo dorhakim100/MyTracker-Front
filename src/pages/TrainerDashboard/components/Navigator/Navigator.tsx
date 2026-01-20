@@ -9,7 +9,7 @@ import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 
 import { apps } from '../../../../assets/config/apps'
-import { trainerRoutes } from '../../../../assets/routes/trainerRoutes'
+import { trainerRoutes } from '../../../../assets/routes/trainer.routes'
 
 const item = {
   py: '2px',

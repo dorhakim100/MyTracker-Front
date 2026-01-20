@@ -8,10 +8,8 @@ import Typography from '@mui/material/Typography'
 
 import Navigator from './components/Navigator/Navigator'
 import Header from './components/Header/Header'
-import { trainerRoutes } from '../../assets/routes/trainerRoutes'
+import { trainerRoutes } from '../../assets/routes/trainer.routes'
 import { stylesVariables } from '../../assets/config/styles.variables'
-
-import { Dashboard } from '../MyTracker/Dashboard/Dashboard'
 
 function Copyright() {
   return (

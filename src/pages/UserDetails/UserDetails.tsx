@@ -44,6 +44,10 @@ export function UserDetails() {
     (storeState: RootState) => storeState.systemModule.isDashboard
   )
 
+  const traineeUser = useSelector(
+    (storeState: RootState) => storeState.userModule.traineeUser
+  )
+
   const [requests, setRequests] = useState<TrainerRequest[]>([])
 
   const acrodions = [
@@ -68,7 +72,7 @@ export function UserDetails() {
     },
     {
       title: 'BMR Calculator',
-      cmp: <BmrCard />,
+      cmp: <BmrCard sentUser={traineeUser || user || undefined} />,
       icon: <CalculateIcon />,
       key: 'bmr-calculator',
     },
@@ -87,8 +91,8 @@ export function UserDetails() {
 
   const statsCarouselItems = useMemo(() => {
     if (!user) return []
-    return [<WeightCard />, <WeightChart />]
-  }, [user])
+    return [<WeightCard />, <WeightChart sentUser={traineeUser || user || undefined} />]
+  }, [user, traineeUser])
 
   useEffect(() => {
     getUsersRequests()
@@ -133,17 +137,17 @@ export function UserDetails() {
       className={`page-container user-page ${prefs.isDarkMode ? 'dark-mode' : ''
         } ${isDashboard ? 'dashboard' : ''}`}
     >
-      <ProfileCard />
+      <ProfileCard userToDisplay={traineeUser || user || undefined} />
 
 
       {isDashboard &&
 
         <div className="weight-chart-container">
-          <WeightChart />
+          <WeightChart sentUser={traineeUser || user || undefined} />
         </div>
       }
       {isDashboard &&
-        <BmrCard />
+        <BmrCard sentUser={traineeUser || user || undefined} />
       }
 
       {!isDashboard && <div className="content-container">

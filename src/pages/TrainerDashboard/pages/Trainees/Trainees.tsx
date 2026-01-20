@@ -3,6 +3,8 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../../../../store/store'
 import { ProfileCard } from '../../../../components/ProfileCard/ProfileCard'
 import { useMemo } from 'react'
+import { TraineesList } from '../../../TrainerDashboard/components/TraineesList/TraineesList'
+
 
 export function Trainees() {
   const prefs = useSelector(
@@ -26,11 +28,9 @@ export function Trainees() {
       </Typography>
 
 
-      {traineesToDisplay.map((trainee) => (
-        <ProfileCard key={trainee._id} userToDisplay={trainee} />
-      ))}
 
 
+      <TraineesList trainees={traineesToDisplay} />
 
     </Box>
   )

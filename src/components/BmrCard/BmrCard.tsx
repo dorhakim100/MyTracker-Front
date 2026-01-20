@@ -14,6 +14,7 @@ import { BmrFormState } from '../../types/bmrForm/BmrForm'
 import { CustomSelect } from '../../CustomMui/CustomSelect/CustomSelect'
 import { getArrayOfNumbers } from '../../services/util.service'
 import { genderOptions } from '../helpers/GenderOptions'
+import { User } from '../../types/user/User'
 
 export const activityOptions: ToggleOption[] = [
   // { value: 'bmr', label: 'BMR' },
@@ -40,7 +41,11 @@ const DEFAULT_AGE = 25
 const DEFAULT_HEIGHT = 170
 const DEFAULT_ACTIVITY_LEVEL = 'sedentary'
 
-export function BmrCard() {
+interface BmrCardProps {
+  sentUser: User | undefined
+}
+
+export function BmrCard({ sentUser }: BmrCardProps) {
   const prefs = useSelector(
     (storeState: RootState) => storeState.systemModule.prefs
   )
@@ -49,24 +54,25 @@ export function BmrCard() {
     (storeState: RootState) => storeState.userModule.user
   )
 
-  const isDashboard = useSelector(
-    (storeState: RootState) => storeState.systemModule.isDashboard
-  )
+  const viewdUser = useMemo(() => {
+    return sentUser || user
+  }, [sentUser, user])
+
 
   const calculatedAge = useMemo(() => {
-    return user?.details?.birthdate
+    return viewdUser?.details?.birthdate
       ? new Date().getFullYear() -
-      new Date(user.details.birthdate).getFullYear()
+      new Date(viewdUser.details.birthdate).getFullYear()
       : DEFAULT_AGE
-  }, [user?.details?.birthdate])
+  }, [viewdUser?.details?.birthdate])
 
   const [form, setForm] = useState<BmrFormState>({
     ...bmrService.getDefaultFormState(),
-    weightKg: Math.round(user?.lastWeight?.kg || DEFAULT_WEIGHT) + '',
-    gender: user?.details?.gender || DEFAULT_GENDER,
+    weightKg: Math.round(viewdUser?.lastWeight?.kg || DEFAULT_WEIGHT) + '',
+    gender: viewdUser?.details?.gender || DEFAULT_GENDER,
     ageYears: calculatedAge + '',
-    heightCm: (user?.details?.height || DEFAULT_HEIGHT) + '',
-    activity: user?.details?.activity || DEFAULT_ACTIVITY_LEVEL,
+    heightCm: (viewdUser?.details?.height || DEFAULT_HEIGHT) + '',
+    activity: viewdUser?.details?.activity || DEFAULT_ACTIVITY_LEVEL,
   })
 
   const bmr = useMemo(() => {
@@ -79,22 +85,27 @@ export function BmrCard() {
       heightCm: height,
       weightKg: weight,
     })
-  }, [form, user])
+  }, [form, viewdUser])
 
   //   const activityBuffer = useMemo(() => {
   //     return bmrService.calculateActivityBuffer(bmr, form.activity)
   //   }, [bmr, form.activity])
 
   useEffect(() => {
-    if (user && user.lastWeight)
+
+    let weightKg = viewdUser?.lastWeight?.kg || DEFAULT_WEIGHT
+
+
+    if (viewdUser)
       setForm({
         ...form,
-        gender: user.details.gender,
-        heightCm: user.details.height + '',
-        weightKg: Math.round(user.lastWeight.kg) + '',
-        activity: user.details.activity,
+        gender: viewdUser.details.gender,
+        heightCm: viewdUser.details.height + '',
+        weightKg: Math.round(weightKg) + '',
+        activity: viewdUser.details.activity,
+        ageYears: calculatedAge + '',
       })
-  }, [user])
+  }, [viewdUser, calculatedAge])
 
   const tdee = useMemo(() => {
     return bmrService.calculateTDEE(bmr, form.activity)
