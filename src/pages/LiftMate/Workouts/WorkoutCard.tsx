@@ -101,7 +101,7 @@ export function WorkoutCard({
         onClick: onViewDetails,
       },
       {
-        title: 'Edit Block',
+        title: 'Edit Routine',
         icon: <Edit />,
         onClick: onEdit,
       },
@@ -235,7 +235,7 @@ export function WorkoutCard({
           isDashboard && (
             <div className="dashboard-actions-container">
               <CustomButton
-                text="Edit Block"
+                text="Edit Routine"
                 fullWidth={true}
                 onClick={(ev) => {
                   ev.stopPropagation()
