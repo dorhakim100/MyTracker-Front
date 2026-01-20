@@ -78,9 +78,24 @@
   }
 
   .chart-container {
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    justify-content: center;
+    
     canvas {
-      width: 85vw !important;
-      height: calc(85vw * 0.5) !important;
+      width: min(85vw, 800px) !important;
+      height: calc(min(85vw, 800px) * 0.5) !important;
+      max-width: 100%;
+    }
+  }
+  
+  @media (min-width: 800px) {
+    .chart-container {
+      canvas {
+        width: min(85vw, 1000px) !important;
+        height: calc(min(85vw, 1000px) * 0.5) !important;
+      }
     }
   }
 }

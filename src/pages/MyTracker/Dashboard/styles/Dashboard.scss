@@ -83,7 +83,7 @@
 }
 
 body.dashboard {
-  .card {
+  .card:not(.weight):not(.user-details) {
     min-height: 390px !important;
   }
 }

@@ -1,10 +1,30 @@
+
+
 .user-page {
-  // padding: 16px;
-  // display: grid;
-  align-items: start;
-  gap: 16px;
-  .MuiAccordionSummary-root {
-    // padding: 0;
+  
+  &.dashboard {
+
+    display: grid;
+    grid-template-columns: 500px 1fr;
+    grid-template-rows: auto 1fr;
+    align-items: start;
+    gap: 1rem;
+    // margin-bottom: 1rem;
+
+    .user-details{
+      margin: 0;
+    }
+
+    .weight-chart-container {
+      grid-column: 2/3;
+      grid-row: 1/-1;
+    }
+
+    .bmr-card {
+      grid-column: 1/2;
+      grid-row: 2/3;
+
+    }
   }
 
   .MuiAccordionDetails-root {
@@ -105,3 +125,4 @@
     background-color: $picker-color-deep-purple;
   }
 }
+

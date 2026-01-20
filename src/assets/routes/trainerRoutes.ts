@@ -6,14 +6,15 @@ import PeopleIcon from '@mui/icons-material/People'
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter'
 import SettingsIcon from '@mui/icons-material/Settings'
 import FeaturedPlayListIcon from '@mui/icons-material/FeaturedPlayList'
+import UserIcon from '@mui/icons-material/Person'
 
-// Placeholder components - will be created
 
 import { Trainees } from '../../pages/TrainerDashboard/pages/Trainees/Trainees'
 import { TrainerDashboardOverview } from '../../pages/TrainerDashboard/pages/Dashboard/TrainerDashboardOverview'
 import { TrainerWorkouts } from '../../pages/TrainerDashboard/pages/Workouts/TrainerWorkouts'
 import { TrainerExercises } from '../../pages/TrainerDashboard/pages/Exercises/TrainerExercises'
 import { TrainerSettings } from '../../pages/TrainerDashboard/pages/Settings/TrainerSettings'
+import { UserDetails } from '../../pages/UserDetails/UserDetails'
 
 export interface TrainerRoute {
   title: string
@@ -47,7 +48,12 @@ export const trainerRoutes: TrainerRoute[] = [
     element: TrainerExercises,
     icon: FitnessCenterIcon,
   },
-
+  {
+    title: 'User',
+    path: '/trainer/user',
+    element: UserDetails,
+    icon: UserIcon,
+  },
   {
     title: 'Settings',
     path: '/trainer/settings',

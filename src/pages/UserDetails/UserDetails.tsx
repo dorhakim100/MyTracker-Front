@@ -40,6 +40,10 @@ export function UserDetails() {
     (storeState: RootState) => storeState.userModule.user
   )
 
+  const isDashboard = useSelector(
+    (storeState: RootState) => storeState.systemModule.isDashboard
+  )
+
   const [requests, setRequests] = useState<TrainerRequest[]>([])
 
   const acrodions = [
@@ -121,14 +125,28 @@ export function UserDetails() {
     }
   }
 
+
+
+
   return (
     <div
       className={`page-container user-page ${prefs.isDarkMode ? 'dark-mode' : ''
-        }`}
+        } ${isDashboard ? 'dashboard' : ''}`}
     >
       <ProfileCard />
 
-      <div className="content-container">
+
+      {isDashboard &&
+
+        <div className="weight-chart-container">
+          <WeightChart />
+        </div>
+      }
+      {isDashboard &&
+        <BmrCard />
+      }
+
+      {!isDashboard && <div className="content-container">
         <StatsCarousel
           items={statsCarouselItems}
           showSkeleton={!user}
@@ -158,7 +176,7 @@ export function UserDetails() {
           className={`${prefs.favoriteColor}`}
           text="Logout"
         />
-      </div>
+      </div>}
     </div>
   )
 }
