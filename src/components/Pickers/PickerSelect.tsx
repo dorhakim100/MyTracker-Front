@@ -4,6 +4,7 @@ import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
+import { Tooltip } from '@mui/material'
 
 interface PickerSelectProps {
   openClock: () => void
@@ -33,35 +34,41 @@ export function PickerSelect({
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
+  const isDashboard = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.isDashboard
+  )
 
   return (
-    <FormControl
-      sx={{ m: 1, minWidth: isAutoWidth ? 'auto' : minWidth || 150 }}
-      size="small"
-      onClick={openClock}
-      className={`picker-select ${className}`}
-    >
-      <InputLabel id={`${option.label}-label`}>{option.label}</InputLabel>
-      <Select
-        className={`${prefs.favoriteColor}`}
-        labelId={`${option.label}-label`}
-        label={option.label}
-        value={value}
-        open={false}
-        onOpen={() => {}}
-        renderValue={(selected) =>
-          `${selected} ${afterString ? ` ${afterString}` : ''}`
-        }
+    <Tooltip title={`Edit ${option.label}`} disableHoverListener={!isDashboard}>
+
+      <FormControl
+        sx={{ m: 1, minWidth: isAutoWidth ? 'auto' : minWidth || 150 }}
+        size="small"
+        onClick={openClock}
+        className={`picker-select ${className}`}
       >
-        <MenuItem
-          sx={{
-            display: 'none',
-          }}
+        <InputLabel id={`${option.label}-label`}>{option.label}</InputLabel>
+        <Select
+          className={`${prefs.favoriteColor}`}
+          labelId={`${option.label}-label`}
+          label={option.label}
           value={value}
+          open={false}
+          onOpen={() => { }}
+          renderValue={(selected) =>
+            `${selected} ${afterString ? ` ${afterString}` : ''}`
+          }
         >
-          {value}
-        </MenuItem>
-      </Select>
-    </FormControl>
+          <MenuItem
+            sx={{
+              display: 'none',
+            }}
+            value={value}
+          >
+            {value}
+          </MenuItem>
+        </Select>
+      </FormControl>
+    </Tooltip>
   )
 }
