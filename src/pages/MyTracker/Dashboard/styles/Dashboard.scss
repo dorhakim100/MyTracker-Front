@@ -17,6 +17,15 @@
       width: 160px;
       height: 160px;
       justify-self: center;
+
+      &.dashboard {
+
+        min-width: 300px;
+        min-height: 300px;
+  
+        max-width: 500px;
+        max-height: 500px;
+      }
     }
   }
   .times-container {

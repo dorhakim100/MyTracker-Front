@@ -81,8 +81,10 @@ async function update(user: User) {
   try {
     const { _id } = user
 
-    const mealsIds = user.meals.map((meal) => meal._id)
-    const goalsIds = user.goals.map((goal) => goal._id)
+    let mealsIds
+    let goalsIds
+    if (user.meals) mealsIds = user.meals.map((meal) => meal._id)
+    if (user.goals) goalsIds = user.goals.map((goal) => goal._id)
     // const weightsIds = user.weights.map((weight) => weight._id)
     const userToSend = {
       _id: user._id,
@@ -220,7 +222,7 @@ async function logout() {
   sessionStorage.removeItem(STORAGE_KEY_LOGGEDIN_USER)
   try {
     await indexedDbService.remove(REMEMBER_STORE, REMEMBER_RECORD_ID)
-  } catch {}
+  } catch { }
   try {
     return await httpService.post('auth/logout', null)
   } catch (err) {
@@ -300,7 +302,7 @@ async function getRememberedUser() {
         REMEMBER_RECORD_ID
       )
       if (rec && rec.userId) rememberedId = rec.userId
-    } catch {}
+    } catch { }
 
     if (!rememberedId) {
       const ls = localStorage.getItem(STORAGE_KEY_REMEMBERED_USER)
@@ -312,7 +314,7 @@ async function getRememberedUser() {
             userId: rememberedId,
           })
           localStorage.removeItem(STORAGE_KEY_REMEMBERED_USER)
-        } catch {}
+        } catch { }
       }
     }
 

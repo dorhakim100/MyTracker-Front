@@ -195,7 +195,7 @@ export function Dashboard() {
           <Typography variant="h6" className="bold-header">
             No workout today
           </Typography>
-          <div className="animation-container">
+          <div className={`animation-container ${isDashboard ? 'dashboard' : ''}`}>
             <Lottie animationData={workoutAnimation} loop={true} />
           </div>
           {!isDashboard && <CustomButton

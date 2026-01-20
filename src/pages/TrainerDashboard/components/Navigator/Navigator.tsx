@@ -41,8 +41,8 @@ export default function Navigator(props: DrawerProps) {
       {...other}
       className="trainer-dashboard-navigator-container"
     >
-      <List disablePadding>
-        <ListItem
+      <List disablePadding >
+        <ListItem className='pointer' onClick={() => navigate('/trainer')}
           sx={{ ...item, ...itemCategory, fontSize: 22, color: '#fff' }}
         >
           <img src={apps.myTracker.logo} alt="logo" className="logo" />

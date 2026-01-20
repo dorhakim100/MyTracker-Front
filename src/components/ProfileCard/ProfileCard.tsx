@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { Typography } from '@mui/material'
 import { Card } from '@mui/material'
@@ -7,7 +7,7 @@ import { RootState } from '../../store/store'
 import { EditUser } from '../EditUser/EditUser'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { User } from '../../types/user/User'
-import { optimisticUpdateUser } from '../../store/actions/user.actions'
+import { optimisticUpdateUser, setTrainees } from '../../store/actions/user.actions'
 import { updateUser } from '../../store/actions/user.actions'
 import { showSuccessMsg } from '../../services/event-bus.service'
 import { showErrorMsg } from '../../services/event-bus.service'
@@ -24,13 +24,21 @@ export function ProfileCard({ userToDisplay }: ProfileCardProps) {
     (storeState: RootState) => storeState.systemModule.prefs
   )
 
-  const user = userToDisplay || useSelector(
+  const user = useSelector(
     (storeState: RootState) => storeState.userModule.user
   )
 
   const traineeUser = useSelector(
     (storeState: RootState) => storeState.userModule.traineeUser
   )
+
+  const trainees = useSelector(
+    (storeState: RootState) => storeState.userModule.trainees
+  )
+
+  const userToEdit = useMemo(() => {
+    return userToDisplay || user
+  }, [userToDisplay, user])
 
   const [isEditUserOpen, setIsEditUserOpen] = useState<boolean>(false)
 
@@ -50,15 +58,29 @@ export function ProfileCard({ userToDisplay }: ProfileCardProps) {
     setOpenAlertDialog(false)
   }
 
-  const onSaveEditUser = async (user: User) => {
-    optimisticUpdateUser(user)
+  const onSaveEditUser = async (userToUpdate: User) => {
+
+
+
+    if (userToUpdate._id === user?._id) {
+      optimisticUpdateUser(userToUpdate)
+    } else {
+      const traineeIdx = trainees.findIndex(trainee => trainee._id === userToUpdate._id)
+      const newTrainees = [...trainees]
+      newTrainees[traineeIdx] = userToUpdate
+      setTrainees(newTrainees)
+    }
     onCloseEditUser()
     try {
-      await updateUser(user)
+      await updateUser(userToUpdate)
       showSuccessMsg(messages.success.updateUser)
     } catch (err) {
+
+
       showErrorMsg(messages.error.updateUser)
-      optimisticUpdateUser(user as User)
+      if (userToUpdate._id === user?._id) {
+        optimisticUpdateUser(userToUpdate)
+      }
     }
   }
   return (
@@ -71,19 +93,19 @@ export function ProfileCard({ userToDisplay }: ProfileCardProps) {
         <div className="profile-container" onClick={onOpenAlertDialog}>
           <img
             className="profile-avatar  box-shadow white-outline"
-            src={user?.details?.imgUrl || '/logo-square.png'}
+            src={userToEdit?.details?.imgUrl || '/logo-square.png'}
             alt="Profile"
           />
           <div className="profile-info">
             <Typography variant="h5" className="text-overflow">
-              {user?.details?.fullname || 'User Profile'}
+              {userToEdit?.details?.fullname || 'User Profile'}
             </Typography>
 
             <Typography variant="body1">
-              {user?.details?.height || 0} cm
+              {userToEdit?.details?.height || 0} cm
             </Typography>
             <Typography variant="body1">
-              {new Date(user?.details?.birthdate || 0).toLocaleDateString('he')}
+              {new Date(userToEdit?.details?.birthdate || 0).toLocaleDateString('he')}
             </Typography>
           </div>
         </div>
@@ -91,7 +113,7 @@ export function ProfileCard({ userToDisplay }: ProfileCardProps) {
       <SlideDialog
         open={isEditUserOpen}
         onClose={onCloseEditUser}
-        component={<EditUser onSave={onSaveEditUser} selectedUser={user} />}
+        component={<EditUser onSave={onSaveEditUser} selectedUser={userToEdit} />}
         title="Edit User"
         // onSave={() => onSaveEditUser(user as User)}
         type="full"
@@ -103,7 +125,7 @@ export function ProfileCard({ userToDisplay }: ProfileCardProps) {
       >
         <div className="modal-profile-picture-container">
           <img
-            src={user?.details?.imgUrl || '/logo-square.png'}
+            src={userToEdit?.details?.imgUrl || '/logo-square.png'}
             alt="Profile"
             className={`profile-picture box-shadow white-outline`}
           />

@@ -27,7 +27,7 @@ import { DeleteAccountCard } from '../DeleteAccountCard/DeleteAccountCard'
 
 interface EditUserProps {
   selectedUser?: User | null
-  onSave: (user: User) => void
+  onSave: (user: User) => Promise<void>
 }
 
 const DEFAULT_BIRTHDATE = 946684800000
@@ -152,7 +152,7 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
     }
   }
 
-  function handleSave() {
+  async function handleSave() {
     if (!selectedUser && !user) return showErrorMsg(messages.error.updateUser)
 
     const base: User = selectedUser || (user as User)
@@ -170,7 +170,13 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
       },
     }
 
-    onSave(merged)
+
+    try {
+      await onSave(merged)
+
+    } catch (err) {
+      throw err
+    }
   }
 
   function setIsoDate(isoDate: string) {
