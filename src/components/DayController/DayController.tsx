@@ -1,4 +1,4 @@
-import { IconButton } from '@mui/material'
+import { IconButton, Tooltip } from '@mui/material'
 import { useSelector } from 'react-redux'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
@@ -25,23 +25,28 @@ export function DayController({
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
-
+  const isDashboard = useSelector((state: RootState) => state.systemModule.isDashboard)
   return (
     <div className='day-controller-container'>
-      <IconButton onClick={() => onDayChange(-1)}>
-        <ArrowBackIcon />
-      </IconButton>
+      <Tooltip title="Previous day" disableHoverListener={!isDashboard}>
+
+        <IconButton onClick={() => onDayChange(-1)}>
+          <ArrowBackIcon />
+        </IconButton>
+      </Tooltip>
       <div
-        className={`time-controls-container ${
-          isToday ? `today ${prefs.favoriteColor}` : ''
-        } ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+        className={`time-controls-container ${isToday ? `today ${prefs.favoriteColor}` : ''
+          } ${prefs.isDarkMode ? 'dark-mode' : ''}`}
       >
         <TimesContainer isClock={false} selectedDay={selectedDay} />
         <CustomDatePicker value={selectedDayDate} onChange={onDateChange} />
       </div>
-      <IconButton onClick={() => onDayChange(1)}>
-        <ArrowForwardIcon />
-      </IconButton>
+      <Tooltip title="Next day" disableHoverListener={!isDashboard}>
+
+        <IconButton onClick={() => onDayChange(1)}>
+          <ArrowForwardIcon />
+        </IconButton>
+      </Tooltip>
     </div>
   )
 }

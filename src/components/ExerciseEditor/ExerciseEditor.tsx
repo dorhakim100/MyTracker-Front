@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { Badge, Checkbox, Divider, Typography } from '@mui/material'
+import { Badge, Checkbox, Divider, Tooltip, Typography } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 
 import { RootState } from '../../store/store'
@@ -297,23 +297,29 @@ export function ExerciseEditor({
                     />
                     <div className="badges-container">
                       {(previousInstructions || !isExpected) && (
-                        <Checkbox
-                          disabled={isExpected}
-                          icon={
-                            <RadioButtonUncheckedIcon
-                              className="not-finished"
-                              sx={{ color: 'white' }}
-                            />
-                          }
-                          checkedIcon={
-                            <CheckIcon
-                              className="finished"
-                              sx={{ color: 'white' }}
-                            />
-                          }
-                          checked={set.isDone ? true : false}
-                          onChange={() => onMarkAsDone(index)}
-                        />
+                        <Tooltip
+                          title={set.isDone ? 'Mark as not done' : 'Mark as done'}
+                          disableHoverListener={!isDashboard}
+                        >
+
+                          <Checkbox
+                            disabled={isExpected}
+                            icon={
+                              <RadioButtonUncheckedIcon
+                                className="not-finished"
+                                sx={{ color: 'white' }}
+                              />
+                            }
+                            checkedIcon={
+                              <CheckIcon
+                                className="finished"
+                                sx={{ color: 'white' }}
+                              />
+                            }
+                            checked={set.isDone ? true : false}
+                            onChange={() => onMarkAsDone(index)}
+                          />
+                        </Tooltip>
                       )}
                     </div>
                     {previousInstructions && (

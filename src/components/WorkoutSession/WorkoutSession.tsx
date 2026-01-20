@@ -849,6 +849,7 @@ export function WorkoutSession({
               icon={allExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               onClick={toggleExpandAll}
               isIcon={true}
+              tooltipTitle={allExpanded ? 'Collapse all' : 'Expand all'}
             />
             <CustomButton
               // text="Finish Workout"
@@ -860,6 +861,7 @@ export function WorkoutSession({
                 if (!timer) return
                 removeTimer(timer._id)
               }}
+              tooltipTitle="Finish Workout"
             />
             <CustomButton
               icon={<DeleteIcon />}
@@ -872,6 +874,7 @@ export function WorkoutSession({
                 })
               }}
               isIcon={true}
+              tooltipTitle="Delete Workout"
             />
           </div>
         </div>

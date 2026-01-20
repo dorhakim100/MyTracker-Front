@@ -27,9 +27,8 @@ export function TraineeUserCard() {
 
   return (
     <div
-      className={`trainee-user-card-container ${
-        prefs.isDarkMode ? 'dark-mode' : ''
-      } ${isHidden ? 'hidden' : ''}`}
+      className={`trainee-user-card-container ${prefs.isDarkMode ? 'dark-mode' : ''
+        } ${isHidden ? 'hidden' : ''}`}
     >
       <div className='trainee-details'>
         <img src={displayImage} alt={displayName} />
@@ -46,6 +45,7 @@ export function TraineeUserCard() {
       <CustomButton
         isIcon={true}
         icon={isHidden ? <KeyboardArrowRightIcon /> : <KeyboardArrowLeftIcon />}
+        tooltipTitle={isHidden ? 'Show' : 'Hide'}
         onClick={() => {
           setIsHidden(!isHidden)
         }}

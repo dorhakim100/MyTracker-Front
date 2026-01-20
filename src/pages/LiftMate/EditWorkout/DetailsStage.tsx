@@ -241,6 +241,7 @@ export function DetailsStage({
                       exercise: exerciseDetails,
                     })
                   }}
+                  tooltipTitle="View exercise details"
                 />
                 <h4>{capitalizeFirstLetter(exerciseDetails.name)}</h4>
 
@@ -250,9 +251,8 @@ export function DetailsStage({
                   onChange={(value) => {
                     onSwitchRpeRir(exercise.exerciseId, value as 'rpe' | 'rir')
                   }}
-                  className={`rpe-rir-toggle ${
-                    prefs.isDarkMode ? 'dark-mode' : ''
-                  }`}
+                  className={`rpe-rir-toggle ${prefs.isDarkMode ? 'dark-mode' : ''
+                    }`}
                 />
               </div>
 

@@ -13,6 +13,7 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import CircularProgress from '@mui/material/CircularProgress'
 import { stylesVariables } from '../../assets/config/styles.variables'
+import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -226,9 +227,8 @@ export function SlideDialog({
         }}
         slotProps={{
           paper: {
-            className: `slide-dialog ${prefs.isDarkMode ? 'dark-mode' : ''} ${
-              prefs.favoriteColor || ''
-            }`,
+            className: `slide-dialog ${prefs.isDarkMode ? 'dark-mode' : ''} ${prefs.favoriteColor || ''
+              }`,
             style: {
               borderTopRightRadius: '10px',
               borderTopLeftRadius: '10px',
@@ -262,14 +262,12 @@ export function SlideDialog({
           >
             <AppBar sx={{ position: 'relative' }}>
               <Toolbar className={`${prefs.favoriteColor}`}>
-                <IconButton
-                  edge="start"
-                  color="inherit"
+                <CustomButton
+                  isIcon={true}
+                  icon={<CloseIcon />}
                   onClick={onClose}
-                  aria-label="close"
-                >
-                  <CloseIcon sx={{ color: '#fff' }} />
-                </IconButton>
+                  tooltipTitle="Close"
+                />
                 <Typography
                   sx={{ ml: 2, flex: 1 }}
                   variant="h6"

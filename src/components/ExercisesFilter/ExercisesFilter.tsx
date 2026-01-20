@@ -43,9 +43,8 @@ export function ExercisesFilter({
 
   return (
     <div
-      className={`exercises-filter-container ${className} ${
-        prefs.isDarkMode ? 'dark-mode' : ''
-      } ${isDashboard ? 'dashboard' : ''}`}
+      className={`exercises-filter-container ${className} ${prefs.isDarkMode ? 'dark-mode' : ''
+        } ${isDashboard ? 'dashboard' : ''}`}
     >
       <CustomInput
         value={exerciseFilter.searchValue}
@@ -78,6 +77,7 @@ export function ExercisesFilter({
         <CustomButton
           icon={<FilterAltOffIcon />}
           isIcon={true}
+          tooltipTitle="Clear filters"
           onClick={() => {
             onExerciseFilterChange(workoutService.getEmptyExerciseFilter())
           }}

@@ -1,4 +1,4 @@
-import { Button, IconButton } from '@mui/material'
+import { Button, IconButton, Tooltip } from '@mui/material'
 import type { SxProps, Theme } from '@mui/material/styles'
 import type { ReactNode, MouseEvent } from 'react'
 import { useSelector } from 'react-redux'
@@ -18,6 +18,7 @@ interface CustomButtonProps {
   fullWidth?: boolean
   sx?: SxProps<Theme>
   isIconReverse?: boolean
+  tooltipTitle?: string
 }
 
 export function CustomButton({
@@ -33,6 +34,7 @@ export function CustomButton({
   fullWidth = false,
   sx,
   isIconReverse = false,
+  tooltipTitle,
 }: CustomButtonProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -54,30 +56,33 @@ export function CustomButton({
         } ${disabled ? 'disabled' : ''} ${prefs.favoriteColor || ''}`}
     >
       {isIcon ? (
-        <IconButton
-          aria-label={ariaLabel || (typeof text === 'string' ? text : 'button')}
-          onClick={onClick}
-          disabled={disabled}
-          className={`custom-button ${className || ''} `}
-          sx={{
-            backgroundColor: resolvedBg,
-            color: resolvedBg ? '#fff' : undefined,
-            borderRadius: 999,
-            touchAction: 'manipulation',
-            WebkitTapHighlightColor: 'transparent',
-            '&:hover': {
+        <Tooltip title={tooltipTitle || ariaLabel || (typeof text === 'string' ? text : 'button')} disableHoverListener={tooltipTitle && isDashboard ? false : true} >
+
+          <IconButton
+            aria-label={ariaLabel || (typeof text === 'string' ? text : 'button')}
+            onClick={onClick}
+            disabled={disabled}
+            className={`custom-button ${className || ''} `}
+            sx={{
               backgroundColor: resolvedBg,
-              filter: resolvedBg ? 'brightness(0.95)' : undefined,
-            },
-            '&:active': {
-              transform: 'scale(0.98)',
-            },
-            '&:focus': { outline: 'none' },
-            ...sx,
-          }}
-        >
-          {icon}
-        </IconButton>
+              color: resolvedBg ? '#fff' : undefined,
+              borderRadius: 999,
+              touchAction: 'manipulation',
+              WebkitTapHighlightColor: 'transparent',
+              '&:hover': {
+                backgroundColor: resolvedBg,
+                filter: resolvedBg ? 'brightness(0.95)' : undefined,
+              },
+              '&:active': {
+                transform: 'scale(0.98)',
+              },
+              '&:focus': { outline: 'none' },
+              ...sx,
+            }}
+          >
+            {icon}
+          </IconButton>
+        </Tooltip>
       ) : (
         <Button
           variant="contained"

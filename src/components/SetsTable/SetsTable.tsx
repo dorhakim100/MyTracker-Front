@@ -106,10 +106,12 @@ function Row(props: {
               getNotes(sessionId, sets[0].exerciseId)
             }}
             isIcon={true}
+            tooltipTitle="View notes"
           />
           <CustomButton
             icon={open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
             isIcon={true}
+            tooltipTitle={open ? 'Collapse' : 'Expand'}
           />
         </TableCell>
       </TableRow>
@@ -160,7 +162,7 @@ function Row(props: {
               </Table>
             </Box>
           </Collapse>
-         {divider && <Divider sx={{marginInline: '0.5rem'}} className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />}
+          {divider && <Divider sx={{ marginInline: '0.5rem' }} className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />}
         </TableCell>
       </TableRow>
 

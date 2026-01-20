@@ -1,6 +1,7 @@
 import * as React from 'react'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
+import { Tooltip } from '@mui/material'
 import { DropdownOption } from '../../types/DropdownOption'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
@@ -72,6 +73,7 @@ export function CustomOptionsMenu({
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
+  const isDashboard = useSelector((state: RootState) => state.systemModule.isDashboard)
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const [open, setOpen] = React.useState(false)
 
@@ -92,20 +94,22 @@ export function CustomOptionsMenu({
 
   return (
     <div className={className} onClick={handleClick}>
-      {triggerElement}
+      <Tooltip title="Options" disableHoverListener={!isDashboard}>
+        <div onClick={handleClick}>
+          {triggerElement}
+        </div>
+      </Tooltip>
       <StyledMenu
-        className={`${
-          prefs.isDarkMode ? 'dark-mode' : ''
-        } ${className} options-menu`}
+        className={`${prefs.isDarkMode ? 'dark-mode' : ''
+          } ${className} options-menu`}
         id="basic-menu"
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}
         slotProps={{
           paper: {
-            className: `${
-              prefs.isDarkMode ? 'dark-mode' : ''
-            } options-menu-paper ${prefs.favoriteColor}`,
+            className: `${prefs.isDarkMode ? 'dark-mode' : ''
+              } options-menu-paper ${prefs.favoriteColor}`,
           },
           list: {
             'aria-labelledby': 'basic-button',
@@ -115,9 +119,8 @@ export function CustomOptionsMenu({
         {options.map((option) => (
           <MenuItem
             key={option.title}
-            className={`${
-              prefs.isDarkMode ? 'dark-mode' : ''
-            } option-menu-item`}
+            className={`${prefs.isDarkMode ? 'dark-mode' : ''
+              } option-menu-item`}
             onClick={(ev) => {
               ev.stopPropagation()
               option.onClick()

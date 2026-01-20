@@ -295,6 +295,7 @@ export function WeightChart({
                 icon={<Settings />}
                 onClick={onOpenSettings}
                 backgroundColor="transparent"
+                tooltipTitle="Settings"
               />
             </div>
           </div>

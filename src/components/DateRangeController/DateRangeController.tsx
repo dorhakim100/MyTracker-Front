@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
-import { Typography } from '@mui/material'
+import { Divider, Typography } from '@mui/material'
 import { CustomDatePicker } from '../../CustomMui/CustomDatePicker/CustomDatePicker'
 
 interface DateRangeControllerProps {
@@ -34,6 +34,7 @@ export function DateRangeController({
         }
         className={`${prefs.favoriteColor}`}
       />
+      <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} orientation='vertical' flexItem />
       <Typography variant='body1'>
         To: {toDate.toLocaleDateString('he')}
       </Typography>

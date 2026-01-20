@@ -415,6 +415,7 @@ export function ExerciseCard({
             triggerElement={
               <CustomButton
                 isIcon={true}
+
                 icon={<MoreHorizIcon />}
                 className={`more-options ${prefs.favoriteColor} ${prefs.isDarkMode ? 'dark-mode' : ''
                   }`}
@@ -430,6 +431,7 @@ export function ExerciseCard({
                 onOpenChange?.()
               }}
               isIcon={true}
+              tooltipTitle={isOpen ? 'Collapse' : 'Expand'}
             />
           )}
         </div>

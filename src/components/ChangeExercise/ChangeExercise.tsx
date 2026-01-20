@@ -235,6 +235,7 @@ export function ChangeExercise({ exerciseToChange }: ChangeExerciseProps) {
                   onChangeExercise(exercise)
                 }}
                 isIcon={true}
+                tooltipTitle="Change exercise"
               />
             )}
           />

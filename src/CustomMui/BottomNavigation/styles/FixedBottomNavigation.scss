@@ -204,7 +204,7 @@
 }
 
 body.dark-mode {
-.MuiButtonBase-root:not(.css-1dcy7mk-MuiButtonBase-root-MuiListItemButton-root){
+.MuiButtonBase-root:not(.css-1dcy7mk-MuiButtonBase-root-MuiListItemButton-root):not(.color-button){
   &:hover{
     background-color: lighten($darker-gray, 10%);
   }
