@@ -5,6 +5,7 @@
   align-items: center;
   gap: 1rem;
   height: fit-content;
+  text-align: start;
 
   .profile-avatar {
     width: 120px;
@@ -19,8 +20,6 @@
     max-width: 100%;
     overflow: hidden;
   }
-
-  
 }
 
 .modal-profile-picture-container {
@@ -40,9 +39,9 @@
   }
 }
 
-.user-details{
+.user-details {
   border-left: 8px solid transparent !important;
-  
+
   &.selected {
     border-left: 8px solid $primary-color !important;
   }
@@ -54,7 +53,7 @@
   &.red {
     border-left: 8px solid $picker-color-red !important;
   }
-  
+
   &.yellow {
     border-left: 8px solid $picker-color-yellow !important;
   }
@@ -62,8 +61,7 @@
   &.green {
     border-left: 8px solid $picker-color-green !important;
   }
-  
-  
+
   &.orange {
     border-left: 8px solid $picker-color-orange !important;
   }
@@ -71,8 +69,7 @@
   &.deepPurple {
     border-left: 8px solid $picker-color-deep-purple !important;
   }
-  
-  
+
   &.purple {
     border-left: 8px solid $picker-color-purple !important;
   }
