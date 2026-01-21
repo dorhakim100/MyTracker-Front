@@ -1,14 +1,10 @@
 .workouts-container {
-
-
   &:not(.dashboard) {
-
     padding-top: 1rem;
   }
   &.dashboard {
     @media (min-width: 600px) {
       width: calc(100vw - $left-menu-width - 2rem);
-
     }
   }
   &.skeleton {
@@ -54,13 +50,11 @@
     gap: 0.5rem;
   }
 
-
-  .workouts-header{
-
-    h6{
+  .workouts-header {
+    h6 {
       text-align: center;
     }
-    .animation-container{
+    .animation-container {
       min-width: 220px;
       min-height: 220px;
 
@@ -98,11 +92,21 @@
     margin: 0.8rem 0;
   }
 
+  .inactive-list {
+    @media (min-width: 800px) {
+      .workout-avatar {
+        width: 50px;
+        height: 50px;
+      }
+      span {
+        font-size: 1rem;
+      }
+    }
+  }
+
   .no-past-workouts-message {
     text-align: center;
     margin-bottom: 1rem;
     opacity: 0.7;
   }
-
-
 }

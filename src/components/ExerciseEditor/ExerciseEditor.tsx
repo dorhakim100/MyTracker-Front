@@ -285,34 +285,38 @@ export function ExerciseEditor({
             items={exercise.sets.map((set, index) => ({
               id: `${exercise.exerciseId}-set-${index}`,
               content: (
-                <div className={`set-container ${isDashboard ? 'dashboard' : ''}`}>
+                <div
+                  className={`set-container ${isDashboard ? 'dashboard' : ''}`}
+                >
                   <div
-                    className={`set-editor-container ${previousInstructions ? 'with-previous-set' : ''
-                      } ${isDashboard ? 'dashboard' : ''}`}
+                    className={`set-editor-container ${
+                      previousInstructions ? 'with-previous-set' : ''
+                    } ${isDashboard ? 'dashboard' : ''}`}
                   >
                     <Badge
                       badgeContent={index + 1}
-                      color="primary"
+                      color='primary'
                       className={`${prefs.favoriteColor} float ${isDashboard ? 'dashboard' : ''}`}
                     />
-                    <div className="badges-container">
+                    <div className='badges-container'>
                       {(previousInstructions || !isExpected) && (
                         <Tooltip
-                          title={set.isDone ? 'Mark as not done' : 'Mark as done'}
+                          title={
+                            set.isDone ? 'Mark as not done' : 'Mark as done'
+                          }
                           disableHoverListener={!isDashboard}
                         >
-
                           <Checkbox
                             disabled={isExpected}
                             icon={
                               <RadioButtonUncheckedIcon
-                                className="not-finished"
+                                className='not-finished'
                                 sx={{ color: 'white' }}
                               />
                             }
                             checkedIcon={
                               <CheckIcon
-                                className="finished"
+                                className='finished'
                                 sx={{ color: 'white' }}
                               />
                             }
@@ -323,11 +327,13 @@ export function ExerciseEditor({
                       )}
                     </div>
                     {previousInstructions && (
-                      <span className={`previous-set-label ${isDashboard ? 'dashboard' : ''}`}>
+                      <span
+                        className={`previous-set-label ${isDashboard ? 'dashboard' : ''}`}
+                      >
                         Previous week expected:
                       </span>
                     )}
-                    <div className="reps-container">
+                    <div className='reps-container'>
                       {previousInstructions && (
                         <>
                           <span>
@@ -337,14 +343,15 @@ export function ExerciseEditor({
                             reps
                           </span>
                           <Divider
-                            orientation="horizontal"
-                            className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''
-                              }`}
+                            orientation='horizontal'
+                            className={`divider ${
+                              prefs.isDarkMode ? 'dark-mode' : ''
+                            }`}
                           />
                           {previousInstructions && (
                             <Typography
-                              variant="body1"
-                              className="previous-set-actual-label bold-header"
+                              variant='body1'
+                              className='previous-set-actual-label bold-header'
                             >
                               Actual:
                             </Typography>
@@ -369,10 +376,10 @@ export function ExerciseEditor({
                         value={set.reps.actual}
                         minWidth={windowWidth > 1050 ? windowWidth / 12 : 80}
 
-                      // isAutoWidth={true}
+                        // isAutoWidth={true}
                       />
                     </div>
-                    <div className="weight-container">
+                    <div className='weight-container'>
                       {previousInstructions && (
                         <>
                           <span>
@@ -382,12 +389,13 @@ export function ExerciseEditor({
                             kg
                           </span>
                           <Divider
-                            orientation="horizontal"
-                            className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''
-                              }`}
+                            orientation='horizontal'
+                            className={`divider ${
+                              prefs.isDarkMode ? 'dark-mode' : ''
+                            }`}
                           />
                           {previousInstructions && (
-                            <span className="previous-set-actual-label"></span>
+                            <span className='previous-set-actual-label'></span>
                           )}
                         </>
                       )}
@@ -408,11 +416,11 @@ export function ExerciseEditor({
                         }}
                         value={set.weight.actual}
                         minWidth={windowWidth > 1050 ? windowWidth / 10 : 100}
-                        afterString="kg"
-                      // isAutoWidth={true}
+                        afterString='kg'
+                        // isAutoWidth={true}
                       />
                     </div>
-                    <div className="rpe-rir-container">
+                    <div className='rpe-rir-container'>
                       {previousInstructions && (
                         <>
                           {' '}
@@ -421,11 +429,11 @@ export function ExerciseEditor({
                               (e) => e.exerciseId === exercise.exerciseId
                             )?.sets[index]?.rpe?.expected
                               ? previousInstructions?.exercises.find(
-                                (e) => e.exerciseId === exercise.exerciseId
-                              )?.sets[index]?.rpe?.expected
+                                  (e) => e.exerciseId === exercise.exerciseId
+                                )?.sets[index]?.rpe?.expected
                               : previousInstructions?.exercises.find(
-                                (e) => e.exerciseId === exercise.exerciseId
-                              )?.sets[index]?.rir?.expected}{' '}
+                                  (e) => e.exerciseId === exercise.exerciseId
+                                )?.sets[index]?.rir?.expected}{' '}
                             {previousInstructions?.exercises.find(
                               (e) => e.exerciseId === exercise.exerciseId
                             )?.sets[0].rpe?.expected
@@ -433,12 +441,13 @@ export function ExerciseEditor({
                               : 'RIR'}
                           </span>
                           <Divider
-                            orientation="horizontal"
-                            className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''
-                              }`}
+                            orientation='horizontal'
+                            className={`divider ${
+                              prefs.isDarkMode ? 'dark-mode' : ''
+                            }`}
                           />
                           {previousInstructions && (
-                            <span className="previous-set-actual-label"></span>
+                            <span className='previous-set-actual-label'></span>
                           )}
                         </>
                       )}
@@ -453,7 +462,7 @@ export function ExerciseEditor({
                           setEditSet({ ...set, index })
 
                           setCurrentPickerValue(
-                            set.rpe ? set.rpe.actual : set.rir?.actual ?? 2
+                            set.rpe ? set.rpe.actual : (set.rir?.actual ?? 2)
                           )
                         }}
                         option={{
@@ -461,17 +470,21 @@ export function ExerciseEditor({
                           key: set.rpe ? 'rpe' : 'rir',
                           type: 'number',
                         }}
-                        value={set.rpe ? set.rpe.actual : set.rir?.actual ?? 2}
+                        value={
+                          set.rpe ? set.rpe.actual : (set.rir?.actual ?? 2)
+                        }
                         minWidth={windowWidth > 1050 ? windowWidth / 14 : 70}
-                      // isAutoWidth={true}
+                        // isAutoWidth={true}
                       />
                     </div>
-                    {isDashboard && isExpected && <CustomButton
-                      className="delete-set-button red"
-                      text="Delete Set"
-                      onClick={() => onDeleteSet(index)}
-                      icon={<DeleteIcon />}
-                    />}
+                    {isDashboard && isExpected && (
+                      <CustomButton
+                        className='delete-set-button red'
+                        text='Delete Set'
+                        onClick={() => onDeleteSet(index)}
+                        icon={<DeleteIcon />}
+                      />
+                    )}
                   </div>{' '}
                   {/* <Divider
                     className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
@@ -480,46 +493,49 @@ export function ExerciseEditor({
               ),
               renderRightSwipeActions: isExpected
                 ? () => (
-                  <DeleteAction
-                    item={set}
-                    onDeleteItem={() => onDeleteSet(index)}
-                    destructive={
-                      index === 0 && exercise.sets.length === 1 ? false : true
-                    }
-                  />
-                )
+                    <DeleteAction
+                      item={set}
+                      onDeleteItem={() => onDeleteSet(index)}
+                      destructive={
+                        index === 0 && exercise.sets.length === 1 ? false : true
+                      }
+                    />
+                  )
                 : undefined,
               renderLeftSwipeActions: !isExpected
                 ? () => (
-                  <CustomSwipeAction
-                    item={set}
-                    onAction={() => onMarkAsDone(index)}
-                    destructive={false}
-                    icon={
-                      set.isDone ? (
-                        <RemoveCircleOutlineIcon />
-                      ) : (
-                        <CheckCircleOutlineIcon />
-                      )
-                    }
-                    text={set.isDone ? 'Not done' : 'Done'}
-                    className={set.isDone ? 'red' : 'green'}
-                  />
-                )
+                    <CustomSwipeAction
+                      item={set}
+                      onAction={() => onMarkAsDone(index)}
+                      destructive={false}
+                      icon={
+                        set.isDone ? (
+                          <RemoveCircleOutlineIcon />
+                        ) : (
+                          <CheckCircleOutlineIcon />
+                        )
+                      }
+                      text={set.isDone ? 'Not done' : 'Done'}
+                      className={set.isDone ? 'red' : 'green'}
+                    />
+                  )
                 : undefined,
             }))}
             listKey={`${exercise.exerciseId}-list-${exercise.sets.length}`}
             threshold={0.15}
           />
         )}
-        {!isDashboard && <div className="controls-container">
-          <CustomButton
-            icon={<AddIcon />}
-            text="Add Set"
-            onClick={onAddSet}
-            fullWidth
-          />
-        </div>}
+        {!isDashboard ||
+          (isExpected && (
+            <div className='controls-container'>
+              <CustomButton
+                icon={<AddIcon />}
+                text='Add Set'
+                onClick={onAddSet}
+                fullWidth
+              />
+            </div>
+          ))}
       </div>
       <SlideDialog
         open={pickerOptions.isOpen}
@@ -531,7 +547,7 @@ export function ExerciseEditor({
             isAfterValue={getIsAfterValue(pickerOptions.type)}
             buttonsValues={
               pickerButtonsValues[
-              pickerOptions.type as keyof typeof pickerButtonsValues
+                pickerOptions.type as keyof typeof pickerButtonsValues
               ]
             }
             minValue={

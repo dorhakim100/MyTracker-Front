@@ -31,7 +31,7 @@ import {
   showSuccessMsg,
 } from '../../../services/event-bus.service'
 import { WorkoutDetails } from '../../../components/WorkoutDetails/WorkoutDetails'
-import { CircularProgress, Divider, Typography } from '@mui/material'
+import { Avatar, CircularProgress, Divider, Typography } from '@mui/material'
 import { Add, Delete, Edit } from '@mui/icons-material'
 import { workoutService } from '../../../services/workout/workout.service'
 import { DAY_IN_MS, MONTH_IN_MS } from '../../../assets/config/times'
@@ -51,10 +51,9 @@ import {
 import CustomSkeleton from '../../../CustomMui/CustomSkeleton/CustomSkeleton'
 import { MyTraineeCard } from '../../../components/MyTraineeCard/MyTraineeCard'
 import { CustomAccordion } from '../../../CustomMui/CustomAccordion/CustomAccordion'
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import workoutAnimation from '../../../../public/gain-weight.json'
 import Lottie from 'lottie-react'
-
 
 const EDIT = 'edit'
 const DETAILS = 'details'
@@ -100,7 +99,9 @@ export function Workouts() {
     (state: RootState) => state.workoutModule.sessionDay
   )
 
-  const isDashboard = useSelector((state: RootState) => state.systemModule.isDashboard)
+  const isDashboard = useSelector(
+    (state: RootState) => state.systemModule.isDashboard
+  )
 
   const [selectedDay, setSelectedDay] = useState(new Date())
   const [selectedDayDate] = useState(new Date().toISOString())
@@ -187,8 +188,6 @@ export function Workouts() {
       from: selectedPastDate?.from,
       to: selectedPastDate?.to,
     })
-
-
   }, [user, traineeUser, selectedPastDate])
 
   useEffect(() => {
@@ -317,7 +316,7 @@ export function Workouts() {
         return <WorkoutDetails workout={selectedWorkout} />
       case ROUTINES:
         return (
-          <div className="dialog-routines-container">
+          <div className='dialog-routines-container'>
             {renderWorkoutLists(false)}
           </div>
         )
@@ -346,21 +345,22 @@ export function Workouts() {
 
     if (activeWorkouts.length === 0 && inactiveWorkouts.length === 0) {
       return (
-        <div className="no-workouts-container">
-          <Typography variant="body1">No workouts found</Typography>
+        <div className='no-workouts-container'>
+          <Typography variant='body1'>No workouts found</Typography>
         </div>
       )
     }
 
     return (
-      <div className="workouts-lists-container">
+      <div className='workouts-lists-container'>
         {activeWorkouts.length > 0 && (
-          <span className="bold-header">Active Routines</span>
+          <span className='bold-header'>Active Routines</span>
         )}
 
         <div
-          className={`workouts-list-container ${isDashboard ? 'dashboard' : ''} ${prefs.isDarkMode ? 'dark-mode' : ''
-            } active`}
+          className={`workouts-list-container ${isDashboard ? 'dashboard' : ''} ${
+            prefs.isDarkMode ? 'dark-mode' : ''
+          } active`}
         >
           <WorkoutsList
             workouts={activeWorkouts}
@@ -372,8 +372,8 @@ export function Workouts() {
         </div>
         <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
 
-        <div className="past-controller">
-          <span className="bold-header">Past Routines</span>
+        <div className='past-controller'>
+          <span className='bold-header'>Past Routines</span>
           <DateRangeController
             selectedPastDate={selectedPastDate}
             onDateChange={setSelectedPastDate}
@@ -385,8 +385,14 @@ export function Workouts() {
         {inactiveWorkouts.length > 0 ? (
           <CustomList
             items={inactiveWorkouts}
-            className={`workouts-list inactive-list ${prefs.isDarkMode ? 'dark-mode' : ''
-              }`}
+            className={`workouts-list inactive-list ${
+              prefs.isDarkMode ? 'dark-mode' : ''
+            }`}
+            renderLeft={(workout) => (
+              <Avatar className='workout-avatar'>
+                {workout.name.charAt(0)}
+              </Avatar>
+            )}
             renderPrimaryText={(workout) => workout.name}
             renderSecondaryText={(workout) =>
               capitalizeFirstLetter(workout.muscleGroups.join(', '))
@@ -396,7 +402,10 @@ export function Workouts() {
               <CustomOptionsMenu
                 options={pastWorkoutOptions}
                 triggerElement={
-                  <CustomButton isIcon={true} icon={<MoreHorizIcon />} />
+                  <CustomButton
+                    isIcon={true}
+                    icon={<MoreHorizIcon />}
+                  />
                 }
                 onClick={() => {
                   setSelectedWorkoutForOptions(workout)
@@ -405,11 +414,17 @@ export function Workouts() {
             )}
             isSwipeable={true}
             renderRightSwipeActions={(workout) => (
-              <DeleteAction item={workout} onDeleteItem={onDeleteWorkout} />
+              <DeleteAction
+                item={workout}
+                onDeleteItem={onDeleteWorkout}
+              />
             )}
           />
         ) : (
-          <Typography variant="body1" className="no-past-workouts-message">
+          <Typography
+            variant='body1'
+            className='no-past-workouts-message'
+          >
             No past routines found...
           </Typography>
         )}
@@ -419,7 +434,7 @@ export function Workouts() {
 
   function renderSkeleton() {
     return (
-      <div className="page-container workouts-container skeleton">
+      <div className='page-container workouts-container skeleton'>
         <DayController
           selectedDay={selectedDay}
           selectedDayDate={sessionFilter.date}
@@ -433,7 +448,7 @@ export function Workouts() {
             <CustomSkeleton
               key={index}
               height={'300px'}
-              width="100%"
+              width='100%'
               isDarkMode={prefs.isDarkMode}
             />
           )
@@ -458,17 +473,26 @@ export function Workouts() {
   if (!sessionDay || !sessionDay._id || isPageLoading) return renderSkeleton()
   return (
     <>
-
       <div
-        className={`page-container workouts-container ${timer ? 'has-timer' : ''
-          } ${isDashboard ? 'dashboard' : ''}`}
+        className={`page-container workouts-container ${
+          timer ? 'has-timer' : ''
+        } ${isDashboard ? 'dashboard' : ''}`}
       >
-        {isDashboard && <Typography variant="h4" className='bold-header' style={{ textAlign: 'center' }} >
-          Workouts
-        </Typography>}
+        {isDashboard && (
+          <Typography
+            variant='h4'
+            className='bold-header'
+            style={{ textAlign: 'center' }}
+          >
+            Workouts
+          </Typography>
+        )}
         <>
-          <div className="workouts-header routines">
-            <Typography variant="h5" className="bold-header">
+          <div className='workouts-header routines'>
+            <Typography
+              variant='h5'
+              className='bold-header'
+            >
               Routines
             </Typography>
 
@@ -483,28 +507,34 @@ export function Workouts() {
             className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
           />
         </>
-        {user?.isTrainer && !isDashboard &&
+        {user?.isTrainer && !isDashboard && (
           <CustomAccordion
-            title="My Trainees"
+            title='My Trainees'
             cmp={<MyTraineeCard />}
             icon={<PersonAddIcon />}
           />
-        }
+        )}
         {renderWorkoutLists(
           !sessionDay?.workoutId || !sessionDay?.instructions
         )}
         <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
-        <div className="workouts-header">
-          <Typography variant="h5" className="bold-header">
+        <div className='workouts-header'>
+          <Typography
+            variant='h5'
+            className='bold-header'
+          >
             Workout by date
           </Typography>
           {!sessionDay.instructions && !isDashboard && (
             <CustomButton
-              text="Start Empty Workout"
+              text='Start Empty Workout'
               onClick={onPlayEmptyWorkout}
               icon={
                 emptyWorkoutLoading ? (
-                  <CircularProgress size={20} color="inherit" />
+                  <CircularProgress
+                    size={20}
+                    color='inherit'
+                  />
                 ) : (
                   <Add />
                 )
@@ -525,17 +555,20 @@ export function Workouts() {
         <SlideAnimation
           motionKey={sessionDay._id}
           direction={direction}
-
-
         >
           {!sessionDay.instructions && (
-            <div className="workouts-header">
-              <Typography variant="h6" className="bold-header">
+            <div className='workouts-header'>
+              <Typography
+                variant='h6'
+                className='bold-header'
+              >
                 No workout session this day
               </Typography>
-              <div className="animation-container">
-
-                <Lottie animationData={workoutAnimation} loop={true} />
+              <div className='animation-container'>
+                <Lottie
+                  animationData={workoutAnimation}
+                  loop={true}
+                />
               </div>
             </div>
           )}
@@ -551,7 +584,7 @@ export function Workouts() {
         onClose={closeEdit}
         component={getDialogComponent()}
         title={getDialogTitle()}
-        type="full"
+        type='full'
       />
     </>
   )
