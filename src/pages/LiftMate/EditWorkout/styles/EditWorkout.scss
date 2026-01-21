@@ -11,7 +11,7 @@
     position: relative;
     padding-top: calc(130px + 2em);
 
-    .settings-controls-container{
+    .settings-controls-container {
       position: fixed;
       top: 135px;
       left: 0;
@@ -30,11 +30,7 @@
         background-color: $dark-gray;
       }
 
-
-
-
       z-index: 1000;
-
     }
 
     &.name-exercises-stage {
@@ -132,12 +128,12 @@
       border-top: 1px solid $light-gray;
       z-index: 1000;
       box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
-    &.dashboard {
-      left: $left-menu-width;
-      right: 15px;
-      bottom: 0px;
-      justify-content: space-around;
-    }
+      &.dashboard {
+        left: $left-menu-width;
+        right: 15px;
+        bottom: 0px;
+        justify-content: space-around;
+      }
       &.dark-mode {
         background: $dark-gray;
         border-top: 1px solid $white;
@@ -207,6 +203,16 @@
       height: 50px;
       object-fit: cover;
       border-radius: 50%;
+    }
+    @media (min-width: 800px) {
+      grid-template-columns: 70px 1fr 70px;
+      span {
+        font-size: 1rem;
+      }
+      img {
+        width: 70px;
+        height: 70px;
+      }
     }
   }
 }
