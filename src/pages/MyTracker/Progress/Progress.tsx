@@ -97,20 +97,26 @@ export function Progress() {
   return (
     <>
       <div
-        className="page-container progress-container"
+        className='page-container progress-container'
         style={{ overflowY: 'hidden' }}
       >
-        <WeightChart setSelectedDate={setSelectedDate} />
+        <WeightChart
+          sentUser={user || undefined}
+          setSelectedDate={setSelectedDate}
+        />
 
-        <LogsList loggedToday={loggedToday} onItemClick={onItemClick} />
+        <LogsList
+          loggedToday={loggedToday}
+          onItemClick={onItemClick}
+        />
       </div>
       <SlideDialog
         open={isEditOpen}
         onClose={closeEdit}
         component={<ItemDetails noEdit={true} />}
-        title="Edit Meal"
+        title='Edit Meal'
         onSave={closeEdit}
-        type="half"
+        type='half'
       />
     </>
   )
@@ -157,8 +163,8 @@ function LogsList({
           return (
             cachedItems.find((item) => item.searchId === i.itemId)?.name || (
               <CustomSkeleton
-                variant="text"
-                width="100%"
+                variant='text'
+                width='100%'
                 height={20}
                 isDarkMode={prefs.isDarkMode}
               />
@@ -171,8 +177,8 @@ function LogsList({
           return (
             i.macros?.calories + ' kcal' || (
               <CustomSkeleton
-                variant="text"
-                width="25%"
+                variant='text'
+                width='25%'
                 height={20}
                 isDarkMode={prefs.isDarkMode}
               />
@@ -186,11 +192,11 @@ function LogsList({
 
           return img ? (
             <>
-              <ListItemIcon className="item-image-container">
+              <ListItemIcon className='item-image-container'>
                 <img
                   src={img}
                   alt={i.name}
-                  referrerPolicy="no-referrer"
+                  referrerPolicy='no-referrer'
                   onError={async (e) => {
                     await imageService.fetchOnError(e, item as Item)
                     loadItems()
@@ -205,7 +211,7 @@ function LogsList({
             </>
           ) : (
             <CustomSkeleton
-              variant="circular"
+              variant='circular'
               width={40}
               height={40}
               isDarkMode={prefs.isDarkMode}
@@ -220,7 +226,7 @@ function LogsList({
 
   return (
     <Card
-      variant="outlined"
+      variant='outlined'
       className={`card logged-today-card ${
         prefs.isDarkMode ? 'dark-mode' : ''
       }`}
@@ -229,9 +235,9 @@ function LogsList({
         className={`header-container ${prefs.isDarkMode ? 'dark-mode' : ''}`}
       >
         <EventRepeatIcon />
-        <Typography variant="h5">Previous day logs</Typography>
-        <Typography variant="caption">{hebrewDate}</Typography>
-        <Typography variant="h6">{loggedToday?.calories} kcal</Typography>
+        <Typography variant='h5'>Previous day logs</Typography>
+        <Typography variant='caption'>{hebrewDate}</Typography>
+        <Typography variant='h6'>{loggedToday?.calories} kcal</Typography>
         <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
       </div>
       {renderList()}
