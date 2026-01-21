@@ -27,6 +27,13 @@
       background-color: $picker-color-pink-dark !important;
     }
   }
+
+  .trainer-dashboard-navigator-container {
+    &.dark-mode {
+      // background-color: $dark-gray !important;
+      // background-color: red !important;
+    }
+  }
 }
 
 .trainer-dashboard-content-container {

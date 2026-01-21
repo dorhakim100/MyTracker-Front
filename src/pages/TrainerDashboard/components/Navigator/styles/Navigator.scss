@@ -1,14 +1,119 @@
 // Navigator component styles
 
-.trainer-dashboard-navigator-container {
+.navigator-container-drawer {
+  // background-color: $light-gray !important;
+
+  .MuiBox-root {
+    width: $left-menu-width;
+  }
   li:first-of-type {
-    padding: 0.5em;
+    // padding: 0.5em;
+    color: $dark-gray;
     gap: 0.5em;
   }
+  &.dark-mode {
+    li:first-of-type {
+      // padding: 0.5em;
+
+      color: $white;
+      gap: 0.5em;
+    }
+  }
+  color: $dark-gray;
 
   .logo {
     width: 3em;
     height: 3em;
     padding: 0em;
+  }
+
+  .navigator-container,
+  .navigator-container-box {
+    background-color: $light-gray !important;
+
+    .MuiBox-root {
+    }
+    &:not(.dark-mode) {
+      .Mui-selected {
+        filter: brightness(0.8);
+        color: $primary-color !important;
+      }
+      &.blue {
+        .Mui-selected {
+          color: $picker-color-blue !important;
+          filter: brightness(0.8);
+        }
+      }
+      &.yellow {
+        .Mui-selected {
+          color: $picker-color-yellow !important;
+          filter: brightness(0.8);
+        }
+      }
+      &.red {
+        .Mui-selected {
+          color: $picker-color-red !important;
+          filter: brightness(0.8);
+        }
+      }
+      &.orange {
+        .Mui-selected {
+          color: $picker-color-orange !important;
+          filter: brightness(0.8);
+        }
+      }
+      &.green {
+        .Mui-selected {
+          color: $picker-color-green !important;
+          filter: brightness(0.8);
+        }
+      }
+      &.deepPurple {
+        .Mui-selected {
+          color: $picker-color-deep-purple !important;
+          filter: brightness(0.8);
+        }
+      }
+      &.purple {
+        .Mui-selected {
+          color: $picker-color-purple !important;
+          filter: brightness(0.8);
+        }
+      }
+      &.pink {
+        .Mui-selected {
+          color: $picker-color-pink !important;
+          filter: brightness(0.8);
+        }
+      }
+    }
+    &.dark-mode {
+      background-color: $darker-gray !important;
+      color: $white !important;
+      &.blue {
+        background-color: $darker-gray-blue-left-menu !important;
+      }
+      &.yellow {
+        background-color: $darker-gray-yellow-left-menu !important;
+      }
+      &.red {
+        background-color: $darker-gray-red-left-menu !important;
+      }
+      &.orange {
+        background-color: $darker-gray-orange-left-menu !important;
+      }
+      &.green {
+        background-color: $darker-gray-green-left-menu !important;
+      }
+      &.deepPurple {
+        background-color: $darker-gray-deep-purple-left-menu !important;
+      }
+      &.purple {
+        background-color: $darker-gray-purple-left-menu !important;
+      }
+      &.pink {
+        background-color: $darker-gray-pink-left-menu !important;
+      }
+    }
   }
 }

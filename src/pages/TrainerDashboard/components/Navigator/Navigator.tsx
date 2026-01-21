@@ -10,11 +10,14 @@ import ListItemText from '@mui/material/ListItemText'
 
 import { apps } from '../../../../assets/config/apps'
 import { trainerRoutes } from '../../../../assets/routes/trainer.routes'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../../../store/store'
+import { Typography } from '@mui/material'
 
 const item = {
   py: '2px',
   px: 3,
-  color: 'rgba(255, 255, 255, 0.7)',
+  // color: 'rgba(255, 255, 255, 0.7)',
   '&:hover, &:focus': {
     bgcolor: 'rgba(255, 255, 255, 0.08)',
   },
@@ -30,7 +33,9 @@ export default function Navigator(props: DrawerProps) {
   const { ...other } = props
   const navigate = useNavigate()
   const location = useLocation()
-
+  const prefs = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.prefs
+  )
   const handleNavigation = (path: string) => {
     navigate(path)
   }
@@ -39,19 +44,29 @@ export default function Navigator(props: DrawerProps) {
     <Drawer
       variant="permanent"
       {...other}
-      className="trainer-dashboard-navigator-container"
+      className={`navigator-container-drawer ${prefs.isDarkMode ? 'dark-mode' : ''} ${prefs.favoriteColor}`}
+      PaperProps={{
+        // component: 'nav',
+        className: `navigator-container navigator-nav ${prefs.isDarkMode ? 'dark-mode' : ''} ${prefs.favoriteColor}`,
+      }}
     >
-      <List disablePadding >
-        <ListItem className='pointer' onClick={() => navigate('/trainer')}
+      <List disablePadding>
+        <ListItem
+          className="pointer"
+          onClick={() => navigate('/trainer')}
           sx={{ ...item, ...itemCategory, fontSize: 22, color: '#fff' }}
         >
           <img src={apps.myTracker.logo} alt="logo" className="logo" />
-          MyTracker
+          <Typography variant="h6" className="bold-header">
+            MyTracker
+          </Typography>
         </ListItem>
 
-        <Box sx={{ bgcolor: '#101F33' }}>
+        <Box
+          className={`navigator-container-box ${prefs.isDarkMode ? 'dark-mode' : ''} ${prefs.favoriteColor}`}
+        >
           <ListItem sx={{ py: 2, px: 3 }}>
-            <ListItemText sx={{ color: '#fff' }}>Navigation</ListItemText>
+            <ListItemText>Navigation</ListItemText>
           </ListItem>
           {trainerRoutes.map((route) => {
             const isActive = location.pathname === route.path

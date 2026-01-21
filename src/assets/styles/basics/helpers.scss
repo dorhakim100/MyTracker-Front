@@ -29,14 +29,10 @@ button {
   }
 }
 
-
-
 .card {
   height: $card-height;
   padding: 0.8rem 1rem;
   position: relative;
-
-
 
   h6 {
     grid-column: 1 / -1;
@@ -154,9 +150,8 @@ button {
   }
 }
 
-.MuiCard-root:not(.dark-mode){
+.MuiCard-root:not(.dark-mode) {
   background-color: $neutral-gray !important;
-
 }
 
 .MuiPaper-root:has(.MuiMenu-list).dark-mode {
@@ -174,7 +169,7 @@ body.dark-mode {
     }
 
     &.blue {
-      background-color: $menu-bg-blue !important;
+      // background-color: $menu-bg-blue !important;
     }
     &.yellow {
       background-color: $menu-bg-yellow !important;
@@ -267,7 +262,7 @@ body.dark-mode {
 
   .MuiPaper-root:not(.MuiAppBar-positionFixed):not(.MuiDialog-paper):not(
       .slide-dialog
-    ) {
+    ):not(.navigator-container):not(.trainer-dashboard-container) {
     background-color: $darker-gray !important;
 
     &.blue {
@@ -309,7 +304,7 @@ body.dark-mode {
   &.blue
     .MuiPaper-root:not(:has(.MuiMenu-list)):not(.slide-dialog):not(
       .MuiDialog-paper
-    ) {
+    ):not(.navigator-container):not(.trainer-dashboard-container) {
     background-color: $darker-gray-blue !important;
 
     &.MuiAlert-root {
@@ -1254,7 +1249,9 @@ select {
 }
 
 .box-shadow {
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+  box-shadow:
+    rgba(0, 0, 0, 0.16) 0px 3px 6px,
+    rgba(0, 0, 0, 0.23) 0px 3px 6px;
 }
 
 .white-outline {

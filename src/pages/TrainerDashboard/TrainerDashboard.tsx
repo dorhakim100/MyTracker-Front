@@ -191,6 +191,7 @@ export function TrainerDashboard() {
         <Box
           component="nav"
           sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+          className={`trainer-dashboard-navigator-container ${prefs.isDarkMode ? 'dark-mode' : ''} ${prefs.favoriteColor}`}
         >
           {isSmUp ? null : (
             <Navigator
