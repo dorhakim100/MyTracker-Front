@@ -10,7 +10,9 @@ export function TrainerSettings() {
   )
 
   return (
-    <Box className={`trainer-settings-container ${prefs.isDarkMode ? 'dark-mode' : ''} ${prefs.favoriteColor}`}>
+    <Box
+      className={`trainer-settings-container ${prefs.isDarkMode ? 'dark-mode' : ''} ${prefs.favoriteColor}`}
+    >
       <Typography variant="h4" className="bold-header">
         Settings
       </Typography>

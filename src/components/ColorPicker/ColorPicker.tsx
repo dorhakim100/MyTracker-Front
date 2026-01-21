@@ -23,7 +23,7 @@ interface ColorPickerProps {
 
 export function ColorPicker({ pickedColor, onColorPick }: ColorPickerProps) {
   return (
-    <div className='color-options'>
+    <div className="color-options">
       {colorChoices.map((color) => (
         <Button
           key={`${color}-color-button`}
@@ -55,7 +55,7 @@ function ColorMotion({
       whileTap={{ scale: 0.8 }}
       animate={color === pickedColor ? { scale: [1, 1.3, 1] } : { scale: 1 }}
       transition={{ duration: 0.3 }}
-      className='motion-container'
+      className="motion-container"
     >
       {color === pickedColor ? <CheckIcon /> : null}
     </motion.div>

@@ -28,6 +28,7 @@ import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
 import { login, signup } from '../../store/actions/user.actions'
 import { setIsLoading } from '../../store/actions/system.actions'
 import { ScreenLoader } from '../../components/ScreenLoader/ScreenLoader'
+import { usePwaDetect } from '../../hooks/usePwaDetect'
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -97,6 +98,8 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
     (stateSelector: RootState) => stateSelector.systemModule.isLoading
   )
 
+  const { platform } = usePwaDetect()
+
   const handleClose = () => {
     setOpen(false)
   }
@@ -127,12 +130,22 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
         user = await login({ ...credientials, isRemember })
       }
 
-      if (user) {
-        showSuccessMsg('Login successful!')
-        navigate('/')
-      } else {
+      if (!user) {
         showErrorMsg('Login failed. Please check your credentials.')
+        return
       }
+
+      let route = ''
+      if (user && user.isTrainer && platform === 'desktop') {
+        route = '/trainer'
+      } else {
+        route = '/'
+      }
+
+      console.log('route', route)
+
+      navigate(`${route}`)
+      showSuccessMsg('Login successful!')
     } catch (err) {
       showErrorMsg('An error occurred while signing in. Please try again.')
     } finally {

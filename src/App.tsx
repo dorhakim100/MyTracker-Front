@@ -18,7 +18,11 @@ import { RootState } from './store/store.ts'
 
 import { setRemembered } from './store/actions/user.actions.ts'
 import { setFavoriteItems } from './store/actions/item.actions.ts'
-import { loadPrefs, setIsNative, setIsDashboard } from './store/actions/system.actions.ts'
+import {
+  loadPrefs,
+  setIsNative,
+  setIsDashboard,
+} from './store/actions/system.actions.ts'
 import { SignIn } from './CustomMui/SignIn/SignIn.tsx'
 import { searchService } from './services/search/search-service.ts'
 import { FirstGoalEdit } from './components/FirstGoalEdit/FirstGoalEdit.tsx'
@@ -103,27 +107,22 @@ function App() {
     )
 
     if (isDashboard) {
-      document.body.classList.add(
-        'dashboard'
-      )
-
+      document.body.classList.add('dashboard')
     } else {
-      document.body.classList.remove(
-        'dashboard'
-      )
+      document.body.classList.remove('dashboard')
     }
-
   }, [prefs, isDashboard])
 
   useEffect(() => {
     setIsNative(Capacitor.isNativePlatform())
-
-
   }, [])
 
   useEffect(() => {
+    console.log('user', user)
     if (user && user.isTrainer && platform === 'desktop') {
       setIsDashboard(true)
+    } else {
+      setIsDashboard(false)
     }
   }, [user, platform])
 
@@ -247,14 +246,14 @@ function App() {
       {traineeUser && <TraineeUserCard />}
 
       <main
-        className={`main ${prefs.isDarkMode ? 'dark-mode' : ''} ${user ? '' : 'no-user'
-          } ${prefs.favoriteColor || ''}`}
+        className={`main ${prefs.isDarkMode ? 'dark-mode' : ''} ${
+          user ? '' : 'no-user'
+        } ${prefs.favoriteColor || ''}`}
       >
         <SlideAnimation
           motionKey={location.pathname}
           direction={slideDirection}
           duration={0.25}
-          overflow={user ? 'hidden' : 'scroll'}
         >
           {!user ? (
             <div className="page-container login-sign-up-container">

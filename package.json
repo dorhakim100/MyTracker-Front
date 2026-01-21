@@ -51,6 +51,7 @@
     "swiper": "^11.2.10",
     "vite-plugin-svgr": "^4.5.0"
   },
+  "jsxSingleQuote": true,
   "devDependencies": {
     "@capacitor/cli": "^8.0.0",
     "@eslint/js": "^9.21.0",

@@ -2,7 +2,10 @@ import { useEffect, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../../store/store'
 import { setIsLoading } from '../../../../store/actions/system.actions'
-import { setTrainees } from '../../../../store/actions/user.actions'
+import {
+  setTrainees,
+  removeTraineeUser,
+} from '../../../../store/actions/user.actions'
 import AppBar from '@mui/material/AppBar'
 import Avatar from '@mui/material/Avatar'
 import Grid from '@mui/material/GridLegacy'
@@ -20,8 +23,6 @@ import { TRAINEE_ORDER_STORE_NAME } from '../../../../constants/store.constants'
 import { CustomOptionsMenu } from '../../../../CustomMui/CustomOptionsMenu/CustomOptionsMenu'
 import { logout } from '../../../../store/actions/user.actions'
 import { useNavigate } from 'react-router-dom'
-
-
 
 interface HeaderProps {
   onDrawerToggle: () => void
@@ -44,14 +45,16 @@ export default function Header(props: HeaderProps) {
         title: 'View Profile',
         onClick: () => {
           navigate('/trainer/user')
-        }
+        },
       },
       {
         title: 'Logout',
         onClick: () => {
           logout()
-        }
-      }
+          navigate('/')
+          removeTraineeUser()
+        },
+      },
     ]
   }, [user])
 
@@ -70,16 +73,18 @@ export default function Header(props: HeaderProps) {
         (request: TrainerRequest) => request.trainee
       )
 
-
       trainees.unshift(user)
 
-
-      let traineesOrder: string[] = JSON.parse(localStorage.getItem(TRAINEE_ORDER_STORE_NAME) || '[]')
-
+      let traineesOrder: string[] = JSON.parse(
+        localStorage.getItem(TRAINEE_ORDER_STORE_NAME) || '[]'
+      )
 
       if (!traineesOrder.length) {
         traineesOrder = trainees.map((trainee: User) => trainee._id)
-        localStorage.setItem(TRAINEE_ORDER_STORE_NAME, JSON.stringify(traineesOrder))
+        localStorage.setItem(
+          TRAINEE_ORDER_STORE_NAME,
+          JSON.stringify(traineesOrder)
+        )
         setTrainees(trainees)
         return
       }
@@ -91,7 +96,6 @@ export default function Header(props: HeaderProps) {
       })
 
       setTrainees(orderedTrainees)
-
     } catch (err) {
       showErrorMsg(messages.error.getRequests)
     } finally {
@@ -99,11 +103,12 @@ export default function Header(props: HeaderProps) {
     }
   }
 
-
   return (
     <div className="trainer-dashboard-header-container box-shadow">
       <AppBar color="primary" position="sticky" elevation={0}>
-        <Toolbar className={`${prefs.isDarkMode ? 'dark-mode' : ''} ${prefs.favoriteColor}`} >
+        <Toolbar
+          className={`${prefs.isDarkMode ? 'dark-mode' : ''} ${prefs.favoriteColor}`}
+        >
           <Grid container spacing={1} sx={{ alignItems: 'center' }}>
             <Grid sx={{ display: { sm: 'none', xs: 'block' } }} item>
               <IconButton
@@ -117,7 +122,6 @@ export default function Header(props: HeaderProps) {
             </Grid>
             <Grid item xs />
 
-
             <Grid item>
               <CustomOptionsMenu
                 className={`${prefs.favoriteColor}`}
@@ -130,8 +134,6 @@ export default function Header(props: HeaderProps) {
                   </IconButton>
                 }
                 options={options}
-
-
               />
             </Grid>
           </Grid>
@@ -144,14 +146,15 @@ export default function Header(props: HeaderProps) {
         elevation={0}
         sx={{ zIndex: 0 }}
       >
-        <Toolbar className={`${prefs.isDarkMode ? 'dark-mode' : ''} ${prefs.favoriteColor}`}>
+        <Toolbar
+          className={`${prefs.isDarkMode ? 'dark-mode' : ''} ${prefs.favoriteColor}`}
+        >
           <Grid container spacing={1} sx={{ alignItems: 'center' }}>
             <Grid item xs>
               <Typography color="inherit" variant="h5" component="h1">
                 {`${user?.details?.fullname} ${user?.isTrainer ? '• Trainer' : ''}`}
               </Typography>
             </Grid>
-
           </Grid>
         </Toolbar>
       </AppBar>
@@ -160,12 +163,11 @@ export default function Header(props: HeaderProps) {
         position="static"
         elevation={0}
         sx={{ zIndex: 0 }}
-        className={`tabs-container ${prefs.isDarkMode ? 'dark-mode' : ''} ${prefs.favoriteColor
-          }`}
+        className={`tabs-container ${prefs.isDarkMode ? 'dark-mode' : ''} ${
+          prefs.favoriteColor
+        }`}
       >
-
         <TraineesTabs trainees={trainees} />
-
       </AppBar>
     </div>
   )

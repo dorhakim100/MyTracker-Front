@@ -8,7 +8,6 @@ import SettingsIcon from '@mui/icons-material/Settings'
 import FeaturedPlayListIcon from '@mui/icons-material/FeaturedPlayList'
 import UserIcon from '@mui/icons-material/Person'
 
-
 import { Trainees } from '../../pages/TrainerDashboard/pages/Trainees/Trainees'
 import { TrainerDashboardOverview } from '../../pages/TrainerDashboard/pages/Dashboard/TrainerDashboardOverview'
 import { TrainerWorkouts } from '../../pages/TrainerDashboard/pages/Workouts/TrainerWorkouts'
