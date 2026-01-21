@@ -10,6 +10,8 @@ import Navigator from './components/Navigator/Navigator'
 import Header from './components/Header/Header'
 import { trainerRoutes } from '../../assets/routes/trainer.routes'
 import { stylesVariables } from '../../assets/config/styles.variables'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../store/store'
 
 function Copyright() {
   return (
@@ -169,14 +171,22 @@ const drawerWidth = stylesVariables.dashboardDialogLeft
 export function TrainerDashboard() {
   const [mobileOpen, setMobileOpen] = React.useState(false)
   const isSmUp = useMediaQuery(theme.breakpoints.up('sm'))
-
+  const prefs = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.prefs
+  )
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen)
   }
 
   return (
     <ThemeProvider theme={theme}>
-      <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          minHeight: '100vh',
+        }}
+        className={`trainer-dashboard-container ${prefs.isDarkMode ? 'dark-mode' : ''} ${prefs.favoriteColor}`}
+      >
         <CssBaseline />
         <Box
           component="nav"
@@ -197,7 +207,11 @@ export function TrainerDashboard() {
         </Box>
         <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
           <Header onDrawerToggle={handleDrawerToggle} />
-          <Box component="main" sx={{ flex: 1 }} className="trainer-dashboard-content-container">
+          <Box
+            component="main"
+            sx={{ flex: 1 }}
+            className="trainer-dashboard-content-container"
+          >
             <Routes>
               {trainerRoutes.map((route) => (
                 <Route

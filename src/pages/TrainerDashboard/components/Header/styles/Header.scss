@@ -1,11 +1,34 @@
 // Header component styles
 .tabs-container {
-  background-color: $primary-color !important;
-
   button {
     padding-inline: 1em;
   }
+  background-color: $primary-color-dark !important;
 
+  &.blue {
+    background-color: $picker-color-blue-dark !important;
+  }
+  &.yellow {
+    background-color: $picker-color-yellow-dark !important;
+  }
+  &.red {
+    background-color: $picker-color-red-dark !important;
+  }
+  &.orange {
+    background-color: $picker-color-orange-dark !important;
+  }
+  &.green {
+    background-color: $picker-color-green-dark !important;
+  }
+  &.deepPurple {
+    background-color: $picker-color-deep-purple-dark !important;
+  }
+  &.purple {
+    background-color: $picker-color-purple-dark !important;
+  }
+  &.pink {
+    background-color: $picker-color-pink-dark !important;
+  }
   &.dark-mode {
     button {
       background-color: transparent !important;
