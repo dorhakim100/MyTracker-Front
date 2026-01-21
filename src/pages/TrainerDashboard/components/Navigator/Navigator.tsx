@@ -42,7 +42,7 @@ export default function Navigator(props: DrawerProps) {
 
   return (
     <Drawer
-      variant="permanent"
+      variant='permanent'
       {...other}
       className={`navigator-container-drawer ${prefs.isDarkMode ? 'dark-mode' : ''} ${prefs.favoriteColor}`}
       PaperProps={{
@@ -52,12 +52,19 @@ export default function Navigator(props: DrawerProps) {
     >
       <List disablePadding>
         <ListItem
-          className="pointer"
+          className='pointer'
           onClick={() => navigate('/trainer')}
           sx={{ ...item, ...itemCategory, fontSize: 22, color: '#fff' }}
         >
-          <img src={apps.myTracker.logo} alt="logo" className="logo" />
-          <Typography variant="h6" className="bold-header">
+          <img
+            src={apps.myTracker.logo}
+            alt='logo'
+            className='logo'
+          />
+          <Typography
+            variant='h6'
+            className='bold-header'
+          >
             MyTracker
           </Typography>
         </ListItem>
@@ -73,7 +80,10 @@ export default function Navigator(props: DrawerProps) {
             const Icon = route.icon
 
             return (
-              <ListItem disablePadding key={route.path}>
+              <ListItem
+                disablePadding
+                key={route.path}
+              >
                 <ListItemButton
                   selected={isActive}
                   sx={item}
