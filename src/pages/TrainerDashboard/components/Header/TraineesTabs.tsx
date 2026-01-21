@@ -1,4 +1,4 @@
-import { Divider, Tab, Tabs } from '@mui/material'
+import { Tabs } from '@mui/material'
 import { User } from '../../../../types/user/User'
 import {
   removeTraineeUser,
@@ -73,11 +73,17 @@ export function TraineesTabs({ trainees }: TraineesTabsProps) {
   }
 
   return (
-    <div className="trainees-tabs-container">
+    <div className='trainees-tabs-container'>
       <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="trainees-tabs" direction="horizontal">
+        <Droppable
+          droppableId='trainees-tabs'
+          direction='horizontal'
+        >
           {(provided) => (
-            <div ref={provided.innerRef} {...provided.droppableProps}>
+            <div
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+            >
               <Tabs
                 ref={provided.innerRef}
                 {...provided.droppableProps}
@@ -87,7 +93,7 @@ export function TraineesTabs({ trainees }: TraineesTabsProps) {
                     setTraineeUser(reorderedTrainees[newValue])
                   }
                 }}
-                textColor="inherit"
+                textColor='inherit'
               >
                 {reorderedTrainees.map((trainee, index) => (
                   <Draggable

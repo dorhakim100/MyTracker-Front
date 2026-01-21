@@ -4,9 +4,6 @@ import { CustomButton } from '../CustomButton/CustomButton'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker'
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
-import { Tooltip } from '@mui/material'
-import { useSelector } from 'react-redux'
-import { RootState } from '../../store/store'
 
 interface CustomDatePickerProps {
   value?: string // ISO (yyyy-mm-dd)
@@ -21,7 +18,6 @@ export function CustomDatePicker({
   ariaLabel,
   className,
 }: CustomDatePickerProps) {
-  const isDashboard = useSelector((state: RootState) => state.systemModule.isDashboard)
   const [open, setOpen] = useState(false)
 
   const localIso = useMemo(
@@ -48,18 +44,14 @@ export function CustomDatePicker({
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
-
-
-
       <CustomButton
         isIcon
         icon={<CalendarMonthIcon />}
         ariaLabel={ariaLabel || 'open date picker'}
         onClick={onOpen}
         className={`custom-date-picker-button ${className || ''}`}
-        tooltipTitle="Select date"
+        tooltipTitle='Select date'
       />
-
 
       <MobileDatePicker
         value={dateValue}

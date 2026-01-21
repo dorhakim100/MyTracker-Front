@@ -28,15 +28,13 @@ import { instructionsService } from '../../services/instructions/instructions.se
 import { showErrorMsg } from '../../services/event-bus.service'
 import { messages } from '../../assets/config/messages'
 import { setService } from '../../services/set/set.service'
-import TimerIcon from '@mui/icons-material/Timer'
 import { RestingTimerEdit } from '../RestingTimerEdit/RestingTimerEdit'
 import { DEFAULT_RESTING_TIME } from '../../assets/config/times'
 import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import AltRouteIcon from '@mui/icons-material/AltRoute'
 import { useWindowDimentions } from '../../hooks/useWindowDimentions'
-import AccessAlarmIcon from '@mui/icons-material/AccessAlarm';
-
+import AccessAlarmIcon from '@mui/icons-material/AccessAlarm'
 
 interface SlideDialogOptions {
   title: string
@@ -198,9 +196,11 @@ export function ExerciseCard({
       icon: <EditNoteIcon />,
       onClick: () => {
         setIsEditNotesOpen(true)
-        setEditNotes(isExpected
-          ? exerciseInstructions?.notes?.expected
-          : exerciseInstructions?.notes?.actual)
+        setEditNotes(
+          isExpected
+            ? exerciseInstructions?.notes?.expected
+            : exerciseInstructions?.notes?.actual
+        )
       },
     },
     !isExpected && {
@@ -217,14 +217,14 @@ export function ExerciseCard({
 
     isExpected
       ? {
-        title: 'Reorder Exercises',
-        icon: <DragHandleIcon />,
-        onClick: () => {
-          if (setIsReorderExercisesOpen) {
-            setIsReorderExercisesOpen(true)
-          }
-        },
-      }
+          title: 'Reorder Exercises',
+          icon: <DragHandleIcon />,
+          onClick: () => {
+            if (setIsReorderExercisesOpen) {
+              setIsReorderExercisesOpen(true)
+            }
+          },
+        }
       : null,
     (isExpected && {
       title: 'Delete',
@@ -235,7 +235,7 @@ export function ExerciseCard({
         }
       },
     }) ||
-    null,
+      null,
   ].filter((option) => option) as DropdownOption[]
 
   function getIsExerciseDone(exerciseInstructions: ExerciseInstructions) {
@@ -403,22 +403,24 @@ export function ExerciseCard({
   return (
     <>
       <Card
-        className={`exercise-card-container ${className} ${prefs.isDarkMode ? 'dark-mode' : ''
-          } ${prefs.favoriteColor} ${isDone ? 'done' : ''} ${isOpen ? 'open' : 'closed'
-          } ${isDashboard ? 'dashboard' : ''} ${windowWidth < 900 ? 'mobile' : 'desktop'}`}
+        className={`exercise-card-container ${className} ${
+          prefs.isDarkMode ? 'dark-mode' : ''
+        } ${prefs.favoriteColor} ${isDone ? 'done' : ''} ${
+          isOpen ? 'open' : 'closed'
+        } ${isDashboard ? 'dashboard' : ''} ${windowWidth < 900 ? 'mobile' : 'desktop'}`}
         onClick={handleClick}
       >
-        <div className="exercise-card-actions">
+        <div className='exercise-card-actions'>
           <CustomOptionsMenu
-            className="more-options-container"
+            className='more-options-container'
             options={menuOptions}
             triggerElement={
               <CustomButton
                 isIcon={true}
-
                 icon={<MoreHorizIcon />}
-                className={`more-options ${prefs.favoriteColor} ${prefs.isDarkMode ? 'dark-mode' : ''
-                  }`}
+                className={`more-options ${prefs.favoriteColor} ${
+                  prefs.isDarkMode ? 'dark-mode' : ''
+                }`}
               />
             }
           />
@@ -436,7 +438,7 @@ export function ExerciseCard({
           )}
         </div>
         <div
-          className="exercise-card-content"
+          className='exercise-card-content'
           onClick={() => {
             if (!isOpen && onOpenChange) {
               onOpenChange()
@@ -449,23 +451,24 @@ export function ExerciseCard({
             <img
               src={exercise.image}
               alt={exercise.name}
-              className="exercise-card-image"
+              className='exercise-card-image'
               onError={(e) => {
                 e.currentTarget.style.display = 'none'
               }}
             />
           )}
 
-
-
-          <div className="exercise-card-info">
-            <Typography variant="h6" className="exercise-card-name">
+          <div className='exercise-card-info'>
+            <Typography
+              variant='h6'
+              className='exercise-card-name'
+            >
               {capitalizeFirstLetter(exercise.name)}
             </Typography>
             {exercise.muscleGroups && exercise.muscleGroups.length > 0 && (
               <Typography
-                variant="body2"
-                className="exercise-card-muscle-groups"
+                variant='body2'
+                className='exercise-card-muscle-groups'
               >
                 {exercise.muscleGroups
                   .map((muscleGroup) => capitalizeFirstLetter(muscleGroup))
@@ -474,14 +477,21 @@ export function ExerciseCard({
             )}
             {/* if expected is false and expected notes are empty, don't show expected notes */}
             {!isExpected && !exerciseInstructions?.notes?.expected ? null : (
-              <Typography variant="body2" className="exercise-card-notes">
-                {`Expected Notes: ${exerciseInstructions?.notes?.expected || ''
-                  }`}
+              <Typography
+                variant='body2'
+                className='exercise-card-notes'
+              >
+                {`Expected Notes: ${
+                  exerciseInstructions?.notes?.expected || ''
+                }`}
               </Typography>
             )}
             {/* if there are actual notes, show them */}
             {!exerciseInstructions?.notes?.actual ? null : (
-              <Typography variant="body2" className="exercise-card-notes">
+              <Typography
+                variant='body2'
+                className='exercise-card-notes'
+              >
                 {`Actual Notes: ${exerciseInstructions?.notes?.actual || ''}`}
               </Typography>
             )}
@@ -490,8 +500,8 @@ export function ExerciseCard({
               exercise.equipments.length > 0 && (
                 <>
                   <Typography
-                    variant="body2"
-                    className="exercise-card-equipment"
+                    variant='body2'
+                    className='exercise-card-equipment'
                   >
                     {exercise.equipments
                       .map((eq) => capitalizeFirstLetter(eq))
@@ -504,11 +514,10 @@ export function ExerciseCard({
                 <Divider
                   className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
                 />
-                <div className="resting-time-container">
+                <div className='resting-time-container'>
                   <AccessAlarmIcon />
                   <span>Resting time:</span>
                   <span>
-
                     {formatTime(
                       exerciseInstructions.restingTime || DEFAULT_RESTING_TIME
                     )}
@@ -528,37 +537,37 @@ export function ExerciseCard({
               isExpected
                 ? updateExerciseInInstructions
                 : (exerciseToUpdate) =>
-                  updateExercise?.({
-                    ...exerciseToUpdate,
-                    image: exercise.image,
-                  })
+                    updateExercise?.({
+                      ...exerciseToUpdate,
+                      image: exercise.image,
+                    })
             }
             addSet={
               isExpected
                 ? undefined
                 : (exerciseToUpdate, setIndex) =>
-                  addSet?.(
-                    { ...exerciseToUpdate, image: exercise.image },
-                    setIndex
-                  )
+                    addSet?.(
+                      { ...exerciseToUpdate, image: exercise.image },
+                      setIndex
+                    )
             }
             removeSet={
               isExpected
                 ? undefined
                 : (exerciseToUpdate, setIndex) =>
-                  removeSet?.(
-                    { ...exerciseToUpdate, image: exercise.image },
-                    setIndex
-                  )
+                    removeSet?.(
+                      { ...exerciseToUpdate, image: exercise.image },
+                      setIndex
+                    )
             }
             markSetAsDone={
               isExpected
                 ? undefined
                 : (exerciseToUpdate, setIndex) =>
-                  markSetAsDone?.(
-                    { ...exerciseToUpdate, image: exercise.image },
-                    setIndex
-                  )
+                    markSetAsDone?.(
+                      { ...exerciseToUpdate, image: exercise.image },
+                      setIndex
+                    )
             }
             isExpected={isExpected}
           />
@@ -583,7 +592,7 @@ export function ExerciseCard({
         onClose={() => setIsEditNotesOpen(false)}
         title={capitalizeFirstLetter(exercise.name)}
       >
-        <Typography variant="h6">Add Notes</Typography>
+        <Typography variant='h6'>Add Notes</Typography>
 
         <CustomInput
           value={editNotes || ''}
@@ -594,13 +603,13 @@ export function ExerciseCard({
         />
         <DialogActions>
           <CustomButton
-            text="Cancel"
+            text='Cancel'
             fullWidth
             onClick={() => setIsEditNotesOpen(false)}
             className={`${prefs.favoriteColor}`}
           />
           <CustomButton
-            text="Save"
+            text='Save'
             fullWidth
             onClick={() => {
               onEditExerciseNotes(exercise.exerciseId, editNotes || '')

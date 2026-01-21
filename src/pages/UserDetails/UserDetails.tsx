@@ -10,14 +10,12 @@ import { BmrCard } from '../../components/BmrCard/BmrCard'
 import { MealsCard } from '../../components/MealsCard/MealsCard'
 import { FavoriteItemsCard } from '../../components/FavoriteItemsCard/FavoriteItemsCard'
 import { PreferencesCard } from '../../components/PreferencesCard/PreferencesCard'
-import { MyTraineeCard } from '../../components/MyTraineeCard/MyTraineeCard'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import RestaurantMenuIcon from '@mui/icons-material/RestaurantMenu'
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
 import CalculateIcon from '@mui/icons-material/Calculate'
 import SettingsIcon from '@mui/icons-material/Settings'
 import ModeStandbyIcon from '@mui/icons-material/ModeStandby'
-import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import { userService } from '../../services/user/user.service'
 import { setIsLoading } from '../../store/actions/system.actions'
 import { TrainerRequest } from '../../types/trainerRequest/TrainerRequest'
@@ -51,7 +49,6 @@ export function UserDetails() {
   const [requests, setRequests] = useState<TrainerRequest[]>([])
 
   const acrodions = [
-
     {
       title: 'Meals',
       cmp: <MealsCard />,
@@ -91,7 +88,10 @@ export function UserDetails() {
 
   const statsCarouselItems = useMemo(() => {
     if (!user) return []
-    return [<WeightCard />, <WeightChart sentUser={traineeUser || user || undefined} />]
+    return [
+      <WeightCard />,
+      <WeightChart sentUser={traineeUser || user || undefined} />,
+    ]
   }, [user, traineeUser])
 
   useEffect(() => {
@@ -129,58 +129,54 @@ export function UserDetails() {
     }
   }
 
-
-
-
   return (
     <div
-      className={`page-container user-page ${prefs.isDarkMode ? 'dark-mode' : ''
-        } ${isDashboard ? 'dashboard' : ''}`}
+      className={`page-container user-page ${
+        prefs.isDarkMode ? 'dark-mode' : ''
+      } ${isDashboard ? 'dashboard' : ''}`}
     >
       <ProfileCard userToDisplay={traineeUser || user || undefined} />
 
-
-      {isDashboard &&
-
-        <div className="weight-chart-container">
+      {isDashboard && (
+        <div className='weight-chart-container'>
           <WeightChart sentUser={traineeUser || user || undefined} />
         </div>
-      }
-      {isDashboard &&
-        <BmrCard sentUser={traineeUser || user || undefined} />
-      }
+      )}
+      {isDashboard && <BmrCard sentUser={traineeUser || user || undefined} />}
 
-      {!isDashboard && <div className="content-container">
-        <StatsCarousel
-          items={statsCarouselItems}
-          showSkeleton={!user}
-          direction="vertical"
-        />
-
-        {requests.length > 0 && (
-          <TrainerRequestCard
-            request={requests[0]}
-            onAccept={(request) => onUpdateRequest(request, APPROVED_STATUS)}
-            onReject={(request) => onUpdateRequest(request, REJECTED_STATUS)}
+      {!isDashboard && (
+        <div className='content-container'>
+          <StatsCarousel
+            items={statsCarouselItems}
+            showSkeleton={!user}
+            direction='vertical'
           />
-        )}
 
-        {acrodions.map((accordion) => (
-          <CustomAccordion
-            key={`${accordion.key}-accordion`}
-            title={accordion.title}
-            cmp={accordion.cmp}
-            icon={accordion.icon}
+          {requests.length > 0 && (
+            <TrainerRequestCard
+              request={requests[0]}
+              onAccept={(request) => onUpdateRequest(request, APPROVED_STATUS)}
+              onReject={(request) => onUpdateRequest(request, REJECTED_STATUS)}
+            />
+          )}
+
+          {acrodions.map((accordion) => (
+            <CustomAccordion
+              key={`${accordion.key}-accordion`}
+              title={accordion.title}
+              cmp={accordion.cmp}
+              icon={accordion.icon}
+            />
+          ))}
+
+          <CustomButton
+            fullWidth
+            onClick={() => logout()}
+            className={`${prefs.favoriteColor}`}
+            text='Logout'
           />
-        ))}
-
-        <CustomButton
-          fullWidth
-          onClick={() => logout()}
-          className={`${prefs.favoriteColor}`}
-          text="Logout"
-        />
-      </div>}
+        </div>
+      )}
     </div>
   )
 }

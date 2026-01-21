@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Divider, Tooltip, Typography } from '@mui/material'
+import { Divider, Typography } from '@mui/material'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { CustomToggle } from '../../CustomMui/CustomToggle/CustomToggle'
@@ -58,11 +58,10 @@ export function BmrCard({ sentUser }: BmrCardProps) {
     return sentUser || user
   }, [sentUser, user])
 
-
   const calculatedAge = useMemo(() => {
     return viewdUser?.details?.birthdate
       ? new Date().getFullYear() -
-      new Date(viewdUser.details.birthdate).getFullYear()
+          new Date(viewdUser.details.birthdate).getFullYear()
       : DEFAULT_AGE
   }, [viewdUser?.details?.birthdate])
 
@@ -92,9 +91,7 @@ export function BmrCard({ sentUser }: BmrCardProps) {
   //   }, [bmr, form.activity])
 
   useEffect(() => {
-
     let weightKg = viewdUser?.lastWeight?.kg || DEFAULT_WEIGHT
-
 
     if (viewdUser)
       setForm({
@@ -183,9 +180,6 @@ export function BmrCard({ sentUser }: BmrCardProps) {
                 className={`select-container ${option.className}`}
                 key={`${option.key}-${option.label}`}
               >
-
-
-
                 <CustomSelect
                   tooltipTitle={`Edit ${option.label}`}
                   label={option.label}
@@ -197,7 +191,6 @@ export function BmrCard({ sentUser }: BmrCardProps) {
                   extra={option.extra}
                   className={`${option.className} ${prefs.favoriteColor}`}
                 />
-
               </div>
             )
 
@@ -225,7 +218,10 @@ export function BmrCard({ sentUser }: BmrCardProps) {
       <div className='bmr-result-grid'>
         <div className='bmr-result-row'>
           <Typography variant='body1'>BMR</Typography>
-          <Typography variant='h6' className='bmr-value'>
+          <Typography
+            variant='h6'
+            className='bmr-value'
+          >
             {bmr ? `${bmr} kcal` : '--'}
           </Typography>
         </div>
@@ -237,13 +233,20 @@ export function BmrCard({ sentUser }: BmrCardProps) {
         </div> */}
         <div className='bmr-result-row total'>
           <Typography variant='body1'>Daily calories burned</Typography>
-          <Typography variant='h5' className='bmr-value'>
+          <Typography
+            variant='h5'
+            className='bmr-value'
+          >
             {bmr ? `${tdee} kcal` : '--'}
           </Typography>
         </div>
       </div>
 
-      <CustomButton text='Reset' onClick={onReset} fullWidth />
+      <CustomButton
+        text='Reset'
+        onClick={onReset}
+        fullWidth
+      />
     </div>
   )
 }

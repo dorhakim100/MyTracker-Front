@@ -35,7 +35,6 @@ ChartJS.register(
 type SeriesValue = number | null
 
 export interface LineChartProps {
-
   data: {
     labels: string[]
     datasets: {
@@ -74,22 +73,42 @@ export default function LineChart({
   onLineClick,
   secondData,
   secondDataLabel = 'Weekly Average',
-  isDisplaySecondLine = true,
 }: LineChartProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
 
   const min = useMemo(() => {
-
     if (data.datasets[0].data.length === 0) return 0
-    return Math.floor(Math.min(...data.datasets[0].data.filter((data): data is number => data !== null)) - Math.max(...data.datasets[0].data.filter((data): data is number => data !== null)) / 25) || 0
-  },
-
-    [data])
+    return (
+      Math.floor(
+        Math.min(
+          ...data.datasets[0].data.filter(
+            (data): data is number => data !== null
+          )
+        ) -
+          Math.max(
+            ...data.datasets[0].data.filter(
+              (data): data is number => data !== null
+            )
+          ) /
+            25
+      ) || 0
+    )
+  }, [data])
   const max = useMemo(() => {
     if (data.datasets[0].data.length === 0) return 100
-    return Math.ceil(Math.max(...data.datasets[0].data.filter((data): data is number => data !== null)) + Math.max(...data.datasets[0].data.filter((data): data is number => data !== null)) / 25)
+    return Math.ceil(
+      Math.max(
+        ...data.datasets[0].data.filter((data): data is number => data !== null)
+      ) +
+        Math.max(
+          ...data.datasets[0].data.filter(
+            (data): data is number => data !== null
+          )
+        ) /
+          25
+    )
   }, [data])
 
   const chartSettings = useMemo(() => prefs.weightChartSettings, [prefs])
@@ -172,11 +191,7 @@ export default function LineChart({
       })
     }
 
-    if (
-      secondData &&
-      secondData.length &&
-      chartSettings.isMovingAverage
-    ) {
+    if (secondData && secondData.length && chartSettings.isMovingAverage) {
       const movingAverageColor = getColor(chartSettings.movingAverageColor)
       const baseLineColor =
         movingAverageColor ||
@@ -259,11 +274,8 @@ export default function LineChart({
         ticks: { color: isDarkMode ? DARK_MODE_WHITE : undefined },
         grid: { color: isDarkMode ? 'rgba(255,255,255,0.08)' : undefined },
 
-
         min: min,
         max: max,
-
-
       },
     },
   }
@@ -366,7 +378,7 @@ export default function LineChart({
 
         const labelOrIndex =
           Array.isArray(chart.data.labels) &&
-            chart.data.labels[clickedIndex] != null
+          chart.data.labels[clickedIndex] != null
             ? chart.data.labels[clickedIndex]
             : clickedIndex
 

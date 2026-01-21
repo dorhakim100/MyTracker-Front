@@ -28,8 +28,6 @@ import { messages } from '../../assets/config/messages'
 import { showErrorMsg } from '../../services/event-bus.service'
 import { BarcodeScanner } from '../../components/BarcodeScanner/BarcodeScanner'
 import { smoothScroll } from '../../services/util.service'
-import { ClickAnimation } from '../../components/ClickAnimation/ClickAnimation'
-// import { searchTypes } from '../../assets/config/search-types'
 
 type ModalType = 'search' | 'scan'
 
@@ -146,8 +144,9 @@ export function FixedBottomNavigation(props: {
   const renderSpeedDial = () => {
     return (
       <div
-        className={`speed-dial-container ${isAddModal ? 'show' : ''} ${prefs.isDarkMode ? 'dark-mode' : ''
-          } ${prefs.favoriteColor}`}
+        className={`speed-dial-container ${isAddModal ? 'show' : ''} ${
+          prefs.isDarkMode ? 'dark-mode' : ''
+        } ${prefs.favoriteColor}`}
         onClick={(ev) => {
           ev.stopPropagation()
           ev.preventDefault()
@@ -156,11 +155,9 @@ export function FixedBottomNavigation(props: {
           setIsAddModal(false)
         }}
       >
-
-
         <SpeedDial
           // color='primary'
-          ariaLabel="SpeedDial basic example"
+          ariaLabel='SpeedDial basic example'
           aria-label={props.centerAction?.ariaLabel || 'center-action'}
           icon={<AddIcon />}
           onClick={(ev) => {
@@ -174,8 +171,9 @@ export function FixedBottomNavigation(props: {
             })
           }}
           open={isAddModal}
-          className={`${prefs.isDarkMode ? 'dark-mode' : ''} ${prefs.favoriteColor
-            }`}
+          className={`${prefs.isDarkMode ? 'dark-mode' : ''} ${
+            prefs.favoriteColor
+          }`}
           sx={{
             display: timer ? 'none' : '',
             // position: 'absolute',
@@ -192,7 +190,6 @@ export function FixedBottomNavigation(props: {
             />
           ))}
         </SpeedDial>
-
       </div>
     )
   }
@@ -202,8 +199,9 @@ export function FixedBottomNavigation(props: {
       <Box
         sx={{ pb: 7 }}
         ref={ref}
-        className={`fixed-bottom-navigation ${prefs.isDarkMode ? 'dark-mode' : ''
-          } ${prefs.favoriteColor}`}
+        className={`fixed-bottom-navigation ${
+          prefs.isDarkMode ? 'dark-mode' : ''
+        } ${prefs.favoriteColor}`}
       >
         <CssBaseline />
 
@@ -229,8 +227,9 @@ export function FixedBottomNavigation(props: {
               onChange={(_, newValue) => {
                 setValue(newValue)
               }}
-              className={`${prefs.favoriteColor} ${prefs.isDarkMode ? 'dark-mode' : ''
-                }`}
+              className={`${prefs.favoriteColor} ${
+                prefs.isDarkMode ? 'dark-mode' : ''
+              }`}
             >
               {leftRoutes.map((route, index) => {
                 if (!route) return null

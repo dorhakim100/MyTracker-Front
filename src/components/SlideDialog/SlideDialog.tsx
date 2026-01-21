@@ -2,7 +2,6 @@ import * as React from 'react'
 import Dialog from '@mui/material/Dialog'
 import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
-import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 import CloseIcon from '@mui/icons-material/Close'
 import Slide from '@mui/material/Slide'
@@ -21,7 +20,13 @@ const Transition = React.forwardRef(function Transition(
   },
   ref: React.Ref<unknown>
 ) {
-  return <Slide direction="up" ref={ref} {...props} />
+  return (
+    <Slide
+      direction='up'
+      ref={ref}
+      {...props}
+    />
+  )
 })
 
 interface SlideDialogProps {
@@ -217,9 +222,13 @@ export function SlideDialog({
             backgroundColor: 'transparent !important',
             // background: 'transparent !important',
             // left: isDashboard ? `${stylesVariables.dashboardDialogLeft}px` : '0',
-            width: isDashboard ? `calc(100vw - ${stylesVariables.dashboardDialogLeft}px)` : '100%',
+            width: isDashboard
+              ? `calc(100vw - ${stylesVariables.dashboardDialogLeft}px)`
+              : '100%',
 
-            marginLeft: isDashboard ? `${stylesVariables.dashboardDialogLeft}px` : '0',
+            marginLeft: isDashboard
+              ? `${stylesVariables.dashboardDialogLeft}px`
+              : '0',
           },
         }}
         slots={{
@@ -227,8 +236,9 @@ export function SlideDialog({
         }}
         slotProps={{
           paper: {
-            className: `slide-dialog ${prefs.isDarkMode ? 'dark-mode' : ''} ${prefs.favoriteColor || ''
-              }`,
+            className: `slide-dialog ${prefs.isDarkMode ? 'dark-mode' : ''} ${
+              prefs.favoriteColor || ''
+            }`,
             style: {
               borderTopRightRadius: '10px',
               borderTopLeftRadius: '10px',
@@ -266,23 +276,28 @@ export function SlideDialog({
                   isIcon={true}
                   icon={<CloseIcon />}
                   onClick={onClose}
-                  tooltipTitle="Close"
+                  tooltipTitle='Close'
                 />
                 <Typography
                   sx={{ ml: 2, flex: 1 }}
-                  variant="h6"
-                  component="div"
+                  variant='h6'
+                  component='div'
                 >
                   {title}
                 </Typography>
-                <div className="slide-drag-handle"></div>
-                {isLoading && <CircularProgress size={20} color="inherit" />}
+                <div className='slide-drag-handle'></div>
+                {isLoading && (
+                  <CircularProgress
+                    size={20}
+                    color='inherit'
+                  />
+                )}
               </Toolbar>
             </AppBar>
           </div>
           <div
             ref={contentRef}
-            className="slide-dialog-content"
+            className='slide-dialog-content'
             onScroll={handleContentScroll}
             style={{
               flex: 1,

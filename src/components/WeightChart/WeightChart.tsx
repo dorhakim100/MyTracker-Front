@@ -31,7 +31,7 @@ import { User } from '../../types/user/User'
 interface WeightChartProps {
   className?: string
   setSelectedDate?: (date: Date) => void
-  sentUser: User | undefined
+  sentUser: User | null
 }
 
 interface Stats {
