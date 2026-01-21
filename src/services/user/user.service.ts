@@ -141,17 +141,17 @@ async function updateRequest(
 async function login(userCred: UserCred) {
   try {
     const { user, loginToken } = await httpService.post('auth/login', userCred)
+
+    if (!user) {
+      return null
+    }
+
     await indexedDbService.put(REMEMBER_STORE, {
       _id: REMEMBER_RECORD_ID,
       userId: user._id,
       token: loginToken,
     })
 
-    if (!user) {
-      const err = new Error('User credentials do not match.')
-
-      throw err
-    }
     if (userCred.isRemember) {
       saveRememberedUser(user, loginToken)
     }
@@ -222,7 +222,7 @@ async function logout() {
   sessionStorage.removeItem(STORAGE_KEY_LOGGEDIN_USER)
   try {
     await indexedDbService.remove(REMEMBER_STORE, REMEMBER_RECORD_ID)
-  } catch { }
+  } catch {}
   try {
     return await httpService.post('auth/logout', null)
   } catch (err) {
@@ -302,7 +302,7 @@ async function getRememberedUser() {
         REMEMBER_RECORD_ID
       )
       if (rec && rec.userId) rememberedId = rec.userId
-    } catch { }
+    } catch {}
 
     if (!rememberedId) {
       const ls = localStorage.getItem(STORAGE_KEY_REMEMBERED_USER)
@@ -314,7 +314,7 @@ async function getRememberedUser() {
             userId: rememberedId,
           })
           localStorage.removeItem(STORAGE_KEY_REMEMBERED_USER)
-        } catch { }
+        } catch {}
       }
     }
 

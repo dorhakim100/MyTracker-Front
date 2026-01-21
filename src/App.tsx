@@ -118,7 +118,6 @@ function App() {
   }, [])
 
   useEffect(() => {
-    console.log('user', user)
     if (user && user.isTrainer && platform === 'desktop') {
       setIsDashboard(true)
     } else {

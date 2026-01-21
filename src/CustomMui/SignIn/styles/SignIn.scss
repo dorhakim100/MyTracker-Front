@@ -48,6 +48,14 @@
       .login-button {
         color: $white !important;
         background: $primary-color !important;
+
+        position: relative;
+
+        span {
+          position: absolute;
+          // top: 50%;
+          inset-inline-start: 60%;
+        }
         // background: linear-gradient(
         //   to bottom,
         //   $primary-color,

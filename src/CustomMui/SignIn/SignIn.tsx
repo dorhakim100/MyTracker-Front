@@ -19,16 +19,17 @@ import AppTheme from '../shared-theme/AppTheme'
 import { useSelector } from 'react-redux'
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-
+import { setIsLoading } from '../../store/actions/system.actions'
 import { RootState } from '../../store/store'
 
 //import logo from '../../../public/logo.png'
 //import logoDark from '../../../public/logo-dark.png'
 import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
 import { login, signup } from '../../store/actions/user.actions'
-import { setIsLoading } from '../../store/actions/system.actions'
-import { ScreenLoader } from '../../components/ScreenLoader/ScreenLoader'
+
 import { usePwaDetect } from '../../hooks/usePwaDetect'
+import CircularProgress from '@mui/material/CircularProgress'
+import LoginIcon from '@mui/icons-material/Login'
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -142,8 +143,6 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
         route = '/'
       }
 
-      console.log('route', route)
-
       navigate(`${route}`)
       showSuccessMsg('Login successful!')
     } catch (err) {
@@ -225,10 +224,6 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
   const toggleRememberMe = () => {
     // credientials.isRemember = !credientials.isRemember || false
     setIsRemember(!isRemember)
-  }
-
-  if (isLoading) {
-    return <ScreenLoader />
   }
 
   return (
@@ -356,9 +351,14 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
                 type="submit"
                 fullWidth
                 variant="contained"
-                onClick={validateInputs}
+                // onClick={validateInputs}
               >
                 {isSignup ? 'Sign up' : 'Sign in'}
+                {isLoading ? (
+                  <CircularProgress size={28.5} color="inherit" />
+                ) : (
+                  <LoginIcon />
+                )}
               </Button>
               {/* <Link
                 component='button'

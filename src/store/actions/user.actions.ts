@@ -57,6 +57,10 @@ export async function login(credentials: UserCred) {
 
     const retrived = await userService.login(credentials)
 
+    if (!retrived) {
+      return null
+    }
+
     const user = {
       ...retrived,
       meals: retrived.meals.map((meal: Meal) => mealService.modifyMeal(meal)),
@@ -304,7 +308,11 @@ export function setSelectedDiaryDay(selectedDay: LoggedToday | null) {
   })
 }
 
-export async function handleDiaryDayChange(dateToCheck: string, user: User, traineeUser: User | null) {
+export async function handleDiaryDayChange(
+  dateToCheck: string,
+  user: User,
+  traineeUser: User | null
+) {
   try {
     const userToCheck = traineeUser ? traineeUser : user
     const filter = {
@@ -314,13 +322,13 @@ export async function handleDiaryDayChange(dateToCheck: string, user: User, trai
 
     if (!user) return
 
-    const diaryDay = traineeUser ? traineeUser?.loggedToday?.date : user?.loggedToday?.date
-
+    const diaryDay = traineeUser
+      ? traineeUser?.loggedToday?.date
+      : user?.loggedToday?.date
 
     if (diaryDay === dateToCheck) return
 
     const diaryDayChange = await dayService.query(filter)
-
 
     setSelectedDiaryDay(diaryDayChange)
     const newUser = {
@@ -332,7 +340,6 @@ export async function handleDiaryDayChange(dateToCheck: string, user: User, trai
     } else {
       setTraineeUser(newUser)
     }
-
   } catch (err) {
     throw err
   }
