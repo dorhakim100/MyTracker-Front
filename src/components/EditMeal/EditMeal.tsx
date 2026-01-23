@@ -127,22 +127,25 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
   const renderStageContent = () => {
     if (stage === 'name')
       return (
-        <div className="stage-container">
+        <div className='stage-container'>
           <CustomInput
             value={editMeal.name}
             onChange={(value) => onEditMeal('name', value)}
-            placeholder="Meal Name"
+            placeholder='Meal Name'
             className={`${prefs.favoriteColor}`}
           />
-          <div className="animation-container">
-            <Lottie animationData={foodAnimation} loop={false} />
+          <div className='animation-container'>
+            <Lottie
+              animationData={foodAnimation}
+              loop={false}
+            />
           </div>
         </div>
       )
     if (stage === 'items')
       return (
         <>
-          <div className="stage-container">
+          <div className='stage-container'>
             <MacrosDistribution
               protein={editMeal.macros.protein}
               carbs={editMeal.macros.carbs}
@@ -150,15 +153,15 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
               hideEditAndHeader={true}
               className={`edit-meal-macros-distribution`}
             />
-            <div className="buttons-container">
+            <div className='buttons-container'>
               <CustomButton
-                text="Search Item"
+                text='Search Item'
                 fullWidth
                 onClick={onAddItem}
                 icon={<SearchIcon />}
               />
               <CustomButton
-                text="Scan Item"
+                text='Scan Item'
                 fullWidth
                 onClick={onScanItem}
                 icon={<QrCode2Icon />}
@@ -176,7 +179,7 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
               }}
               renderLeft={(item) => (
                 <img
-                  className="item-image"
+                  className='item-image'
                   src={item.image || searchUrls.DEFAULT_IMAGE}
                   alt={item.name}
                 />
@@ -186,10 +189,15 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
                   return `${item.macros?.calories} kcal`
                 return `${+item.servingSize * +item.numberOfServings}gr`
               }}
-              getKey={(item) => item._id || item.searchId || ''}
+              getKey={(item) =>
+                item._id || item.searchId || item.name || makeId()
+              }
               isSwipeable={true}
               renderRightSwipeActions={(item) => (
-                <DeleteAction item={item} onDeleteItem={onDeleteItem} />
+                <DeleteAction
+                  item={item}
+                  onDeleteItem={onDeleteItem}
+                />
               )}
               isDragable={true}
               onReorder={onReorder}
@@ -207,7 +215,7 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
             open={isOpenModal}
             onClose={onCloseItemDetails}
             component={getModelType()}
-            title="Item"
+            title='Item'
             type={modalType === 'scan' ? 'half' : 'full'}
           />
         </>
@@ -257,20 +265,55 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
     } catch (err) {
       console.log('err', err)
     }
-    let newItems = []
-    const hasIndex = editMeal.items.findIndex(
-      (i) => i.searchId === item.searchId
-    )
 
-    if (hasIndex !== -1) {
-      newItems = [...editMeal.items]
-      newItems[hasIndex] = item
-    } else {
-      if (item.searchId === '') {
-        item.searchId = makeId()
-        item.source = searchTypes.custom
+    const getNewItems = (item: MealItem) => {
+      let newItems = []
+      let hasIndex = -1
+      if (item.searchId) {
+        hasIndex = editMeal.items.findIndex((i) => i.searchId === item.searchId)
+      } else {
+        const normalizedItemMacros = {
+          calories: item.macros.calories / item.numberOfServings,
+          protein: item.macros.protein / item.numberOfServings,
+          carbs: item.macros.carbs / item.numberOfServings,
+          fat: item.macros.fat / item.numberOfServings,
+        }
+        hasIndex = editMeal.items.findIndex(
+          (i) =>
+            JSON.stringify({
+              calories: i.macros.calories / i.numberOfServings,
+              protein: i.macros.protein / i.numberOfServings,
+              carbs: i.macros.carbs / i.numberOfServings,
+              fat: i.macros.fat / i.numberOfServings,
+            }) === JSON.stringify(normalizedItemMacros)
+        )
+        item.type = 'meal'
       }
-      newItems = [...editMeal.items, item]
+
+      console.log('item', item)
+      console.log('editMeal.items', editMeal.items)
+
+      console.log('hasIndex', hasIndex)
+      if (hasIndex !== -1) {
+        newItems = [...editMeal.items]
+        newItems[hasIndex] = item
+      } else {
+        if (item.searchId === '') {
+          item.searchId = makeId()
+          item.source = searchTypes.custom
+        }
+        newItems = [...editMeal.items, item]
+      }
+
+      return newItems
+    }
+    let newItems: MealItem[] = []
+    if (item.items) {
+      item.items.forEach((i) => {
+        newItems.push(...getNewItems(i))
+      })
+    } else {
+      newItems = getNewItems(item)
     }
 
     calcNewMealMacros(newItems)
@@ -316,7 +359,7 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
   }
 
   return (
-    <div className="page-container edit-meal-container">
+    <div className='page-container edit-meal-container'>
       <CustomStepper
         stages={stages}
         activeStage={stage}
@@ -324,7 +367,7 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
         renderStage={renderStageContent}
         direction={direction}
         onFinish={onFinish}
-        finishText="Save"
+        finishText='Save'
         title={getStageTitle}
         getIsNextDisabled={getIsNextDisabled}
       />

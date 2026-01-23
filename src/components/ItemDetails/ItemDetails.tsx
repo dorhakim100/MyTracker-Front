@@ -44,6 +44,7 @@ import { loadItems, setSelectedMeal } from '../../store/actions/item.actions'
 import { ClockPicker } from '../Pickers/ClockPicker'
 import { PickerSelect } from '../Pickers/PickerSelect'
 import CustomSkeleton from '../../CustomMui/CustomSkeleton/CustomSkeleton'
+import { sourceTypes } from '../../assets/config/source.types'
 
 interface ItemDetailsProps {
   onAddToMealClick?: (item: MealItem) => void
@@ -124,28 +125,28 @@ export function ItemDetails({
   const editOptions: EditOption[] =
     !isCustomLog && (item as Log).source !== searchTypes.custom
       ? [
-        {
-          label: 'Serving Size',
-          key: 'servingSize',
-          values: [1, 25, 30, 50, 100, 150],
-          extra: 'gram',
-          type: 'select',
-        },
-        NUMBER_OF_SERVINGS_INPUT,
-        MEAL_INPUT,
-      ]
+          {
+            label: 'Serving Size',
+            key: 'servingSize',
+            values: [1, 25, 30, 50, 100, 150],
+            extra: 'gram',
+            type: 'select',
+          },
+          NUMBER_OF_SERVINGS_INPUT,
+          MEAL_INPUT,
+        ]
       : [
-        {
-          label: 'Macros',
-          key: 'custom-log-macros',
+          {
+            label: 'Macros',
+            key: 'custom-log-macros',
 
-          type: 'macros',
-          extra: '',
-          values: [],
-        },
-        NUMBER_OF_SERVINGS_INPUT,
-        MEAL_INPUT,
-      ]
+            type: 'macros',
+            extra: '',
+            values: [],
+          },
+          NUMBER_OF_SERVINGS_INPUT,
+          MEAL_INPUT,
+        ]
 
   useEffect(() => {
     loadItems()
@@ -549,17 +550,21 @@ export function ItemDetails({
   return (
     <>
       <div
-        className={`item-details ${noEdit ? 'no-edit' : ''} ${isCustomLog ? 'custom-log' : ''
-          }`}
+        className={`item-details ${noEdit ? 'no-edit' : ''} ${
+          isCustomLog ? 'custom-log' : ''
+        }`}
       >
         {(!isCustomLog && (item as Log).source !== searchTypes.custom && (
-          <div className="header" onClick={openImageModal}>
-            <div className="image box-shadow white-outline">
+          <div
+            className='header'
+            onClick={openImageModal}
+          >
+            <div className='image box-shadow white-outline'>
               {(item.image && (
                 <img
                   src={item.image}
                   alt={item.name}
-                  referrerPolicy="no-referrer"
+                  referrerPolicy='no-referrer'
                   onError={async (e) => {
                     renderErrorImage()
                     await imageService.fetchOnError(e, item as Item)
@@ -568,21 +573,24 @@ export function ItemDetails({
                   }}
                 />
               )) || (
-                  <CustomSkeleton
-                    variant="circular"
-                    width={60}
-                    height={60}
-                    isDarkMode={prefs.isDarkMode}
-                  />
-                )}
+                <CustomSkeleton
+                  variant='circular'
+                  width={60}
+                  height={60}
+                  isDarkMode={prefs.isDarkMode}
+                />
+              )}
             </div>
-            <div className="title">{item.name}</div>
-            <div className="subtitle">{`${(+item.macros?.calories).toFixed(
+            <div className='title'>{item.name}</div>
+            <div className='subtitle'>{`${(+item.macros?.calories).toFixed(
               0
             )} kcal for ${!_hasItems(item) ? '100g' : 'serving'}`}</div>
 
             {!noEdit && !_hasItems(item) && (
-              <div className="favorite-container" onClick={onFavoriteClick}>
+              <div
+                className='favorite-container'
+                onClick={onFavoriteClick}
+              >
                 <FavoriteButton
                   isFavorite={
                     searchService.isFavorite(searchedItem, user) || false
@@ -592,16 +600,16 @@ export function ItemDetails({
             )}
           </div>
         )) || (
-            <CustomInput
-              value={editItem.name || ''}
-              onChange={(value) => onEditItemChange('name', value)}
-              placeholder="Name"
-              className={`${prefs.favoriteColor}`}
-            />
-          )}
+          <CustomInput
+            value={editItem.name || ''}
+            onChange={(value) => onEditItemChange('name', value)}
+            placeholder='Name'
+            className={`${prefs.favoriteColor}`}
+          />
+        )}
 
-        <div className="content">
-          <div className="macros-container">
+        <div className='content'>
+          <div className='macros-container'>
             <MacrosDonut
               protein={editItem.totalMacros?.protein}
               carbs={editItem.totalMacros?.carbs}
@@ -616,25 +624,28 @@ export function ItemDetails({
           </div>
         </div>
 
-        <div className="edit">
-          <div className="selects-container">
+        <div className='edit'>
+          <div className='selects-container'>
             {!noEdit &&
               editOptions.map((option) => {
                 if (onAddToMealClick && option.key === 'meal') return null
 
                 if (
-                  !item.searchId &&
-                  _hasItems(item) &&
-                  option.key === 'servingSize'
+                  (!item.searchId &&
+                    _hasItems(item) &&
+                    option.key === 'servingSize') ||
+                  ((item as Item).type === 'meal' &&
+                    option.key === 'servingSize')
                 )
                   return null
                 return (
                   <div
-                    className={`select-container ${prefs.isDarkMode ? 'dark-mode' : ''
-                      }`}
+                    className={`select-container ${
+                      prefs.isDarkMode ? 'dark-mode' : ''
+                    }`}
                     key={option.label}
                   >
-                    <Typography variant="h6">{option.label}</Typography>
+                    <Typography variant='h6'>{option.label}</Typography>
                     {option.type === 'select' && option.values && (
                       <CustomSelect
                         tooltipTitle={`Edit ${option.label}`}
@@ -654,8 +665,9 @@ export function ItemDetails({
                     {option.type === 'clock' && (
                       <>
                         <PickerSelect
-                          className={`${prefs.favoriteColor} picker-select ${prefs.isDarkMode ? 'dark-mode' : ''
-                            }`}
+                          className={`${prefs.favoriteColor} picker-select ${
+                            prefs.isDarkMode ? 'dark-mode' : ''
+                          }`}
                           openClock={openClock}
                           option={option}
                           value={editItem.numberOfServings}
@@ -677,7 +689,7 @@ export function ItemDetails({
                     {option.type === 'macros' && (
                       <>
                         <CustomButton
-                          text="Edit Macros"
+                          text='Edit Macros'
                           onClick={openMacros}
                           icon={<EditIcon />}
                         />
@@ -710,7 +722,7 @@ export function ItemDetails({
           <CustomButton
             text={editMealItem ? 'Update Meal' : 'Add to Meal'}
             icon={!editMealItem && <AddIcon sx={{ mr: 1 }} />}
-            size="large"
+            size='large'
             fullWidth
             className={`add-to-meal-button ${prefs.favoriteColor}`}
             onClick={getOnClick()}
@@ -723,12 +735,12 @@ export function ItemDetails({
           onClose={closeImageModal}
           title={item.name || ''}
         >
-          <div className="modal-image-container">
+          <div className='modal-image-container'>
             <img
               src={item.image}
               alt={item.name}
               className={`box-shadow white-outline`}
-              referrerPolicy="no-referrer"
+              referrerPolicy='no-referrer'
               onError={async (e) => {
                 await imageService.fetchOnError(e, item as Item)
                 loadItems()
@@ -736,7 +748,7 @@ export function ItemDetails({
             />
           </div>
           <CustomButton
-            text="Cancel"
+            text='Cancel'
             fullWidth
             onClick={closeImageModal}
             className={`${prefs.favoriteColor}`}
