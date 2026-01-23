@@ -290,10 +290,6 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
         item.type = 'meal'
       }
 
-      console.log('item', item)
-      console.log('editMeal.items', editMeal.items)
-
-      console.log('hasIndex', hasIndex)
       if (hasIndex !== -1) {
         newItems = [...editMeal.items]
         newItems[hasIndex] = item

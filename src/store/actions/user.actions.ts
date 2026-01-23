@@ -310,11 +310,12 @@ export function setSelectedDiaryDay(selectedDay: LoggedToday | null) {
 
 export async function handleDiaryDayChange(
   dateToCheck: string,
-  user: User,
-  traineeUser: User | null
+  user: User
+  // traineeUser: User | null
 ) {
   try {
-    const userToCheck = traineeUser ? traineeUser : user
+    // const userToCheck = traineeUser ? traineeUser : user
+    const userToCheck = user
     const filter = {
       date: dateToCheck,
       userId: userToCheck._id,
@@ -322,9 +323,11 @@ export async function handleDiaryDayChange(
 
     if (!user) return
 
-    const diaryDay = traineeUser
-      ? traineeUser?.loggedToday?.date
-      : user?.loggedToday?.date
+    // const diaryDay = traineeUser
+    //   ? traineeUser?.loggedToday?.date
+    //   : user?.loggedToday?.date
+
+    const diaryDay = user?.loggedToday?.date
 
     if (diaryDay === dateToCheck) return
 
@@ -335,11 +338,22 @@ export async function handleDiaryDayChange(
       ...userToCheck,
       loggedToday: diaryDayChange,
     }
+    const traineeUser = store.getState().userModule.traineeUser
+
     if (!traineeUser) {
       optimisticUpdateUser(newUser)
     } else {
       setTraineeUser(newUser)
+      const trainees = store.getState().userModule.trainees
+      const traineeIdx = trainees.findIndex(
+        (trainee) => trainee._id === newUser._id
+      )
+      if (traineeIdx !== -1) {
+        trainees[traineeIdx] = newUser
+        setTrainees(trainees)
+      }
     }
+    return newUser.loggedToday
   } catch (err) {
     throw err
   }

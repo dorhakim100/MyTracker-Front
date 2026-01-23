@@ -50,7 +50,9 @@ export function Dashboard() {
 
   const timer = useSelector((state: RootState) => state.workoutModule.timer)
 
-  const isDashboard = useSelector((state: RootState) => state.systemModule.isDashboard)
+  const isDashboard = useSelector(
+    (state: RootState) => state.systemModule.isDashboard
+  )
 
   const navigate = useNavigate()
 
@@ -60,11 +62,11 @@ export function Dashboard() {
     fats: { percentage: 0, gram: 0 },
   })
 
-  const [calories, setCalories] = useState(user?.loggedToday?.calories || 0)
+  const [userToCheck, setUserToCheck] = useState(traineeUser || user)
 
-  const userToCheck = useMemo(() => {
-    return traineeUser || user
-  }, [user, traineeUser])
+  const [calories, setCalories] = useState(
+    userToCheck?.loggedToday?.calories || 0
+  )
 
   const showStatsCarousel = useMemo(() => {
     return width < 1100
@@ -73,49 +75,50 @@ export function Dashboard() {
   const statsCarouselItems = useMemo(() => {
     if (!userToCheck) return []
 
-
     return [
       <CaloriesProgress
-        key="calories"
+        key='calories'
         percentageValue={calories / userToCheck.currGoal?.dailyCalories}
         current={calories}
         goal={userToCheck.currGoal?.dailyCalories}
       />,
       <MacrosProgress
-        key="macros-progress"
+        key='macros-progress'
         protein={macros.protein}
         carbs={macros.carbs}
         fats={macros.fats}
       />,
       <MacrosDistribution
-        key="macros-distribution"
+        key='macros-distribution'
         protein={macros.protein.gram}
         carbs={macros.carbs.gram}
         fats={macros.fats.gram}
       />,
     ]
-  }, [userToCheck, calories, macros])
+  }, [userToCheck?._id, calories, macros])
   useEffect(() => {
     updateSessionDay()
-  }, [user, traineeUser])
+  }, [userToCheck?._id])
   useEffect(() => {
-    if (!user) return
-    setSelectedDiaryDay(user.loggedToday)
-  }, [user])
+    if (!userToCheck) return
+    setSelectedDiaryDay(userToCheck.loggedToday)
+  }, [userToCheck])
 
   useEffect(() => {
-    if (!user) return
+    setUserToCheck(traineeUser || user)
+  }, [user, traineeUser])
+
+  useEffect(() => {
+    if (!userToCheck) return
 
     const interval = setInterval(checkDiaryDayChange, CHECK_INTERVAL)
     return () => clearInterval(interval)
-  }, [user])
+  }, [userToCheck])
 
   useEffect(() => {
-    if (!user) return
+    if (!userToCheck) return
 
     checkDiaryDayChange()
-
-
   }, [userToCheck])
 
   useEffect(() => {
@@ -135,7 +138,10 @@ export function Dashboard() {
     )
     const macrosToSet = {
       protein: {
-        percentage: getPercentage(protein, userToCheck?.currGoal?.macros.protein),
+        percentage: getPercentage(
+          protein,
+          userToCheck?.currGoal?.macros.protein
+        ),
         gram: userToCheck?.currGoal?.macros.protein,
       },
       carbs: {
@@ -155,30 +161,30 @@ export function Dashboard() {
     if (!caloriesToSet && caloriesToSet !== 0) return
     const newCalories = caloriesToSet
     setCalories(newCalories)
-  }, [userToCheck?.loggedToday?.calories])
+  }, [userToCheck?.loggedToday?.calories, userToCheck?._id, traineeUser?._id])
 
   useEffect(() => {
     if (!todaySessionDay) return
 
     setSelectedSessionDay(todaySessionDay)
-  }, [user, traineeUser, todaySessionDay])
+  }, [userToCheck, todaySessionDay])
 
   function getPercentage(value: number, goal: number) {
     return (value / goal) * 100
   }
 
   async function checkDiaryDayChange() {
-    if (!user) return
+    if (!userToCheck) return
     const dateToCheck = getDateFromISO(new Date().toISOString())
-    await handleDiaryDayChange(dateToCheck, user, traineeUser)
+    await handleDiaryDayChange(dateToCheck, userToCheck)
   }
 
   async function updateSessionDay() {
     try {
-      if (!user) return
+      if (!userToCheck) return
       const day = await handleSessionDayChange(
         getDateFromISO(new Date().toISOString()),
-        traineeUser || user
+        userToCheck
       )
 
       setTodaySessionDay(day)
@@ -191,22 +197,31 @@ export function Dashboard() {
   const renderNoSession = () => {
     if (!todaySessionDay?.workout)
       return (
-        <div className="no-session-container">
-          <Typography variant="h6" className="bold-header">
+        <div className='no-session-container'>
+          <Typography
+            variant='h6'
+            className='bold-header'
+          >
             No workout today
           </Typography>
-          <div className={`animation-container ${isDashboard ? 'dashboard' : ''}`}>
-            <Lottie animationData={workoutAnimation} loop={true} />
+          <div
+            className={`animation-container ${isDashboard ? 'dashboard' : ''}`}
+          >
+            <Lottie
+              animationData={workoutAnimation}
+              loop={true}
+            />
           </div>
-          {!isDashboard && <CustomButton
-            text="Choose Workout"
-            icon={<PlayArrowIcon />}
-            onClick={() => {
-              setSlideDirection(1)
-              navigate('/lift-mate/workouts')
-            }}
-
-          />}
+          {!isDashboard && (
+            <CustomButton
+              text='Choose Workout'
+              icon={<PlayArrowIcon />}
+              onClick={() => {
+                setSlideDirection(1)
+                navigate('/lift-mate/workouts')
+              }}
+            />
+          )}
         </div>
       )
   }
@@ -214,8 +229,11 @@ export function Dashboard() {
   const renderSession = () => {
     if (sessionDay?.workout)
       return (
-        <div className="dashboard-session-container">
-          <Typography variant="h5" className="bold-header">
+        <div className='dashboard-session-container'>
+          <Typography
+            variant='h5'
+            className='bold-header'
+          >
             Workout Session
           </Typography>
 
@@ -229,25 +247,36 @@ export function Dashboard() {
 
   return (
     <div
-      className={`page-container dashboard-container ${timer ? 'has-timer' : ''
-        } ${isDashboard ? 'dashboard' : ''}`}
+      className={`page-container dashboard-container ${
+        timer ? 'has-timer' : ''
+      } ${isDashboard ? 'dashboard' : ''}`}
     >
-      {!isDashboard && <TimesContainer
-        className={`${prefs.isDarkMode ? 'dark-mode' : ''} ${prefs.favoriteColor
+      {!isDashboard && (
+        <TimesContainer
+          className={`${prefs.isDarkMode ? 'dark-mode' : ''} ${
+            prefs.favoriteColor
           }`}
-      />}
-      {isDashboard && <Typography variant="h4" className='bold-header' >
-        Dashboard
-      </Typography>}
+        />
+      )}
+      {isDashboard && (
+        <Typography
+          variant='h4'
+          className='bold-header'
+        >
+          Dashboard
+        </Typography>
+      )}
       {/* <Typography variant="h5" className="bold-header">Dashboard</Typography> */}
-      {showStatsCarousel ? <StatsCarousel items={statsCarouselItems} showSkeleton={!user} /> :
-
-        <div className="dashboard-items-container">
+      {showStatsCarousel ? (
+        <StatsCarousel
+          items={statsCarouselItems}
+          showSkeleton={!user}
+        />
+      ) : (
+        <div className='dashboard-items-container'>
           {statsCarouselItems.map((item) => item)}
-
         </div>
-
-      }
+      )}
 
       {renderNoSession()}
       {/* <CustomAccordion title="Workout Session" cmp={renderSession()} /> */}
