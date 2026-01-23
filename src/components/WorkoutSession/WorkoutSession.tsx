@@ -133,7 +133,11 @@ export function WorkoutSession({
     } finally {
       setIsLoading(false)
     }
-  }, [exerciseFilter.searchValue])
+  }, [
+    exerciseFilter.searchValue,
+    exerciseFilter.muscleGroupValue,
+    exerciseFilter.equipmentValue,
+  ])
 
   const latestHandleSearchRef = useRef(handleSearch)
   const debouncedRunSearch = useRef(
@@ -146,14 +150,18 @@ export function WorkoutSession({
 
   useEffect(() => {
     debouncedRunSearch()
-  }, [exerciseFilter.searchValue, debouncedRunSearch])
+  }, [
+    exerciseFilter.searchValue,
+    exerciseFilter.muscleGroupValue,
+    exerciseFilter.equipmentValue,
+    debouncedRunSearch,
+  ])
 
   useEffect(() => {
-
     if (isDashboard) {
-      setOpenExercises(new Set(sessionDay.workout.exercises.map(
-        (ex) => ex.exerciseId
-      )))
+      setOpenExercises(
+        new Set(sessionDay.workout.exercises.map((ex) => ex.exerciseId))
+      )
       return
     }
 
@@ -191,18 +199,18 @@ export function WorkoutSession({
       }
       const newExercises = isExerciseAlreadyAdded
         ? instructions.exercises.filter(
-          (e) => e.exerciseId !== exercise.exerciseId
-        )
+            (e) => e.exerciseId !== exercise.exerciseId
+          )
         : [
-          ...instructions.exercises,
-          {
-            exerciseId: exercise.exerciseId,
-            sets: [newSet],
-            notes: { expected: '', actual: '' },
-            restingTime: DEFAULT_RESTING_TIME,
-            image: exercise.image,
-          },
-        ]
+            ...instructions.exercises,
+            {
+              exerciseId: exercise.exerciseId,
+              sets: [newSet],
+              notes: { expected: '', actual: '' },
+              restingTime: DEFAULT_RESTING_TIME,
+              image: exercise.image,
+            },
+          ]
 
       const newInstructions = {
         ...instructions,
@@ -225,18 +233,17 @@ export function WorkoutSession({
         saveWorkout(newWorkout),
         !isExerciseAlreadyAdded
           ? setService.saveSetBySessionIdAndExerciseId(
-            sessionDay._id,
-            exercise.exerciseId,
-            newSet,
-            0,
-            true
-          )
+              sessionDay._id,
+              exercise.exerciseId,
+              newSet,
+              0,
+              true
+            )
           : Promise.resolve(null),
       ]
 
-      const [savedInstructions, savedWorkout, savedSet] = await Promise.all(
-        promises
-      )
+      const [savedInstructions, savedWorkout, savedSet] =
+        await Promise.all(promises)
 
       if (savedSet) {
         setCurrentExercise({
@@ -291,7 +298,9 @@ export function WorkoutSession({
     console.log('exercises', exercises)
   }
 
-  const resultsMsg = 'No exercises found'
+  const resultsMsg = !exerciseFilter.searchValue
+    ? 'Most Popular Exercises'
+    : `${filteredExerciseResults.length} exercises found`
 
   const handleOpenChange = useCallback(
     (exerciseId: string, openToSet: boolean) => {
@@ -307,7 +316,6 @@ export function WorkoutSession({
     },
     []
   )
-
 
   const toggleExpandAll = () => {
     if (!sessionDay?.workout?.exercises) return
@@ -375,8 +383,8 @@ export function WorkoutSession({
     const imageToSet = nextExercise?.image
       ? nextExercise.image
       : sessionDay.workout.exercises.find(
-        (e) => e.exerciseId === nextExercise?.exerciseId
-      )?.image
+          (e) => e.exerciseId === nextExercise?.exerciseId
+        )?.image
 
     const currentExerciseToSet = {
       ...nextExercise,
@@ -683,9 +691,9 @@ export function WorkoutSession({
         exercises: sessionDay.instructions.exercises.map((e) =>
           e.exerciseId === exerciseId
             ? {
-              ...e,
-              notes: { expected: e.notes?.expected || '', actual: notes },
-            }
+                ...e,
+                notes: { expected: e.notes?.expected || '', actual: notes },
+              }
             : e
         ),
       })
@@ -775,19 +783,19 @@ export function WorkoutSession({
   const getAlertDialogComponent = () => {
     if (alertDialogOptions.component === 'delete')
       return (
-        <div className="modal-delete-workout-container">
-          <Typography variant="h6">
+        <div className='modal-delete-workout-container'>
+          <Typography variant='h6'>
             Are you sure you want to delete this workout?
           </Typography>
           <DialogActions>
             <CustomButton
-              text="Cancel"
+              text='Cancel'
               fullWidth
               onClick={closeAlertDialog}
               className={`${prefs.favoriteColor}`}
             />
             <CustomButton
-              text="Delete"
+              text='Delete'
               fullWidth
               onClick={deleteSession}
               className={`${prefs.favoriteColor} delete-account-button`}
@@ -798,23 +806,23 @@ export function WorkoutSession({
 
     if (alertDialogOptions.component === 'note') {
       return (
-        <div className="notes-edit-container">
+        <div className='notes-edit-container'>
           <CustomInput
             value={exerciseNotes}
             onChange={setExerciseNotes}
-            placeholder="Enter notes"
+            placeholder='Enter notes'
             isRemoveIcon={true}
             className={`${prefs.favoriteColor}`}
           />
           <DialogActions>
             <CustomButton
-              text="Cancel"
+              text='Cancel'
               fullWidth
               onClick={closeAlertDialog}
               className={`${prefs.favoriteColor}`}
             />
             <CustomButton
-              text="Save"
+              text='Save'
               fullWidth
               onClick={() =>
                 saveExerciseNotes(alertDialogOptions.exerciseId, exerciseNotes)
@@ -829,22 +837,25 @@ export function WorkoutSession({
 
   return (
     <>
-      <div className="workout-container">
-        <div className="workout-header-container">
+      <div className='workout-container'>
+        <div className='workout-header-container'>
           <div
-            className="workout-name-container"
+            className='workout-name-container'
             onClick={onOpenWorkoutDetails}
           >
             {sessionDay.instructions.isFinished ? (
-              <CircleIcon color="success" />
+              <CircleIcon color='success' />
             ) : (
-              <CircleIcon color="error" />
+              <CircleIcon color='error' />
             )}
-            <Typography variant="h5" className="bold-header">
+            <Typography
+              variant='h5'
+              className='bold-header'
+            >
               {getWorkoutName()}{' '}
             </Typography>
           </div>
-          <div className="actions-container">
+          <div className='actions-container'>
             <CustomButton
               icon={allExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               onClick={toggleExpandAll}
@@ -856,12 +867,12 @@ export function WorkoutSession({
               isIcon={true}
               icon={<CheckIcon />}
               disabled={!timer}
-              size="small"
+              size='small'
               onClick={() => {
                 if (!timer) return
                 removeTimer(timer._id)
               }}
-              tooltipTitle="Finish Workout"
+              tooltipTitle='Finish Workout'
             />
             <CustomButton
               icon={<DeleteIcon />}
@@ -874,16 +885,19 @@ export function WorkoutSession({
                 })
               }}
               isIcon={true}
-              tooltipTitle="Delete Workout"
+              tooltipTitle='Delete Workout'
             />
           </div>
         </div>
-        <Typography variant="body1" className="bold-header">
+        <Typography
+          variant='body1'
+          className='bold-header'
+        >
           {getWorkoutMuscles(sessionDay.workout).join(', ')}
         </Typography>
         <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
         {/* <CustomButton text="Add Exercise" icon={<AddIcon />} /> */}
-        <div className="exercises-container">
+        <div className='exercises-container'>
           {sessionDay.instructions.exercises.map((exercise) => {
             const isOpen = openExercises.has(exercise.exerciseId)
 
@@ -922,20 +936,20 @@ export function WorkoutSession({
             )
           })}
         </div>
-        <div className="buttons-container">
+        <div className='buttons-container'>
           <CustomButton
-            text="Add Exercise"
+            text='Add Exercise'
             icon={<AddIcon />}
             fullWidth
             onClick={openExerciseDialog}
           />
           <Divider
             className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-            orientation="vertical"
+            orientation='vertical'
             flexItem={true}
           />
           <CustomButton
-            text="Finish Workout"
+            text='Finish Workout'
             icon={<CheckIcon />}
             fullWidth
             disabled={!timer}
@@ -951,7 +965,7 @@ export function WorkoutSession({
         onClose={closeSlideDialog}
         title={slideDialogOptions.title}
         component={getSlideDialogComponent() as React.ReactElement}
-        type="full"
+        type='full'
       />
       <CustomAlertDialog
         open={alertDialogOptions.open}

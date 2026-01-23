@@ -7,7 +7,11 @@ import { ExerciseFilter } from '../../../../types/exerciseFilter/ExerciseFilter'
 import { Exercise } from '../../../../types/exercise/Exercise'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { workoutService } from '../../../../services/workout/workout.service'
-import { exerciseSearch, filterExercises, getMostPopularExercises } from '../../../../services/exersice-search/exersice-search'
+import {
+  exerciseSearch,
+  filterExercises,
+  getMostPopularExercises,
+} from '../../../../services/exersice-search/exersice-search'
 import { messages } from '../../../../assets/config/messages'
 import { showErrorMsg } from '../../../../services/event-bus.service'
 import { setIsLoading } from '../../../../store/actions/system.actions'
@@ -24,7 +28,11 @@ export function TrainerExercises() {
 
   const filteredExerciseResults = useMemo(() => {
     return filterExercises(exerciseFilter, exerciseResults)
-  }, [exerciseResults, exerciseFilter.muscleGroupValue, exerciseFilter.equipmentValue])
+  }, [
+    exerciseResults,
+    exerciseFilter.muscleGroupValue,
+    exerciseFilter.equipmentValue,
+  ])
 
   const onExerciseFilterChange = (exerciseFilter: ExerciseFilter) => {
     setExerciseFilter(exerciseFilter)
@@ -46,7 +54,11 @@ export function TrainerExercises() {
     } finally {
       setIsLoading(false)
     }
-  }, [exerciseFilter.searchValue])
+  }, [
+    exerciseFilter.searchValue,
+    exerciseFilter.muscleGroupValue,
+    exerciseFilter.equipmentValue,
+  ])
 
   const latestHandleSearchRef = useRef(handleSearch)
   const debouncedRunSearch = useRef(
@@ -59,23 +71,35 @@ export function TrainerExercises() {
 
   useEffect(() => {
     debouncedRunSearch()
-  }, [exerciseFilter.searchValue, debouncedRunSearch])
+  }, [
+    exerciseFilter.searchValue,
+    exerciseFilter.muscleGroupValue,
+    exerciseFilter.equipmentValue,
+    debouncedRunSearch,
+  ])
 
   return (
-    <Box className={`trainer-exercises-container ${prefs.isDarkMode ? 'dark-mode' : ''} ${prefs.favoriteColor}`}>
-      <Typography variant="h4" className='bold-header' >
+    <Box
+      className={`trainer-exercises-container ${prefs.isDarkMode ? 'dark-mode' : ''} ${prefs.favoriteColor}`}
+    >
+      <Typography
+        variant='h4'
+        className='bold-header'
+      >
         Exercises
       </Typography>
-      <ExercisesSearch 
+      <ExercisesSearch
         exerciseFilter={exerciseFilter}
         onExerciseFilterChange={onExerciseFilterChange}
-        placeholder="Search for exercises"
+        placeholder='Search for exercises'
         className={`${prefs.favoriteColor}`}
         results={filteredExerciseResults}
-        resultsMsg={!exerciseFilter.searchValue
-          ? 'Most Popular Exercises'
-          : `${filteredExerciseResults.length} exercises found`}
-        />
+        resultsMsg={
+          !exerciseFilter.searchValue
+            ? 'Most Popular Exercises'
+            : `${filteredExerciseResults.length} exercises found`
+        }
+      />
     </Box>
   )
 }

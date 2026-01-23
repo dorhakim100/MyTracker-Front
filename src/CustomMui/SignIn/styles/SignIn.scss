@@ -51,6 +51,11 @@
 
         position: relative;
 
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+
         span {
           position: absolute;
           // top: 50%;

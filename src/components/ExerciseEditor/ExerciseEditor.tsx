@@ -525,17 +525,15 @@ export function ExerciseEditor({
             threshold={0.15}
           />
         )}
-        {!isDashboard ||
-          (isExpected && (
-            <div className='controls-container'>
-              <CustomButton
-                icon={<AddIcon />}
-                text='Add Set'
-                onClick={onAddSet}
-                fullWidth
-              />
-            </div>
-          ))}
+
+        <div className='controls-container'>
+          <CustomButton
+            icon={<AddIcon />}
+            text='Add Set'
+            onClick={onAddSet}
+            fullWidth
+          />
+        </div>
       </div>
       <SlideDialog
         open={pickerOptions.isOpen}

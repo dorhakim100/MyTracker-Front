@@ -16,7 +16,10 @@ import {
   filterExercises,
 } from '../../../services/exersice-search/exersice-search'
 import { setIsLoading } from '../../../store/actions/system.actions'
-import { loadWorkouts, saveWorkout } from '../../../store/actions/workout.action'
+import {
+  loadWorkouts,
+  saveWorkout,
+} from '../../../store/actions/workout.action'
 import { Instructions } from '../../../types/instructions/Instructions'
 import { instructionsService } from '../../../services/instructions/instructions.service'
 import { WeekNumberStatus } from '../../../types/weekNumberStatus/WeekNumberStatus'
@@ -96,7 +99,11 @@ export function EditWorkout({
     } finally {
       setIsLoading(false)
     }
-  }, [exerciseFilter.searchValue])
+  }, [
+    exerciseFilter.searchValue,
+    exerciseFilter.muscleGroupValue,
+    exerciseFilter.equipmentValue,
+  ])
 
   const latestHandleSearchRef = useRef(handleSearch)
   const debouncedRunSearch = useRef(
@@ -108,9 +115,8 @@ export function EditWorkout({
       if (!workout._id || (!user?._id && !traineeUser?._id)) return
 
       setIsLoading(true)
-      const instructions = await instructionsService.getByWorkoutId(
-        instructionsFilter
-      )
+      const instructions =
+        await instructionsService.getByWorkoutId(instructionsFilter)
 
       const statuses = await instructionsService.getWeekNumberDone(workout._id)
 
@@ -143,7 +149,12 @@ export function EditWorkout({
 
   useEffect(() => {
     debouncedRunSearch()
-  }, [exerciseFilter.searchValue, debouncedRunSearch])
+  }, [
+    exerciseFilter.searchValue,
+    exerciseFilter.muscleGroupValue,
+    exerciseFilter.equipmentValue,
+    debouncedRunSearch,
+  ])
 
   useEffect(() => {
     getWorkoutInstructions()
@@ -161,9 +172,9 @@ export function EditWorkout({
     const newExercises =
       exerciseIndex === -1
         ? [
-          ...workout.exercises,
-          { ...exercise, details: workoutService.getEmptyExerciseDetail() },
-        ]
+            ...workout.exercises,
+            { ...exercise, details: workoutService.getEmptyExerciseDetail() },
+          ]
         : workout.exercises.filter((e) => e.exerciseId !== exercise.exerciseId)
 
     const notes = instructionsService.getEmptyExpectedActual('notes')
@@ -373,7 +384,9 @@ export function EditWorkout({
       await instructionsService.save({
         ...instructionsToSave,
       })
-      const statuses = await instructionsService.getWeekNumberDone(savedWorkout._id)
+      const statuses = await instructionsService.getWeekNumberDone(
+        savedWorkout._id
+      )
       await loadWorkouts({ forUserId: traineeUser?._id || user?._id || '' })
 
       setWeeksStatus(statuses)
@@ -390,8 +403,9 @@ export function EditWorkout({
 
   return (
     <div
-      className={`edit-workout-container ${prefs.isDarkMode ? 'dark-mode' : ''
-        }`}
+      className={`edit-workout-container ${
+        prefs.isDarkMode ? 'dark-mode' : ''
+      }`}
     >
       <NameExercises
         workout={workout}
@@ -409,9 +423,7 @@ export function EditWorkout({
         setInstructions={setInstructions}
         onEditExerciseNotes={onEditExerciseNotes}
         onSwitchRpeRir={onSwitchRpeRir}
-        onSaveWorkout={(isClose?: boolean) =>
-
-          onFinish(isClose)}
+        onSaveWorkout={(isClose?: boolean) => onFinish(isClose)}
       />
     </div>
   )
