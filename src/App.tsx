@@ -118,6 +118,10 @@ function App() {
   }, [])
 
   useEffect(() => {
+    if (platform !== 'desktop') {
+      setIsDashboard(false)
+      return
+    }
     if (user && user.isTrainer && platform === 'desktop') {
       setIsDashboard(true)
     } else {
@@ -207,11 +211,11 @@ function App() {
     loadFavoriteItems()
   }, [user?._id])
 
-  if (shouldShowInstallGuide && isProd && !isNative) {
+  if (platform !== 'desktop' && shouldShowInstallGuide && isProd && !isNative) {
     return (
       <main className={`main ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
         {/* <AppHeader /> */}
-        <div className="">
+        <div className=''>
           <PwaInstall
             promptInstall={promptInstall}
             platform={platform}
@@ -255,13 +259,16 @@ function App() {
           duration={0.25}
         >
           {!user ? (
-            <div className="page-container login-sign-up-container">
+            <div className='page-container login-sign-up-container'>
               <AppHeader />
 
               <SignIn />
             </div>
           ) : (
-            <Routes location={location} key={location.pathname}>
+            <Routes
+              location={location}
+              key={location.pathname}
+            >
               {filteredRoutes.map((route, index) => (
                 <Route
                   key={index}
