@@ -217,6 +217,9 @@ export function FixedBottomNavigation(props: {
             // paddingBottom: '1.5em',
           }}
           elevation={3}
+          className={`navigation ${prefs.favoriteColor} ${
+            prefs.isDarkMode ? 'dark-mode' : ''
+          }`}
         >
           <Box sx={{ position: 'relative' }}>
             {renderSpeedDial()}

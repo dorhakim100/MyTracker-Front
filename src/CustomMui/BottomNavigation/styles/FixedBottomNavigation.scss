@@ -8,7 +8,7 @@
 
   &.dark-mode {
     .MuiPaper-root {
-      background-color: $darker-gray !important;
+      // background-color: $darker-gray !important;
     }
 
     .MuiBottomNavigation-root,
@@ -82,7 +82,8 @@
   padding: 1rem !important;
   margin-bottom: 0.8rem !important;
 
-  box-shadow: rgba(0, 0, 0, 0.308) 0px 10px 20px,
+  box-shadow:
+    rgba(0, 0, 0, 0.308) 0px 10px 20px,
     rgba(0, 0, 0, 0.23) 0px 6px 6px;
 
   .MuiButtonBase-root {
@@ -204,9 +205,98 @@
 }
 
 body.dark-mode {
-.MuiButtonBase-root:not(.css-1dcy7mk-MuiButtonBase-root-MuiListItemButton-root):not(.color-button){
-  &:hover{
-    background-color: lighten($darker-gray, 10%);
+  .MuiButtonBase-root:not(
+      .css-1dcy7mk-MuiButtonBase-root-MuiListItemButton-root
+    ):not(.color-button) {
+    &:hover {
+      background-color: lighten($darker-gray, 10%);
+    }
   }
 }
+
+.navigation.dark-mode,
+.MuiBottomNavigation-root.dark-mode {
+  background-color: $darker-gray-left-menu !important;
+  &.blue {
+    background-color: $darker-gray-blue-left-menu !important;
+  }
+  &.red {
+    background-color: $darker-gray-red-left-menu !important;
+  }
+  &.yellow {
+    background-color: $darker-gray-yellow-left-menu !important;
+  }
+  &.green {
+    background-color: $darker-gray-green-left-menu !important;
+  }
+  &.orange {
+    background-color: $darker-gray-orange-left-menu !important;
+  }
+  &.deepPurple {
+    background-color: $darker-gray-deep-purple-left-menu !important;
+  }
+  &.pink {
+    background-color: $darker-gray-pink-left-menu !important;
+  }
+  &.purple {
+    background-color: $darker-gray-purple-left-menu !important;
+  }
+}
+
+.MuiBottomNavigation-root {
+  &.dark-mode {
+    background-color: $darker-gray-left-menu !important;
+    button {
+      background-color: $darker-gray-left-menu !important;
+    }
+
+    &.blue {
+      background-color: $darker-gray-blue-left-menu !important;
+      button {
+        background-color: $darker-gray-blue-left-menu !important;
+      }
+    }
+    &.red {
+      background-color: $darker-gray-red-left-menu !important;
+      button {
+        background-color: $darker-gray-red-left-menu !important;
+      }
+    }
+    &.yellow {
+      background-color: $darker-gray-yellow-left-menu !important;
+      button {
+        background-color: $darker-gray-yellow-left-menu !important;
+      }
+    }
+    &.green {
+      background-color: $darker-gray-green-left-menu !important;
+      button {
+        background-color: $darker-gray-green-left-menu !important;
+      }
+    }
+    &.orange {
+      background-color: $darker-gray-orange-left-menu !important;
+      button {
+        background-color: $darker-gray-orange-left-menu !important;
+      }
+    }
+    &.deepPurple {
+      background-color: $darker-gray-deep-purple-left-menu !important;
+      button {
+        background-color: $darker-gray-deep-purple-left-menu !important;
+      }
+    }
+    &.purple {
+      background-color: $darker-gray-purple-left-menu !important;
+      button {
+        background-color: $darker-gray-purple-left-menu !important;
+      }
+    }
+    &.pink {
+      background-color: $darker-gray-pink-left-menu !important;
+      button {
+        background-color: $darker-gray-pink-left-menu !important;
+      }
+    }
+  }
 }
