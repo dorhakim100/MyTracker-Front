@@ -10,25 +10,30 @@ interface EditIconProps {
 }
 
 export function EditIcon({ onClick, ariaLabel = 'Edit' }: EditIconProps) {
-
-
-  const isDashboard = useSelector((state: RootState) => state.systemModule.isDashboard)
+  const isDashboard = useSelector(
+    (state: RootState) => state.systemModule.isDashboard
+  )
 
   function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
     event.stopPropagation()
     onClick?.()
   }
 
-
-
-
   return (
-
-    <Tooltip title="Edit" className='edit-button' disableHoverListener={!isDashboard}>
-      <IconButton onClick={handleClick} aria-label={ariaLabel} size='small'>
+    <Tooltip
+      title='Edit'
+      className='edit-button'
+      disableHoverListener={!isDashboard}
+      disableTouchListener={!isDashboard}
+      disableFocusListener={!isDashboard}
+    >
+      <IconButton
+        onClick={handleClick}
+        aria-label={ariaLabel}
+        size='small'
+      >
         <EditRoundedIcon />
       </IconButton>
     </Tooltip>
-
   )
 }

@@ -25,24 +25,41 @@ export function DayController({
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
-  const isDashboard = useSelector((state: RootState) => state.systemModule.isDashboard)
+  const isDashboard = useSelector(
+    (state: RootState) => state.systemModule.isDashboard
+  )
   return (
     <div className='day-controller-container'>
-      <Tooltip title="Previous day" disableHoverListener={!isDashboard}>
-
+      <Tooltip
+        title='Previous day'
+        disableHoverListener={!isDashboard}
+        disableTouchListener={!isDashboard}
+        disableFocusListener={!isDashboard}
+      >
         <IconButton onClick={() => onDayChange(-1)}>
           <ArrowBackIcon />
         </IconButton>
       </Tooltip>
       <div
-        className={`time-controls-container ${isToday ? `today ${prefs.favoriteColor}` : ''
-          } ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+        className={`time-controls-container ${
+          isToday ? `today ${prefs.favoriteColor}` : ''
+        } ${prefs.isDarkMode ? 'dark-mode' : ''}`}
       >
-        <TimesContainer isClock={false} selectedDay={selectedDay} />
-        <CustomDatePicker value={selectedDayDate} onChange={onDateChange} />
+        <TimesContainer
+          isClock={false}
+          selectedDay={selectedDay}
+        />
+        <CustomDatePicker
+          value={selectedDayDate}
+          onChange={onDateChange}
+        />
       </div>
-      <Tooltip title="Next day" disableHoverListener={!isDashboard}>
-
+      <Tooltip
+        title='Next day'
+        disableHoverListener={!isDashboard}
+        disableTouchListener={!isDashboard}
+        disableFocusListener={!isDashboard}
+      >
         <IconButton onClick={() => onDayChange(1)}>
           <ArrowForwardIcon />
         </IconButton>

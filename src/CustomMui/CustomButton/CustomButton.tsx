@@ -47,19 +47,28 @@ export function CustomButton({
   // const resolvedBg = backgroundColor || prefs.favoriteColor || undefined
   const resolvedBg = backgroundColor || undefined
 
-
-
   return (
     <ClickAnimation
       disabled={isDashboard ? true : disabled}
-      className={`custom-button-wrapper ${prefs.isDarkMode ? 'dark-mode' : ''
-        } ${disabled ? 'disabled' : ''} ${prefs.favoriteColor || ''}`}
+      className={`custom-button-wrapper ${
+        prefs.isDarkMode ? 'dark-mode' : ''
+      } ${disabled ? 'disabled' : ''} ${prefs.favoriteColor || ''}`}
     >
       {isIcon ? (
-        <Tooltip title={tooltipTitle || ariaLabel || (typeof text === 'string' ? text : 'button')} disableHoverListener={tooltipTitle && isDashboard ? false : true} >
-
+        <Tooltip
+          title={
+            tooltipTitle ||
+            ariaLabel ||
+            (typeof text === 'string' ? text : 'button')
+          }
+          disableHoverListener={tooltipTitle && isDashboard ? false : true}
+          disableTouchListener={tooltipTitle && isDashboard ? false : true}
+          disableFocusListener={tooltipTitle && isDashboard ? false : true}
+        >
           <IconButton
-            aria-label={ariaLabel || (typeof text === 'string' ? text : 'button')}
+            aria-label={
+              ariaLabel || (typeof text === 'string' ? text : 'button')
+            }
             onClick={onClick}
             disabled={disabled}
             className={`custom-button ${className || ''} `}
@@ -85,15 +94,17 @@ export function CustomButton({
         </Tooltip>
       ) : (
         <Button
-          variant="contained"
+          variant='contained'
           size={size}
           fullWidth={fullWidth}
           aria-label={ariaLabel || (typeof text === 'string' ? text : 'button')}
           onClick={onClick}
           disabled={disabled}
-          className={`custom-button ${className || ''} ${prefs.favoriteColor || ''
-            } ${disabled ? 'disabled' : ''} ${prefs.isDarkMode ? 'dark-mode' : ''
-            } ${isDashboard ? 'dashboard' : ''}`}
+          className={`custom-button ${className || ''} ${
+            prefs.favoriteColor || ''
+          } ${disabled ? 'disabled' : ''} ${
+            prefs.isDarkMode ? 'dark-mode' : ''
+          } ${isDashboard ? 'dashboard' : ''}`}
         >
           {icon && isIconReverse && icon}
           {text}

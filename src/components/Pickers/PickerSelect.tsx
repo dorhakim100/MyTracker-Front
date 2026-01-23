@@ -39,11 +39,15 @@ export function PickerSelect({
   )
 
   return (
-    <Tooltip title={`Edit ${option.label}`} disableHoverListener={!isDashboard}>
-
+    <Tooltip
+      title={`Edit ${option.label}`}
+      disableHoverListener={!isDashboard}
+      disableTouchListener={!isDashboard}
+      disableFocusListener={!isDashboard}
+    >
       <FormControl
         sx={{ m: 1, minWidth: isAutoWidth ? 'auto' : minWidth || 150 }}
-        size="small"
+        size='small'
         onClick={openClock}
         className={`picker-select ${className}`}
       >
@@ -54,7 +58,7 @@ export function PickerSelect({
           label={option.label}
           value={value}
           open={false}
-          onOpen={() => { }}
+          onOpen={() => {}}
           renderValue={(selected) =>
             `${selected} ${afterString ? ` ${afterString}` : ''}`
           }

@@ -54,14 +54,14 @@ export function CustomSelect({
         <img
           src={(item as { value: string; src: string }).src}
           alt={value}
-          className="custom-select-img"
+          className='custom-select-img'
         />
       )
     }
 
     if (isIcon) {
       return (
-        <div className="custom-select-icon">
+        <div className='custom-select-icon'>
           {(item as { value: string; icon: React.ReactNode }).icon}
         </div>
       )
@@ -71,13 +71,18 @@ export function CustomSelect({
   }
 
   return (
-    <Tooltip title={tooltipTitle} disableHoverListener={isDashboard && tooltipTitle ? false : true}>
-
+    <Tooltip
+      title={tooltipTitle}
+      disableHoverListener={isDashboard && tooltipTitle ? false : true}
+      disableTouchListener={isDashboard && tooltipTitle ? false : true}
+      disableFocusListener={isDashboard && tooltipTitle ? false : true}
+    >
       <FormControl
         sx={{ m: 1, minWidth: 140 }}
-        size="small"
-        className={`custom-select ${className} ${prefs.isDarkMode ? 'dark-mode' : ''
-          } ${isDashboard ? 'dashboard' : ''}`}
+        size='small'
+        className={`custom-select ${className} ${
+          prefs.isDarkMode ? 'dark-mode' : ''
+        } ${isDashboard ? 'dashboard' : ''}`}
       >
         <InputLabel id={`${label}-select-label`}>{label}</InputLabel>
         <Select
@@ -89,8 +94,9 @@ export function CustomSelect({
           onChange={handleChange}
           MenuProps={{
             PaperProps: {
-              className: `${prefs.isDarkMode ? 'dark-mode' : ''
-                } ${className} select-paper`,
+              className: `${
+                prefs.isDarkMode ? 'dark-mode' : ''
+              } ${className} select-paper`,
             },
           }}
         >
@@ -98,7 +104,10 @@ export function CustomSelect({
           <em>None</em>
           </MenuItem> */}
           {values.map((value) => (
-            <MenuItem key={`${label}-${value}-select`} value={value}>
+            <MenuItem
+              key={`${label}-${value}-select`}
+              value={value}
+            >
               {getImg(value)}
               {capitalizeFirstLetter(value)} {extra}
             </MenuItem>

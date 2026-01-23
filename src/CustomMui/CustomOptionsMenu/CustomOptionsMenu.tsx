@@ -73,7 +73,9 @@ export function CustomOptionsMenu({
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
-  const isDashboard = useSelector((state: RootState) => state.systemModule.isDashboard)
+  const isDashboard = useSelector(
+    (state: RootState) => state.systemModule.isDashboard
+  )
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const [open, setOpen] = React.useState(false)
 
@@ -93,23 +95,31 @@ export function CustomOptionsMenu({
   }
 
   return (
-    <div className={className} onClick={handleClick}>
-      <Tooltip title="Options" disableHoverListener={!isDashboard}>
-        <div onClick={handleClick}>
-          {triggerElement}
-        </div>
+    <div
+      className={className}
+      onClick={handleClick}
+    >
+      <Tooltip
+        title='Options'
+        disableHoverListener={!isDashboard}
+        disableTouchListener={!isDashboard}
+        disableFocusListener={!isDashboard}
+      >
+        <div onClick={handleClick}>{triggerElement}</div>
       </Tooltip>
       <StyledMenu
-        className={`${prefs.isDarkMode ? 'dark-mode' : ''
-          } ${className} options-menu`}
-        id="basic-menu"
+        className={`${
+          prefs.isDarkMode ? 'dark-mode' : ''
+        } ${className} options-menu`}
+        id='basic-menu'
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}
         slotProps={{
           paper: {
-            className: `${prefs.isDarkMode ? 'dark-mode' : ''
-              } options-menu-paper ${prefs.favoriteColor}`,
+            className: `${
+              prefs.isDarkMode ? 'dark-mode' : ''
+            } options-menu-paper ${prefs.favoriteColor}`,
           },
           list: {
             'aria-labelledby': 'basic-button',
@@ -119,16 +129,17 @@ export function CustomOptionsMenu({
         {options.map((option) => (
           <MenuItem
             key={option.title}
-            className={`${prefs.isDarkMode ? 'dark-mode' : ''
-              } option-menu-item`}
+            className={`${
+              prefs.isDarkMode ? 'dark-mode' : ''
+            } option-menu-item`}
             onClick={(ev) => {
               ev.stopPropagation()
               option.onClick()
               handleClose()
             }}
           >
-            <span className="option-menu-item-title">{option.title}</span>
-            <span className="option-menu-item-icon">{option.icon}</span>
+            <span className='option-menu-item-title'>{option.title}</span>
+            <span className='option-menu-item-icon'>{option.icon}</span>
           </MenuItem>
         ))}
       </StyledMenu>

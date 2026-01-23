@@ -305,6 +305,8 @@ export function ExerciseEditor({
                             set.isDone ? 'Mark as not done' : 'Mark as done'
                           }
                           disableHoverListener={!isDashboard}
+                          disableTouchListener={!isDashboard}
+                          disableFocusListener={!isDashboard}
                         >
                           <Checkbox
                             disabled={isExpected}
