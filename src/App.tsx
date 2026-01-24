@@ -1,6 +1,5 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { Routes, Route, useLocation } from 'react-router'
 
 import { usePwaDetect } from './hooks/usePwaDetect.tsx'
 
@@ -91,7 +90,8 @@ function App() {
     return routes
   }, [user?._id])
 
-  const location = useLocation()
+  // const location = useLocation()
+  const [activeRoute, setActiveRoute] = useState<string>('/')
 
   useEffect(() => {
     const defaultPrefs = getDefaultsPrefs()
@@ -211,6 +211,13 @@ function App() {
     loadFavoriteItems()
   }, [user?._id])
 
+  const _getActiveRouteComponent = () => {
+    const activeRouteComponent = filteredRoutes.find(
+      (route) => route.path === activeRoute
+    )
+    return activeRouteComponent ? <activeRouteComponent.element /> : null
+  }
+
   if (platform !== 'desktop' && shouldShowInstallGuide && isProd && !isNative) {
     return (
       <main className={`main ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
@@ -254,7 +261,7 @@ function App() {
         } ${prefs.favoriteColor || ''}`}
       >
         <SlideAnimation
-          motionKey={location.pathname}
+          motionKey={activeRoute}
           direction={slideDirection}
           duration={0.25}
         >
@@ -265,23 +272,18 @@ function App() {
               <SignIn />
             </div>
           ) : (
-            <Routes
-              location={location}
-              key={location.pathname}
-            >
-              {filteredRoutes.map((route, index) => (
-                <Route
-                  key={index}
-                  path={route.path}
-                  element={<route.element />}
-                />
-              ))}
-            </Routes>
+            <div key={activeRoute}>{_getActiveRouteComponent()}</div>
           )}
         </SlideAnimation>
         <Timer />
       </main>
-      {user && <FixedBottomNavigation routes={filteredRoutes} />}
+      {user && (
+        <FixedBottomNavigation
+          routes={filteredRoutes}
+          setActiveRoute={setActiveRoute}
+          activeRoute={activeRoute}
+        />
+      )}
     </>
   )
 }

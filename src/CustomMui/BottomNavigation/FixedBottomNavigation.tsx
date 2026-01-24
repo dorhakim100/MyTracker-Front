@@ -1,5 +1,4 @@
 import React, { MouseEventHandler, useEffect, useMemo, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
 import Box from '@mui/material/Box'
 import CssBaseline from '@mui/material/CssBaseline'
 import BottomNavigation from '@mui/material/BottomNavigation'
@@ -20,7 +19,6 @@ import { RootState } from '../../store/store'
 import SpeedDialAction from '@mui/material/SpeedDialAction'
 import {
   setIsAddModal,
-  setNavigateTo,
   setSlideDirection,
 } from '../../store/actions/system.actions'
 import { setSelectedDiaryDay } from '../../store/actions/user.actions'
@@ -38,17 +36,17 @@ const modalTypes = {
 
 export function FixedBottomNavigation(props: {
   routes: Route[]
+  activeRoute: string
   centerAction?: {
     icon?: React.ReactNode
     onClick?: () => void
     ariaLabel?: string
   }
+  setActiveRoute: (route: string) => void
 }) {
+  const { setActiveRoute, activeRoute } = props
   const [value, setValue] = React.useState(0)
   const ref = React.useRef<HTMLDivElement>(null)
-
-  const navigate = useNavigate()
-  const location = useLocation()
 
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -105,7 +103,7 @@ export function FixedBottomNavigation(props: {
 
   useEffect(() => {
     const index = filteredRoutes.findIndex(
-      (route) => route && route.path === location.pathname
+      (route) => route && route.path === activeRoute
     )
 
     if (index === -1) {
@@ -120,7 +118,7 @@ export function FixedBottomNavigation(props: {
     } else {
       setValue(index)
     }
-  }, [location.pathname, filteredRoutes])
+  }, [activeRoute, filteredRoutes])
 
   function onScanClick() {
     setModalType(modalTypes.scan)
@@ -244,11 +242,11 @@ export function FixedBottomNavigation(props: {
                     onClick={() => {
                       setSlideDirection(index < currIndex ? -1 : 1)
 
-                      setNavigateTo(route.path)
-
-                      if (route.path === location.pathname) {
+                      if (route.path === activeRoute) {
                         smoothScroll()
-                      } else navigate(route.path)
+                      } else {
+                        setActiveRoute(route.path)
+                      }
                     }}
                     className={`${prefs.favoriteColor}`}
                   />
@@ -270,9 +268,11 @@ export function FixedBottomNavigation(props: {
                         index + leftRoutes.length > currIndex ? 1 : -1
                       )
 
-                      if (route.path === location.pathname) {
+                      if (route.path === activeRoute) {
                         smoothScroll()
-                      } else navigate(route.path)
+                      } else {
+                        setActiveRoute(route.path)
+                      }
                     }}
                     className={`${prefs.favoriteColor}`}
                   />
