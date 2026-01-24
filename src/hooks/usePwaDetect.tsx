@@ -76,6 +76,9 @@ export function usePwaDetect(): UsePwaDetect {
   }
 
   const shouldShowInstallGuide = useMemo(() => {
+    if (platform === 'desktop') {
+      return false
+    }
     // Not in standalone AND either (Chrome can prompt) OR (iOS where A2HS is manual)
     return !isPwaInstalled && (isInstallable || platform === 'ios')
   }, [isPwaInstalled, isInstallable, platform])
