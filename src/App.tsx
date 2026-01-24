@@ -35,7 +35,6 @@ import { Capacitor } from '@capacitor/core'
 import { TrainerDashboard } from './pages/TrainerDashboard/TrainerDashboard.tsx'
 
 import './App.css'
-import { Route, Routes } from 'react-router-dom'
 
 const isProd = import.meta.env.PROD
 
