@@ -275,16 +275,6 @@ function App() {
           ) : (
             <div key={activeRoute}>{_getActiveRouteComponent()}</div>
           )}
-
-          <Routes>
-            {filteredRoutes.map((route) => (
-              <Route
-                key={route.path}
-                path={route.path}
-                element={<route.element />}
-              />
-            ))}
-          </Routes>
         </SlideAnimation>
         <Timer />
       </main>
