@@ -35,6 +35,7 @@ import { Capacitor } from '@capacitor/core'
 import { TrainerDashboard } from './pages/TrainerDashboard/TrainerDashboard.tsx'
 
 import './App.css'
+import { Route, Routes } from 'react-router-dom'
 
 const isProd = import.meta.env.PROD
 
@@ -274,6 +275,16 @@ function App() {
           ) : (
             <div key={activeRoute}>{_getActiveRouteComponent()}</div>
           )}
+
+          <Routes>
+            {filteredRoutes.map((route) => (
+              <Route
+                key={route.path}
+                path={route.path}
+                element={<route.element />}
+              />
+            ))}
+          </Routes>
         </SlideAnimation>
         <Timer />
       </main>
