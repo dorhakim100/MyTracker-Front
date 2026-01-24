@@ -54,6 +54,10 @@ export function BmrCard({ sentUser }: BmrCardProps) {
     (storeState: RootState) => storeState.userModule.user
   )
 
+  const isDashboard = useSelector(
+    (storeState: RootState) => storeState.systemModule.isDashboard
+  )
+
   const viewdUser = useMemo(() => {
     return sentUser || user
   }, [sentUser, user])
@@ -168,7 +172,7 @@ export function BmrCard({ sentUser }: BmrCardProps) {
   return (
     <div
       //   variant='outlined'
-      className={`bmr-card ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+      className={`bmr-card ${prefs.isDarkMode ? 'dark-mode' : ''} ${isDashboard ? 'dashboard' : ''}`}
     >
       {/* <Typography variant='h6'>BMR Calculator</Typography> */}
 

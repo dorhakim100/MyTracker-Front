@@ -3,6 +3,10 @@
   display: grid;
   gap: 1rem;
 
+  &.dashboard {
+    gap: 0rem;
+  }
+
   // grid-template-columns: repeat(2, 1fr);
 
   p {
