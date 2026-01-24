@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../store/store'
 
@@ -17,7 +16,10 @@ import { getDateFromISO } from '../../../services/util.service'
 import { Typography } from '@mui/material'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import { CustomButton } from '../../../CustomMui/CustomButton/CustomButton'
-import { setSlideDirection } from '../../../store/actions/system.actions'
+import {
+  setActiveRoute,
+  setSlideDirection,
+} from '../../../store/actions/system.actions'
 import { WorkoutSession } from '../../../components/WorkoutSession/WorkoutSession'
 import { showErrorMsg } from '../../../services/event-bus.service'
 import {
@@ -53,8 +55,6 @@ export function Dashboard() {
   const isDashboard = useSelector(
     (state: RootState) => state.systemModule.isDashboard
   )
-
-  const navigate = useNavigate()
 
   const [macros, setMacros] = useState({
     protein: { percentage: 0, gram: 0 },
@@ -218,7 +218,7 @@ export function Dashboard() {
               icon={<PlayArrowIcon />}
               onClick={() => {
                 setSlideDirection(1)
-                navigate('/lift-mate/workouts')
+                setActiveRoute('/lift-mate/workouts')
               }}
             />
           )}

@@ -1,6 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useSelector } from 'react-redux'
-import { useNavigate } from 'react-router'
 import {
   handleSessionDayChange,
   loadWorkouts,
@@ -46,6 +45,7 @@ import { SlideAnimation } from '../../../components/SlideAnimation/SlideAnimatio
 import { WorkoutSession } from '../../../components/WorkoutSession/WorkoutSession'
 import {
   setIsLoading,
+  setActiveRoute,
   setSlideDirection,
 } from '../../../store/actions/system.actions'
 import CustomSkeleton from '../../../CustomMui/CustomSkeleton/CustomSkeleton'
@@ -76,7 +76,6 @@ interface dialogOptions {
 }
 
 export function Workouts() {
-  const navigate = useNavigate()
   const user = useSelector(
     (stateSelector: RootState) => stateSelector.userModule.user
   )
@@ -292,7 +291,7 @@ export function Workouts() {
       if (isToday) {
         setSlideDirection(-1)
 
-        navigate('/')
+        setActiveRoute('/')
       }
 
       // await saveSessionDay()
@@ -462,7 +461,7 @@ export function Workouts() {
       setEmptyWorkoutLoading(true)
       await playEmptyWorkout(traineeUser?._id || user?._id || '')
       setSlideDirection(-1)
-      navigate('/')
+      setActiveRoute('/')
     } catch (err) {
       showErrorMsg(messages.error.playEmptyWorkout)
     } finally {

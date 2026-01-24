@@ -17,6 +17,7 @@ import {
   SET_IS_FIRST_LOADING,
   SET_IS_NATIVE,
   SET_IS_DASHBOARD,
+  SET_ACTIVE_ROUTE,
 } from '../reducers/system.reducer'
 
 export function setIsLoading(stateToSet: boolean) {
@@ -76,4 +77,7 @@ export function setIsNative(isNativeToSet: boolean) {
 }
 export function setIsDashboard(isDashboardToSet: boolean) {
   store.dispatch({ type: SET_IS_DASHBOARD, isDashboard: isDashboardToSet })
+}
+export function setActiveRoute(activeRouteToSet: string) {
+  store.dispatch({ type: SET_ACTIVE_ROUTE, activeRoute: activeRouteToSet })
 }

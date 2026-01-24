@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 
 import { usePwaDetect } from './hooks/usePwaDetect.tsx'
@@ -82,6 +82,10 @@ function App() {
     (stateSelector: RootState) => stateSelector.systemModule.isDashboard
   )
 
+  const activeRoute = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.activeRoute
+  )
+
   const filteredRoutes = useMemo(() => {
     if (user) {
       return routes.filter((route) => route.path !== '/signin')
@@ -91,7 +95,6 @@ function App() {
   }, [user?._id])
 
   // const location = useLocation()
-  const [activeRoute, setActiveRoute] = useState<string>('/')
 
   useEffect(() => {
     const defaultPrefs = getDefaultsPrefs()
@@ -280,7 +283,6 @@ function App() {
       {user && (
         <FixedBottomNavigation
           routes={filteredRoutes}
-          setActiveRoute={setActiveRoute}
           activeRoute={activeRoute}
         />
       )}

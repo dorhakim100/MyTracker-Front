@@ -19,6 +19,7 @@ export const SET_NAVIGATE_TO = 'SET_NAVIGATE_TO'
 export const SET_APP = 'SET_APP'
 export const SET_IS_NATIVE = 'SET_IS_NATIVE'
 export const SET_IS_DASHBOARD = 'SET_IS_DASHBOARD'
+export const SET_ACTIVE_ROUTE = 'SET_ACTIVE_ROUTE'
 export interface SystemState {
   isLoading: boolean
   prefs: Prefs
@@ -32,6 +33,7 @@ export interface SystemState {
   navigateTo: string
   isNative: boolean
   isDashboard: boolean
+  activeRoute: string
 }
 
 const initialState: SystemState = {
@@ -47,6 +49,7 @@ const initialState: SystemState = {
   navigateTo: '',
   isNative: false,
   isDashboard: false,
+  activeRoute: '/',
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -82,6 +85,8 @@ export function systemReducer(state = initialState, action: any = {}) {
       return { ...state, isNative: action.isNative }
     case SET_IS_DASHBOARD:
       return { ...state, isDashboard: action.isDashboard }
+    case SET_ACTIVE_ROUTE:
+      return { ...state, activeRoute: action.activeRoute }
     default:
       return state
   }

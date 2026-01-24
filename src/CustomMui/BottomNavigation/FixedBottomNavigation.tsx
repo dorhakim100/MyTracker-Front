@@ -26,6 +26,7 @@ import { messages } from '../../assets/config/messages'
 import { showErrorMsg } from '../../services/event-bus.service'
 import { BarcodeScanner } from '../../components/BarcodeScanner/BarcodeScanner'
 import { smoothScroll } from '../../services/util.service'
+import { setActiveRoute } from '../../store/actions/system.actions'
 
 type ModalType = 'search' | 'scan'
 
@@ -42,9 +43,8 @@ export function FixedBottomNavigation(props: {
     onClick?: () => void
     ariaLabel?: string
   }
-  setActiveRoute: (route: string) => void
 }) {
-  const { setActiveRoute, activeRoute } = props
+  const { activeRoute } = props
   const [value, setValue] = React.useState(0)
   const ref = React.useRef<HTMLDivElement>(null)
 

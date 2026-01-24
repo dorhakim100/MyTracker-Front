@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../store/store'
 
@@ -26,6 +25,7 @@ import { Exercise } from '../../../types/exercise/Exercise'
 
 import PlayCircleFilledWhiteIcon from '@mui/icons-material/PlayCircleFilledWhite'
 import {
+  setActiveRoute,
   setIsLoading,
   setSlideDirection,
 } from '../../../store/actions/system.actions'
@@ -64,8 +64,6 @@ export function Session() {
   )
 
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
-
-  const navigate = useNavigate()
 
   const [selectedDay, setSelectedDay] = useState(new Date())
   const [selectedDayDate] = useState(new Date().toISOString())
@@ -168,7 +166,7 @@ export function Session() {
   const renderStartWorkoutIcon = (workout: Workout) => {
     return (
       <PlayCircleFilledWhiteIcon
-        className="icon start"
+        className='icon start'
         onClick={(ev) => {
           ev.stopPropagation()
           onStartWorkout(workout)
@@ -179,7 +177,10 @@ export function Session() {
 
   const renderAvailableWorkoutButton = (workout: Workout) => {
     return workout.doneTimes === 0 ? (
-      <Badge badgeContent={'New'} className={`${prefs.favoriteColor}`}>
+      <Badge
+        badgeContent={'New'}
+        className={`${prefs.favoriteColor}`}
+      >
         {renderStartWorkoutIcon(workout)}
       </Badge>
     ) : (
@@ -191,8 +192,11 @@ export function Session() {
     const filteredWorkouts = workouts.filter((workout) => workout.isActive)
 
     return (
-      <div className="no-session-container">
-        <Typography variant="h5" className="bold-header">
+      <div className='no-session-container'>
+        <Typography
+          variant='h5'
+          className='bold-header'
+        >
           Select Your Workout
         </Typography>
         <CustomList
@@ -214,10 +218,11 @@ export function Session() {
               renderAvailableWorkoutButton(workout)
             ) : (
               <AddCircleOutlineIcon
-                className="icon add"
+                className='icon add'
                 onClick={(ev) => {
                   ev.stopPropagation()
-                  navigate(`/lift-mate/workouts`)
+                  setActiveRoute('/lift-mate/workouts')
+
                   setSlideDirection(1)
                 }}
               />
@@ -225,14 +230,14 @@ export function Session() {
           }}
           renderLeft={(workout) => {
             return !workout.isNewInstructions ? (
-              <CheckCircleOutlineIcon className="icon check" />
+              <CheckCircleOutlineIcon className='icon check' />
             ) : (
               <span>
                 {workout.doneTimes} / {workout.timesPerWeek}
               </span>
             )
           }}
-          noResultsMessage="No active workouts found"
+          noResultsMessage='No active workouts found'
         />
       </div>
     )
@@ -252,7 +257,7 @@ export function Session() {
 
   return (
     <>
-      <div className="page-container session-container">
+      <div className='page-container session-container'>
         <DayController
           selectedDay={selectedDay}
           selectedDayDate={sessionFilter.date}
@@ -263,7 +268,7 @@ export function Session() {
         <SlideAnimation
           motionKey={sessionDay._id}
           direction={direction}
-          className="session-container-animation"
+          className='session-container-animation'
         >
           {!sessionDay.workoutId || !sessionDay.instructions ? (
             renderNoSession()
@@ -283,7 +288,7 @@ export function Session() {
           }}
           component={getDialogComponent() as React.ReactElement}
           title={capitalizeFirstLetter(dialogOptions.item?.name || '')}
-          type="full"
+          type='full'
         />
       )}
     </>
