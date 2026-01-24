@@ -4,6 +4,9 @@
 
 html {
   line-height: 1.6;
+  // Prevent iOS swipe-back gesture
+  overscroll-behavior-x: none;
+  -webkit-overflow-scrolling: touch;
 }
 
 body {
@@ -55,6 +58,9 @@ body {
   min-height: 100vh;
   height: 100vh;
   overflow: hidden !important;
+  // Prevent iOS swipe-back gesture
+  overscroll-behavior-x: none;
+  overscroll-behavior-y: none;
 
   // background-color: $neutral-gray;
 
@@ -265,6 +271,8 @@ body {
   // margin-bottom: 100px !important;
 
   padding: 0 1em;
+  // Prevent iOS swipe-back gesture
+  overscroll-behavior-x: none;
 
   &.no-user {
     padding: 0;

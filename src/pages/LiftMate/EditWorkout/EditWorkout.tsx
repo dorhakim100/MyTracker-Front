@@ -136,7 +136,8 @@ export function EditWorkout({
       weeksStatus[weeksStatus.length - 1]?.weekNumber || 1
     let weekToSet = latestWeekNumber
     if (weeksStatus[latestWeekNumber - 1]?.isDone)
-      weekToSet = latestWeekNumber + 1
+      // weekToSet = latestWeekNumber + 1
+      weekToSet = latestWeekNumber
     setInstructionsFilter((prev) => ({
       ...prev,
       weekNumber: weekToSet,

@@ -98,22 +98,30 @@ export function NameExercises({
 
   const originalInstructions = useRef<Instructions>(instructions)
 
-  const [isSaved, setIsSaved] = useState(JSON.stringify(instructions) === JSON.stringify(originalInstructions.current))
-  const [desiredWeekNumber, setDesiredWeekNumber] = useState<number>(instructionsFilter.weekNumber)
-
+  const [isSaved, setIsSaved] = useState(
+    JSON.stringify(instructions) ===
+      JSON.stringify(originalInstructions.current)
+  )
+  const [desiredWeekNumber, setDesiredWeekNumber] = useState<number>(
+    instructionsFilter.weekNumber
+  )
 
   const editWorkoutRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    setIsSaved(JSON.stringify(instructions) === JSON.stringify(originalInstructions.current))
+    setIsSaved(
+      JSON.stringify(instructions) ===
+        JSON.stringify(originalInstructions.current)
+    )
   }, [instructions])
 
   useEffect(() => {
     originalInstructions.current = instructions
-    setIsSaved(JSON.stringify(instructions) === JSON.stringify(originalInstructions.current))
+    setIsSaved(
+      JSON.stringify(instructions) ===
+        JSON.stringify(originalInstructions.current)
+    )
   }, [instructions._id])
-
-
 
   useEffect(() => {
     if (!dialogState.open && editWorkoutRef.current) {
@@ -154,6 +162,7 @@ export function NameExercises({
       (status) => status.weekNumber === weekNumber
     )
 
+    return status?.isDone ? <CheckIcon /> : null
     return status?.isDone ? <CheckIcon /> : <CloseIcon />
   }
 
@@ -186,9 +195,9 @@ export function NameExercises({
 
   const renderNoExercises = () => {
     return (
-      <div className="no-exercises-container">
+      <div className='no-exercises-container'>
         <Dumbbell />
-        <Typography variant="body2">
+        <Typography variant='body2'>
           Get started by adding an exercise to your routine
         </Typography>
       </div>
@@ -249,12 +258,16 @@ export function NameExercises({
               capitalizeFirstLetter(exercise.muscleGroups.join(', '))
             }
             renderLeft={(exercise) => (
-              <img src={exercise.image} alt={exercise.name} />
+              <img
+                src={exercise.image}
+                alt={exercise.name}
+              />
             )}
             getKey={(exercise) => `${exercise.exerciseId}-selected`}
-            className={`reorder-exercise-list ${prefs.isDarkMode ? 'dark-mode' : ''
-              }`}
-            noResultsMessage="No exercises added yet"
+            className={`reorder-exercise-list ${
+              prefs.isDarkMode ? 'dark-mode' : ''
+            }`}
+            noResultsMessage='No exercises added yet'
             isDragable={true}
             onReorder={onReorderExercises}
           />
@@ -284,7 +297,6 @@ export function NameExercises({
         weekNumber: desiredWeekNumber,
       })
       closeDialog()
-
     } catch (err) {
       showErrorMsg(messages.error.saveWorkout)
     }
@@ -293,14 +305,16 @@ export function NameExercises({
   return (
     <>
       <div
-        className="edit-workout-stage name-exercises-stage"
+        className='edit-workout-stage name-exercises-stage'
         ref={editWorkoutRef}
       >
-        <div className={`settings-controls-container ${prefs.isDarkMode ? 'dark-mode' : ''} ${isDashboard ? 'dashboard' : ''}`}>
+        <div
+          className={`settings-controls-container ${prefs.isDarkMode ? 'dark-mode' : ''} ${isDashboard ? 'dashboard' : ''}`}
+        >
           <CustomInput
             value={workout.name}
             onChange={onNameChange}
-            placeholder="Enter workout name"
+            placeholder='Enter workout name'
             isRemoveIcon={true}
             className={`${prefs.favoriteColor}`}
           />
@@ -309,9 +323,7 @@ export function NameExercises({
             <CustomToggle
               value={instructionsFilter.weekNumber.toString()}
               onChange={(weekNumber: string) => {
-
                 if (!isSaved) {
-
                   openDialog('alert')
                   setDesiredWeekNumber(+weekNumber)
                   return
@@ -320,8 +332,7 @@ export function NameExercises({
                   ...instructionsFilter,
                   weekNumber: +weekNumber,
                 })
-              }
-              }
+              }}
               options={getArrayOfNumbers(1, 10).map((weekNumber) => ({
                 label: `Week`,
                 value: weekNumber.toString(),
@@ -334,16 +345,17 @@ export function NameExercises({
               }))}
               isBadge={true}
               isReversedIcon={true}
-              className={`week-number-toggle ${prefs.isDarkMode ? 'dark-mode' : ''
-                }`}
+              className={`week-number-toggle ${
+                prefs.isDarkMode ? 'dark-mode' : ''
+              }`}
             />
           )}
           {!instructions._id && (
-            <div className="times-per-week-container">
-              <span className="bold-header">Times per week</span>
+            <div className='times-per-week-container'>
+              <span className='bold-header'>Times per week</span>
               <CustomSelect
-                tooltipTitle="Edit Times per week"
-                label="Times"
+                tooltipTitle='Edit Times per week'
+                label='Times'
                 values={getArrayOfNumbers(1, 7).map(
                   (timesNumber) => timesNumber + ''
                 )}
@@ -353,7 +365,9 @@ export function NameExercises({
               />
             </div>
           )}
-          <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
+          <Divider
+            className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+          />
         </div>
         {(workout.exercises.length === 0 && renderNoExercises()) || (
           <>
@@ -365,13 +379,14 @@ export function NameExercises({
         )}
       </div>
       <div
-        className={`end-buttons-container ${prefs.isDarkMode ? 'dark-mode' : ''
-          } ${prefs.favoriteColor} ${workout.exercises.length > 0 ? 'has-exercises' : ''
-          } ${isDashboard ? 'dashboard' : ''
-          }`}
+        className={`end-buttons-container ${
+          prefs.isDarkMode ? 'dark-mode' : ''
+        } ${prefs.favoriteColor} ${
+          workout.exercises.length > 0 ? 'has-exercises' : ''
+        } ${isDashboard ? 'dashboard' : ''}`}
       >
         <CustomButton
-          text="Add Exercise"
+          text='Add Exercise'
           onClick={() => openDialog('add')}
           icon={<AddIcon />}
           fullWidth={true}
@@ -381,11 +396,11 @@ export function NameExercises({
           <>
             <Divider
               className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-              orientation="vertical"
+              orientation='vertical'
               flexItem={true}
             />
             <CustomButton
-              text="Save Workout"
+              text='Save Workout'
               onClick={() => onSaveWorkout(true)}
               icon={<BeenhereIcon />}
               fullWidth={true}
@@ -398,17 +413,21 @@ export function NameExercises({
         onClose={closeDialog}
         component={getDialogComponent()}
         title={getDialogTitle()}
-        type="full"
+        type='full'
       />
       <CustomAlertDialog
         open={dialogState.open && dialogState.type === 'alert'}
         onClose={closeDialog}
-        title="Change Week Number"
-
-
+        title='Change Week Number'
       >
-        <span>You have unsaved changes. Do you want to save before changing the week number?</span>
-        <SaveCancel onCancel={closeDialog} onSave={handleSaveOnWeekNumberChange} />
+        <span>
+          You have unsaved changes. Do you want to save before changing the week
+          number?
+        </span>
+        <SaveCancel
+          onCancel={closeDialog}
+          onSave={handleSaveOnWeekNumberChange}
+        />
       </CustomAlertDialog>
     </>
   )

@@ -1,6 +1,6 @@
 .exercise-card-container {
   display: grid;
-    position: relative;
+  position: relative;
   &.dashboard {
     @media (min-width: 1050px) {
       grid-template-columns: auto 1fr;
@@ -8,10 +8,10 @@
     @media (max-width: 1050px) {
       grid-template-columns: 1fr;
     }
-    .exercise-card-content{
+    .exercise-card-content {
       grid-template-columns: 1fr;
       grid-template-rows: auto 1fr;
-      img{
+      img {
         grid-column: 1/2;
         grid-row: 1/2;
         width: 20vw;
@@ -19,29 +19,27 @@
         max-width: 300px;
         max-height: 300px;
         // align-self: start;
-        
-        
       }
-      .exercise-card-info{
+      .exercise-card-info {
         align-self: start;
-         grid-column: 1/-1;
-         grid-row: 2/3;
+        grid-column: 1/-1;
+        grid-row: 2/3;
         max-width: 300px;
 
-        .exercise-card-name, .exercise-card-muscle-groups, .exercise-card-equipment {
+        .exercise-card-name,
+        .exercise-card-muscle-groups,
+        .exercise-card-equipment {
           white-space: normal;
           overflow-wrap: break-word;
           word-break: break-word;
         }
-
-        .resting-time-container {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-        }
       }
     }
-
+  }
+  .resting-time-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
 
   padding: 1rem;

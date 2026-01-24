@@ -516,8 +516,8 @@ export function ExerciseCard({
                 />
                 <div className='resting-time-container'>
                   <AccessAlarmIcon />
-                  <span>Resting time:</span>
                   <span>
+                    Resting time:{' '}
                     {formatTime(
                       exerciseInstructions.restingTime || DEFAULT_RESTING_TIME
                     )}
