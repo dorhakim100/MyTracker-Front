@@ -1,10 +1,10 @@
-# MyTracker Frontend 🥙
+# MyTracker Frontend 
 
-MyTracker is a nutrition and progress tracking mobile app built with React, TypeScript, Vite, MUI, and modern charts. It features barcode scanning, daily diary logging, macro goals, BMR/weight tools, theming, and smooth UX.
+MyTracker is a nutrition and workouts progress tracking app built with React, TypeScript, Vite, MUI, and modern charts. It features barcode scanning, daily diary logging, macro goals, BMR/weight, workouts tracking tools, theming, and smooth UX.
 
 ## Related Links
 - 🔗 [Backend Repository](https://github.com/dorhakim100/MyTracker-Back)
-- 🔗 [Live Site](https://interested-selia-dorhakim-444c2d8e.koyeb.app/)
+- 🔗 [Live Site](https://mytracker-j6fc.onrender.com/)
 
 ## Tech Stack
 
@@ -27,6 +27,8 @@ MyTracker is a nutrition and progress tracking mobile app built with React, Type
 - IndexedDB utilities for persistence
 
 ## Media
+
+### Mobile App
 
 ### Dashboard
 <img width="250" alt="Dashboard" src="https://github.com/user-attachments/assets/76e27573-6e67-43cb-94f8-2ee22a02d149" />
@@ -54,6 +56,36 @@ MyTracker is a nutrition and progress tracking mobile app built with React, Type
 
 ### Goal Creation
 <img width="250" alt="Goal Creation" src="https://github.com/user-attachments/assets/6cb10f89-e631-4444-8476-4e787c47971e" />
+
+### Desktop App
+
+### Dashboard
+<img width="1728" height="1117" alt="Dashboard - Desktop" src="https://github.com/user-attachments/assets/8e0cb808-bf14-4ee7-b006-9770f1e7fb8c" />
+
+
+### Exercise Card
+<img width="1728" height="1117" alt="Exercise Card - Desktop" src="https://github.com/user-attachments/assets/2e04f66c-6cdb-48b7-8399-4457ab6adacb" />
+
+### Exercise Details
+<img width="1728" height="1117" alt="Exercise Details - Weight Chart" src="https://github.com/user-attachments/assets/3b33f038-c319-4736-9c37-246d23959147" />
+
+
+### Past Sets Table
+<img width="1728" height="1117" alt="Exercise Details - Past Sets Table" src="https://github.com/user-attachments/assets/6799471b-56b4-40b7-a8df-c5fe710ca81c" />
+
+### Workouts Page
+<img width="1728" height="1117" alt="Workouts Page" src="https://github.com/user-attachments/assets/c2265cf2-451f-478a-90b5-fab84b3d5e4c" />
+
+### Exercise Search
+<img width="1728" height="1117" alt="Exercise Search" src="https://github.com/user-attachments/assets/a14466ae-91b8-4650-a4a2-6d16e3e23d26" />
+
+
+### User Details
+<img width="1728" height="1117" alt="User Details" src="https://github.com/user-attachments/assets/f4a3a021-ec94-4115-ba1f-939a0fd7c54b" />
+
+Edit Workout Page
+<img width="1728" height="1117" alt="Edit Workout" src="https://github.com/user-attachments/assets/ef8a57a4-ed7e-49b2-83d1-f7e26799a126" />
+
 
 
 ## Getting Started
