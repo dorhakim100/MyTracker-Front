@@ -32,6 +32,7 @@ export function Diary() {
   const selectedDayDiary = useSelector(
     (state: RootState) => state.userModule.selectedDay
   )
+  const timer = useSelector((state: RootState) => state.workoutModule.timer)
 
   const [selectedDay, setSelectedDay] = useState(new Date())
 
@@ -164,7 +165,7 @@ export function Diary() {
       <div
         className={`diary page-container ${
           prefs.isDarkMode ? 'dark-mode' : ''
-        }`}
+        } ${timer ? 'has-timer' : ''}`}
       >
         <DayController
           selectedDay={selectedDay}
@@ -173,9 +174,9 @@ export function Diary() {
           onDayChange={onDayChange}
           onDateChange={onDateChange}
         />
-        <div className="macros-accordion-container">
+        <div className='macros-accordion-container'>
           <CustomAccordion
-            title="Macros"
+            title='Macros'
             cmp={
               <LinearMacrosProgress
                 caloriesProgress={selectedDayDiary?.calories || 0}
@@ -215,14 +216,20 @@ export function Diary() {
                   } ${prefs.favoriteColor || ''}`}
                   key={meal.label}
                 >
-                  <div className="header">
-                    <div className="label-container">
+                  <div className='header'>
+                    <div className='label-container'>
                       {meal.icon}
-                      <Typography variant="h6" className="bold-header">
+                      <Typography
+                        variant='h6'
+                        className='bold-header'
+                      >
                         {meal.label}
                       </Typography>
                     </div>
-                    <Typography variant="body2" className="period">
+                    <Typography
+                      variant='body2'
+                      className='period'
+                    >
                       {meal.rangeLabel}
                     </Typography>
                   </div>
@@ -230,8 +237,11 @@ export function Diary() {
                     className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
                   />
                   <LoggedList mealPeriod={meal.period as MealPeriod} />
-                  <div className="meal-footer">
-                    <Typography variant="body2" className="total-calories">
+                  <div className='meal-footer'>
+                    <Typography
+                      variant='body2'
+                      className='total-calories'
+                    >
                       {`Total: ${caloriesToSet.toFixed(0)} kcal`}
                     </Typography>
                     {hasItems?.length !== 0 && (

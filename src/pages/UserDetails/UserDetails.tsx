@@ -46,6 +46,8 @@ export function UserDetails() {
     (storeState: RootState) => storeState.userModule.traineeUser
   )
 
+  const timer = useSelector((state: RootState) => state.workoutModule.timer)
+
   const [requests, setRequests] = useState<TrainerRequest[]>([])
 
   const acrodions = [
@@ -133,7 +135,7 @@ export function UserDetails() {
     <div
       className={`page-container user-page ${
         prefs.isDarkMode ? 'dark-mode' : ''
-      } ${isDashboard ? 'dashboard' : ''}`}
+      } ${timer ? 'has-timer' : ''} ${isDashboard ? 'dashboard' : ''}`}
     >
       <ProfileCard userToDisplay={traineeUser || user || undefined} />
 
