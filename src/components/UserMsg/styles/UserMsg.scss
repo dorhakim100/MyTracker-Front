@@ -14,6 +14,7 @@
 
   display: flex;
   align-items: center;
+  justify-content: center;
 
   //   padding: 0.2em;
   //   padding-inline-end: 20px;
@@ -36,13 +37,14 @@
   translate: 150%; /* start right to the viewport */
   translate: 0 -150%; /* start above the viewport */
   width: calc(100vw - 1em) !important;
-
-  .MuiPaper-root {
+  .user-msg-motion-container {
     justify-self: center;
     text-align: start;
     align-items: center;
     width: 100vw !important;
-    padding: 0 1em !important;
+    .MuiPaper-root {
+      padding: 0 1em !important;
+    }
   }
 }
 
