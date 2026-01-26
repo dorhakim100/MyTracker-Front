@@ -212,7 +212,7 @@ function App() {
       setFavoriteItems(cachedItems)
     }
     loadFavoriteItems()
-  }, [user?._id])
+  }, [user?._id, user?.favoriteItems])
 
   const _getActiveRouteComponent = () => {
     const activeRouteComponent = filteredRoutes.find(

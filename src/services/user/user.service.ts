@@ -100,7 +100,7 @@ async function update(user: User) {
 
     const savedUser = await httpService.put(`user/${_id}`, userToSend)
 
-    await getLoggedinUser() // Might not work because its defined in the main service???
+    //await getLoggedinUser() // Might not work because its defined in the main service???
 
     delete savedUser.password
     return savedUser

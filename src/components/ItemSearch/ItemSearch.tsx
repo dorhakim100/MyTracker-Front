@@ -193,12 +193,16 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
     setIsItemSelected(true)
   }
 
-  const dragEnd = async (newItems: Item[]) => {
-    const newFavoriteItems = newItems.map((item) => item.searchId)
+  const dragEnd = async (newItems: Item[], isMeals: boolean = false) => {
+    const newFavoriteItems = isMeals
+      ? newItems
+      : newItems.map((item) => item.searchId)
+
+    const key = isMeals ? 'meals' : 'favoriteItems'
 
     const newUser = {
       ...user,
-      favoriteItems: newFavoriteItems,
+      [key]: newFavoriteItems,
     }
 
     optimisticUpdateUser(newUser as User)
@@ -212,9 +216,9 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
 
   const renderNoResults = () => {
     return (
-      <Box className="results">
+      <Box className='results'>
         <Typography
-          variant="h6"
+          variant='h6'
           className={`no-results ${prefs.isDarkMode ? 'dark-mode' : ''}`}
         >
           No results...
@@ -225,12 +229,15 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
 
   const renderSearchFirst = () => {
     return (
-      <Box className="results">
+      <Box className='results'>
         <Lottie
           animationData={prefs.isDarkMode ? searchDark : searchLight}
           loop={true}
         />
-        <Typography variant="h6" className="search-first">
+        <Typography
+          variant='h6'
+          className='search-first'
+        >
           Search for an item first...
         </Typography>
       </Box>
@@ -251,7 +258,7 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
     } else if (!results.length && filter.txt) {
       // } else if (!results.length && !hasFavorite) {
       return renderNoResults()
-    } else if (!results.length && !filter.txt) {
+    } else if (!results.length && !filter.txt && !isShowMeals) {
       return renderSearchFirst()
     }
 
@@ -264,10 +271,13 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
     }
 
     return (
-      <Box className="results">
+      <Box className='results'>
         {isShowMeals && (
           <>
-            <Typography variant="h6" className="bold-header search-header">
+            <Typography
+              variant='h6'
+              className='bold-header search-header'
+            >
               Meals
             </Typography>
             <CustomList<Item>
@@ -276,20 +286,22 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
               itemClassName={`search-item-container ${
                 prefs.isDarkMode ? 'dark-mode' : ''
               }`}
+              isDragable={resultsDragable}
+              onReorder={(newItems) => dragEnd(newItems, true)}
               renderLeft={(item) => (
-                <div className="left-content macros-image-container">
+                <div className='left-content macros-image-container'>
                   <MacrosDonut
                     protein={item.macros?.protein}
                     carbs={item.macros?.carbs}
                     fats={item.macros?.fat}
                   />
-                  <ListItemIcon className="item-image-container">
+                  <ListItemIcon className='item-image-container'>
                     {(item.image && (
                       <img
                         src={item.image}
                         alt={item.name}
-                        className="item-image"
-                        referrerPolicy="no-referrer"
+                        className='item-image'
+                        referrerPolicy='no-referrer'
                         onError={async (e) => {
                           renderErrorImage(item)
                           await imageService.fetchOnError(e, item)
@@ -298,7 +310,7 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
                       />
                     )) || (
                       <CustomSkeleton
-                        variant="circular"
+                        variant='circular'
                         width={40}
                         height={40}
                         isDarkMode={prefs.isDarkMode}
@@ -308,7 +320,7 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
                 </div>
               )}
               renderPrimaryText={(item) => (
-                <div className="hide-text-overflow">{item.name}</div>
+                <div className='hide-text-overflow'>{item.name}</div>
               )}
               renderSecondaryText={(item) => {
                 let caloriesToDisplay
@@ -332,9 +344,14 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
             <Divider
               className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
             />
-            <Typography variant="h6" className="bold-header search-header">
-              Favorite Items
-            </Typography>
+            {user?.favoriteItems?.length && user?.favoriteItems?.length > 0 ? (
+              <Typography
+                variant='h6'
+                className='bold-header search-header'
+              >
+                Favorite Items
+              </Typography>
+            ) : null}
           </>
         )}
         <CustomList<Item>
@@ -344,19 +361,19 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
             prefs.isDarkMode ? 'dark-mode' : ''
           }`}
           renderLeft={(item) => (
-            <div className="left-content macros-image-container">
+            <div className='left-content macros-image-container'>
               <MacrosDonut
                 protein={item.macros?.protein}
                 carbs={item.macros?.carbs}
                 fats={item.macros?.fat}
               />
-              <ListItemIcon className="item-image-container">
+              <ListItemIcon className='item-image-container'>
                 {(item.image && (
                   <img
                     src={item.image}
                     alt={item.name}
-                    className="item-image"
-                    referrerPolicy="no-referrer"
+                    className='item-image'
+                    referrerPolicy='no-referrer'
                     onError={async (e) => {
                       renderErrorImage(item)
                       await imageService.fetchOnError(e, item)
@@ -365,7 +382,7 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
                   />
                 )) || (
                   <CustomSkeleton
-                    variant="circular"
+                    variant='circular'
                     width={40}
                     height={40}
                     isDarkMode={prefs.isDarkMode}
@@ -375,7 +392,7 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
             </div>
           )}
           renderPrimaryText={(item) => (
-            <div className="hide-text-overflow">{item.name}</div>
+            <div className='hide-text-overflow'>{item.name}</div>
           )}
           renderSecondaryText={(item) => {
             let caloriesToDisplay
@@ -428,7 +445,7 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
           />
         }
         title={isCustomLog ? 'Custom Log' : 'Item'}
-        type="full"
+        type='full'
       />
     </>
   )
