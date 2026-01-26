@@ -46,7 +46,10 @@ export const UserMsg: React.FC = () => {
   return (
     <section className={className}>
       {msg && (
-        <Alert severity={msg.type}>
+        <Alert
+          severity={msg.type}
+          className={msg.type}
+        >
           <AlertTitle>
             {msg.type === 'success' ? 'Success' : 'Error'}
           </AlertTitle>
