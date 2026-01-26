@@ -304,7 +304,10 @@ export function ItemDetails({
   function _hasItems(
     x: Item | Meal | Log
   ): x is Meal | (Item & { items: MealItem[] }) {
-    return Array.isArray((x as Item & { items: MealItem[] }).items)
+    return (
+      Array.isArray((x as Item & { items: MealItem[] }).items) &&
+      (x as Item & { items: MealItem[] }).items.length > 0
+    )
   }
 
   const onAddToMeal = async () => {
