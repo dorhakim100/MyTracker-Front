@@ -32,22 +32,38 @@ It features barcode scanning, daily diary logging, macro goals, BMR/weight, work
 ### Mobile App
 
 ### Dashboard
-<img width="250" alt="Dashboard" src="https://github.com/user-attachments/assets/76e27573-6e67-43cb-94f8-2ee22a02d149" />
+<img width="349" height="757" alt="Dashboard" src="https://github.com/user-attachments/assets/dada68b1-f8d6-44a3-b38a-fe84c8385bba" />
+
+### Exercise Card
+<img width="350" height="760" alt="Exercise Card" src="https://github.com/user-attachments/assets/a125fc46-3db0-4dec-87dc-04a9ad64f763" />
+
+### Exercise Details
+<img width="347" height="758" alt="Exercise Details" src="https://github.com/user-attachments/assets/792913d1-4d3f-43bf-af83-47701bdde5f4" />
+
 
 ### Diary
-<img width="250" alt="Diary" src="https://github.com/user-attachments/assets/37bcaf49-8fc0-4ce6-85e6-4b50fb20735b" />
+<img width="347" height="757" alt="Diary" src="https://github.com/user-attachments/assets/d04e6305-d066-4e23-987c-aa44fa80b3d6" />
 
-### Progress
-<img width="250" alt="Progress" src="https://github.com/user-attachments/assets/7698ec67-1654-448f-b5f9-8abf3c36d217" />
+### Workouts Page
+<img width="347" height="758" alt="Workouts" src="https://github.com/user-attachments/assets/d6102a9b-cc69-43f3-be76-a2adaa60fec9" />
+
+### Edit Workout
+<img width="349" height="754" alt="Edit Workout" src="https://github.com/user-attachments/assets/9fd8ff31-f87a-458a-9dd4-78c88f52babc" />
+
+
 
 ### Profile
-<img width="250" alt="Profile" src="https://github.com/user-attachments/assets/4df565e1-f7f8-4d5c-ac86-9c04f19dbec0" />
+<img width="350" height="760" alt="User Details" src="https://github.com/user-attachments/assets/d4cf0e40-c7b0-43bc-a305-597a7bef9eb3" />
+
+
 
 ### Food Search
-<img width="250" alt="Food Search" src="https://github.com/user-attachments/assets/c90ed461-7e9d-4f50-91c4-f023f576272d" />
+<img width="352" height="757" alt="Food Search" src="https://github.com/user-attachments/assets/b716ed6b-4a6c-48d1-9e8c-78afe6258592" />
+
 
 ### Food Page
-<img width="250" alt="Food Page" src="https://github.com/user-attachments/assets/66b3028b-f972-46d8-9893-fb56f5d1557a" />
+<img width="350" height="755" alt="Food Details" src="https://github.com/user-attachments/assets/fa4b2a34-e43d-40a2-a602-b489fcc9cad7" />
+
 
 ### Macros
 <img width="250" alt="Macros" src="https://github.com/user-attachments/assets/ed8554a6-7bf0-4021-b62e-f85225d4f623" />
