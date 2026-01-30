@@ -321,7 +321,18 @@ export function ItemDetails({
 
         const logsToAdd = item.items
           .map((item: MealItem) => {
-            if (!item.searchId) return null
+            let source = ''
+
+            if (!item.searchId) {
+              source = searchTypes.meal
+            } else {
+              source =
+                isCustomLog || item.source === searchTypes.custom
+                  ? searchTypes.custom
+                  : item.searchId.length < LONGEST_FOOD_ID_LENGTH
+                    ? searchTypes.usda
+                    : searchTypes.openFoodFacts
+            }
 
             return {
               itemId: item.searchId,
@@ -335,16 +346,12 @@ export function ItemDetails({
               time: Date.now(),
               servingSize: item.servingSize,
               numberOfServings: item.numberOfServings * mealNumberOfServings,
-              source:
-                isCustomLog || item.source === searchTypes.custom
-                  ? searchTypes.custom
-                  : item.searchId.length < LONGEST_FOOD_ID_LENGTH
-                    ? searchTypes.usda
-                    : searchTypes.openFoodFacts,
+              source,
+              mealId: item.mealId || undefined,
               createdBy: user._id,
               name:
-                isCustomLog || item.source === searchTypes.custom
-                  ? editItem.name
+                isCustomLog || item.source === searchTypes.custom || item.mealId
+                  ? item.name
                   : '',
             }
           })
@@ -519,17 +526,24 @@ export function ItemDetails({
 
   const getOnClick = () => {
     if (onAddToMealClick) {
-      const itemMealToEdit = {
-        searchId: isCustomLog ? '' : item.searchId,
-        name: isCustomLog ? editItem.name : item.name || editItem.name,
-        macros: editItem.totalMacros,
-        image: item.image,
-        servingSize: editItem.servingSize,
-        numberOfServings: editItem.numberOfServings,
-        source: isCustomLog ? searchTypes.custom : null,
-      }
+      return () => {
+        const itemMealToEdit = {
+          searchId: isCustomLog ? '' : item.searchId,
+          name: isCustomLog ? editItem.name : item.name || editItem.name,
+          macros: editItem.totalMacros,
+          image: item.image,
+          servingSize: editItem.servingSize,
+          numberOfServings: editItem.numberOfServings,
+          source: isCustomLog ? searchTypes.custom : null,
+        }
 
-      return () => onAddToMealClick(itemMealToEdit as MealItem)
+        if ((item as Item).type === 'meal') {
+          ;(itemMealToEdit as MealItem).mealId = item._id
+          ;(itemMealToEdit as MealItem).source = 'meal'
+        }
+
+        onAddToMealClick(itemMealToEdit as MealItem)
+      }
     }
     if (editMealItem) {
       return onEditMeal

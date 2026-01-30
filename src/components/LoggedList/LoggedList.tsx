@@ -30,6 +30,7 @@ import { CustomSkeleton } from '../../CustomMui/CustomSkeleton/CustomSkeleton'
 import { AddItemButton } from '../AddItemButton/AddItemButton'
 import { DeleteAction } from '../DeleteAction/DeleteAction'
 import { imageService } from '../../services/image/image.service'
+import { mealService } from '../../services/meal/meal.service'
 
 export function LoggedList({ mealPeriod }: { mealPeriod: MealPeriod }) {
   const user = useSelector((state: RootState) => state.userModule.user)
@@ -68,6 +69,7 @@ export function LoggedList({ mealPeriod }: { mealPeriod: MealPeriod }) {
       if (!logs || !logs.length) return
 
       await searchService.searchBulkIds(logs) // actual update from api
+
       await loadItems() // actual update from api
     } catch (err) {
       console.error(err)
@@ -77,15 +79,15 @@ export function LoggedList({ mealPeriod }: { mealPeriod: MealPeriod }) {
 
   if (!user || !logs?.length)
     return (
-      <div className="logged-items">
-        <div className="placeholder-container">
-          <div className="placeholder">No items logged yet</div>
+      <div className='logged-items'>
+        <div className='placeholder-container'>
+          <div className='placeholder'>No items logged yet</div>
           <AddItemButton mealPeriod={mealPeriod} />
         </div>
       </div>
     )
 
-  const getKey = (item: Log) => item.itemId + item.time
+  const getKey = (item: Log) => item.itemId || item.mealId || item.time
 
   const renderPrimaryText = (item: Log) => {
     if (item.name) return item.name
@@ -94,8 +96,8 @@ export function LoggedList({ mealPeriod }: { mealPeriod: MealPeriod }) {
     return (
       cachedItem?.name || (
         <CustomSkeleton
-          variant="text"
-          width="100%"
+          variant='text'
+          width='100%'
           height={20}
           isDarkMode={prefs.isDarkMode}
         />
@@ -106,6 +108,9 @@ export function LoggedList({ mealPeriod }: { mealPeriod: MealPeriod }) {
   const renderSecondaryText = (item: Log) => {
     if (item.source === searchTypes.custom)
       return `${item.macros?.calories.toFixed(0)} kcal`
+
+    if (item.mealId) return `${item.macros?.calories.toFixed(0)} kcal`
+
     const cachedItem = cachedItems.find((i) => i.searchId === item.itemId)
     let caloriesToReturn
     if (cachedItem) caloriesToReturn = +item.macros?.calories
@@ -113,8 +118,8 @@ export function LoggedList({ mealPeriod }: { mealPeriod: MealPeriod }) {
       `${caloriesToReturn.toFixed(0)} kcal`
     ) : (
       <CustomSkeleton
-        variant="text"
-        width="25%"
+        variant='text'
+        width='25%'
         height={20}
         isDarkMode={prefs.isDarkMode}
       />
@@ -141,7 +146,7 @@ export function LoggedList({ mealPeriod }: { mealPeriod: MealPeriod }) {
         mealItem.name = cachedItem.name
         mealItem.image = cachedItem.image
         itemToSet = cachedItem
-      } else {
+      } else if (mealItem.source !== searchTypes.meal && mealItem.itemId) {
         const searchedItem = await searchService.searchById(
           mealItem.itemId,
           mealItem.source ||
@@ -152,6 +157,15 @@ export function LoggedList({ mealPeriod }: { mealPeriod: MealPeriod }) {
         mealItem.name = searchedItem?.name || 'Unknown'
         mealItem.image = searchedItem?.image || searchUrls.DEFAULT_IMAGE
         itemToSet = searchedItem
+      } else if (mealItem.mealId) {
+        const meal = await mealService.getById(mealItem.mealId)
+
+        mealItem.name = mealItem.name || meal.name
+        mealItem.image =
+          meal.image ||
+          meal.items.find((item) => item.image)?.image ||
+          searchUrls.DEFAULT_IMAGE
+        itemToSet = meal
       }
       mealItem.searchId = mealItem.itemId
 
@@ -221,7 +235,10 @@ export function LoggedList({ mealPeriod }: { mealPeriod: MealPeriod }) {
         isSwipeable={true}
         // renderLeftSwipeActions={renderLeftSwipeActions}
         renderRightSwipeActions={(item) => (
-          <DeleteAction item={item} onDeleteItem={onDeleteLog} />
+          <DeleteAction
+            item={item}
+            onDeleteItem={onDeleteLog}
+          />
         )}
         itemClassName={`meal-item-container ${
           prefs.isDarkMode ? 'dark-mode' : ''
@@ -230,10 +247,10 @@ export function LoggedList({ mealPeriod }: { mealPeriod: MealPeriod }) {
       <SlideDialog
         open={isEditOpen}
         onClose={closeEdit}
-        title="Edit Meal"
+        title='Edit Meal'
         component={<ItemDetails />}
         onSave={closeEdit}
-        type="full"
+        type='full'
       />
     </>
   )

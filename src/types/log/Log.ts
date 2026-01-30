@@ -2,7 +2,7 @@ import { Macros } from '../macros/Macros'
 
 export interface Log {
   _id?: string
-  itemId: string
+  itemId: string | undefined
   searchId?: string
   meal: string
   macros: Macros
@@ -12,4 +12,5 @@ export interface Log {
   servingSize?: number
   numberOfServings?: number
   source?: string
+  mealId?: string
 }

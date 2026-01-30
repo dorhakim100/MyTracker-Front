@@ -11,6 +11,7 @@ export const mealService = {
   remove,
   getEmptyMeal,
   modifyMeal,
+  getBulkByIds,
 }
 
 async function query(filterBy: Partial<Meal> | Record<string, unknown>) {
@@ -31,6 +32,14 @@ async function getById(mealId: string) {
   }
 }
 
+async function getBulkByIds(mealIds: string[]) {
+  try {
+    const meals = await httpService.get(`${KEY}/bulk`, { mealIds })
+    return meals.map((meal: Meal) => modifyMeal(meal as Meal))
+  } catch (err) {
+    throw err
+  }
+}
 async function remove(mealId: string) {
   try {
     return await httpService.delete(`${KEY}/${mealId}`, null)

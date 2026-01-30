@@ -18,6 +18,7 @@ import { translateService } from '../translate/translate.service'
 import { imageService } from '../image/image.service'
 
 import { itemService } from '../item/item.service'
+import { mealService } from '../meal/meal.service'
 
 const {
   OPEN_FOOD_FACTS_API_URL,
@@ -334,11 +335,18 @@ async function searchBulkIds(logs: Log[]) {
           log.source === sourceTypes.product || log.source === 'open-food-facts'
       )
       .map((log) => log.itemId)
+      .filter((id) => id !== undefined)
     const foodsIds = logs
       .filter((log) => log.source === sourceTypes.food)
       .map((log) => log.itemId)
+      .filter((id) => id !== undefined)
 
-    if (!productsIds.length && !foodsIds.length) return []
+    const mealIds = logs
+      .filter((log) => log.mealId)
+      .map((log) => log.mealId)
+      .filter((id) => id !== undefined)
+
+    if (!productsIds.length && !foodsIds.length && !mealIds.length) return []
 
     let backendRes = await itemService.getBulkBySearchIds(
       productsIds.concat(foodsIds)
@@ -346,7 +354,10 @@ async function searchBulkIds(logs: Log[]) {
 
     backendRes = filterDuplicates(backendRes)
 
-    if (backendRes.length === productsIds.length + foodsIds.length) {
+    if (
+      backendRes.length ===
+      productsIds.length + foodsIds.length + mealIds.length
+    ) {
       await Promise.all(
         backendRes.map(async (item: Item) => {
           await addToCache(item as Item, ITEMS_CACHE)
@@ -358,6 +369,7 @@ async function searchBulkIds(logs: Log[]) {
 
     const missingIds = productsIds
       .concat(foodsIds)
+      .concat(mealIds)
       .filter((id) => !backendRes.some((item: Item) => item.searchId === id))
 
     const missingProducts = missingIds.filter(
@@ -366,14 +378,17 @@ async function searchBulkIds(logs: Log[]) {
     const missingFoods = missingIds.filter(
       (id) => id.length <= LONGEST_FOOD_ID_LENGTH
     )
+    const missingMeals = missingIds.filter((id) => mealIds.includes(id))
 
     const promises = [
       getProductsByIds(missingProducts),
       getFoodsByIds(missingFoods),
+      mealService.getBulkByIds(missingMeals),
     ]
 
-    const [products, foods] = await Promise.all(promises)
-    const res = [...backendRes, ...products, ...foods]
+    const [products, foods, meals] = await Promise.all(promises)
+
+    const res = [...backendRes, ...products, ...foods, ...meals]
 
     // Batch cache operations
     // await Promise.all(res.map((item) => addToCache(item as Item, ITEMS_CACHE)))

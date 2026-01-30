@@ -259,7 +259,7 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
   async function onAddToMealClick(item: MealItem) {
     try {
       const isImageNative = await itemService.isImageNative(item.searchId || '')
-      if (!isImageNative) {
+      if (!isImageNative && item.source !== searchTypes.meal) {
         item.image = undefined
       }
     } catch (err) {
