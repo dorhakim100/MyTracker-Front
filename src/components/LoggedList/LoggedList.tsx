@@ -53,7 +53,7 @@ export function LoggedList({ mealPeriod }: { mealPeriod: MealPeriod }) {
         _filterLogsByMealPeriod(log, mealPeriod)
       )
     return user?.loggedToday?.logs
-  }, [user, mealPeriod, selectedDay])
+  }, [user, mealPeriod, selectedDay, user?.loggedToday?.logs])
 
   useEffect(() => {
     handleLoadItems()
