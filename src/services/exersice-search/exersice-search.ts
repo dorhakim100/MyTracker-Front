@@ -326,7 +326,9 @@ export function getWorkoutMuscles(workout: Workout) {
     .flat()
     .filter((muscle): muscle is string => muscle !== undefined)
   const uniqueMuscles = [...new Set(muscles)]
-  return uniqueMuscles.map((muscle) => mapMuscleToMuscleGroup(muscle))
+  return [
+    ...new Set(uniqueMuscles.map((muscle) => mapMuscleToMuscleGroup(muscle))),
+  ]
 }
 
 /**

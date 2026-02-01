@@ -87,7 +87,8 @@ export function LoggedList({ mealPeriod }: { mealPeriod: MealPeriod }) {
       </div>
     )
 
-  const getKey = (item: Log) => item.itemId || item.mealId || item.time
+  const getKey = (item: Log) =>
+    item._id || item.itemId || item.mealId || item.time
 
   const renderPrimaryText = (item: Log) => {
     if (item.name) return item.name
