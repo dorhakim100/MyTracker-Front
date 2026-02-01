@@ -165,6 +165,19 @@ export default function LineChart({
     [interpolateGaps]
   )
 
+  // Indices where the main series had null (filled by interpolation) — hide tooltip for these
+  const originalNullIndices = useMemo(() => {
+    if (!interpolateGaps || !data.datasets[0]) return new Set<number>()
+    const set = new Set<number>()
+    data.datasets.forEach((ds) => {
+      ds.data.forEach((v, i) => {
+        if (v == null) set.add(i)
+      })
+    })
+
+    return set
+  }, [data.datasets, interpolateGaps])
+
   const processedData = useMemo<
     ChartData<'line', SeriesValue[], string>
   >(() => {
@@ -252,7 +265,13 @@ export default function LineChart({
     plugins: {
       legend: { display: false },
       tooltip: {
-        filter: (ctx: TooltipItem<'line'>) => ctx.raw != null,
+        filter: (ctx: TooltipItem<'line'>) => {
+          if (ctx.raw == null) return false
+
+          // Hide tooltip for interpolated (filled) points on the main dataset
+          if (originalNullIndices.has(ctx.dataIndex)) return false
+          return true
+        },
         titleColor: isDarkMode ? DARK_MODE_WHITE : undefined,
         bodyColor: isDarkMode ? DARK_MODE_WHITE : undefined,
         backgroundColor: isDarkMode ? 'rgba(0,0,0,0.8)' : undefined,
