@@ -12,7 +12,11 @@ import { CustomAccordion } from '../../CustomMui/CustomAccordion/CustomAccordion
 import AutoStoriesIcon from '@mui/icons-material/AutoStories'
 import { setService } from '../../services/set/set.service'
 import { Set } from '../../types/exercise/Exercise'
-import { capitalizeFirstLetter, getDateFromISO, prepareSeries } from '../../services/util.service'
+import {
+  capitalizeFirstLetter,
+  getDateFromISO,
+  prepareSeries,
+} from '../../services/util.service'
 import SetsTable from '../SetsTable/SetsTable'
 import LineChart from '../LineChart/LineChart'
 import {
@@ -73,10 +77,8 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
       )
   }, [groupedSets])
 
-
   const data = useMemo(() => {
     const key = viewBy === 'Weight' ? 'weight' : 'reps'
-
 
     const dateToSend = setsData.map((set) => ({
       createdAt: set?.createdAt as unknown as string,
@@ -87,13 +89,10 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
       dateToSend as (Set & { createdAt: string; value: number })[],
       false,
       range
-
     )
 
     const labelsToShow = series?.labels
     const firstData = series?.data ?? []
-
-
 
     const dataToSend = {
       labels: labelsToShow,
@@ -106,8 +105,6 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
             colors.primary,
           tension: 0.3,
         },
-
-
       ],
     }
 
@@ -118,15 +115,12 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
       value: set?.[secondKey]?.actual as number,
     }))
 
-
     const secondSeries = prepareSeries(
       range,
       secondDateToSend as (Set & { createdAt: string; value: number })[],
       false,
       range
     )
-
-
 
     if (secondSeries?.data?.length) {
       dataToSend.datasets.push({
@@ -139,8 +133,6 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
 
     return dataToSend
   }, [setsData, range, viewBy])
-
-
 
   useEffect(() => {
     const getExerciseSets = async () => {
@@ -197,21 +189,25 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
           new Date(b.createdAt || '').getTime() -
           new Date(a.createdAt || '').getTime()
       )
-      .reduce((acc: Record<string, Set[]>, set: Set) => {
-        if (!set.createdAt) return acc
-        const date = getDateFromISO(new Date(set.createdAt).toISOString())
-        if (!acc[date]) {
-          acc[date] = []
-        }
-        acc[date].push(set)
-        return acc
-      }, {} as Record<string, Set[]>)
+      .reduce(
+        (acc: Record<string, Set[]>, set: Set) => {
+          if (!set.createdAt) return acc
+          const date = getDateFromISO(new Date(set.createdAt).toISOString())
+          if (!acc[date]) {
+            acc[date] = []
+          }
+          acc[date].push(set)
+          return acc
+        },
+        {} as Record<string, Set[]>
+      )
   }
 
   return (
     <div
-      className={`exercise-details-container ${prefs.isDarkMode ? 'dark-mode' : ''
-        } ${isDashboard ? 'dashboard' : ''}`}
+      className={`exercise-details-container ${
+        prefs.isDarkMode ? 'dark-mode' : ''
+      } ${isDashboard ? 'dashboard' : ''}`}
     >
       <img
         src={exerciseImage}
@@ -222,7 +218,10 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
       {/* <div className="exercise-details"> */}
       {exercise?.notes?.expected && (
         <>
-          <Typography variant="h5" className="bold-header">
+          <Typography
+            variant='h5'
+            className='bold-header'
+          >
             Notes
           </Typography>
           <div
@@ -236,20 +235,21 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
       )}
 
       <CustomAccordion
-        title="Instructions"
+        title='Instructions'
         cmp={exerciseInstructions?.map(renderExerciseInstructions)}
         icon={<AutoStoriesIcon />}
         className='instructions-accordion'
       />
-      <div className="line-chart-container">
-        <div className="chart-header-container">
-
-          <Typography variant="h5" className="bold-header">
+      <div className='line-chart-container'>
+        <div className='chart-header-container'>
+          <Typography
+            variant='h5'
+            className='bold-header'
+          >
             Max Progress
           </Typography>
           <CustomSelect
-
-            label="View by"
+            label='View by'
             values={['Weight', 'Reps']}
             value={viewBy}
             onChange={(val) => setViewBy(val)}
@@ -257,17 +257,23 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
           />
         </div>
         <LineChart
+          isDisplayPoints={true}
           data={data as any}
           isDarkMode={prefs.isDarkMode}
           interpolateGaps={true}
           spanGaps={true}
-
           isDisplaySecondLine={false}
           secondDataLabel={viewBy === 'Weight' ? 'Reps' : 'Weight'}
         />
-        <LineChartControls value={range} onChange={(val) => setRange(val)} />
+        <LineChartControls
+          value={range}
+          onChange={(val) => setRange(val)}
+        />
       </div>
-      <Typography variant="h5" className="bold-header past-sessions">
+      <Typography
+        variant='h5'
+        className='bold-header past-sessions'
+      >
         Past Sessions
       </Typography>
       {/* {exerciseSets.length === 0} */}

@@ -58,6 +58,7 @@ export interface LineChartProps {
   secondData?: (number | null)[]
   secondDataLabel?: string
   isDisplaySecondLine?: boolean
+  isDisplayPoints?: boolean
 }
 
 const DARK_MODE_WHITE = '#fff'
@@ -73,6 +74,7 @@ export default function LineChart({
   onLineClick,
   secondData,
   secondDataLabel = 'Weekly Average',
+  isDisplayPoints = false,
 }: LineChartProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -190,7 +192,10 @@ export default function LineChart({
           : ds.borderColor,
         tension: ds.tension,
         borderWidth: isDarkMode ? 2 : undefined,
-        pointRadius: 0.3,
+        pointRadius: isDisplayPoints
+          ? (ctx: ScriptableContext<'line'>) =>
+              originalNullIndices.has(ctx.dataIndex) ? 0.1 : 3
+          : undefined,
       }))
 
     if (typeof baseline === 'number' && data.labels?.length) {
@@ -261,6 +266,7 @@ export default function LineChart({
   const options: ChartOptions<'line'> = {
     responsive: true,
     spanGaps,
+
     interaction: { mode: 'index', intersect: false, axis: 'x' },
     plugins: {
       legend: { display: false },
@@ -281,7 +287,10 @@ export default function LineChart({
       point: {
         radius: (ctx: ScriptableContext<'line'>) => (ctx.raw == null ? 0 : 0.3),
         hitRadius: 12,
-        hoverRadius: 4,
+        hoverRadius: isDisplayPoints
+          ? (ctx: ScriptableContext<'line'>) =>
+              originalNullIndices.has(ctx.dataIndex) ? 3 : 5
+          : undefined,
       },
     },
     scales: {
