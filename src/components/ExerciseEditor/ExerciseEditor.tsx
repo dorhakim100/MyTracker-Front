@@ -308,8 +308,9 @@ export function ExerciseEditor({
                           disableTouchListener={!isDashboard}
                           disableFocusListener={!isDashboard}
                         >
-                          <Checkbox
-                            disabled={isExpected}
+                          <span style={{ display: 'inline-flex' }}>
+                            <Checkbox
+                              disabled={isExpected}
                             icon={
                               <RadioButtonUncheckedIcon
                                 className='not-finished'
@@ -325,6 +326,7 @@ export function ExerciseEditor({
                             checked={set.isDone ? true : false}
                             onChange={() => onMarkAsDone(index)}
                           />
+                          </span>
                         </Tooltip>
                       )}
                     </div>

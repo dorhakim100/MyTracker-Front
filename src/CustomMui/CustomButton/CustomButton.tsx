@@ -65,32 +65,34 @@ export function CustomButton({
           disableTouchListener={tooltipTitle && isDashboard ? false : true}
           disableFocusListener={tooltipTitle && isDashboard ? false : true}
         >
-          <IconButton
-            aria-label={
-              ariaLabel || (typeof text === 'string' ? text : 'button')
-            }
-            onClick={onClick}
-            disabled={disabled}
-            className={`custom-button ${className || ''} `}
-            sx={{
-              backgroundColor: resolvedBg,
-              color: resolvedBg ? '#fff' : undefined,
-              borderRadius: 999,
-              touchAction: 'manipulation',
-              WebkitTapHighlightColor: 'transparent',
-              '&:hover': {
+          <span style={{ display: 'inline-flex' }}>
+            <IconButton
+              aria-label={
+                ariaLabel || (typeof text === 'string' ? text : 'button')
+              }
+              onClick={onClick}
+              disabled={disabled}
+              className={`custom-button ${className || ''} `}
+              sx={{
                 backgroundColor: resolvedBg,
-                filter: resolvedBg ? 'brightness(0.95)' : undefined,
-              },
-              '&:active': {
-                transform: 'scale(0.98)',
-              },
-              '&:focus': { outline: 'none' },
-              ...sx,
-            }}
-          >
-            {icon}
-          </IconButton>
+                color: resolvedBg ? '#fff' : undefined,
+                borderRadius: 999,
+                touchAction: 'manipulation',
+                WebkitTapHighlightColor: 'transparent',
+                '&:hover': {
+                  backgroundColor: resolvedBg,
+                  filter: resolvedBg ? 'brightness(0.95)' : undefined,
+                },
+                '&:active': {
+                  transform: 'scale(0.98)',
+                },
+                '&:focus': { outline: 'none' },
+                ...sx,
+              }}
+            >
+              {icon}
+            </IconButton>
+          </span>
         </Tooltip>
       ) : (
         <Button
