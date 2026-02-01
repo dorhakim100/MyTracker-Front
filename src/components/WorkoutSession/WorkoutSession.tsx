@@ -592,30 +592,7 @@ export function WorkoutSession({
     })
 
     try {
-      // Save instructions to backend
-      const savedInstructions = await saveNewInstructions(newInstructions)
-      if (savedInstructions) {
-        setSelectedSessionDay({
-          ...sessionDay,
-          instructions: savedInstructions,
-        })
-      }
-
-      // Save the updated set to backend
-      const setToSave = cleanSet(exercise.sets[setIndex])
-      await setService.saveSetBySessionIdAndExerciseId(
-        sessionDay._id,
-        exercise.exerciseId,
-        {
-          ...setToSave,
-          userId: sessionDay.workout.forUserId || '',
-        },
-        setIndex,
-        false // isNew
-      )
-
       const currentExerciseToSet = { ...exercise, setIndex }
-
       // Check if exercise is done
       if (isExerciseDone(exercise)) {
         const nextExercise = handleMoveToNextExercise(exercise, exerciseIndex)
@@ -634,18 +611,39 @@ export function WorkoutSession({
           startTime: new Date().getTime(),
         })
       }
-
+      // Save instructions to backend
+      const savedInstructions = await saveNewInstructions(newInstructions)
+      if (savedInstructions) {
+        setSelectedSessionDay({
+          ...sessionDay,
+          instructions: savedInstructions,
+        })
+      }
       // Check if all exercises are done
-      const isAllExercisesDone = sessionDay.instructions.exercises.every((e) =>
-        e.exerciseId === exercise.exerciseId
-          ? isExerciseDone(exercise)
-          : isExerciseDone(e)
+      const isAllExercisesDone = savedInstructions.exercises.every(
+        (e: ExerciseInstructions) =>
+          e.exerciseId === exercise.exerciseId
+            ? isExerciseDone(exercise)
+            : isExerciseDone(e)
       )
 
       if (isAllExercisesDone) {
         await handleAllExercisesCompleted(savedInstructions || newInstructions)
         handleOpenChange(exercise.exerciseId, false)
       }
+
+      // Save the updated set to backend
+      const setToSave = cleanSet(exercise.sets[setIndex])
+      await setService.saveSetBySessionIdAndExerciseId(
+        sessionDay._id,
+        exercise.exerciseId,
+        {
+          ...setToSave,
+          userId: sessionDay.workout.forUserId || '',
+        },
+        setIndex,
+        false // isNew
+      )
     } catch (err) {
       // Rollback on error
       setSelectedSessionDay({
