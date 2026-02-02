@@ -1,0 +1,15 @@
+.add-trainee-form-container {
+  display: grid;
+  grid-template-rows: auto auto auto 25px;
+  gap: 1rem;
+  min-width: 400px;
+
+  padding: 0rem 1rem 1rem 1rem;
+
+  .error-message {
+    color: $error-color;
+    font-size: 0.8rem;
+    font-weight: 600;
+    opacity: 0;
+  }
+}

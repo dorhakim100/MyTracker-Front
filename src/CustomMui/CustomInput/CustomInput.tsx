@@ -17,6 +17,7 @@ interface CustomInputProps {
   size?: 'small' | 'medium'
   className?: string
   isRemoveIcon?: boolean
+  onBlur?: () => void
 }
 
 export function CustomInput({
@@ -29,6 +30,7 @@ export function CustomInput({
   size = 'medium',
   className,
   isRemoveIcon,
+  onBlur,
 }: CustomInputProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const prefs = useSelector(
@@ -37,6 +39,7 @@ export function CustomInput({
 
   return (
     <TextField
+      onBlur={onBlur}
       fullWidth
       size={size}
       ref={inputRef}
@@ -50,12 +53,12 @@ export function CustomInput({
       }`}
       InputProps={{
         startAdornment: startIconFn ? (
-          <InputAdornment position="start">{startIconFn()}</InputAdornment>
+          <InputAdornment position='start'>{startIconFn()}</InputAdornment>
         ) : undefined,
         endAdornment: endIconFn ? (
-          <InputAdornment position="end">{endIconFn()}</InputAdornment>
+          <InputAdornment position='end'>{endIconFn()}</InputAdornment>
         ) : isRemoveIcon ? (
-          <InputAdornment position="end">
+          <InputAdornment position='end'>
             <IconButton onClick={() => onChange('')}>
               <CloseIcon />
             </IconButton>
