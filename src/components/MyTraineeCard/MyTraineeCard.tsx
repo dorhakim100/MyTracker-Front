@@ -28,7 +28,11 @@ import {
   setTraineeUser,
 } from '../../store/actions/user.actions'
 
-export function MyTraineeCard() {
+interface MyTraineeCardProps {
+  displayTrainees?: boolean
+}
+
+export function MyTraineeCard({ displayTrainees = true }: MyTraineeCardProps) {
   const user = useSelector((state: RootState) => state.userModule.user)
 
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
@@ -180,26 +184,43 @@ export function MyTraineeCard() {
         renderPrimaryText={(trainee) => trainee.details.fullname}
         renderSecondaryText={(trainee) => trainee.email}
         renderLeft={(trainee) => (
-          <img src={trainee.details.imgUrl} alt={trainee.details.fullname} />
+          <img
+            src={trainee.details.imgUrl}
+            alt={trainee.details.fullname}
+          />
         )}
         getKey={(trainee) => `${trainee._id}-searched-trainee-card`}
-        noResultsMessage='No trainees found'
+        noResultsMessage={
+          search === ''
+            ? 'Search for a trainee to add as a trainee'
+            : 'No trainees found...'
+        }
         className={`trainees-list ${prefs.isDarkMode ? 'dark-mode' : ''}`}
         renderRight={(trainee) => renderRequestStatus(trainee)}
       />
-      <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
-      <CustomList
-        items={trainees ?? []}
-        renderPrimaryText={(trainee) => trainee.details.fullname}
-        renderSecondaryText={(trainee) => trainee.email}
-        renderLeft={(trainee) => (
-          <img src={trainee.details.imgUrl} alt={trainee.details.fullname} />
-        )}
-        renderRight={(trainee) => renderRequestStatus(trainee)}
-        getKey={(trainee) => `${trainee._id}-assigned-trainee-card`}
-        noResultsMessage='No assigned trainees yet'
-        className={`trainees-list ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-      />
+      {displayTrainees && (
+        <>
+          <Divider
+            className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+          />
+
+          <CustomList
+            items={trainees ?? []}
+            renderPrimaryText={(trainee) => trainee.details.fullname}
+            renderSecondaryText={(trainee) => trainee.email}
+            renderLeft={(trainee) => (
+              <img
+                src={trainee.details.imgUrl}
+                alt={trainee.details.fullname}
+              />
+            )}
+            renderRight={(trainee) => renderRequestStatus(trainee)}
+            getKey={(trainee) => `${trainee._id}-assigned-trainee-card`}
+            noResultsMessage={'No assigned trainees yet...'}
+            className={`trainees-list ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+          />
+        </>
+      )}
     </div>
   )
 }

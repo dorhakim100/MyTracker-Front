@@ -5,6 +5,10 @@ import { useMemo } from 'react'
 import { TraineesList } from '../../../TrainerDashboard/components/TraineesList/TraineesList'
 import { TRAINEE_ORDER_STORE_NAME } from '../../../../constants/store.constants'
 
+import { MyTraineeCard } from '../../../../components/MyTraineeCard/MyTraineeCard'
+
+import AddIcon from '@mui/icons-material/Add'
+import { CustomButton } from '../../../../CustomMui/CustomButton/CustomButton'
 export function Trainees() {
   const user = useSelector(
     (storeState: RootState) => storeState.userModule.user
@@ -34,11 +38,13 @@ export function Trainees() {
         Trainees
       </Typography>
 
-      {/* <CustomButton
-
-        text="Add Trainee"
-        icon={<AddIcon />}
-      /> */}
+      <div className='add-trainee-container'>
+        <MyTraineeCard displayTrainees={false} />
+        <CustomButton
+          text='Add Trainee'
+          icon={<AddIcon />}
+        />
+      </div>
 
       <TraineesList trainees={traineesToDisplay} />
     </Box>

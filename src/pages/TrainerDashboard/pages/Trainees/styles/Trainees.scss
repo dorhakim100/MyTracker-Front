@@ -1,0 +1,12 @@
+.add-trainee-container {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1rem;
+  margin-top: 1rem;
+  align-items: start;
+  justify-content: space-between;
+  min-height: 382px;
+  .my-trainees-container {
+    max-width: 500px;
+  }
+}

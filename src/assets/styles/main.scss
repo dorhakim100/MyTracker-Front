@@ -92,7 +92,6 @@
 
 @import '../../pages/TrainerDashboard/styles/TrainerDashboard.scss';
 
-
 @import '../../pages/TrainerDashboard/components/Header/styles/Header.scss';
 @import '../../pages/TrainerDashboard/components/Content/styles/Content.scss';
 @import '../../pages/TrainerDashboard/components/Navigator/styles/Navigator.scss';
@@ -101,10 +100,9 @@
 @import '../../pages/TrainerDashboard/components/Header/styles/TraineesTabs.scss';
 @import '../../pages/TrainerDashboard/pages/Dashboard/styles/TrainerDashboardOverview.scss';
 @import '../../pages/TrainerDashboard/pages/Workouts/styles/TrainerWorkouts.scss';
+@import '../../pages/TrainerDashboard/pages/Trainees/styles/Trainees.scss';
 
 @import '../../pages/TrainerDashboard/components/TraineesList/styles/TraineesList.scss';
-
-
 
 @import '../../CustomMui/SignIn/styles/SignIn.scss';
 @import '../../CustomMui/BottomNavigation/styles/FixedBottomNavigation.scss';
