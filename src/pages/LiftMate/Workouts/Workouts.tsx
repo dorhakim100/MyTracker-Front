@@ -54,6 +54,13 @@ import { CustomAccordion } from '../../../CustomMui/CustomAccordion/CustomAccord
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import workoutAnimation from '../../../../public/gain-weight.json'
 import Lottie from 'lottie-react'
+import { TrainerRequest } from '../../../types/trainerRequest/TrainerRequest'
+import { TrainerRequestCard } from '../../../components/TrainerRequestCard/TrainerRequestCard'
+import { userService } from '../../../services/user/user.service'
+import {
+  APPROVED_STATUS,
+  REJECTED_STATUS,
+} from '../../../assets/config/request-statuses'
 
 const EDIT = 'edit'
 const DETAILS = 'details'
@@ -129,6 +136,8 @@ export function Workouts() {
     to: getDateFromISO(new Date().toISOString()),
   })
 
+  const [requests, setRequests] = useState<TrainerRequest[]>([])
+
   const isToday = useMemo(() => {
     const isToday =
       getDateFromISO(sessionFilter?.date) ===
@@ -200,6 +209,41 @@ export function Workouts() {
       loadWorkouts({ forUserId: user._id })
     }
   }, [user, traineeUser, sessionDay?.date])
+
+  useEffect(() => {
+    getUsersRequests()
+  }, [user])
+
+  async function getUsersRequests() {
+    try {
+      if (!user?._id) return
+      setIsLoading(true)
+      const requests = await userService.getRequests(undefined, user._id)
+      setRequests(requests)
+    } catch (err) {
+      console.log(err)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  async function onUpdateRequest(
+    request: TrainerRequest,
+    status: typeof APPROVED_STATUS | typeof REJECTED_STATUS
+  ) {
+    if (!request?._id) return
+    try {
+      setIsLoading(true)
+      await userService.updateRequest(request._id, status)
+      const updatedRequests = requests.filter((r) => r._id !== request._id)
+      setRequests(updatedRequests)
+      showSuccessMsg(messages.success.updateRequest)
+    } catch (err) {
+      showErrorMsg(messages.error.updateRequest)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   function onOpenEdit(workout: Workout) {
     setDialogOptions({ open: true, type: EDIT })
@@ -506,6 +550,13 @@ export function Workouts() {
             className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
           />
         </>
+        {requests.length > 0 && (
+          <TrainerRequestCard
+            request={requests[0]}
+            onAccept={(request) => onUpdateRequest(request, APPROVED_STATUS)}
+            onReject={(request) => onUpdateRequest(request, REJECTED_STATUS)}
+          />
+        )}
         {user?.isTrainer && !isDashboard && (
           <CustomAccordion
             title='My Trainees'

@@ -45,11 +45,29 @@ export function TrainerRequestCard({
   const getStatusChip = () => {
     switch (request.status) {
       case APPROVED_STATUS:
-        return <Chip label="Accepted" color="success" size="small" />
+        return (
+          <Chip
+            label='Accepted'
+            color='success'
+            size='small'
+          />
+        )
       case REJECTED_STATUS:
-        return <Chip label="Rejected" color="error" size="small" />
+        return (
+          <Chip
+            label='Rejected'
+            color='error'
+            size='small'
+          />
+        )
       case PENDING_STATUS:
-        return <Chip label="Pending" color="warning" size="small" />
+        return (
+          <Chip
+            label='Pending'
+            color='warning'
+            size='small'
+          />
+        )
       default:
         return null
     }
@@ -57,8 +75,11 @@ export function TrainerRequestCard({
 
   return (
     <>
-      <Typography variant="h6" className="bold-header trainer-requests-header">
-        Trainer Requests
+      <Typography
+        variant='h6'
+        className='bold-header trainer-requests-header'
+      >
+        {`Trainer${request.status === PENDING_STATUS ? ' Request' : ''}`}
       </Typography>
       <Card
         className={`trainer-request-card ${
@@ -66,21 +87,27 @@ export function TrainerRequestCard({
         }`}
         elevation={0}
       >
-        <div className="trainer-request-card-content">
-          <div className="trainer-request-card-header">
+        <div className='trainer-request-card-content'>
+          <div className='trainer-request-card-header'>
             <Avatar
               src={displayImage}
               alt={displayName}
-              className="trainer-request-avatar"
+              className='trainer-request-avatar'
             >
               {displayName}
             </Avatar>
-            <div className="trainer-request-info">
-              <Typography variant="subtitle1" className="trainer-request-name">
+            <div className='trainer-request-info'>
+              <Typography
+                variant='subtitle1'
+                className='trainer-request-name'
+              >
                 {displayName}
               </Typography>
               {displayEmail && (
-                <Typography variant="body2" className="trainer-request-email">
+                <Typography
+                  variant='body2'
+                  className='trainer-request-email'
+                >
                   {displayEmail}
                 </Typography>
               )}
@@ -88,24 +115,24 @@ export function TrainerRequestCard({
           </div>
 
           {request.status === PENDING_STATUS ? (
-            <div className="trainer-request-actions">
+            <div className='trainer-request-actions'>
               <CustomButton
-                text="Reject"
+                text='Reject'
                 icon={<CloseIcon />}
                 onClick={handleReject}
-                className="reject-button red"
-                size="small"
+                className='reject-button red'
+                size='small'
               />
               <CustomButton
-                text="Accept"
+                text='Accept'
                 icon={<CheckIcon />}
                 onClick={handleAccept}
-                className="accept-button primary"
-                size="small"
+                className='accept-button primary'
+                size='small'
               />
             </div>
           ) : (
-            <div className="trainer-request-status">{getStatusChip()}</div>
+            <div className='trainer-request-status'>{getStatusChip()}</div>
           )}
         </div>
       </Card>{' '}

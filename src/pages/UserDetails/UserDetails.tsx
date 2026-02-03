@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { logout } from '../../store/actions/user.actions'
@@ -16,16 +16,6 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
 import CalculateIcon from '@mui/icons-material/Calculate'
 import SettingsIcon from '@mui/icons-material/Settings'
 import ModeStandbyIcon from '@mui/icons-material/ModeStandby'
-import { userService } from '../../services/user/user.service'
-import { setIsLoading } from '../../store/actions/system.actions'
-import { TrainerRequest } from '../../types/trainerRequest/TrainerRequest'
-import { TrainerRequestCard } from '../../components/TrainerRequestCard/TrainerRequestCard'
-import { messages } from '../../assets/config/messages'
-import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
-import {
-  APPROVED_STATUS,
-  REJECTED_STATUS,
-} from '../../assets/config/request-statuses'
 import { WeightChart } from '../../components/WeightChart/WeightChart'
 import { StatsCarousel } from '../../components/StatsCarousel/StatsCarousel'
 
@@ -47,8 +37,6 @@ export function UserDetails() {
   )
 
   const timer = useSelector((state: RootState) => state.workoutModule.timer)
-
-  const [requests, setRequests] = useState<TrainerRequest[]>([])
 
   const acrodions = [
     {
@@ -96,41 +84,6 @@ export function UserDetails() {
     ]
   }, [user, traineeUser])
 
-  useEffect(() => {
-    getUsersRequests()
-  }, [user])
-
-  async function getUsersRequests() {
-    try {
-      if (!user?._id) return
-      setIsLoading(true)
-      const requests = await userService.getRequests(undefined, user._id)
-      setRequests(requests)
-    } catch (err) {
-      console.log(err)
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  async function onUpdateRequest(
-    request: TrainerRequest,
-    status: typeof APPROVED_STATUS | typeof REJECTED_STATUS
-  ) {
-    if (!request?._id) return
-    try {
-      setIsLoading(true)
-      await userService.updateRequest(request._id, status)
-      const updatedRequests = requests.filter((r) => r._id !== request._id)
-      setRequests(updatedRequests)
-      showSuccessMsg(messages.success.updateRequest)
-    } catch (err) {
-      showErrorMsg(messages.error.updateRequest)
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
   return (
     <div
       className={`page-container user-page ${
@@ -153,14 +106,6 @@ export function UserDetails() {
             showSkeleton={!user}
             direction='vertical'
           />
-
-          {requests.length > 0 && (
-            <TrainerRequestCard
-              request={requests[0]}
-              onAccept={(request) => onUpdateRequest(request, APPROVED_STATUS)}
-              onReject={(request) => onUpdateRequest(request, REJECTED_STATUS)}
-            />
-          )}
 
           {acrodions.map((accordion) => (
             <CustomAccordion
