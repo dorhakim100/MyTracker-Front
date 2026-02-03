@@ -6,10 +6,18 @@
   overflow: hidden !important;
   transition: max-height 0.3s ease-in-out;
 
-
-
   &.closed {
     max-height: 0;
+  }
+  .dashboard-exercise-editor-container-headers {
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+    h6:first-child {
+      margin-inline-start: 20px;
+    }
+    h6:not(:first-child) {
+      margin-inline-end: 125px;
+    }
   }
 
   .set-container {
@@ -22,14 +30,12 @@
 
     @media (min-width: 700px) {
       width: calc(100vw - 5rem - 500px);
-      padding-inline:1rem;
-
+      padding-inline: 1rem;
     }
     @media (max-width: 1050px) {
       &.dashboard {
         width: calc(100vw - $left-menu-width - 3rem);
-        padding-inline:1rem;
-
+        padding-inline: 1rem;
       }
     }
     .set-editor-container {
@@ -45,18 +51,16 @@
         justify-items: start;
         &.dashboard {
           grid-template-columns: auto auto auto auto auto;
-
         }
       }
       justify-items: center;
 
-
       .badges-container {
         display: grid;
-        input{
+        input {
           padding: 0 !important;
         }
-        .MuiCheckbox-root{
+        .MuiCheckbox-root {
           height: 49px;
           width: 49px;
         }
@@ -79,22 +83,17 @@
           top: 1rem;
           left: 0.75rem;
           &.dashboard {
-
             margin-top: 0.5rem;
             left: 1.75rem;
           }
           position: absolute;
           @media (min-width: 800px) {
-            span{
+            span {
               font-size: 1.2rem;
               width: 1.5rem;
               height: 1.5rem;
               border-radius: 50%;
-
-
             }
-
-
           }
         }
 
@@ -139,15 +138,13 @@
           }
         }
 
-        .delete-set-button{
+        .delete-set-button {
           align-self: end;
         }
         .badges-container {
           align-self: start;
           margin-top: 1.2rem;
           margin-inline-start: 3px;
-
-  
         }
 
         .MuiBadge-root.float {

@@ -279,6 +279,34 @@ export function ExerciseEditor({
       <div
         className={`exercise-editor-container ${isOpen ? 'open' : 'closed'}`}
       >
+        {isDashboard && (
+          <div className='dashboard-exercise-editor-container-headers'>
+            <Typography
+              variant='h6'
+              className='bold-header'
+            >
+              Sets
+            </Typography>
+            <Typography
+              variant='h6'
+              className='bold-header'
+            >
+              Reps
+            </Typography>
+            <Typography
+              variant='h6'
+              className='bold-header'
+            >
+              Weight
+            </Typography>
+            <Typography
+              variant='h6'
+              className='bold-header'
+            >
+              {exercise.sets[0]?.rpe ? 'RPE' : 'RIR'}
+            </Typography>
+          </div>
+        )}
         {exercise.sets && exercise.sets.length > 0 && (
           <SwipeableWrapper
             disableSwipe={isDashboard}
@@ -311,21 +339,21 @@ export function ExerciseEditor({
                           <span style={{ display: 'inline-flex' }}>
                             <Checkbox
                               disabled={isExpected}
-                            icon={
-                              <RadioButtonUncheckedIcon
-                                className='not-finished'
-                                sx={{ color: 'white' }}
-                              />
-                            }
-                            checkedIcon={
-                              <CheckIcon
-                                className='finished'
-                                sx={{ color: 'white' }}
-                              />
-                            }
-                            checked={set.isDone ? true : false}
-                            onChange={() => onMarkAsDone(index)}
-                          />
+                              icon={
+                                <RadioButtonUncheckedIcon
+                                  className='not-finished'
+                                  sx={{ color: 'white' }}
+                                />
+                              }
+                              checkedIcon={
+                                <CheckIcon
+                                  className='finished'
+                                  sx={{ color: 'white' }}
+                                />
+                              }
+                              checked={set.isDone ? true : false}
+                              onChange={() => onMarkAsDone(index)}
+                            />
                           </span>
                         </Tooltip>
                       )}

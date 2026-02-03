@@ -527,6 +527,7 @@ export function ExerciseCard({
             )}
           </div>
         </div>
+
         {exerciseInstructions && exerciseInstructions.sets && (
           <ExerciseEditor
             exerciseSets={exerciseSets}
