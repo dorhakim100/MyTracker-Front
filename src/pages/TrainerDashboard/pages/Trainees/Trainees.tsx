@@ -12,10 +12,14 @@ import { CustomButton } from '../../../../CustomMui/CustomButton/CustomButton'
 import { CustomAlertDialog } from '../../../../CustomMui/CustomAlertDialog/CustomAlertDialog'
 import { SaveCancel } from '../../../../components/SaveCancel/SaveCancel'
 import { AddTrainee } from '../../../../components/AddTrainee/AddTrainee'
+import { setIsLoading } from '../../../../store/actions/system.actions'
+import { addTrainee } from '../../../../store/actions/user.actions'
+import { AxiosError } from 'axios'
 
 export interface AddTraineeForm {
   fullname: string
   email: string
+  trainerId: string
 }
 
 interface AlertDialogProps {
@@ -28,6 +32,9 @@ export function Trainees() {
   const user = useSelector(
     (storeState: RootState) => storeState.userModule.user
   )
+  if (!user) {
+    return null
+  }
 
   const trainees = useSelector((state: RootState) => state.userModule.trainees)
 
@@ -40,6 +47,7 @@ export function Trainees() {
   const [addTraineeForm, setAddTraineeForm] = useState<AddTraineeForm>({
     fullname: '',
     email: '',
+    trainerId: user._id,
   })
 
   const [errorMessage, setErrorMessage] = useState<string>('')
@@ -72,12 +80,23 @@ export function Trainees() {
     })
   }
 
-  const handleAddTrainee = () => {
-    setAlertDialog({
-      open: false,
-      type: null,
-      title: '',
-    })
+  const handleAddTrainee = async () => {
+    try {
+      setIsLoading(true)
+      console.log('handleAddTrainee')
+      console.log(addTraineeForm)
+      await addTrainee(addTraineeForm)
+      handleClose()
+    } catch (error) {
+      console.log(error)
+      const { err } = (error as AxiosError<{ err: string }>).response?.data as {
+        err: string
+      }
+
+      setErrorMessage(err)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const openAddTraineeDialog = () => {
@@ -114,6 +133,7 @@ export function Trainees() {
         open={alertDialog.open}
         onClose={handleClose}
         title={alertDialog.title}
+        className='add-trainee-dialog'
       >
         <div className='add-trainee-dialog-content'>
           <AddTrainee

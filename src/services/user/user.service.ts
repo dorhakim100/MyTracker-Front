@@ -19,6 +19,7 @@ import {
   APPROVED_STATUS,
   REJECTED_STATUS,
 } from '../../assets/config/request-statuses'
+import { AddTraineeForm } from '../../pages/TrainerDashboard/pages/Trainees/Trainees'
 // import { getPrefs, setPrefs } from '../system/system.service'
 
 export const userService = {
@@ -38,6 +39,7 @@ export const userService = {
   getEmptyUser,
   getRememberedById,
   getRememberedUser,
+  addTrainee,
   // getMaxPage,
 }
 
@@ -192,7 +194,7 @@ async function signup(userCred: UserCred) {
   try {
     const DEFAULT_IMG_URL =
       'https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_1280.png'
-    const DEFAULT_BIRTHDATE = 951955200000
+    const DEFAULT_BIRTHDATE = 946684800000
     const DEFAULT_HEIGHT = 170
 
     const userDetails: UserDetails = {
@@ -336,6 +338,15 @@ async function saveRememberedUser(user: User, token: string) {
       userId: user._id,
       token: token,
     })
+  } catch (err) {
+    throw err
+  }
+}
+
+async function addTrainee(traineeForm: AddTraineeForm) {
+  try {
+    const trainee = await httpService.post('user/add-trainee', traineeForm)
+    return trainee
   } catch (err) {
     throw err
   }

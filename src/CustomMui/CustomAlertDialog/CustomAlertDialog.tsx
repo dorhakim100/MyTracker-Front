@@ -10,10 +10,11 @@ export interface SimpleDialogProps {
   onClose: () => void
 
   children: React.ReactNode
+  className?: string
 }
 
 export function CustomAlertDialog(props: SimpleDialogProps) {
-  const { onClose, open, children, title } = props
+  const { onClose, open, children, title, className } = props
 
   const isLoading = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.isLoading
@@ -31,6 +32,10 @@ export function CustomAlertDialog(props: SimpleDialogProps) {
     <Dialog
       onClose={handleClose}
       open={open}
+      // className={className}
+      PaperProps={{
+        className: className,
+      }}
       sx={{
         '& .MuiPaper-root': {
           padding: '1rem',

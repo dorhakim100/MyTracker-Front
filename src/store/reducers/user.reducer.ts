@@ -15,6 +15,7 @@ export const SET_SELECTED_DAY = 'SET_SELECTED_DAY'
 export const SET_TRAINEE_USER = 'SET_TRAINEE_USER'
 export const REMOVE_TRAINEE_USER = 'REMOVE_TRAINEE_USER'
 export const SET_TRAINEE_USERS = 'SET_TRAINEE_USERS'
+export const ADD_TRAINEE = 'ADD_TRAINEE'
 export interface UserState {
   users: User[]
   user: User | null
@@ -79,6 +80,10 @@ export function userReducer(state = initialState, action: any): UserState {
 
     case SET_TRAINEE_USERS:
       newState = { ...state, trainees: action.trainees }
+      break
+
+    case ADD_TRAINEE:
+      newState = { ...state, trainees: [...state.trainees, action.trainee] }
       break
 
     // case SET_USER_FILTER:

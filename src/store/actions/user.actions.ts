@@ -11,6 +11,7 @@ import {
   SET_TRAINEE_USER,
   REMOVE_TRAINEE_USER,
   SET_TRAINEE_USERS,
+  ADD_TRAINEE,
   // SET_USER_FILTER,
 } from '../reducers/user.reducer'
 
@@ -28,6 +29,7 @@ import { ActivityLevel, Gender } from '../../services/bmr/bmr.service'
 import { Goal } from '../../types/goal/Goal'
 import { goalService } from '../../services/goal/goal.service'
 import { setIsFirstLoading } from './system.actions'
+import { AddTraineeForm } from '../../pages/TrainerDashboard/pages/Trainees/Trainees'
 
 export async function loadUsers(filter: UserFilter) {
   try {
@@ -391,4 +393,14 @@ export function removeTraineeUser() {
 
 export function setTrainees(trainees: User[]) {
   store.dispatch({ type: SET_TRAINEE_USERS, trainees })
+}
+
+export async function addTrainee(traineeForm: AddTraineeForm) {
+  try {
+    const trainee = await userService.addTrainee(traineeForm)
+    store.dispatch({ type: ADD_TRAINEE, trainee })
+    return trainee
+  } catch (error) {
+    throw error
+  }
 }

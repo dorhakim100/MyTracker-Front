@@ -12,13 +12,23 @@
   }
 }
 
+.add-trainee-dialog {
+  position: relative !important;
+  .MuiLinearProgress-root {
+    position: absolute !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+  }
+}
+
 .add-trainee-dialog-content {
   position: relative;
 
-  .linear-loader {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-  }
+  // .linear-loader {
+  //   position: absolute;
+  //   bottom: 0;
+  //   left: 0;
+  //   width: 100%;
+  // }
 }
