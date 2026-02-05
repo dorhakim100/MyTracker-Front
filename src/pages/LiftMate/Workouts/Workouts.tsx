@@ -562,6 +562,7 @@ export function Workouts() {
             title='My Trainees'
             cmp={<MyTraineeCard />}
             icon={<PersonAddIcon />}
+            className={`my-trainees-accordion`}
           />
         )}
         {renderWorkoutLists(

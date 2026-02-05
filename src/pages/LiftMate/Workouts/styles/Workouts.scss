@@ -66,6 +66,42 @@
       justify-content: center;
     }
   }
+  .my-trainees-accordion {
+    position: sticky;
+    top: -1rem;
+    z-index: 10;
+    padding: 1rem 0;
+    background-color: $neutral-gray;
+
+    &.dark-mode {
+      background-color: $dark-gray;
+
+      &.blue {
+        background-color: $dark-gray-blue;
+      }
+      &.yellow {
+        background-color: $dark-gray-yellow;
+      }
+      &.red {
+        background-color: $dark-gray-red;
+      }
+      &.orange {
+        background-color: $dark-gray-orange;
+      }
+      &.green {
+        background-color: $dark-gray-green;
+      }
+      &.deepPurple {
+        background-color: $dark-gray-deep-purple;
+      }
+      &.purple {
+        background-color: $dark-gray-purple;
+      }
+      &.pink {
+        background-color: $dark-gray-pink;
+      }
+    }
+  }
 }
 .dialog-routines-container {
   padding: 1rem;
