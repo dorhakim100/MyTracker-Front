@@ -56,7 +56,10 @@ interface ExerciseCardProps {
   instructions: Instructions
   onSwitchRpeRir?: (exerciseId: string, value: 'rpe' | 'rir') => void
   setIsReorderExercisesOpen?: (isOpen: boolean) => void
-  updateExercise?: (exercise: ExerciseInstructions) => Promise<void> | void
+  updateExercise?: (
+    exercise: ExerciseInstructions,
+    setIndex: number
+  ) => Promise<void> | void
   addSet?: (
     exercise: ExerciseInstructions,
     setIndex: number
@@ -537,11 +540,14 @@ export function ExerciseCard({
             updateExercise={
               isExpected
                 ? updateExerciseInInstructions
-                : (exerciseToUpdate) =>
-                    updateExercise?.({
-                      ...exerciseToUpdate,
-                      image: exercise.image,
-                    })
+                : (exerciseToUpdate, setIndex) =>
+                    updateExercise?.(
+                      {
+                        ...exerciseToUpdate,
+                        image: exercise.image,
+                      },
+                      setIndex
+                    )
             }
             addSet={
               isExpected

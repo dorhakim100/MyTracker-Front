@@ -37,7 +37,10 @@ export interface ExerciseEditorProps {
   exerciseSets?: Set[]
   previousInstructions?: Instructions | null
   isExpected?: boolean
-  updateExercise: (exercise: ExerciseInstructions) => Promise<void> | void
+  updateExercise: (
+    exercise: ExerciseInstructions,
+    setIndex: number
+  ) => Promise<void> | void
   addSet?: (
     exercise: ExerciseInstructions,
     setIndex: number
@@ -113,7 +116,7 @@ export function ExerciseEditor({
 
     try {
       if (isExpected) {
-        await updateExercise(updatedExercise)
+        await updateExercise(updatedExercise, newSets.length - 1)
       } else if (addSet) {
         await addSet(updatedExercise, newSets.length - 1)
       }
@@ -133,7 +136,7 @@ export function ExerciseEditor({
 
     try {
       if (isExpected) {
-        await updateExercise(updatedExercise)
+        await updateExercise(updatedExercise, indexToRemove)
       } else if (removeSet) {
         await removeSet(updatedExercise, indexToRemove)
       }
@@ -187,7 +190,7 @@ export function ExerciseEditor({
       if (editSet.index < index && isExpected) return editSet
       return set
     })
-    updateExercise(newExercise)
+    updateExercise(newExercise, editSet.index)
   }, [editSet])
 
   useEffect(() => {
@@ -265,7 +268,7 @@ export function ExerciseEditor({
     try {
       const updatedExercise = { ...exercise, sets: newSetsToSave }
       if (isExpected) {
-        await updateExercise(updatedExercise)
+        await updateExercise(updatedExercise, index)
       } else if (markSetAsDone) {
         await markSetAsDone(updatedExercise, index)
       }

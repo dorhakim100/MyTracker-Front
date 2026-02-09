@@ -413,8 +413,37 @@ export function WorkoutSession({
     }
   }
 
+  const updateSet = async (
+    exercise: ExerciseInstructions,
+    setIndex: number
+  ) => {
+    if (!sessionDay._id) {
+      showErrorMsg(messages.error.updateSet)
+      return
+    }
+    try {
+      const setToSave = cleanSet(exercise.sets[setIndex])
+      await setService.saveSetBySessionIdAndExerciseId(
+        sessionDay._id,
+        exercise.exerciseId,
+        {
+          ...setToSave,
+          userId: sessionDay.workout.forUserId || '',
+        },
+        setIndex,
+        false // isNew - updating existing set
+      )
+    } catch (err) {
+      showErrorMsg(messages.error.updateSet)
+      return
+    }
+  }
+
   // Updates exercise values (reps, weight, RPE/RIR) and saves instructions
-  const updateExercise = async (exercise: ExerciseInstructions) => {
+  const updateExercise = async (
+    exercise: ExerciseInstructions,
+    setIndex: number
+  ) => {
     if (!sessionDay._id) {
       showErrorMsg(messages.error.updateSet)
       return
@@ -446,22 +475,8 @@ export function WorkoutSession({
       const exerciseIndex = newInstructions.exercises.findIndex(
         (e) => e.exerciseId === exercise.exerciseId
       )
-
       if (exerciseIndex !== -1) {
-        // Save all sets that have been updated
-        for (let setIndex = 0; setIndex < exercise.sets.length; setIndex++) {
-          const setToSave = cleanSet(exercise.sets[setIndex])
-          await setService.saveSetBySessionIdAndExerciseId(
-            sessionDay._id,
-            exercise.exerciseId,
-            {
-              ...setToSave,
-              userId: sessionDay.workout.forUserId || '',
-            },
-            setIndex,
-            false // isNew - updating existing set
-          )
-        }
+        await updateSet(exercise, setIndex)
       }
     } catch (err) {
       // Rollback on error
