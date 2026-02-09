@@ -611,8 +611,24 @@ export function WorkoutSession({
           startTime: new Date().getTime(),
         })
       }
-      // Save instructions to backend
-      const savedInstructions = await saveNewInstructions(newInstructions)
+      const setToSave = cleanSet(exercise.sets[setIndex])
+
+      const promises = []
+      promises.push(saveNewInstructions(newInstructions))
+      promises.push(
+        setService.saveSetBySessionIdAndExerciseId(
+          sessionDay._id,
+          exercise.exerciseId,
+          {
+            ...setToSave,
+            userId: sessionDay.workout.forUserId || '',
+          },
+          setIndex,
+          false // isNew
+        )
+      )
+      const [savedInstructions] = await Promise.all(promises)
+
       if (savedInstructions) {
         setSelectedSessionDay({
           ...sessionDay,
@@ -633,17 +649,6 @@ export function WorkoutSession({
       }
 
       // Save the updated set to backend
-      const setToSave = cleanSet(exercise.sets[setIndex])
-      await setService.saveSetBySessionIdAndExerciseId(
-        sessionDay._id,
-        exercise.exerciseId,
-        {
-          ...setToSave,
-          userId: sessionDay.workout.forUserId || '',
-        },
-        setIndex,
-        false // isNew
-      )
     } catch (err) {
       // Rollback on error
       setSelectedSessionDay({
