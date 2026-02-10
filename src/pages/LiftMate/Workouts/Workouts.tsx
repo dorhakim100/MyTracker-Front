@@ -372,10 +372,11 @@ export function Workouts() {
         _id: string
       }>(ACTIVE_WORKOUTS_ORDER_STORE_NAME, userIdToCheck)
 
-      const idsOrder = savedOrders?.order
+      const idsOrder = savedOrders?.order || []
 
-      if (!idsOrder || idsOrder.length === 0) {
+      if (!idsOrder) {
         const newOrder = activeWorkouts.map((workout) => workout._id)
+
         await indexedDbService.post(ACTIVE_WORKOUTS_ORDER_STORE_NAME, {
           id: userIdToCheck,
           order: newOrder,
@@ -481,9 +482,7 @@ export function Workouts() {
           } active`}
         >
           <WorkoutsList
-            workouts={
-              reorderedWorkouts.length > 0 ? reorderedWorkouts : activeWorkouts
-            }
+            workouts={reorderedWorkouts}
             className={`active-list`}
             onStartWorkout={onStartWorkout}
             selectedWorkoutId={selectedWorkoutId}
