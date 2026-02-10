@@ -8,6 +8,7 @@ interface WorkoutsListProps {
   onStartWorkout: (workout: Workout) => void
   selectedWorkoutId: string | null
   isRenderStartButtons: boolean
+  onReorderWorkouts: (workouts: Workout[]) => void
 }
 
 export function WorkoutsList({
@@ -16,6 +17,7 @@ export function WorkoutsList({
   onStartWorkout,
   selectedWorkoutId,
   isRenderStartButtons = true,
+  onReorderWorkouts,
 }: WorkoutsListProps) {
   return (
     <CustomBasicList<Workout>
@@ -23,7 +25,7 @@ export function WorkoutsList({
       renderItem={(workout) => (
         <WorkoutCard
           workout={workout}
-          className="workout-card"
+          className='workout-card'
           onStartWorkout={onStartWorkout}
           selectedWorkoutId={selectedWorkoutId}
           isRenderStartButtons={isRenderStartButtons}
@@ -31,7 +33,8 @@ export function WorkoutsList({
       )}
       getKey={(workout, index) => workout._id || `workout-${index}`}
       containerClassName={`workouts-list-container ${className || ''}`}
-      emptyMessage="No workouts found"
+      emptyMessage='No workouts found'
+      onReorder={onReorderWorkouts}
     />
   )
 }

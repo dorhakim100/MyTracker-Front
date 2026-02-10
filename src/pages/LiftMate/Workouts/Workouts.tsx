@@ -487,6 +487,7 @@ export function Workouts() {
             onStartWorkout={onStartWorkout}
             selectedWorkoutId={selectedWorkoutId}
             isRenderStartButtons={isRenderStartButtons}
+            onReorderWorkouts={onReorderWorkouts}
           />
         </div>
         <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
