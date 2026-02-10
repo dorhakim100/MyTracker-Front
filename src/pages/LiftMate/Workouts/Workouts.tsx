@@ -139,7 +139,6 @@ export function Workouts() {
   })
 
   const [requests, setRequests] = useState<TrainerRequest[]>([])
-
   const isToday = useMemo(() => {
     const isToday =
       getDateFromISO(sessionFilter?.date) ===
@@ -156,6 +155,8 @@ export function Workouts() {
     return workouts.filter((workout) => !workout.isActive)
   }, [workouts])
 
+  const [reorderedWorkouts, setReorderedWorkouts] =
+    useState<Workout[]>(activeWorkouts)
   useEffect(() => {
     if (isToday && sessionDay) {
       setTodaySessionDay(sessionDay)
@@ -221,46 +222,7 @@ export function Workouts() {
   }, [user, traineeUser, sessionDay?.date])
 
   useEffect(() => {
-    const orderActiveWorkouts = async () => {
-      try {
-        const userIdToCheck = traineeUser?._id || user?._id
-        if (!userIdToCheck) return
-
-        const savedOrders = await indexedDbService.query<{
-          id: string
-          order: string[]
-          _id: string
-        }>(ACTIVE_WORKOUTS_ORDER_STORE_NAME, 0)
-
-        const saved = savedOrders.find((order) => order.id === userIdToCheck)
-
-        const savedOrder = saved?.order
-
-        if (!savedOrder || savedOrder.length === 0) {
-          const newOrder = activeWorkouts.map((workout) => workout._id)
-          await indexedDbService.post(ACTIVE_WORKOUTS_ORDER_STORE_NAME, {
-            id: userIdToCheck,
-            order: newOrder,
-          })
-        } else if (savedOrder.length !== activeWorkouts.length && saved?._id) {
-          const newOrderedWorkous = activeWorkouts.map((workout) => workout._id)
-
-          await indexedDbService.put(ACTIVE_WORKOUTS_ORDER_STORE_NAME, {
-            id: userIdToCheck,
-            order: newOrderedWorkous,
-            _id: saved?._id,
-          })
-        }
-
-        console.log('savedOrder', savedOrder)
-      } catch (err) {
-        console.log(err)
-      }
-    }
-
     orderActiveWorkouts()
-
-    const activeWorkoutsIds = activeWorkouts.map((workout) => workout._id)
   }, [activeWorkouts])
 
   useEffect(() => {
@@ -399,6 +361,70 @@ export function Workouts() {
     }
   }
 
+  async function orderActiveWorkouts() {
+    try {
+      const userIdToCheck = traineeUser?._id || user?._id
+      if (!userIdToCheck) return
+      let newWorkoutsOrder: Workout[] = []
+
+      const savedOrders = await indexedDbService.get<{
+        id: string
+        order: string[]
+        _id: string
+      }>(ACTIVE_WORKOUTS_ORDER_STORE_NAME, userIdToCheck)
+
+      const idsOrder = savedOrders?.order
+
+      if (!idsOrder || idsOrder.length === 0) {
+        const newOrder = activeWorkouts.map((workout) => workout._id)
+        await indexedDbService.post(ACTIVE_WORKOUTS_ORDER_STORE_NAME, {
+          id: userIdToCheck,
+          order: newOrder,
+          _id: userIdToCheck,
+        })
+      } else if (idsOrder.length !== activeWorkouts.length) {
+        newWorkoutsOrder = activeWorkouts.sort((a: Workout, b: Workout) => {
+          const aIndex = idsOrder.indexOf(a._id || '')
+          const bIndex = idsOrder.indexOf(b._id || '')
+          return aIndex - bIndex
+        })
+
+        const newIdsOrder = newWorkoutsOrder.map((workout) => workout._id)
+
+        await indexedDbService.put(ACTIVE_WORKOUTS_ORDER_STORE_NAME, {
+          id: userIdToCheck,
+          order: newIdsOrder,
+          _id: userIdToCheck,
+        })
+      } else {
+        newWorkoutsOrder = activeWorkouts.sort((a: Workout, b: Workout) => {
+          const aIndex = idsOrder.indexOf(a._id || '')
+          const bIndex = idsOrder.indexOf(b._id || '')
+          return aIndex - bIndex
+        })
+      }
+
+      setReorderedWorkouts(newWorkoutsOrder)
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  async function onReorderWorkouts(reorderedWorkouts: Workout[]) {
+    try {
+      const userIdToCheck = traineeUser?._id || user?._id
+      if (!userIdToCheck) return
+      await indexedDbService.put(ACTIVE_WORKOUTS_ORDER_STORE_NAME, {
+        id: userIdToCheck,
+        order: reorderedWorkouts.map((workout) => workout._id),
+        _id: userIdToCheck,
+      })
+      setReorderedWorkouts(reorderedWorkouts)
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
   const getDialogComponent = () => {
     switch (dialogOptions.type) {
       case EDIT:
@@ -456,7 +482,7 @@ export function Workouts() {
           } active`}
         >
           <WorkoutsList
-            workouts={activeWorkouts}
+            workouts={reorderedWorkouts}
             className={`active-list`}
             onStartWorkout={onStartWorkout}
             selectedWorkoutId={selectedWorkoutId}
