@@ -39,13 +39,15 @@ import { Badge } from '@mui/material'
 
 import DoneAllIcon from '@mui/icons-material/DoneAll'
 import { getWorkoutMuscles } from '../../../services/exersice-search/exersice-search'
-import EditIcon from '@mui/icons-material/Edit';
+import EditIcon from '@mui/icons-material/Edit'
 interface WorkoutCardProps {
   workout: Workout
   className?: string
   onStartWorkout: (workout: Workout) => void
   selectedWorkoutId: string | null
   isRenderStartButtons: boolean
+  onReorderWorkouts: (workouts: Workout[]) => void
+  workouts: Workout[]
 }
 
 export function WorkoutCard({
@@ -54,6 +56,8 @@ export function WorkoutCard({
   onStartWorkout,
   selectedWorkoutId,
   isRenderStartButtons = true,
+  onReorderWorkouts,
+  workouts,
 }: WorkoutCardProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -108,7 +112,13 @@ export function WorkoutCard({
       {
         title: 'Deactivate',
         icon: <IndeterminateCheckBoxIcon />,
-        onClick: () => toggleActivateWorkout(workout),
+        onClick: () => {
+          toggleActivateWorkout(workout)
+          const newWorkouts = workouts.filter(
+            (w: Workout) => w._id !== workout._id
+          )
+          onReorderWorkouts(newWorkouts)
+        },
       },
       {
         title: 'Delete',
@@ -145,24 +155,28 @@ export function WorkoutCard({
   }
 
   function renderAvailableWorkoutButton() {
-    if (!isDashboard) return (
-      <CustomButton
-        text="Start Routine"
-        fullWidth={true}
-        onClick={(ev) => {
-          ev.stopPropagation()
-          onStartWorkout(workout)
-        }}
-        className="start-workout-button"
-        icon={
-          isLoading && selectedWorkoutId === workout._id ? (
-            <CircularProgress size={20} color="inherit" />
-          ) : (
-            <PlayArrow />
-          )
-        }
-      />
-    )
+    if (!isDashboard)
+      return (
+        <CustomButton
+          text='Start Routine'
+          fullWidth={true}
+          onClick={(ev) => {
+            ev.stopPropagation()
+            onStartWorkout(workout)
+          }}
+          className='start-workout-button'
+          icon={
+            isLoading && selectedWorkoutId === workout._id ? (
+              <CircularProgress
+                size={20}
+                color='inherit'
+              />
+            ) : (
+              <PlayArrow />
+            )
+          }
+        />
+      )
   }
 
   const renderTimes = () => {
@@ -191,32 +205,36 @@ export function WorkoutCard({
   return (
     <>
       <Card
-        className={`workout-card-container pointer ${className} ${prefs.isDarkMode ? 'dark-mode' : ''
-          }`}
+        className={`workout-card-container pointer ${className} ${
+          prefs.isDarkMode ? 'dark-mode' : ''
+        }`}
         onClick={onViewDetails}
       >
-        <div className="header-container">
-          <Typography variant="h6">{workout.name}</Typography>
-          <div className="header-actions-container">
+        <div className='header-container'>
+          <Typography variant='h6'>{workout.name}</Typography>
+          <div className='header-actions-container'>
             {renderTimes()}
             <CustomOptionsMenu
               options={options}
               triggerElement={
-                <CustomButton isIcon={true} icon={<MoreHorizIcon />} />
+                <CustomButton
+                  isIcon={true}
+                  icon={<MoreHorizIcon />}
+                />
               }
             />
           </div>
         </div>
         <Typography
-          variant="body1"
-          className="muscle-groups-list hide-text-overflow"
+          variant='body1'
+          className='muscle-groups-list hide-text-overflow'
         >
           {getWorkoutMuscles(workout).join(', ')}
         </Typography>
         <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
         <Typography
-          variant="body2"
-          className="exercises-list hide-text-overflow opacity-70"
+          variant='body2'
+          className='exercises-list hide-text-overflow opacity-70'
         >
           {workout.exercises
             .map((exercise) => capitalizeFirstLetter(exercise.name))
@@ -231,40 +249,38 @@ export function WorkoutCard({
             {renderAvailableWorkoutButton()}
           </>
         )}
-        {
-          isDashboard && (
-            <div className="dashboard-actions-container">
-              <CustomButton
-                text="Edit Routine"
-                fullWidth={true}
-                onClick={(ev) => {
-                  ev.stopPropagation()
-                  onEdit()
-                }}
-                className="start-workout-button"
-                icon={<EditIcon />}
-              />
-            </div>
-          )
-        }
+        {isDashboard && (
+          <div className='dashboard-actions-container'>
+            <CustomButton
+              text='Edit Routine'
+              fullWidth={true}
+              onClick={(ev) => {
+                ev.stopPropagation()
+                onEdit()
+              }}
+              className='start-workout-button'
+              icon={<EditIcon />}
+            />
+          </div>
+        )}
       </Card>
       <CustomAlertDialog
         open={isDeleteOpen}
         onClose={() => setIsDeleteOpen(false)}
-        title="Delete Workout"
+        title='Delete Workout'
       >
-        <div className="modal-delete-workout-container">
-          <Typography variant="body1">
+        <div className='modal-delete-workout-container'>
+          <Typography variant='body1'>
             Are you sure you want to delete this workout?
           </Typography>
           <DialogActions>
             <CustomButton
-              text="Cancel"
+              text='Cancel'
               fullWidth={true}
               onClick={() => setIsDeleteOpen(false)}
             />
             <CustomButton
-              text="Delete"
+              text='Delete'
               fullWidth={true}
               onClick={onDelete}
               className={`${prefs.favoriteColor} delete-account-button`}
@@ -277,7 +293,7 @@ export function WorkoutCard({
         onClose={() => setSlideOptions({ open: false, type: null })}
         title={getSlideTitle() || ''}
         component={getSlideComponent() || <></>}
-        type="full"
+        type='full'
       />
     </>
   )

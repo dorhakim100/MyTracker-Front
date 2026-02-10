@@ -174,6 +174,7 @@ export function Workouts() {
         onClick: () => {
           if (selectedWorkoutForOptions) {
             toggleActivateWorkout(selectedWorkoutForOptions)
+            onReorderWorkouts([...reorderedWorkouts, selectedWorkoutForOptions])
           }
         },
       },
@@ -374,6 +375,10 @@ export function Workouts() {
 
       const idsOrder = savedOrders?.order || []
 
+      const isIdentical =
+        JSON.stringify(idsOrder) ===
+        JSON.stringify(activeWorkouts.map((workout) => workout._id))
+
       if (!idsOrder) {
         const newOrder = activeWorkouts.map((workout) => workout._id)
 
@@ -382,19 +387,11 @@ export function Workouts() {
           order: newOrder,
           _id: userIdToCheck,
         })
-      } else if (idsOrder.length !== activeWorkouts.length) {
+      } else if (!isIdentical) {
         newWorkoutsOrder = activeWorkouts.sort((a: Workout, b: Workout) => {
           const aIndex = idsOrder.indexOf(a._id || '')
           const bIndex = idsOrder.indexOf(b._id || '')
           return aIndex - bIndex
-        })
-
-        const newIdsOrder = newWorkoutsOrder.map((workout) => workout._id)
-
-        await indexedDbService.put(ACTIVE_WORKOUTS_ORDER_STORE_NAME, {
-          id: userIdToCheck,
-          order: newIdsOrder,
-          _id: userIdToCheck,
         })
       } else {
         newWorkoutsOrder = activeWorkouts.sort((a: Workout, b: Workout) => {
@@ -404,7 +401,7 @@ export function Workouts() {
         })
       }
 
-      setReorderedWorkouts(newWorkoutsOrder)
+      setReorderedWorkouts([...newWorkoutsOrder])
     } catch (err) {
       console.log(err)
     }

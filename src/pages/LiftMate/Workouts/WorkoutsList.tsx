@@ -32,6 +32,8 @@ export function WorkoutsList({
           onStartWorkout={onStartWorkout}
           selectedWorkoutId={selectedWorkoutId}
           isRenderStartButtons={isRenderStartButtons}
+          onReorderWorkouts={onReorderWorkouts}
+          workouts={workouts}
         />
       )}
       getKey={(workout, index) => workout._id || `workout-${index}`}
