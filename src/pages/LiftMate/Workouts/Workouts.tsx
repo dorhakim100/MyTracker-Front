@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, cache } from 'react'
 import { useSelector } from 'react-redux'
 import {
   handleSessionDayChange,
@@ -61,6 +61,8 @@ import {
   APPROVED_STATUS,
   REJECTED_STATUS,
 } from '../../../assets/config/request-statuses'
+import { indexedDbService } from '../../../services/indexeddb.service'
+import { ACTIVE_WORKOUTS_ORDER_STORE_NAME } from '../../../constants/store.constants'
 
 const EDIT = 'edit'
 const DETAILS = 'details'
@@ -146,6 +148,14 @@ export function Workouts() {
     return isToday
   }, [sessionDay?.date, sessionFilter])
 
+  const activeWorkouts = useMemo(() => {
+    return workouts.filter((workout) => workout.isActive)
+  }, [workouts])
+
+  const inactiveWorkouts = useMemo(() => {
+    return workouts.filter((workout) => !workout.isActive)
+  }, [workouts])
+
   useEffect(() => {
     if (isToday && sessionDay) {
       setTodaySessionDay(sessionDay)
@@ -209,6 +219,49 @@ export function Workouts() {
       loadWorkouts({ forUserId: user._id })
     }
   }, [user, traineeUser, sessionDay?.date])
+
+  useEffect(() => {
+    const orderActiveWorkouts = async () => {
+      try {
+        const userIdToCheck = traineeUser?._id || user?._id
+        if (!userIdToCheck) return
+
+        const savedOrders = await indexedDbService.query<{
+          id: string
+          order: string[]
+          _id: string
+        }>(ACTIVE_WORKOUTS_ORDER_STORE_NAME, 0)
+
+        const saved = savedOrders.find((order) => order.id === userIdToCheck)
+
+        const savedOrder = saved?.order
+
+        if (!savedOrder || savedOrder.length === 0) {
+          const newOrder = activeWorkouts.map((workout) => workout._id)
+          await indexedDbService.post(ACTIVE_WORKOUTS_ORDER_STORE_NAME, {
+            id: userIdToCheck,
+            order: newOrder,
+          })
+        } else if (savedOrder.length !== activeWorkouts.length && saved?._id) {
+          const newOrderedWorkous = activeWorkouts.map((workout) => workout._id)
+
+          await indexedDbService.put(ACTIVE_WORKOUTS_ORDER_STORE_NAME, {
+            id: userIdToCheck,
+            order: newOrderedWorkous,
+            _id: saved?._id,
+          })
+        }
+
+        console.log('savedOrder', savedOrder)
+      } catch (err) {
+        console.log(err)
+      }
+    }
+
+    orderActiveWorkouts()
+
+    const activeWorkoutsIds = activeWorkouts.map((workout) => workout._id)
+  }, [activeWorkouts])
 
   useEffect(() => {
     getUsersRequests()
@@ -383,9 +436,6 @@ export function Workouts() {
   }
 
   const renderWorkoutLists = (isRenderStartButtons: boolean = true) => {
-    const activeWorkouts = workouts.filter((workout) => workout.isActive)
-    const inactiveWorkouts = workouts.filter((workout) => !workout.isActive)
-
     if (activeWorkouts.length === 0 && inactiveWorkouts.length === 0) {
       return (
         <div className='no-workouts-container'>
