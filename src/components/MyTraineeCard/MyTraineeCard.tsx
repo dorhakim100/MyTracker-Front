@@ -144,7 +144,7 @@ export function MyTraineeCard({ displayTrainees = true }: MyTraineeCardProps) {
         if (traineeUser?._id === trainee._id) {
           return (
             <CustomButton
-              className='red'
+              className='disable-button'
               icon={<DisabledVisibleIcon />}
               onClick={() => {
                 removeTraineeUser()

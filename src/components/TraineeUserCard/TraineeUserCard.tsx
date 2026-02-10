@@ -27,18 +27,25 @@ export function TraineeUserCard() {
 
   return (
     <div
-      className={`trainee-user-card-container ${prefs.isDarkMode ? 'dark-mode' : ''
-        } ${isHidden ? 'hidden' : ''}`}
+      className={`trainee-user-card-container ${
+        prefs.isDarkMode ? 'dark-mode' : ''
+      } ${isHidden ? 'hidden' : ''} ${prefs.favoriteColor}`}
     >
       <div className='trainee-details'>
-        <img src={displayImage} alt={displayName} />
+        <img
+          src={displayImage}
+          alt={displayName}
+        />
         <Typography variant='h6'>{displayName}</Typography>
       </div>
       <CustomButton
         icon={<DisabledVisibleIcon />}
-        className='red'
+        className='disable-button'
         onClick={() => {
           removeTraineeUser()
+        }}
+        sx={{
+          backgroundColor: '#d32f2f',
         }}
       />
 

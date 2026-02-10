@@ -28,6 +28,31 @@
     background-color: $darker-gray;
     color: $white;
     border-color: $white;
+
+    &.blue {
+      background-color: $darker-gray-blue;
+    }
+    &.red {
+      background-color: $darker-gray-red;
+    }
+    &.yellow {
+      background-color: $darker-gray-yellow;
+    }
+    &.green {
+      background-color: $darker-gray-green;
+    }
+    &.orange {
+      background-color: $darker-gray-orange;
+    }
+    &.deepPurple {
+      background-color: $darker-gray-deep-purple;
+    }
+    &.purple {
+      background-color: $darker-gray-purple;
+    }
+    &.pink {
+      background-color: $darker-gray-pink;
+    }
   }
 
   .trainee-details {

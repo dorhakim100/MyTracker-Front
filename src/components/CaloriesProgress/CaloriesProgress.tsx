@@ -28,11 +28,9 @@ interface CaloriesProgressProps {
   current: number
   goal: number
   label?: string
-
 }
 
 export function CaloriesProgress({
-
   current,
 
   label = 'Calories',
@@ -49,7 +47,6 @@ export function CaloriesProgress({
   const userToEdit = useSelector(
     (stateSelector: RootState) => stateSelector.userModule.userToEdit
   )
-
 
   const [openModal, setOpenModal] = useState(false)
 
@@ -84,20 +81,22 @@ export function CaloriesProgress({
 
   function getPercentageValue() {
     return (currentValue / (goal || 1)) * 100
-
   }
 
   return (
     <>
       <Card
-        className={`card calories-progress ${prefs.isDarkMode ? 'dark' : ''}`}
-      // onClick={onChangeDisplay}
+        className={`card calories-progress ${prefs.isDarkMode ? 'dark' : ''} ${prefs.favoriteColor}`}
+        // onClick={onChangeDisplay}
       >
-        <Typography variant="h6" className="bold-header">
+        <Typography
+          variant='h6'
+          className='bold-header'
+        >
           {label}
         </Typography>
         <EditIcon onClick={edit} />
-        <div className="goal-container">
+        <div className='goal-container'>
           <GoalBanner
             current={currentValue}
             goal={roundToNearest50(goal || 0)}
@@ -112,9 +111,14 @@ export function CaloriesProgress({
       <SlideDialog
         open={openModal}
         onClose={onClose}
-        component={<CaloriesEdit onCancel={onClose} onSave={onSave} />}
-        title="Edit Calories"
-      // onSave={onSave}
+        component={
+          <CaloriesEdit
+            onCancel={onClose}
+            onSave={onSave}
+          />
+        }
+        title='Edit Calories'
+        // onSave={onSave}
       />
     </>
   )

@@ -279,7 +279,7 @@ export function WeightChart({
       <div className={`weight-chart ${className}`}>
         <Card
           variant='outlined'
-          className={`card weight   ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+          className={`card weight   ${prefs.isDarkMode ? 'dark-mode' : ''} ${prefs.favoriteColor}`}
         >
           <div className='header'>
             <div className='weight-container'>

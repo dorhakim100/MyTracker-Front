@@ -80,23 +80,37 @@ export function MacrosDistribution({
       <Card
         className={`card macros-distribution ${
           prefs.isDarkMode ? 'dark-mode' : ''
-        } ${className}`}
+        } ${className} ${prefs.favoriteColor}`}
       >
         {!hideEditAndHeader && (
-          <Typography variant="h6" className="bold-header">
+          <Typography
+            variant='h6'
+            className='bold-header'
+          >
             Distribution
           </Typography>
         )}
         {!hideEditAndHeader && <EditIcon onClick={edit} />}
-        <MacrosDonut protein={protein} carbs={carbs} fats={fats} />
+        <MacrosDonut
+          protein={protein}
+          carbs={carbs}
+          fats={fats}
+        />
 
-        <Macros protein={protein} carbs={carbs} fats={fats} />
+        <Macros
+          protein={protein}
+          carbs={carbs}
+          fats={fats}
+        />
       </Card>
       <SlideDialog
         open={open}
         onClose={onClose}
         component={
-          <MacrosDistributionEdit onCancel={onClose} onSave={onSave} />
+          <MacrosDistributionEdit
+            onCancel={onClose}
+            onSave={onSave}
+          />
         }
         // onSave={onSave}
       />

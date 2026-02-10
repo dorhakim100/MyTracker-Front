@@ -120,12 +120,18 @@ export function WeightCard() {
     const weight = selectedDay?.weight?.kg
 
     return weight ? (
-      <Typography variant='body1' className='weight-text'>
+      <Typography
+        variant='body1'
+        className='weight-text'
+      >
         {weight}
         <span className='weight-text-kg'>kg</span>
       </Typography>
     ) : (
-      <Typography variant='body1' className='weight-text'>
+      <Typography
+        variant='body1'
+        className='weight-text'
+      >
         Haven't logged...
       </Typography>
     )
@@ -135,7 +141,7 @@ export function WeightCard() {
     <>
       <Card
         variant='outlined'
-        className={`card weight-card ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+        className={`card weight-card ${prefs.isDarkMode ? 'dark-mode' : ''} ${prefs.favoriteColor}`}
       >
         <div className='date-picker-container'>
           <CustomDatePicker
@@ -144,13 +150,19 @@ export function WeightCard() {
             className={`${prefs.favoriteColor}`}
           />
         </div>
-        <Typography variant='body2' className='date-text'>
+        <Typography
+          variant='body2'
+          className='date-text'
+        >
           Date: {heDate}
         </Typography>
 
         <div className='weight-container'>{renderWeight()}</div>
         <div className='animation-container'>
-          <Lottie animationData={scaleAnimation} loop={true} />
+          <Lottie
+            animationData={scaleAnimation}
+            loop={true}
+          />
         </div>
         <div className='update-weight-button-container'>
           <CustomButton
@@ -163,7 +175,12 @@ export function WeightCard() {
       <SlideDialog
         open={open}
         onClose={onClose}
-        component={<WeightEdit value={weightToAdd} onChange={onSave} />}
+        component={
+          <WeightEdit
+            value={weightToAdd}
+            onChange={onSave}
+          />
+        }
         title='Update Weight'
       />
     </>

@@ -849,7 +849,7 @@ select {
     .MuiFab-circular
   ):not(.MuiPickersDay-root):not(.delete-account-button):not(
     .MuiBottomNavigationAction-root
-  ),
+  ):not(.disable-button),
 .MuiToolbar-gutters,
 .MuiToolbar-root,
 .MuiFab-root,
@@ -1576,4 +1576,9 @@ body.dark-mode {
 
 .pointer {
   cursor: pointer;
+}
+
+.disable-button {
+  background-color: $error-color !important;
+  color: $white !important;
 }
