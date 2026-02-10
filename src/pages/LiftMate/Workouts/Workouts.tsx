@@ -201,7 +201,6 @@ export function Workouts() {
 
   useEffect(() => {
     if (!user) return
-
     loadWorkouts({
       forUserId: traineeUser?._id || user?._id,
       from: selectedPastDate?.from,
@@ -482,7 +481,9 @@ export function Workouts() {
           } active`}
         >
           <WorkoutsList
-            workouts={reorderedWorkouts}
+            workouts={
+              reorderedWorkouts.length > 0 ? reorderedWorkouts : activeWorkouts
+            }
             className={`active-list`}
             onStartWorkout={onStartWorkout}
             selectedWorkoutId={selectedWorkoutId}
