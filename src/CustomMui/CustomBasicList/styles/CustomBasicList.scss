@@ -5,6 +5,62 @@
   &.dark-mode {
     color: $white;
   }
+
+  .draggable-item {
+    &.dragging {
+      .MuiCard-root {
+        opacity: 0.8;
+        border-inline-start: 2px solid $primary-color;
+      }
+      &.blue {
+        .MuiCard-root {
+          border-inline-start: 2px solid $picker-color-blue;
+        }
+      }
+
+      &.red {
+        .MuiCard-root {
+          border-inline-start: 2px solid $picker-color-red;
+        }
+      }
+
+      &.yellow {
+        .MuiCard-root {
+          border-inline-start: 2px solid $picker-color-yellow;
+        }
+      }
+
+      &.green {
+        .MuiCard-root {
+          border-inline-start: 2px solid $picker-color-green;
+        }
+      }
+
+      &.orange {
+        .MuiCard-root {
+          border-inline-start: 2px solid $picker-color-orange;
+        }
+      }
+
+      &.deepPurple {
+        .MuiCard-root {
+          border-inline-start: 2px solid $picker-color-deep-purple;
+        }
+      }
+
+      &.purple {
+        .MuiCard-root {
+          border-inline-start: 2px solid $picker-color-purple;
+        }
+      }
+
+      &.pink {
+        .MuiCard-root {
+          border-inline-start: 2px solid $picker-color-pink;
+        }
+      }
+    }
+  }
 }
 
 .custom-basic-list-empty {

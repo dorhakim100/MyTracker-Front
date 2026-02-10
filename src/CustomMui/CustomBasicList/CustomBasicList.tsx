@@ -72,7 +72,10 @@ export function CustomBasicList<T>({
   }
 
   return (
-    <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
+    <DragDropContext
+      onDragStart={onDragStart}
+      onDragEnd={onDragEnd}
+    >
       <Droppable
         droppableId='droppable'
         direction={isDashboard ? 'horizontal' : 'vertical'}
@@ -89,7 +92,10 @@ export function CustomBasicList<T>({
             }`}
             style={{
               ...(isDragging && containerHeight !== null
-                ? { height: `${containerHeight}px`, minHeight: `${containerHeight}px` }
+                ? {
+                    height: `${containerHeight}px`,
+                    minHeight: `${containerHeight}px`,
+                  }
                 : {}),
             }}
           >
@@ -99,11 +105,12 @@ export function CustomBasicList<T>({
                 draggableId={getKey ? getKey(item, index) + '' : index + ''}
                 index={index}
               >
-                {(provided) => (
+                {(provided, snapshot) => (
                   <div
                     ref={provided.innerRef}
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
+                    className={`draggable-item ${snapshot.isDragging ? 'dragging' : ''} ${prefs.favoriteColor}`}
                   >
                     {renderItem(item, index)}
                   </div>
