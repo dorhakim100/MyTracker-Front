@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, cache } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import {
   handleSessionDayChange,
