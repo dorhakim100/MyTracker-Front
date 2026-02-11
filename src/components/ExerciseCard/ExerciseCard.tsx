@@ -70,7 +70,8 @@ interface ExerciseCardProps {
   ) => Promise<void> | void
   markSetAsDone?: (
     exercise: ExerciseInstructions,
-    setIndex: number
+    setIndex: number,
+    isAll?: boolean
   ) => Promise<void> | void
   isOpen?: boolean
   onOpenChange?: () => void
@@ -264,7 +265,7 @@ export function ExerciseCard({
       )
       const indexToUse = setIndex !== -1 ? setIndex : 0
 
-      await markSetAsDone(newExerciseInstructions, indexToUse)
+      await markSetAsDone(newExerciseInstructions, indexToUse, true)
       const sets = await setService.getSetsBySessionIdAndExerciseId(
         sessionDay._id,
         exercise.exerciseId
@@ -570,10 +571,11 @@ export function ExerciseCard({
             markSetAsDone={
               isExpected
                 ? undefined
-                : (exerciseToUpdate, setIndex) =>
+                : (exerciseToUpdate, setIndex, isAll?: boolean) =>
                     markSetAsDone?.(
                       { ...exerciseToUpdate, image: exercise.image },
-                      setIndex
+                      setIndex,
+                      isAll
                     )
             }
             isExpected={isExpected}

@@ -415,13 +415,29 @@ export function WorkoutSession({
 
   const updateSet = async (
     exercise: ExerciseInstructions,
-    setIndex: number
+    setIndex: number,
+    isAll: boolean = false
   ) => {
     if (!sessionDay._id) {
       showErrorMsg(messages.error.updateSet)
       return
     }
     try {
+      if (isAll) {
+        const setsToSave = exercise.sets.map((set) => cleanSet(set))
+        await Promise.all(
+          setsToSave.map(async (set) => {
+            await setService.saveSetBySessionIdAndExerciseId(
+              sessionDay._id || '',
+              exercise.exerciseId,
+              set,
+              set.setIndex,
+              false // isNew - updating existing set
+            )
+          })
+        )
+      }
+
       const setToSave = cleanSet(exercise.sets[setIndex])
       await setService.saveSetBySessionIdAndExerciseId(
         sessionDay._id,
@@ -587,7 +603,8 @@ export function WorkoutSession({
   // Marks a set as done and handles timer/exercise completion
   const markSetAsDone = async (
     exercise: ExerciseInstructions,
-    setIndex: number
+    setIndex: number,
+    isAll?: boolean
   ): Promise<void> => {
     if (!sessionDay._id) {
       showErrorMsg(messages.error.updateSet)
@@ -607,6 +624,9 @@ export function WorkoutSession({
     })
 
     try {
+      let promises = []
+      promises.push(saveNewInstructions(newInstructions))
+
       const currentExerciseToSet = { ...exercise, setIndex }
       // Check if exercise is done
       if (isExerciseDone(exercise)) {
@@ -626,22 +646,36 @@ export function WorkoutSession({
           startTime: new Date().getTime(),
         })
       }
-      const setToSave = cleanSet(exercise.sets[setIndex])
-
-      const promises = []
-      promises.push(saveNewInstructions(newInstructions))
-      promises.push(
-        setService.saveSetBySessionIdAndExerciseId(
-          sessionDay._id,
-          exercise.exerciseId,
-          {
-            ...setToSave,
-            userId: sessionDay.workout.forUserId || '',
-          },
-          setIndex,
-          false // isNew
+      if (isAll) {
+        const setsToSave = exercise.sets.map((set) => cleanSet(set))
+        promises = promises.concat(
+          setsToSave.map((set, idx) => {
+            return setService.saveSetBySessionIdAndExerciseId(
+              sessionDay._id || '',
+              exercise.exerciseId,
+              set,
+              set.index || idx,
+              false // isNew - updating existing set
+            )
+          })
         )
-      )
+      } else {
+        const setToSave = cleanSet(exercise.sets[setIndex])
+
+        promises = promises.concat(
+          setService.saveSetBySessionIdAndExerciseId(
+            sessionDay._id,
+            exercise.exerciseId,
+            {
+              ...setToSave,
+              userId: sessionDay.workout.forUserId || '',
+            },
+            setIndex,
+            false // isNew
+          )
+        )
+      }
+
       const [savedInstructions] = await Promise.all(promises)
 
       if (savedInstructions) {
@@ -662,8 +696,6 @@ export function WorkoutSession({
         await handleAllExercisesCompleted(savedInstructions || newInstructions)
         handleOpenChange(exercise.exerciseId, false)
       }
-
-      // Save the updated set to backend
     } catch (err) {
       // Rollback on error
       setSelectedSessionDay({
