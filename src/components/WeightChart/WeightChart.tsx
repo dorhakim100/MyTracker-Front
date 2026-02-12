@@ -65,7 +65,9 @@ export function WeightChart({
 
   const [weights, setWeights] = useState<Weight[]>([])
   const [previousWeights, setPreviousWeights] = useState<Weight[]>([])
-
+  const [previous2WeeksWeights, setPrevious2WeeksWeights] = useState<Weight[]>(
+    []
+  )
   const [stats, setStats] = useState<Stats>({
     selectedDate: new Date(),
     selectedWeight: 0,
@@ -74,6 +76,7 @@ export function WeightChart({
   })
 
   const [openSettings, setOpenSettings] = useState(false)
+  const [selectedIndex, setSelectedIndex] = useState(0)
 
   const data = useMemo(() => {
     setChartLoading(true)
@@ -168,6 +171,29 @@ export function WeightChart({
     return res
   }, [weights, previousWeights, range])
 
+  const weeklyChange = useMemo(() => {
+    const currAverage = movingAverageData[selectedIndex]
+    let prevAverage =
+      movingAverageData[selectedIndex - DEFAULT_MOVING_AVERAGE_PERIOD]
+    if (!currAverage || !prevAverage) {
+      return 0
+    }
+
+    if (!prevAverage) {
+      const calcPrevAverage = +(
+        previous2WeeksWeights.reduce((acc, curr) => {
+          return acc + curr.kg
+        }, 0) / previous2WeeksWeights.length
+      ).toFixed(1)
+
+      prevAverage = calcPrevAverage
+    }
+
+    const diff = +(currAverage - prevAverage).toFixed(1)
+
+    return diff
+  }, [movingAverageData, selectedIndex])
+
   useEffect(() => {
     const fetchWeights = async () => {
       setChartLoading(true)
@@ -207,6 +233,13 @@ export function WeightChart({
         toDate: toDate ? toDate.toISOString() : null,
       })
 
+      const fromDateMinusTwoWeeks = fromDate
+        ? new Date(fromDate.getTime() - 86400000 * 13).toISOString()
+        : null
+
+      const toDateMinusTwoWeeks = fromDate
+        ? new Date(fromDate.getTime() - 86400000 * 6).toISOString()
+        : null
       const fromDateMinusWeek = fromDate
         ? new Date(fromDate.getTime() - 86400000 * 7).toISOString()
         : null
@@ -220,9 +253,15 @@ export function WeightChart({
         toDate: toDateMinusWeek,
       })
 
+      const previous2WeeksWeight = await weightService.query({
+        userId: sentUser?._id || user?._id,
+        fromDate: fromDateMinusTwoWeeks,
+        toDate: toDateMinusTwoWeeks,
+      })
+
       setWeights(weights)
       setPreviousWeights(previousWeight)
-
+      setPrevious2WeeksWeights(previous2WeeksWeight)
       setStats({
         selectedDate: new Date(),
         selectedWeight: weights[0]?.kg || 0,
@@ -256,6 +295,8 @@ export function WeightChart({
     } else if (!weight && !estimatedValue) {
       messageToSet = 'No weight logged'
     }
+
+    setSelectedIndex(index)
 
     setStats({
       selectedDate: getFullDate(data.labels[index]),
