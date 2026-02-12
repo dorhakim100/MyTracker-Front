@@ -175,9 +175,6 @@ export function WeightChart({
     const currAverage = movingAverageData[selectedIndex]
     let prevAverage =
       movingAverageData[selectedIndex - DEFAULT_MOVING_AVERAGE_PERIOD]
-    if (!currAverage || !prevAverage) {
-      return 0
-    }
 
     if (!prevAverage) {
       const calcPrevAverage = +(
@@ -187,6 +184,9 @@ export function WeightChart({
       ).toFixed(1)
 
       prevAverage = calcPrevAverage
+    }
+    if (!currAverage || !prevAverage) {
+      return 0
     }
 
     const diff = +(currAverage - prevAverage).toFixed(1)
@@ -269,6 +269,7 @@ export function WeightChart({
         isGoal: false,
       })
       setChartLoading(false)
+      setSelectedIndex(weights.length - 1)
     }
     fetchWeights()
   }, [sentUser?._id, user?._id, range, user?.lastWeight])
@@ -329,6 +330,17 @@ export function WeightChart({
                 {stats.selectedWeight}
                 {stats.selectedWeight && <span className='kg'>kg</span>}
               </h3>
+
+              <Typography
+                variant='body2'
+                className={`weekly-change ${weeklyChange !== 0 ? 'has-change' : ''} ${weeklyChange > 0 ? 'positive' : 'negative'} ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+              >
+                {weeklyChange !== 0 && weeklyChange > 0
+                  ? `+${weeklyChange} kg`
+                  : weeklyChange < 0
+                    ? `${weeklyChange} kg`
+                    : 'No change'}
+              </Typography>
 
               {stats.message && (
                 <Typography

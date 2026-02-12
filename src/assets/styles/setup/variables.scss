@@ -61,6 +61,9 @@
 
   --success-color: #2e7d32;
   --error-color: #d32f2f;
+
+  --success-color-dark-mode: #6fd38c;
+  --error-color-dark-mode: #f28b82;
 }
 
 // Colors
@@ -116,6 +119,8 @@ $picker-color-pink-darker: var(--picker-color-pink-darker);
 
 $success-color: var(--success-color);
 $error-color: var(--error-color);
+$success-color-dark-mode: var(--success-color-dark-mode);
+$error-color-dark-mode: var(--error-color-dark-mode);
 
 // Shades of Red
 $light-red: #f28b82;
