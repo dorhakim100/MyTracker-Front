@@ -45,6 +45,12 @@
       gap: 0.5rem;
 
       .weekly-change {
+        .since-last-week {
+          color: $dark-gray;
+          &.dark-mode {
+            color: $light-gray;
+          }
+        }
         &.has-change {
           font-weight: 600;
           &.positive {

@@ -332,16 +332,24 @@ export function WeightChart({
               </h3>
 
               {prefs.weightChartSettings.isDisplayWeeklyChange && (
-                <Typography
-                  variant='body2'
-                  className={`weekly-change ${weeklyChange !== 0 ? 'has-change' : ''} ${weeklyChange > 0 ? 'positive' : 'negative'} ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-                >
-                  {weeklyChange !== 0 && weeklyChange > 0
-                    ? `+${weeklyChange} kg`
-                    : weeklyChange < 0
-                      ? `${weeklyChange} kg`
-                      : 'No change'}
-                </Typography>
+                <>
+                  <Typography
+                    variant='body1'
+                    className={`weekly-change ${weeklyChange !== 0 ? 'has-change' : ''} ${weeklyChange > 0 ? 'positive' : 'negative'} ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+                  >
+                    {weeklyChange !== 0 && weeklyChange > 0
+                      ? `+${weeklyChange} kg`
+                      : weeklyChange < 0
+                        ? `${weeklyChange} kg`
+                        : 'No change'}
+                  </Typography>
+                  <Typography
+                    variant='caption'
+                    className={`since-last-week ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+                  >
+                    (since last week)
+                  </Typography>
+                </>
               )}
 
               {stats.message && (
