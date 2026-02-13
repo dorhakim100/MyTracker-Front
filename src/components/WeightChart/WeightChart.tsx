@@ -331,16 +331,18 @@ export function WeightChart({
                 {stats.selectedWeight && <span className='kg'>kg</span>}
               </h3>
 
-              <Typography
-                variant='body2'
-                className={`weekly-change ${weeklyChange !== 0 ? 'has-change' : ''} ${weeklyChange > 0 ? 'positive' : 'negative'} ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-              >
-                {weeklyChange !== 0 && weeklyChange > 0
-                  ? `+${weeklyChange} kg`
-                  : weeklyChange < 0
-                    ? `${weeklyChange} kg`
-                    : 'No change'}
-              </Typography>
+              {prefs.weightChartSettings.isDisplayWeeklyChange && (
+                <Typography
+                  variant='body2'
+                  className={`weekly-change ${weeklyChange !== 0 ? 'has-change' : ''} ${weeklyChange > 0 ? 'positive' : 'negative'} ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+                >
+                  {weeklyChange !== 0 && weeklyChange > 0
+                    ? `+${weeklyChange} kg`
+                    : weeklyChange < 0
+                      ? `${weeklyChange} kg`
+                      : 'No change'}
+                </Typography>
+              )}
 
               {stats.message && (
                 <Typography
@@ -431,6 +433,15 @@ const ModalWeightChartSettings = () => {
       },
     })
   }
+  const onDisplayWeeklyChange = (display: boolean) => {
+    setPrefs({
+      ...prefs,
+      weightChartSettings: {
+        ...prefs.weightChartSettings,
+        isDisplayWeeklyChange: display,
+      },
+    })
+  }
 
   return (
     <div className='weight-chart-settings-container'>
@@ -444,6 +455,21 @@ const ModalWeightChartSettings = () => {
 
         <CustomIOSSwitch
           checked={prefs.weightChartSettings.isMovingAverage}
+          color={prefs.favoriteColor}
+        />
+      </div>
+      <div
+        className='display-moving-average-container'
+        onClick={() =>
+          onDisplayWeeklyChange(
+            !prefs.weightChartSettings.isDisplayWeeklyChange
+          )
+        }
+      >
+        <Typography variant='h6'>Display Weekly Change</Typography>
+
+        <CustomIOSSwitch
+          checked={prefs.weightChartSettings.isDisplayWeeklyChange}
           color={prefs.favoriteColor}
         />
       </div>

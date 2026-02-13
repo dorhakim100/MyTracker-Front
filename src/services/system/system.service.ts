@@ -85,6 +85,7 @@ export function getDefaultsPrefs(): Prefs {
     weightChartSettings: {
       movingAverageColor: 'orange',
       isMovingAverage: true,
+      isDisplayWeeklyChange: true,
     },
   }
 }
