@@ -41,44 +41,48 @@
 
     &.blue {
       .MuiTabs-indicator {
-        background-color: $primary-color !important;
+        background-color: $picker-color-blue !important;
       }
     }
 
     &.green {
       .MuiTabs-indicator {
-        background-color: $primary-color !important;
+        background-color: $picker-color-green !important;
       }
     }
 
     &.yellow {
       .MuiTabs-indicator {
-        background-color: $primary-color !important;
+        background-color: $picker-color-yellow !important;
+      }
+    }
+    &.red {
+      .MuiTabs-indicator {
+        background-color: $picker-color-red !important;
       }
     }
 
     &.orange {
       .MuiTabs-indicator {
-        background-color: $primary-color !important;
+        background-color: $picker-color-orange !important;
       }
     }
 
     &.deepPurple {
       .MuiTabs-indicator {
-        background-color: $primary-color !important;
+        background-color: $picker-color-deep-purple !important;
       }
     }
-  }
-
-  &.purple {
-    .MuiTabs-indicator {
-      background-color: $primary-color !important;
+    &.purple {
+      .MuiTabs-indicator {
+        background-color: $picker-color-purple !important;
+      }
     }
-  }
 
-  &.pink {
-    .MuiTabs-indicator {
-      background-color: $primary-color !important;
+    &.pink {
+      .MuiTabs-indicator {
+        background-color: $picker-color-pink !important;
+      }
     }
   }
 }

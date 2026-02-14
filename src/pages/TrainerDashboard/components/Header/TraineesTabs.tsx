@@ -73,7 +73,9 @@ export function TraineesTabs({ trainees }: TraineesTabsProps) {
   }
 
   return (
-    <div className='trainees-tabs-container'>
+    <div
+      className={`trainees-tabs-container ${prefs.isDarkMode ? 'dark-mode' : ''} ${prefs.favoriteColor}`}
+    >
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable
           droppableId='trainees-tabs'
