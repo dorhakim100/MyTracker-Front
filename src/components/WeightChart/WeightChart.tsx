@@ -346,24 +346,10 @@ export function WeightChart({
 
               {prefs.weightChartSettings.isDisplayWeeklyChange &&
                 !stats.isGoal && (
-                  <>
-                    <Typography
-                      variant='body1'
-                      className={`range-change ${rangeChange !== 0 ? 'has-change' : ''} ${rangeChange > 0 ? 'positive' : 'negative'} ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-                    >
-                      {rangeChange !== 0 && rangeChange > 0
-                        ? `+${rangeChange} kg`
-                        : rangeChange < 0
-                          ? `${rangeChange} kg`
-                          : 'No change'}
-                    </Typography>
-                    <Typography
-                      variant='caption'
-                      className={`since-last-week ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-                    >
-                      (since last {range})
-                    </Typography>
-                  </>
+                  <WeightChangeDisplay
+                    value={rangeChange}
+                    range={range}
+                  />
                 )}
 
               {stats.message && (
