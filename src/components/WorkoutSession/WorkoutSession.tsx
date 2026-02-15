@@ -164,6 +164,12 @@ export function WorkoutSession({
       )
       return
     }
+    const isFinished = sessionDay.instructions.isFinished
+
+    if (isFinished) {
+      setOpenExercises(new Set([]))
+      return
+    }
 
     if (
       !sessionDay.instructions.exercises ||
@@ -176,6 +182,7 @@ export function WorkoutSession({
     const firstExerciseToOpen = sessionDay.instructions.exercises.find(
       (e) => !isExerciseDone(e)
     )
+
     if (firstExerciseToOpen) {
       handleOpenChange(firstExerciseToOpen.exerciseId, true)
     }
