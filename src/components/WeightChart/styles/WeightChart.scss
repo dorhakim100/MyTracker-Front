@@ -75,34 +75,6 @@
       }
     }
   }
-  .weekly-change,
-  .range-change {
-    .since-last-week,
-    .since-last-range {
-      color: $dark-gray;
-      &.dark-mode {
-        color: $light-gray;
-      }
-    }
-    &.has-change {
-      font-weight: 600;
-      &.positive {
-        color: $success-color;
-      }
-      &.negative {
-        color: $error-color;
-      }
-      &.dark-mode {
-        &.positive {
-          color: $success-color-dark-mode;
-        }
-        &.negative {
-          color: $error-color-dark-mode;
-        }
-      }
-    }
-  }
-
   .date-container {
     display: flex;
     align-items: center;

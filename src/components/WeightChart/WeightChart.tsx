@@ -27,6 +27,7 @@ import { setPrefs } from '../../store/actions/system.actions'
 import { CustomIOSSwitch } from '../../CustomMui/CustomIOSSwitch/CustomIOSSwitch'
 import { prepareSeries } from '../../services/util.service'
 import { User } from '../../types/user/User'
+import { WeightChangeDisplay } from '../WeightChangeDisplay/WeightChangeDisplay'
 
 interface WeightChartProps {
   className?: string
@@ -382,26 +383,7 @@ export function WeightChart({
                 isClock={false}
               />
               {prefs.weightChartSettings.isDisplayWeeklyChange &&
-                !stats.isGoal && (
-                  <>
-                    <Typography
-                      variant='body1'
-                      className={`weekly-change ${weeklyChange !== 0 ? 'has-change' : ''} ${weeklyChange > 0 ? 'positive' : 'negative'} ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-                    >
-                      {weeklyChange !== 0 && weeklyChange > 0
-                        ? `+${weeklyChange} kg`
-                        : weeklyChange < 0
-                          ? `${weeklyChange} kg`
-                          : 'No change'}
-                    </Typography>
-                    <Typography
-                      variant='caption'
-                      className={`since-last-week ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-                    >
-                      (since last week)
-                    </Typography>
-                  </>
-                )}
+                !stats.isGoal && <WeightChangeDisplay value={weeklyChange} />}
             </div>
 
             <div className='setting-button-container'>
