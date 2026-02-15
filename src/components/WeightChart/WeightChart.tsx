@@ -436,21 +436,15 @@ const ModalWeightChartSettings = () => {
     })
   }
 
-  const onDisplayMovingAverage = (display: boolean) => {
+  const onToggleDisplay = (
+    type: 'isMovingAverage' | 'isDisplayWeeklyChange'
+  ) => {
+    const newValue = !prefs.weightChartSettings[type]
     setPrefs({
       ...prefs,
       weightChartSettings: {
         ...prefs.weightChartSettings,
-        isMovingAverage: display,
-      },
-    })
-  }
-  const onDisplayWeeklyChange = (display: boolean) => {
-    setPrefs({
-      ...prefs,
-      weightChartSettings: {
-        ...prefs.weightChartSettings,
-        isDisplayWeeklyChange: display,
+        [type]: newValue,
       },
     })
   }
@@ -459,9 +453,7 @@ const ModalWeightChartSettings = () => {
     <div className='weight-chart-settings-container'>
       <div
         className='display-moving-average-container'
-        onClick={() =>
-          onDisplayMovingAverage(!prefs.weightChartSettings.isMovingAverage)
-        }
+        onClick={() => onToggleDisplay('isMovingAverage')}
       >
         <Typography variant='h6'>Display Weakly Average</Typography>
 
@@ -472,13 +464,9 @@ const ModalWeightChartSettings = () => {
       </div>
       <div
         className='display-moving-average-container'
-        onClick={() =>
-          onDisplayWeeklyChange(
-            !prefs.weightChartSettings.isDisplayWeeklyChange
-          )
-        }
+        onClick={() => onToggleDisplay('isDisplayWeeklyChange')}
       >
-        <Typography variant='h6'>Display Weekly Change</Typography>
+        <Typography variant='h6'>Display Weight Change</Typography>
 
         <CustomIOSSwitch
           checked={prefs.weightChartSettings.isDisplayWeeklyChange}
