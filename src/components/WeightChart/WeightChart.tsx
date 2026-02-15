@@ -194,6 +194,18 @@ export function WeightChart({
     return diff
   }, [movingAverageData, selectedIndex])
 
+  const rangeChange = useMemo(() => {
+    const firstAverage = movingAverageData.find((average) => average !== null)
+    const lastAverage = movingAverageData
+      .reverse()
+      .find((average) => average !== null)
+    if (!firstAverage || !lastAverage) {
+      return 0
+    }
+    const diff = +(lastAverage - firstAverage).toFixed(1)
+    return diff
+  }, [movingAverageData, range])
+
   useEffect(() => {
     const fetchWeights = async () => {
       setChartLoading(true)
@@ -331,26 +343,27 @@ export function WeightChart({
                 {stats.selectedWeight && <span className='kg'>kg</span>}
               </h3>
 
-              {prefs.weightChartSettings.isDisplayWeeklyChange && (
-                <>
-                  <Typography
-                    variant='body1'
-                    className={`weekly-change ${weeklyChange !== 0 ? 'has-change' : ''} ${weeklyChange > 0 ? 'positive' : 'negative'} ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-                  >
-                    {weeklyChange !== 0 && weeklyChange > 0
-                      ? `+${weeklyChange} kg`
-                      : weeklyChange < 0
-                        ? `${weeklyChange} kg`
-                        : 'No change'}
-                  </Typography>
-                  <Typography
-                    variant='caption'
-                    className={`since-last-week ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-                  >
-                    (since last week)
-                  </Typography>
-                </>
-              )}
+              {prefs.weightChartSettings.isDisplayWeeklyChange &&
+                !stats.isGoal && (
+                  <>
+                    <Typography
+                      variant='body1'
+                      className={`range-change ${rangeChange !== 0 ? 'has-change' : ''} ${rangeChange > 0 ? 'positive' : 'negative'} ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+                    >
+                      {rangeChange !== 0 && rangeChange > 0
+                        ? `+${rangeChange} kg`
+                        : rangeChange < 0
+                          ? `${rangeChange} kg`
+                          : 'No change'}
+                    </Typography>
+                    <Typography
+                      variant='caption'
+                      className={`since-last-week ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+                    >
+                      (since last {range})
+                    </Typography>
+                  </>
+                )}
 
               {stats.message && (
                 <Typography
@@ -368,7 +381,29 @@ export function WeightChart({
                 selectedDay={stats.selectedDate}
                 isClock={false}
               />
+              {prefs.weightChartSettings.isDisplayWeeklyChange &&
+                !stats.isGoal && (
+                  <>
+                    <Typography
+                      variant='body1'
+                      className={`weekly-change ${weeklyChange !== 0 ? 'has-change' : ''} ${weeklyChange > 0 ? 'positive' : 'negative'} ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+                    >
+                      {weeklyChange !== 0 && weeklyChange > 0
+                        ? `+${weeklyChange} kg`
+                        : weeklyChange < 0
+                          ? `${weeklyChange} kg`
+                          : 'No change'}
+                    </Typography>
+                    <Typography
+                      variant='caption'
+                      className={`since-last-week ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+                    >
+                      (since last week)
+                    </Typography>
+                  </>
+                )}
             </div>
+
             <div className='setting-button-container'>
               <CustomButton
                 isIcon={true}
@@ -379,6 +414,7 @@ export function WeightChart({
               />
             </div>
           </div>
+
           <div className='chart-container'>
             <LineChart
               data={data}
