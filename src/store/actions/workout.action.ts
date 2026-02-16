@@ -14,6 +14,7 @@ import {
   SET_TIMER,
   REMOVE_TODAY_SESSION_DAY,
   SET_TODAY_SESSION_DAY,
+  SET_CURR_UPDATED_EXERCISE_SETTINGS,
 } from '../reducers/workout.reducer'
 import { Workout } from '../../types/workout/Workout'
 import { WorkoutFilter } from '../../types/workoutFilter/WorkoutFilter'
@@ -21,6 +22,7 @@ import { User } from '../../types/user/User'
 import { SessionDay } from '../../types/workout/SessionDay'
 import { sessionService } from '../../services/session/session.service'
 import { ExerciseInstructions } from '../../types/exercise/ExerciseInstructions'
+import type { CurrUpdatedExerciseSettings } from '../../types/workout/CurrUpdatedExerciseSettings'
 import { indexedDbService } from '../../services/indexeddb.service'
 import { Timer } from '../../types/timer/Timer'
 import { DEFAULT_RESTING_TIME } from '../../assets/config/times'
@@ -178,4 +180,13 @@ export function setTodaySessionDay(todaySessionDay: SessionDay) {
 
 export function removeTodaySessionDay() {
   store.dispatch({ type: REMOVE_TODAY_SESSION_DAY })
+}
+
+export function setCurrUpdatedExerciseSettings(
+  currUpdatedExerciseSettings: CurrUpdatedExerciseSettings
+) {
+  store.dispatch({
+    type: SET_CURR_UPDATED_EXERCISE_SETTINGS,
+    currUpdatedExerciseSettings,
+  })
 }

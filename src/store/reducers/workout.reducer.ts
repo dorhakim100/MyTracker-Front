@@ -2,6 +2,7 @@ import { workoutService } from '../../services/workout/workout.service'
 import { Workout } from '../../types/workout/Workout'
 import { SessionDay } from '../../types/workout/SessionDay'
 import { ExerciseInstructions } from '../../types/exercise/ExerciseInstructions'
+import { CurrUpdatedExerciseSettings } from '../../types/workout/CurrUpdatedExerciseSettings'
 
 export const SET_WORKOUTS = 'SET_WORKOUTS'
 export const SET_WORKOUT = 'SET_WORKOUT'
@@ -16,6 +17,9 @@ export const SET_TIMER = 'SET_TIMER'
 export const REMOVE_TIMER = 'REMOVE_TIMER'
 export const SET_TODAY_SESSION_DAY = 'SET_TODAY_SESSION_DAY'
 export const REMOVE_TODAY_SESSION_DAY = 'REMOVE_TODAY_SESSION_DAY'
+export const SET_CURR_UPDATED_EXERCISE_SETTINGS =
+  'SET_CURR_UPDATED_EXERCISE_SETTINGS'
+
 export interface WorkoutState {
   workouts: Workout[]
   workout: Workout
@@ -23,6 +27,12 @@ export interface WorkoutState {
   currentExercise: ExerciseInstructions | null
   timer: any | null
   todaySessionDay: SessionDay | null
+  currUpdatedExerciseSettings: CurrUpdatedExerciseSettings
+}
+
+const initialCurrUpdatedExerciseSettings: CurrUpdatedExerciseSettings = {
+  exerciseId: '',
+  setIndex: -1,
 }
 
 const initialState: WorkoutState = {
@@ -32,6 +42,7 @@ const initialState: WorkoutState = {
   currentExercise: null,
   timer: null,
   todaySessionDay: null,
+  currUpdatedExerciseSettings: initialCurrUpdatedExerciseSettings,
 }
 
 export function workoutReducer(state = initialState, action: any) {
@@ -85,6 +96,12 @@ export function workoutReducer(state = initialState, action: any) {
       break
     case REMOVE_TODAY_SESSION_DAY:
       newState = { ...state, todaySessionDay: null }
+      break
+    case SET_CURR_UPDATED_EXERCISE_SETTINGS:
+      newState = {
+        ...state,
+        currUpdatedExerciseSettings: action.currUpdatedExerciseSettings,
+      }
       break
     default:
   }

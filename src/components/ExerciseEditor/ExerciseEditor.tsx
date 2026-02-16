@@ -1,6 +1,13 @@
 import { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { Badge, Checkbox, Divider, Tooltip, Typography } from '@mui/material'
+import {
+  Badge,
+  Checkbox,
+  CircularProgress,
+  Divider,
+  Tooltip,
+  Typography,
+} from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 
 import { RootState } from '../../store/store'
@@ -92,6 +99,10 @@ export function ExerciseEditor({
 
   const sessionDay = useSelector(
     (stateSelector: RootState) => stateSelector.workoutModule.sessionDay
+  )
+  const currUpdatedExerciseSettings = useSelector(
+    (stateSelector: RootState) =>
+      stateSelector.workoutModule.currUpdatedExerciseSettings
   )
   const { width: windowWidth } = useWindowDimentions()
   const isDashboard = useSelector(
@@ -277,6 +288,10 @@ export function ExerciseEditor({
     }
   }
 
+  useEffect(() => {
+    console.log('currUpdatedExerciseSettings', currUpdatedExerciseSettings)
+  }, [currUpdatedExerciseSettings])
+
   return (
     <>
       <div
@@ -312,7 +327,7 @@ export function ExerciseEditor({
         )}
         {exercise.sets && exercise.sets.length > 0 && (
           <SwipeableWrapper
-            disableSwipe={isDashboard}
+            disableSwipe={isDashboard || currUpdatedExerciseSettings.exerciseId}
             items={exercise.sets.map((set, index) => ({
               id: `${exercise.exerciseId}-set-${index}`,
               content: (
@@ -339,24 +354,38 @@ export function ExerciseEditor({
                           disableTouchListener={!isDashboard}
                           disableFocusListener={!isDashboard}
                         >
-                          <span style={{ display: 'inline-flex' }}>
-                            <Checkbox
-                              disabled={isExpected}
-                              icon={
-                                <RadioButtonUncheckedIcon
-                                  className='not-finished'
-                                  sx={{ color: 'white' }}
-                                />
-                              }
-                              checkedIcon={
-                                <CheckIcon
-                                  className='finished'
-                                  sx={{ color: 'white' }}
-                                />
-                              }
-                              checked={set.isDone ? true : false}
-                              onChange={() => onMarkAsDone(index)}
-                            />
+                          <span
+                            style={{ display: 'inline-flex' }}
+                            className='checkbox-container'
+                          >
+                            {currUpdatedExerciseSettings.exerciseId ===
+                              exercise.exerciseId &&
+                            currUpdatedExerciseSettings.setIndex === index ? (
+                              <CircularProgress
+                                size={21.59}
+                                className={prefs.favoriteColor}
+                                sx={{ marginTop: '20px' }}
+                              />
+                            ) : (
+                              <Checkbox
+                                disabled={isExpected}
+                                sx={{ marginTop: '5px' }}
+                                icon={
+                                  <RadioButtonUncheckedIcon
+                                    className='not-finished'
+                                    sx={{ color: 'white' }}
+                                  />
+                                }
+                                checkedIcon={
+                                  <CheckIcon
+                                    className='finished'
+                                    sx={{ color: 'white' }}
+                                  />
+                                }
+                                checked={set.isDone ? true : false}
+                                onChange={() => onMarkAsDone(index)}
+                              />
+                            )}
                           </span>
                         </Tooltip>
                       )}

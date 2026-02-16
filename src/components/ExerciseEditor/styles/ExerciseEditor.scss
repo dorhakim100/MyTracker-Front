@@ -57,12 +57,15 @@
 
       .badges-container {
         display: grid;
+
         input {
           padding: 0 !important;
         }
         .MuiCheckbox-root {
           height: 49px;
           width: 49px;
+        }
+        span {
         }
       }
       .finished,
@@ -189,6 +192,11 @@
     .divider {
       margin: 0.5rem 0;
     }
+  }
+  .reps-container,
+  .weight-container,
+  .rpe-rir-container {
+    padding-block: 0.5rem;
   }
 
   .controls-container {
