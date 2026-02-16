@@ -197,9 +197,10 @@ export function WeightChart({
 
   const rangeChange = useMemo(() => {
     const firstAverage = movingAverageData.find((average) => average !== null)
-    const lastAverage = movingAverageData
-      .reverse()
-      .find((average) => average !== null)
+    const reversedMovingAverageData = [...movingAverageData].reverse()
+    const lastAverage = reversedMovingAverageData.find(
+      (average) => average !== null
+    )
     if (!firstAverage || !lastAverage) {
       return 0
     }
