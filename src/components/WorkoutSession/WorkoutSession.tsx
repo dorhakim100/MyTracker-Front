@@ -8,10 +8,10 @@ import {
   removeCurrentExercise,
   setCurrentExercise,
   setSelectedSessionDay,
-  setCurrUpdatedExerciseSettings,
   removeTimer,
   setTimer,
   saveWorkout,
+  setCurrUpdatedExerciseSettings,
 } from '../../store/actions/workout.action'
 
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
@@ -446,11 +446,6 @@ export function WorkoutSession({
         )
       }
 
-      setCurrUpdatedExerciseSettings({
-        exerciseId: exercise.exerciseId,
-        setIndex: setIndex,
-      })
-
       const setToSave = cleanSet(exercise.sets[setIndex])
       await setService.saveSetBySessionIdAndExerciseId(
         sessionDay._id,
@@ -519,6 +514,11 @@ export function WorkoutSession({
         instructions: originalInstructions,
       })
       showErrorMsg(messages.error.updateSet)
+    } finally {
+      setCurrUpdatedExerciseSettings({
+        exerciseId: '',
+        setIndex: -1,
+      })
     }
   }
 
@@ -678,11 +678,6 @@ export function WorkoutSession({
           })
         )
       } else {
-        setCurrUpdatedExerciseSettings({
-          exerciseId: exercise.exerciseId,
-          setIndex: setIndex,
-        })
-
         const setToSave = cleanSet(exercise.sets[setIndex])
 
         promises = promises.concat(
@@ -726,11 +721,6 @@ export function WorkoutSession({
         instructions: originalInstructions,
       })
       showErrorMsg(messages.error.updateSet)
-    } finally {
-      setCurrUpdatedExerciseSettings({
-        exerciseId: '',
-        setIndex: -1,
-      })
     }
   }
 

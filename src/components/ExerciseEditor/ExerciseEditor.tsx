@@ -35,7 +35,10 @@ import { CustomSwipeAction } from '../CustomSwipeAction/CustomSwipeAction'
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline'
 import { Instructions } from '../../types/instructions/Instructions'
-import { setSelectedSessionDay } from '../../store/actions/workout.action'
+import {
+  setCurrUpdatedExerciseSettings,
+  setSelectedSessionDay,
+} from '../../store/actions/workout.action'
 import { useWindowDimentions } from '../../hooks/useWindowDimentions'
 import DeleteIcon from '@mui/icons-material/Delete'
 
@@ -277,6 +280,10 @@ export function ExerciseEditor({
     }
 
     try {
+      setCurrUpdatedExerciseSettings({
+        exerciseId: exercise.exerciseId,
+        setIndex: index,
+      })
       const updatedExercise = { ...exercise, sets: newSetsToSave }
       if (isExpected) {
         await updateExercise(updatedExercise, index)
@@ -285,12 +292,13 @@ export function ExerciseEditor({
       }
     } catch (err) {
       showErrorMsg(messages.error.updateSet)
+    } finally {
+      setCurrUpdatedExerciseSettings({
+        exerciseId: '',
+        setIndex: -1,
+      })
     }
   }
-
-  useEffect(() => {
-    console.log('currUpdatedExerciseSettings', currUpdatedExerciseSettings)
-  }, [currUpdatedExerciseSettings])
 
   return (
     <>
@@ -425,6 +433,10 @@ export function ExerciseEditor({
                       <PickerSelect
                         className={`${prefs.favoriteColor}`}
                         openClock={() => {
+                          setCurrUpdatedExerciseSettings({
+                            exerciseId: exercise.exerciseId,
+                            setIndex: index,
+                          })
                           setPickerOptions({
                             type: 'reps',
                             isOpen: true,
