@@ -433,10 +433,12 @@ export function ExerciseEditor({
                       <PickerSelect
                         className={`${prefs.favoriteColor}`}
                         openClock={() => {
-                          setCurrUpdatedExerciseSettings({
-                            exerciseId: exercise.exerciseId,
-                            setIndex: index,
-                          })
+                          if (!isExpected) {
+                            setCurrUpdatedExerciseSettings({
+                              exerciseId: exercise.exerciseId,
+                              setIndex: index,
+                            })
+                          }
                           setPickerOptions({
                             type: 'reps',
                             isOpen: true,
