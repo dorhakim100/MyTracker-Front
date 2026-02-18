@@ -12,6 +12,7 @@ import { Exercise } from '../../types/exercise/Exercise'
 
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { ExerciseDetails } from '../ExerciseDetails/ExerciseDetails'
+import { getWorkoutMuscles } from '../../services/exersice-search/exersice-search'
 interface WorkoutDetailsProps {
   workout: Workout | null
 }
@@ -47,22 +48,24 @@ export function WorkoutDetails({ workout }: WorkoutDetailsProps) {
       </div>
     )
   }
-
-
+  const workoutMuscles = getWorkoutMuscles(workout).join(', ')
 
   return (
     <>
       <div className='workout-details-container'>
         <div className='header-container'>
-          <Typography variant='h4' className='name-container bold-header'>
+          <Typography
+            variant='h4'
+            className='name-container bold-header'
+          >
             {workout.name}
-
           </Typography>
-          {workout.muscleGroups && workout.muscleGroups.length > 0 && (
-            <Typography variant='body1' className='muscle-groups-container'>
-              {workout.muscleGroups
-                .map((group) => capitalizeFirstLetter(group))
-                .join(', ')}
+          {workoutMuscles && workoutMuscles.length > 0 && (
+            <Typography
+              variant='body1'
+              className='muscle-groups-container'
+            >
+              {workoutMuscles}
             </Typography>
           )}
         </div>
@@ -76,7 +79,10 @@ export function WorkoutDetails({ workout }: WorkoutDetailsProps) {
           }
           className={`exercises-list  ${prefs.isDarkMode ? 'dark-mode' : ''} ${isDashboard ? 'dashboard' : ''}`}
           renderLeft={(exercise) => (
-            <img src={exercise.image} alt={exercise.name} />
+            <img
+              src={exercise.image}
+              alt={exercise.name}
+            />
           )}
           getKey={(exercise) => exercise.exerciseId}
           onItemClick={(exercise) => onOpenExerciseDetails(exercise)}
