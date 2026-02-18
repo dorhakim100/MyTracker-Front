@@ -433,6 +433,11 @@ export function ExerciseEditor({
                       <PickerSelect
                         className={`${prefs.favoriteColor}`}
                         openClock={() => {
+                          const isUpdatingCurrSet =
+                            currUpdatedExerciseSettings.exerciseId ===
+                              exercise.exerciseId &&
+                            currUpdatedExerciseSettings.setIndex === index
+                          if (isUpdatingCurrSet) return
                           if (!isExpected) {
                             setCurrUpdatedExerciseSettings({
                               exerciseId: exercise.exerciseId,
@@ -480,6 +485,18 @@ export function ExerciseEditor({
                       <PickerSelect
                         className={`${prefs.favoriteColor}`}
                         openClock={() => {
+                          const isUpdatingCurrSet =
+                            currUpdatedExerciseSettings.exerciseId ===
+                              exercise.exerciseId &&
+                            currUpdatedExerciseSettings.setIndex === index
+                          if (isUpdatingCurrSet) return
+
+                          if (!isExpected) {
+                            setCurrUpdatedExerciseSettings({
+                              exerciseId: exercise.exerciseId,
+                              setIndex: index,
+                            })
+                          }
                           setPickerOptions({
                             type: 'weight',
                             isOpen: true,
@@ -533,6 +550,17 @@ export function ExerciseEditor({
                       <PickerSelect
                         className={`${prefs.favoriteColor}`}
                         openClock={() => {
+                          const isUpdatingCurrSet =
+                            currUpdatedExerciseSettings.exerciseId ===
+                              exercise.exerciseId &&
+                            currUpdatedExerciseSettings.setIndex === index
+                          if (isUpdatingCurrSet) return
+                          if (!isExpected) {
+                            setCurrUpdatedExerciseSettings({
+                              exerciseId: exercise.exerciseId,
+                              setIndex: index,
+                            })
+                          }
                           setPickerOptions({
                             type: set.rpe ? 'rpe' : 'rir',
                             isOpen: true,
@@ -615,11 +643,23 @@ export function ExerciseEditor({
       </div>
       <SlideDialog
         open={pickerOptions.isOpen}
-        onClose={onClosePicker}
+        onClose={() => {
+          onClosePicker()
+          setCurrUpdatedExerciseSettings({
+            exerciseId: '',
+            setIndex: -1,
+          })
+        }}
         component={
           <ClockPicker
             value={currentPickerValue}
             onChange={(_, value) => onPickerChange(value)}
+            sentOnCancel={() => {
+              setCurrUpdatedExerciseSettings({
+                exerciseId: '',
+                setIndex: -1,
+              })
+            }}
             isAfterValue={getIsAfterValue(pickerOptions.type)}
             buttonsValues={
               pickerButtonsValues[

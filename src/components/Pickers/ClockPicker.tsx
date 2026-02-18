@@ -21,6 +21,7 @@ export function ClockPicker({
   isSaveCancelButtonsVisible = true,
   valuesToDisplay,
   isRounded = true,
+  sentOnCancel = () => {},
 }: {
   value: number
   onChange: (key: keyof EditItem, value: number) => void
@@ -33,6 +34,7 @@ export function ClockPicker({
   isSaveCancelButtonsVisible?: boolean
   valuesToDisplay?: number[]
   isRounded?: boolean
+  sentOnCancel?: () => void
 }) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -88,6 +90,7 @@ export function ClockPicker({
       afterValue: originalAfterValue.current,
     })
     onClose()
+    if (sentOnCancel) sentOnCancel()
   }
 
   function onSave() {
@@ -97,7 +100,7 @@ export function ClockPicker({
   }
 
   return (
-    <div className="picker-container">
+    <div className='picker-container'>
       <Picker
         value={pickerValue}
         // wheelMode='normal'
@@ -108,12 +111,15 @@ export function ClockPicker({
         }
         wheelMode='normal'
       >
-        <Picker.Column name="numberOfServings">
+        <Picker.Column name='numberOfServings'>
           {values.map((number) => (
-            <Picker.Item key={number} value={number}>
+            <Picker.Item
+              key={number}
+              value={number}
+            >
               {({ selected }) => (
                 <Typography
-                  variant="h5"
+                  variant='h5'
                   className={`${selected ? 'selected' : ''}`}
                 >
                   {number}
@@ -125,16 +131,19 @@ export function ClockPicker({
         {isAfterValue && (
           <>
             <Divider
-              orientation="vertical"
+              orientation='vertical'
               flexItem
               className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
             />
-            <Picker.Column name="afterValue">
+            <Picker.Column name='afterValue'>
               {afterValues.map((number) => (
-                <Picker.Item key={number} value={number}>
+                <Picker.Item
+                  key={number}
+                  value={number}
+                >
                   {({ selected }) => (
                     <Typography
-                      variant="h5"
+                      variant='h5'
                       className={`${selected ? 'selected' : ''}`}
                     >
                       {number}
@@ -147,7 +156,7 @@ export function ClockPicker({
         )}
       </Picker>
       {isButtonsVisible && (
-        <div className="buttons-container">
+        <div className='buttons-container'>
           {buttons.map((button) => (
             <CustomButton
               key={`${button.value}-button`}
@@ -160,15 +169,15 @@ export function ClockPicker({
         </div>
       )}
       {isSaveCancelButtonsVisible && (
-        <DialogActions className="save-cancel-container">
+        <DialogActions className='save-cancel-container'>
           <CustomButton
-            text="Cancel"
+            text='Cancel'
             onClick={onCancel}
-            className="delete-account-button"
+            className='delete-account-button'
             fullWidth
           />
           <CustomButton
-            text="Save"
+            text='Save'
             onClick={onSave}
             className={`${prefs.favoriteColor} save-button`}
             fullWidth
