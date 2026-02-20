@@ -1,0 +1,2 @@
+- Across the app is a use of CustomCmps, mainly a wrapper of an existing MUI cmp, with repeated added logic attached to it. Follow that convention where appropriate.
+- See [CustomButton](../../../src/CustomMui/CustomButton/CustomButton.tsx) for an example.

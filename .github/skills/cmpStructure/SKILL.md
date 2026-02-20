@@ -1,0 +1,1 @@
+- Each cmp has its own folder, and each cmp folder contains a styles folder that will hold a SCSS file. `src/components/SomeCmp/styles`

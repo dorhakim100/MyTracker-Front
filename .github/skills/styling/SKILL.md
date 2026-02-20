@@ -1,0 +1,3 @@
+- Main UI library is MUI, unless it's something very minor and not general, styling for MUI cmps will not be directly at the html, exceptions can be made if necessary.
+- Use CSS styling when possible, both for regular elements and MUI ones.
+- The project supports a favorite color picker options, and dark mode.
