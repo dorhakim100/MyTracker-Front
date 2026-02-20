@@ -8,6 +8,7 @@ import { CssVarsProvider } from '@mui/material/styles'
 
 import { store } from './store/store'
 
+import './i18n'
 import './index.css'
 import './assets/styles/main.scss'
 

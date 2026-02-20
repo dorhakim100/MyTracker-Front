@@ -9,7 +9,7 @@ import { SignIn } from '../../CustomMui/SignIn/SignIn.tsx'
 import { App } from '../../types/app/App'
 
 export interface Route {
-  title: string
+  titleKey: string
   path: string
   element: React.ComponentType
   icon: React.ComponentType
@@ -26,35 +26,35 @@ export const mainRoutes = ['/', '/diary', '/lift-mate/workouts', '/user']
 
 export const routes: Route[] = [
   {
-    title: 'Dashboard',
+    titleKey: 'nav.dashboard',
     path: '/',
     element: Dashboard,
     icon: DashboardIcon,
     app: 'all',
   },
   {
-    title: 'Food',
+    titleKey: 'nav.food',
     path: '/diary',
     element: Diary,
     icon: FastfoodIcon,
     app: 'all',
   },
   {
-    title: 'Workouts',
+    titleKey: 'nav.workouts',
     path: '/lift-mate/workouts',
     element: Workouts,
     icon: FitnessCenterIcon,
     app: 'all',
   },
   {
-    title: 'User',
+    titleKey: 'nav.user',
     path: '/user',
     element: UserDetails,
     icon: UserIcon,
     app: 'all',
   },
   {
-    title: 'Sign in',
+    titleKey: 'nav.signIn',
     path: '/signin',
     element: SignIn,
     icon: SignInIcon,

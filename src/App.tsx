@@ -1,4 +1,5 @@
 import { useEffect, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 
 import { usePwaDetect } from './hooks/usePwaDetect.tsx'
@@ -51,6 +52,7 @@ const colors = [
 ]
 
 function App() {
+  const { i18n } = useTranslation()
   const { shouldShowInstallGuide, promptInstall, platform, isInstallable } =
     usePwaDetect()
 
@@ -95,6 +97,11 @@ function App() {
   }, [user?._id])
 
   // const location = useLocation()
+
+  useEffect(() => {
+    document.documentElement.lang = i18n.language
+    document.documentElement.dir = i18n.language === 'he' ? 'rtl' : 'ltr'
+  }, [i18n.language])
 
   useEffect(() => {
     const defaultPrefs = getDefaultsPrefs()

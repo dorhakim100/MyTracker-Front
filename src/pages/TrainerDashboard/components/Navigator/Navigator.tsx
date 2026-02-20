@@ -1,4 +1,5 @@
 import { useNavigate, useLocation } from 'react-router'
+import { useTranslation } from 'react-i18next'
 import Divider from '@mui/material/Divider'
 import Drawer, { DrawerProps } from '@mui/material/Drawer'
 import List from '@mui/material/List'
@@ -30,6 +31,7 @@ const itemCategory = {
 }
 
 export default function Navigator(props: DrawerProps) {
+  const { t } = useTranslation()
   const { ...other } = props
   const navigate = useNavigate()
   const location = useLocation()
@@ -73,7 +75,7 @@ export default function Navigator(props: DrawerProps) {
           className={`navigator-container-box ${prefs.isDarkMode ? 'dark-mode' : ''} ${prefs.favoriteColor}`}
         >
           <ListItem sx={{ py: 2, px: 3 }}>
-            <ListItemText>Navigation</ListItemText>
+            <ListItemText>{t('nav.navigation')}</ListItemText>
           </ListItem>
           {trainerRoutes.map((route) => {
             const isActive = location.pathname === route.path
@@ -92,7 +94,7 @@ export default function Navigator(props: DrawerProps) {
                   <ListItemIcon>
                     <Icon />
                   </ListItemIcon>
-                  <ListItemText>{route.title}</ListItemText>
+                  <ListItemText>{t(route.titleKey)}</ListItemText>
                 </ListItemButton>
               </ListItem>
             )

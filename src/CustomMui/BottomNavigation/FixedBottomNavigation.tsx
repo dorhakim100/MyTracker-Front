@@ -1,4 +1,5 @@
 import React, { MouseEventHandler, useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import Box from '@mui/material/Box'
 import CssBaseline from '@mui/material/CssBaseline'
 import BottomNavigation from '@mui/material/BottomNavigation'
@@ -22,7 +23,6 @@ import {
   setSlideDirection,
 } from '../../store/actions/system.actions'
 import { setSelectedDiaryDay } from '../../store/actions/user.actions'
-import { messages } from '../../assets/config/messages'
 import { showErrorMsg } from '../../services/event-bus.service'
 import { BarcodeScanner } from '../../components/BarcodeScanner/BarcodeScanner'
 import { smoothScroll } from '../../services/util.service'
@@ -44,6 +44,7 @@ export function FixedBottomNavigation(props: {
     ariaLabel?: string
   }
 }) {
+  const { t } = useTranslation()
   const { activeRoute } = props
   const [value, setValue] = React.useState(0)
   const ref = React.useRef<HTMLDivElement>(null)
@@ -91,12 +92,12 @@ export function FixedBottomNavigation(props: {
   const speedDialActions = [
     {
       icon: <QrCode2Icon />,
-      name: 'Scan',
+      name: t('nav.scan'),
       onClick: onScanClick,
     },
     {
       icon: <SearchIcon />,
-      name: 'Search',
+      name: t('nav.search'),
       onClick: onSearchClick,
     },
   ]
@@ -159,7 +160,7 @@ export function FixedBottomNavigation(props: {
           aria-label={props.centerAction?.ariaLabel || 'center-action'}
           icon={<AddIcon />}
           onClick={(ev) => {
-            if (!user) return showErrorMsg(messages.error.register)
+            if (!user) return showErrorMsg(t('messages.error.register'))
             ev.stopPropagation()
             setIsAddModal(!isAddModal)
 
@@ -237,7 +238,7 @@ export function FixedBottomNavigation(props: {
                 return (
                   <BottomNavigationAction
                     key={route.path}
-                    label={route.title}
+                    label={t(route.titleKey)}
                     icon={<route.icon />}
                     onClick={() => {
                       setSlideDirection(index < currIndex ? -1 : 1)
@@ -261,7 +262,7 @@ export function FixedBottomNavigation(props: {
                 return (
                   <BottomNavigationAction
                     key={route.path}
-                    label={route.title}
+                    label={t(route.titleKey)}
                     icon={<route.icon />}
                     onClick={() => {
                       setSlideDirection(
@@ -293,7 +294,11 @@ export function FixedBottomNavigation(props: {
             <BarcodeScanner onClose={closeSearchModal} />
           )
         }
-        title={modalType === modalTypes.search ? 'Search Food' : 'Scan'}
+        title={
+          modalType === modalTypes.search
+            ? t('nav.searchFood')
+            : t('nav.scan')
+        }
         type={modalType === modalTypes.search ? 'full' : 'half'}
       />
     </>

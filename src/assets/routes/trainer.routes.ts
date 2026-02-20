@@ -16,7 +16,7 @@ import { TrainerSettings } from '../../pages/TrainerDashboard/pages/Settings/Tra
 import { UserDetails } from '../../pages/UserDetails/UserDetails'
 
 export interface TrainerRoute {
-  title: string
+  titleKey: string
   path: string
   element: React.ComponentType
   icon: React.ComponentType
@@ -24,37 +24,37 @@ export interface TrainerRoute {
 
 export const trainerRoutes: TrainerRoute[] = [
   {
-    title: 'Dashboard',
+    titleKey: 'nav.dashboard',
     path: '/trainer',
     element: TrainerDashboardOverview,
     icon: DashboardIcon,
   },
   {
-    title: 'Trainees',
+    titleKey: 'nav.trainees',
     path: '/trainer/trainees',
     element: Trainees,
     icon: PeopleIcon,
   },
   {
-    title: 'Workouts',
+    titleKey: 'nav.workouts',
     path: '/trainer/workouts',
     element: TrainerWorkouts,
     icon: FeaturedPlayListIcon,
   },
   {
-    title: 'Exercises',
+    titleKey: 'nav.exercises',
     path: '/trainer/exercises',
     element: TrainerExercises,
     icon: FitnessCenterIcon,
   },
   {
-    title: 'User',
+    titleKey: 'nav.user',
     path: '/trainer/user',
     element: UserDetails,
     icon: UserIcon,
   },
   {
-    title: 'Settings',
+    titleKey: 'nav.settings',
     path: '/trainer/settings',
     element: TrainerSettings,
     icon: SettingsIcon,
