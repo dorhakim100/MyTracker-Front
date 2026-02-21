@@ -3,9 +3,11 @@ import { initReactI18next } from 'react-i18next'
 import LanguageDetector from 'i18next-browser-languagedetector'
 
 import en from './assets/locales/en.json'
+import he from './assets/locales/he.json'
 
 const resources = {
   en: { translation: en },
+  he: { translation: he },
 }
 
 i18n
@@ -14,6 +16,7 @@ i18n
   .init({
     resources,
     fallbackLng: 'en',
+    supportedLngs: ['en', 'he'],
     defaultNS: 'translation',
     interpolation: {
       escapeValue: false,

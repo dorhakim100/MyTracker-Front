@@ -1,6 +1,7 @@
 import { store } from '../store'
 import { Prefs } from '../../types/system/Prefs'
 import { systemService } from '../../services/system/system.service'
+import i18n from 'i18next'
 
 import {
   LOADING_START,
@@ -35,6 +36,7 @@ export async function loadPrefs() {
   try {
     const prefs = await systemService.getPrefs()
     store.dispatch({ type: SET_PREFS, prefs })
+    await i18n.changeLanguage(prefs.lang)
   } catch {
     // ignore
   }

@@ -1,0 +1,42 @@
+.language-switch {
+  &.blue {
+    .MuiSwitch-switchBase {
+      background-color: $picker-color-blue !important;
+    }
+  }
+  &.green {
+    .MuiSwitch-switchBase {
+      background-color: $picker-color-green !important;
+    }
+  }
+  &.yellow {
+    .MuiSwitch-switchBase {
+      background-color: $picker-color-yellow !important;
+    }
+  }
+  &.red {
+    .MuiSwitch-switchBase {
+      background-color: $picker-color-red !important;
+    }
+  }
+  &.orange {
+    .MuiSwitch-switchBase {
+      background-color: $picker-color-orange !important;
+    }
+  }
+  &.deepPurple {
+    .MuiSwitch-switchBase {
+      background-color: $picker-color-deep-purple !important;
+    }
+  }
+  &.purple {
+    .MuiSwitch-switchBase {
+      background-color: $picker-color-purple !important;
+    }
+  }
+  &.pink {
+    .MuiSwitch-switchBase {
+      background-color: $picker-color-pink !important;
+    }
+  }
+}

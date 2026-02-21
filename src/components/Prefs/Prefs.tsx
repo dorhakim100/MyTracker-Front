@@ -8,7 +8,7 @@ import {
 } from '../../store/actions/system.actions'
 
 import { DarkModeSwitch } from '../DarkModeSwitch/DarkModeSwitch'
-// import { LanguageSwitch } from '../LanguageSwitch/LanguageSwitch'
+import { LanguageSwitch } from '../LanguageSwitch/LanguageSwitch'
 
 import CloseIcon from '@mui/icons-material/Close'
 // import LanguageIcon from '@mui/icons-material/Language'
@@ -31,12 +31,15 @@ export function Prefs() {
   function onSetPrefs(type: string) {
     let newPrefs
     switch (type) {
-      // case 'lang':
-      //   const newLang = !prefs.isEnglish
-      //   newPrefs = { ...prefs, isEnglish: newLang }
-      //   setPrefs(newPrefs)
-      //   // closePrefsModal()
-      //   return
+      case 'lang': {
+        const newLang = prefs.lang === 'en' ? 'he' : 'en'
+        newPrefs = { ...prefs, lang: newLang }
+        setPrefs(newPrefs)
+        import('i18next').then(({ default: i18n }) =>
+          i18n.changeLanguage(newLang)
+        )
+        return
+      }
 
       case 'darkMode': {
         const newMode = !darkMode
@@ -65,28 +68,14 @@ export function Prefs() {
           <CloseIcon />
         </div>
         <div className='prefs-control'>
-          {/* <LanguageSwitch
+          <LanguageSwitch
             onClick={() => onSetPrefs('lang')}
-            checked={!prefs.isEnglish}
-          /> */}
+            checked={prefs.lang === 'he'}
+          />
           <DarkModeSwitch
             onClick={() => onSetPrefs('darkMode')}
             checked={prefs.isDarkMode}
           />
-          {/* <button onClick={() => onSetPrefs('lang')}>
-          {prefs.isEnglish ? 'Hebrew' : 'אנגלית'}
-          <LanguageIcon />
-        </button>
-        <button onClick={() => onSetPrefs('darkMode')}>
-          {prefs.isDarkMode
-            ? prefs.isEnglish
-              ? 'Light mode'
-              : 'מסך בהיר'
-            : prefs.isEnglish
-            ? 'Dark mode'
-            : 'מסך כהה'}
-          {prefs.isDarkMode ? <LightModeIcon /> : <DarkModeIcon />}{' '}
-        </button> */}
         </div>
       </div>{' '}
     </>

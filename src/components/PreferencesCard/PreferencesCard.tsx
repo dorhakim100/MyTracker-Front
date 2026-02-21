@@ -6,6 +6,7 @@ import { setPrefs } from '../../store/actions/system.actions'
 import type { Prefs } from '../../types/system/Prefs'
 import { DarkModeSwitch } from '../../components/DarkModeSwitch/DarkModeSwitch'
 import { ColorPicker } from '../../components/ColorPicker/ColorPicker'
+import { LanguageSwitch } from '../../components/LanguageSwitch/LanguageSwitch'
 
 export function PreferencesCard() {
   const prefs = useSelector(
@@ -27,19 +28,50 @@ export function PreferencesCard() {
     setPrefs(newPrefs)
   }
 
+  function onToggleLanguage() {
+    const newPrefs: Prefs = {
+      ...prefs,
+      lang: prefs.lang === 'en' ? 'he' : 'en',
+    }
+    setPrefs(newPrefs)
+    import('i18next').then(({ default: i18n }) =>
+      i18n.changeLanguage(newPrefs.lang)
+    )
+  }
+
   return (
     <>
       <div className='prefs-switch-container'>
-        <Typography variant='body1' className='prefs-label'>
+        <Typography
+          variant='body1'
+          className='prefs-label'
+        >
           Dark mode
         </Typography>
-        <DarkModeSwitch checked={prefs.isDarkMode} onClick={onToggleDarkMode} />
+        <DarkModeSwitch
+          checked={prefs.isDarkMode}
+          onClick={onToggleDarkMode}
+        />
       </div>
-
+      <div className='prefs-switch-container'>
+        <Typography
+          variant='body1'
+          className='prefs-label'
+        >
+          Language
+        </Typography>
+        <LanguageSwitch
+          checked={prefs.lang === 'he'}
+          onClick={onToggleLanguage}
+        />
+      </div>
       <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
 
       <div className='color-prefs-container'>
-        <Typography variant='body1' className='prefs-label'>
+        <Typography
+          variant='body1'
+          className='prefs-label'
+        >
           Favorite color
         </Typography>
         <ColorPicker

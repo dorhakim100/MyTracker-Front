@@ -21,6 +21,10 @@
     "close": "Close",
     "options": "Options"
   },
+  "prefs": {
+    "hebrew": "עברית",
+    "english": "English"
+  },
   "messages": {
     "success": {
       "updateCalories": "Calories updated successfully",
