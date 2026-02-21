@@ -13,6 +13,24 @@
     "settings": "הגדרות",
     "navigation": "ניווט"
   },
+  "macros": {
+    "calories": "קלוריות",
+    "protein": "חלבון",
+    "carbs": "פחמימות",
+    "fats": "שומנים",
+    "fat": "שומן",
+    "macros": "ערכים תזונתיים",
+    "distribution": "אחוזים",
+    "editCalories": "עריכת קלוריות",
+    "editMacros": "עריכת ערכים תזונתיים",
+    "kcal": "קל׳"
+  },
+  "dashboard": {
+    "title": "דף הבית",
+    "noWorkoutToday": "עדיין לא נוסף אימון להיום",
+    "chooseWorkout": "בחר אימון",
+    "workoutSession": "אימון"
+  },
   "common": {
     "save": "שמור",
     "cancel": "ביטול",

@@ -1,6 +1,6 @@
+import { useTranslation } from 'react-i18next'
 import Picker from 'react-mobile-picker'
 import {
-  capitalizeFirstLetter,
   getArrayOfNumbers,
   getFixedNumber,
 } from '../../services/util.service'
@@ -105,7 +105,14 @@ export function EditMacros({
     ),
   })
 
+  const { t } = useTranslation()
   const macroKeys = Object.keys(macros) as (keyof typeof macros)[]
+
+  const macroNameKeys: Record<string, string> = {
+    carbs: 'macros.carbs',
+    protein: 'macros.protein',
+    fats: 'macros.fats',
+  }
 
   useEffect(() => {
     pickerValue.protein = +pickerValue.protein.toFixed(0)
@@ -241,7 +248,7 @@ export function EditMacros({
             <div className="macro-container" key={`name-${macroName}`}>
               <div className={`banner ${macroName}`}>
                 <span className="title">
-                  {capitalizeFirstLetter(macroName)}
+                  {t(macroNameKeys[macroName])}
                 </span>
               </div>
               <Typography variant="h6" className="value">

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../store/store'
 
@@ -27,7 +28,6 @@ import {
   setSelectedSessionDay,
   setTodaySessionDay,
 } from '../../../store/actions/workout.action'
-import { messages } from '../../../assets/config/messages'
 import Lottie from 'lottie-react'
 import workoutAnimation from '../../../../public/gain-weight.json'
 import { useWindowDimentions } from '../../../hooks/useWindowDimentions'
@@ -35,6 +35,7 @@ import { useWindowDimentions } from '../../../hooks/useWindowDimentions'
 const CHECK_INTERVAL = 1000 * 60 // minute
 
 export function Dashboard() {
+  const { t } = useTranslation()
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
   const user = useSelector((state: RootState) => state.userModule.user)
   const traineeUser = useSelector(
@@ -191,7 +192,7 @@ export function Dashboard() {
     } catch (err) {
       console.log(err)
 
-      showErrorMsg(messages.error.getSessionDay)
+      showErrorMsg(t('messages.error.getSessionDay'))
     }
   }
   const renderNoSession = () => {
@@ -202,7 +203,7 @@ export function Dashboard() {
             variant='h6'
             className='bold-header'
           >
-            No workout today
+            {t('dashboard.noWorkoutToday')}
           </Typography>
           <div
             className={`animation-container ${isDashboard ? 'dashboard' : ''}`}
@@ -214,7 +215,7 @@ export function Dashboard() {
           </div>
           {!isDashboard && (
             <CustomButton
-              text='Choose Workout'
+              text={t('dashboard.chooseWorkout')}
               icon={<PlayArrowIcon />}
               onClick={() => {
                 setSlideDirection(1)
@@ -234,7 +235,7 @@ export function Dashboard() {
             variant='h5'
             className='bold-header'
           >
-            Workout Session
+            {t('dashboard.workoutSession')}
           </Typography>
 
           <WorkoutSession
@@ -263,7 +264,7 @@ export function Dashboard() {
           variant='h4'
           className='bold-header'
         >
-          Dashboard
+          {t('dashboard.title')}
         </Typography>
       )}
       {/* <Typography variant="h5" className="bold-header">Dashboard</Typography> */}

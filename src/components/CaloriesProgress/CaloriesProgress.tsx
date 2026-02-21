@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { Card, Typography } from '@mui/material'
 // import {Slider} from '@mui/material'
 import { CircularProgress } from '../CircularProgress/CircularProgress'
@@ -12,7 +13,6 @@ import {
 import { setIsLoading } from '../../store/actions/system.actions'
 import { showSuccessMsg } from '../../services/event-bus.service'
 import { showErrorMsg } from '../../services/event-bus.service'
-import { messages } from '../../assets/config/messages'
 import { CaloriesEdit } from './CaloriesEdit'
 
 import { EditIcon } from '../EditIcon/EditIcon'
@@ -27,15 +27,14 @@ interface CaloriesProgressProps {
   percentageValue?: number
   current: number
   goal: number
-  label?: string
 }
 
 export function CaloriesProgress({
   current,
 
-  label = 'Calories',
   goal,
 }: CaloriesProgressProps) {
+  const { t } = useTranslation()
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
@@ -70,9 +69,9 @@ export function CaloriesProgress({
       onClose()
       const savedGoal = await goalService.save({ ...userToEdit.currGoal })
       await updateUser({ ...userToEdit, currGoal: savedGoal })
-      showSuccessMsg(messages.success.updateCalories)
+      showSuccessMsg(t('messages.success.updateCalories'))
     } catch (err) {
-      showErrorMsg(messages.error.updateCalories)
+      showErrorMsg(t('messages.error.updateCalories'))
       optimisticUpdateUser(user as User)
     } finally {
       setIsLoading(false)
@@ -86,14 +85,16 @@ export function CaloriesProgress({
   return (
     <>
       <Card
-        className={`card calories-progress ${prefs.isDarkMode ? 'dark' : ''} ${prefs.favoriteColor}`}
+        className={`card calories-progress ${prefs.isDarkMode ? 'dark' : ''} ${
+          prefs.favoriteColor
+        }`}
         // onClick={onChangeDisplay}
       >
         <Typography
           variant='h6'
           className='bold-header'
         >
-          {label}
+          {t('macros.calories')}
         </Typography>
         <EditIcon onClick={edit} />
         <div className='goal-container'>
@@ -117,7 +118,7 @@ export function CaloriesProgress({
             onSave={onSave}
           />
         }
-        title='Edit Calories'
+        title={t('macros.editCalories')}
         // onSave={onSave}
       />
     </>

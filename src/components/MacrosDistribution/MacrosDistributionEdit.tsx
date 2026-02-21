@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import Slider from 'rc-slider'
 import { setUserToEdit } from '../../store/actions/user.actions'
 import { User } from '../../types/user/User'
@@ -33,6 +34,7 @@ export function MacrosDistributionEdit({
   onCancel,
   onSave,
 }: MacrosDistributionEditProps) {
+  const { t } = useTranslation()
   const user = useSelector(
     (stateSelector: RootState) => stateSelector.userModule.user
   )
@@ -90,6 +92,7 @@ export function MacrosDistributionEdit({
 
     return [
       {
+        nameKey: 'macros.protein',
         name: 'Protein',
         value: proteinPercentage,
         calories: proteinCalories,
@@ -97,6 +100,7 @@ export function MacrosDistributionEdit({
         color: proteinColor,
       },
       {
+        nameKey: 'macros.carbs',
         name: 'Carbs',
         value: carbsPercentage,
         calories: carbsCalories,
@@ -104,6 +108,7 @@ export function MacrosDistributionEdit({
         color: carbsColor,
       },
       {
+        nameKey: 'macros.fat',
         name: 'Fat',
         value: fatPercentage,
         calories: fatCalories,
@@ -201,17 +206,17 @@ export function MacrosDistributionEdit({
   return (
     <Box>
       <div className="edit-macros-container distribution">
-        <Typography variant="h5">Distribution</Typography>
+        <Typography variant="h5">{t('macros.distribution')}</Typography>
         {macros.map((macro) => (
           <div
             className="macro-container"
-            key={`percantage-edit-${macro.name}`}
+            key={`percentage-edit-${macro.nameKey}`}
           >
             <div className="macro-title">
-              <Typography variant="h6">{macro.name}</Typography>
+              <Typography variant="h6">{t(macro.nameKey)}</Typography>
               <Typography variant="body1">{macro.value}%</Typography>
               <Typography variant="body1">
-                ~{roundToNearest50(macro.calories)} kcal
+                ~{roundToNearest50(macro.calories)} {t('macros.kcal')}
               </Typography>
             </div>
             <Slider

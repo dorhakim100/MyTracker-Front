@@ -1,4 +1,5 @@
 import { CSSProperties } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   calculateCarbCalories,
   calculateFatCalories,
@@ -24,6 +25,7 @@ export function MacrosDonut({
   fats,
   calories,
 }: MacrosDonutProps) {
+  const { t } = useTranslation()
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
@@ -59,7 +61,7 @@ export function MacrosDonut({
       >
         <div className="totals">
           <div className="value">{total.toFixed(0)}</div>
-          <div className="label">kcal</div>
+          <div className="label">{t('macros.kcal')}</div>
         </div>
       </div>
     </div>

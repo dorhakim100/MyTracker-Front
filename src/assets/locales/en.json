@@ -13,6 +13,24 @@
     "settings": "Settings",
     "navigation": "Navigation"
   },
+  "macros": {
+    "calories": "Calories",
+    "protein": "Protein",
+    "carbs": "Carbs",
+    "fats": "Fats",
+    "fat": "Fat",
+    "macros": "Macros",
+    "distribution": "Distribution",
+    "editCalories": "Edit Calories",
+    "editMacros": "Edit Macros",
+    "kcal": "kcal"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "noWorkoutToday": "No workout today",
+    "chooseWorkout": "Choose Workout",
+    "workoutSession": "Workout Session"
+  },
   "common": {
     "save": "Save",
     "cancel": "Cancel",

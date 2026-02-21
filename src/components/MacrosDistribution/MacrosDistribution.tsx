@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Card, Typography } from '@mui/material'
 import { Macros } from '../Macros/Macros'
 import { useSelector } from 'react-redux'
@@ -10,7 +11,6 @@ import {
   updateUser,
 } from '../../store/actions/user.actions'
 import { showSuccessMsg } from '../../services/event-bus.service'
-import { messages } from '../../assets/config/messages'
 import { showErrorMsg } from '../../services/event-bus.service'
 import { User } from '../../types/user/User'
 import { setIsLoading } from '../../store/actions/system.actions'
@@ -37,6 +37,7 @@ export function MacrosDistribution({
   hideEditAndHeader = false,
   className = '',
 }: MacrosDistributionProps) {
+  const { t } = useTranslation()
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
@@ -66,9 +67,9 @@ export function MacrosDistribution({
       onClose()
       const savedGoal = await goalService.save({ ...userToEdit.currGoal })
       await updateUser({ ...userToEdit, currGoal: savedGoal })
-      showSuccessMsg(messages.success.updateMacros)
+      showSuccessMsg(t('messages.success.updateMacros'))
     } catch (err) {
-      showErrorMsg(messages.error.updateMacros)
+      showErrorMsg(t('messages.error.updateMacros'))
       optimisticUpdateUser(user as User)
     } finally {
       setIsLoading(false)
@@ -87,7 +88,7 @@ export function MacrosDistribution({
             variant='h6'
             className='bold-header'
           >
-            Distribution
+            {t('macros.distribution')}
           </Typography>
         )}
         {!hideEditAndHeader && <EditIcon onClick={edit} />}

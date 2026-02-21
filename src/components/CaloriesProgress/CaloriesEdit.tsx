@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { getArrayOfNumbers } from '../../services/util.service'
 import Picker from 'react-mobile-picker'
 import { setUserToEdit } from '../../store/actions/user.actions'
@@ -29,6 +30,7 @@ export function CaloriesEdit({
   onCancel,
   onSave,
 }: CaloriesEditProps) {
+  const { t } = useTranslation()
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
@@ -128,7 +130,7 @@ export function CaloriesEdit({
             variant="h3"
             className={`calories-amount ${prefs.favoriteColor || ''}`}
           >
-            {roundCaloriesToNearest50(pickerCalories.calories)} kcal
+            {roundCaloriesToNearest50(pickerCalories.calories)} {t('macros.kcal')}
           </Typography>
           <div className="picker-container">
             <Picker

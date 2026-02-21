@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
@@ -14,10 +15,11 @@ interface SaveCancelProps {
 export function SaveCancel({
   onCancel,
   onSave,
-  cancelText = 'Cancel',
-  saveText = 'Save',
+  cancelText,
+  saveText,
   className = '',
 }: SaveCancelProps) {
+  const { t } = useTranslation()
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
@@ -27,12 +29,12 @@ export function SaveCancel({
       <CustomButton
         onClick={onCancel}
         className="delete-account-button"
-        text={cancelText}
+        text={cancelText ?? t('common.cancel')}
       />
       <CustomButton
         onClick={onSave}
         className={`${prefs.favoriteColor}`}
-        text={saveText}
+        text={saveText ?? t('common.save')}
       />
     </div>
   )

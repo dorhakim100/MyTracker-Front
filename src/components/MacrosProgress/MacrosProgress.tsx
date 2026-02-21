@@ -1,5 +1,5 @@
 import { useState } from 'react'
-
+import { useTranslation } from 'react-i18next'
 import { Card, Typography } from '@mui/material'
 
 import { CircularProgress } from '../CircularProgress/CircularProgress'
@@ -10,7 +10,6 @@ import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { GoalBanner } from '../GoalBanner/GoalBanner'
 import { EditMacros } from './EditMacros'
 import { showSuccessMsg } from '../../services/event-bus.service'
-import { messages } from '../../assets/config/messages'
 import { showErrorMsg } from '../../services/event-bus.service'
 import { setIsLoading } from '../../store/actions/system.actions'
 import {
@@ -48,18 +47,22 @@ export function MacrosProgress({ protein, carbs, fats }: MacrosProgressProps) {
 
   const [openModal, setOpenModal] = useState(false)
 
+  const { t } = useTranslation()
   const macros = [
     {
+      nameKey: 'macros.carbs' as const,
       name: 'Carbs',
       value: carbs,
       color: prefs.isDarkMode ? carbsColorDarkMode : carbsColor,
     },
     {
+      nameKey: 'macros.protein' as const,
       name: 'Protein',
       value: protein,
       color: prefs.isDarkMode ? proteinColorDarkMode : proteinColor,
     },
     {
+      nameKey: 'macros.fats' as const,
       name: 'Fats',
       value: fats,
       color: prefs.isDarkMode ? fatsColorDarkMode : fatsColor,
@@ -82,9 +85,9 @@ export function MacrosProgress({ protein, carbs, fats }: MacrosProgressProps) {
       onClose()
       const savedGoal = await goalService.save({ ...userToEdit.currGoal })
       await updateUser({ ...userToEdit, currGoal: savedGoal })
-      showSuccessMsg(messages.success.updateMacros)
+      showSuccessMsg(t('messages.success.updateMacros'))
     } catch (err) {
-      showErrorMsg(messages.error.updateMacros)
+      showErrorMsg(t('messages.error.updateMacros'))
     } finally {
       setIsLoading(false)
     }
@@ -101,7 +104,7 @@ export function MacrosProgress({ protein, carbs, fats }: MacrosProgressProps) {
           variant='h6'
           className='bold-header'
         >
-          Macros
+          {t('macros.macros')}
         </Typography>
         <EditIcon onClick={edit} />
         <div className='macros-container'>
@@ -115,7 +118,7 @@ export function MacrosProgress({ protein, carbs, fats }: MacrosProgressProps) {
                 text={`${macro.value.gram.toFixed(0)}`}
                 color={macro.color}
               />
-              <span>{macro.name}</span>
+              <span>{t(macro.nameKey)}</span>
               <GoalBanner
                 current={(
                   (macro.value.percentage / 100) *
@@ -136,7 +139,7 @@ export function MacrosProgress({ protein, carbs, fats }: MacrosProgressProps) {
             onSave={onSave}
           />
         }
-        title='Edit Macros'
+        title={t('macros.editMacros')}
         // onSave={onSave}
       />
     </>

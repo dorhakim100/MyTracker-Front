@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 
@@ -22,6 +23,7 @@ export function LinearMacrosProgress({
   carbsProgress,
   fatsProgress,
 }: LinearMacrosProgressProps) {
+  const { t } = useTranslation()
   const user = useSelector(
     (stateSelector: RootState) => stateSelector.userModule.user
   )
@@ -34,7 +36,7 @@ export function LinearMacrosProgress({
             currentValue={caloriesProgress + ''}
             goalValue={user?.currGoal?.dailyCalories + ''}
             value={(caloriesProgress / user?.currGoal?.dailyCalories) * 100}
-            header='Calories'
+            header={t('macros.calories')}
             color={caloriesColor}
           />
         )}
@@ -43,7 +45,7 @@ export function LinearMacrosProgress({
             currentValue={proteinProgress + ''}
             goalValue={user?.currGoal?.macros.protein + ''}
             value={(proteinProgress / user.currGoal.macros.protein) * 100}
-            header='Protein'
+            header={t('macros.protein')}
             color={proteinColor}
             isGram={true}
           />
@@ -53,7 +55,7 @@ export function LinearMacrosProgress({
             currentValue={carbsProgress + ''}
             goalValue={user?.currGoal?.macros.carbs + ''}
             value={(carbsProgress / user?.currGoal?.macros.carbs) * 100}
-            header='Carbs'
+            header={t('macros.carbs')}
             color={carbsColor}
             isGram={true}
           />
@@ -63,7 +65,7 @@ export function LinearMacrosProgress({
             currentValue={fatsProgress + ''}
             goalValue={user?.currGoal?.macros.fat + ''}
             value={(fatsProgress / user?.currGoal?.macros.fat) * 100}
-            header='Fats'
+            header={t('macros.fats')}
             color={fatsColor}
             isGram={true}
           />
