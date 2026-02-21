@@ -1,1 +1,1 @@
-- Each cmp has its own folder, and each cmp folder contains a styles folder that will hold a SCSS file. `src/components/SomeCmp/styles`
+- Each cmp has its own folder, and each cmp folder contains a styles folder that will hold a SCSS file. `src/components/SomeCmp/styles`. Even if there is no styling yet, create a styles folder and a SCSS file, and connect it to main SCSS file.
