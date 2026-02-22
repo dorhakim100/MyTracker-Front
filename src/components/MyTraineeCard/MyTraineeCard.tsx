@@ -14,7 +14,7 @@ import { showErrorMsg } from '../../services/event-bus.service'
 import AddIcon from '@mui/icons-material/Add'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import { TrainerRequest } from '../../types/trainerRequest/TrainerRequest'
-
+import { useTranslation } from 'react-i18next'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import DisabledVisibleIcon from '@mui/icons-material/DisabledVisible'
 
@@ -33,6 +33,7 @@ interface MyTraineeCardProps {
 }
 
 export function MyTraineeCard({ displayTrainees = true }: MyTraineeCardProps) {
+  const { t } = useTranslation()
   const user = useSelector((state: RootState) => state.userModule.user)
 
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
@@ -173,7 +174,7 @@ export function MyTraineeCard({ displayTrainees = true }: MyTraineeCardProps) {
       <CustomInput
         value={search}
         onChange={setSearch}
-        placeholder='Search for a trainee'
+        placeholder={t('trainer.searchForTrainee')}
         isRemoveIcon={true}
         className={`${prefs.favoriteColor}`}
       />
@@ -192,8 +193,8 @@ export function MyTraineeCard({ displayTrainees = true }: MyTraineeCardProps) {
         getKey={(trainee) => `${trainee._id}-searched-trainee-card`}
         noResultsMessage={
           search === ''
-            ? 'Search for a trainee to add as a trainee'
-            : 'No trainees found...'
+            ? t('trainer.searchTraineeDescription')
+            : t('trainer.noTraineesFound')
         }
         className={`trainees-list ${prefs.isDarkMode ? 'dark-mode' : ''}`}
         renderRight={(trainee) => renderRequestStatus(trainee)}
@@ -216,7 +217,7 @@ export function MyTraineeCard({ displayTrainees = true }: MyTraineeCardProps) {
             )}
             renderRight={(trainee) => renderRequestStatus(trainee)}
             getKey={(trainee) => `${trainee._id}-assigned-trainee-card`}
-            noResultsMessage={'No assigned trainees yet...'}
+            noResultsMessage={t('trainer.noAssignedTrainees')}
             className={`trainees-list ${prefs.isDarkMode ? 'dark-mode' : ''}`}
           />
         </>

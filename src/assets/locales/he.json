@@ -102,7 +102,7 @@
     "customLog": "רישום ידני",
     "barcodeScanned": "ברקוד נסרק",
     "addToMeal": "הוספת פריט לארוחה",
-    "updateMeal": "עדכן ארוחה",
+    "updateMeal": "עדכון ארוחה",
     "numberOfServings": "מספר מנות",
     "servingSize": "גודל מנה",
     "noItemsAdded": "טרם נוספו פריטים",
@@ -230,7 +230,7 @@
     "bands": "גומיות"
   },
   "weight": {
-    "updateWeight": "עדכן משקל",
+    "updateWeight": "עדכון משקל",
     "kg": "ק\"ג",
     "settings": "הגדרות",
     "displayWeeklyAverage": "הצג ממוצע שבועי",
@@ -255,8 +255,8 @@
     "enterGoalTitle": "הזן כותרת יעד..."
   },
   "user": {
-    "logout": "התנתק",
-    "viewProfile": "צפה בפרופיל",
+    "logout": "התנתקות",
+    "viewProfile": "צפייה בפרופיל",
     "profilePicture": "תמונת פרופיל",
     "editUser": "עריכת משתמש",
     "noImage": "אין תמונה",
@@ -285,7 +285,8 @@
   },
   "trainer": {
     "addTrainee": "הוספת מתאמן",
-    "searchForTrainee": "חפש מתאמן",
+    "searchForTrainee": "חיפוש מתאמן",
+    "searchTraineeDescription": "חיפוש מתאמן בכדי לשלוח בקשת מאמן",
     "noTraineesFound": "לא נמצאו מתאמנים...",
     "noAssignedTrainees": "טרם שויכו מתאמנים...",
     "accept": "אשר",
@@ -293,7 +294,7 @@
     "accepted": "אושר",
     "rejected": "נדחה",
     "pending": "ממתין",
-    "searchPlaceholder": "חפש לפי אימייל, טלפון או UID"
+    "searchPlaceholder": "חיפוש לפי אימייל, טלפון"
   },
   "bmr": {
     "title": "BMR",

@@ -23,6 +23,7 @@ import { TRAINEE_ORDER_STORE_NAME } from '../../../../constants/store.constants'
 import { CustomOptionsMenu } from '../../../../CustomMui/CustomOptionsMenu/CustomOptionsMenu'
 import { logout } from '../../../../store/actions/user.actions'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 interface HeaderProps {
   onDrawerToggle: () => void
@@ -30,7 +31,7 @@ interface HeaderProps {
 
 export default function Header(props: HeaderProps) {
   const { onDrawerToggle } = props
-
+  const { t } = useTranslation()
   const user = useSelector((state: RootState) => state.userModule.user)
 
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
@@ -42,13 +43,13 @@ export default function Header(props: HeaderProps) {
   const options = useMemo(() => {
     return [
       {
-        title: 'View Profile',
+        title: t('user.viewProfile'),
         onClick: () => {
           navigate('/trainer/user')
         },
       },
       {
-        title: 'Logout',
+        title: t('user.logout'),
         onClick: () => {
           logout()
           navigate('/')
@@ -104,29 +105,48 @@ export default function Header(props: HeaderProps) {
   }
 
   return (
-    <div className="trainer-dashboard-header-container box-shadow">
-      <AppBar color="primary" position="sticky" elevation={0}>
+    <div className='trainer-dashboard-header-container box-shadow'>
+      <AppBar
+        color='primary'
+        position='sticky'
+        elevation={0}
+      >
         <Toolbar
-          className={`${prefs.isDarkMode ? 'dark-mode' : ''} ${prefs.favoriteColor}`}
+          className={`${prefs.isDarkMode ? 'dark-mode' : ''} ${
+            prefs.favoriteColor
+          }`}
         >
-          <Grid container spacing={1} sx={{ alignItems: 'center' }}>
-            <Grid sx={{ display: { sm: 'none', xs: 'block' } }} item>
+          <Grid
+            container
+            spacing={1}
+            sx={{ alignItems: 'center' }}
+          >
+            <Grid
+              sx={{ display: { sm: 'none', xs: 'block' } }}
+              item
+            >
               <IconButton
-                color="inherit"
-                aria-label="open drawer"
+                color='inherit'
+                aria-label='open drawer'
                 onClick={onDrawerToggle}
-                edge="start"
+                edge='start'
               >
                 <MenuIcon />
               </IconButton>
             </Grid>
-            <Grid item xs />
+            <Grid
+              item
+              xs
+            />
 
             <Grid item>
               <CustomOptionsMenu
                 className={`${prefs.favoriteColor}`}
                 triggerElement={
-                  <IconButton color="inherit" sx={{ p: 0.5 }}>
+                  <IconButton
+                    color='inherit'
+                    sx={{ p: 0.5 }}
+                  >
                     <Avatar
                       src={user?.details?.imgUrl || '/logo-square.png'}
                       alt={user?.details?.fullname || 'Trainer Profile'}
@@ -140,27 +160,46 @@ export default function Header(props: HeaderProps) {
         </Toolbar>
       </AppBar>
       <AppBar
-        component="div"
-        color="primary"
-        position="static"
+        component='div'
+        color='primary'
+        position='static'
         elevation={0}
         sx={{ zIndex: 0 }}
       >
         <Toolbar
-          className={`${prefs.isDarkMode ? 'dark-mode' : ''} ${prefs.favoriteColor}`}
+          className={`${prefs.isDarkMode ? 'dark-mode' : ''} ${
+            prefs.favoriteColor
+          }`}
         >
-          <Grid container spacing={1} sx={{ alignItems: 'center' }}>
-            <Grid item xs>
-              <Typography color="inherit" variant="h5" component="h1">
-                {`${user?.details?.fullname} ${user?.isTrainer ? '• Trainer' : ''}`}
+          <Grid
+            container
+            spacing={1}
+            sx={{ alignItems: 'center' }}
+          >
+            <Grid
+              item
+              xs
+            >
+              <Typography
+                color='inherit'
+                variant='h5'
+                component='h1'
+              >
+                {`${user?.details?.fullname} ${
+                  user?.isTrainer
+                    ? prefs.lang === 'he'
+                      ? 'מאמן •'
+                      : '• Trainer'
+                    : ''
+                }`}
               </Typography>
             </Grid>
           </Grid>
         </Toolbar>
       </AppBar>
       <AppBar
-        component="div"
-        position="static"
+        component='div'
+        position='static'
         elevation={0}
         sx={{ zIndex: 0 }}
         className={`tabs-container ${prefs.isDarkMode ? 'dark-mode' : ''} ${

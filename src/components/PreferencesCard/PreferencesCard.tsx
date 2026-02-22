@@ -55,6 +55,7 @@ export function PreferencesCard() {
           onClick={onToggleDarkMode}
         />
       </div>
+      <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
       <div className='prefs-switch-container'>
         <Typography
           variant='body1'

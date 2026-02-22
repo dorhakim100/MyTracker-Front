@@ -1,10 +1,13 @@
 import { useTranslation } from 'react-i18next'
 import { useMemo, useState } from 'react'
+import { useSelector } from 'react-redux'
+import { he } from 'date-fns/locale'
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'
 import { CustomButton } from '../CustomButton/CustomButton'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker'
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
+import { RootState } from '../../store/store'
 
 interface CustomDatePickerProps {
   value?: string // ISO (yyyy-mm-dd)
@@ -20,6 +23,7 @@ export function CustomDatePicker({
   className,
 }: CustomDatePickerProps) {
   const { t } = useTranslation()
+  const lang = useSelector((state: RootState) => state.systemModule.prefs.lang)
   const [open, setOpen] = useState(false)
 
   const localIso = useMemo(
@@ -45,7 +49,10 @@ export function CustomDatePicker({
   }
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDateFns}>
+    <LocalizationProvider
+      dateAdapter={AdapterDateFns}
+      adapterLocale={lang === 'he' ? he : undefined}
+    >
       <CustomButton
         isIcon
         icon={<CalendarMonthIcon />}
@@ -67,6 +74,10 @@ export function CustomDatePicker({
         open={open}
         onClose={onClose}
         slotProps={{ textField: { style: { display: 'none' } } }}
+        localeText={{
+          cancelButtonLabel: t('common.cancel'),
+          okButtonLabel: t('common.save'),
+        }}
         className={`${className || ''}`}
       />
     </LocalizationProvider>
