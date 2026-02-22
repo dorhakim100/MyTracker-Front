@@ -1,6 +1,7 @@
 .weight-change-display {
   display: flex;
   align-items: end;
+  direction: ltr;
   gap: 0.25rem;
   .since-last {
     color: $dark-gray;

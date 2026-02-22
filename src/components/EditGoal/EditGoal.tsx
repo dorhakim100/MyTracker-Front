@@ -405,15 +405,18 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
   // Stages rendering
   function _renderTitleStage() {
     return (
-      <div className="stage-container">
+      <div className='stage-container'>
         <CustomInput
           value={editGoal.title || ''}
           onChange={(value) => setEditGoal({ ...editGoal, title: value })}
-          placeholder="Enter goal title..."
+          placeholder='Enter goal title...'
           className={`${prefs.favoriteColor}`}
         />
-        <div className="animation-container">
-          <Lottie animationData={goalAnimation} loop={false} />
+        <div className='animation-container'>
+          <Lottie
+            animationData={goalAnimation}
+            loop={false}
+          />
         </div>
       </div>
     )
@@ -421,8 +424,8 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
 
   function _renderTargetStage() {
     return (
-      <div className="stage-container">
-        <div className="targets-container">
+      <div className='stage-container'>
+        <div className='targets-container'>
           {targets.map((target) => {
             return (
               <CustomButton
@@ -440,13 +443,16 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
             )
           })}
         </div>
-        <div className="animation-container">
+        <div className='animation-container'>
           <SlideAnimation
             motionKey={selectedTarget}
             direction={targetAnimationDirection}
             duration={0.25}
           >
-            <Lottie animationData={targetAnimation} loop={true} />
+            <Lottie
+              animationData={targetAnimation}
+              loop={true}
+            />
           </SlideAnimation>
         </div>
       </div>
@@ -455,8 +461,11 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
 
   function _renderWeightStage() {
     return (
-      <div className="stage-container">
-        <div className="weight-edit-container">
+      <div className='stage-container'>
+        <div
+          className='weight-edit-container'
+          style={{ direction: 'ltr' }}
+        >
           <WeightEdit
             value={editGoal.targetWeight || 0}
             onChange={(value) =>
@@ -464,7 +473,7 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
             }
             isHideSaveButton={true}
           />
-          <div className="weight-buttons-container">
+          <div className='weight-buttons-container'>
             {weightButtons.map((button) => (
               <CustomButton
                 text={button.text}
@@ -482,7 +491,7 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
   function _renderMacrosStage() {
     return (
       <>
-        <div className="stage-container macros-stage-container">
+        <div className='stage-container macros-stage-container'>
           <div onClick={() => onCaloriesOpenClick()}>
             <MacrosDonut
               protein={editGoal.macros?.protein || 0}
@@ -491,7 +500,10 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
             />
           </div>
 
-          <div onClick={() => onMacrosOpenClick()} className="macros-container">
+          <div
+            onClick={() => onMacrosOpenClick()}
+            className='macros-container'
+          >
             <Macros
               protein={editGoal.macros?.protein || 0}
               carbs={editGoal.macros?.carbs || 0}
@@ -499,13 +511,13 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
             />
           </div>
 
-          <div className="edit-header-container">
-            <Typography variant="h5">Edit Macros</Typography>
+          <div className='edit-header-container'>
+            <Typography variant='h5'>Edit Macros</Typography>
             <Divider
               className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
             />
           </div>
-          <div className="buttons-container">
+          <div className='buttons-container'>
             {editButtons.map((button) => (
               <CustomButton
                 text={button.label}
@@ -521,7 +533,7 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
           open={editGoalOpen}
           onClose={onCloseEditGoal}
           component={getModalTypeComponent()}
-          title="Edit Calories"
+          title='Edit Calories'
           onSave={getModalOnSave()}
         />
       </>
@@ -547,14 +559,17 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
     }
 
     return (
-      <div className="stage-container">
-        <div className="edit-header-container">
-          <div className="date-picker-container">
-            <label htmlFor="start-date" className="start-date-label">
+      <div className='stage-container'>
+        <div className='edit-header-container'>
+          <div className='date-picker-container'>
+            <label
+              htmlFor='start-date'
+              className='start-date-label'
+            >
               Start Date:
             </label>
 
-            <Typography variant="h6">{startDateToShow}</Typography>
+            <Typography variant='h6'>{startDateToShow}</Typography>
             <CustomDatePicker
               value={startDate}
               onChange={(date) =>
@@ -582,16 +597,19 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
                     : undefined,
                 })
               }
-              id="end-date"
+              id='end-date'
             />
-            <label htmlFor="end-date" className="end-date-label">
+            <label
+              htmlFor='end-date'
+              className='end-date-label'
+            >
               End Date:
             </label>
             {/* <Typography variant='h6'  >
               End Date:
             </Typography> */}
 
-            <Typography variant="h6">{endDateToShow}</Typography>
+            <Typography variant='h6'>{endDateToShow}</Typography>
             {editGoal.endDate !== undefined && (
               <CustomDatePicker
                 value={endDate}
@@ -606,14 +624,17 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
             )}
           </div>
         </div>
-        <div className="animation-container date">
-          <Lottie animationData={dateAnimation} loop={true} />
+        <div className='animation-container date'>
+          <Lottie
+            animationData={dateAnimation}
+            loop={true}
+          />
         </div>
       </div>
     )
   }
   return (
-    <div className="page-container edit-goal-container">
+    <div className='page-container edit-goal-container'>
       <CustomStepper
         stages={stages}
         activeStage={activeStage}

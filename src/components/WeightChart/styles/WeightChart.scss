@@ -28,7 +28,7 @@
 
     .setting-button-container {
       position: absolute;
-      right: 0;
+      inset-inline-end: 0;
       top: 0;
       svg {
         width: 1.8rem;

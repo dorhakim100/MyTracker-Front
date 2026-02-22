@@ -1,3 +1,7 @@
+[dir='rtl'] .trainee-user-card-container .MuiIconButton svg {
+  transform: scaleX(-1);
+}
+
 .trainee-user-card-container {
   position: fixed;
 
@@ -22,6 +26,10 @@
 
   &.hidden {
     transform: translateX(calc(-100% + 60px));
+  }
+
+  [dir='rtl'] &.hidden {
+    transform: translateX(calc(100% - 60px));
   }
 
   &.dark-mode {

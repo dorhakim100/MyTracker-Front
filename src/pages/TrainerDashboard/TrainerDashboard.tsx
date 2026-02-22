@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { useMemo } from 'react'
 import { Routes, Route, Navigate } from 'react-router'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
@@ -15,7 +16,11 @@ import { RootState } from '../../store/store'
 
 function Copyright() {
   return (
-    <Typography variant="body2" align="center" sx={{ color: 'text.secondary' }}>
+    <Typography
+      variant='body2'
+      align='center'
+      sx={{ color: 'text.secondary' }}
+    >
       {'Copyright © '}
       MyTracker Trainer Dashboard
       {new Date().getFullYear()}.
@@ -81,7 +86,7 @@ theme = {
     MuiTabs: {
       styleOverrides: {
         root: {
-          marginLeft: theme.spacing(1),
+          marginInlineStart: theme.spacing(1),
         },
         indicator: {
           height: 3,
@@ -148,7 +153,7 @@ theme = {
         root: {
           color: 'inherit',
           minWidth: 'auto',
-          marginRight: theme.spacing(2),
+          marginInlineEnd: theme.spacing(2),
           '& svg': {
             fontSize: 20,
           },
@@ -170,33 +175,43 @@ const drawerWidth = stylesVariables.dashboardDialogLeft
 
 export function TrainerDashboard() {
   const [mobileOpen, setMobileOpen] = React.useState(false)
-  const isSmUp = useMediaQuery(theme.breakpoints.up('sm'))
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
+
+  const themeWithDirection = useMemo(
+    () => ({ ...theme, direction: prefs.lang === 'he' ? 'rtl' : 'ltr' }),
+    [prefs.lang]
+  )
+  const isSmUp = useMediaQuery(theme.breakpoints.up('sm'))
+
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen)
   }
 
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={themeWithDirection}>
       <Box
         sx={{
           display: 'flex',
           minHeight: '100vh',
         }}
-        className={`trainer-dashboard-container ${prefs.isDarkMode ? 'dark-mode' : ''} ${prefs.favoriteColor}`}
+        className={`trainer-dashboard-container ${
+          prefs.isDarkMode ? 'dark-mode' : ''
+        } ${prefs.favoriteColor}`}
       >
         <CssBaseline />
         <Box
-          component="nav"
+          component='nav'
           sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
-          className={`trainer-dashboard-navigator-container ${prefs.isDarkMode ? 'dark-mode' : ''} ${prefs.favoriteColor}`}
+          className={`trainer-dashboard-navigator-container ${
+            prefs.isDarkMode ? 'dark-mode' : ''
+          } ${prefs.favoriteColor}`}
         >
           {isSmUp ? null : (
             <Navigator
               PaperProps={{ style: { width: drawerWidth } }}
-              variant="temporary"
+              variant='temporary'
               open={mobileOpen}
               onClose={handleDrawerToggle}
             />
@@ -209,9 +224,9 @@ export function TrainerDashboard() {
         <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
           <Header onDrawerToggle={handleDrawerToggle} />
           <Box
-            component="main"
+            component='main'
             sx={{ flex: 1 }}
-            className="trainer-dashboard-content-container"
+            className='trainer-dashboard-content-container'
           >
             <Routes>
               {trainerRoutes.map((route) => (
@@ -221,10 +236,21 @@ export function TrainerDashboard() {
                   element={<route.element />}
                 />
               ))}
-              <Route path="*" element={<Navigate to="/trainer" replace />} />
+              <Route
+                path='*'
+                element={
+                  <Navigate
+                    to='/trainer'
+                    replace
+                  />
+                }
+              />
             </Routes>
           </Box>
-          <Box component="footer" sx={{ p: 2 }}>
+          <Box
+            component='footer'
+            sx={{ p: 2 }}
+          >
             <Copyright />
           </Box>
         </Box>

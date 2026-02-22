@@ -184,11 +184,12 @@ export default function Header(props: HeaderProps) {
                 color='inherit'
                 variant='h5'
                 component='h1'
+                sx={{}}
               >
                 {`${user?.details?.fullname} ${
                   user?.isTrainer
                     ? prefs.lang === 'he'
-                      ? 'מאמן •'
+                      ? '• מאמן'
                       : '• Trainer'
                     : ''
                 }`}

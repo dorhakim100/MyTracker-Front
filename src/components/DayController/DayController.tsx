@@ -39,7 +39,7 @@ export function DayController({
         disableFocusListener={!isDashboard}
       >
         <IconButton onClick={() => onDayChange(-1)}>
-          <ArrowBackIcon />
+          {prefs.lang === 'he' ? <ArrowForwardIcon /> : <ArrowBackIcon />}
         </IconButton>
       </Tooltip>
       <div
@@ -63,7 +63,7 @@ export function DayController({
         disableFocusListener={!isDashboard}
       >
         <IconButton onClick={() => onDayChange(1)}>
-          <ArrowForwardIcon />
+          {prefs.lang === 'he' ? <ArrowBackIcon /> : <ArrowForwardIcon />}
         </IconButton>
       </Tooltip>
     </div>

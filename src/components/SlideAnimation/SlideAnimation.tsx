@@ -1,5 +1,7 @@
-import { PropsWithChildren } from 'react'
+import { PropsWithChildren, useMemo } from 'react'
+import { useSelector } from 'react-redux'
 import { AnimatePresence, motion, Variants } from 'framer-motion'
+import { RootState } from '../../store/store'
 
 interface SlideAnimationProps {
   motionKey: string | number
@@ -21,6 +23,14 @@ export function SlideAnimation({
   overflow = 'hidden',
   onClick,
 }: PropsWithChildren<SlideAnimationProps>) {
+  const isRtl = useSelector(
+    (state: RootState) => state.systemModule.prefs.lang === 'he'
+  )
+  const effectiveDirection = useMemo(
+    () => (isRtl ? -direction : direction),
+    [isRtl, direction]
+  )
+
   const variants: Variants = {
     enter: (dir: number) => ({ x: dir > 0 ? distance : -distance, opacity: 0 }),
     center: { x: 0, opacity: 1 },
@@ -28,10 +38,10 @@ export function SlideAnimation({
   }
 
   return (
-    <AnimatePresence initial={false} custom={direction} mode="wait">
+    <AnimatePresence initial={false} custom={effectiveDirection} mode="wait">
       <motion.div
         key={motionKey}
-        custom={direction}
+        custom={effectiveDirection}
         variants={variants}
         initial="enter"
         animate="center"

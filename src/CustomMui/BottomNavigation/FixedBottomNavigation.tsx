@@ -208,8 +208,7 @@ export function FixedBottomNavigation(props: {
           sx={{
             position: 'fixed',
             bottom: 0,
-            left: 0,
-            right: 0,
+            insetInline: 0,
             zIndex: 1000,
             height: '100px',
 

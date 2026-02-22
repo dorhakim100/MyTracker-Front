@@ -9,6 +9,7 @@
   }
   .custom-list-item {
     gap: 1em;
+    text-align: start;
 
     .left-content {
       position: relative;
@@ -16,7 +17,7 @@
       .item-image-container {
         position: absolute;
         top: 0.2em;
-        right: -0.2em;
+        inset-inline-end: -0.2em;
         bottom: 0.2em;
         display: flex;
         align-items: center;
@@ -41,7 +42,7 @@
 
   .drag-handle {
     cursor: grab;
-    padding-right: 8px;
+    padding-inline-end: 8px;
     display: flex;
     align-items: center;
     font-size: 1.3rem;

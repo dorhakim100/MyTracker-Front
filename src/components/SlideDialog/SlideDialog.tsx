@@ -228,7 +228,7 @@ export function SlideDialog({
               ? `calc(100vw - ${stylesVariables.dashboardDialogLeft}px)`
               : '100%',
 
-            marginLeft: isDashboard
+            marginInlineStart: isDashboard
               ? `${stylesVariables.dashboardDialogLeft}px`
               : '0',
           },
@@ -281,7 +281,7 @@ export function SlideDialog({
                   tooltipTitle={t('common.close')}
                 />
                 <Typography
-                  sx={{ ml: 2, flex: 1 }}
+                  sx={{ marginInlineStart: 2, flex: 1 }}
                   variant='h6'
                   component='div'
                 >

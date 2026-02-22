@@ -1,6 +1,7 @@
 .exercise-card-container {
   display: grid;
   position: relative;
+  direction: ltr;
   &.dashboard {
     @media (min-width: 1050px) {
       grid-template-columns: auto 1fr;
@@ -56,8 +57,8 @@
 
   &.done {
     // opacity: 0.8;
-    padding-left: 0.7rem;
-    border-left: 0.3rem solid $success-color;
+    padding-inline-start: 0.7rem;
+    border-inline-start: 0.3rem solid $success-color;
   }
 
   &.closed {
@@ -84,7 +85,7 @@
     grid-template-columns: 1fr;
     position: absolute;
     top: 0.5rem;
-    right: 0.5rem;
+    inset-inline-end: 0.5rem;
     z-index: 2;
   }
 

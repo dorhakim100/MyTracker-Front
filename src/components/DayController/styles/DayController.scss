@@ -1,3 +1,7 @@
+[dir='rtl'] .day-controller-container .MuiIconButton svg {
+  transform: scaleX(-1);
+}
+
 .day-controller-container {
   display: grid;
   grid-template-columns: auto 1fr auto;

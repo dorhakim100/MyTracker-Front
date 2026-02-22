@@ -18,6 +18,7 @@ import { Typography } from '@mui/material'
 const item = {
   py: '2px',
   px: 3,
+
   // color: 'rgba(255, 255, 255, 0.7)',
   '&:hover, &:focus': {
     bgcolor: 'rgba(255, 255, 255, 0.08)',
@@ -42,21 +43,34 @@ export default function Navigator(props: DrawerProps) {
     navigate(path)
   }
 
+  const isRtl = prefs.lang === 'he'
+
   return (
     <Drawer
       variant='permanent'
+      anchor={isRtl ? 'right' : 'left'}
       {...other}
-      className={`navigator-container-drawer ${prefs.isDarkMode ? 'dark-mode' : ''} ${prefs.favoriteColor}`}
+      className={`navigator-container-drawer ${
+        prefs.isDarkMode ? 'dark-mode' : ''
+      } ${prefs.favoriteColor}`}
       PaperProps={{
         // component: 'nav',
-        className: `navigator-container navigator-nav ${prefs.isDarkMode ? 'dark-mode' : ''} ${prefs.favoriteColor}`,
+        className: `navigator-container navigator-nav ${
+          prefs.isDarkMode ? 'dark-mode' : ''
+        } ${prefs.favoriteColor}`,
       }}
     >
       <List disablePadding>
         <ListItem
           className='pointer'
           onClick={() => navigate('/trainer')}
-          sx={{ ...item, ...itemCategory, fontSize: 22, color: '#fff' }}
+          sx={{
+            ...item,
+            ...itemCategory,
+            fontSize: 22,
+            color: '#fff',
+            direction: 'ltr',
+          }}
         >
           <img
             src={apps.myTracker.logo}
@@ -72,9 +86,11 @@ export default function Navigator(props: DrawerProps) {
         </ListItem>
 
         <Box
-          className={`navigator-container-box ${prefs.isDarkMode ? 'dark-mode' : ''} ${prefs.favoriteColor}`}
+          className={`navigator-container-box ${
+            prefs.isDarkMode ? 'dark-mode' : ''
+          } ${prefs.favoriteColor}`}
         >
-          <ListItem sx={{ py: 2, px: 3 }}>
+          <ListItem sx={{ py: 2, px: 3, textAlign: isRtl ? 'right' : 'left' }}>
             <ListItemText>{t('nav.navigation')}</ListItemText>
           </ListItem>
           {trainerRoutes.map((route) => {
@@ -88,7 +104,10 @@ export default function Navigator(props: DrawerProps) {
               >
                 <ListItemButton
                   selected={isActive}
-                  sx={item}
+                  sx={{
+                    ...item,
+                    textAlign: isRtl ? 'right' : 'left',
+                  }}
                   onClick={() => handleNavigation(route.path)}
                 >
                   <ListItemIcon>

@@ -1,5 +1,31 @@
 # RTL Support Implementation Plan
 
+## Implementation Status (Phase 1–3 Mostly Complete)
+
+### Phase 1
+- **DirectionThemeProvider** – Added in `main.tsx`; provides `direction: 'rtl'|'ltr'` to MUI theme based on `prefs.lang`
+- **TrainerDashboard** – Theme uses `direction` from `prefs.lang`; `marginLeft`/`marginRight` replaced with `marginInlineStart`/`marginInlineEnd`
+- **SlideAnimation** – Inverts `direction` when RTL so slide direction feels correct
+- **Document** – `dir` and `lang` already set in `App.tsx` when language changes
+
+### Phase 2 (CSS Audit – Partial)
+- **Navigator** – Drawer `anchor={isRtl ? 'right' : 'left'}`; TrainerDashboard uses `flexDirection: row-reverse` when RTL
+- **SlideDialog** – `marginLeft` → `marginInlineStart`; Typography `ml` → `marginInlineStart`
+- **CustomList** – `right`, `padding-right` → `inset-inline-end`, `padding-inline-end`
+- **AppHeader** – `left: 0; right: 0` → `inset-inline: 0`
+- **FixedBottomNavigation** – Paper `left/right: 0` → `insetInline: 0`
+- **ProfileCard** – `border-left` → `border-inline-start`
+- **ExerciseCard** – `padding-left`, `border-left`, `right` → logical properties
+- **EditIcon** – `right` → `inset-inline-end`
+- **CustomAccordion** – `margin-right` → `margin-inline-end`
+- **TraineeUserCard** – RTL flip for expand icon; hidden-state `translateX` reversed for RTL
+
+### Phase 3 (Directional Logic)
+- **SlideAnimation** – Already inverts direction for RTL ✓
+- **Directional icons** – `scaleX(-1)` in RTL for DayController arrows, TraineeUserCard expand icon
+
+---
+
 ## Current State Summary
 
 ### What Already Exists
@@ -42,6 +68,7 @@
 - **Location:** `TrainerDashboard.tsx` – has its own `createTheme` and `ThemeProvider`
 - **Action:** Make theme dynamic: read `prefs.lang` and pass `direction: prefs.lang === 'he' ? 'rtl' : 'ltr'` into `createTheme`
 - **Note:** `marginLeft` in MuiTabs styleOverrides should switch to `marginInlineStart` or rely on MUI's RTL handling
+- also, Navigator is attached to the left part of the dashboard, it needs to be aligned as well
 
 #### 1.3 AppTheme (SignIn)
 
@@ -110,6 +137,14 @@
 - **Chevrons / Arrows:** Icons like `ChevronLeft`, `ChevronRight`, `ArrowBack` – in RTL, "back" is often to the right. Options:
   - Use `transform: scaleX(-1)` via `sx` when `dir="rtl"`
   - Or use MUI's `rtl`-aware icon variants if available
+
+### 3.5 CustomList
+
+- custom list uses both render right and slide logic that relies on direction instead of start or end, and it needs to be adressed
+
+### 3.6 Slide logic
+
+- across the app are several slide logic and renderRight action, that needs to be adressed as well, not only in CustomList
 
 ---
 

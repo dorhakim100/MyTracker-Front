@@ -7,6 +7,7 @@ import { Provider } from 'react-redux'
 import { CssVarsProvider } from '@mui/material/styles'
 
 import { store } from './store/store'
+import { DirectionThemeProvider } from './components/DirectionThemeProvider/DirectionThemeProvider'
 
 import './i18n'
 import './index.css'
@@ -19,11 +20,13 @@ createRoot(document.getElementById('root')!).render(
     <Provider store={store}>
       <Router>
         <CssVarsProvider>
-          <link
-            rel='stylesheet'
-            href='https://fonts.googleapis.com/icon?family=Material+Icons'
-          />
-          <App />
+          <DirectionThemeProvider>
+            <link
+              rel='stylesheet'
+              href='https://fonts.googleapis.com/icon?family=Material+Icons'
+            />
+            <App />
+          </DirectionThemeProvider>
         </CssVarsProvider>
       </Router>
     </Provider>
