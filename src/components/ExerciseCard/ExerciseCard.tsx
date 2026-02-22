@@ -498,7 +498,7 @@ export function ExerciseCard({
                 variant='body2'
                 className='exercise-card-notes'
               >
-                {`Actual Notes: ${exerciseInstructions?.notes?.actual || ''}`}
+                {`${t('exercise.actualNotesLabel')} ${exerciseInstructions?.notes?.actual || ''}`}
               </Typography>
             )}
             {showEquipment &&
@@ -608,7 +608,7 @@ export function ExerciseCard({
         <CustomInput
           value={editNotes || ''}
           onChange={setEditNotes}
-          placeholder={`${capitalizeFirstLetter(exercise.name)} notes`}
+          placeholder={t('exercise.notesPlaceholder', { name: capitalizeFirstLetter(exercise.name) })}
           isRemoveIcon={true}
           className={`${prefs.favoriteColor}`}
         />

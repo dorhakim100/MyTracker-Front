@@ -91,14 +91,11 @@ export function CustomSelect({
           labelId={`${label}-select-label`}
           id={`${label}-select`}
           value={value}
-          className={`${imgs ? 'with-imgs' : ''} ${isDashboard ? 'dashboard' : ''}`}
+          className={`${imgs ? 'with-imgs' : ''} ${
+            isDashboard ? 'dashboard' : ''
+          }`}
           label={label}
           onChange={handleChange}
-          renderValue={
-            valueLabels
-              ? (v) => valueLabels[v as string] ?? capitalizeFirstLetter(v as string)
-              : undefined
-          }
           MenuProps={{
             PaperProps: {
               className: `${
@@ -116,7 +113,7 @@ export function CustomSelect({
               value={value}
             >
               {getImg(value)}
-              {(valueLabels?.[value] ?? capitalizeFirstLetter(value))} {extra}
+              {valueLabels?.[value] ?? capitalizeFirstLetter(value)} {extra}
             </MenuItem>
           ))}
         </Select>

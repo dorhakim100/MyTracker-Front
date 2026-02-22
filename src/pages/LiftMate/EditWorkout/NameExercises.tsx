@@ -1,4 +1,5 @@
 import { useRef, useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../store/store'
 import { CustomInput } from '../../../CustomMui/CustomInput/CustomInput'
@@ -83,6 +84,7 @@ export function NameExercises({
   onSaveWorkout,
   onSwitchRpeRir,
 }: NameExercisesProps) {
+  const { t } = useTranslation()
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
@@ -198,7 +200,7 @@ export function NameExercises({
       <div className='no-exercises-container'>
         <Dumbbell />
         <Typography variant='body2'>
-          Get started by adding an exercise to your routine
+          {t('workout.getStartedByAdding')}
         </Typography>
       </div>
     )
@@ -242,8 +244,8 @@ export function NameExercises({
             onReorderExercises={onReorderExercises}
             resultsMsg={
               !exerciseFilter.searchValue
-                ? 'Most Popular Exercises'
-                : `${exerciseResults.length} exercises found`
+                ? t('workout.mostPopularExercises')
+                : t('workout.exercisesFound', { count: exerciseResults.length })
             }
           />
         )
@@ -267,7 +269,7 @@ export function NameExercises({
             className={`reorder-exercise-list ${
               prefs.isDarkMode ? 'dark-mode' : ''
             }`}
-            noResultsMessage='No exercises added yet'
+            noResultsMessage={t('workout.noExercisesAdded')}
             isDragable={true}
             onReorder={onReorderExercises}
           />
@@ -281,9 +283,9 @@ export function NameExercises({
   const getDialogTitle = () => {
     switch (dialogState.type) {
       case 'add':
-        return 'Add Exercises'
+        return t('workout.addExercises')
       case 'reorder':
-        return 'Reorder Exercises'
+        return t('workout.reorderExercises')
       default:
         return ''
     }
@@ -314,7 +316,7 @@ export function NameExercises({
           <CustomInput
             value={workout.name}
             onChange={onNameChange}
-            placeholder='Enter workout name'
+            placeholder={t('workout.enterWorkoutName')}
             isRemoveIcon={true}
             className={`${prefs.favoriteColor}`}
           />
@@ -334,7 +336,7 @@ export function NameExercises({
                 })
               }}
               options={getArrayOfNumbers(1, 10).map((weekNumber) => ({
-                label: `Week`,
+                label: t('workout.week'),
                 value: weekNumber.toString(),
                 icon: <span>{weekNumber}</span>,
                 badgeIcon: getWeekNumberIcon(+weekNumber),
@@ -352,10 +354,10 @@ export function NameExercises({
           )}
           {!instructions._id && (
             <div className='times-per-week-container'>
-              <span className='bold-header'>Times per week</span>
+              <span className='bold-header'>{t('workout.timesPerWeek')}</span>
               <CustomSelect
-                tooltipTitle='Edit Times per week'
-                label='Times'
+                tooltipTitle={t('workout.editTimesPerWeek')}
+                label={t('workout.times')}
                 values={getArrayOfNumbers(1, 7).map(
                   (timesNumber) => timesNumber + ''
                 )}
@@ -386,7 +388,7 @@ export function NameExercises({
         } ${isDashboard ? 'dashboard' : ''}`}
       >
         <CustomButton
-          text='Add Exercise'
+          text={t('workout.addExercise')}
           onClick={() => openDialog('add')}
           icon={<AddIcon />}
           fullWidth={true}
@@ -400,7 +402,7 @@ export function NameExercises({
               flexItem={true}
             />
             <CustomButton
-              text='Save Workout'
+              text={t('workout.saveWorkout')}
               onClick={() => onSaveWorkout(true)}
               icon={<BeenhereIcon />}
               fullWidth={true}
@@ -418,12 +420,9 @@ export function NameExercises({
       <CustomAlertDialog
         open={dialogState.open && dialogState.type === 'alert'}
         onClose={closeDialog}
-        title='Change Week Number'
+        title={t('workout.changeWeekNumber')}
       >
-        <span>
-          You have unsaved changes. Do you want to save before changing the week
-          number?
-        </span>
+        <span>{t('workout.unsavedChangesWeek')}</span>
         <SaveCancel
           onCancel={closeDialog}
           onSave={handleSaveOnWeekNumberChange}

@@ -25,7 +25,8 @@
     "editMacros": "Edit Macros",
     "kcal": "kcal",
     "total": "Total",
-    "editMacrosButton": "Edit Macros"
+    "editMacrosButton": "Edit Macros",
+    "gram": "g"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -115,7 +116,19 @@
     "searchFirst": "Search for an item first...",
     "meals": "Meals",
     "favoriteItems": "Favorite Items",
-    "editSortBy": "Edit Sort by"
+    "editSortBy": "Edit Sort by",
+    "per100g": "100g",
+    "perServing": "serving",
+    "for": "for",
+    "sortRelevance": "Relevance",
+    "sortCaloriesHighToLow": "Calories (high to low)",
+    "sortCaloriesLowToHigh": "Calories (low to high)",
+    "sortProteinHighToLow": "Protein (high to low)",
+    "sortProteinLowToHigh": "Protein (low to high)",
+    "sortCarbsHighToLow": "Carbs (high to low)",
+    "sortCarbsLowToHigh": "Carbs (low to high)",
+    "sortFatHighToLow": "Fat (high to low)",
+    "sortFatLowToHigh": "Fat (low to high)"
   },
   "workout": {
     "noWorkoutSelected": "No workout selected",
@@ -140,7 +153,7 @@
     "viewDetails": "View Details",
     "deactivate": "Deactivate",
     "mostPopularExercises": "Most Popular Exercises",
-    "exercisesFound": "exercises found",
+    "exercisesFound": "{{count}} exercises found",
     "activeRoutines": "Active Routines",
     "pastRoutines": "Past Routines",
     "startRoutine": "Start Routine",
@@ -159,6 +172,8 @@
     "noActiveWorkouts": "No active workouts found",
     "searchExercises": "Search exercises...",
     "searchForExercises": "Search for exercises",
+    "getStartedByAdding": "Get started by adding an exercise to your routine",
+    "untitledWorkout": "Untitled Workout",
     "workoutByDate": "Workout by date",
     "noWorkoutSessionThisDay": "No workout session this day"
   },
@@ -184,6 +199,8 @@
     "notes": "Notes",
     "viewNotes": "View notes",
     "enterNotes": "Enter notes",
+    "notesPlaceholder": "{{name}} notes",
+    "actualNotesLabel": "Actual notes:",
     "collapse": "Collapse",
     "expand": "Expand",
     "exerciseDetails": "Exercise Details",
@@ -259,7 +276,12 @@
     "image": "Image",
     "uploadImage": "Upload Image",
     "uploading": "Uploading...",
-    "deleteAccount": "Delete Account"
+    "deleteAccount": "Delete Account",
+    "accordionMeals": "Meals",
+    "accordionGoals": "Goals",
+    "accordionFavoriteItems": "Favorite Items",
+    "accordionBmrCalculator": "BMR Calculator",
+    "accordionPreferences": "Preferences"
   },
   "trainer": {
     "addTrainee": "Add Trainee",

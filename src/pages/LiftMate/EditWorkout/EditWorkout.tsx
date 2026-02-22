@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useCallback, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../store/store'
 import { debounce } from '../../../services/util.service'
@@ -43,6 +44,7 @@ export function EditWorkout({
   forUserId,
   closeDialog,
 }: EditWorkoutProps) {
+  const { t } = useTranslation()
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
@@ -370,7 +372,7 @@ export function EditWorkout({
     }
 
     if (!workoutToSave.name) {
-      workoutToSave.name = 'Untitled Workout'
+      workoutToSave.name = t('workout.untitledWorkout')
     }
 
     const instructionsToSave = modifyInstructionsForSave(instructions)

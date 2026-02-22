@@ -1,5 +1,6 @@
 import { Exercise } from '../../../types/exercise/Exercise'
 import { Workout } from '../../../types/workout/Workout'
+import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../store/store'
 import { ExercisesSearch } from '../../../components/ExercisesSearch/ExercisesSearch'
@@ -26,6 +27,7 @@ export function ExercisesStage({
   onReorderExercises,
   resultsMsg,
 }: ExercisesStageProps) {
+  const { t } = useTranslation()
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
@@ -34,7 +36,7 @@ export function ExercisesStage({
       <ExercisesSearch
         exerciseFilter={exerciseFilter}
         onExerciseFilterChange={onExerciseFilterChange}
-        placeholder="Search for exercises"
+        placeholder={t('workout.searchForExercises')}
         className={`${prefs.favoriteColor}`}
         results={exerciseResults}
         onAddExercise={onAddExercise}

@@ -41,6 +41,18 @@ export function ItemFilter({
     'fat (low to high)',
   ]
 
+  const sortByValueLabels = {
+    'relevance': t('meals.sortRelevance'),
+    'calories (high to low)': t('meals.sortCaloriesHighToLow'),
+    'calories (low to high)': t('meals.sortCaloriesLowToHigh'),
+    'protein (high to low)': t('meals.sortProteinHighToLow'),
+    'protein (low to high)': t('meals.sortProteinLowToHigh'),
+    'carbs (high to low)': t('meals.sortCarbsHighToLow'),
+    'carbs (low to high)': t('meals.sortCarbsLowToHigh'),
+    'fat (high to low)': t('meals.sortFatHighToLow'),
+    'fat (low to high)': t('meals.sortFatLowToHigh'),
+  }
+
   return (
     <Box className={`search-container ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
       <div className="input-container">
@@ -65,6 +77,7 @@ export function ItemFilter({
         onChange={(val) => onFilterChange({ ...filter, sortBy: val })}
         label={t('meals.sortBy')}
         values={sortByOptions}
+        valueLabels={sortByValueLabels}
         className={`${prefs.favoriteColor} ${prefs.isDarkMode ? 'dark-mode' : ''
           } item-filter-select`}
       />

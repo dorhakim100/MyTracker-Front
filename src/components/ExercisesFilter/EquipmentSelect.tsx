@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import { CustomSelect } from '../../CustomMui/CustomSelect/CustomSelect'
 import { equipmentsValues } from '../../assets/config/equipments'
@@ -26,19 +27,23 @@ export function EquipmentSelect({
   exerciseFilter,
   onExerciseFilterChange,
 }: EquipmentSelectProps) {
+  const { t } = useTranslation()
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
 
   return (
     <CustomSelect
-      tooltipTitle="Edit Equipment"
+      tooltipTitle={t('exercise.editEquipment')}
       value={exerciseFilter.equipmentValue}
       onChange={(value) =>
         onExerciseFilterChange({ ...exerciseFilter, equipmentValue: value })
       }
-      label="Equipment"
+      label={t('exercise.equipment')}
       values={equipmentsValues}
+      valueLabels={Object.fromEntries(
+        equipmentsValues.map((v) => [v, t(`equipment.${v.toLowerCase()}`)])
+      )}
       className={`${prefs.favoriteColor}`}
       imgs={equipmentsImgs}
     />

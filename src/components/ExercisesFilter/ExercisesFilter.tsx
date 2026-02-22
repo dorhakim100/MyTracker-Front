@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { CustomInput } from '../../CustomMui/CustomInput/CustomInput'
@@ -22,10 +23,11 @@ interface ExercisesFilterProps {
 export function ExercisesFilter({
   exerciseFilter,
   onExerciseFilterChange,
-  searchPlaceholder = 'Search for exercises',
+  searchPlaceholder,
   className = '',
   resultsMsg,
 }: ExercisesFilterProps) {
+  const { t } = useTranslation()
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
@@ -51,17 +53,17 @@ export function ExercisesFilter({
         onChange={(value) => {
           onExerciseFilterChange({ ...exerciseFilter, searchValue: value })
         }}
-        placeholder={searchPlaceholder}
+        placeholder={searchPlaceholder ?? t('workout.searchForExercises')}
         isRemoveIcon={true}
         className={`${prefs.favoriteColor}`}
       />
       <CustomSelect
-        tooltipTitle="Edit Muscle Group"
+        tooltipTitle={t('exercise.editMuscleGroup')}
         value={exerciseFilter.muscleGroupValue}
         onChange={(value) =>
           onExerciseFilterChange({ ...exerciseFilter, muscleGroupValue: value })
         }
-        label="Muscle Group"
+        label={t('exercise.muscleGroup')}
         values={musclesValues}
         className={`${prefs.favoriteColor}`}
         imgs={musclesImgs}
@@ -78,7 +80,7 @@ export function ExercisesFilter({
         <CustomButton
           icon={<FilterAltOffIcon />}
           isIcon={true}
-          tooltipTitle="Clear filters"
+          tooltipTitle={t('exercise.clearFilters')}
           onClick={() => {
             onExerciseFilterChange(workoutService.getEmptyExerciseFilter())
           }}

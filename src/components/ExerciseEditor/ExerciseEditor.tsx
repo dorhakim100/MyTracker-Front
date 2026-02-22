@@ -471,7 +471,7 @@ export function ExerciseEditor({
                             {previousInstructions?.exercises.find(
                               (e) => e.exerciseId === exercise.exerciseId
                             )?.sets[index]?.weight?.expected || 'N/A'}{' '}
-                            kg
+                            {t('weight.kg')}
                           </span>
                           <Divider
                             orientation='horizontal'
@@ -513,7 +513,7 @@ export function ExerciseEditor({
                         }}
                         value={set.weight.actual}
                         minWidth={windowWidth > 1050 ? windowWidth / 10 : 100}
-                        afterString='kg'
+                        afterString={t('weight.kg')}
                         // isAutoWidth={true}
                       />
                     </div>

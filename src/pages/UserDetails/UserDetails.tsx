@@ -42,31 +42,31 @@ export function UserDetails() {
 
   const acrodions = [
     {
-      title: 'Meals',
+      title: t('user.accordionMeals'),
       cmp: <MealsCard />,
       icon: <RestaurantMenuIcon />,
       key: 'meals',
     },
     {
-      title: 'Goals',
+      title: t('user.accordionGoals'),
       cmp: <GoalsCard />,
       icon: <ModeStandbyIcon />,
       key: 'goals',
     },
     {
-      title: 'Favorite Items',
+      title: t('user.accordionFavoriteItems'),
       cmp: <FavoriteItemsCard />,
       icon: <FavoriteBorderIcon />,
       key: 'favorite-items',
     },
     {
-      title: 'BMR Calculator',
+      title: t('user.accordionBmrCalculator'),
       cmp: <BmrCard sentUser={traineeUser || user || undefined} />,
       icon: <CalculateIcon />,
       key: 'bmr-calculator',
     },
     {
-      title: 'Preferences',
+      title: t('user.accordionPreferences'),
       cmp: <PreferencesCard />,
       icon: <SettingsIcon />,
       key: 'preferences',

@@ -252,7 +252,7 @@ export function EditMacros({
                 </span>
               </div>
               <Typography variant="h6" className="value">
-                {pickerValue[macroName].toFixed(0)}g
+                {pickerValue[macroName].toFixed(0)}{t('macros.gram')}
               </Typography>
               {/* <div className="add-remove-buttons-container">
                 <CustomButton

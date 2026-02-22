@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { Exercise } from '../../types/exercise/Exercise'
@@ -32,12 +33,14 @@ export function ExercisesSearch({
   workout,
   exerciseFilter,
   onExerciseFilterChange,
+  placeholder,
   className = '',
   results,
   onAddExercise,
   // renderErrorImage,
   resultsMsg,
 }: ExercisesSearchProps) {
+  const { t } = useTranslation()
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
@@ -69,6 +72,7 @@ export function ExercisesSearch({
         <ExercisesFilter
           exerciseFilter={exerciseFilter}
           onExerciseFilterChange={onExerciseFilterChange}
+          searchPlaceholder={placeholder}
           resultsMsg={resultsMsg}
         />
 
@@ -109,7 +113,7 @@ export function ExercisesSearch({
               className={isExerciseAdded(exercise) ? 'red' : ''}
             />}
           }
-          noResultsMessage="No exercises found..."
+          noResultsMessage={t('exercise.noExercisesFound')}
           onItemClick={(exercise) => onOpenModal(exercise)}
         />
       </div>
@@ -117,7 +121,7 @@ export function ExercisesSearch({
         open={openModal}
         onClose={onCloseModal}
         component={<ExerciseDetails exercise={exercise} />}
-        title={capitalizeFirstLetter(exercise?.name || 'Exercise Details')}
+        title={capitalizeFirstLetter(exercise?.name || t('exercise.exerciseDetails'))}
         type="full"
       />
     </>

@@ -142,7 +142,7 @@ export function ItemDetails({
             label: t('meals.servingSize'),
             key: 'servingSize',
             values: [1, 25, 30, 50, 100, 150],
-            extra: 'gram',
+            extra: t('macros.gram'),
             type: 'select',
           },
           getNumberOfServingsInput(t),
@@ -614,7 +614,7 @@ export function ItemDetails({
             <div className='title'>{item.name}</div>
             <div className='subtitle'>{`${(+item.macros?.calories).toFixed(
               0
-            )} kcal for ${!_hasItems(item) ? '100g' : 'serving'}`}</div>
+            )} ${t('macros.kcal')} ${t('meals.for')} ${!_hasItems(item) ? t('meals.per100g') : t('meals.perServing')}`}</div>
 
             {!noEdit && !_hasItems(item) && (
               <div

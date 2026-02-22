@@ -2,6 +2,7 @@ import FormControl from '@mui/material/FormControl'
 import InputLabel from '@mui/material/InputLabel'
 import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
+import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { Tooltip } from '@mui/material'
@@ -31,6 +32,7 @@ export function PickerSelect({
   className,
   afterString,
 }: PickerSelectProps) {
+  const { t } = useTranslation()
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
@@ -40,7 +42,7 @@ export function PickerSelect({
 
   return (
     <Tooltip
-      title={`Edit ${option.label}`}
+      title={t('common.editOption', { option: option.label })}
       disableHoverListener={!isDashboard}
       disableTouchListener={!isDashboard}
       disableFocusListener={!isDashboard}
