@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../store/store'
 
 interface TimesContainerProps {
   isClock?: boolean
@@ -6,20 +8,26 @@ interface TimesContainerProps {
   className?: string
 }
 
+const dateLocale = (lang: 'en' | 'he') => (lang === 'he' ? 'he-IL' : 'en')
+
 export function TimesContainer({
   isClock = true,
   selectedDay = new Date(),
   className = '',
 }: TimesContainerProps) {
+  const lang = useSelector(
+    (state: RootState) => state.systemModule.prefs.lang
+  )
+
   const [timeString, setTimeString] = useState(
-    new Date().toLocaleTimeString('he', {
+    new Date().toLocaleTimeString(lang === 'he' ? 'he-IL' : 'en', {
       hour: '2-digit',
       minute: '2-digit',
       hour12: false,
     })
   )
   const [dateString, setDateString] = useState(
-    selectedDay.toLocaleDateString('eng', {
+    selectedDay.toLocaleDateString(dateLocale(lang), {
       weekday: 'long',
       day: 'numeric',
       month: 'long',
@@ -27,37 +35,30 @@ export function TimesContainer({
   )
 
   useEffect(() => {
+    const locale = lang === 'he' ? 'he-IL' : 'en'
     const interval = setInterval(() => {
       const now = new Date()
       setTimeString(
-        now.toLocaleTimeString('he', {
+        now.toLocaleTimeString(locale, {
           hour: '2-digit',
           minute: '2-digit',
           hour12: false,
         })
       )
-
-      // setDateString(
-      //   now.toLocaleDateString('eng', {
-      //     weekday: 'long',
-      //     day: 'numeric',
-      //     month: 'long',
-      //   })
-      // )
     }, 1000)
 
     return () => clearInterval(interval)
-  }, [])
+  }, [lang])
 
   useEffect(() => {
     setDateString(
-      selectedDay.toLocaleDateString('eng', {
+      selectedDay.toLocaleDateString(dateLocale(lang), {
         weekday: 'long',
         day: 'numeric',
         month: 'long',
       })
     )
-  }, [selectedDay])
+  }, [selectedDay, lang])
 
   return (
     <div className={`times-container ${className}`}>
