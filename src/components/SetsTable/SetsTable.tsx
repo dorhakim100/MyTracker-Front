@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { useTranslation } from 'react-i18next'
 import Box from '@mui/material/Box'
 import Collapse from '@mui/material/Collapse'
 import Table from '@mui/material/Table'
@@ -36,6 +37,7 @@ function Row(props: {
   divider?: boolean
 }) {
   const { sets, setAlertDialogOptions, divider = true } = props
+  const { t } = useTranslation()
   const [open, setOpen] = React.useState(false)
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -78,7 +80,7 @@ function Row(props: {
                 Math.max(...sets.map((set) => set.weight.actual))
             )?.weight.actual
           }{' '}
-          kg
+          {t('weight.kg')}
         </TableCell>
         <TableCell align='center' sx={{ width: '25%' }}>
           {
@@ -106,12 +108,12 @@ function Row(props: {
               getNotes(sessionId, sets[0].exerciseId)
             }}
             isIcon={true}
-            tooltipTitle="View notes"
+            tooltipTitle={t('exercise.viewNotes')}
           />
           <CustomButton
             icon={open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
             isIcon={true}
-            tooltipTitle={open ? 'Collapse' : 'Expand'}
+            tooltipTitle={open ? t('exercise.collapse') : t('exercise.expand')}
           />
         </TableCell>
       </TableRow>
@@ -130,11 +132,11 @@ function Row(props: {
               <Table size='small' aria-label='sets' sx={{ tableLayout: 'fixed', width: '100%' }}>
                 <TableHead>
                   <TableRow>
-                    <TableCell align='center' sx={{ width: '30%' }}>Set</TableCell>
-                    <TableCell align='center' sx={{ width: '25%' }}>Weight</TableCell>
-                    <TableCell align='center' sx={{ width: '25%' }}>Reps</TableCell>
+                    <TableCell align='center' sx={{ width: '30%' }}>{t('exercise.set')}</TableCell>
+                    <TableCell align='center' sx={{ width: '25%' }}>{t('exercise.weight')}</TableCell>
+                    <TableCell align='center' sx={{ width: '25%' }}>{t('exercise.reps')}</TableCell>
                     <TableCell align='center' sx={{ width: '20%' }}>
-                      {sets[0].rpe ? 'RPE' : 'RIR'}
+                      {sets[0].rpe ? t('exercise.rpe') : t('exercise.rir')}
                     </TableCell>
                   </TableRow>
                 </TableHead>
@@ -150,7 +152,7 @@ function Row(props: {
                           ></Badge>
                         </TableCell>
                         <TableCell align='center' sx={{ width: '25%' }}>
-                          {set.weight.actual} kg
+                          {set.weight.actual} {t('weight.kg')}
                         </TableCell>
                         <TableCell align='center' sx={{ width: '25%' }}>{set.reps.actual}</TableCell>
                         <TableCell align='center' sx={{ width: '20%' }}>
@@ -174,6 +176,7 @@ export default function SetsTable({
 }: {
   groupedSets: Record<string, (Set & { exerciseId: string })[]>
 }) {
+  const { t } = useTranslation()
   const entries = Object.entries(groupedSets)
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -200,9 +203,9 @@ export default function SetsTable({
           <Table aria-label='collapsible table ' sx={{ tableLayout: 'fixed' }}>
             <TableHead>
               <TableRow>
-                <TableCell sx={{ width: '30%' }}>Date</TableCell>
-                <TableCell sx={{ textAlign: 'center', width: '25%' }}>Top weight</TableCell>
-                <TableCell sx={{ textAlign: 'center', width: '25%' }}>Top Reps</TableCell>
+                <TableCell sx={{ width: '30%' }}>{t('exercise.date')}</TableCell>
+                <TableCell sx={{ textAlign: 'center', width: '25%' }}>{t('exercise.topWeight')}</TableCell>
+                <TableCell sx={{ textAlign: 'center', width: '25%' }}>{t('exercise.topReps')}</TableCell>
                 <TableCell sx={{ width: '20%' }}></TableCell>
               </TableRow>
             </TableHead>
@@ -222,7 +225,7 @@ export default function SetsTable({
                 <TableRow>
                   <TableCell colSpan={4}>
                     <Typography variant='body1'>
-                      No past sessions found
+                      {t('exercise.noPastSessionsFound')}
                     </Typography>
                   </TableCell>
                 </TableRow>
@@ -239,7 +242,7 @@ export default function SetsTable({
               date: '',
             })
           }
-          title='Notes'
+          title={t('exercise.notes')}
         >
           <NotesDisplay
             notes={alertDialogOptions.notes}
@@ -248,7 +251,7 @@ export default function SetsTable({
 
           <DialogActions>
             <CustomButton
-              text='Close'
+              text={t('common.close')}
               onClick={() =>
                 setAlertDialogOptions({
                   open: false,

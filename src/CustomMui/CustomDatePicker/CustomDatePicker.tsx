@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { useMemo, useState } from 'react'
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'
 import { CustomButton } from '../CustomButton/CustomButton'
@@ -18,6 +19,7 @@ export function CustomDatePicker({
   ariaLabel,
   className,
 }: CustomDatePickerProps) {
+  const { t } = useTranslation()
   const [open, setOpen] = useState(false)
 
   const localIso = useMemo(
@@ -50,7 +52,7 @@ export function CustomDatePicker({
         ariaLabel={ariaLabel || 'open date picker'}
         onClick={onOpen}
         className={`custom-date-picker-button ${className || ''}`}
-        tooltipTitle='Select date'
+        tooltipTitle={t('common.selectDate')}
       />
 
       <MobileDatePicker

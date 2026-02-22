@@ -1,4 +1,5 @@
 import Picker from 'react-mobile-picker'
+import { useTranslation } from 'react-i18next'
 import { EditItem } from '../../types/editItem/editItem'
 
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
@@ -36,6 +37,7 @@ export function ClockPicker({
   isRounded?: boolean
   sentOnCancel?: () => void
 }) {
+  const { t } = useTranslation()
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
@@ -171,13 +173,13 @@ export function ClockPicker({
       {isSaveCancelButtonsVisible && (
         <DialogActions className='save-cancel-container'>
           <CustomButton
-            text='Cancel'
+            text={t('common.cancel')}
             onClick={onCancel}
             className='delete-account-button'
             fullWidth
           />
           <CustomButton
-            text='Save'
+            text={t('common.save')}
             onClick={onSave}
             className={`${prefs.favoriteColor} save-button`}
             fullWidth

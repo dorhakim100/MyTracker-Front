@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useLocation } from 'react-router-dom'
 import { LoggedList } from '../../../components/LoggedList/LoggedList'
 import { Box, Divider, Typography } from '@mui/material'
@@ -27,6 +28,7 @@ import { getDateFromISO } from '../../../services/util.service'
 import { DAY_IN_MS } from '../../../assets/config/times'
 
 export function Diary() {
+  const { t } = useTranslation()
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
   const user = useSelector((state: RootState) => state.userModule.user)
   const selectedDayDiary = useSelector(
@@ -53,27 +55,27 @@ export function Diary() {
 
   const meals = [
     {
-      label: 'Breakfast',
+      label: t('meals.breakfast'),
       period: 'breakfast',
       rangeLabel: '06:00 – 12:00',
       icon: <WbTwilightIcon />,
     },
     {
-      label: 'Lunch',
+      label: t('meals.lunch'),
       period: 'lunch',
       rangeLabel: '12:00 – 18:00',
       icon: <LightModeIcon />,
     },
     {
-      label: 'Dinner',
+      label: t('meals.dinner'),
       period: 'dinner',
       rangeLabel: '18:00 – 00:00',
       icon: <BedtimeIcon />,
     },
     {
-      label: 'Snacks',
+      label: t('meals.snacks'),
       period: 'snacks',
-      rangeLabel: 'During the day',
+      rangeLabel: t('meals.duringTheDay'),
       icon: <IcecreamIcon />,
     },
   ]
@@ -176,7 +178,7 @@ export function Diary() {
         />
         <div className='macros-accordion-container'>
           <CustomAccordion
-            title='Macros'
+            title={t('macros.macros')}
             cmp={
               <LinearMacrosProgress
                 caloriesProgress={selectedDayDiary?.calories || 0}
@@ -242,7 +244,7 @@ export function Diary() {
                       variant='body2'
                       className='total-calories'
                     >
-                      {`Total: ${caloriesToSet.toFixed(0)} kcal`}
+                      {`${t('macros.total')}: ${caloriesToSet.toFixed(0)} ${t('macros.kcal')}`}
                     </Typography>
                     {hasItems?.length !== 0 && (
                       <AddItemButton mealPeriod={meal.period as MealPeriod} />

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 
 import { RootState } from '../../store/store'
@@ -14,6 +15,7 @@ import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight'
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft'
 
 export function TraineeUserCard() {
+  const { t } = useTranslation()
   const traineeUser = useSelector(
     (state: RootState) => state.userModule.traineeUser
   )
@@ -52,7 +54,7 @@ export function TraineeUserCard() {
       <CustomButton
         isIcon={true}
         icon={isHidden ? <KeyboardArrowRightIcon /> : <KeyboardArrowLeftIcon />}
-        tooltipTitle={isHidden ? 'Show' : 'Hide'}
+        tooltipTitle={isHidden ? t('common.show') : t('common.hide')}
         onClick={() => {
           setIsHidden(!isHidden)
         }}

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Card, Typography, Divider, DialogActions } from '@mui/material'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
@@ -97,6 +98,7 @@ export function ExerciseCard({
   isOpen = true,
   onOpenChange,
 }: ExerciseCardProps) {
+  const { t } = useTranslation()
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
@@ -159,12 +161,12 @@ export function ExerciseCard({
 
   const menuOptions = [
     {
-      title: 'View Details',
+      title: t('workout.viewDetails'),
       icon: <InfoOutlineIcon />,
       onClick: openDetailsDialog,
     },
     isExpected && {
-      title: `Toggle to ${exerciseInstructions?.sets[0]?.rpe ? 'RIR' : 'RPE'}`,
+      title: exerciseInstructions?.sets[0]?.rpe ? t('exercise.toggleToRir') : t('exercise.toggleToRpe'),
       icon: <SwitchLeftIcon />,
       onClick: () => {
         const modeToSet = exerciseInstructions?.sets[0]?.rpe ? 'rir' : 'rpe'
@@ -175,7 +177,7 @@ export function ExerciseCard({
       },
     },
     isExpected && {
-      title: 'Edit Resting Timer',
+      title: t('exercise.editRestingTime'),
       icon: <AccessAlarmIcon />,
       onClick: () => {
         setSlideDialogOptions((prev) => {
@@ -189,14 +191,14 @@ export function ExerciseCard({
     },
 
     !isExpected && {
-      title: isDone ? 'Mark as Not Done' : 'Mark as Done',
+      title: isDone ? t('exercise.markAsNotDone') : t('exercise.markAsDone'),
       icon: isDone ? <RemoveCircleIcon /> : <CheckCircleIcon />,
       onClick: () => {
         onMarkAsDone(!isDone)
       },
     },
     {
-      title: 'Edit Notes',
+      title: t('exercise.addNotes'),
       icon: <EditNoteIcon />,
       onClick: () => {
         setIsEditNotesOpen(true)
@@ -208,11 +210,11 @@ export function ExerciseCard({
       },
     },
     !isExpected && {
-      title: 'Change Exercise',
+      title: t('exercise.changeExercise'),
       icon: <AltRouteIcon />,
       onClick: () => {
         setSlideDialogOptions({
-          title: 'Change Exercise',
+          title: t('exercise.changeExercise'),
           type: 'change-exercise',
           open: true,
         })
@@ -221,7 +223,7 @@ export function ExerciseCard({
 
     isExpected
       ? {
-          title: 'Reorder Exercises',
+          title: t('workout.reorderExercises'),
           icon: <DragHandleIcon />,
           onClick: () => {
             if (setIsReorderExercisesOpen) {
@@ -231,7 +233,7 @@ export function ExerciseCard({
         }
       : null,
     (isExpected && {
-      title: 'Delete',
+      title: t('common.delete'),
       icon: <DeleteIcon />,
       onClick: () => {
         if (onDelete) {
@@ -345,7 +347,7 @@ export function ExerciseCard({
       case 'exercise-details':
         return capitalizeFirstLetter(exercise.name)
       case 'resting-timer':
-        return 'Edit Resting Time'
+        return t('exercise.editRestingTime')
       case 'change-exercise':
         return capitalizeFirstLetter(exercise.name)
       default:
@@ -437,7 +439,7 @@ export function ExerciseCard({
                 onOpenChange?.()
               }}
               isIcon={true}
-              tooltipTitle={isOpen ? 'Collapse' : 'Expand'}
+              tooltipTitle={isOpen ? t('exercise.collapse') : t('exercise.expand')}
             />
           )}
         </div>
@@ -521,7 +523,7 @@ export function ExerciseCard({
                 <div className='resting-time-container'>
                   <AccessAlarmIcon />
                   <span>
-                    Resting time:{' '}
+                    {t('exercise.restingTime')}{' '}
                     {formatTime(
                       exerciseInstructions.restingTime || DEFAULT_RESTING_TIME
                     )}
@@ -601,7 +603,7 @@ export function ExerciseCard({
         onClose={() => setIsEditNotesOpen(false)}
         title={capitalizeFirstLetter(exercise.name)}
       >
-        <Typography variant='h6'>Add Notes</Typography>
+        <Typography variant='h6'>{t('exercise.addNotes')}</Typography>
 
         <CustomInput
           value={editNotes || ''}
@@ -612,13 +614,13 @@ export function ExerciseCard({
         />
         <DialogActions>
           <CustomButton
-            text='Cancel'
+            text={t('common.cancel')}
             fullWidth
             onClick={() => setIsEditNotesOpen(false)}
             className={`${prefs.favoriteColor}`}
           />
           <CustomButton
-            text='Save'
+            text={t('common.save')}
             fullWidth
             onClick={() => {
               onEditExerciseNotes(exercise.exerciseId, editNotes || '')

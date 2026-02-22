@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { useSelector } from 'react-redux'
 import Typography from '@mui/material/Typography'
@@ -23,6 +24,7 @@ interface ExerciseDialogOptions {
 }
 
 export function WorkoutDetails({ workout }: WorkoutDetailsProps) {
+  const { t } = useTranslation()
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
@@ -44,7 +46,7 @@ export function WorkoutDetails({ workout }: WorkoutDetailsProps) {
   if (!workout) {
     return (
       <div className='workout-details-container'>
-        <Typography>No workout selected</Typography>
+        <Typography>{t('workout.noWorkoutSelected')}</Typography>
       </div>
     )
   }

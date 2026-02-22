@@ -1,4 +1,5 @@
 import { useMemo, useCallback, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   Card,
   CircularProgress,
@@ -59,6 +60,7 @@ export function WorkoutCard({
   onReorderWorkouts,
   workouts,
 }: WorkoutCardProps) {
+  const { t } = useTranslation()
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
@@ -100,17 +102,17 @@ export function WorkoutCard({
   const options: DropdownOption[] = useMemo(
     () => [
       {
-        title: 'View Details',
+        title: t('workout.viewDetails'),
         icon: <InfoOutlineIcon />,
         onClick: onViewDetails,
       },
       {
-        title: 'Edit Routine',
+        title: t('workout.editRoutine'),
         icon: <Edit />,
         onClick: onEdit,
       },
       {
-        title: 'Deactivate',
+        title: t('workout.deactivate'),
         icon: <IndeterminateCheckBoxIcon />,
         onClick: () => {
           toggleActivateWorkout(workout)
@@ -121,20 +123,20 @@ export function WorkoutCard({
         },
       },
       {
-        title: 'Delete',
+        title: t('common.delete'),
         icon: <Delete />,
         onClick: () => setIsDeleteOpen(true),
       },
     ],
-    [onViewDetails, onEdit, setIsDeleteOpen, workout]
+    [onViewDetails, onEdit, setIsDeleteOpen, workout, t]
   )
 
   const getSlideTitle = () => {
     if (slideOptions.type === 'details') {
-      return 'Workout Details'
+      return t('workout.workoutDetails')
     }
     if (slideOptions.type === 'edit') {
-      return `Edit ${workout.name}`
+      return t('common.editOption', { option: workout.name })
     }
     return null
   }
@@ -158,7 +160,7 @@ export function WorkoutCard({
     if (!isDashboard)
       return (
         <CustomButton
-          text='Start Routine'
+          text={t('workout.startRoutine')}
           fullWidth={true}
           onClick={(ev) => {
             ev.stopPropagation()
@@ -183,7 +185,7 @@ export function WorkoutCard({
     if (workout.isNewInstructions && workout.doneTimes === 0) {
       return (
         <Badge
-          badgeContent={'New'}
+          badgeContent={t('common.new')}
           className={`${prefs.favoriteColor} new-workout-badge`}
         >
           <span>
@@ -252,7 +254,7 @@ export function WorkoutCard({
         {isDashboard && (
           <div className='dashboard-actions-container'>
             <CustomButton
-              text='Edit Routine'
+              text={t('workout.editRoutine')}
               fullWidth={true}
               onClick={(ev) => {
                 ev.stopPropagation()
@@ -267,20 +269,20 @@ export function WorkoutCard({
       <CustomAlertDialog
         open={isDeleteOpen}
         onClose={() => setIsDeleteOpen(false)}
-        title='Delete Workout'
+        title={t('workout.deleteWorkout')}
       >
         <div className='modal-delete-workout-container'>
           <Typography variant='body1'>
-            Are you sure you want to delete this workout?
+            {t('workout.deleteWorkoutConfirm')}
           </Typography>
           <DialogActions>
             <CustomButton
-              text='Cancel'
+              text={t('common.cancel')}
               fullWidth={true}
               onClick={() => setIsDeleteOpen(false)}
             />
             <CustomButton
-              text='Delete'
+              text={t('common.delete')}
               fullWidth={true}
               onClick={onDelete}
               className={`${prefs.favoriteColor} delete-account-button`}

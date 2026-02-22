@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { debounce, DialogActions, Divider, Typography } from '@mui/material'
 
 import { SessionDay } from '../../types/workout/SessionDay'
@@ -54,6 +55,8 @@ export function WorkoutSession({
   sessionDay,
   updateSessionDay,
 }: WorkoutSessionProps) {
+  const { t } = useTranslation()
+
   if (!sessionDay.instructions) return null
 
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
@@ -307,8 +310,8 @@ export function WorkoutSession({
   }
 
   const resultsMsg = !exerciseFilter.searchValue
-    ? 'Most Popular Exercises'
-    : `${filteredExerciseResults.length} exercises found`
+    ? t('workout.mostPopularExercises')
+    : t('workout.exercisesFound', { count: filteredExerciseResults.length })
 
   const handleOpenChange = useCallback(
     (exerciseId: string, openToSet: boolean) => {
@@ -835,7 +838,7 @@ export function WorkoutSession({
   function openExerciseDialog() {
     setSlideDialogOptions({
       open: true,
-      title: 'Add Exercise',
+      title: t('workout.addExercise'),
       component: null,
       type: 'edit',
     })
@@ -843,7 +846,7 @@ export function WorkoutSession({
   const onOpenWorkoutDetails = () => {
     setSlideDialogOptions({
       open: true,
-      title: 'Workout Details',
+      title: t('workout.workoutDetails'),
       component: <WorkoutDetails workout={sessionDay.workout} />,
       type: 'details',
     })
@@ -853,17 +856,17 @@ export function WorkoutSession({
       return (
         <div className='modal-delete-workout-container'>
           <Typography variant='h6'>
-            Are you sure you want to delete this workout?
+            {t('workout.deleteWorkoutConfirm')}
           </Typography>
           <DialogActions>
             <CustomButton
-              text='Cancel'
+              text={t('common.cancel')}
               fullWidth
               onClick={closeAlertDialog}
               className={`${prefs.favoriteColor}`}
             />
             <CustomButton
-              text='Delete'
+              text={t('common.delete')}
               fullWidth
               onClick={deleteSession}
               className={`${prefs.favoriteColor} delete-account-button`}
@@ -878,19 +881,19 @@ export function WorkoutSession({
           <CustomInput
             value={exerciseNotes}
             onChange={setExerciseNotes}
-            placeholder='Enter notes'
+            placeholder={t('exercise.enterNotes')}
             isRemoveIcon={true}
             className={`${prefs.favoriteColor}`}
           />
           <DialogActions>
             <CustomButton
-              text='Cancel'
+              text={t('common.cancel')}
               fullWidth
               onClick={closeAlertDialog}
               className={`${prefs.favoriteColor}`}
             />
             <CustomButton
-              text='Save'
+              text={t('common.save')}
               fullWidth
               onClick={() =>
                 saveExerciseNotes(alertDialogOptions.exerciseId, exerciseNotes)
@@ -928,7 +931,7 @@ export function WorkoutSession({
               icon={allExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               onClick={toggleExpandAll}
               isIcon={true}
-              tooltipTitle={allExpanded ? 'Collapse all' : 'Expand all'}
+              tooltipTitle={allExpanded ? t('workout.collapseAll') : t('workout.expandAll')}
             />
             <CustomButton
               // text="Finish Workout"
@@ -940,20 +943,20 @@ export function WorkoutSession({
                 if (!timer) return
                 removeTimer(timer._id)
               }}
-              tooltipTitle='Finish Workout'
+              tooltipTitle={t('workout.finishWorkout')}
             />
             <CustomButton
               icon={<DeleteIcon />}
               onClick={() => {
                 setAlertDialogOptions({
                   open: true,
-                  title: 'Delete Workout',
+                  title: t('workout.deleteWorkout'),
                   component: 'delete',
                   exerciseId: '',
                 })
               }}
               isIcon={true}
-              tooltipTitle='Delete Workout'
+              tooltipTitle={t('workout.deleteWorkout')}
             />
           </div>
         </div>
@@ -1006,7 +1009,7 @@ export function WorkoutSession({
         </div>
         <div className='buttons-container'>
           <CustomButton
-            text='Add Exercise'
+            text={t('workout.addExercise')}
             icon={<AddIcon />}
             fullWidth
             onClick={openExerciseDialog}
@@ -1017,7 +1020,7 @@ export function WorkoutSession({
             flexItem={true}
           />
           <CustomButton
-            text='Finish Workout'
+            text={t('workout.finishWorkout')}
             icon={<CheckIcon />}
             fullWidth
             disabled={!timer}

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { Card, Typography } from '@mui/material'
 import { RootState } from '../../store/store'
@@ -26,6 +27,7 @@ import Lottie from 'lottie-react'
 const DEFAULT_WEIGHT = 60
 
 export function WeightCard() {
+  const { t } = useTranslation()
   const prefs = useSelector(
     (storeState: RootState) => storeState.systemModule.prefs
   )
@@ -125,14 +127,14 @@ export function WeightCard() {
         className='weight-text'
       >
         {weight}
-        <span className='weight-text-kg'>kg</span>
+        <span className='weight-text-kg'>{t('weight.kg')}</span>
       </Typography>
     ) : (
       <Typography
         variant='body1'
         className='weight-text'
       >
-        Haven't logged...
+        {t('weight.noWeightLogged')}
       </Typography>
     )
   }
@@ -166,7 +168,7 @@ export function WeightCard() {
         </div>
         <div className='update-weight-button-container'>
           <CustomButton
-            text='Update Weight'
+            text={t('weight.updateWeight')}
             onClick={onOpenModal}
             className={`${prefs.favoriteColor}`}
           />
@@ -181,7 +183,7 @@ export function WeightCard() {
             onChange={onSave}
           />
         }
-        title='Update Weight'
+        title={t('weight.updateWeight')}
       />
     </>
   )

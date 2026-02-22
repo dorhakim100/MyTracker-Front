@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import { ListItemIcon } from '@mui/material'
 import { RootState } from '../../store/store'
@@ -21,6 +22,7 @@ import { User } from '../../types/user/User'
 import { DeleteAction } from '../../components/DeleteAction/DeleteAction'
 
 export function MealsCard() {
+  const { t } = useTranslation()
   const user = useSelector(
     (storeState: RootState) => storeState.userModule.user
   )
@@ -124,14 +126,14 @@ export function MealsCard() {
   return (
     <>
       <CustomButton
-        text="Add Meal"
+        text={t('meals.addMeal')}
         icon={<AddIcon />}
         fullWidth
         onClick={onAddMeal}
       />
       {!user?.meals?.length && (
         <div className="no-results-container">
-          <span>No meals added yet</span>
+          <span>{t('meals.noMealsAdded')}</span>
         </div>
       )}
       {user?.meals && user?.meals.length > 0 && (
@@ -176,7 +178,7 @@ export function MealsCard() {
         open={isAddMealOpen}
         onClose={onCloseMealDetails}
         component={<EditMeal saveMeal={saveMeal} selectedMeal={selectedMeal} />}
-        title={selectedMeal ? 'Edit Meal' : 'Add Meal'}
+        title={selectedMeal ? t('meals.editMeal') : t('meals.addMeal')}
         type="full"
       />
     </>

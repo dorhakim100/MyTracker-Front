@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import LineChart from '../LineChart/LineChart'
 import {
   LineChartControls,
@@ -42,7 +43,6 @@ interface Stats {
   isGoal: boolean
 }
 
-const LABEL = 'Weight'
 const GOAL_WEIGHT = 94
 
 const DEFAULT_MOVING_AVERAGE_PERIOD = 7
@@ -52,6 +52,7 @@ export function WeightChart({
   setSelectedDate,
   sentUser,
 }: WeightChartProps) {
+  const { t } = useTranslation()
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
@@ -97,7 +98,7 @@ export function WeightChart({
       labels: labelsToShow,
       datasets: [
         {
-          label: LABEL,
+          label: t('weight.weight'),
           data: kgs,
           borderColor:
             colors[prefs.favoriteColor as keyof typeof colors] ||
@@ -106,7 +107,7 @@ export function WeightChart({
         },
       ],
     }
-  }, [weights])
+  }, [weights, t])
 
   const movingAverageData = useMemo(() => {
     setChartLoading(true)
@@ -300,15 +301,15 @@ export function WeightChart({
     let messageToSet = ''
 
     if (isBaseline) {
-      messageToSet = 'Goal weight'
+      messageToSet = t('weight.goalWeight')
       weight =
         sentUser?.currGoal.targetWeight ||
         user?.currGoal.targetWeight ||
         GOAL_WEIGHT
     } else if (!weight && estimatedValue) {
-      messageToSet = 'Estimated weight'
+      messageToSet = t('weight.estimatedWeight')
     } else if (!weight && !estimatedValue) {
-      messageToSet = 'No weight logged'
+      messageToSet = t('weight.noWeightLogged')
     }
 
     setSelectedIndex(index)
@@ -342,7 +343,7 @@ export function WeightChart({
               <h3 className='title'>
                 {stats.isGoal ? <FlagIcon /> : <ScaleIcon />}
                 {stats.selectedWeight}
-                {stats.selectedWeight && <span className='kg'>kg</span>}
+                {stats.selectedWeight && <span className='kg'>{t('weight.kg')}</span>}
               </h3>
 
               {prefs.weightChartSettings.isDisplayWeeklyChange &&
@@ -379,7 +380,7 @@ export function WeightChart({
                 icon={<Settings />}
                 onClick={onOpenSettings}
                 backgroundColor='transparent'
-                tooltipTitle='Settings'
+                tooltipTitle={t('weight.settings')}
               />
             </div>
           </div>
@@ -393,10 +394,10 @@ export function WeightChart({
               baseline={
                 sentUser?.currGoal?.targetWeight || user?.currGoal?.targetWeight
               }
-              baselineLabel='Goal weight'
+              baselineLabel={t('weight.goalWeight')}
               isDarkMode={prefs.isDarkMode}
               secondData={movingAverageData}
-              secondDataLabel='Weekly Average'
+              secondDataLabel={t('weight.weeklyAverage')}
             />
           </div>
           {chartLoading && (
@@ -415,7 +416,7 @@ export function WeightChart({
       <CustomAlertDialog
         open={openSettings}
         onClose={onCloseSettings}
-        title='Settings'
+        title={t('weight.settings')}
       >
         <ModalWeightChartSettings />
       </CustomAlertDialog>
@@ -424,6 +425,7 @@ export function WeightChart({
 }
 
 const ModalWeightChartSettings = () => {
+  const { t } = useTranslation()
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
@@ -456,7 +458,7 @@ const ModalWeightChartSettings = () => {
         className='display-moving-average-container'
         onClick={() => onToggleDisplay('isMovingAverage')}
       >
-        <Typography variant='h6'>Display Weakly Average</Typography>
+        <Typography variant='h6'>{t('weight.displayWeeklyAverage')}</Typography>
 
         <CustomIOSSwitch
           checked={prefs.weightChartSettings.isMovingAverage}
@@ -467,7 +469,7 @@ const ModalWeightChartSettings = () => {
         className='display-moving-average-container'
         onClick={() => onToggleDisplay('isDisplayWeeklyChange')}
       >
-        <Typography variant='h6'>Display Weight Change</Typography>
+        <Typography variant='h6'>{t('weight.displayWeightChange')}</Typography>
 
         <CustomIOSSwitch
           checked={prefs.weightChartSettings.isDisplayWeeklyChange}
@@ -475,7 +477,7 @@ const ModalWeightChartSettings = () => {
         />
       </div>
       <div className='color-picker-container'>
-        <Typography variant='h6'>Weakly Average Color</Typography>
+        <Typography variant='h6'>{t('weight.weeklyAverageColor')}</Typography>
         <ColorPicker
           pickedColor={prefs.weightChartSettings.movingAverageColor}
           onColorPick={onChangeMovingAverageColor}

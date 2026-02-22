@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { useTranslation } from 'react-i18next'
 import Dialog from '@mui/material/Dialog'
 import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
@@ -46,11 +47,12 @@ export function SlideDialog({
   open,
   onClose,
   component,
-  title = 'Edit',
+  title,
   onSave,
   type = 'half',
   enableSwipeToClose = true,
 }: SlideDialogProps) {
+  const { t } = useTranslation()
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
@@ -276,14 +278,14 @@ export function SlideDialog({
                   isIcon={true}
                   icon={<CloseIcon />}
                   onClick={onClose}
-                  tooltipTitle='Close'
+                  tooltipTitle={t('common.close')}
                 />
                 <Typography
                   sx={{ ml: 2, flex: 1 }}
                   variant='h6'
                   component='div'
                 >
-                  {title}
+                  {title ?? t('common.edit')}
                 </Typography>
                 <div className='slide-drag-handle'></div>
                 {isLoading && (

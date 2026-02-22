@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { IconButton, Tooltip } from '@mui/material'
 import { useSelector } from 'react-redux'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
@@ -22,6 +23,7 @@ export function DayController({
   onDayChange,
   onDateChange,
 }: DayControllerProps) {
+  const { t } = useTranslation()
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
@@ -31,7 +33,7 @@ export function DayController({
   return (
     <div className='day-controller-container'>
       <Tooltip
-        title='Previous day'
+        title={t('day.previousDay')}
         disableHoverListener={!isDashboard}
         disableTouchListener={!isDashboard}
         disableFocusListener={!isDashboard}
@@ -55,7 +57,7 @@ export function DayController({
         />
       </div>
       <Tooltip
-        title='Next day'
+        title={t('day.nextDay')}
         disableHoverListener={!isDashboard}
         disableTouchListener={!isDashboard}
         disableFocusListener={!isDashboard}

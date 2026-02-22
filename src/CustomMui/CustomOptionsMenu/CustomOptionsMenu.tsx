@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { useTranslation } from 'react-i18next'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import { Tooltip } from '@mui/material'
@@ -70,6 +71,7 @@ export function CustomOptionsMenu({
   className,
   onClick,
 }: CustomOptionsMenuProps) {
+  const { t } = useTranslation()
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
@@ -100,7 +102,7 @@ export function CustomOptionsMenu({
       onClick={handleClick}
     >
       <Tooltip
-        title='Options'
+        title={t('common.options')}
         disableHoverListener={!isDashboard}
         disableTouchListener={!isDashboard}
         disableFocusListener={!isDashboard}

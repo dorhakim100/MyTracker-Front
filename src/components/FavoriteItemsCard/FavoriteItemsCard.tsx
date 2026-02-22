@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import { ListItemIcon } from '@mui/material'
 import { RootState } from '../../store/store'
@@ -18,6 +19,7 @@ import { ItemDetails } from '../../components/ItemDetails/ItemDetails'
 import { MacrosDonut } from '../../components/MacrosDonut/MacrosDonut'
 
 export function FavoriteItemsCard() {
+  const { t } = useTranslation()
   const user = useSelector(
     (storeState: RootState) => storeState.userModule.user
   )
@@ -59,7 +61,7 @@ export function FavoriteItemsCard() {
   if (!favoriteItems.length) {
     return (
       <div className="no-results-container">
-        <span>No favorite items found</span>
+        <span>{t('meals.noFavoriteItems')}</span>
       </div>
     )
   }
@@ -100,7 +102,7 @@ export function FavoriteItemsCard() {
         open={isItemSelected}
         onClose={onCloseItemDetails}
         component={<ItemDetails />}
-        title="Item"
+        title={t('meals.item')}
         type="full"
       />
     </>

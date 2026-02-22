@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { Typography } from '@mui/material'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
@@ -11,6 +12,7 @@ export function WeightChangeDisplay({
   value,
   range = '7D',
 }: WeightChangeDisplayProps) {
+  const { t } = useTranslation()
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
@@ -23,7 +25,7 @@ export function WeightChangeDisplay({
       ? `+${value} kg`
       : value < 0
         ? `${value} kg`
-        : 'No change'
+        : t('weight.noChange')
 
   return (
     <div

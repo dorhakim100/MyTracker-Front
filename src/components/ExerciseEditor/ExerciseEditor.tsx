@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import {
   Badge,
@@ -88,6 +89,7 @@ export function ExerciseEditor({
   markSetAsDone,
   isOpen = true,
 }: ExerciseEditorProps) {
+  const { t } = useTranslation()
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
@@ -311,19 +313,19 @@ export function ExerciseEditor({
               variant='h6'
               className='bold-header'
             >
-              Sets
+              {t('exercise.sets')}
             </Typography>
             <Typography
               variant='h6'
               className='bold-header'
             >
-              Reps
+              {t('exercise.reps')}
             </Typography>
             <Typography
               variant='h6'
               className='bold-header'
             >
-              Weight
+              {t('exercise.weight')}
             </Typography>
             <Typography
               variant='h6'
@@ -356,7 +358,7 @@ export function ExerciseEditor({
                       {(previousInstructions || !isExpected) && (
                         <Tooltip
                           title={
-                            set.isDone ? 'Mark as not done' : 'Mark as done'
+                            set.isDone ? t('exercise.markAsNotDone') : t('exercise.markAsDone')
                           }
                           disableHoverListener={!isDashboard}
                           disableTouchListener={!isDashboard}
@@ -402,7 +404,7 @@ export function ExerciseEditor({
                       <span
                         className={`previous-set-label ${isDashboard ? 'dashboard' : ''}`}
                       >
-                        Previous week expected:
+                        {t('exercise.previousWeekExpected')}
                       </span>
                     )}
                     <div className='reps-container'>
@@ -425,7 +427,7 @@ export function ExerciseEditor({
                               variant='body1'
                               className='previous-set-actual-label bold-header'
                             >
-                              Actual:
+                              {t('exercise.actual')}
                             </Typography>
                           )}
                         </>
@@ -452,7 +454,7 @@ export function ExerciseEditor({
                           setCurrentPickerValue(set.reps.actual || 0)
                         }}
                         option={{
-                          label: 'Reps',
+                          label: t('exercise.reps'),
                           key: 'reps',
                           type: 'number',
                         }}
@@ -505,7 +507,7 @@ export function ExerciseEditor({
                           setCurrentPickerValue(set.weight.actual || 0)
                         }}
                         option={{
-                          label: 'Weight',
+                          label: t('exercise.weight'),
                           key: 'weight',
                           type: 'number',
                         }}
@@ -586,7 +588,7 @@ export function ExerciseEditor({
                     {isDashboard && isExpected && (
                       <CustomButton
                         className='delete-set-button red'
-                        text='Delete Set'
+                        text={t('exercise.deleteSet')}
                         onClick={() => onDeleteSet(index)}
                         icon={<DeleteIcon />}
                       />
@@ -621,7 +623,7 @@ export function ExerciseEditor({
                           <CheckCircleOutlineIcon />
                         )
                       }
-                      text={set.isDone ? 'Not done' : 'Done'}
+                      text={set.isDone ? t('exercise.notDone') : t('exercise.done')}
                       className={set.isDone ? 'red' : 'green'}
                     />
                   )
@@ -635,7 +637,7 @@ export function ExerciseEditor({
         <div className='controls-container'>
           <CustomButton
             icon={<AddIcon />}
-            text='Add Set'
+            text={t('exercise.addSet')}
             onClick={onAddSet}
             fullWidth
           />

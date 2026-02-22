@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import { CustomInput } from '../../CustomMui/CustomInput/CustomInput'
 import { Meal } from '../../types/meal/Meal'
@@ -37,6 +38,7 @@ interface EditMealProps {
 }
 
 export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
+  const { t } = useTranslation()
   const user = useSelector(
     (stateSelector: RootState) => stateSelector.userModule.user
   )
@@ -131,7 +133,7 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
           <CustomInput
             value={editMeal.name}
             onChange={(value) => onEditMeal('name', value)}
-            placeholder='Meal Name'
+            placeholder={t('meals.mealName')}
             className={`${prefs.favoriteColor}`}
           />
           <div className='animation-container'>
@@ -155,13 +157,13 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
             />
             <div className='buttons-container'>
               <CustomButton
-                text='Search Item'
+                text={t('meals.searchItem')}
                 fullWidth
                 onClick={onAddItem}
                 icon={<SearchIcon />}
               />
               <CustomButton
-                text='Scan Item'
+                text={t('meals.scanItem')}
                 fullWidth
                 onClick={onScanItem}
                 icon={<QrCode2Icon />}
@@ -174,7 +176,7 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
               items={editMeal.items}
               renderPrimaryText={(item) => {
                 if (item.source === searchTypes.custom && !item.name)
-                  return 'Custom Item'
+                  return t('meals.customItem')
                 return item.name
               }}
               renderLeft={(item) => (
@@ -202,7 +204,7 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
               isDragable={true}
               onReorder={onReorder}
               onItemClick={onSelectItem}
-              noResultsMessage={'No items added yet'}
+              noResultsMessage={t('meals.noItemsAdded')}
               // renderSecondaryText={(item) =>
               //   `${+item.servingSize * +item.numberOfServings}gr - ${
               //     item.macros?.calories
@@ -215,7 +217,7 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
             open={isOpenModal}
             onClose={onCloseItemDetails}
             component={getModelType()}
-            title='Item'
+            title={t('meals.item')}
             type={modalType === 'scan' ? 'half' : 'full'}
           />
         </>
@@ -340,7 +342,7 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
   const getStageTitle = (stage: string) => {
     switch (stage) {
       case 'name':
-        return 'Meal Name'
+        return t('meals.mealName')
       case 'items':
         return editMeal.name
       default:
@@ -363,7 +365,7 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
         renderStage={renderStageContent}
         direction={direction}
         onFinish={onFinish}
-        finishText='Save'
+        finishText={t('common.save')}
         title={getStageTitle}
         getIsNextDisabled={getIsNextDisabled}
       />

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Divider, Typography } from '@mui/material'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
@@ -16,13 +17,11 @@ import { getArrayOfNumbers } from '../../services/util.service'
 import { genderOptions } from '../helpers/GenderOptions'
 import { User } from '../../types/user/User'
 
-export const activityOptions: ToggleOption[] = [
-  // { value: 'bmr', label: 'BMR' },
-  { value: 'sedentary', label: 'None' },
-  { value: 'light', label: '1-3 / wk' },
-  { value: 'moderate', label: '4-5 / wk' },
-  { value: 'daily', label: 'Daily' },
-  //   { value: 'very_intense', label: 'Intense job' },
+export const getActivityOptions = (t: (key: string) => string): ToggleOption[] => [
+  { value: 'sedentary', label: t('bmr.none') },
+  { value: 'light', label: t('bmr.low') },
+  { value: 'moderate', label: t('bmr.medium') },
+  { value: 'daily', label: t('bmr.high') },
 ]
 
 interface Options {
@@ -46,6 +45,7 @@ interface BmrCardProps {
 }
 
 export function BmrCard({ sentUser }: BmrCardProps) {
+  const { t } = useTranslation()
   const prefs = useSelector(
     (storeState: RootState) => storeState.systemModule.prefs
   )
@@ -114,7 +114,7 @@ export function BmrCard({ sentUser }: BmrCardProps) {
 
   const options: Options[] = [
     {
-      label: 'Gender',
+      label: t('bmr.gender'),
       values: genderOptions,
       onChange: (val: string) => onChange('gender', val as Gender),
       type: 'toggle',
@@ -123,7 +123,7 @@ export function BmrCard({ sentUser }: BmrCardProps) {
       key: 'gender',
     },
     {
-      label: 'Age',
+      label: t('bmr.age'),
       onChange: (val: string) => onChange('ageYears', val),
       values: getArrayOfNumbers(1, 100, true) as string[],
       type: 'select',
@@ -131,7 +131,7 @@ export function BmrCard({ sentUser }: BmrCardProps) {
       className: 'first-column',
     },
     {
-      label: 'Height',
+      label: t('bmr.height'),
       onChange: (val: string) => onChange('heightCm', val),
       values: getArrayOfNumbers(100, 250, true) as string[],
       type: 'select',
@@ -140,7 +140,7 @@ export function BmrCard({ sentUser }: BmrCardProps) {
       className: 'second-column',
     },
     {
-      label: 'Weight',
+      label: t('bmr.weight'),
       onChange: (val: string) => onChange('weightKg', val),
       values: getArrayOfNumbers(30, 250, true) as string[],
       type: 'select',
@@ -149,8 +149,8 @@ export function BmrCard({ sentUser }: BmrCardProps) {
       className: 'full-width',
     },
     {
-      label: 'Activity',
-      values: activityOptions,
+      label: t('user.activity'),
+      values: getActivityOptions(t),
       onChange: (val: string) => onChange('activity', val as ActivityLevel),
       type: 'toggle',
       key: 'activity',
@@ -185,7 +185,7 @@ export function BmrCard({ sentUser }: BmrCardProps) {
                 key={`${option.key}-${option.label}`}
               >
                 <CustomSelect
-                  tooltipTitle={`Edit ${option.label}`}
+                  tooltipTitle={t('common.editOption', { option: option.label })}
                   label={option.label}
                   values={option.values as string[]}
                   value={form[option.key as keyof BmrFormState]}
@@ -221,7 +221,7 @@ export function BmrCard({ sentUser }: BmrCardProps) {
 
       <div className='bmr-result-grid'>
         <div className='bmr-result-row'>
-          <Typography variant='body1'>BMR</Typography>
+          <Typography variant='body1'>{t('bmr.title')}</Typography>
           <Typography
             variant='h6'
             className='bmr-value'
@@ -236,7 +236,7 @@ export function BmrCard({ sentUser }: BmrCardProps) {
           </Typography>
         </div> */}
         <div className='bmr-result-row total'>
-          <Typography variant='body1'>Daily calories burned</Typography>
+          <Typography variant='body1'>{t('bmr.dailyCaloriesBurned')}</Typography>
           <Typography
             variant='h5'
             className='bmr-value'
@@ -247,7 +247,7 @@ export function BmrCard({ sentUser }: BmrCardProps) {
       </div>
 
       <CustomButton
-        text='Reset'
+        text={t('bmr.reset')}
         onClick={onReset}
         fullWidth
       />

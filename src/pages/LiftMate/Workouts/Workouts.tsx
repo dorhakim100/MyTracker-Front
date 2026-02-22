@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import {
   handleSessionDayChange,
@@ -68,15 +69,6 @@ const EDIT = 'edit'
 const DETAILS = 'details'
 const ROUTINES = 'routines'
 
-const EDIT_TITLE = 'Edit Workout'
-const CREATE_TITLE = 'Create Workout'
-const DETAILS_TITLE = 'Workout Details'
-const ROUTINES_TITLE = 'Routines'
-
-const WORKOUTS_TITLE = 'Workouts'
-
-const ADD_ROUTINE_BUTTON = 'Add New Routine'
-
 type dialogType = typeof EDIT | typeof DETAILS | typeof ROUTINES
 
 interface dialogOptions {
@@ -85,6 +77,7 @@ interface dialogOptions {
 }
 
 export function Workouts() {
+  const { t } = useTranslation()
   const user = useSelector(
     (stateSelector: RootState) => stateSelector.userModule.user
   )
@@ -169,7 +162,7 @@ export function Workouts() {
   const pastWorkoutOptions: DropdownOption[] = useMemo(
     () => [
       {
-        title: 'Activate',
+        title: t('common.activate'),
         icon: <CheckBoxIcon />,
         onClick: () => {
           if (selectedWorkoutForOptions) {
@@ -179,7 +172,7 @@ export function Workouts() {
         },
       },
       {
-        title: 'Edit',
+        title: t('common.edit'),
         icon: <Edit />,
         onClick: () => {
           if (selectedWorkoutForOptions) {
@@ -188,7 +181,7 @@ export function Workouts() {
         },
       },
       {
-        title: 'Delete',
+        title: t('common.delete'),
         icon: <Delete />,
         onClick: () => {
           if (selectedWorkoutForOptions) {
@@ -197,7 +190,7 @@ export function Workouts() {
         },
       },
     ],
-    [onDeleteWorkout, onOpenEdit, selectedWorkoutForOptions]
+    [onDeleteWorkout, onOpenEdit, onReorderWorkouts, selectedWorkoutForOptions, t]
   )
 
   useEffect(() => {
@@ -447,14 +440,14 @@ export function Workouts() {
   const getDialogTitle = () => {
     switch (dialogOptions.type) {
       case EDIT:
-        return selectedWorkout ? EDIT_TITLE : CREATE_TITLE
+        return selectedWorkout ? t('workout.editWorkout') : t('workout.createWorkout')
       case DETAILS:
-        return DETAILS_TITLE
+        return t('workout.workoutDetails')
       case ROUTINES:
-        return ROUTINES_TITLE
+        return t('workout.routines')
 
       default:
-        return WORKOUTS_TITLE
+        return t('workout.workouts')
     }
   }
 
@@ -462,7 +455,7 @@ export function Workouts() {
     if (activeWorkouts.length === 0 && inactiveWorkouts.length === 0) {
       return (
         <div className='no-workouts-container'>
-          <Typography variant='body1'>No workouts found</Typography>
+          <Typography variant='body1'>{t('workout.noWorkoutsFound')}</Typography>
         </div>
       )
     }
@@ -470,7 +463,7 @@ export function Workouts() {
     return (
       <div className='workouts-lists-container'>
         {activeWorkouts.length > 0 && (
-          <span className='bold-header'>Active Routines</span>
+          <span className='bold-header'>{t('workout.activeRoutines')}</span>
         )}
 
         <div
@@ -490,7 +483,7 @@ export function Workouts() {
         <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
 
         <div className='past-controller'>
-          <span className='bold-header'>Past Routines</span>
+          <span className='bold-header'>{t('workout.pastRoutines')}</span>
           <DateRangeController
             selectedPastDate={selectedPastDate}
             onDateChange={setSelectedPastDate}
@@ -542,7 +535,7 @@ export function Workouts() {
             variant='body1'
             className='no-past-workouts-message'
           >
-            No past routines found...
+            {t('workout.noPastRoutinesFound')}
           </Typography>
         )}
       </div>
@@ -601,7 +594,7 @@ export function Workouts() {
             className='bold-header'
             style={{ textAlign: 'center' }}
           >
-            Workouts
+            {t('workout.workouts')}
           </Typography>
         )}
         <>
@@ -610,11 +603,11 @@ export function Workouts() {
               variant='h5'
               className='bold-header'
             >
-              Routines
+              {t('workout.routines')}
             </Typography>
 
             <CustomButton
-              text={ADD_ROUTINE_BUTTON}
+              text={t('workout.addNewRoutine')}
               onClick={() => setDialogOptions({ open: true, type: EDIT })}
               icon={<Add />}
               fullWidth={true}
@@ -633,7 +626,7 @@ export function Workouts() {
         )}
         {user?.isTrainer && !isDashboard && (
           <CustomAccordion
-            title='My Trainees'
+            title={t('workout.myTrainees')}
             cmp={<MyTraineeCard />}
             icon={<PersonAddIcon />}
             className={`my-trainees-accordion`}
@@ -648,11 +641,11 @@ export function Workouts() {
             variant='h5'
             className='bold-header'
           >
-            Workout by date
+            {t('workout.workoutByDate')}
           </Typography>
           {!sessionDay.instructions && !isDashboard && (
             <CustomButton
-              text='Start Empty Workout'
+              text={t('workout.startEmptyWorkout')}
               onClick={onPlayEmptyWorkout}
               icon={
                 emptyWorkoutLoading ? (
@@ -687,7 +680,7 @@ export function Workouts() {
                 variant='h6'
                 className='bold-header'
               >
-                No workout session this day
+                {t('workout.noWorkoutSessionThisDay')}
               </Typography>
               <div className='animation-container'>
                 <Lottie

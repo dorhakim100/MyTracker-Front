@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { CustomList } from '../../CustomMui/CustomList/CustomList'
@@ -32,6 +33,7 @@ import BalanceIcon from '@mui/icons-material/Balance'
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
 
 export function GoalsCard() {
+  const { t } = useTranslation()
   const user = useSelector(
     (stateSelector: RootState) => stateSelector.userModule.user
   )
@@ -144,7 +146,7 @@ export function GoalsCard() {
     <>
       <div className="goals-card">
         <CustomButton
-          text="Add Goal"
+          text={t('goal.addGoal')}
           icon={<AddIcon />}
           onClick={onAddGoal}
           fullWidth
@@ -197,7 +199,7 @@ export function GoalsCard() {
         open={isAddGoalOpen}
         onClose={onCloseGoalDetails}
         component={<EditGoal saveGoal={saveGoal} selectedGoal={selectedGoal} />}
-        title={selectedGoal ? 'Edit Goal' : 'Add Goal'}
+        title={selectedGoal ? t('goal.editGoal') : t('goal.addGoal')}
         type="full"
       />
     </>

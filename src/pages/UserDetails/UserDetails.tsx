@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { logout } from '../../store/actions/user.actions'
@@ -20,6 +21,7 @@ import { WeightChart } from '../../components/WeightChart/WeightChart'
 import { StatsCarousel } from '../../components/StatsCarousel/StatsCarousel'
 
 export function UserDetails() {
+  const { t } = useTranslation()
   const prefs = useSelector(
     (storeState: RootState) => storeState.systemModule.prefs
   )
@@ -120,7 +122,7 @@ export function UserDetails() {
             fullWidth
             onClick={() => logout()}
             className={`${prefs.favoriteColor}`}
-            text='Logout'
+            text={t('user.logout')}
           />
         </div>
       )}

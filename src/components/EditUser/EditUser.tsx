@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 
 import { RootState } from '../../store/store'
@@ -19,7 +20,7 @@ import { CustomToggle } from '../../CustomMui/CustomToggle/CustomToggle'
 import { genderOptions } from '../helpers/GenderOptions'
 import { ActivityLevel, Gender } from '../../services/bmr/bmr.service'
 import { setIsLoading } from '../../store/actions/system.actions'
-import { activityOptions } from '../BmrCard/BmrCard'
+import { getActivityOptions } from '../BmrCard/BmrCard'
 import { CustomAlertDialog } from '../../CustomMui/CustomAlertDialog/CustomAlertDialog'
 import { deleteAccount } from '../../store/actions/user.actions'
 import { logout } from '../../store/actions/user.actions'
@@ -38,6 +39,7 @@ const DEFAULT_GENDER = 'male'
 const DEFAULT_ACTIVITY_LEVEL = 'sedentary'
 
 export function EditUser({ selectedUser, onSave }: EditUserProps) {
+  const { t } = useTranslation()
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
@@ -80,7 +82,7 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
 
   const inputs = [
     {
-      label: 'Image',
+      label: t('user.image'),
       type: 'image',
       key: 'imgUrl',
       className: 'field',
@@ -88,7 +90,7 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
       onChange: setImgUrl,
     },
     {
-      label: 'Fullname',
+      label: t('user.fullname'),
       value: fullname,
       onChange: setFullname,
 
@@ -97,7 +99,7 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
       className: 'field',
     },
     {
-      label: 'Birthdate',
+      label: t('user.birthdate'),
       type: 'date',
       key: 'birthdate',
       className: 'field',
@@ -105,7 +107,7 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
       onChange: setIsoDate,
     },
     {
-      label: 'Height',
+      label: t('user.height'),
       type: 'select',
       key: 'height',
       className: 'field',
@@ -113,7 +115,7 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
       onChange: (value: string) => setHeight(+value),
     },
     {
-      label: 'Gender',
+      label: t('user.gender'),
       type: 'toggle',
       key: 'gender',
       options: genderOptions,
@@ -122,14 +124,14 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
       onChange: (value: string) => setGender(value),
     },
     {
-      label: 'Activity',
-      options: activityOptions,
+      label: t('user.activity'),
+      options: getActivityOptions(t),
       onChange: (val: string) => setActivity(val as ActivityLevel),
       type: 'toggle',
       key: 'activity',
       className: 'full-width',
       value: activity,
-      extraLabel: 'Activity level',
+      extraLabel: t('user.activityLevel'),
     },
   ]
 
@@ -223,7 +225,7 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
                       {input.value ? (
                         <img src={input.value as string} alt='avatar' />
                       ) : (
-                        <div className='placeholder'>No image</div>
+                        <div className='placeholder'>{t('user.noImage')}</div>
                       )}
                     </div>
                     <label
@@ -235,7 +237,7 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
                         accept='image/*'
                         onChange={onPickImg}
                       />
-                      {isLoading ? 'Uploading...' : 'Upload Image'}
+                      {isLoading ? t('user.uploading') : t('user.uploadImage')}
                     </label>
                   </div>
                   <Divider
@@ -256,7 +258,7 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
             if (input.type === 'select')
               return (
                 <CustomSelect
-                  tooltipTitle={`Edit ${input.label}`}
+                  tooltipTitle={t('common.editOption', { option: input.label })}
                   key={`${input.key}-edit-user`}
                   label={input.label}
                   values={getArrayOfNumbers(100, 250, true) as string[]}
@@ -301,7 +303,7 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
 
         <div className='buttons-container'>
           <div className='save-button-container'>
-            <CustomButton text='Save' onClick={handleSave} fullWidth />
+            <CustomButton text={t('common.save')} onClick={handleSave} fullWidth />
           </div>
           <Divider
             className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
@@ -311,14 +313,14 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
             fullWidth
             onClick={openDeleteModal}
             className={`delete-account-button ${prefs.favoriteColor}`}
-            text='Delete Account'
+            text={t('user.deleteAccount')}
           />
         </div>
       </div>
       <CustomAlertDialog
         open={isDeleteModalOpen}
         onClose={setDeleteModalClose}
-        title='Delete Account'
+        title={t('user.deleteAccount')}
       >
         <DeleteAccountCard
           onDeleteAccount={onDeleteAccount}

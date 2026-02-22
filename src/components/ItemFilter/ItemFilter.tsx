@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
 import SearchIcon from '@mui/icons-material/Search'
@@ -25,6 +26,7 @@ export function ItemFilter({
   onClearQuery,
   onCustomLog,
 }: ItemFilterProps) {
+  const { t } = useTranslation()
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
 
   const sortByOptions = [
@@ -45,7 +47,7 @@ export function ItemFilter({
         <CustomInput
           value={filter.txt}
           onChange={(val) => onFilterChange({ ...filter, txt: val })}
-          placeholder="Search items..."
+          placeholder={t('meals.searchItems')}
           startIconFn={() => <SearchIcon />}
           endIconFn={() => (
             <IconButton aria-label="close" onClick={onClearQuery}>
@@ -58,10 +60,10 @@ export function ItemFilter({
       </div>
 
       <CustomSelect
-        tooltipTitle="Edit Sort by"
+        tooltipTitle={t('meals.editSortBy')}
         value={filter.sortBy}
         onChange={(val) => onFilterChange({ ...filter, sortBy: val })}
-        label="Sort by"
+        label={t('meals.sortBy')}
         values={sortByOptions}
         className={`${prefs.favoriteColor} ${prefs.isDarkMode ? 'dark-mode' : ''
           } item-filter-select`}
@@ -69,7 +71,7 @@ export function ItemFilter({
 
       <CustomButton
         onClick={onCustomLog}
-        text="Custom"
+        text={t('meals.custom')}
         icon={<AddIcon />}
         className="custom-add-button"
       />

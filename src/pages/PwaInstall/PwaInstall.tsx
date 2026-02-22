@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton.tsx'
 import { Typography } from '@mui/material'
 
@@ -12,11 +13,12 @@ type Props = {
 }
 
 export function PwaInstall({ promptInstall, platform, isInstallable }: Props) {
+  const { t } = useTranslation()
   return (
     <div className='pwa-install-container'>
       <div className='title-container'>
         <img src={logo} alt='logo' className='logo-image' />
-        <Typography variant='h3'>Install the app</Typography>
+        <Typography variant='h3'>{t('pwa.installApp')}</Typography>
         {/* <img src={downloadAnimation} alt='download-animation' /> */}
       </div>
       {platform === 'ios' ? (
@@ -28,7 +30,7 @@ export function PwaInstall({ promptInstall, platform, isInstallable }: Props) {
       ) : (
         <div className='install-container'>
           <Typography variant='h6'>
-            To get the best experience, please install the app.
+            {t('pwa.installBestExperience')}
           </Typography>
           <img
             src={downloadAnimation}
@@ -37,7 +39,7 @@ export function PwaInstall({ promptInstall, platform, isInstallable }: Props) {
           />
           <CustomButton
             onClick={promptInstall}
-            text='Install'
+            text={t('common.install')}
             fullWidth
             disabled={!isInstallable}
           />

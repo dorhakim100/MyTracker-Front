@@ -30,6 +30,7 @@ import { login, signup } from '../../store/actions/user.actions'
 import { usePwaDetect } from '../../hooks/usePwaDetect'
 import CircularProgress from '@mui/material/CircularProgress'
 import LoginIcon from '@mui/icons-material/Login'
+import { useTranslation } from 'react-i18next'
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -79,6 +80,7 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 }))
 
 export function SignIn(props: { disableCustomTheme?: boolean }) {
+  const { t } = useTranslation()
   const [fullnameError, setFullnameError] = React.useState(false)
   const [fullnameErrorMessage, setFullnameErrorMessage] = React.useState('')
   const [emailError, setEmailError] = React.useState(false)
@@ -114,7 +116,7 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
     event.stopPropagation()
     const isValid = validateInputs()
     if (!isValid) {
-      showErrorMsg('Please fill in all required fields correctly.')
+      showErrorMsg(t('auth.fillRequired'))
       return
     }
 
@@ -136,7 +138,7 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
       }
 
       if (!user) {
-        showErrorMsg('Login failed. Please check your credentials.')
+        showErrorMsg(t('auth.loginFailed'))
         return
       }
 
@@ -148,9 +150,9 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
       }
 
       navigate(`${route}`)
-      showSuccessMsg('Login successful!')
+      showSuccessMsg(t('auth.loginSuccess'))
     } catch (err) {
-      showErrorMsg('An error occurred while signing in. Please try again.')
+      showErrorMsg(t('auth.signInError'))
     } finally {
       setIsLoading(false)
     }
@@ -168,13 +170,13 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
 
     if (isSignup && !fullname.value) {
       setFullnameError(true)
-      setFullnameErrorMessage('Please enter your full name.')
+      setFullnameErrorMessage(t('auth.pleaseEnterFullName'))
       isValid = false
     }
 
     if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
       setEmailError(true)
-      setEmailErrorMessage('Please enter a valid email address.')
+      setEmailErrorMessage(t('auth.invalidEmail'))
       isValid = false
     } else {
       setEmailError(false)
@@ -183,7 +185,7 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
 
     if (!password.value || password.value.length < 6) {
       setPasswordError(true)
-      setPasswordErrorMessage('Password must be at least 6 characters long.')
+      setPasswordErrorMessage(t('auth.passwordMinLength'))
       isValid = false
     } else {
       setPasswordError(false)
@@ -192,7 +194,7 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
 
     if (isSignup && password.value !== validatePassword.value) {
       setValidatePasswordError(true)
-      setValidatePasswordMessage('Validate password must be identical')
+      setValidatePasswordMessage(t('auth.validatePasswordMustMatch'))
       isValid = false
     } else {
       setValidatePasswordError(false)
@@ -262,7 +264,7 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
               variant='h4'
               sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
             >
-              {isSignup ? 'Sign up' : 'Sign in'}
+              {isSignup ? t('auth.signUp') : t('auth.signIn')}
             </Typography>
             <Box
               component='form'
@@ -277,14 +279,14 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
             >
               {isSignup && (
                 <FormControl>
-                  <FormLabel htmlFor='fullname'>Full Name</FormLabel>
+                  <FormLabel htmlFor='fullname'>{t('auth.fullName')}</FormLabel>
                   <TextField
                     error={fullnameError}
                     helperText={fullnameErrorMessage}
                     id='fullname'
                     type='fullname'
                     name='fullname'
-                    placeholder='Your full name'
+                    placeholder={t('auth.fullNamePlaceholder')}
                     autoComplete='name'
                     autoFocus
                     required
@@ -295,14 +297,14 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
                 </FormControl>
               )}
               <FormControl>
-                <FormLabel htmlFor='email'>Email</FormLabel>
+                <FormLabel htmlFor='email'>{t('auth.email')}</FormLabel>
                 <TextField
                   error={emailError}
                   helperText={emailErrorMessage}
                   id='email'
                   type='email'
                   name='email'
-                  placeholder='your@email.com'
+                  placeholder={t('auth.emailPlaceholder')}
                   autoComplete='email'
                   autoFocus
                   required
@@ -312,7 +314,7 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
                 />
               </FormControl>
               <FormControl>
-                <FormLabel htmlFor='password'>Password</FormLabel>
+                <FormLabel htmlFor='password'>{t('auth.password')}</FormLabel>
                 <TextField
                   error={passwordError}
                   helperText={passwordErrorMessage}
@@ -330,7 +332,7 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
               </FormControl>
               {isSignup && (
                 <FormControl>
-                  <FormLabel htmlFor='password'>Validate Password</FormLabel>
+                  <FormLabel htmlFor='password'>{t('auth.validatePassword')}</FormLabel>
                   <TextField
                     error={validatePasswordError}
                     helperText={validatePasswordMessage}
@@ -354,7 +356,7 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
                     color='primary'
                   />
                 }
-                label='Remember me'
+                label={t('auth.rememberMe')}
                 onChange={toggleRememberMe}
               />
               <ForgotPassword
@@ -368,7 +370,7 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
                 variant='contained'
                 // onClick={validateInputs}
               >
-                {isSignup ? 'Sign up' : 'Sign in'}
+                {isSignup ? t('auth.signUp') : t('auth.signIn')}
                 {isLoading ? (
                   <CircularProgress
                     size={isDashboard ? 28.5 : 16}
@@ -388,7 +390,7 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
                 Forgot your password?
               </Link> */}
             </Box>
-            <Divider>or</Divider>
+            <Divider>{t('common.or')}</Divider>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               {/* <Button
                 fullWidth
@@ -415,16 +417,16 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
                     variant='body2'
                     sx={{ textAlign: 'center', cursor: 'pointer' }}
                   >
-                    Already have an account?{' '}
-                    <Link style={{ alignSelf: 'center' }}>Login in</Link>
+                    {t('auth.alreadyHaveAccount')}
+                    <Link style={{ alignSelf: 'center' }}>{t('auth.loginIn')}</Link>
                   </Typography>
                 ) : (
                   <Typography
                     variant='body2'
                     sx={{ textAlign: 'center', cursor: 'pointer' }}
                   >
-                    Don&apos;t have an account?{' '}
-                    <Link style={{ alignSelf: 'center' }}>Sign up</Link>
+{t('auth.dontHaveAccount')}
+                  <Link style={{ alignSelf: 'center' }}>{t('auth.signUp')}</Link>
                   </Typography>
                 )}
               </div>

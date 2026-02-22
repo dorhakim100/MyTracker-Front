@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import { BrowserMultiFormatReader, IScannerControls } from '@zxing/browser'
 import { BarcodeFormat, DecodeHintType, Result } from '@zxing/library'
@@ -29,6 +30,7 @@ export function BarcodeScanner({
   onClose,
   onAddToMealClick,
 }: BarcodeScannerProps) {
+  const { t } = useTranslation()
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
@@ -120,7 +122,7 @@ export function BarcodeScanner({
             </div>
           </div>
           <CustomButton
-            text="Custom Log"
+            text={t('meals.customLog')}
             onClick={onCustomLog}
             icon={<AddIcon />}
             fullWidth
@@ -129,7 +131,7 @@ export function BarcodeScanner({
       )}
       {isItemDetected.current && !isItemFound && isTryAgain && (
         <CustomButton
-          text="Try Again"
+          text={t('common.tryAgain')}
           onClick={() => {
             isItemDetected.current = false
             setIsTryAgain(false)
@@ -159,7 +161,7 @@ export function BarcodeScanner({
             onAddToMealClick={onAddToMealClick}
           />
         }
-        title={isCustomLog ? 'Custom Log' : 'Barcode Scanned'}
+        title={isCustomLog ? t('meals.customLog') : t('meals.barcodeScanned')}
         type="full"
       />
     </>

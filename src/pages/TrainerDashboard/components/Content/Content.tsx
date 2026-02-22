@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
@@ -11,6 +12,7 @@ import SearchIcon from '@mui/icons-material/Search'
 import RefreshIcon from '@mui/icons-material/Refresh'
 
 export default function Content() {
+  const { t } = useTranslation()
   return (
     <Paper sx={{ maxWidth: 936, margin: 'auto', overflow: 'hidden' }}>
       <AppBar
@@ -27,7 +29,7 @@ export default function Content() {
             <Grid item xs>
               <TextField
                 fullWidth
-                placeholder="Search by email address, phone number, or user UID"
+                placeholder={t('trainer.searchPlaceholder')}
                 InputProps={{
                   disableUnderline: true,
                   sx: { fontSize: 'default' },
@@ -39,7 +41,7 @@ export default function Content() {
               <Button variant="contained" sx={{ mr: 1 }}>
                 Add user
               </Button>
-              <Tooltip title="Reload">
+              <Tooltip title={t('common.reload')}>
                 <IconButton>
                   <RefreshIcon color="inherit" sx={{ display: 'block' }} />
                 </IconButton>

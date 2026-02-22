@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { Log } from '../../types/log/Log'
@@ -33,6 +34,7 @@ import { imageService } from '../../services/image/image.service'
 import { mealService } from '../../services/meal/meal.service'
 
 export function LoggedList({ mealPeriod }: { mealPeriod: MealPeriod }) {
+  const { t } = useTranslation()
   const user = useSelector((state: RootState) => state.userModule.user)
   const cachedItems = useSelector((state: RootState) => state.itemModule.items)
   const [isEditOpen, setIsEditOpen] = useState(false)
@@ -81,7 +83,7 @@ export function LoggedList({ mealPeriod }: { mealPeriod: MealPeriod }) {
     return (
       <div className='logged-items'>
         <div className='placeholder-container'>
-          <div className='placeholder'>No items logged yet</div>
+          <div className='placeholder'>{t('meals.noItemsLogged')}</div>
           <AddItemButton mealPeriod={mealPeriod} />
         </div>
       </div>
@@ -92,7 +94,7 @@ export function LoggedList({ mealPeriod }: { mealPeriod: MealPeriod }) {
 
   const renderPrimaryText = (item: Log) => {
     if (item.name) return item.name
-    if (item.source === searchTypes.custom) return 'Custom Log'
+    if (item.source === searchTypes.custom) return t('meals.customLog')
     const cachedItem = cachedItems.find((i) => i.searchId === item.itemId)
     return (
       cachedItem?.name || (
@@ -248,7 +250,7 @@ export function LoggedList({ mealPeriod }: { mealPeriod: MealPeriod }) {
       <SlideDialog
         open={isEditOpen}
         onClose={closeEdit}
-        title='Edit Meal'
+        title={t('meals.editMeal')}
         component={<ItemDetails />}
         onSave={closeEdit}
         type='full'

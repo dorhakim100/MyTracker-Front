@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { Typography } from '@mui/material'
@@ -11,6 +12,7 @@ export function DeleteAccountCard({
   onDeleteAccount: () => void
   setDeleteModalClose: () => void
 }) {
+  const { t } = useTranslation()
   const prefs = useSelector(
     (storeState: RootState) => storeState.systemModule.prefs
   )
@@ -18,24 +20,24 @@ export function DeleteAccountCard({
   return (
     <>
       <Typography variant='body1'>
-        Are you sure you want to delete your account?
+        {t('user.deleteAccountConfirm')}
       </Typography>
 
       <Typography variant='body2'>
-        This action is irreversible and will delete all your data.
+        {t('user.deleteAccountIrreversible')}
       </Typography>
       <DialogActions>
         <CustomButton
           fullWidth
           onClick={setDeleteModalClose}
           className={`${prefs.favoriteColor}`}
-          text='Cancel'
+          text={t('common.cancel')}
         />
         <CustomButton
           fullWidth
           onClick={onDeleteAccount}
           className={`${prefs.favoriteColor} delete-account-button`}
-          text='Delete'
+          text={t('common.delete')}
         />
       </DialogActions>
     </>

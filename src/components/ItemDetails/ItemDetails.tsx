@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 
 import { RootState } from '../../store/store'
@@ -59,27 +60,30 @@ interface EditOption {
   extra?: string
 }
 
-const MEAL_INPUT = {
-  label: 'Meal',
+const MEAL_VALUES = ['Breakfast', 'Lunch', 'Dinner', 'Snacks']
+
+const getMealInput = (t: (key: string) => string) => ({
+  label: t('meals.meal'),
   key: 'meal',
-  values: ['Breakfast', 'Lunch', 'Dinner', 'Snacks'],
+  values: MEAL_VALUES,
   type: 'select',
   extra: '',
-}
+})
 
-const NUMBER_OF_SERVINGS_INPUT = {
-  label: 'Number of Servings',
+const getNumberOfServingsInput = (t: (key: string) => string) => ({
+  label: t('meals.numberOfServings'),
   key: 'numberOfServings',
   values: getArrayOfNumbers(0, 100),
   type: 'clock',
   extra: '',
-}
+})
 
 export function ItemDetails({
   onAddToMealClick,
   noEdit = false,
   isCustomLog = false,
 }: ItemDetailsProps) {
+  const { t } = useTranslation()
   const searchedItem: Item = useSelector(
     (stateSelector: RootState) => stateSelector.itemModule.item
   )
@@ -121,30 +125,40 @@ export function ItemDetails({
 
   const [isImageModalOpen, setIsImageModalOpen] = useState(false)
 
+  const mealValueLabels = useMemo(
+    () => ({
+      Breakfast: t('meals.breakfast'),
+      Lunch: t('meals.lunch'),
+      Dinner: t('meals.dinner'),
+      Snacks: t('meals.snacks'),
+    }),
+    [t]
+  )
+
   const editOptions: EditOption[] =
     !isCustomLog && (item as Log).source !== searchTypes.custom
       ? [
           {
-            label: 'Serving Size',
+            label: t('meals.servingSize'),
             key: 'servingSize',
             values: [1, 25, 30, 50, 100, 150],
             extra: 'gram',
             type: 'select',
           },
-          NUMBER_OF_SERVINGS_INPUT,
-          MEAL_INPUT,
+          getNumberOfServingsInput(t),
+          getMealInput(t),
         ]
       : [
           {
-            label: 'Macros',
+            label: t('macros.macros'),
             key: 'custom-log-macros',
 
             type: 'macros',
             extra: '',
             values: [],
           },
-          NUMBER_OF_SERVINGS_INPUT,
-          MEAL_INPUT,
+          getNumberOfServingsInput(t),
+          getMealInput(t),
         ]
 
   useEffect(() => {
@@ -619,7 +633,7 @@ export function ItemDetails({
           <CustomInput
             value={editItem.name || ''}
             onChange={(value) => onEditItemChange('name', value)}
-            placeholder='Name'
+            placeholder={t('common.name')}
             className={`${prefs.favoriteColor}`}
           />
         )}
@@ -664,9 +678,10 @@ export function ItemDetails({
                     <Typography variant='h6'>{option.label}</Typography>
                     {option.type === 'select' && option.values && (
                       <CustomSelect
-                        tooltipTitle={`Edit ${option.label}`}
+                        tooltipTitle={t('common.editOption', { option: option.label })}
                         label={option.label}
                         values={option.values.map((value) => value.toString())}
+                        valueLabels={option.key === 'meal' ? mealValueLabels : undefined}
                         extra={option.extra}
                         value={
                           editItem[option.key as keyof EditItem]?.toString() ||
@@ -705,7 +720,7 @@ export function ItemDetails({
                     {option.type === 'macros' && (
                       <>
                         <CustomButton
-                          text='Edit Macros'
+                          text={t('macros.editMacrosButton')}
                           onClick={openMacros}
                           icon={<EditIcon />}
                         />
@@ -736,7 +751,7 @@ export function ItemDetails({
         </div>
         {!noEdit && (
           <CustomButton
-            text={editMealItem ? 'Update Meal' : 'Add to Meal'}
+            text={editMealItem ? t('meals.updateMeal') : t('meals.addToMeal')}
             icon={!editMealItem && <AddIcon sx={{ mr: 1 }} />}
             size='large'
             fullWidth
@@ -764,7 +779,7 @@ export function ItemDetails({
             />
           </div>
           <CustomButton
-            text='Cancel'
+            text={t('common.cancel')}
             fullWidth
             onClick={closeImageModal}
             className={`${prefs.favoriteColor}`}

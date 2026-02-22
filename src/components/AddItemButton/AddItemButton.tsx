@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import AddIcon from '@mui/icons-material/Add'
 import { setIsAddModal } from '../../store/actions/system.actions'
 import { setSelectedMeal } from '../../store/actions/item.actions'
@@ -12,13 +13,14 @@ interface AddItemButtonProps {
 }
 
 export const AddItemButton = ({ mealPeriod }: AddItemButtonProps) => {
+  const { t } = useTranslation()
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
 
   const timer = useSelector((state: RootState) => state.workoutModule.timer)
 
   return (
     <CustomButton
-      text="Add Item"
+      text={t('meals.addItem')}
       icon={<AddIcon />}
       size="small"
       onClick={(e) => {

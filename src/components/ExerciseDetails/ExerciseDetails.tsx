@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import { getExerciseSummary } from '../../services/exersice-search/exersice-search'
 import { Exercise } from '../../types/exercise/Exercise'
@@ -37,6 +38,7 @@ interface ExerciseDetailsProps {
 }
 
 export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
+  const { t } = useTranslation()
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
@@ -163,12 +165,12 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
       } catch (err) {
         // console.error(err)
         // showErrorMsg(messages.error.getExerciseSummary)
-        setExerciseInstructions(['No instructions found'])
+        setExerciseInstructions([t('exercise.noInstructions')])
       }
     }
 
     getWorkoutInstructions()
-  }, [exercise])
+  }, [exercise, t])
 
   const renderExerciseInstructions = (instruction: string) => {
     const cleaned = instruction.replace(/^Step:\d+\s*/, '')
@@ -222,7 +224,7 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
             variant='h5'
             className='bold-header'
           >
-            Notes
+            {t('exercise.notes')}
           </Typography>
           <div
             className={`notes-container ${getNotesClass(
@@ -235,7 +237,7 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
       )}
 
       <CustomAccordion
-        title='Instructions'
+        title={t('exercise.instructions')}
         cmp={exerciseInstructions?.map(renderExerciseInstructions)}
         icon={<AutoStoriesIcon />}
         className='instructions-accordion'
@@ -246,10 +248,10 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
             variant='h5'
             className='bold-header'
           >
-            Max Progress
+            {t('exercise.maxProgress')}
           </Typography>
           <CustomSelect
-            label='View by'
+            label={t('exercise.viewBy')}
             values={['Weight', 'Reps']}
             value={viewBy}
             onChange={(val) => setViewBy(val)}
@@ -263,7 +265,7 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
           interpolateGaps={true}
           spanGaps={true}
           isDisplaySecondLine={false}
-          secondDataLabel={viewBy === 'Weight' ? 'Reps' : 'Weight'}
+          secondDataLabel={viewBy === 'Weight' ? t('exercise.reps') : t('exercise.weight')}
         />
         <LineChartControls
           value={range}
@@ -274,12 +276,12 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
         variant='h5'
         className='bold-header past-sessions'
       >
-        Past Sessions
+        {t('exercise.pastSessions')}
       </Typography>
       {/* {exerciseSets.length === 0} */}
       {exerciseSets.length === 0 && (
         <Badge
-          badgeContent={'New'}
+          badgeContent={t('common.new')}
           className={`${prefs.favoriteColor} new`}
         ></Badge>
       )}

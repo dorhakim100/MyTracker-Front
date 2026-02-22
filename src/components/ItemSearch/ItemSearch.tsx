@@ -2,6 +2,7 @@ import Box from '@mui/material/Box'
 import ListItemIcon from '@mui/material/ListItemIcon'
 
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 
 import { searchService } from '../../services/search/search-service'
@@ -56,6 +57,7 @@ export interface Filter {
 }
 
 export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
+  const { t } = useTranslation()
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
 
   const user = useSelector((state: RootState) => state.userModule.user)
@@ -221,7 +223,7 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
           variant='h6'
           className={`no-results ${prefs.isDarkMode ? 'dark-mode' : ''}`}
         >
-          No results...
+          {t('meals.noResults')}
         </Typography>
       </Box>
     )
@@ -238,7 +240,7 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
           variant='h6'
           className='search-first'
         >
-          Search for an item first...
+          {t('meals.searchFirst')}
         </Typography>
       </Box>
     )
@@ -278,7 +280,7 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
               variant='h6'
               className='bold-header search-header'
             >
-              Meals
+              {t('meals.meals')}
             </Typography>
             <CustomList<Item>
               items={sortedMeals}
@@ -349,7 +351,7 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
                 variant='h6'
                 className='bold-header search-header'
               >
-                Favorite Items
+                {t('meals.favoriteItems')}
               </Typography>
             ) : null}
           </>
@@ -444,7 +446,7 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
             isCustomLog={isCustomLog}
           />
         }
-        title={isCustomLog ? 'Custom Log' : 'Item'}
+        title={isCustomLog ? t('meals.customLog') : t('meals.item')}
         type='full'
       />
     </>

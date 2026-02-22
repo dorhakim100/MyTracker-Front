@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import IconButton from '@mui/material/IconButton'
 import EditRoundedIcon from '@mui/icons-material/EditRounded'
 import { Tooltip } from '@mui/material'
@@ -9,7 +10,9 @@ interface EditIconProps {
   ariaLabel?: string
 }
 
-export function EditIcon({ onClick, ariaLabel = 'Edit' }: EditIconProps) {
+export function EditIcon({ onClick, ariaLabel }: EditIconProps) {
+  const { t } = useTranslation()
+  const label = ariaLabel ?? t('common.edit')
   const isDashboard = useSelector(
     (state: RootState) => state.systemModule.isDashboard
   )
@@ -21,7 +24,7 @@ export function EditIcon({ onClick, ariaLabel = 'Edit' }: EditIconProps) {
 
   return (
     <Tooltip
-      title='Edit'
+      title={label}
       className='edit-button'
       disableHoverListener={!isDashboard}
       disableTouchListener={!isDashboard}
@@ -29,7 +32,7 @@ export function EditIcon({ onClick, ariaLabel = 'Edit' }: EditIconProps) {
     >
       <IconButton
         onClick={handleClick}
-        aria-label={ariaLabel}
+        aria-label={label}
         size='small'
       >
         <EditRoundedIcon />

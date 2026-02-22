@@ -2,8 +2,9 @@ import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
 import type { ReactNode } from 'react'
 import { useRef } from 'react'
-import { IconButton } from '@mui/material'
+import { IconButton, Tooltip } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
+import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import type { RootState } from '../../store/store'
 
@@ -36,7 +37,7 @@ export function CustomInput({
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
-
+  const { t } = useTranslation()
   return (
     <TextField
       onBlur={onBlur}
@@ -58,11 +59,13 @@ export function CustomInput({
         endAdornment: endIconFn ? (
           <InputAdornment position='end'>{endIconFn()}</InputAdornment>
         ) : isRemoveIcon ? (
-          <InputAdornment position='end'>
-            <IconButton onClick={() => onChange('')}>
-              <CloseIcon />
-            </IconButton>
-          </InputAdornment>
+          <Tooltip title={t('common.clear')}>
+            <InputAdornment position='end'>
+              <IconButton onClick={() => onChange('')}>
+                <CloseIcon />
+              </IconButton>
+            </InputAdornment>
+          </Tooltip>
         ) : undefined,
       }}
     />

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { Typography, Box } from '@mui/material'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../../store/store'
@@ -29,6 +30,7 @@ interface AlertDialogProps {
 }
 
 export function Trainees() {
+  const { t } = useTranslation()
   const user = useSelector(
     (storeState: RootState) => storeState.userModule.user
   )
@@ -103,7 +105,7 @@ export function Trainees() {
     setAlertDialog({
       open: true,
       type: 'add',
-      title: 'Add Trainee',
+      title: t('trainer.addTrainee'),
     })
   }
 
@@ -114,13 +116,13 @@ export function Trainees() {
           variant='h4'
           className='bold-header'
         >
-          Trainees
+          {t('nav.trainees')}
         </Typography>
 
         <div className='add-trainee-container'>
           <MyTraineeCard displayTrainees={false} />
           <CustomButton
-            text='Add Trainee'
+            text={t('trainer.addTrainee')}
             icon={<AddIcon />}
             onClick={openAddTraineeDialog}
           />

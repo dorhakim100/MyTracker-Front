@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import { Typography } from '@mui/material'
 import { Card } from '@mui/material'
@@ -21,6 +22,7 @@ interface ProfileCardProps {
 }
 
 export function ProfileCard({ userToDisplay }: ProfileCardProps) {
+  const { t } = useTranslation()
   const prefs = useSelector(
     (storeState: RootState) => storeState.systemModule.prefs
   )
@@ -114,7 +116,7 @@ export function ProfileCard({ userToDisplay }: ProfileCardProps) {
           />
           <div className="profile-info">
             <Typography variant="h5" className="text-overflow">
-              {userToEdit?.details?.fullname || 'User Profile'}
+              {userToEdit?.details?.fullname || t('user.userProfile')}
             </Typography>
 
             <Typography variant="body1">
@@ -129,7 +131,7 @@ export function ProfileCard({ userToDisplay }: ProfileCardProps) {
         {isDashboard && location.pathname !== '/trainer/user' && (
           <div className="dashboard-actions-container">
             <CustomButton
-              text="View Profile"
+              text={t('user.viewProfile')}
               onClick={handleViewProfile}
               className={`${prefs.favoriteColor}`}
               disabled={!userToDisplay}
@@ -141,14 +143,14 @@ export function ProfileCard({ userToDisplay }: ProfileCardProps) {
         open={isEditUserOpen}
         onClose={onCloseEditUser}
         component={<EditUser onSave={onSaveEditUser} selectedUser={userToEdit} />}
-        title="Edit User"
+        title={t('user.editUser')}
         // onSave={() => onSaveEditUser(user as User)}
         type="full"
       />
       <CustomAlertDialog
         open={openAlertDialog}
         onClose={onCloseAlertDialog}
-        title="Profile Picture"
+        title={t('user.profilePicture')}
       >
         <div className="modal-profile-picture-container">
           <img
@@ -157,7 +159,7 @@ export function ProfileCard({ userToDisplay }: ProfileCardProps) {
             className={`profile-picture box-shadow white-outline`}
           />
           <CustomButton
-            text="Cancel"
+            text={t('common.cancel')}
             fullWidth
             onClick={onCloseAlertDialog}
             className={`${prefs.favoriteColor}`}

@@ -16,6 +16,7 @@ interface CustomSelectProps {
   className?: string
   imgs?: { value: string; src?: string; icon?: React.ReactNode }[]
   tooltipTitle?: string
+  valueLabels?: Record<string, string>
 }
 
 export function CustomSelect({
@@ -27,6 +28,7 @@ export function CustomSelect({
   className,
   imgs,
   tooltipTitle,
+  valueLabels,
 }: CustomSelectProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -92,6 +94,11 @@ export function CustomSelect({
           className={`${imgs ? 'with-imgs' : ''} ${isDashboard ? 'dashboard' : ''}`}
           label={label}
           onChange={handleChange}
+          renderValue={
+            valueLabels
+              ? (v) => valueLabels[v as string] ?? capitalizeFirstLetter(v as string)
+              : undefined
+          }
           MenuProps={{
             PaperProps: {
               className: `${
@@ -109,7 +116,7 @@ export function CustomSelect({
               value={value}
             >
               {getImg(value)}
-              {capitalizeFirstLetter(value)} {extra}
+              {(valueLabels?.[value] ?? capitalizeFirstLetter(value))} {extra}
             </MenuItem>
           ))}
         </Select>
