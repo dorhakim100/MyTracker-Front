@@ -279,7 +279,9 @@
     "accordionGoals": "יעדים",
     "accordionFavoriteItems": "פריטים מועדפים",
     "accordionBmrCalculator": "מחשבון BMR",
-    "accordionPreferences": "העדפות"
+    "accordionPreferences": "העדפות",
+    "cm": "סנטימטר",
+    "kg": "קילו"
   },
   "trainer": {
     "addTrainee": "הוספת מתאמן",
@@ -321,8 +323,14 @@
   "prefs": {
     "hebrew": "עברית",
     "english": "English",
-    "lightMode": "מסך בהיר",
-    "darkMode": "מסך כהה"
+    "darkMode": "מסך כהה",
+    "language": "שפה",
+    "favoriteColor": "צבע מועדף"
+  },
+  "date": {
+    "from": "מתאריך",
+    "to": "עד תאריך",
+    "date": "תאריך"
   },
   "messages": {
     "success": {

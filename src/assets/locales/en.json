@@ -173,9 +173,7 @@
     "searchExercises": "Search exercises...",
     "searchForExercises": "Search for exercises",
     "getStartedByAdding": "Get started by adding an exercise to your routine",
-    "untitledWorkout": "Untitled Workout",
-    "workoutByDate": "Workout by date",
-    "noWorkoutSessionThisDay": "No workout session this day"
+    "untitledWorkout": "Untitled Workout"
   },
   "exercise": {
     "deleteSet": "Delete Set",
@@ -281,7 +279,9 @@
     "accordionGoals": "Goals",
     "accordionFavoriteItems": "Favorite Items",
     "accordionBmrCalculator": "BMR Calculator",
-    "accordionPreferences": "Preferences"
+    "accordionPreferences": "Preferences",
+    "cm": "cm",
+    "kg": "kg"
   },
   "trainer": {
     "addTrainee": "Add Trainee",
@@ -322,7 +322,15 @@
   },
   "prefs": {
     "hebrew": "עברית",
-    "english": "English"
+    "english": "English",
+    "darkMode": "Dark mode",
+    "language": "Language",
+    "favoriteColor": "Favorite color"
+  },
+  "date": {
+    "from": "From",
+    "to": "To",
+    "date": "Date"
   },
   "messages": {
     "success": {

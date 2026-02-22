@@ -7,8 +7,10 @@ import type { Prefs } from '../../types/system/Prefs'
 import { DarkModeSwitch } from '../../components/DarkModeSwitch/DarkModeSwitch'
 import { ColorPicker } from '../../components/ColorPicker/ColorPicker'
 import { LanguageSwitch } from '../../components/LanguageSwitch/LanguageSwitch'
+import { useTranslation } from 'react-i18next'
 
 export function PreferencesCard() {
+  const { t } = useTranslation()
   const prefs = useSelector(
     (storeState: RootState) => storeState.systemModule.prefs
   )
@@ -46,7 +48,7 @@ export function PreferencesCard() {
           variant='body1'
           className='prefs-label'
         >
-          Dark mode
+          {t('prefs.darkMode')}
         </Typography>
         <DarkModeSwitch
           checked={prefs.isDarkMode}
@@ -58,7 +60,7 @@ export function PreferencesCard() {
           variant='body1'
           className='prefs-label'
         >
-          Language
+          {t('prefs.language')}
         </Typography>
         <LanguageSwitch
           checked={prefs.lang === 'he'}
@@ -72,7 +74,7 @@ export function PreferencesCard() {
           variant='body1'
           className='prefs-label'
         >
-          Favorite color
+          {t('prefs.favoriteColor')}
         </Typography>
         <ColorPicker
           pickedColor={favoriteColor}

@@ -60,8 +60,8 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
   )
   const [birthdate, setBirthdate] = useState<number>(
     selectedUser?.details?.birthdate ||
-    user?.details?.birthdate ||
-    DEFAULT_BIRTHDATE
+      user?.details?.birthdate ||
+      DEFAULT_BIRTHDATE
   )
 
   const [height, setHeight] = useState<number>(
@@ -75,8 +75,8 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
   )
   const [activity, setActivity] = useState(
     selectedUser?.details?.activity ||
-    user?.details?.activity ||
-    DEFAULT_ACTIVITY_LEVEL
+      user?.details?.activity ||
+      DEFAULT_ACTIVITY_LEVEL
   )
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false)
 
@@ -172,10 +172,8 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
       },
     }
 
-
     try {
       await onSave(merged)
-
     } catch (err) {
       throw err
     }
@@ -223,14 +221,18 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
                   <div className='avatar-field'>
                     <div className='image-preview box-shadow white-outline'>
                       {input.value ? (
-                        <img src={input.value as string} alt='avatar' />
+                        <img
+                          src={input.value as string}
+                          alt='avatar'
+                        />
                       ) : (
                         <div className='placeholder'>{t('user.noImage')}</div>
                       )}
                     </div>
                     <label
-                      className={`upload-button ${prefs.isDarkMode ? 'dark-mode' : ''
-                        }`}
+                      className={`upload-button ${
+                        prefs.isDarkMode ? 'dark-mode' : ''
+                      }`}
                     >
                       <input
                         type='file'
@@ -264,13 +266,16 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
                   values={getArrayOfNumbers(100, 250, true) as string[]}
                   value={input.value + ''}
                   onChange={input.onChange}
-                  extra='cm'
+                  extra={t('user.cm')}
                   className={`${input.className} ${prefs.favoriteColor}`}
                 />
               )
             if (input.type === 'date')
               return (
-                <div className='date-container' key={`${input.key}-edit-user`}>
+                <div
+                  className='date-container'
+                  key={`${input.key}-edit-user`}
+                >
                   <Typography variant='body1'>
                     {input.label}: {isoDate}
                   </Typography>
@@ -303,7 +308,11 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
 
         <div className='buttons-container'>
           <div className='save-button-container'>
-            <CustomButton text={t('common.save')} onClick={handleSave} fullWidth />
+            <CustomButton
+              text={t('common.save')}
+              onClick={handleSave}
+              fullWidth
+            />
           </div>
           <Divider
             className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}

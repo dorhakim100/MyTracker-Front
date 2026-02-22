@@ -143,7 +143,9 @@ export function WeightCard() {
     <>
       <Card
         variant='outlined'
-        className={`card weight-card ${prefs.isDarkMode ? 'dark-mode' : ''} ${prefs.favoriteColor}`}
+        className={`card weight-card ${prefs.isDarkMode ? 'dark-mode' : ''} ${
+          prefs.favoriteColor
+        }`}
       >
         <div className='date-picker-container'>
           <CustomDatePicker
@@ -156,7 +158,7 @@ export function WeightCard() {
           variant='body2'
           className='date-text'
         >
-          Date: {heDate}
+          {t('date.date')}: {heDate}
         </Typography>
 
         <div className='weight-container'>{renderWeight()}</div>

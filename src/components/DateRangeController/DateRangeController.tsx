@@ -2,6 +2,7 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { Divider, Typography } from '@mui/material'
 import { CustomDatePicker } from '../../CustomMui/CustomDatePicker/CustomDatePicker'
+import { useTranslation } from 'react-i18next'
 
 interface DateRangeControllerProps {
   selectedPastDate: {
@@ -19,13 +20,14 @@ export function DateRangeController({
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
 
+  const { t } = useTranslation()
   const fromDate = new Date(selectedPastDate?.from)
   const toDate = new Date(selectedPastDate?.to)
 
   return (
     <div className='date-picker-container'>
       <Typography variant='body1'>
-        From: {fromDate.toLocaleDateString('he')}
+        {t('date.from')}: {fromDate.toLocaleDateString('he')}
       </Typography>
       <CustomDatePicker
         value={selectedPastDate?.from}
@@ -34,9 +36,13 @@ export function DateRangeController({
         }
         className={`${prefs.favoriteColor}`}
       />
-      <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} orientation='vertical' flexItem />
+      <Divider
+        className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+        orientation='vertical'
+        flexItem
+      />
       <Typography variant='body1'>
-        To: {toDate.toLocaleDateString('he')}
+        {t('date.to')}: {toDate.toLocaleDateString('he')}
       </Typography>
       <CustomDatePicker
         value={selectedPastDate?.to}

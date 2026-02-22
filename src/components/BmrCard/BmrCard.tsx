@@ -17,7 +17,9 @@ import { getArrayOfNumbers } from '../../services/util.service'
 import { genderOptions } from '../helpers/GenderOptions'
 import { User } from '../../types/user/User'
 
-export const getActivityOptions = (t: (key: string) => string): ToggleOption[] => [
+export const getActivityOptions = (
+  t: (key: string) => string
+): ToggleOption[] => [
   { value: 'sedentary', label: t('bmr.none') },
   { value: 'light', label: t('bmr.low') },
   { value: 'moderate', label: t('bmr.medium') },
@@ -136,7 +138,7 @@ export function BmrCard({ sentUser }: BmrCardProps) {
       values: getArrayOfNumbers(100, 250, true) as string[],
       type: 'select',
       key: 'heightCm',
-      extra: 'cm',
+      extra: t('user.cm'),
       className: 'second-column',
     },
     {
@@ -145,7 +147,7 @@ export function BmrCard({ sentUser }: BmrCardProps) {
       values: getArrayOfNumbers(30, 250, true) as string[],
       type: 'select',
       key: 'weightKg',
-      extra: 'kg',
+      extra: t('user.kg'),
       className: 'full-width',
     },
     {
@@ -172,7 +174,9 @@ export function BmrCard({ sentUser }: BmrCardProps) {
   return (
     <div
       //   variant='outlined'
-      className={`bmr-card ${prefs.isDarkMode ? 'dark-mode' : ''} ${isDashboard ? 'dashboard' : ''}`}
+      className={`bmr-card ${prefs.isDarkMode ? 'dark-mode' : ''} ${
+        isDashboard ? 'dashboard' : ''
+      }`}
     >
       {/* <Typography variant='h6'>BMR Calculator</Typography> */}
 
@@ -185,7 +189,9 @@ export function BmrCard({ sentUser }: BmrCardProps) {
                 key={`${option.key}-${option.label}`}
               >
                 <CustomSelect
-                  tooltipTitle={t('common.editOption', { option: option.label })}
+                  tooltipTitle={t('common.editOption', {
+                    option: option.label,
+                  })}
                   label={option.label}
                   values={option.values as string[]}
                   value={form[option.key as keyof BmrFormState]}
@@ -236,7 +242,9 @@ export function BmrCard({ sentUser }: BmrCardProps) {
           </Typography>
         </div> */}
         <div className='bmr-result-row total'>
-          <Typography variant='body1'>{t('bmr.dailyCaloriesBurned')}</Typography>
+          <Typography variant='body1'>
+            {t('bmr.dailyCaloriesBurned')}
+          </Typography>
           <Typography
             variant='h5'
             className='bmr-value'
