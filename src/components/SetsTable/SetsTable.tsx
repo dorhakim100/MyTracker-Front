@@ -32,7 +32,6 @@ function Row(props: {
     open: boolean
     notes: ExpectedActual<string>
     date: string
-
   }) => void
   divider?: boolean
 }) {
@@ -63,16 +62,21 @@ function Row(props: {
         // sx={{ '& > *': { borderBottom: 'unset' } }}
         onClick={() => setOpen(!open)}
         className='pointer'
-
-
       >
-        <TableCell component='th' scope='row' sx={{ width: '30%' }}>
+        <TableCell
+          component='th'
+          scope='row'
+          sx={{ width: '30%', textAlign: 'start' }}
+        >
           {sets[0].createdAt
             ? new Date(sets[0].createdAt).toLocaleDateString('he')
             : ''}
         </TableCell>
 
-        <TableCell align='center' sx={{ width: '25%' }}>
+        <TableCell
+          align='center'
+          sx={{ width: '25%' }}
+        >
           {
             sets.find(
               (set) =>
@@ -82,7 +86,10 @@ function Row(props: {
           }{' '}
           {t('weight.kg')}
         </TableCell>
-        <TableCell align='center' sx={{ width: '25%' }}>
+        <TableCell
+          align='center'
+          sx={{ width: '25%' }}
+        >
           {
             sets.find(
               (set) =>
@@ -127,15 +134,41 @@ function Row(props: {
           }}
           colSpan={4}
         >
-          <Collapse in={open} timeout='auto' unmountOnExit>
+          <Collapse
+            in={open}
+            timeout='auto'
+            unmountOnExit
+          >
             <Box sx={{ margin: 0, padding: 1 }}>
-              <Table size='small' aria-label='sets' sx={{ tableLayout: 'fixed', width: '100%' }}>
+              <Table
+                size='small'
+                aria-label='sets'
+                sx={{ tableLayout: 'fixed', width: '100%' }}
+              >
                 <TableHead>
                   <TableRow>
-                    <TableCell align='center' sx={{ width: '30%' }}>{t('exercise.set')}</TableCell>
-                    <TableCell align='center' sx={{ width: '25%' }}>{t('exercise.weight')}</TableCell>
-                    <TableCell align='center' sx={{ width: '25%' }}>{t('exercise.reps')}</TableCell>
-                    <TableCell align='center' sx={{ width: '20%' }}>
+                    <TableCell
+                      align='center'
+                      sx={{ width: '30%' }}
+                    >
+                      {t('exercise.set')}
+                    </TableCell>
+                    <TableCell
+                      align='center'
+                      sx={{ width: '25%' }}
+                    >
+                      {t('exercise.weight')}
+                    </TableCell>
+                    <TableCell
+                      align='center'
+                      sx={{ width: '25%' }}
+                    >
+                      {t('exercise.reps')}
+                    </TableCell>
+                    <TableCell
+                      align='center'
+                      sx={{ width: '20%' }}
+                    >
                       {sets[0].rpe ? t('exercise.rpe') : t('exercise.rir')}
                     </TableCell>
                   </TableRow>
@@ -145,17 +178,31 @@ function Row(props: {
                     .sort((a, b) => (a.setNumber || 0) - (b.setNumber || 0))
                     .map((set) => (
                       <TableRow key={set._id}>
-                        <TableCell align='center' sx={{ width: '30%' }}>
+                        <TableCell
+                          align='center'
+                          sx={{ width: '30%' }}
+                        >
                           <Badge
                             badgeContent={set.setNumber}
                             className={prefs.favoriteColor}
                           ></Badge>
                         </TableCell>
-                        <TableCell align='center' sx={{ width: '25%' }}>
+                        <TableCell
+                          align='center'
+                          sx={{ width: '25%' }}
+                        >
                           {set.weight.actual} {t('weight.kg')}
                         </TableCell>
-                        <TableCell align='center' sx={{ width: '25%' }}>{set.reps.actual}</TableCell>
-                        <TableCell align='center' sx={{ width: '20%' }}>
+                        <TableCell
+                          align='center'
+                          sx={{ width: '25%' }}
+                        >
+                          {set.reps.actual}
+                        </TableCell>
+                        <TableCell
+                          align='center'
+                          sx={{ width: '20%' }}
+                        >
                           {set.rpe?.actual ? set.rpe.actual : set.rir?.actual}
                         </TableCell>
                       </TableRow>
@@ -164,10 +211,14 @@ function Row(props: {
               </Table>
             </Box>
           </Collapse>
-          {divider && <Divider sx={{ marginInline: '0.5rem' }} className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />}
+          {divider && (
+            <Divider
+              sx={{ marginInline: '0.5rem' }}
+              className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+            />
+          )}
         </TableCell>
       </TableRow>
-
     </React.Fragment>
   )
 }
@@ -200,12 +251,21 @@ export default function SetsTable({
           component={Paper}
           className={`sets-table ${prefs.isDarkMode ? 'dark-mode' : ''}`}
         >
-          <Table aria-label='collapsible table ' sx={{ tableLayout: 'fixed' }}>
+          <Table
+            aria-label='collapsible table '
+            sx={{ tableLayout: 'fixed' }}
+          >
             <TableHead>
               <TableRow>
-                <TableCell sx={{ width: '30%' }}>{t('exercise.date')}</TableCell>
-                <TableCell sx={{ textAlign: 'center', width: '25%' }}>{t('exercise.topWeight')}</TableCell>
-                <TableCell sx={{ textAlign: 'center', width: '25%' }}>{t('exercise.topReps')}</TableCell>
+                <TableCell sx={{ width: '30%', textAlign: 'start' }}>
+                  {t('exercise.date')}
+                </TableCell>
+                <TableCell sx={{ textAlign: 'center', width: '25%' }}>
+                  {t('exercise.topWeight')}
+                </TableCell>
+                <TableCell sx={{ textAlign: 'center', width: '25%' }}>
+                  {t('exercise.topReps')}
+                </TableCell>
                 <TableCell sx={{ width: '20%' }}></TableCell>
               </TableRow>
             </TableHead>
@@ -218,7 +278,6 @@ export default function SetsTable({
                       setAlertDialogOptions={setAlertDialogOptions}
                       divider={index !== entries.length - 1}
                     />
-
                   </React.Fragment>
                 ))
               ) : (

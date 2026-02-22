@@ -221,6 +221,7 @@ export function Dashboard() {
                 setSlideDirection(1)
                 setActiveRoute('/lift-mate/workouts')
               }}
+              isIconReverse={prefs.lang === 'he' ? true : false}
             />
           )}
         </div>

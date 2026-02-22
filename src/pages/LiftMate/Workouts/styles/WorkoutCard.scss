@@ -5,6 +5,7 @@
   box-shadow: 0 0 0.5rem 0 rgba(0, 0, 0, 0.1);
 
   width: calc(100vw - 2rem);
+  direction: ltr;
 
   @media (min-width: 600px) {
     max-width: 100%;

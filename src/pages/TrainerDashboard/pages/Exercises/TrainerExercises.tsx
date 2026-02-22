@@ -15,8 +15,10 @@ import {
 import { messages } from '../../../../assets/config/messages'
 import { showErrorMsg } from '../../../../services/event-bus.service'
 import { setIsLoading } from '../../../../store/actions/system.actions'
+import { useTranslation } from 'react-i18next'
 
 export function TrainerExercises() {
+  const { t } = useTranslation()
   const prefs = useSelector(
     (storeState: RootState) => storeState.systemModule.prefs
   )
@@ -80,24 +82,28 @@ export function TrainerExercises() {
 
   return (
     <Box
-      className={`trainer-exercises-container ${prefs.isDarkMode ? 'dark-mode' : ''} ${prefs.favoriteColor}`}
+      className={`trainer-exercises-container ${
+        prefs.isDarkMode ? 'dark-mode' : ''
+      } ${prefs.favoriteColor}`}
     >
       <Typography
         variant='h4'
         className='bold-header'
       >
-        Exercises
+        {t('workout.exercises')}
       </Typography>
       <ExercisesSearch
         exerciseFilter={exerciseFilter}
         onExerciseFilterChange={onExerciseFilterChange}
-        placeholder='Search for exercises'
+        placeholder={t('workout.searchForExercises')}
         className={`${prefs.favoriteColor}`}
         results={filteredExerciseResults}
         resultsMsg={
           !exerciseFilter.searchValue
-            ? 'Most Popular Exercises'
-            : `${filteredExerciseResults.length} exercises found`
+            ? t('workout.mostPopularExercises')
+            : t('workout.exercisesFound', {
+                count: filteredExerciseResults.length,
+              })
         }
       />
     </Box>

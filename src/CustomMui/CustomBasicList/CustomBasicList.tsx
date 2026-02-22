@@ -26,6 +26,8 @@ export function CustomBasicList<T>({
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
 
+  const isRtl = prefs.lang === 'he'
+
   const isDashboard = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.isDashboard
   )
@@ -71,6 +73,9 @@ export function CustomBasicList<T>({
     onReorder(newItems)
   }
 
+  const isHorizontal = isDashboard
+  const isHorizontalRtl = isHorizontal && isRtl
+
   return (
     <DragDropContext
       onDragStart={onDragStart}
@@ -78,7 +83,7 @@ export function CustomBasicList<T>({
     >
       <Droppable
         droppableId='droppable'
-        direction={isDashboard ? 'horizontal' : 'vertical'}
+        direction={isHorizontal ? 'horizontal' : 'vertical'}
       >
         {(provided) => (
           <div
@@ -87,9 +92,10 @@ export function CustomBasicList<T>({
               containerRef.current = node
             }}
             {...provided.droppableProps}
+            dir={isHorizontalRtl ? 'rtl' : undefined}
             className={`custom-basic-list-container ${containerClassName} ${
               prefs.isDarkMode ? 'dark-mode' : ''
-            }`}
+            } ${isHorizontalRtl ? 'horizontal-rtl' : ''}`}
             style={{
               ...(isDragging && containerHeight !== null
                 ? {

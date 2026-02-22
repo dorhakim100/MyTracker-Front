@@ -191,18 +191,15 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
           new Date(b.createdAt || '').getTime() -
           new Date(a.createdAt || '').getTime()
       )
-      .reduce(
-        (acc: Record<string, Set[]>, set: Set) => {
-          if (!set.createdAt) return acc
-          const date = getDateFromISO(new Date(set.createdAt).toISOString())
-          if (!acc[date]) {
-            acc[date] = []
-          }
-          acc[date].push(set)
-          return acc
-        },
-        {} as Record<string, Set[]>
-      )
+      .reduce((acc: Record<string, Set[]>, set: Set) => {
+        if (!set.createdAt) return acc
+        const date = getDateFromISO(new Date(set.createdAt).toISOString())
+        if (!acc[date]) {
+          acc[date] = []
+        }
+        acc[date].push(set)
+        return acc
+      }, {} as Record<string, Set[]>)
   }
 
   return (
@@ -252,8 +249,10 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
           </Typography>
           <CustomSelect
             label={t('exercise.viewBy')}
-            values={['Weight', 'Reps']}
-            value={viewBy}
+            values={[t('exercise.weight'), t('exercise.reps')]}
+            value={
+              viewBy === 'Weight' ? t('exercise.weight') : t('exercise.reps')
+            }
             onChange={(val) => setViewBy(val)}
             className={`${prefs.favoriteColor}`}
           />
@@ -265,7 +264,9 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
           interpolateGaps={true}
           spanGaps={true}
           isDisplaySecondLine={false}
-          secondDataLabel={viewBy === 'Weight' ? t('exercise.reps') : t('exercise.weight')}
+          secondDataLabel={
+            viewBy === 'Weight' ? t('exercise.reps') : t('exercise.weight')
+          }
         />
         <LineChartControls
           value={range}

@@ -72,6 +72,8 @@ export function TraineesTabs({ trainees }: TraineesTabsProps) {
     )
   }
 
+  const isRtl = prefs.lang === 'he'
+
   return (
     <div
       className={`trainees-tabs-container ${prefs.isDarkMode ? 'dark-mode' : ''} ${prefs.favoriteColor}`}
@@ -85,6 +87,7 @@ export function TraineesTabs({ trainees }: TraineesTabsProps) {
             <div
               ref={provided.innerRef}
               {...provided.droppableProps}
+              dir={isRtl ? 'rtl' : undefined}
             >
               <Tabs
                 ref={provided.innerRef}

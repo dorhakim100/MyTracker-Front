@@ -37,7 +37,7 @@
   "common": {
     "save": "שמור",
     "cancel": "ביטול",
-    "delete": "מחק",
+    "delete": "מחיקה",
     "edit": "עריכה",
     "close": "סגור",
     "options": "אפשרויות",
@@ -54,7 +54,9 @@
     "show": "הצג",
     "hide": "הסתר",
     "search": "חיפוש",
-    "name": "שם"
+    "name": "שם",
+    "previous": "הקודם",
+    "next": "הבא"
   },
   "auth": {
     "signIn": "כניסה",
@@ -94,6 +96,7 @@
     "currentMeal": "ארוחה נוכחית",
     "meal": "ארוחה",
     "mealName": "שם ארוחה",
+    "items": "פריטים",
     "noMealsAdded": "טרם נוספו ארוחות",
     "noItemsLogged": "טרם נרשמו פריטים",
     "searchItem": "חיפוש פריט",
@@ -134,7 +137,7 @@
     "noWorkoutSelected": "לא נבחר אימון",
     "addExercise": "הוספת תרגיל",
     "finishWorkout": "סיים אימון",
-    "deleteWorkout": "מחק אימון",
+    "deleteWorkout": "מחיקת אימון",
     "collapseAll": "סגור הכל",
     "expandAll": "הרחב הכל",
     "workoutDetails": "פרטי אימון",
@@ -173,10 +176,11 @@
     "deactivate": "השבת",
     "noPastRoutinesFound": "לא נמצאו אימונים קודמות...",
     "workoutByDate": "אימון לפי תאריך",
-    "noWorkoutSessionThisDay": "אין אימון מתוכנן ליום זה"
+    "noWorkoutSessionThisDay": "אין אימון מתוכנן ליום זה",
+    "exercises": "תרגילים"
   },
   "exercise": {
-    "deleteSet": "מחק סט",
+    "deleteSet": "מחיקת סט",
     "addSet": "הוספת סט",
     "markAsDone": "סמן כבוצע",
     "markAsNotDone": "בטל סימון",
@@ -246,13 +250,26 @@
   "goal": {
     "addGoal": "הוספת יעד",
     "editGoal": "עריכת יעד",
-    "lose": "הרזייה",
+    "lose": "ירידה",
     "maintain": "שמירה",
-    "gain": "השמנה",
+    "gain": "עלייה",
     "calories": "קלוריות",
     "grams": "גרמים",
     "percentages": "אחוזים",
-    "enterGoalTitle": "הזן כותרת יעד..."
+    "enterGoalTitle": "הזן כותרת יעד...",
+    "goalTitle": "כותרת יעד",
+    "target": "מטרה",
+    "macrosDistribution": "התפלגות ערכים תזונתיים",
+    "targetWeightKg": "משקל יעד (ק״ג)",
+    "goalDates": "תאריכי יעד",
+    "startDate": "תאריך התחלה:",
+    "endDate": "תאריך סיום:",
+    "editMacros": "עריכת ערכים תזונתיים",
+    "weightKg": "{{value}} ק״ג",
+    "title": "כותרת",
+    "macros": "ערכים תזונתיים",
+    "dates": "תאריכים",
+    "weight": "משקל"
   },
   "user": {
     "logout": "התנתקות",
@@ -274,7 +291,7 @@
     "image": "תמונה",
     "uploadImage": "העלה תמונה",
     "uploading": "מעלה...",
-    "deleteAccount": "מחק חשבון",
+    "deleteAccount": "מחיקת חשבון",
     "accordionMeals": "ארוחות",
     "accordionGoals": "יעדים",
     "accordionFavoriteItems": "פריטים מועדפים",

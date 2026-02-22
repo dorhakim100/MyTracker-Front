@@ -21,7 +21,6 @@
     }
 
     tr {
-    
       td {
         color: $white !important;
         // border-bottom: 1px solid $darker-gray !important;
@@ -33,7 +32,7 @@
   .MuiCollapse-root {
     .MuiTable-root {
       width: 100%;
-      
+
       // Match the column widths of the main table
       .MuiTableCell-root {
         padding-left: 16px;

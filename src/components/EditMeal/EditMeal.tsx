@@ -39,6 +39,7 @@ interface EditMealProps {
 
 export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
   const { t } = useTranslation()
+  const stagesTitles = [t('meals.mealName'), t('meals.items')]
   const user = useSelector(
     (stateSelector: RootState) => stateSelector.userModule.user
   )
@@ -368,6 +369,7 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
         finishText={t('common.save')}
         title={getStageTitle}
         getIsNextDisabled={getIsNextDisabled}
+        stagesTitles={stagesTitles}
       />
     </div>
   )

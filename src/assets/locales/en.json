@@ -54,7 +54,9 @@
     "show": "Show",
     "hide": "Hide",
     "search": "Search",
-    "name": "Name"
+    "name": "Name",
+    "previous": "Previous",
+    "next": "Next"
   },
   "auth": {
     "signIn": "Sign in",
@@ -94,6 +96,7 @@
     "currentMeal": "Current Meal",
     "meal": "Meal",
     "mealName": "Meal Name",
+    "items": "Items",
     "noMealsAdded": "No meals added yet",
     "noItemsLogged": "No items logged yet",
     "searchItem": "Search Item",
@@ -172,6 +175,7 @@
     "noActiveWorkouts": "No active workouts found",
     "searchExercises": "Search exercises...",
     "searchForExercises": "Search for exercises",
+    "exercises": "Exercises",
     "getStartedByAdding": "Get started by adding an exercise to your routine",
     "untitledWorkout": "Untitled Workout"
   },
@@ -252,7 +256,20 @@
     "calories": "Calories",
     "grams": "Grams",
     "percentages": "Percentages",
-    "enterGoalTitle": "Enter goal title..."
+    "enterGoalTitle": "Enter goal title...",
+    "goalTitle": "Goal Title",
+    "target": "Target",
+    "macrosDistribution": "Macros Distribution",
+    "targetWeightKg": "Target Weight (kg)",
+    "goalDates": "Goal Dates",
+    "startDate": "Start Date:",
+    "endDate": "End Date:",
+    "editMacros": "Edit Macros",
+    "weightKg": "{{value}} kg",
+    "title": "Title",
+    "macros": "Macros",
+    "weight": "Weight",
+    "dates": "Dates"
   },
   "user": {
     "logout": "Logout",

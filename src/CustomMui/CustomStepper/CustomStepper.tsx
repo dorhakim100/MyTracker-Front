@@ -11,6 +11,7 @@ import { RootState } from '../../store/store'
 import { capitalizeFirstLetter } from '../../services/util.service'
 import { CustomButton } from '../CustomButton/CustomButton'
 import { SlideAnimation } from '../../components/SlideAnimation/SlideAnimation'
+import { useTranslation } from 'react-i18next'
 
 interface CustomStepperProps<TStage extends string = string> {
   stages: TStage[]
@@ -27,6 +28,7 @@ interface CustomStepperProps<TStage extends string = string> {
   nextText?: string
   footerClassName?: string
   direction?: number
+  stagesTitles?: string[]
 }
 
 export function CustomStepper<TStage extends string = string>({
@@ -44,7 +46,13 @@ export function CustomStepper<TStage extends string = string>({
   nextText = 'Next',
   footerClassName,
   direction = 1,
+  stagesTitles,
 }: CustomStepperProps<TStage>) {
+  const { t } = useTranslation()
+  finishText = t('common.save')
+  previousText = t('common.previous')
+  nextText = t('common.next')
+
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
@@ -81,10 +89,14 @@ export function CustomStepper<TStage extends string = string>({
   }, [getIsNextDisabled, activeStage, isAtEnd])
 
   return (
-    <div className={`custom-stepper ${className || ''}`}>
+    <div
+      className={`custom-stepper ${className || ''} ${
+        prefs.lang === 'he' ? 'rtl' : ''
+      }`}
+    >
       {resolvedTitle && (
         <>
-          <Typography variant="h5">{resolvedTitle}</Typography>
+          <Typography variant='h5'>{resolvedTitle}</Typography>
 
           <Divider
             className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
@@ -92,7 +104,7 @@ export function CustomStepper<TStage extends string = string>({
         </>
       )}
 
-      <div className="custom-stepper-stage">
+      <div className='custom-stepper-stage'>
         <SlideAnimation
           motionKey={activeStage}
           direction={direction}
@@ -110,14 +122,16 @@ export function CustomStepper<TStage extends string = string>({
             prefs.favoriteColor || ''
           }`}
         >
-          {stages.map((stage) => (
+          {stages.map((stage, index) => (
             <Step key={stage}>
-              <StepLabel>{capitalizeFirstLetter(stage)}</StepLabel>
+              <StepLabel>
+                {stagesTitles?.[index] || capitalizeFirstLetter(stage)}
+              </StepLabel>
             </Step>
           ))}
         </Stepper>
 
-        <div className="buttons-container">
+        <div className='buttons-container'>
           <CustomButton
             text={previousText}
             onClick={() => onChange(-1)}

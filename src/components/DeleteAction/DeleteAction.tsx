@@ -2,6 +2,7 @@ import { Typography } from '@mui/material'
 
 import { SwipeAction } from 'react-swipeable-list'
 import DeleteIcon from '@mui/icons-material/Delete'
+import { useTranslation } from 'react-i18next'
 
 type Item<T> = T & { _id?: string }
 
@@ -24,7 +25,7 @@ export function DeleteAction<T>({
 }: DeleteActionProps<T>) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const extraProps = { trailing, leading, main } as any
-
+  const { t } = useTranslation()
   return (
     <SwipeAction
       destructive={destructive}
@@ -33,7 +34,7 @@ export function DeleteAction<T>({
     >
       <div className='swipeable-right-action delete'>
         <DeleteIcon className='delete-icon-button' />
-        <Typography variant='body2'>Delete</Typography>
+        <Typography variant='body2'>{t('common.delete')}</Typography>
       </div>
     </SwipeAction>
   )

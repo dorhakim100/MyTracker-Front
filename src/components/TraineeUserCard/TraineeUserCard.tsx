@@ -21,6 +21,7 @@ export function TraineeUserCard() {
   )
 
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
+  const isRtl = prefs.lang === 'he'
 
   const displayName = traineeUser?.details.fullname
   const displayImage = traineeUser?.details.imgUrl
@@ -31,7 +32,9 @@ export function TraineeUserCard() {
     <div
       className={`trainee-user-card-container ${
         prefs.isDarkMode ? 'dark-mode' : ''
-      } ${isHidden ? 'hidden' : ''} ${prefs.favoriteColor}`}
+      } ${isHidden ? 'hidden' : ''} ${prefs.favoriteColor} ${
+        isRtl ? 'rtl' : ''
+      }`}
     >
       <div className='trainee-details'>
         <img
@@ -53,7 +56,17 @@ export function TraineeUserCard() {
 
       <CustomButton
         isIcon={true}
-        icon={isHidden ? <KeyboardArrowRightIcon /> : <KeyboardArrowLeftIcon />}
+        icon={
+          isHidden ? (
+            <KeyboardArrowRightIcon
+              style={{ transform: isRtl ? 'scaleX(1)' : 'scaleX(-1)' }}
+            />
+          ) : (
+            <KeyboardArrowLeftIcon
+              style={{ transform: isRtl ? 'scaleX(-1)' : 'scaleX(1)' }}
+            />
+          )
+        }
         tooltipTitle={isHidden ? t('common.show') : t('common.hide')}
         onClick={() => {
           setIsHidden(!isHidden)

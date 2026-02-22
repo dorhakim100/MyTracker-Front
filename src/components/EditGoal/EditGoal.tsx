@@ -1,5 +1,5 @@
 import { useMemo, useState, useRef, useEffect } from 'react'
-
+import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import { Goal } from '../../types/goal/Goal'
 import CustomStepper from '../../CustomMui/CustomStepper/CustomStepper'
@@ -52,13 +52,22 @@ interface EditGoalProps {
   saveGoal: (goal: Goal) => void
 }
 
-const stages = ['title', 'target', 'macros', 'weight', 'dates']
-
 const DEFAULT_CALORIES = 2400
 
 const CALORIES_DIFF = 500
 
+const stages = ['title', 'target', 'macros', 'weight', 'dates']
+
 export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
+  const { t } = useTranslation()
+
+  const stagesTitles = [
+    t('goal.title'),
+    t('goal.target'),
+    t('goal.macros'),
+    t('goal.weight'),
+    t('goal.dates'),
+  ]
   const user = useSelector(
     (stateSelector: RootState) => stateSelector.userModule.user
   )
@@ -127,21 +136,21 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
 
   const targets = [
     {
-      label: 'Lose',
+      label: t('goal.lose'),
       icon: <ArrowDownwardIcon />,
       suggestedCalories: maintainUserBmr - CALORIES_DIFF,
       key: 'lose',
       onClick: () => _onTargetClick('lose'),
     },
     {
-      label: 'Maintain',
+      label: t('goal.maintain'),
       icon: <BalanceIcon />,
       suggestedCalories: maintainUserBmr,
       key: 'maintain',
       onClick: () => _onTargetClick('maintain'),
     },
     {
-      label: 'Gain',
+      label: t('goal.gain'),
       icon: <ArrowUpwardIcon />,
       suggestedCalories: maintainUserBmr + CALORIES_DIFF,
       key: 'gain',
@@ -150,19 +159,19 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
   ]
   const editButtons = [
     {
-      label: 'Calories',
+      label: t('goal.calories'),
       onClick: () => onCaloriesOpenClick(),
       icon: <EditIcon />,
       key: 'calories-edit-goal',
     },
     {
-      label: 'Grams',
+      label: t('goal.grams'),
       onClick: () => onMacrosOpenClick(),
       icon: <EditIcon />,
       key: 'macros-edit-goal',
     },
     {
-      label: 'Percentages',
+      label: t('goal.percentages'),
       onClick: () => onDistributionOpenClick(),
       icon: <EditIcon />,
       key: 'distribution-edit-goal',
@@ -171,19 +180,19 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
 
   const weightButtons = [
     {
-      text: '60 kg',
+      value: 60,
       onClick: () => setEditGoal((prev) => ({ ...prev, targetWeight: 60 })),
     },
     {
-      text: '70 kg',
+      value: 70,
       onClick: () => setEditGoal((prev) => ({ ...prev, targetWeight: 70 })),
     },
     {
-      text: '80 kg',
+      value: 80,
       onClick: () => setEditGoal((prev) => ({ ...prev, targetWeight: 80 })),
     },
     {
-      text: '90 kg',
+      value: 90,
       onClick: () => setEditGoal((prev) => ({ ...prev, targetWeight: 90 })),
     },
   ]
@@ -381,15 +390,15 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
   const getStageTitle = (stage: string) => {
     switch (stage) {
       case 'title':
-        return 'Goal Title'
+        return t('goal.goalTitle')
       case 'target':
-        return 'Target'
+        return t('goal.target')
       case 'macros':
-        return 'Macros Distribution'
+        return t('goal.macrosDistribution')
       case 'weight':
-        return 'Target Weight (kg)'
+        return t('goal.targetWeightKg')
       case 'dates':
-        return 'Goal Dates'
+        return t('goal.goalDates')
       default:
         return capitalizeFirstLetter(stage)
     }
@@ -409,7 +418,7 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
         <CustomInput
           value={editGoal.title || ''}
           onChange={(value) => setEditGoal({ ...editGoal, title: value })}
-          placeholder='Enter goal title...'
+          placeholder={t('goal.enterGoalTitle')}
           className={`${prefs.favoriteColor}`}
         />
         <div className='animation-container'>
@@ -476,9 +485,9 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
           <div className='weight-buttons-container'>
             {weightButtons.map((button) => (
               <CustomButton
-                text={button.text}
+                text={t('goal.weightKg', { value: button.value })}
                 onClick={button.onClick}
-                key={button.text}
+                key={button.value}
                 className={`${prefs.favoriteColor}`}
               />
             ))}
@@ -512,7 +521,7 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
           </div>
 
           <div className='edit-header-container'>
-            <Typography variant='h5'>Edit Macros</Typography>
+            <Typography variant='h5'>{t('goal.editMacros')}</Typography>
             <Divider
               className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
             />
@@ -533,7 +542,7 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
           open={editGoalOpen}
           onClose={onCloseEditGoal}
           component={getModalTypeComponent()}
-          title='Edit Calories'
+          title={t('macros.editCalories')}
           onSave={getModalOnSave()}
         />
       </>
@@ -543,9 +552,10 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
   function _renderDatesStage() {
     const newDateStart = new Date(editGoal.startDate as number)
     const newDateEnd = new Date(editGoal.endDate as number)
+    const dateLocale = prefs.lang === 'he' ? 'he-IL' : 'en'
 
     const startDateToShow = newDateStart.toLocaleString(
-      'he',
+      dateLocale,
       israelLocaleStringObject
     )
     let endDateToShow
@@ -554,7 +564,10 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
     let endDate
 
     if (editGoal.endDate !== undefined) {
-      endDateToShow = newDateEnd.toLocaleString('he', israelLocaleStringObject)
+      endDateToShow = newDateEnd.toLocaleString(
+        dateLocale,
+        israelLocaleStringObject
+      )
       endDate = getDateFromISO(newDateEnd.toISOString())
     }
 
@@ -566,7 +579,7 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
               htmlFor='start-date'
               className='start-date-label'
             >
-              Start Date:
+              {t('goal.startDate')}
             </label>
 
             <Typography variant='h6'>{startDateToShow}</Typography>
@@ -603,13 +616,13 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
               htmlFor='end-date'
               className='end-date-label'
             >
-              End Date:
+              {t('goal.endDate')}
             </label>
             {/* <Typography variant='h6'  >
               End Date:
             </Typography> */}
 
-            <Typography variant='h6'>{endDateToShow}</Typography>
+            <Typography variant='h6'>{endDateToShow ?? ''}</Typography>
             {editGoal.endDate !== undefined && (
               <CustomDatePicker
                 value={endDate}
@@ -644,6 +657,7 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
         direction={direction}
         getIsNextDisabled={getIsNextDisabled}
         onFinish={() => saveGoal(editGoal as Goal)}
+        stagesTitles={stagesTitles}
       />
     </div>
   )
