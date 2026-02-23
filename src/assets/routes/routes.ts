@@ -2,7 +2,7 @@
 import React from 'react'
 
 import { Dashboard } from '../../pages/MyTracker/Dashboard/Dashboard'
-import { Diary } from '../../pages/MyTracker/Diary/Diary'
+import { FoodTab } from '../../pages/MyTracker/FoodTab/FoodTab'
 import { UserDetails } from '../../pages/UserDetails/UserDetails'
 import { Workouts } from '../../pages/LiftMate/Workouts/Workouts.tsx'
 import { SignIn } from '../../CustomMui/SignIn/SignIn.tsx'
@@ -35,7 +35,7 @@ export const routes: Route[] = [
   {
     titleKey: 'nav.food',
     path: '/diary',
-    element: Diary,
+    element: FoodTab,
     icon: FastfoodIcon,
     app: 'all',
   },
