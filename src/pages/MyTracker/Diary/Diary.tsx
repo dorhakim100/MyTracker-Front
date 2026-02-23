@@ -16,10 +16,7 @@ import { messages } from '../../../assets/config/messages'
 import { SlideAnimation } from '../../../components/SlideAnimation/SlideAnimation'
 import { setSelectedDiaryDay } from '../../../store/actions/user.actions'
 import DonutLargeIcon from '@mui/icons-material/DonutLarge'
-import WbTwilightIcon from '@mui/icons-material/WbTwilight'
-import LightModeIcon from '@mui/icons-material/LightMode'
-import BedtimeIcon from '@mui/icons-material/Bedtime'
-import IcecreamIcon from '@mui/icons-material/Icecream'
+import { getMeals } from '../../../assets/config/meals'
 
 import { getDateFromISO } from '../../../services/util.service'
 import { DAY_IN_MS } from '../../../assets/config/times'
@@ -50,32 +47,7 @@ export function Diary() {
     return isToday
   }, [selectedDayDiary?.date])
 
-  const meals = [
-    {
-      label: t('meals.breakfast'),
-      period: 'breakfast',
-      rangeLabel: '06:00 – 12:00',
-      icon: <WbTwilightIcon />,
-    },
-    {
-      label: t('meals.lunch'),
-      period: 'lunch',
-      rangeLabel: '12:00 – 18:00',
-      icon: <LightModeIcon />,
-    },
-    {
-      label: t('meals.dinner'),
-      period: 'dinner',
-      rangeLabel: '18:00 – 00:00',
-      icon: <BedtimeIcon />,
-    },
-    {
-      label: t('meals.snacks'),
-      period: 'snacks',
-      rangeLabel: t('meals.duringTheDay'),
-      icon: <IcecreamIcon />,
-    },
-  ]
+  const meals = getMeals(t)
 
   const totalBreakfastCalories = useMemo(() => {
     return getTotalCalories('breakfast')
