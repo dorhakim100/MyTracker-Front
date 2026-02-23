@@ -25,6 +25,8 @@ export interface User {
 
   isTrainer?: boolean
   trainees?: User[]
+
+  isFixedMenu?: boolean
 }
 
 export interface UserDetails {

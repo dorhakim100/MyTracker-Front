@@ -343,7 +343,8 @@
     "english": "English",
     "darkMode": "מסך כהה",
     "language": "שפה",
-    "favoriteColor": "צבע מועדף"
+    "favoriteColor": "צבע מועדף",
+    "fixedMenu": "תפריט קבוע"
   },
   "date": {
     "from": "מתאריך",

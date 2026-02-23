@@ -220,7 +220,7 @@ export function FixedBottomNavigation(props: {
           }`}
         >
           <Box sx={{ position: 'relative' }}>
-            {renderSpeedDial()}
+            {!user?.isFixedMenu && renderSpeedDial()}
 
             <BottomNavigation
               showLabels
@@ -294,9 +294,7 @@ export function FixedBottomNavigation(props: {
           )
         }
         title={
-          modalType === modalTypes.search
-            ? t('nav.searchFood')
-            : t('nav.scan')
+          modalType === modalTypes.search ? t('nav.searchFood') : t('nav.scan')
         }
         type={modalType === modalTypes.search ? 'full' : 'half'}
       />

@@ -343,7 +343,8 @@
     "english": "English",
     "darkMode": "Dark mode",
     "language": "Language",
-    "favoriteColor": "Favorite color"
+    "favoriteColor": "Favorite color",
+    "fixedMenu": "Fixed menu"
   },
   "date": {
     "from": "From",

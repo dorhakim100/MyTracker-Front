@@ -132,12 +132,23 @@ export async function updateUser(userToUpdate: User) {
   try {
     const saved = await userService.update(userToUpdate)
 
-    const user = store.getState().userModule.user
+    const { user, traineeUser, trainees } = store.getState().userModule
+
     if (user?._id === userToUpdate._id) {
       store.dispatch({
         type: SET_USER,
         user: saved,
       })
+    }
+
+    if (traineeUser?._id === userToUpdate._id) {
+      setTraineeUser(saved)
+      const traineeIdx = trainees.findIndex((t) => t._id === saved._id)
+      if (traineeIdx !== -1) {
+        const updatedTrainees = [...trainees]
+        updatedTrainees[traineeIdx] = saved
+        setTrainees(updatedTrainees)
+      }
     }
 
     return saved

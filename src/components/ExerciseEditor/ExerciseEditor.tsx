@@ -93,7 +93,7 @@ export function ExerciseEditor({
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
-
+  const isRtl = prefs.lang === 'he'
   const [pickerOptions, setPickerOptions] = useState<PickerOption>({
     isOpen: false,
     type: null,
@@ -352,13 +352,17 @@ export function ExerciseEditor({
                     <Badge
                       badgeContent={index + 1}
                       color='primary'
-                      className={`${prefs.favoriteColor} float ${isDashboard ? 'dashboard' : ''}`}
+                      className={`${prefs.favoriteColor} float ${
+                        isDashboard ? 'dashboard' : ''
+                      }`}
                     />
                     <div className='badges-container'>
                       {(previousInstructions || !isExpected) && (
                         <Tooltip
                           title={
-                            set.isDone ? t('exercise.markAsNotDone') : t('exercise.markAsDone')
+                            set.isDone
+                              ? t('exercise.markAsNotDone')
+                              : t('exercise.markAsDone')
                           }
                           disableHoverListener={!isDashboard}
                           disableTouchListener={!isDashboard}
@@ -402,7 +406,9 @@ export function ExerciseEditor({
                     </div>
                     {previousInstructions && (
                       <span
-                        className={`previous-set-label ${isDashboard ? 'dashboard' : ''}`}
+                        className={`previous-set-label ${
+                          isDashboard ? 'dashboard' : ''
+                        }`}
                       >
                         {t('exercise.previousWeekExpected')}
                       </span>
@@ -485,7 +491,9 @@ export function ExerciseEditor({
                         </>
                       )}
                       <PickerSelect
-                        className={`${prefs.favoriteColor}`}
+                        className={`weight-picker ${prefs.favoriteColor} ${
+                          isRtl ? 'rtl' : ''
+                        }`}
                         openClock={() => {
                           const isUpdatingCurrSet =
                             currUpdatedExerciseSettings.exerciseId ===
@@ -570,7 +578,7 @@ export function ExerciseEditor({
                           setEditSet({ ...set, index })
 
                           setCurrentPickerValue(
-                            set.rpe ? set.rpe.actual : (set.rir?.actual ?? 2)
+                            set.rpe ? set.rpe.actual : set.rir?.actual ?? 2
                           )
                         }}
                         option={{
@@ -578,9 +586,7 @@ export function ExerciseEditor({
                           key: set.rpe ? 'rpe' : 'rir',
                           type: 'number',
                         }}
-                        value={
-                          set.rpe ? set.rpe.actual : (set.rir?.actual ?? 2)
-                        }
+                        value={set.rpe ? set.rpe.actual : set.rir?.actual ?? 2}
                         minWidth={windowWidth > 1050 ? windowWidth / 14 : 70}
                         // isAutoWidth={true}
                       />
@@ -623,7 +629,9 @@ export function ExerciseEditor({
                           <CheckCircleOutlineIcon />
                         )
                       }
-                      text={set.isDone ? t('exercise.notDone') : t('exercise.done')}
+                      text={
+                        set.isDone ? t('exercise.notDone') : t('exercise.done')
+                      }
                       className={set.isDone ? 'red' : 'green'}
                     />
                   )

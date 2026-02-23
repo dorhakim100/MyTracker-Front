@@ -1,19 +1,29 @@
 import { useState } from 'react'
 import { useSelector } from 'react-redux'
-import { Divider, Typography } from '@mui/material'
+import { Divider, Switch, Typography } from '@mui/material'
 import { RootState } from '../../store/store'
 import { setPrefs } from '../../store/actions/system.actions'
+import { updateUser } from '../../store/actions/user.actions'
 import type { Prefs } from '../../types/system/Prefs'
 import { DarkModeSwitch } from '../../components/DarkModeSwitch/DarkModeSwitch'
 import { ColorPicker } from '../../components/ColorPicker/ColorPicker'
 import { LanguageSwitch } from '../../components/LanguageSwitch/LanguageSwitch'
 import { useTranslation } from 'react-i18next'
+import { showErrorMsg } from '../../services/event-bus.service'
+import { CustomIOSSwitch } from '../../CustomMui/CustomIOSSwitch/CustomIOSSwitch'
 
 export function PreferencesCard() {
   const { t } = useTranslation()
   const prefs = useSelector(
     (storeState: RootState) => storeState.systemModule.prefs
   )
+  const user = useSelector(
+    (storeState: RootState) => storeState.userModule.user
+  )
+  const traineeUser = useSelector(
+    (storeState: RootState) => storeState.userModule.traineeUser
+  )
+  const displayUser = traineeUser || user
 
   const [favoriteColor, setFavoriteColor] = useState<string>(
     prefs.favoriteColor || '#1976d2'
@@ -41,6 +51,19 @@ export function PreferencesCard() {
     )
   }
 
+  async function onToggleFixedMenu() {
+    if (!displayUser) return
+    const updatedUser = {
+      ...displayUser,
+      isFixedMenu: !displayUser.isFixedMenu,
+    }
+    try {
+      await updateUser(updatedUser)
+    } catch (err) {
+      showErrorMsg(t('messages.error.updateUser'))
+    }
+  }
+
   return (
     <>
       <div className='prefs-switch-container'>
@@ -66,6 +89,20 @@ export function PreferencesCard() {
         <LanguageSwitch
           checked={prefs.lang === 'he'}
           onClick={onToggleLanguage}
+        />
+      </div>
+      <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
+      <div className='prefs-switch-container'>
+        <Typography
+          variant='body1'
+          className='prefs-label'
+        >
+          {t('prefs.fixedMenu')}
+        </Typography>
+        <CustomIOSSwitch
+          color={prefs.favoriteColor}
+          checked={!!displayUser?.isFixedMenu}
+          onClick={onToggleFixedMenu}
         />
       </div>
       <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />

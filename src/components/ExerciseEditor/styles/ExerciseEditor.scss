@@ -198,7 +198,11 @@
   .rpe-rir-container {
     padding-block: 0.5rem;
   }
-
+  .weight-picker {
+    &.rtl {
+      direction: rtl;
+    }
+  }
   .controls-container {
     display: grid;
     grid-auto-flow: column;

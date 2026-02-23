@@ -95,6 +95,7 @@ async function update(user: User) {
       favoriteItems: user.favoriteItems,
       lastWeight: user.lastWeight,
       loggedToday: user.loggedToday,
+      isFixedMenu: user.isFixedMenu,
 
       mealsIds,
       goalsIds,
@@ -268,6 +269,7 @@ async function saveLoggedinUser(user: User) {
       lastWeight: user.lastWeight,
       isTrainer: user.isTrainer,
       trainees: user.trainees ?? [],
+      isFixedMenu: user.isFixedMenu,
       // weights: user.weights ?? [],
     }
     sessionStorage.setItem(STORAGE_KEY_LOGGEDIN_USER, JSON.stringify(user))
