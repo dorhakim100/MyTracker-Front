@@ -1,8 +1,7 @@
 import { useMemo, useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation } from 'react-router-dom'
-import { LoggedList } from '../../../components/LoggedList/LoggedList'
-import { Box, Divider, Typography } from '@mui/material'
+import { MealCard } from '../../../components/MealCard/MealCard'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../store/store'
 
@@ -16,8 +15,6 @@ import { showErrorMsg } from '../../../services/event-bus.service'
 import { messages } from '../../../assets/config/messages'
 import { SlideAnimation } from '../../../components/SlideAnimation/SlideAnimation'
 import { setSelectedDiaryDay } from '../../../store/actions/user.actions'
-import { MealPeriod } from '../../../types/mealPeriod/MealPeriod'
-import { AddItemButton } from '../../../components/AddItemButton/AddItemButton'
 import DonutLargeIcon from '@mui/icons-material/DonutLarge'
 import WbTwilightIcon from '@mui/icons-material/WbTwilight'
 import LightModeIcon from '@mui/icons-material/LightMode'
@@ -208,49 +205,17 @@ export function Diary() {
             {meals.map((meal) => {
               const currMeal = meal.period
               const caloriesToSet = getMealCalories(currMeal)
-              const hasItems = selectedDayDiary?.logs?.filter(
-                (log) => log.meal.toLocaleLowerCase() === currMeal
-              )
+              const hasItems =
+                selectedDayDiary?.logs?.filter(
+                  (log) => log.meal.toLocaleLowerCase() === currMeal
+                ) || []
               return (
-                <Box
-                  className={`diary-meal-container ${
-                    prefs.isDarkMode ? 'dark-mode' : ''
-                  } ${prefs.favoriteColor || ''}`}
+                <MealCard
                   key={meal.label}
-                >
-                  <div className='header'>
-                    <div className='label-container'>
-                      {meal.icon}
-                      <Typography
-                        variant='h6'
-                        className='bold-header'
-                      >
-                        {meal.label}
-                      </Typography>
-                    </div>
-                    <Typography
-                      variant='body2'
-                      className='period'
-                    >
-                      {meal.rangeLabel}
-                    </Typography>
-                  </div>
-                  <Divider
-                    className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-                  />
-                  <LoggedList mealPeriod={meal.period as MealPeriod} />
-                  <div className='meal-footer'>
-                    <Typography
-                      variant='body2'
-                      className='total-calories'
-                    >
-                      {`${t('macros.total')}: ${caloriesToSet.toFixed(0)} ${t('macros.kcal')}`}
-                    </Typography>
-                    {hasItems?.length !== 0 && (
-                      <AddItemButton mealPeriod={meal.period as MealPeriod} />
-                    )}
-                  </div>
-                </Box>
+                  meal={meal}
+                  caloriesToSet={caloriesToSet}
+                  showAddButton={hasItems.length > 0}
+                />
               )
             })}
           </div>
