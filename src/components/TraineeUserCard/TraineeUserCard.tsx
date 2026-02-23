@@ -59,7 +59,7 @@ export function TraineeUserCard() {
         icon={
           isHidden ? (
             <KeyboardArrowRightIcon
-              style={{ transform: isRtl ? 'scaleX(1)' : 'scaleX(-1)' }}
+              style={{ transform: isRtl ? 'scaleX(-1)' : 'scaleX(1)' }}
             />
           ) : (
             <KeyboardArrowLeftIcon

@@ -55,9 +55,8 @@ export function WorkoutSession({
   sessionDay,
   updateSessionDay,
 }: WorkoutSessionProps) {
-  const { t } = useTranslation()
-
   if (!sessionDay.instructions) return null
+  const { t } = useTranslation()
 
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
 
@@ -253,8 +252,9 @@ export function WorkoutSession({
           : Promise.resolve(null),
       ]
 
-      const [savedInstructions, savedWorkout, savedSet] =
-        await Promise.all(promises)
+      const [savedInstructions, savedWorkout, savedSet] = await Promise.all(
+        promises
+      )
 
       if (savedSet) {
         setCurrentExercise({
@@ -931,7 +931,9 @@ export function WorkoutSession({
               icon={allExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               onClick={toggleExpandAll}
               isIcon={true}
-              tooltipTitle={allExpanded ? t('workout.collapseAll') : t('workout.expandAll')}
+              tooltipTitle={
+                allExpanded ? t('workout.collapseAll') : t('workout.expandAll')
+              }
             />
             <CustomButton
               // text="Finish Workout"
