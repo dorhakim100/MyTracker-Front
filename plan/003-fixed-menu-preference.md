@@ -14,7 +14,7 @@ Allow users to choose between the standard diary view and a fixed menu view in t
 interface Menu {
   _id: string
   userId: string
-  menuLogs: MenuLog[]
+  menuLogs: Log[]  // uses existing Log type
 }
 ```
 
@@ -106,14 +106,97 @@ Alternatively, keep the route pointing to `Diary` and have `Diary` conditionally
 - Later: fetch and display `Menu` data for the user
 - Data flow: `Menu` has `userId` and `menuLogs[]`; you’ll need a `menuService` to `query`/`getById` menus
 
-#### 3.2 Menu Service (when ready)
+#### 3.2 Menu Service
 
 **New file:** `src/services/menu/menu.service.ts`
 
-- `query(filter: { userId: string })` – get menu(s) for user
-- `getById(menuId: string)` – get single menu
-- `update(menu: Menu)` – save menu
-- Backend endpoints: `menu`, `menu/:id`, etc.
+**Backend routes** (Menu router – same pattern as User):
+
+| Method | Route        | Handler        | Description              |
+| ------ | ------------ | -------------- | ------------------------ |
+| GET    | `/`          | getMenus       | Query menus (filter)     |
+| GET    | `/:id`       | getMenu        | Get menu by id           |
+| POST   | `/`          | addMenu        | Create menu              |
+| PUT    | `/:id`       | updateMenu     | Update menu              |
+| DELETE | `/:id`       | deleteMenu     | Delete menu              |
+
+**Note:** The routes you shared appear to be User routes. Confirm the Menu base path (e.g. `menu` → `/api/menu`) and that the above structure matches your backend.
+
+**Service API:**
+
+```ts
+// src/services/menu/menu.service.ts
+import { httpService } from '../http.service'
+import { Menu } from '../../types/menu/Menu'
+
+const KEY = 'menu'
+
+export const menuService = {
+  query,
+  getById,
+  save,
+  remove,
+  getEmptyMenu,
+  getDefaultFilter,
+}
+
+async function query(filter: MenuFilter) {
+  try {
+    const menus = await httpService.get(KEY, filter)
+    return menus
+  } catch (err) {
+    throw err
+  }
+}
+
+async function getById(menuId: string) {
+  try {
+    const menu = await httpService.get(`${KEY}/${menuId}`, null)
+    return menu
+  } catch (err) {
+    throw err
+  }
+}
+
+async function save(menu: Menu) {
+  try {
+    if (menu._id) {
+      return await httpService.put(`${KEY}/${menu._id}`, menu)
+    }
+    return await httpService.post(KEY, menu)
+  } catch (err) {
+    throw err
+  }
+}
+
+async function remove(menuId: string) {
+  try {
+    return await httpService.delete(`${KEY}/${menuId}`, null)
+  } catch (err) {
+    throw err
+  }
+}
+
+function getEmptyMenu(userId: string): Menu {
+  return {
+    _id: '',
+    userId,
+    menuLogs: [],
+  }
+}
+
+function getDefaultFilter(): MenuFilter {
+  return { userId: '' }
+}
+```
+
+**MenuFilter type** (in `src/types/menu/Menu.ts` or alongside):
+
+```ts
+export interface MenuFilter {
+  userId: string
+}
+```
 
 ---
 
@@ -124,16 +207,16 @@ Alternatively, keep the route pointing to `Diary` and have `Diary` conditionally
 **New file:** `src/types/menu/Menu.ts`
 
 ```ts
+import { Log } from '../log/Log'
+
 export interface Menu {
   _id: string
   userId: string
-  menuLogs: MenuLog[]
+  menuLogs: Log[]
 }
 
-export interface MenuLog {
-  // Define based on your schema (see Phase 1 question)
-  _id?: string
-  // ... fields
+export interface MenuFilter {
+  userId: string
 }
 ```
 
@@ -158,16 +241,15 @@ Add keys, e.g.:
 | Create FoodTab wrapper (or conditional in Diary)            | Pending |
 | Create FixedMenu component (placeholder)                    | Pending |
 | Update routes to use FoodTab                                | Pending |
-| Add Menu & MenuLog types                                    | Pending |
+| Add Menu type + MenuFilter                                  | Pending |
 | Add i18n keys                                               | Pending |
 | Backend: support `isFixedMenu` on user                      | Pending |
+| Menu service implementation                                 | Pending |
 | Menu service + FixedMenu data integration                   | Future  |
 
 ---
 
 ## Open Questions
 
-1. **MenuLog structure:** What exact fields should `MenuLog` have? (e.g. day of week, meal period, items, macros, etc.)
-2. **Trainee vs User:** When a trainer views a trainee’s profile, should the "Fixed Menu" switch update the trainee’s preference or the trainer’s?
-3. **Backend:** Does the user API already support `isFixedMenu`, or does it need to be added?
-4. **Menu CRUD:** Will menus be created/edited in the FixedMenu view, or is there a separate flow?
+1. **Backend Menu routes:** The routes you shared appear to be User routes. Please confirm the actual Menu API base path and structure (e.g. `menu` vs `user/:id/menu`).
+2. **Menu CRUD:** Will menus be created/edited in the FixedMenu view, or is there a separate flow?
