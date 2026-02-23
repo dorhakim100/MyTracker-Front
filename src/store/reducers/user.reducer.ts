@@ -1,6 +1,7 @@
 import { LoggedToday } from '../../types/loggedToday/LoggedToday'
 
 import { User } from '../../types/user/User'
+import { Menu } from '../../types/menu/Menu'
 // import { UserFilter } from '../../types/userFilter/UserFilter'
 
 export const SET_USERS = 'SET_USERS'
@@ -16,6 +17,7 @@ export const SET_TRAINEE_USER = 'SET_TRAINEE_USER'
 export const REMOVE_TRAINEE_USER = 'REMOVE_TRAINEE_USER'
 export const SET_TRAINEE_USERS = 'SET_TRAINEE_USERS'
 export const ADD_TRAINEE = 'ADD_TRAINEE'
+export const SET_MENU = 'SET_MENU'
 export interface UserState {
   users: User[]
   user: User | null
@@ -25,6 +27,7 @@ export interface UserState {
   lastRemovedUser?: User
   traineeUser: User | null
   trainees: User[]
+  menu: Menu | null
 }
 
 const initialState: UserState = {
@@ -35,6 +38,7 @@ const initialState: UserState = {
   // filter: userService.getDefaultFilter(),
   traineeUser: null,
   trainees: [],
+  menu: null,
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -84,6 +88,10 @@ export function userReducer(state = initialState, action: any): UserState {
 
     case ADD_TRAINEE:
       newState = { ...state, trainees: [...state.trainees, action.trainee] }
+      break
+
+    case SET_MENU:
+      newState = { ...state, menu: action.menu }
       break
 
     // case SET_USER_FILTER:

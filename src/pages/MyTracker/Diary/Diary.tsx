@@ -186,7 +186,8 @@ export function Diary() {
                   key={meal.label}
                   meal={meal}
                   caloriesToSet={caloriesToSet}
-                  showAddButton={hasItems.length > 0}
+                  showEmptyCardAddButton={hasItems.length > 0}
+                  isAddButton={true}
                 />
               )
             })}

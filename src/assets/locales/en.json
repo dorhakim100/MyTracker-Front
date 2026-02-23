@@ -134,7 +134,8 @@
     "sortFatLowToHigh": "Fat (low to high)"
   },
   "menu": {
-    "viewMenus": "View menus"
+    "viewMenus": "View menus",
+    "noMenuFound": "No menu found, create a new menu"
   },
   "workout": {
     "noWorkoutSelected": "No workout selected",

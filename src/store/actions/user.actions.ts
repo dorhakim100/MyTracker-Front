@@ -12,6 +12,7 @@ import {
   REMOVE_TRAINEE_USER,
   SET_TRAINEE_USERS,
   ADD_TRAINEE,
+  SET_MENU,
   // SET_USER_FILTER,
 } from '../reducers/user.reducer'
 
@@ -30,6 +31,7 @@ import { Goal } from '../../types/goal/Goal'
 import { goalService } from '../../services/goal/goal.service'
 import { setIsFirstLoading } from './system.actions'
 import { AddTraineeForm } from '../../pages/TrainerDashboard/pages/Trainees/Trainees'
+import { Menu } from '../../types/menu/Menu'
 
 export async function loadUsers(filter: UserFilter) {
   try {
@@ -414,4 +416,8 @@ export async function addTrainee(traineeForm: AddTraineeForm) {
   } catch (error) {
     throw error
   }
+}
+
+export function setMenu(menu: Menu) {
+  store.dispatch({ type: SET_MENU, menu })
 }

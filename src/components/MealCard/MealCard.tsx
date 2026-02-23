@@ -16,18 +16,24 @@ export interface MealCardMeal {
 interface MealCardProps {
   meal: MealCardMeal
   caloriesToSet: number
-  showAddButton: boolean
+  showEmptyCardAddButton: boolean
+  isAddButton?: boolean
 }
 
-export function MealCard({ meal, caloriesToSet, showAddButton }: MealCardProps) {
+export function MealCard({
+  meal,
+  caloriesToSet,
+  showEmptyCardAddButton,
+  isAddButton = true,
+}: MealCardProps) {
   const { t } = useTranslation()
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
 
   return (
     <Box
-      className={`diary-meal-container ${
-        prefs.isDarkMode ? 'dark-mode' : ''
-      } ${prefs.favoriteColor || ''}`}
+      className={`meal-card ${prefs.isDarkMode ? 'dark-mode' : ''} ${
+        prefs.favoriteColor || ''
+      }`}
     >
       <div className='header'>
         <div className='label-container'>
@@ -46,18 +52,21 @@ export function MealCard({ meal, caloriesToSet, showAddButton }: MealCardProps) 
           {meal.rangeLabel}
         </Typography>
       </div>
-      <Divider
-        className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+      <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
+      <LoggedList
+        mealPeriod={meal.period as MealPeriod}
+        isAddButton={isAddButton}
       />
-      <LoggedList mealPeriod={meal.period as MealPeriod} />
       <div className='meal-footer'>
         <Typography
           variant='body2'
           className='total-calories'
         >
-          {`${t('macros.total')}: ${caloriesToSet.toFixed(0)} ${t('macros.kcal')}`}
+          {`${t('macros.total')}: ${caloriesToSet.toFixed(0)} ${t(
+            'macros.kcal'
+          )}`}
         </Typography>
-        {showAddButton && (
+        {showEmptyCardAddButton && (
           <AddItemButton mealPeriod={meal.period as MealPeriod} />
         )}
       </div>

@@ -33,7 +33,15 @@ import { DeleteAction } from '../DeleteAction/DeleteAction'
 import { imageService } from '../../services/image/image.service'
 import { mealService } from '../../services/meal/meal.service'
 
-export function LoggedList({ mealPeriod }: { mealPeriod: MealPeriod }) {
+interface LoggedListProps {
+  mealPeriod: MealPeriod
+  isAddButton?: boolean
+}
+
+export function LoggedList({
+  mealPeriod,
+  isAddButton = true,
+}: LoggedListProps) {
   const { t } = useTranslation()
   const user = useSelector((state: RootState) => state.userModule.user)
   const cachedItems = useSelector((state: RootState) => state.itemModule.items)
@@ -79,7 +87,7 @@ export function LoggedList({ mealPeriod }: { mealPeriod: MealPeriod }) {
     }
   }
 
-  if (!user || !logs?.length)
+  if (!user || (!logs?.length && isAddButton))
     return (
       <div className='logged-items'>
         <div className='placeholder-container'>
@@ -229,7 +237,7 @@ export function LoggedList({ mealPeriod }: { mealPeriod: MealPeriod }) {
   return (
     <>
       <CustomList
-        items={logs}
+        items={logs || []}
         getKey={getKey}
         renderPrimaryText={renderPrimaryText}
         renderSecondaryText={renderSecondaryText}
