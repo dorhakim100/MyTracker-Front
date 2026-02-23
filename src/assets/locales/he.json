@@ -346,6 +346,9 @@
     "favoriteColor": "צבע מועדף",
     "fixedMenu": "תפריט קבוע"
   },
+  "menu": {
+    "viewMenus": "צפייה בתפריטים"
+  },
   "date": {
     "from": "מתאריך",
     "to": "עד תאריך",

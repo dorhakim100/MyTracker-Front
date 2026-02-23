@@ -1,0 +1,17 @@
+.fixed-menu {
+  padding-top: 2rem;
+  height: fit-content;
+
+  display: grid;
+  gap: 1rem;
+
+  .fixed-menu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    button {
+      gap: 0.75rem;
+    }
+  }
+}

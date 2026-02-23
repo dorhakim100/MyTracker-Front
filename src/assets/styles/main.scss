@@ -86,8 +86,11 @@
 @import '../../pages/LiftMate/Workouts/styles/WorkoutsList.scss';
 @import '../../pages/LiftMate/Session/styles/Session.scss';
 @import '../../pages/LiftMate/Progress/styles/Progress.scss';
-@import '../../components/LanguageSwitch/styles/LanguageSwitch.scss';
 
+@import '../../pages/MyTracker/FoodTab/styles/FoodTab.scss';
+@import '../../pages/MyTracker/FixedMenu/styles/FixedMenu.scss';
+
+@import '../../components/LanguageSwitch/styles/LanguageSwitch.scss';
 @import '../../components/ExercisesSearch/styles/ExercisesSearch.scss';
 @import '../../pages/LiftMate/EditWorkout/styles/ExercisesStage.scss';
 @import '../../components/ExercisesFilter/styles/ExercisesFilter.scss';
