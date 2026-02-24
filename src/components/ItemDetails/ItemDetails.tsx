@@ -37,8 +37,10 @@ import {
   handleFavorite,
   optimisticUpdateUser,
   setSelectedDiaryDay,
+  setMenu,
 } from '../../store/actions/user.actions'
 import { dayService } from '../../services/day/day.service'
+import { menuService } from '../../services/menu/menu.service'
 import { LoggedToday } from '../../types/loggedToday/LoggedToday'
 import { imageService } from '../../services/image/image.service'
 import { loadItems, setSelectedMeal } from '../../store/actions/item.actions'
@@ -105,6 +107,14 @@ export function ItemDetails({
 
   const selectedDay = useSelector(
     (stateSelector: RootState) => stateSelector.userModule.selectedDay
+  )
+
+  const menu = useSelector(
+    (stateSelector: RootState) => stateSelector.userModule.menu
+  )
+
+  const addTarget = useSelector(
+    (stateSelector: RootState) => stateSelector.itemModule.addTarget
   )
 
   const item: Item | Meal | Log = useMemo(
@@ -326,7 +336,31 @@ export function ItemDetails({
 
   const onAddToMeal = async () => {
     try {
-      if (!user || !selectedDay) return showErrorMsg(messages.error.addLog)
+      if (!user) return showErrorMsg(messages.error.addLog)
+
+      if (addTarget === 'menu' && menu) {
+        const newLog = {
+          itemId: isCustomLog ? '' : (item as Item).searchId,
+          meal: editItem.meal,
+          macros: editItem.totalMacros,
+          time: Date.now(),
+          servingSize: editItem.servingSize,
+          numberOfServings: editItem.numberOfServings,
+          source: isCustomLog ? searchTypes.custom : (searchedItem as Item).type,
+          name: isCustomLog ? editItem.name : '',
+        } as Log
+        const updatedMenu = {
+          ...menu,
+          menuLogs: [...(menu.menuLogs || []), newLog],
+        }
+        await menuService.save(updatedMenu)
+        setMenu(updatedMenu)
+        setSelectedMeal(null)
+        showSuccessMsg(messages.success.addedToMeal)
+        return
+      }
+
+      if (!selectedDay) return showErrorMsg(messages.error.addLog)
 
       if (!item.searchId && _hasItems(item)) {
         const LONGEST_FOOD_ID_LENGTH = 10

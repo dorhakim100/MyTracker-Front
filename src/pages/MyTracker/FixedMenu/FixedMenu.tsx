@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { Divider, Typography } from '@mui/material'
@@ -6,25 +6,39 @@ import { RootState } from '../../../store/store'
 import { CustomButton } from '../../../CustomMui/CustomButton/CustomButton'
 import MenuBookIcon from '@mui/icons-material/MenuBook'
 import { SlideDialog } from '../../../components/SlideDialog/SlideDialog'
-import { LoggedList } from '../../../components/LoggedList/LoggedList'
-
 import { getMeals } from '../../../assets/config/meals'
+import { EditMenu } from '../../../components/EditMenu/EditMenu'
+import { menuService } from '../../../services/menu/menu.service'
+import { setMenu } from '../../../store/actions/user.actions'
 import { MealCard } from '../../../components/MealCard/MealCard'
 import { Add } from '@mui/icons-material'
 
 interface MenuListDialogOptions {
   open: boolean
-  type: 'menuList' | null
+  type: 'menuList' | 'editMenu' | null
 }
 
 export function FixedMenu() {
   const { t } = useTranslation()
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
   const user = useSelector((state: RootState) => state.userModule.user)
-
   const menu = useSelector((state: RootState) => state.userModule.menu)
 
   const meals = getMeals(t)
+
+  useEffect(() => {
+    const loadMenu = async () => {
+      if (!user) return
+      try {
+        const menus = await menuService.query({ userId: user._id })
+        const existingMenu = Array.isArray(menus) ? menus[0] : menus
+        if (existingMenu) setMenu(existingMenu)
+      } catch (err) {
+        console.error(err)
+      }
+    }
+    loadMenu()
+  }, [user?._id])
 
   const [menuListDialogOptions, setMenuListDialogOptions] =
     useState<MenuListDialogOptions>({
@@ -41,8 +55,8 @@ export function FixedMenu() {
             <Typography variant='h6'>{t('menu.viewMenus')}</Typography>
           </div>
         )
-        break
-
+      case 'editMenu':
+        return <EditMenu />
       default:
         return <></>
     }
@@ -52,6 +66,13 @@ export function FixedMenu() {
     setMenuListDialogOptions({
       open: true,
       type: 'menuList',
+    })
+  }
+
+  const openEditMenuDialog = () => {
+    setMenuListDialogOptions({
+      open: true,
+      type: 'editMenu',
     })
   }
 
@@ -76,11 +97,18 @@ export function FixedMenu() {
           >
             {t('prefs.fixedMenu')}
           </Typography>
-          <CustomButton
-            text={t('menu.viewMenus')}
-            onClick={openMenuListDialog}
-            icon={<MenuBookIcon />}
-          />
+          <div className='fixed-menu-actions'>
+            <CustomButton
+              text={t('menu.editMenu')}
+              onClick={openEditMenuDialog}
+              icon={<MenuBookIcon />}
+            />
+            <CustomButton
+              text={t('menu.viewMenus')}
+              onClick={openMenuListDialog}
+              icon={<MenuBookIcon />}
+            />
+          </div>
         </div>
         <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
 
@@ -99,18 +127,22 @@ export function FixedMenu() {
         ) : (
           <div className='no-results-container'>
             <span>{t('menu.noMenuFound')}</span>
-            <CustomButton
-              text={t('common.add')}
-              onClick={openMenuListDialog}
-              icon={<Add />}
-            />
+          <CustomButton
+            text={t('common.add')}
+            onClick={openEditMenuDialog}
+            icon={<Add />}
+          />
           </div>
         )}
       </div>
       <SlideDialog
         open={menuListDialogOptions.open}
         onClose={closeMenuListDialog}
-        title={t('menu.viewMenus')}
+        title={
+          menuListDialogOptions.type === 'editMenu'
+            ? t('menu.editMenu')
+            : t('menu.viewMenus')
+        }
         component={getDialogContent()}
         type='full'
       />

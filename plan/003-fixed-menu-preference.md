@@ -14,7 +14,7 @@ Allow users to choose between the standard diary view and a fixed menu view in t
 interface Menu {
   _id: string
   userId: string
-  menuLogs: Log[]  // uses existing Log type
+  menuLogs: Log[] // uses existing Log type
 }
 ```
 
@@ -112,13 +112,13 @@ Alternatively, keep the route pointing to `Diary` and have `Diary` conditionally
 
 **Backend routes** (Menu router – same pattern as User):
 
-| Method | Route        | Handler        | Description              |
-| ------ | ------------ | -------------- | ------------------------ |
-| GET    | `/`          | getMenus       | Query menus (filter)     |
-| GET    | `/:id`       | getMenu        | Get menu by id           |
-| POST   | `/`          | addMenu        | Create menu              |
-| PUT    | `/:id`       | updateMenu     | Update menu              |
-| DELETE | `/:id`       | deleteMenu     | Delete menu              |
+| Method | Route  | Handler    | Description          |
+| ------ | ------ | ---------- | -------------------- |
+| GET    | `/`    | getMenus   | Query menus (filter) |
+| GET    | `/:id` | getMenu    | Get menu by id       |
+| POST   | `/`    | addMenu    | Create menu          |
+| PUT    | `/:id` | updateMenu | Update menu          |
+| DELETE | `/:id` | deleteMenu | Delete menu          |
 
 **Note:** The routes you shared appear to be User routes. Confirm the Menu base path (e.g. `menu` → `/api/menu`) and that the above structure matches your backend.
 
@@ -238,14 +238,82 @@ Add keys, e.g.:
 | Add switch in PreferencesCard                               | Done    |
 | Wire switch to `updateUser`                                 | Done    |
 | Add `isFixedMenu` to user.service update & saveLoggedinUser | Done    |
-| Create FoodTab wrapper (or conditional in Diary)            | Pending |
+| Create FoodTab wrapper (or conditional in Diary)            | Done    |
 | Create FixedMenu component (placeholder)                    | Pending |
 | Update routes to use FoodTab                                | Pending |
 | Add Menu type + MenuFilter                                  | Pending |
 | Add i18n keys                                               | Pending |
 | Backend: support `isFixedMenu` on user                      | Pending |
-| Menu service implementation                                 | Pending |
-| Menu service + FixedMenu data integration                   | Future  |
+| Menu service implementation                                 | Done    |
+| Menu service + FixedMenu data integration                   | Done    |
+| EditMenu component (Diary-like with MealCards)              | Pending |
+| MenuLoggedList or LoggedList extension for menu logs        | Pending |
+| Add-to-menu flow (ItemDetails or addTarget)                 | Pending |
+
+---
+
+---
+
+## Phase 5: EditMenu Component
+
+### Overview
+
+EditMenu lets users build/edit a fixed menu by adding items to each meal period (breakfast, lunch, dinner, snacks), similar to how they log food in the Diary. The layout mirrors Diary: multiple MealCards, one per meal period.
+
+### 5.1 Structure (Diary-like)
+
+```
+EditMenu
+├── StatsCarousel diaplaying Menu filling user's CaloriesProgress and MacrosProgress, based on user's goal and added items (logs)
+├── MealCards (breakfast, lunch, dinner, snacks)
+│   └── Each MealCard shows:
+│       ├── Meal header (label, range)
+│       ├── Logged items for that meal (from menu.menuLogs)
+│       └── Add item button
+└── Footer (GoalBanner - calories, Save button)
+```
+
+### 5.3 Key Decisions
+
+**A. Reuse MealCard?**
+
+- use option a, a source is good in that sulotion
+
+* MealCard currently uses LoggedList, which reads from `selectedDay` / `user.loggedToday`.
+* **Option 1:** Extend LoggedList with optional `logsSource` prop (`'diary' | 'menu'`). When `'menu'`, use `menu.menuLogs` filtered by meal period. Add/remove would need to call menu-specific handlers.
+* **Option 2:** Create `MenuLoggedList` – a variant that takes `logs: Log[]` and `onAdd`, `onRemove` callbacks. Reuses rendering logic but not data source.
+* **Option 3:** Create `MenuMealCard` – wraps MealCard structure but uses MenuLoggedList internally.
+
+**B. Add flow**
+
+- Diary: AddItemButton → setIsAddModal → ItemSearch → ItemDetails → logService.save + dayService.save.
+- EditMenu: Same AddItemButton flow, but on save: add Log to `menu.menuLogs` (with correct `meal`), then `menuService.save(menu)`.
+- **Approach:** Add `addTarget?: 'diary' | 'menu'` to Redux (e.g. `itemModule` or `systemModule`). ItemDetails checks it and either updates day or menu accordingly. Alternatively, a dedicated `AddMenuItemButton` that opens a menu-specific add flow.
+
+**C. Where does EditMenu live?**
+
+- it's a SlideDialog cmp
+
+* **Option A:** Full-page route (e.g. `/diary/edit-menu`) – user navigates to it.
+* **Option B:** SlideDialog/modal opened from FixedMenu (e.g. "Edit Menu" button).
+* **Option C:** Inline in FixedMenu – replace view with EditMenu when editing.
+
+### 5.4 Implementation Steps
+
+1. **Menu state in Redux** (if not already): `menuModule` or `userModule.menu` – current menu being viewed/edited.
+2. **MenuLoggedList** (or extend LoggedList): Component that displays `Log[]` for a meal period, with add/remove. Takes `logs`, `mealPeriod`, `onAdd`, `onRemove`, `onItemClick`.
+3. **MenuMealCard** (or extend MealCard): Same layout as MealCard but uses MenuLoggedList. Props: `meal`, `logs` (filtered), `onAddLog`, `onRemoveLog`.
+4. **EditMenu page/component**: Renders `getMeals(t).map` → MenuMealCard per meal. Loads menu via `menuService.query({ userId })`, creates empty menu if none. Save button calls `menuService.save(menu)`.
+5. **Add-to-menu flow**: When adding from EditMenu, ItemDetails (or a wrapper) adds the new log to `menu.menuLogs` and saves the menu instead of updating the day.
+6. **Entry point**: Add "Edit Menu" in FixedMenu that opens EditMenu (as route or dialog).
+
+### 5.5 Open Questions
+
+1. **One menu per user?** Does each user have a single menu, or multiple named menus?
+   each user have multiple menus, with isActive boolean that will be added later on
+2. **Add target:** Use global `addTarget` in Redux, or a separate add flow for menu?
+3. **EditMenu placement:** Full page, dialog, or inline in FixedMenu?
+   SlideDialog cmp
 
 ---
 

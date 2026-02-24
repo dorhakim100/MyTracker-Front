@@ -9,9 +9,12 @@ export const SET_ITEM = 'SET_ITEM'
 export const SET_ITEM_FILTER = 'SET_ITEM_FILTER'
 export const SET_EDIT_MEAL_ITEM = 'SET_EDIT_MEAL_ITEM'
 export const SET_SELECTED_MEAL = 'SET_SELECTED_MEAL'
+export const SET_ADD_TARGET = 'SET_ADD_TARGET'
 export const SET_FAVORITE_ITEMS = 'SET_FAVORITE_ITEMS'
 export const ADD_FAVORITE_ITEM = 'ADD_FAVORITE_ITEM'
 export const REMOVE_FAVORITE_ITEM = 'REMOVE_FAVORITE_ITEM'
+
+export type AddTarget = 'diary' | 'menu'
 
 export interface ItemState {
   items: Item[]
@@ -19,6 +22,7 @@ export interface ItemState {
   editMealItem: Log | null
   favoriteItems: Item[]
   selectedMeal: string | null
+  addTarget: AddTarget
   filter: ItemFilter
   lastRemovedItem?: Item
 }
@@ -28,6 +32,7 @@ const initialState: ItemState = {
   item: itemService.getEmptyItem(),
   favoriteItems: [],
   selectedMeal: null,
+  addTarget: 'diary',
   editMealItem: null,
   filter: itemService.getDefaultFilter(),
 }
@@ -46,6 +51,9 @@ export function itemReducer(state = initialState, action: any) {
       break
     case SET_SELECTED_MEAL:
       newState = { ...state, selectedMeal: action.selectedMeal }
+      break
+    case SET_ADD_TARGET:
+      newState = { ...state, addTarget: action.addTarget }
       break
     case SET_FAVORITE_ITEMS:
       newState = { ...state, favoriteItems: action.favoriteItems }

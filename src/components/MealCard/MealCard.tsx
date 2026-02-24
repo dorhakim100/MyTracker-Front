@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import { Box, Divider, Typography } from '@mui/material'
 import { RootState } from '../../store/store'
-import { LoggedList } from '../LoggedList/LoggedList'
+import { LoggedList, LogsSource } from '../LoggedList/LoggedList'
 import { AddItemButton } from '../AddItemButton/AddItemButton'
 import { MealPeriod } from '../../types/mealPeriod/MealPeriod'
 
@@ -18,6 +18,7 @@ interface MealCardProps {
   caloriesToSet: number
   showEmptyCardAddButton: boolean
   isAddButton?: boolean
+  logsSource?: LogsSource
 }
 
 export function MealCard({
@@ -25,6 +26,7 @@ export function MealCard({
   caloriesToSet,
   showEmptyCardAddButton,
   isAddButton = true,
+  logsSource = 'diary',
 }: MealCardProps) {
   const { t } = useTranslation()
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
@@ -56,6 +58,7 @@ export function MealCard({
       <LoggedList
         mealPeriod={meal.period as MealPeriod}
         isAddButton={isAddButton}
+        logsSource={logsSource}
       />
       <div className='meal-footer'>
         <Typography

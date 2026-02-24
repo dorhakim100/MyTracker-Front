@@ -5,10 +5,12 @@ import {
   SET_ITEM,
   SET_EDIT_MEAL_ITEM,
   SET_SELECTED_MEAL,
+  SET_ADD_TARGET,
   SET_FAVORITE_ITEMS,
   ADD_FAVORITE_ITEM,
   REMOVE_FAVORITE_ITEM,
 } from '../reducers/item.reducer'
+import type { AddTarget } from '../reducers/item.reducer'
 import { Item } from '../../types/item/Item'
 import { Log } from '../../types/log/Log'
 
@@ -45,6 +47,10 @@ export function setEditMealItem(editMealItem: Log | null) {
 
 export function setSelectedMeal(selectedMeal: string | null) {
   store.dispatch(getCmdSetSelectedMeal(selectedMeal))
+}
+
+export function setAddTarget(addTarget: AddTarget) {
+  store.dispatch({ type: SET_ADD_TARGET, addTarget })
 }
 
 export function setFavoriteItems(favoriteItems: Item[]) {

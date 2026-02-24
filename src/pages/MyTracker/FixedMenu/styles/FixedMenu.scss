@@ -10,9 +10,19 @@
     justify-content: space-between;
     align-items: center;
 
+    .fixed-menu-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
     button {
       gap: 0.75rem;
     }
+  }
+
+  .meals-container {
+    display: grid;
+    gap: 1rem;
   }
 
   .no-results-container {

@@ -1,0 +1,17 @@
+.edit-menu {
+  padding: 1rem;
+
+  display: grid;
+  gap: 1rem;
+
+  .edit-menu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .meals-container {
+    display: grid;
+    gap: 1rem;
+  }
+}

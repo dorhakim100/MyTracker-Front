@@ -13,6 +13,7 @@ import {
   optimisticUpdateUser,
   removeLogAction,
   setSelectedDiaryDay,
+  setMenu,
 } from '../../store/actions/user.actions'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { ItemDetails } from '../ItemDetails/ItemDetails'
@@ -32,15 +33,20 @@ import { AddItemButton } from '../AddItemButton/AddItemButton'
 import { DeleteAction } from '../DeleteAction/DeleteAction'
 import { imageService } from '../../services/image/image.service'
 import { mealService } from '../../services/meal/meal.service'
+import { menuService } from '../../services/menu/menu.service'
+
+export type LogsSource = 'diary' | 'menu'
 
 interface LoggedListProps {
   mealPeriod: MealPeriod
   isAddButton?: boolean
+  logsSource?: LogsSource
 }
 
 export function LoggedList({
   mealPeriod,
   isAddButton = true,
+  logsSource = 'diary',
 }: LoggedListProps) {
   const { t } = useTranslation()
   const user = useSelector((state: RootState) => state.userModule.user)
@@ -50,10 +56,16 @@ export function LoggedList({
   const selectedDay = useSelector(
     (state: RootState) => state.userModule.selectedDay
   )
+  const menu = useSelector((state: RootState) => state.userModule.menu)
 
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
 
   const logs = useMemo(() => {
+    if (logsSource === 'menu') {
+      return menu?.menuLogs?.filter((log) =>
+        _filterLogsByMealPeriod(log, mealPeriod)
+      ) || []
+    }
     if (selectedDay)
       return selectedDay?.logs?.filter((log) =>
         _filterLogsByMealPeriod(log, mealPeriod)
@@ -63,7 +75,7 @@ export function LoggedList({
         _filterLogsByMealPeriod(log, mealPeriod)
       )
     return user?.loggedToday?.logs
-  }, [user, mealPeriod, selectedDay, user?.loggedToday?.logs])
+  }, [user, mealPeriod, selectedDay, user?.loggedToday?.logs, menu?.menuLogs, logsSource])
 
   useEffect(() => {
     handleLoadItems()
@@ -87,12 +99,13 @@ export function LoggedList({
     }
   }
 
-  if (!user || (!logs?.length && isAddButton))
+  const showEmptyState = logsSource === 'menu' ? !logs?.length : (!user || (!logs?.length && isAddButton))
+  if (showEmptyState)
     return (
       <div className='logged-items'>
         <div className='placeholder-container'>
           <div className='placeholder'>{t('meals.noItemsLogged')}</div>
-          <AddItemButton mealPeriod={mealPeriod} />
+          {isAddButton && <AddItemButton mealPeriod={mealPeriod} />}
         </div>
       </div>
     )
@@ -201,15 +214,34 @@ export function LoggedList({
 
   const onDeleteLog = async (log: Log) => {
     try {
+      if (logsSource === 'menu' && menu) {
+        const newLogs = menu.menuLogs.filter(
+          (l) =>
+            !(
+              (l._id && log._id && l._id === log._id) ||
+              (l.itemId === log.itemId &&
+                l.time === log.time &&
+                l.meal === log.meal)
+            )
+        )
+        const newMenu = {
+          ...menu,
+          menuLogs: newLogs,
+        }
+        await menuService.save(newMenu)
+        setMenu(newMenu)
+        showSuccessMsg(messages.success.updateCalories)
+        return
+      }
+
       const newToday = removeLogAction(log, selectedDay as LoggedToday)
 
-      if (newToday._id === user.loggedToday._id) {
+      if (user && newToday._id === user.loggedToday._id) {
         const newUser = {
           ...user,
           loggedToday: newToday,
         }
         optimisticUpdateUser(newUser)
-        // await updateUser({newUser})
       }
       setSelectedDiaryDay(newToday)
       await logService.remove(log._id as string)
@@ -219,7 +251,7 @@ export function LoggedList({
     } catch (err) {
       console.error(err)
       showErrorMsg(messages.error.updateCalories)
-      optimisticUpdateUser(user)
+      if (user) optimisticUpdateUser(user)
     }
   }
 
