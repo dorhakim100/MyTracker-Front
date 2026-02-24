@@ -20,8 +20,16 @@ export function MenusList({ onAddClick }: MenusListProps) {
 
   const menus = useSelector((state: RootState) => state.userModule.menus)
 
-  const onSelect = (menu: Menu) => {
-    setMenu(menu)
+  const onSelect = async (menu: Menu) => {
+    try {
+      setMenu(menu)
+      const selectedMenu = await menuService.select(menu._id)
+      if (selectedMenu) {
+        setMenu(selectedMenu)
+      }
+    } catch (err) {
+      console.error(err)
+    }
   }
 
   const onDelete = async (deletedMenu: Menu) => {

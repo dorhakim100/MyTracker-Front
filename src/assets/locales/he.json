@@ -353,7 +353,8 @@
     "editMenu": "עריכת תפריט",
     "defaultName": "תפריט",
     "deleteMenu": "מחיקת תפריט",
-    "deleteMenuConfirm": "האם אתה בטוח שברצונך למחוק תפריט זה?"
+    "deleteMenuConfirm": "האם אתה בטוח שברצונך למחוק תפריט זה?",
+    "selectMenu": "בחירת תפריט"
   },
   "date": {
     "from": "מתאריך",

@@ -11,7 +11,40 @@
   }
 
   &.selected {
-    box-shadow: 0 0 0 2px currentColor;
+    border-inline-start: 3px solid $primary-color;
+    padding-inline-start: calc(1rem + 3px);
+    &.blue {
+      border-inline-start: 3px solid $picker-color-blue;
+      padding-inline-start: 3px;
+    }
+    &.red {
+      border-inline-start: 3px solid $picker-color-red;
+      padding-inline-start: 3px;
+    }
+    &.yellow {
+      border-inline-start: 3px solid $picker-color-yellow;
+      padding-inline-start: 3px;
+    }
+    &.green {
+      border-inline-start: 3px solid $picker-color-green;
+      padding-inline-start: 3px;
+    }
+    &.orange {
+      border-inline-start: 3px solid $picker-color-orange;
+      padding-inline-start: 3px;
+    }
+    &.deepPurple {
+      border-inline-start: 3px solid $picker-color-deep-purple;
+      padding-inline-start: 3px;
+    }
+    &.purple {
+      border-inline-start: 3px solid $picker-color-purple;
+      padding-inline-start: 3px;
+    }
+    &.pink {
+      border-inline-start: 3px solid $picker-color-pink;
+      padding-inline-start: 3px;
+    }
   }
 
   &.dark-mode {

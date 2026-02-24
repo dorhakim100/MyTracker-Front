@@ -15,6 +15,9 @@ import { useTranslation } from 'react-i18next'
 import { Menu } from '../../types/menu/Menu'
 import { DropdownOption } from '../../types/DropdownOption'
 import { SaveCancel } from '../SaveCancel/SaveCancel'
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
+import EditIcon from '@mui/icons-material/Edit'
+import DeleteIcon from '@mui/icons-material/Delete'
 
 interface MenuCardProps {
   menu: Menu
@@ -24,11 +27,11 @@ interface MenuCardProps {
 
 export function MenuCard({ menu, onSelect, onDelete }: MenuCardProps) {
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
+  const selectedMenu = useSelector((state: RootState) => state.userModule.menu)
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
   const [isEditOpen, setIsEditOpen] = useState(false)
   const [menuToEdit, setMenuToEdit] = useState<Menu | undefined>(undefined)
   const { t } = useTranslation()
-
   const stats = useMemo(() => {
     return {
       totalCalories: menu.menuLogs.reduce(
@@ -42,27 +45,51 @@ export function MenuCard({ menu, onSelect, onDelete }: MenuCardProps) {
   const menuOptions = useMemo(
     () => [
       {
+        title: t('menu.selectMenu'),
+        icon: <CheckCircleOutlineIcon />,
+        onClick: onSelectMenu,
+      },
+      {
         title: t('menu.editMenu'),
-        onClick: () => {
-          setIsEditOpen(true)
-          setMenuToEdit(menu)
-        },
+        icon: <EditIcon />,
+        onClick: onEditMenu,
       },
       {
         title: t('menu.deleteMenu'),
+        icon: <DeleteIcon />,
         onClick: () => setIsDeleteOpen(true),
       },
     ],
     [t, setIsEditOpen, setIsDeleteOpen]
   )
 
+  const getSlideComponent = () => {
+    return (
+      <EditMenu
+        closeDialog={() => setIsEditOpen(false)}
+        menuToEdit={menuToEdit}
+      />
+    )
+  }
+
+  function onEditMenu() {
+    setIsEditOpen(true)
+    setMenuToEdit(menu)
+  }
+
+  function onSelectMenu() {
+    onSelect(menu)
+  }
+
   return (
     <>
       <Card
         className={`menu-card-container ${
           prefs.isDarkMode ? 'dark-mode' : ''
-        }  ${prefs.favoriteColor || ''}`}
-        // onClick={onSelectMenu}
+        }  ${prefs.favoriteColor || ''} ${
+          selectedMenu?._id === menu._id ? 'selected' : ''
+        }`}
+        onClick={onEditMenu}
       >
         <div className='menu-card-header'>
           <div className='menu-card-title'>
@@ -116,12 +143,7 @@ export function MenuCard({ menu, onSelect, onDelete }: MenuCardProps) {
         open={isEditOpen}
         onClose={() => setIsEditOpen(false)}
         title={t('menu.editMenu')}
-        component={
-          <EditMenu
-            closeDialog={() => setIsEditOpen(false)}
-            menuToEdit={menuToEdit}
-          />
-        }
+        component={getSlideComponent()}
         type='full'
       />
     </>

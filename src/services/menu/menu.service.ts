@@ -8,6 +8,7 @@ export const menuService = {
   getById,
   save,
   remove,
+  select,
   getEmptyMenu,
   getDefaultFilter,
 }
@@ -35,7 +36,7 @@ async function save(menu: Menu) {
     if (menu._id) {
       return await httpService.put(`${KEY}/${menu._id}`, menu)
     }
-    return await httpService.post(KEY, menu)
+    return await httpService.post(KEY, { menu, userId: menu.userId })
   } catch (err) {
     throw err
   }
@@ -44,6 +45,14 @@ async function save(menu: Menu) {
 async function remove(menuId: string) {
   try {
     return await httpService.delete(`${KEY}/${menuId}`, null)
+  } catch (err) {
+    throw err
+  }
+}
+
+async function select(menuId: string) {
+  try {
+    return await httpService.put(`${KEY}/select`, { menuId })
   } catch (err) {
     throw err
   }
