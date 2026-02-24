@@ -8,8 +8,9 @@ import MenuBookIcon from '@mui/icons-material/MenuBook'
 import { SlideDialog } from '../../../components/SlideDialog/SlideDialog'
 import { getMeals } from '../../../assets/config/meals'
 import { EditMenu } from '../../../components/EditMenu/EditMenu'
+import { MenusList } from '../../../components/MenusList/MenusList'
 import { menuService } from '../../../services/menu/menu.service'
-import { setMenu } from '../../../store/actions/user.actions'
+import { setMenus } from '../../../store/actions/user.actions'
 import { MealCard } from '../../../components/MealCard/MealCard'
 import { Add } from '@mui/icons-material'
 
@@ -23,21 +24,22 @@ export function FixedMenu() {
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
   const user = useSelector((state: RootState) => state.userModule.user)
   const menu = useSelector((state: RootState) => state.userModule.menu)
+  const menus = useSelector((state: RootState) => state.userModule.menus)
 
   const meals = getMeals(t)
 
   useEffect(() => {
-    const loadMenu = async () => {
+    const loadMenus = async () => {
       if (!user) return
       try {
         const menus = await menuService.query({ userId: user._id })
-        const existingMenu = Array.isArray(menus) ? menus[0] : menus
-        if (existingMenu) setMenu(existingMenu)
+
+        setMenus(menus)
       } catch (err) {
         console.error(err)
       }
     }
-    loadMenu()
+    loadMenus()
   }, [user?._id])
 
   const [menuListDialogOptions, setMenuListDialogOptions] =
@@ -51,9 +53,12 @@ export function FixedMenu() {
     switch (menuListDialogOptions.type) {
       case 'menuList':
         return (
-          <div>
-            <Typography variant='h6'>{t('menu.viewMenus')}</Typography>
-          </div>
+          <MenusList
+            onAddClick={() => {
+              closeDialog()
+              openEditMenuDialog()
+            }}
+          />
         )
       case 'editMenu':
         return <EditMenu closeDialog={closeDialog} />
@@ -82,6 +87,21 @@ export function FixedMenu() {
       type: null,
     })
   }
+  const renderNoMenuSelected = () => {
+    if (menus.length === 0)
+      return (
+        <div className='no-results-container'>
+          <span>{t('menu.noMenuFound')}</span>
+          <CustomButton
+            text={t('common.add')}
+            onClick={openEditMenuDialog}
+            icon={<Add />}
+          />
+        </div>
+      )
+
+    return <MenusList onAddClick={openEditMenuDialog} />
+  }
 
   return (
     <>
@@ -98,11 +118,13 @@ export function FixedMenu() {
             {t('prefs.fixedMenu')}
           </Typography>
           <div className='fixed-menu-actions'>
-            <CustomButton
-              text={t('menu.viewMenus')}
-              onClick={openMenuListDialog}
-              icon={<MenuBookIcon />}
-            />
+            {menu && (
+              <CustomButton
+                text={t('menu.viewMenus')}
+                onClick={openMenuListDialog}
+                icon={<MenuBookIcon />}
+              />
+            )}
           </div>
         </div>
         <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
@@ -120,14 +142,7 @@ export function FixedMenu() {
             ))}
           </div>
         ) : (
-          <div className='no-results-container'>
-            <span>{t('menu.noMenuFound')}</span>
-            <CustomButton
-              text={t('common.add')}
-              onClick={openEditMenuDialog}
-              icon={<Add />}
-            />
-          </div>
+          renderNoMenuSelected()
         )}
       </div>
       <SlideDialog

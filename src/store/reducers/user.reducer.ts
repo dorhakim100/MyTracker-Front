@@ -18,6 +18,7 @@ export const REMOVE_TRAINEE_USER = 'REMOVE_TRAINEE_USER'
 export const SET_TRAINEE_USERS = 'SET_TRAINEE_USERS'
 export const ADD_TRAINEE = 'ADD_TRAINEE'
 export const SET_MENU = 'SET_MENU'
+export const SET_MENUS = 'SET_MENUS'
 export interface UserState {
   users: User[]
   user: User | null
@@ -28,6 +29,7 @@ export interface UserState {
   traineeUser: User | null
   trainees: User[]
   menu: Menu | null
+  menus: Menu[] | []
 }
 
 const initialState: UserState = {
@@ -39,6 +41,7 @@ const initialState: UserState = {
   traineeUser: null,
   trainees: [],
   menu: null,
+  menus: [],
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -92,6 +95,10 @@ export function userReducer(state = initialState, action: any): UserState {
 
     case SET_MENU:
       newState = { ...state, menu: action.menu }
+      break
+
+    case SET_MENUS:
+      newState = { ...state, menus: action.menus }
       break
 
     // case SET_USER_FILTER:

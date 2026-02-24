@@ -1,0 +1,80 @@
+.menu-card-container {
+  display: grid;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+  // cursor: pointer;
+  transition: box-shadow 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.15);
+  }
+
+  &.selected {
+    box-shadow: 0 0 0 2px currentColor;
+  }
+
+  &.dark-mode {
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.3);
+    color: $white;
+  }
+
+  .menu-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .menu-card-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    .menu-card-icon {
+      opacity: 0.7;
+    }
+  }
+
+  .menu-card-stats {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.5rem;
+  }
+}
+
+.delete-menu-dialog {
+  .save-cancel-container {
+    margin-top: 1rem;
+
+    .delete-account-button {
+      background-color: $primary-color-dark !important;
+      &.blue {
+        background-color: $primary-color-dark !important;
+      }
+      &.yellow {
+        background-color: $primary-color-dark !important;
+      }
+      &.red {
+        background-color: $primary-color-dark !important;
+      }
+      &.orange {
+        background-color: $primary-color-dark !important;
+      }
+      &.green {
+        background-color: $primary-color-dark !important;
+      }
+      &.deepPurple {
+        background-color: $primary-color-dark !important;
+      }
+      &.purple {
+        background-color: $primary-color-dark !important;
+      }
+      &.pink {
+        background-color: $primary-color-dark !important;
+      }
+    }
+    .save-button {
+      background-color: $error-color !important;
+    }
+  }
+}

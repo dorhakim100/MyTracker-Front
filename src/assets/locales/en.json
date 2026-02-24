@@ -136,7 +136,11 @@
   "menu": {
     "viewMenus": "View menus",
     "noMenuFound": "No menu found, create a new menu",
-    "editMenu": "Edit menu"
+    "name": "Name",
+    "editMenu": "Edit menu",
+    "defaultName": "Menu",
+    "deleteMenu": "Delete menu",
+    "deleteMenuConfirm": "Are you sure you want to delete this menu?"
   },
   "workout": {
     "noWorkoutSelected": "No workout selected",

@@ -27,12 +27,15 @@ import DoneIcon from '@mui/icons-material/Done'
 import { CircularProgress, Divider } from '@mui/material'
 import { showSuccessMsg } from '../../services/event-bus.service'
 import { messages } from '../../assets/config/messages'
+import { CustomInput } from '../../CustomMui/CustomInput/CustomInput'
+import { setMenus } from '../../store/actions/user.actions'
 
 interface EditMenuProps {
   closeDialog: () => void
+  menuToEdit?: Menu
 }
 
-export function EditMenu({ closeDialog }: EditMenuProps) {
+export function EditMenu({ closeDialog, menuToEdit }: EditMenuProps) {
   const { t } = useTranslation()
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
   const user = useSelector((state: RootState) => state.userModule.user)
@@ -46,12 +49,13 @@ export function EditMenu({ closeDialog }: EditMenuProps) {
   const selectedMeal = useSelector(
     (state: RootState) => state.itemModule.selectedMeal
   )
+  const menus = useSelector((state: RootState) => state.userModule.menus)
   if (!user) return null
 
   const meals = getMeals(t)
 
   const [editMenu, setEditMenu] = useState<Menu>(
-    menuService.getEmptyMenu(user._id)
+    menuToEdit || menuService.getEmptyMenu(user._id)
   )
 
   const menuStats = useMemo(() => {
@@ -162,7 +166,14 @@ export function EditMenu({ closeDialog }: EditMenuProps) {
         delete (editMenu as Partial<Menu>)._id
       }
       const savedMenu = await menuService.save(editMenu)
-      console.log('savedMenu', savedMenu)
+
+      const newMenus = menus.map((m) =>
+        m._id === savedMenu._id ? savedMenu : m
+      )
+      if (newMenus.length === 0) {
+        newMenus.push(savedMenu)
+      }
+      setMenus(newMenus)
       showSuccessMsg(messages.success.saveMeal)
       closeDialog()
     } catch (err) {
@@ -202,6 +213,12 @@ export function EditMenu({ closeDialog }: EditMenuProps) {
             direction='horizontal'
           />
         </div>
+        <CustomInput
+          value={editMenu.name || ''}
+          onChange={(value) => setEditMenu({ ...editMenu, name: value })}
+          placeholder={t('menu.name')}
+          className={`${prefs.favoriteColor}`}
+        />
         <div
           className={`meals-container ${prefs.isDarkMode ? 'dark-mode' : ''}`}
         >

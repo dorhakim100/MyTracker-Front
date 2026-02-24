@@ -349,7 +349,11 @@
   "menu": {
     "viewMenus": "צפייה בתפריטים",
     "noMenuFound": "לא נמצאו תפריטים, יש ליצור תפריט חדש",
-    "editMenu": "עריכת תפריט"
+    "name": "שם",
+    "editMenu": "עריכת תפריט",
+    "defaultName": "תפריט",
+    "deleteMenu": "מחיקת תפריט",
+    "deleteMenuConfirm": "האם אתה בטוח שברצונך למחוק תפריט זה?"
   },
   "date": {
     "from": "מתאריך",

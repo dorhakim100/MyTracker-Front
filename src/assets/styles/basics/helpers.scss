@@ -849,7 +849,7 @@ select {
     .MuiFab-circular
   ):not(.MuiPickersDay-root):not(.delete-account-button):not(
     .MuiBottomNavigationAction-root
-  ):not(.disable-button),
+  ):not(.disable-button):not(.save-button.alternative),
 .MuiToolbar-gutters,
 .MuiToolbar-root,
 .MuiFab-root,
@@ -1263,9 +1263,7 @@ select {
 }
 
 .box-shadow {
-  box-shadow:
-    rgba(0, 0, 0, 0.16) 0px 3px 6px,
-    rgba(0, 0, 0, 0.23) 0px 3px 6px;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
 }
 
 .white-outline {

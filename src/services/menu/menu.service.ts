@@ -52,6 +52,7 @@ async function remove(menuId: string) {
 function getEmptyMenu(userId: string): Menu {
   return {
     _id: '',
+    name: '',
     userId,
     menuLogs: [],
   }

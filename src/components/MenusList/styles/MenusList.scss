@@ -1,0 +1,16 @@
+.menus-list-container {
+  display: grid;
+  gap: 1rem;
+  // padding: 1rem;
+
+  .menus-list {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .menus-list-empty {
+    text-align: center;
+    padding: 2rem;
+    opacity: 0.7;
+  }
+}

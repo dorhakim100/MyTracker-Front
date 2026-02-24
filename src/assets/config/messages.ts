@@ -14,6 +14,7 @@ export const messages = {
     updateRequest: 'Request handled successfully',
     addSet: 'Set added successfully',
     deleteWorkout: 'Workout deleted successfully',
+    deleteMenu: 'Menu deleted successfully',
     deleteExercise: 'Exercise deleted successfully',
   },
   error: {
@@ -38,6 +39,7 @@ export const messages = {
     deleteAccount: 'Failed to delete account',
     saveWorkout: 'Failed to save workout',
     deleteWorkout: 'Failed to delete workout',
+    deleteMenu: 'Failed to delete menu',
     getExerciseSummary: 'Failed to get exercise summary',
     getSessionDay: 'Failed to get session day',
     startWorkout: 'Failed to start workout',

@@ -13,6 +13,7 @@ import {
   SET_TRAINEE_USERS,
   ADD_TRAINEE,
   SET_MENU,
+  SET_MENUS,
   // SET_USER_FILTER,
 } from '../reducers/user.reducer'
 
@@ -418,6 +419,10 @@ export async function addTrainee(traineeForm: AddTraineeForm) {
   }
 }
 
-export function setMenu(menu: Menu) {
+export function setMenu(menu: Menu | null) {
   store.dispatch({ type: SET_MENU, menu })
+}
+
+export function setMenus(menus: Menu[]) {
+  store.dispatch({ type: SET_MENUS, menus })
 }

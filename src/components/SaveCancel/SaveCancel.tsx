@@ -10,6 +10,7 @@ interface SaveCancelProps {
   cancelText?: string
   saveText?: string
   className?: string
+  saveButtonClassName?: string
 }
 
 export function SaveCancel({
@@ -18,6 +19,7 @@ export function SaveCancel({
   cancelText,
   saveText,
   className = '',
+  saveButtonClassName = '',
 }: SaveCancelProps) {
   const { t } = useTranslation()
   const prefs = useSelector(
@@ -28,12 +30,12 @@ export function SaveCancel({
     <div className={`save-cancel-container ${className}`}>
       <CustomButton
         onClick={onCancel}
-        className="delete-account-button"
+        className='delete-account-button'
         text={cancelText ?? t('common.cancel')}
       />
       <CustomButton
         onClick={onSave}
-        className={`${prefs.favoriteColor}`}
+        className={`${prefs.favoriteColor} save-button ${saveButtonClassName}`}
         text={saveText ?? t('common.save')}
       />
     </div>
