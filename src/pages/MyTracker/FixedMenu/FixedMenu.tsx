@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { Divider, Typography } from '@mui/material'
@@ -28,6 +28,11 @@ export function FixedMenu() {
   const menus = useSelector((state: RootState) => state.userModule.menus)
 
   const meals = getMeals(t)
+
+  const logs = useMemo(() => {
+    if (!menu?.menuLogs?.length) return []
+    return menu.menuLogs
+  }, [menu])
 
   useEffect(() => {
     const loadMenus = async () => {
@@ -108,6 +113,20 @@ export function FixedMenu() {
     return <MenusList onAddClick={openEditMenuDialog} />
   }
 
+  const getLogsCalories = (mealPeriod: string) => {
+    if (!logs?.length) return 0
+    return logs
+      .filter((log) => log.meal?.toLowerCase() === mealPeriod.toLowerCase())
+      .reduce((acc, log) => acc + (log.macros?.calories || 0), 0)
+  }
+
+  const getLogsToShow = (mealPeriod: string) => {
+    if (!logs?.length) return []
+    return logs.filter(
+      (log) => log.meal?.toLowerCase() === mealPeriod.toLowerCase()
+    )
+  }
+
   return (
     <>
       <div
@@ -140,9 +159,10 @@ export function FixedMenu() {
               <MealCard
                 key={meal.label}
                 meal={meal}
-                caloriesToSet={0}
+                caloriesToSet={getLogsCalories(meal.period)}
                 showEmptyCardAddButton={false}
                 isAddButton={false}
+                logsToShow={getLogsToShow(meal.period)}
               />
             ))}
           </div>

@@ -36,7 +36,9 @@ async function save(menu: Menu) {
     if (menu._id) {
       return await httpService.put(`${KEY}/${menu._id}`, menu)
     }
-    return await httpService.post(KEY, { menu, userId: menu.userId })
+    const payload = { ...menu }
+    delete (payload as Partial<Menu>)._id
+    return await httpService.post(KEY, payload)
   } catch (err) {
     throw err
   }

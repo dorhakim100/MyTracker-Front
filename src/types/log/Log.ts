@@ -13,4 +13,5 @@ export interface Log {
   numberOfServings?: number
   source?: string
   mealId?: string
+  isFixedMenuLog?: boolean
 }

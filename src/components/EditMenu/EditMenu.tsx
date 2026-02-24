@@ -131,6 +131,7 @@ export function EditMenu({ closeDialog, menuToEdit }: EditMenuProps) {
       source: item.source,
       mealId: item.mealId,
       createdBy: user._id,
+      isFixedMenuLog: true,
     } as Log
 
     try {
@@ -162,9 +163,11 @@ export function EditMenu({ closeDialog, menuToEdit }: EditMenuProps) {
   async function onSaveMenu() {
     try {
       setIsLoading(true)
+      console.log('editMenu', editMenu)
       if (editMenu._id === '') {
         delete (editMenu as Partial<Menu>)._id
       }
+      console.log('editMenu', editMenu)
       const savedMenu = await menuService.save(editMenu)
 
       const newMenus = menus.map((m) =>

@@ -594,6 +594,7 @@ export function ItemDetails({
           macros: editItem.totalMacros,
           numberOfServings: editItem.numberOfServings,
           source: isCustomLog ? searchTypes.custom : null,
+          isFixedMenuLog: true,
         }
 
         editMenu?.menuLogs.splice(itemIndex, 1, newLog as Log)
@@ -723,7 +724,16 @@ export function ItemDetails({
                     option.key === 'servingSize') ||
                   ((item as Item).type === 'meal' &&
                     option.key === 'servingSize') ||
-                  ((item as MealItem).mealId && option.key === 'servingSize')
+                  ((item as MealItem).mealId && option.key === 'servingSize') ||
+                  (!updateMenu &&
+                    (item as Log).isFixedMenuLog &&
+                    option.key === 'servingSize') ||
+                  (!updateMenu &&
+                    (item as Log).isFixedMenuLog &&
+                    option.key === 'numberOfServings') ||
+                  (!updateMenu &&
+                    (item as Log).isFixedMenuLog &&
+                    option.key === 'meal')
                 )
                   return null
 
@@ -812,16 +822,17 @@ export function ItemDetails({
               })}
           </div>
         </div>
-        {!noEdit && (
-          <CustomButton
-            text={editMealItem ? t('meals.updateMeal') : t('meals.addToMeal')}
-            icon={!editMealItem && <AddIcon sx={{ mr: 1 }} />}
-            size='large'
-            fullWidth
-            className={`add-to-meal-button ${prefs.favoriteColor}`}
-            onClick={getOnClick()}
-          />
-        )}
+        {!noEdit ||
+          (!updateMenu && (item as Log).isFixedMenuLog && (
+            <CustomButton
+              text={editMealItem ? t('meals.updateMeal') : t('meals.addToMeal')}
+              icon={!editMealItem && <AddIcon sx={{ mr: 1 }} />}
+              size='large'
+              fullWidth
+              className={`add-to-meal-button ${prefs.favoriteColor}`}
+              onClick={getOnClick()}
+            />
+          ))}
       </div>
       {item.image && (
         <CustomAlertDialog
