@@ -58,6 +58,8 @@ export function EditMenu({ closeDialog, menuToEdit }: EditMenuProps) {
     menuToEdit || menuService.getEmptyMenu(user._id)
   )
 
+  console.log('editMenu', editMenu)
+
   const menuStats = useMemo(() => {
     return getMenuStats()
   }, [editMenu.menuLogs, user])

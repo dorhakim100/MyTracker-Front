@@ -822,17 +822,16 @@ export function ItemDetails({
               })}
           </div>
         </div>
-        {!noEdit ||
-          (!updateMenu && (item as Log).isFixedMenuLog && (
-            <CustomButton
-              text={editMealItem ? t('meals.updateMeal') : t('meals.addToMeal')}
-              icon={!editMealItem && <AddIcon sx={{ mr: 1 }} />}
-              size='large'
-              fullWidth
-              className={`add-to-meal-button ${prefs.favoriteColor}`}
-              onClick={getOnClick()}
-            />
-          ))}
+        {!noEdit && (
+          <CustomButton
+            text={editMealItem ? t('meals.updateMeal') : t('meals.addToMeal')}
+            icon={!editMealItem && <AddIcon sx={{ mr: 1 }} />}
+            size='large'
+            fullWidth
+            className={`add-to-meal-button ${prefs.favoriteColor}`}
+            onClick={getOnClick()}
+          />
+        )}
       </div>
       {item.image && (
         <CustomAlertDialog

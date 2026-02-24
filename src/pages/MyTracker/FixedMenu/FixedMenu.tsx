@@ -163,6 +163,8 @@ export function FixedMenu() {
                 showEmptyCardAddButton={false}
                 isAddButton={false}
                 logsToShow={getLogsToShow(meal.period)}
+                logsSource='menu'
+                noEdit={true}
               />
             ))}
           </div>

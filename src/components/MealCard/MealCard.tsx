@@ -24,6 +24,7 @@ interface MealCardProps {
   logsToShow?: Log[]
   updateMenu?: (newMenu: Menu) => void
   editMenu?: Menu
+  noEdit?: boolean
 }
 
 export function MealCard({
@@ -35,6 +36,7 @@ export function MealCard({
   logsToShow = [],
   updateMenu,
   editMenu,
+  noEdit = false,
 }: MealCardProps) {
   const { t } = useTranslation()
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
@@ -70,6 +72,7 @@ export function MealCard({
         logsToShow={logsToShow}
         updateMenu={updateMenu}
         editMenu={editMenu}
+        noEdit={noEdit}
       />
       <div className='meal-footer'>
         <Typography

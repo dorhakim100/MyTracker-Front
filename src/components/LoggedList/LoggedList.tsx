@@ -45,6 +45,7 @@ interface LoggedListProps {
   logsToShow?: Log[]
   updateMenu?: (newMenu: Menu) => void
   editMenu?: Menu
+  noEdit?: boolean
 }
 
 export function LoggedList({
@@ -54,6 +55,7 @@ export function LoggedList({
   logsToShow = [],
   updateMenu,
   editMenu,
+  noEdit = false,
 }: LoggedListProps) {
   const { t } = useTranslation()
   const user = useSelector((state: RootState) => state.userModule.user)
@@ -68,6 +70,13 @@ export function LoggedList({
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
 
   const logs = useMemo(() => {
+    if (logsSource === 'menu' && editMenu) {
+      return (
+        editMenu.menuLogs?.filter((log) =>
+          _filterLogsByMealPeriod(log, mealPeriod)
+        ) || []
+      )
+    }
     if (logsToShow.length) return logsToShow
     if (logsSource === 'menu') {
       return (
@@ -91,6 +100,7 @@ export function LoggedList({
     selectedDay,
     user?.loggedToday?.logs,
     menu?.menuLogs,
+    editMenu?.menuLogs,
     logsSource,
     logsToShow,
   ])
@@ -291,7 +301,7 @@ export function LoggedList({
         renderSecondaryText={renderSecondaryText}
         // renderRight={renderRight}
         onItemClick={onItemClick}
-        isSwipeable={true}
+        isSwipeable={noEdit ? false : true}
         // renderLeftSwipeActions={renderLeftSwipeActions}
         renderRightSwipeActions={(item) => (
           <DeleteAction
@@ -311,6 +321,7 @@ export function LoggedList({
           <ItemDetails
             updateMenu={updateMenu}
             editMenu={editMenu}
+            noEdit={noEdit}
           />
         }
         onSave={closeEdit}
