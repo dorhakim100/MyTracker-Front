@@ -5,6 +5,8 @@ import { RootState } from '../../store/store'
 import { LoggedList, LogsSource } from '../LoggedList/LoggedList'
 import { AddItemButton } from '../AddItemButton/AddItemButton'
 import { MealPeriod } from '../../types/mealPeriod/MealPeriod'
+import { Log } from '../../types/log/Log'
+import { Menu } from '../../types/menu/Menu'
 
 export interface MealCardMeal {
   label: string
@@ -19,6 +21,9 @@ interface MealCardProps {
   showEmptyCardAddButton: boolean
   isAddButton?: boolean
   logsSource?: LogsSource
+  logsToShow?: Log[]
+  updateMenu?: (newMenu: Menu) => void
+  editMenu?: Menu
 }
 
 export function MealCard({
@@ -27,6 +32,9 @@ export function MealCard({
   showEmptyCardAddButton,
   isAddButton = true,
   logsSource = 'diary',
+  logsToShow = [],
+  updateMenu,
+  editMenu,
 }: MealCardProps) {
   const { t } = useTranslation()
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
@@ -59,6 +67,9 @@ export function MealCard({
         mealPeriod={meal.period as MealPeriod}
         isAddButton={isAddButton}
         logsSource={logsSource}
+        logsToShow={logsToShow}
+        updateMenu={updateMenu}
+        editMenu={editMenu}
       />
       <div className='meal-footer'>
         <Typography

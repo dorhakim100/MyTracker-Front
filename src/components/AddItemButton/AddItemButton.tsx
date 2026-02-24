@@ -22,7 +22,7 @@ export const AddItemButton = ({ mealPeriod }: AddItemButtonProps) => {
     <CustomButton
       text={t('meals.addItem')}
       icon={<AddIcon />}
-      size="small"
+      size='small'
       onClick={(e) => {
         e.stopPropagation()
         e.preventDefault()

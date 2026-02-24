@@ -34,9 +34,15 @@ interface MacrosProgressProps {
   protein: Macro
   carbs: Macro
   fats: Macro
+  isEditButton?: boolean
 }
 
-export function MacrosProgress({ protein, carbs, fats }: MacrosProgressProps) {
+export function MacrosProgress({
+  protein,
+  carbs,
+  fats,
+  isEditButton = true,
+}: MacrosProgressProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
@@ -106,7 +112,7 @@ export function MacrosProgress({ protein, carbs, fats }: MacrosProgressProps) {
         >
           {t('macros.macros')}
         </Typography>
-        <EditIcon onClick={edit} />
+        {isEditButton && <EditIcon onClick={edit} />}
         <div className='macros-container'>
           {macros.map((macro) => (
             <div

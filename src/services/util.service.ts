@@ -390,3 +390,36 @@ export function formatTime(time: number, isMinutes: boolean = true): string {
     isMinutes ? 'minutes' : ''
   }`
 }
+
+export function getPercentage(value: number, goal: number) {
+  return (value / goal) * 100
+}
+
+export function getMealPeriodTimestamp(period: string) {
+  if (!period || period === '' || period === 'snacks' || period === 'Snacks')
+    return new Date().getTime()
+  const periods = {
+    breakfast: { start: 6, end: 12 },
+    lunch: { start: 12, end: 18 },
+    dinner: { start: 18, end: 26 }, // 26 = 02:00 next day
+  }
+
+  const config = periods[period.toLowerCase() as keyof typeof periods]
+  if (!config) throw new Error('Invalid meal period')
+
+  const now = new Date()
+  const baseDate = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+
+  // random hour + minute inside range
+  const totalMinutes = (config.end - config.start) * 60
+
+  const randomMinutes = Math.floor(Math.random() * totalMinutes)
+
+  const hoursToAdd = Math.floor(randomMinutes / 60)
+  const minutesToAdd = randomMinutes % 60
+
+  const result = new Date(baseDate)
+  result.setHours(config.start + hoursToAdd, minutesToAdd, 0, 0)
+
+  return result.getTime()
+}

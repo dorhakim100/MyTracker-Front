@@ -56,7 +56,7 @@ export function FixedMenu() {
           </div>
         )
       case 'editMenu':
-        return <EditMenu />
+        return <EditMenu closeDialog={closeDialog} />
       default:
         return <></>
     }
@@ -76,7 +76,7 @@ export function FixedMenu() {
     })
   }
 
-  const closeMenuListDialog = () => {
+  const closeDialog = () => {
     setMenuListDialogOptions({
       open: false,
       type: null,
@@ -98,11 +98,6 @@ export function FixedMenu() {
             {t('prefs.fixedMenu')}
           </Typography>
           <div className='fixed-menu-actions'>
-            <CustomButton
-              text={t('menu.editMenu')}
-              onClick={openEditMenuDialog}
-              icon={<MenuBookIcon />}
-            />
             <CustomButton
               text={t('menu.viewMenus')}
               onClick={openMenuListDialog}
@@ -127,17 +122,17 @@ export function FixedMenu() {
         ) : (
           <div className='no-results-container'>
             <span>{t('menu.noMenuFound')}</span>
-          <CustomButton
-            text={t('common.add')}
-            onClick={openEditMenuDialog}
-            icon={<Add />}
-          />
+            <CustomButton
+              text={t('common.add')}
+              onClick={openEditMenuDialog}
+              icon={<Add />}
+            />
           </div>
         )}
       </div>
       <SlideDialog
         open={menuListDialogOptions.open}
-        onClose={closeMenuListDialog}
+        onClose={closeDialog}
         title={
           menuListDialogOptions.type === 'editMenu'
             ? t('menu.editMenu')

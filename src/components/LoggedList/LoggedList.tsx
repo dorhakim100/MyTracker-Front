@@ -34,6 +34,7 @@ import { DeleteAction } from '../DeleteAction/DeleteAction'
 import { imageService } from '../../services/image/image.service'
 import { mealService } from '../../services/meal/meal.service'
 import { menuService } from '../../services/menu/menu.service'
+import { Menu } from '../../types/menu/Menu'
 
 export type LogsSource = 'diary' | 'menu'
 
@@ -41,12 +42,18 @@ interface LoggedListProps {
   mealPeriod: MealPeriod
   isAddButton?: boolean
   logsSource?: LogsSource
+  logsToShow?: Log[]
+  updateMenu?: (newMenu: Menu) => void
+  editMenu?: Menu
 }
 
 export function LoggedList({
   mealPeriod,
   isAddButton = true,
   logsSource = 'diary',
+  logsToShow = [],
+  updateMenu,
+  editMenu,
 }: LoggedListProps) {
   const { t } = useTranslation()
   const user = useSelector((state: RootState) => state.userModule.user)
@@ -61,10 +68,13 @@ export function LoggedList({
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
 
   const logs = useMemo(() => {
+    if (logsToShow.length) return logsToShow
     if (logsSource === 'menu') {
-      return menu?.menuLogs?.filter((log) =>
-        _filterLogsByMealPeriod(log, mealPeriod)
-      ) || []
+      return (
+        menu?.menuLogs?.filter((log) =>
+          _filterLogsByMealPeriod(log, mealPeriod)
+        ) || []
+      )
     }
     if (selectedDay)
       return selectedDay?.logs?.filter((log) =>
@@ -75,7 +85,15 @@ export function LoggedList({
         _filterLogsByMealPeriod(log, mealPeriod)
       )
     return user?.loggedToday?.logs
-  }, [user, mealPeriod, selectedDay, user?.loggedToday?.logs, menu?.menuLogs, logsSource])
+  }, [
+    user,
+    mealPeriod,
+    selectedDay,
+    user?.loggedToday?.logs,
+    menu?.menuLogs,
+    logsSource,
+    logsToShow,
+  ])
 
   useEffect(() => {
     handleLoadItems()
@@ -99,7 +117,10 @@ export function LoggedList({
     }
   }
 
-  const showEmptyState = logsSource === 'menu' ? !logs?.length : (!user || (!logs?.length && isAddButton))
+  const showEmptyState =
+    logsSource === 'menu'
+      ? !logs?.length
+      : !user || (!logs?.length && isAddButton)
   if (showEmptyState)
     return (
       <div className='logged-items'>
@@ -214,22 +235,17 @@ export function LoggedList({
 
   const onDeleteLog = async (log: Log) => {
     try {
-      if (logsSource === 'menu' && menu) {
-        const newLogs = menu.menuLogs.filter(
-          (l) =>
-            !(
-              (l._id && log._id && l._id === log._id) ||
-              (l.itemId === log.itemId &&
-                l.time === log.time &&
-                l.meal === log.meal)
-            )
-        )
+      if (logsSource === 'menu') {
+        const newLogs =
+          editMenu?.menuLogs.filter((l) => l._id !== log._id) || []
         const newMenu = {
-          ...menu,
+          ...(editMenu as Menu),
           menuLogs: newLogs,
         }
-        await menuService.save(newMenu)
-        setMenu(newMenu)
+        if (updateMenu) {
+          updateMenu(newMenu)
+        }
+
         showSuccessMsg(messages.success.updateCalories)
         return
       }
@@ -291,7 +307,12 @@ export function LoggedList({
         open={isEditOpen}
         onClose={closeEdit}
         title={t('meals.editMeal')}
-        component={<ItemDetails />}
+        component={
+          <ItemDetails
+            updateMenu={updateMenu}
+            editMenu={editMenu}
+          />
+        }
         onSave={closeEdit}
         type='full'
       />

@@ -47,11 +47,14 @@ import { loadItems, setSelectedMeal } from '../../store/actions/item.actions'
 import { ClockPicker } from '../Pickers/ClockPicker'
 import { PickerSelect } from '../Pickers/PickerSelect'
 import CustomSkeleton from '../../CustomMui/CustomSkeleton/CustomSkeleton'
+import { Menu } from '../../types/menu/Menu'
 
 interface ItemDetailsProps {
   onAddToMealClick?: (item: MealItem) => void
   noEdit?: boolean
   isCustomLog?: boolean
+  updateMenu?: (newMenu: Menu) => void
+  editMenu?: Menu
 }
 
 interface EditOption {
@@ -84,6 +87,8 @@ export function ItemDetails({
   onAddToMealClick,
   noEdit = false,
   isCustomLog = false,
+  updateMenu,
+  editMenu,
 }: ItemDetailsProps) {
   const { t } = useTranslation()
   const searchedItem: Item = useSelector(
@@ -338,28 +343,6 @@ export function ItemDetails({
     try {
       if (!user) return showErrorMsg(messages.error.addLog)
 
-      if (addTarget === 'menu' && menu) {
-        const newLog = {
-          itemId: isCustomLog ? '' : (item as Item).searchId,
-          meal: editItem.meal,
-          macros: editItem.totalMacros,
-          time: Date.now(),
-          servingSize: editItem.servingSize,
-          numberOfServings: editItem.numberOfServings,
-          source: isCustomLog ? searchTypes.custom : (searchedItem as Item).type,
-          name: isCustomLog ? editItem.name : '',
-        } as Log
-        const updatedMenu = {
-          ...menu,
-          menuLogs: [...(menu.menuLogs || []), newLog],
-        }
-        await menuService.save(updatedMenu)
-        setMenu(updatedMenu)
-        setSelectedMeal(null)
-        showSuccessMsg(messages.success.addedToMeal)
-        return
-      }
-
       if (!selectedDay) return showErrorMsg(messages.error.addLog)
 
       if (!item.searchId && _hasItems(item)) {
@@ -378,8 +361,8 @@ export function ItemDetails({
                 isCustomLog || item.source === searchTypes.custom
                   ? searchTypes.custom
                   : item.searchId.length < LONGEST_FOOD_ID_LENGTH
-                    ? searchTypes.usda
-                    : searchTypes.openFoodFacts
+                  ? searchTypes.usda
+                  : searchTypes.openFoodFacts
             }
 
             return {
@@ -590,7 +573,45 @@ export function ItemDetails({
           ;(itemMealToEdit as MealItem).source = 'meal'
         }
 
+        if ((item as Item).type && !isCustomLog) {
+          itemMealToEdit.source = (item as Item).type
+        }
+
         onAddToMealClick(itemMealToEdit as MealItem)
+      }
+    }
+    if (updateMenu) {
+      return async () => {
+        const itemIndex = editMenu?.menuLogs.findIndex(
+          (log) => log._id === item._id
+        )
+
+        if (itemIndex === -1 || (!itemIndex && itemIndex !== 0)) return
+
+        const newLog = {
+          ...editMenu?.menuLogs[itemIndex],
+          meal: editItem.meal,
+          macros: editItem.totalMacros,
+          numberOfServings: editItem.numberOfServings,
+          source: isCustomLog ? searchTypes.custom : null,
+        }
+
+        editMenu?.menuLogs.splice(itemIndex, 1, newLog as Log)
+        const newLogs = [...(editMenu?.menuLogs || [])]
+        const newMenu = {
+          ...editMenu,
+          menuLogs: newLogs,
+        }
+
+        try {
+          await logService.save(newLog as Log)
+
+          updateMenu(newMenu as Menu)
+          showSuccessMsg(messages.success.saveMeal)
+          return
+        } catch (err) {
+          showErrorMsg(messages.error.saveMeal)
+        }
       }
     }
     if (editMealItem) {
@@ -648,7 +669,9 @@ export function ItemDetails({
             <div className='title'>{item.name}</div>
             <div className='subtitle'>{`${(+item.macros?.calories).toFixed(
               0
-            )} ${t('macros.kcal')} ${t('meals.for')} ${!_hasItems(item) ? t('meals.per100g') : t('meals.perServing')}`}</div>
+            )} ${t('macros.kcal')} ${t('meals.for')} ${
+              !_hasItems(item) ? t('meals.per100g') : t('meals.perServing')
+            }`}</div>
 
             {!noEdit && !_hasItems(item) && (
               <div
@@ -699,9 +722,11 @@ export function ItemDetails({
                     _hasItems(item) &&
                     option.key === 'servingSize') ||
                   ((item as Item).type === 'meal' &&
-                    option.key === 'servingSize')
+                    option.key === 'servingSize') ||
+                  ((item as MealItem).mealId && option.key === 'servingSize')
                 )
                   return null
+
                 return (
                   <div
                     className={`select-container ${
@@ -712,10 +737,14 @@ export function ItemDetails({
                     <Typography variant='h6'>{option.label}</Typography>
                     {option.type === 'select' && option.values && (
                       <CustomSelect
-                        tooltipTitle={t('common.editOption', { option: option.label })}
+                        tooltipTitle={t('common.editOption', {
+                          option: option.label,
+                        })}
                         label={option.label}
                         values={option.values.map((value) => value.toString())}
-                        valueLabels={option.key === 'meal' ? mealValueLabels : undefined}
+                        valueLabels={
+                          option.key === 'meal' ? mealValueLabels : undefined
+                        }
                         extra={option.extra}
                         value={
                           editItem[option.key as keyof EditItem]?.toString() ||

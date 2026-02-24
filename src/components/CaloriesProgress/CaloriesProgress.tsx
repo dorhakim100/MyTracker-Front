@@ -27,11 +27,12 @@ interface CaloriesProgressProps {
   percentageValue?: number
   current: number
   goal: number
+  isEditButton?: boolean
 }
 
 export function CaloriesProgress({
   current,
-
+  isEditButton = true,
   goal,
 }: CaloriesProgressProps) {
   const { t } = useTranslation()
@@ -96,7 +97,7 @@ export function CaloriesProgress({
         >
           {t('macros.calories')}
         </Typography>
-        <EditIcon onClick={edit} />
+        {isEditButton && <EditIcon onClick={edit} />}
         <div className='goal-container'>
           <GoalBanner
             current={currentValue}

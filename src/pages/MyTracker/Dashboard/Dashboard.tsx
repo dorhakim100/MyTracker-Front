@@ -31,6 +31,7 @@ import {
 import Lottie from 'lottie-react'
 import workoutAnimation from '../../../../public/gain-weight.json'
 import { useWindowDimentions } from '../../../hooks/useWindowDimentions'
+import { getPercentage } from '../../../services/util.service'
 
 const CHECK_INTERVAL = 1000 * 60 // minute
 
@@ -169,10 +170,6 @@ export function Dashboard() {
 
     setSelectedSessionDay(todaySessionDay)
   }, [userToCheck, todaySessionDay])
-
-  function getPercentage(value: number, goal: number) {
-    return (value / goal) * 100
-  }
 
   async function checkDiaryDayChange() {
     if (!userToCheck) return
