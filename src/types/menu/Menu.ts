@@ -5,6 +5,7 @@ export interface Menu {
   userId: string
   menuLogs: Log[]
   name?: string
+  isSelected?: boolean
 }
 
 export interface MenuFilter {

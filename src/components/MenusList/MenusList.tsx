@@ -23,7 +23,7 @@ export function MenusList({ onAddClick }: MenusListProps) {
   const onSelect = async (menu: Menu) => {
     try {
       setMenu(menu)
-      const selectedMenu = await menuService.select(menu._id)
+      const selectedMenu = await menuService.select(menu)
       if (selectedMenu) {
         setMenu(selectedMenu)
       }

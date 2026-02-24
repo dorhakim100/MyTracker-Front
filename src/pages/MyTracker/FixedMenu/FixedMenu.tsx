@@ -10,9 +10,10 @@ import { getMeals } from '../../../assets/config/meals'
 import { EditMenu } from '../../../components/EditMenu/EditMenu'
 import { MenusList } from '../../../components/MenusList/MenusList'
 import { menuService } from '../../../services/menu/menu.service'
-import { setMenus } from '../../../store/actions/user.actions'
+import { setMenus, setMenu } from '../../../store/actions/user.actions'
 import { MealCard } from '../../../components/MealCard/MealCard'
 import { Add } from '@mui/icons-material'
+import { Menu } from '../../../types/menu/Menu'
 
 interface MenuListDialogOptions {
   open: boolean
@@ -35,6 +36,10 @@ export function FixedMenu() {
         const menus = await menuService.query({ userId: user._id })
 
         setMenus(menus)
+        const selected = menus.find((menu: Menu) => menu.isSelected)
+        if (selected) {
+          setMenu(selected)
+        }
       } catch (err) {
         console.error(err)
       }

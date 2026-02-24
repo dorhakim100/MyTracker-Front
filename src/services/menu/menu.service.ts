@@ -50,9 +50,10 @@ async function remove(menuId: string) {
   }
 }
 
-async function select(menuId: string) {
+async function select(menu: Menu) {
   try {
-    return await httpService.put(`${KEY}/select`, { menuId })
+    console.log('select menu', menu)
+    return await httpService.put(`${KEY}/select`, { menu })
   } catch (err) {
     throw err
   }
