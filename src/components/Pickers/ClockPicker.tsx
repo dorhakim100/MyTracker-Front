@@ -112,6 +112,7 @@ export function ClockPicker({
           )
         }
         wheelMode='normal'
+        className='clock-picker'
       >
         <Picker.Column name='numberOfServings'>
           {values.map((number) => (

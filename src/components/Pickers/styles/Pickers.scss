@@ -14,6 +14,10 @@
   // transform: translateZ(0);
   // contain: content;
 
+  .clock-picker {
+    direction: ltr;
+  }
+
   .buttons-container {
     display: grid;
     grid-auto-flow: column;
