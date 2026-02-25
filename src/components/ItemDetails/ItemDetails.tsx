@@ -595,6 +595,7 @@ export function ItemDetails({
           numberOfServings: editItem.numberOfServings,
           source: isCustomLog ? searchTypes.custom : null,
           isFixedMenuLog: true,
+          name: editItem.name || t('menu.customItem'),
         }
 
         editMenu?.menuLogs.splice(itemIndex, 1, newLog as Log)

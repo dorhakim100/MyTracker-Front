@@ -354,7 +354,8 @@
     "defaultName": "תפריט",
     "deleteMenu": "מחיקת תפריט",
     "deleteMenuConfirm": "האם אתה בטוח שברצונך למחוק תפריט זה?",
-    "selectMenu": "בחירת תפריט"
+    "selectMenu": "בחירת תפריט",
+    "customItem": "מאכל מותאם"
   },
   "date": {
     "from": "מתאריך",

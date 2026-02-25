@@ -121,8 +121,6 @@ export function EditMenu({ closeDialog, menuToEdit }: EditMenuProps) {
   }
 
   const onAddToMealClick = async (item: MealItem) => {
-    console.log('item', item)
-    console.log('selectedMeal', selectedMeal)
     const newLog = {
       itemId: item.searchId,
       meal: selectedMeal,
@@ -134,6 +132,7 @@ export function EditMenu({ closeDialog, menuToEdit }: EditMenuProps) {
       mealId: item.mealId,
       createdBy: user._id,
       isFixedMenuLog: true,
+      name: item.name || t('menu.customItem'),
     } as Log
 
     try {

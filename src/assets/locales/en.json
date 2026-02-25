@@ -141,7 +141,8 @@
     "defaultName": "Menu",
     "deleteMenu": "Delete menu",
     "deleteMenuConfirm": "Are you sure you want to delete this menu?",
-    "selectMenu": "Select menu"
+    "selectMenu": "Select menu",
+    "customItem": "Custom Item"
   },
   "workout": {
     "noWorkoutSelected": "No workout selected",

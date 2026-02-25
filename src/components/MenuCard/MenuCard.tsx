@@ -33,12 +33,14 @@ export function MenuCard({ menu, onSelect, onDelete }: MenuCardProps) {
   const [menuToEdit, setMenuToEdit] = useState<Menu | undefined>(undefined)
   const { t } = useTranslation()
   const stats = useMemo(() => {
+    console.log('menu.menuLogs', menu.menuLogs)
     return {
       totalCalories: menu.menuLogs.reduce(
         (acc, log) => acc + log.macros?.calories || 0,
         0
       ),
       itemCount: menu.menuLogs.length,
+      itemsNames: menu.menuLogs.map((log) => log.name).join(', '),
     }
   }, [menu.menuLogs])
 
@@ -117,7 +119,8 @@ export function MenuCard({ menu, onSelect, onDelete }: MenuCardProps) {
             {stats.totalCalories.toFixed(0)} {t('macros.kcal')}
           </Typography>
           <Typography variant='body2'>
-            {stats.itemCount} {t('meals.items')}
+            {stats.itemsNames}
+            {/* {t('meals.items')} */}
           </Typography>
         </div>
       </Card>
