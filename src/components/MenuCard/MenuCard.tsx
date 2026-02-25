@@ -118,10 +118,7 @@ export function MenuCard({ menu, onSelect, onDelete }: MenuCardProps) {
           <Typography variant='body2'>
             {stats.totalCalories.toFixed(0)} {t('macros.kcal')}
           </Typography>
-          <Typography variant='body2'>
-            {stats.itemsNames}
-            {/* {t('meals.items')} */}
-          </Typography>
+          <Typography variant='body2'>{stats.itemsNames}</Typography>
         </div>
       </Card>
       <CustomAlertDialog

@@ -3,10 +3,8 @@
   gap: 0.5rem;
   align-items: start;
   grid-template-rows: auto minmax(310px, 1fr) 1fr;
-  
-  
-  &.dashboard {
 
+  &.dashboard {
     grid-template-rows: auto auto minmax(310px, 1fr) 1fr;
   }
   .no-session-container {
@@ -19,10 +17,9 @@
       justify-self: center;
 
       &.dashboard {
-
         min-width: 300px;
         min-height: 300px;
-  
+
         max-width: 500px;
         max-height: 500px;
       }
@@ -65,24 +62,24 @@
     }
   }
 
-  .dashboard-items-container{
+  .meal-card {
+    // height: 250px;
+  }
 
+  .dashboard-items-container {
     display: grid;
     // max-width: 400px;
     grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
 
     justify-items: center;
     gap: 1rem;
-    .card{
+    .card {
       width: 100%;
 
       max-width: 500px;
-
-
     }
-
   }
-  
+
   .dashboard-session-container {
     margin-top: 0.5rem;
     .bold-header {

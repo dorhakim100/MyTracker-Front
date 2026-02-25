@@ -25,6 +25,7 @@ interface MealCardProps {
   updateMenu?: (newMenu: Menu) => void
   editMenu?: Menu
   noEdit?: boolean
+  className?: string
 }
 
 export function MealCard({
@@ -37,15 +38,16 @@ export function MealCard({
   updateMenu,
   editMenu,
   noEdit = false,
+  className = '',
 }: MealCardProps) {
   const { t } = useTranslation()
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
 
   return (
     <Box
-      className={`meal-card ${prefs.isDarkMode ? 'dark-mode' : ''} ${
-        prefs.favoriteColor || ''
-      }`}
+      className={`meal-card ${className} ${
+        prefs.isDarkMode ? 'dark-mode' : ''
+      } ${prefs.favoriteColor || ''}`}
     >
       <div className='header'>
         <div className='label-container'>

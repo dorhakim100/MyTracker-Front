@@ -109,6 +109,7 @@ export function Dashboard() {
           logsToShow={[]}
           logsSource='menu'
           noEdit={true}
+          className='card'
         />,
         <MacrosDistribution
           key='macros-distribution'
