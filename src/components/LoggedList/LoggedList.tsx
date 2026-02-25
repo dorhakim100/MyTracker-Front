@@ -13,7 +13,6 @@ import {
   optimisticUpdateUser,
   removeLogAction,
   setSelectedDiaryDay,
-  setMenu,
 } from '../../store/actions/user.actions'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { ItemDetails } from '../ItemDetails/ItemDetails'
@@ -33,7 +32,6 @@ import { AddItemButton } from '../AddItemButton/AddItemButton'
 import { DeleteAction } from '../DeleteAction/DeleteAction'
 import { imageService } from '../../services/image/image.service'
 import { mealService } from '../../services/meal/meal.service'
-import { menuService } from '../../services/menu/menu.service'
 import { Menu } from '../../types/menu/Menu'
 
 export type LogsSource = 'diary' | 'menu'

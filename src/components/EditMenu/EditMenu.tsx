@@ -38,7 +38,6 @@ export function EditMenu({ closeDialog, menuToEdit }: EditMenuProps) {
   const { t } = useTranslation()
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
   const user = useSelector((state: RootState) => state.userModule.user)
-  const menu = useSelector((state: RootState) => state.userModule.menu)
   const isLoading = useSelector(
     (state: RootState) => state.systemModule.isLoading
   )

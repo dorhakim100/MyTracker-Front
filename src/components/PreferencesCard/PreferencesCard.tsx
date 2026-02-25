@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useSelector } from 'react-redux'
-import { Divider, Switch, Typography } from '@mui/material'
+import { Divider, Typography } from '@mui/material'
 import { RootState } from '../../store/store'
 import { setPrefs } from '../../store/actions/system.actions'
 import { updateUser } from '../../store/actions/user.actions'

@@ -37,10 +37,9 @@ import {
   handleFavorite,
   optimisticUpdateUser,
   setSelectedDiaryDay,
-  setMenu,
 } from '../../store/actions/user.actions'
 import { dayService } from '../../services/day/day.service'
-import { menuService } from '../../services/menu/menu.service'
+
 import { LoggedToday } from '../../types/loggedToday/LoggedToday'
 import { imageService } from '../../services/image/image.service'
 import { loadItems, setSelectedMeal } from '../../store/actions/item.actions'
@@ -112,14 +111,6 @@ export function ItemDetails({
 
   const selectedDay = useSelector(
     (stateSelector: RootState) => stateSelector.userModule.selectedDay
-  )
-
-  const menu = useSelector(
-    (stateSelector: RootState) => stateSelector.userModule.menu
-  )
-
-  const addTarget = useSelector(
-    (stateSelector: RootState) => stateSelector.itemModule.addTarget
   )
 
   const item: Item | Meal | Log = useMemo(

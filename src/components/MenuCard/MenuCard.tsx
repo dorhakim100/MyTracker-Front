@@ -13,7 +13,6 @@ import { CustomAlertDialog } from '../../CustomMui/CustomAlertDialog/CustomAlert
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Menu } from '../../types/menu/Menu'
-import { DropdownOption } from '../../types/DropdownOption'
 import { SaveCancel } from '../SaveCancel/SaveCancel'
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
 import EditIcon from '@mui/icons-material/Edit'
