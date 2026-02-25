@@ -14,10 +14,7 @@ import {
   loadMenus,
   setSelectedDiaryDay,
 } from '../../../store/actions/user.actions'
-import {
-  capitalizeFirstLetter,
-  getDateFromISO,
-} from '../../../services/util.service'
+import { getDateFromISO } from '../../../services/util.service'
 import { Typography } from '@mui/material'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import { CustomButton } from '../../../CustomMui/CustomButton/CustomButton'
@@ -36,7 +33,7 @@ import Lottie from 'lottie-react'
 import workoutAnimation from '../../../../public/gain-weight.json'
 import { useWindowDimentions } from '../../../hooks/useWindowDimentions'
 import { getPercentage } from '../../../services/util.service'
-import { MealCard, MealCardMeal } from '../../../components/MealCard/MealCard'
+import { MealCard } from '../../../components/MealCard/MealCard'
 import { getMeals } from '../../../assets/config/meals'
 import { useCurrMealPeriod } from '../../../hooks/useCurrMealPeriod'
 
