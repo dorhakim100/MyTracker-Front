@@ -33,6 +33,7 @@ import { goalService } from '../../services/goal/goal.service'
 import { setIsFirstLoading } from './system.actions'
 import { AddTraineeForm } from '../../pages/TrainerDashboard/pages/Trainees/Trainees'
 import { Menu } from '../../types/menu/Menu'
+import { menuService } from '../../services/menu/menu.service'
 
 export async function loadUsers(filter: UserFilter) {
   try {
@@ -425,4 +426,19 @@ export function setMenu(menu: Menu | null) {
 
 export function setMenus(menus: Menu[]) {
   store.dispatch({ type: SET_MENUS, menus })
+}
+
+export async function loadMenus(userId: string) {
+  if (!userId) return
+  try {
+    const menus = await menuService.query({ userId })
+
+    setMenus(menus)
+    const selected = menus.find((menu: Menu) => menu.isSelected)
+    if (selected) {
+      setMenu(selected)
+    }
+  } catch (err) {
+    throw err
+  }
 }

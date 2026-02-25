@@ -11,11 +11,11 @@ import { MacrosDistribution } from '../../../components/MacrosDistribution/Macro
 import { MacrosProgress } from '../../../components/MacrosProgress/MacrosProgress'
 import {
   handleDiaryDayChange,
+  loadMenus,
   setSelectedDiaryDay,
 } from '../../../store/actions/user.actions'
 import {
   capitalizeFirstLetter,
-  getCurrMealPeriod,
   getDateFromISO,
 } from '../../../services/util.service'
 import { Typography } from '@mui/material'
@@ -38,6 +38,7 @@ import { useWindowDimentions } from '../../../hooks/useWindowDimentions'
 import { getPercentage } from '../../../services/util.service'
 import { MealCard, MealCardMeal } from '../../../components/MealCard/MealCard'
 import { getMeals } from '../../../assets/config/meals'
+import { useCurrMealPeriod } from '../../../hooks/useCurrMealPeriod'
 
 const CHECK_INTERVAL = 1000 * 60 // minute
 
@@ -57,6 +58,7 @@ export function Dashboard() {
   const meals = getMeals(t)
 
   const { width } = useWindowDimentions()
+  const currMealPeriod = useCurrMealPeriod()
 
   const todaySessionDay = useSelector(
     (state: RootState) => state.workoutModule.todaySessionDay
@@ -79,8 +81,6 @@ export function Dashboard() {
   const [calories, setCalories] = useState(
     userToCheck?.loggedToday?.calories || 0
   )
-
-  const currMealPeriod = getCurrMealPeriod()
 
   const showStatsCarousel = useMemo(() => {
     return width < 1100
@@ -140,7 +140,7 @@ export function Dashboard() {
         fats={macros.fats.gram}
       />,
     ]
-  }, [userToCheck?._id, calories, macros])
+  }, [userToCheck?._id, calories, macros, currMealPeriod, menu])
   useEffect(() => {
     updateSessionDay()
   }, [userToCheck?._id])
@@ -164,6 +164,12 @@ export function Dashboard() {
     if (!userToCheck) return
 
     checkDiaryDayChange()
+  }, [userToCheck])
+
+  useEffect(() => {
+    if (userToCheck?.isFixedMenu) {
+      loadMenus(userToCheck._id)
+    }
   }, [userToCheck])
 
   useEffect(() => {

@@ -9,11 +9,9 @@ import { SlideDialog } from '../../../components/SlideDialog/SlideDialog'
 import { getMeals } from '../../../assets/config/meals'
 import { EditMenu } from '../../../components/EditMenu/EditMenu'
 import { MenusList } from '../../../components/MenusList/MenusList'
-import { menuService } from '../../../services/menu/menu.service'
-import { setMenus, setMenu } from '../../../store/actions/user.actions'
+import { loadMenus } from '../../../store/actions/user.actions'
 import { MealCard } from '../../../components/MealCard/MealCard'
 import { Add } from '@mui/icons-material'
-import { Menu } from '../../../types/menu/Menu'
 
 interface MenuListDialogOptions {
   open: boolean
@@ -35,21 +33,8 @@ export function FixedMenu() {
   }, [menu])
 
   useEffect(() => {
-    const loadMenus = async () => {
-      if (!user) return
-      try {
-        const menus = await menuService.query({ userId: user._id })
-
-        setMenus(menus)
-        const selected = menus.find((menu: Menu) => menu.isSelected)
-        if (selected) {
-          setMenu(selected)
-        }
-      } catch (err) {
-        console.error(err)
-      }
-    }
-    loadMenus()
+    if (!user?._id) return
+    loadMenus(user._id)
   }, [user?._id])
 
   const [menuListDialogOptions, setMenuListDialogOptions] =
