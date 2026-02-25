@@ -168,7 +168,11 @@ export function Dashboard() {
 
   useEffect(() => {
     if (userToCheck?.isFixedMenu) {
-      loadMenus(userToCheck._id)
+      try {
+        loadMenus(userToCheck._id)
+      } catch (err) {
+        showErrorMsg(t('error.getMenus'))
+      }
     }
   }, [userToCheck])
 

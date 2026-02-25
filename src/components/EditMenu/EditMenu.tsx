@@ -22,10 +22,9 @@ import { MealItem } from '../../types/mealItem/MealItem'
 import { Log } from '../../types/log/Log'
 import { logService } from '../../services/log/log.service'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
-import { Save } from '@mui/icons-material'
 import DoneIcon from '@mui/icons-material/Done'
 import { CircularProgress, Divider } from '@mui/material'
-import { showSuccessMsg } from '../../services/event-bus.service'
+import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
 import { messages } from '../../assets/config/messages'
 import { CustomInput } from '../../CustomMui/CustomInput/CustomInput'
 import { setMenus } from '../../store/actions/user.actions'
@@ -57,8 +56,6 @@ export function EditMenu({ closeDialog, menuToEdit }: EditMenuProps) {
   const [editMenu, setEditMenu] = useState<Menu>(
     menuToEdit || menuService.getEmptyMenu(user._id)
   )
-
-  console.log('editMenu', editMenu)
 
   const menuStats = useMemo(() => {
     return getMenuStats()
@@ -144,7 +141,7 @@ export function EditMenu({ closeDialog, menuToEdit }: EditMenuProps) {
       setEditMenu(newMenu)
       setIsAddModal(false)
     } catch (err) {
-      console.log('err', err)
+      showErrorMsg(t('error.getItem'))
     }
   }
 
@@ -164,11 +161,9 @@ export function EditMenu({ closeDialog, menuToEdit }: EditMenuProps) {
   async function onSaveMenu() {
     try {
       setIsLoading(true)
-      console.log('editMenu', editMenu)
       if (editMenu._id === '') {
         delete (editMenu as Partial<Menu>)._id
       }
-      console.log('editMenu', editMenu)
       const savedMenu = await menuService.save(editMenu)
 
       const newMenus = menus.map((m) =>
@@ -181,7 +176,7 @@ export function EditMenu({ closeDialog, menuToEdit }: EditMenuProps) {
       showSuccessMsg(messages.success.saveMeal)
       closeDialog()
     } catch (err) {
-      console.log('err', err)
+      showErrorMsg(t('error.saveMenu'))
     } finally {
       setIsLoading(false)
     }

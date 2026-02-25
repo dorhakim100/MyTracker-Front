@@ -29,6 +29,7 @@ import SearchIcon from '@mui/icons-material/Search'
 import QrCode2Icon from '@mui/icons-material/QrCode2'
 import { BarcodeScanner } from '../BarcodeScanner/BarcodeScanner'
 import { itemService } from '../../services/item/item.service'
+import { showErrorMsg } from '../../services/event-bus.service'
 
 const stages = ['name', 'items']
 
@@ -266,7 +267,7 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
         item.image = undefined
       }
     } catch (err) {
-      console.log('err', err)
+      showErrorMsg(t('error.getItem'))
     }
 
     const getNewItems = (item: MealItem) => {

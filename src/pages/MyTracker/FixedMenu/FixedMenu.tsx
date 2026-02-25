@@ -12,6 +12,7 @@ import { MenusList } from '../../../components/MenusList/MenusList'
 import { loadMenus } from '../../../store/actions/user.actions'
 import { MealCard } from '../../../components/MealCard/MealCard'
 import { Add } from '@mui/icons-material'
+import { showErrorMsg } from '../../../services/event-bus.service'
 
 interface MenuListDialogOptions {
   open: boolean
@@ -34,7 +35,11 @@ export function FixedMenu() {
 
   useEffect(() => {
     if (!user?._id) return
-    loadMenus(user._id)
+    try {
+      loadMenus(user._id)
+    } catch (err) {
+      showErrorMsg(t('error.getMenus'))
+    }
   }, [user?._id])
 
   const [menuListDialogOptions, setMenuListDialogOptions] =

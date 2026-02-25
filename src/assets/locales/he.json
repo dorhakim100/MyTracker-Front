@@ -421,7 +421,9 @@
       "playEmptyWorkout": "שגיאה בהשמעת אימון ריק",
       "addExercise": "שגיאה בהוספת התרגיל",
       "getExercises": "שגיאה בטעינת התרגילים",
-      "changeExercise": "שגיאה בהחלפת התרגיל"
+      "changeExercise": "שגיאה בהחלפת התרגיל",
+      "getMenus": "שגיאה בטעינת התפריטים",
+      "saveMenu": "שגיאה בשמירת התפריט"
     }
   }
 }

@@ -85,8 +85,6 @@ export function Trainees() {
   const handleAddTrainee = async () => {
     try {
       setIsLoading(true)
-      console.log('handleAddTrainee')
-      console.log(addTraineeForm)
       await addTrainee(addTraineeForm)
       handleClose()
     } catch (error) {

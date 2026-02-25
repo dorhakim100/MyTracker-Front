@@ -33,7 +33,6 @@ export function MenuCard({ menu, onSelect, onDelete }: MenuCardProps) {
   const [menuToEdit, setMenuToEdit] = useState<Menu | undefined>(undefined)
   const { t } = useTranslation()
   const stats = useMemo(() => {
-    console.log('menu.menuLogs', menu.menuLogs)
     return {
       totalCalories: menu.menuLogs.reduce(
         (acc, log) => acc + log.macros?.calories || 0,

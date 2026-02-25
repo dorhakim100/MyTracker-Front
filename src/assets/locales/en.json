@@ -421,7 +421,9 @@
       "playEmptyWorkout": "Failed to play empty workout",
       "addExercise": "Failed to add exercise",
       "getExercises": "Failed to get exercises",
-      "changeExercise": "Failed to change exercise"
+      "changeExercise": "Failed to change exercise",
+      "getMenus": "Failed to get menus",
+      "saveMenu": "Failed to save menu"
     }
   }
 }
