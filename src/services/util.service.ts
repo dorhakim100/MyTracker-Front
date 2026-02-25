@@ -423,3 +423,14 @@ export function getMealPeriodTimestamp(period: string) {
 
   return result.getTime()
 }
+
+export function getCurrMealPeriod(date: Date = new Date()): string {
+  const hour = date.getHours()
+  if (hour >= 6 && hour < 12) {
+    return 'breakfast'
+  } else if (hour >= 12 && hour < 18) {
+    return 'lunch'
+  } else {
+    return 'dinner'
+  }
+}

@@ -13,7 +13,11 @@ import {
   handleDiaryDayChange,
   setSelectedDiaryDay,
 } from '../../../store/actions/user.actions'
-import { getDateFromISO } from '../../../services/util.service'
+import {
+  capitalizeFirstLetter,
+  getCurrMealPeriod,
+  getDateFromISO,
+} from '../../../services/util.service'
 import { Typography } from '@mui/material'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import { CustomButton } from '../../../CustomMui/CustomButton/CustomButton'
@@ -32,6 +36,8 @@ import Lottie from 'lottie-react'
 import workoutAnimation from '../../../../public/gain-weight.json'
 import { useWindowDimentions } from '../../../hooks/useWindowDimentions'
 import { getPercentage } from '../../../services/util.service'
+import { MealCard, MealCardMeal } from '../../../components/MealCard/MealCard'
+import { getMeals } from '../../../assets/config/meals'
 
 const CHECK_INTERVAL = 1000 * 60 // minute
 
@@ -45,6 +51,10 @@ export function Dashboard() {
   const sessionDay = useSelector(
     (state: RootState) => state.workoutModule.sessionDay
   )
+
+  const menu = useSelector((state: RootState) => state.userModule.menu)
+
+  const meals = getMeals(t)
 
   const { width } = useWindowDimentions()
 
@@ -70,12 +80,44 @@ export function Dashboard() {
     userToCheck?.loggedToday?.calories || 0
   )
 
+  const currMealPeriod = getCurrMealPeriod()
+
   const showStatsCarousel = useMemo(() => {
     return width < 1100
   }, [width])
 
   const statsCarouselItems = useMemo(() => {
     if (!userToCheck) return []
+
+    if (userToCheck.isFixedMenu) {
+      const currLogs = menu?.menuLogs.filter(
+        (log) => log.meal?.toLowerCase() === currMealPeriod.toLowerCase()
+      )
+      const caloriesToSet =
+        currLogs?.reduce((acc, log) => acc + log.macros.calories, 0) || 0
+      return [
+        <MealCard
+          key='meal-card'
+          meal={
+            meals.find(
+              (meal) => meal.label === capitalizeFirstLetter(currMealPeriod)
+            ) as MealCardMeal
+          }
+          caloriesToSet={caloriesToSet}
+          showEmptyCardAddButton={false}
+          isAddButton={false}
+          logsToShow={[]}
+          logsSource='menu'
+          noEdit={true}
+        />,
+        <MacrosDistribution
+          key='macros-distribution'
+          protein={macros.protein.gram}
+          carbs={macros.carbs.gram}
+          fats={macros.fats.gram}
+        />,
+      ]
+    }
 
     return [
       <CaloriesProgress

@@ -1,47 +1,47 @@
 .meals-container {
   display: grid;
   gap: 1rem;
-  .meal-card {
+}
+.meal-card {
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+
+  min-height: 120px;
+
+  background-color: $white;
+  padding: 1rem;
+  border-radius: 3px;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+
+  &.dark-mode {
+    background-color: $darker-gray;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
+  }
+
+  .header {
     display: grid;
-    grid-template-rows: auto auto 1fr auto;
+    grid-template-columns: 1fr 1fr;
+    // gap: 16px;
+    text-align: start;
+    align-items: center;
 
-    min-height: 120px;
-
-    background-color: $white;
-    padding: 1rem;
-    border-radius: 3px;
-    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
-
-    &.dark-mode {
-      background-color: $darker-gray;
-      box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
-    }
-
-    .header {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      // gap: 16px;
-      text-align: start;
-      align-items: center;
-
-      .label-container {
-        display: flex;
-        gap: 0.5rem;
-      }
-
-      .period {
-        text-align: end;
-      }
-    }
-
-    .meal-footer {
+    .label-container {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      gap: 0.5rem;
+    }
 
-      .total-calories {
-        // font-weight: 600;
-      }
+    .period {
+      text-align: end;
+    }
+  }
+
+  .meal-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .total-calories {
+      // font-weight: 600;
     }
   }
 }
