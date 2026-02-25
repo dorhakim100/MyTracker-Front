@@ -95,14 +95,22 @@ export function Dashboard() {
       )
       const caloriesToSet =
         currLogs?.reduce((acc, log) => acc + log.macros.calories, 0) || 0
+
+      const meal = meals.find((meal) => meal.period === currMealPeriod)
+
+      if (!meal)
+        return [
+          <MacrosDistribution
+            key='macros-distribution'
+            protein={macros.protein.gram}
+            carbs={macros.carbs.gram}
+            fats={macros.fats.gram}
+          />,
+        ]
       return [
         <MealCard
           key='meal-card'
-          meal={
-            meals.find(
-              (meal) => meal.label === capitalizeFirstLetter(currMealPeriod)
-            ) as MealCardMeal
-          }
+          meal={meal}
           caloriesToSet={caloriesToSet}
           showEmptyCardAddButton={false}
           isAddButton={false}
