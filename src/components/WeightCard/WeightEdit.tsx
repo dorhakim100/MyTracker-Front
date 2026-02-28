@@ -65,10 +65,14 @@ export function WeightEdit({
           })
         }
         wheelMode='normal'
+        className={`weight-picker ${prefs.isDarkMode ? 'dark-mode' : ''}`}
       >
         <Picker.Column name='firstValue'>
           {getArrayOfNumbers(30, 150).map((number) => (
-            <Picker.Item key={number} value={number}>
+            <Picker.Item
+              key={number}
+              value={number}
+            >
               {({ selected }) => (
                 <Typography
                   variant='h5'
@@ -87,7 +91,10 @@ export function WeightEdit({
         />
         <Picker.Column name='secondValue'>
           {getArrayOfNumbers(0, 9).map((number) => (
-            <Picker.Item key={number} value={number}>
+            <Picker.Item
+              key={number}
+              value={number}
+            >
               {({ selected }) => (
                 <Typography
                   variant='h5'
@@ -101,7 +108,10 @@ export function WeightEdit({
         </Picker.Column>
       </Picker>
       {!isHideSaveButton && (
-        <CustomButton text='Save' onClick={onUpdateClick} />
+        <CustomButton
+          text='Save'
+          onClick={onUpdateClick}
+        />
       )}
     </div>
   )
