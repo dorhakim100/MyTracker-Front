@@ -97,6 +97,7 @@ export function LoggedList({
     mealPeriod,
     selectedDay,
     user?.loggedToday?.logs,
+    user?.loggedToday?.logs.length,
     menu?.menuLogs,
     editMenu?.menuLogs,
     logsSource,
