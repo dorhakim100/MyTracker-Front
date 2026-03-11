@@ -1,21 +1,26 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Lottie from 'lottie-react'
-
+import { useTranslation } from 'react-i18next'
 import { useTypewriter, Cursor } from 'react-simple-typewriter'
 
 import { Typography } from '@mui/material'
 // import LinearProgress from '@mui/material/LinearProgress'
 
 import loadingAnimation from '../../../public/food-animation.json'
-// import { useSelector } from 'react-redux'
-// import { RootState } from '../../store/store'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../store/store'
 
-import { loadingPhrases } from '../../assets/config/loading-phrases'
+import { loadingPhraseKeys } from '../../assets/config/loading-phrases'
 import { shuffle } from '../../services/util.service'
 
-const words = shuffle(loadingPhrases)
 
 export function ScreenLoader() {
+  const { t } = useTranslation()
+  const prefs = useSelector((state: RootState) => state.systemModule.prefs)
+  const words = useMemo(
+    () => shuffle(loadingPhraseKeys.map((key) => t(key))),
+    [t]
+  )
   const [dots, setDots] = useState('')
   const [typedText] = useTypewriter({
     words,
@@ -42,13 +47,15 @@ export function ScreenLoader() {
     <div className='screen-loader'>
       <div className='loader-container'>
         <Lottie animationData={loadingAnimation} loop={true} />
-        <div className='dots-container'>
-          <Typography variant='h4'>Loading{dots}</Typography>
+        <div className={`dots-container ${prefs.lang === 'he' ? 'he' : ''}`}>
+          <Typography variant='h4'>{t('common.loading')}{dots}</Typography>
         </div>
-        <div className='typewriter-container'>
+        <div
+          className='typewriter-container'
+        >
           <Typography variant='h4'>
             <span>{typedText}</span>
-            <Cursor cursorStyle='_' />
+            <Cursor cursorStyle='_'  />
           </Typography>
         </div>
       </div>

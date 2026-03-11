@@ -56,7 +56,8 @@
     "search": "חיפוש",
     "name": "שם",
     "previous": "הקודם",
-    "next": "הבא"
+    "next": "הבא",
+    "loading": "טוען"
   },
   "auth": {
     "signIn": "כניסה",
@@ -425,5 +426,19 @@
       "getMenus": "שגיאה בטעינת התפריטים",
       "saveMenu": "שגיאה בשמירת התפריט"
     }
+  },
+  "loading": {
+    "somethingGoodIsCooking": "משהו טוב מתבשל...",
+    "progressIsBeingMade": "מתקדמים יפה...",
+    "macrosAreBeingBalanced": "מכוונים את המאקרו...",
+    "addingAPinchOfMagic": "מוסיפים קמצוץ קסם...",
+    "mixingTheRightIngredients": "מערבבים את המרכיבים הנכונים...",
+    "heatingUpTheGoodStuff": "מחממים את הדברים הטובים...",
+    "loadingWithExtraFlavor": "טוענים עם טעם נוסף...",
+    "fetchingTheSecretRecipe": "מוצאים את המתכון הסודי...",
+    "seasoningTheFinalTouch": "מתבלים את המגע האחרון...",
+    "warmingUp": "מתחממים...",
+    "gettingReady": "מתכוננים...",
+    "pushingTheLimits": "דוחפים את הגבולות..."
   }
 }

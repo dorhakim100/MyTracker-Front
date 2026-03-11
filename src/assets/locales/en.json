@@ -56,7 +56,8 @@
     "search": "Search",
     "name": "Name",
     "previous": "Previous",
-    "next": "Next"
+    "next": "Next",
+    "loading": "Loading"
   },
   "auth": {
     "signIn": "Sign in",
@@ -425,5 +426,19 @@
       "getMenus": "Failed to get menus",
       "saveMenu": "Failed to save menu"
     }
+  },
+  "loading": {
+    "somethingGoodIsCooking": "Something good is cooking...",
+    "progressIsBeingMade": "Progress is being made...",
+    "macrosAreBeingBalanced": "Macros are being balanced...",
+    "addingAPinchOfMagic": "Adding a pinch of magic...",
+    "mixingTheRightIngredients": "Mixing the right ingredients...",
+    "heatingUpTheGoodStuff": "Heating up the good stuff...",
+    "loadingWithExtraFlavor": "Loading with extra flavor...",
+    "fetchingTheSecretRecipe": "Fetching the secret recipe...",
+    "seasoningTheFinalTouch": "Seasoning the final touch...",
+    "warmingUp": "Warming up...",
+    "gettingReady": "Getting ready...",
+    "pushingTheLimits": "Pushing the limits..."
   }
 }

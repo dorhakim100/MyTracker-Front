@@ -15,16 +15,24 @@
     text-align: center !important;
     .dots-container {
       justify-self: center !important;
-      width: 150px;
+      width: 137px;
       display: grid;
       justify-items: start;
+      &.he {
+        width: 77px;
+
+      }
     }
 
     .typewriter-container {
-      // justify-self: start;
       width: 250px;
       display: grid;
       justify-items: start;
+
+      &[dir='rtl'] {
+        justify-items: end;
+      }
+
       span {
         font-size: 1.2rem;
       }
