@@ -15,7 +15,6 @@ import {
   getDateFromISO,
 } from '../../../services/util.service'
 import { showErrorMsg } from '../../../services/event-bus.service'
-import { messages } from '../../../assets/config/messages'
 import { Badge, CircularProgress, Typography } from '@mui/material'
 import { CustomList } from '../../../CustomMui/CustomList/CustomList'
 import { SlideDialog } from '../../../components/SlideDialog/SlideDialog'
@@ -34,6 +33,7 @@ import { ExerciseDetails } from '../../../components/ExerciseDetails/ExerciseDet
 import { WorkoutSession } from '../../../components/WorkoutSession/WorkoutSession'
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
+import { useTranslation } from 'react-i18next'
 
 const WORKOUT = 'workout'
 const EXERCISE = 'exercise'
@@ -45,6 +45,7 @@ interface SessionDialogOptions {
 }
 
 export function Session() {
+  const { t } = useTranslation()
   const sessionDay = useSelector(
     (state: RootState) => state.workoutModule.sessionDay
   )
@@ -116,7 +117,7 @@ export function Session() {
     } catch (err) {
       console.log(err)
 
-      showErrorMsg(messages.error.getSessionDay)
+      showErrorMsg(t('messages.error.getSessionDay'))
     }
   }
 
@@ -156,8 +157,8 @@ export function Session() {
       )
 
       // await saveSessionDay()
-    } catch (err) {
-      showErrorMsg(messages.error.startWorkout)
+    } catch {
+      showErrorMsg(t('messages.error.startWorkout'))
     } finally {
       setIsLoading(false)
     }

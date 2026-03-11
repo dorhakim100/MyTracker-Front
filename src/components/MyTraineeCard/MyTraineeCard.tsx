@@ -9,7 +9,6 @@ import { Chip, Divider } from '@mui/material'
 import { CustomList } from '../../CustomMui/CustomList/CustomList'
 import { userService } from '../../services/user/user.service'
 import { setIsLoading } from '../../store/actions/system.actions'
-import { messages } from '../../assets/config/messages'
 import { showErrorMsg } from '../../services/event-bus.service'
 import AddIcon from '@mui/icons-material/Add'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
@@ -35,24 +34,20 @@ interface MyTraineeCardProps {
 export function MyTraineeCard({ displayTrainees = true }: MyTraineeCardProps) {
   const { t } = useTranslation()
   const user = useSelector((state: RootState) => state.userModule.user)
-
+  
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
-
+  
   const traineeUser = useSelector(
     (state: RootState) => state.userModule.traineeUser
   )
-
+  
   const [searchedTrainees, setSearchedTrainees] = useState<User[]>([])
   const [trainees, setTrainees] = useState<User[]>(user?.trainees ?? [])
-
+  
   const [requests, setRequests] = useState<TrainerRequest[]>([])
-
+  
   const [search, setSearch] = useState<string>('')
-
-  if (!user) {
-    return null
-  }
-
+  
   useEffect(() => {
     if (!search || search === '') {
       setSearchedTrainees([])
@@ -60,10 +55,14 @@ export function MyTraineeCard({ displayTrainees = true }: MyTraineeCardProps) {
     }
     onSearchTrainee()
   }, [search])
-
+  
   useEffect(() => {
     getRequests()
   }, [user])
+  
+    if (!user) {
+      return null
+    }
 
   async function onSearchTrainee() {
     try {
@@ -76,8 +75,8 @@ export function MyTraineeCard({ displayTrainees = true }: MyTraineeCardProps) {
         searchingUserId: user._id,
       })
       setSearchedTrainees(trainees)
-    } catch (error) {
-      showErrorMsg(messages.error.findUser)
+    } catch {
+      showErrorMsg(t('messages.error.findUser'))
     } finally {
       setIsLoading(false)
     }
@@ -95,8 +94,8 @@ export function MyTraineeCard({ displayTrainees = true }: MyTraineeCardProps) {
       })
 
       setRequests([...requests, request])
-    } catch (error) {
-      showErrorMsg(messages.error.addTrainee)
+    } catch {
+      showErrorMsg(t('messages.error.addTrainee'))
     }
   }
 
@@ -115,8 +114,8 @@ export function MyTraineeCard({ displayTrainees = true }: MyTraineeCardProps) {
       setTrainees(requestUsers)
 
       setRequests(requests)
-    } catch (err) {
-      showErrorMsg(messages.error.getRequests)
+    } catch {
+      showErrorMsg(t('messages.error.getRequests'))
     } finally {
       setIsLoading(false)
     }

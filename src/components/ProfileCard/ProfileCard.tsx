@@ -14,9 +14,7 @@ import {
   setTraineeUser,
 } from '../../store/actions/user.actions'
 import { updateUser } from '../../store/actions/user.actions'
-import { showSuccessMsg } from '../../services/event-bus.service'
-import { showErrorMsg } from '../../services/event-bus.service'
-import { messages } from '../../assets/config/messages'
+import { showSuccessMsg, showErrorMsg } from '../../services/event-bus.service'
 import { CustomAlertDialog } from '../../CustomMui/CustomAlertDialog/CustomAlertDialog'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import { useLocation, useNavigate } from 'react-router'
@@ -87,9 +85,9 @@ export function ProfileCard({ userToDisplay }: ProfileCardProps) {
     onCloseEditUser()
     try {
       await updateUser(userToUpdate)
-      showSuccessMsg(messages.success.updateUser)
-    } catch (err) {
-      showErrorMsg(messages.error.updateUser)
+      showSuccessMsg(t('messages.success.updateUser'))
+    } catch {
+      showErrorMsg(t('messages.error.updateUser'))
       if (userToUpdate._id === user?._id) {
         optimisticUpdateUser(userToUpdate)
       }

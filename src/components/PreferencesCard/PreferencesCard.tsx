@@ -59,7 +59,7 @@ export function PreferencesCard() {
     }
     try {
       await updateUser(updatedUser)
-    } catch (err) {
+    } catch {
       showErrorMsg(t('messages.error.updateUser'))
     }
   }

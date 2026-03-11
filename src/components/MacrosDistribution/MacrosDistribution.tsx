@@ -10,8 +10,7 @@ import {
   optimisticUpdateUser,
   updateUser,
 } from '../../store/actions/user.actions'
-import { showSuccessMsg } from '../../services/event-bus.service'
-import { showErrorMsg } from '../../services/event-bus.service'
+import { showSuccessMsg, showErrorMsg } from '../../services/event-bus.service'
 import { User } from '../../types/user/User'
 import { setIsLoading } from '../../store/actions/system.actions'
 import { MacrosDistributionEdit } from './MacrosDistributionEdit'
@@ -68,7 +67,7 @@ export function MacrosDistribution({
       const savedGoal = await goalService.save({ ...userToEdit.currGoal })
       await updateUser({ ...userToEdit, currGoal: savedGoal })
       showSuccessMsg(t('messages.success.updateMacros'))
-    } catch (err) {
+    } catch {
       showErrorMsg(t('messages.error.updateMacros'))
       optimisticUpdateUser(user as User)
     } finally {

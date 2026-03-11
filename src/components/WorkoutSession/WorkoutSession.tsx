@@ -21,7 +21,6 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { ExerciseInstructions } from '../../types/exercise/ExerciseInstructions'
 import { showErrorMsg } from '../../services/event-bus.service'
-import { messages } from '../../assets/config/messages'
 import { instructionsService } from '../../services/instructions/instructions.service'
 import { setIsLoading } from '../../store/actions/system.actions'
 import { setService } from '../../services/set/set.service'
@@ -130,8 +129,8 @@ export function WorkoutSession({
       setIsLoading(true)
       const results = await exerciseSearch(exerciseFilter)
       setExerciseResults(results)
-    } catch (err) {
-      showErrorMsg(messages.error.search)
+    } catch {
+      showErrorMsg(t('messages.error.search'))
       setExerciseResults([])
     } finally {
       setIsLoading(false)
@@ -197,7 +196,7 @@ export function WorkoutSession({
 
   const onAddExercise = async (exercise: Exercise) => {
     try {
-      if (!sessionDay._id) return showErrorMsg(messages.error.addExercise)
+      if (!sessionDay._id) return showErrorMsg(t('messages.error.addExercise'))
       const instructions = sessionDay.instructions
       const isExerciseAlreadyAdded = instructions.exercises.find(
         (e) => e.exerciseId === exercise.exerciseId
@@ -270,8 +269,8 @@ export function WorkoutSession({
         instructions: savedInstructions,
         workout: savedWorkout,
       })
-    } catch (err) {
-      showErrorMsg(messages.error.addExercise)
+    } catch {
+      showErrorMsg(t('messages.error.addExercise'))
     }
   }
 
@@ -300,8 +299,8 @@ export function WorkoutSession({
         instructions: savedInstructions,
         workout: savedWorkout,
       })
-    } catch (err) {
-      showErrorMsg(messages.error.deleteExercise)
+    } catch {
+      showErrorMsg(t('messages.error.deleteExercise'))
     }
   }
 
@@ -430,7 +429,7 @@ export function WorkoutSession({
     isAll: boolean = false
   ) => {
     if (!sessionDay._id) {
-      showErrorMsg(messages.error.updateSet)
+      showErrorMsg(t('messages.error.updateSet'))
       return
     }
     try {
@@ -460,8 +459,8 @@ export function WorkoutSession({
         setIndex,
         false // isNew - updating existing set
       )
-    } catch (err) {
-      showErrorMsg(messages.error.updateSet)
+    } catch {
+      showErrorMsg(t('messages.error.updateSet'))
       return
     } finally {
       setCurrUpdatedExerciseSettings({
@@ -477,7 +476,7 @@ export function WorkoutSession({
     setIndex: number
   ) => {
     if (!sessionDay._id) {
-      showErrorMsg(messages.error.updateSet)
+      showErrorMsg(t('messages.error.updateSet'))
       return
     }
 
@@ -516,7 +515,7 @@ export function WorkoutSession({
         ...sessionDay,
         instructions: originalInstructions,
       })
-      showErrorMsg(messages.error.updateSet)
+      showErrorMsg(t('messages.error.updateSet'))
     } finally {
       setCurrUpdatedExerciseSettings({
         exerciseId: '',
@@ -531,7 +530,7 @@ export function WorkoutSession({
     setIndex: number
   ): Promise<void> => {
     if (!sessionDay._id) {
-      showErrorMsg(messages.error.updateSet)
+      showErrorMsg(t('messages.error.updateSet'))
       return
     }
 
@@ -566,13 +565,13 @@ export function WorkoutSession({
         setIndex,
         true // isNew
       )
-    } catch (err) {
+    } catch {
       // Rollback on error
       setSelectedSessionDay({
         ...sessionDay,
         instructions: originalInstructions,
       })
-      showErrorMsg(messages.error.updateSet)
+      showErrorMsg(t('messages.error.updateSet'))
     }
   }
 
@@ -582,7 +581,7 @@ export function WorkoutSession({
     setIndex: number
   ): Promise<void> => {
     if (!sessionDay._id) {
-      showErrorMsg(messages.error.updateSet)
+      showErrorMsg(t('messages.error.updateSet'))
       return
     }
 
@@ -611,13 +610,13 @@ export function WorkoutSession({
           instructions: savedInstructions,
         })
       }
-    } catch (err) {
+    } catch {
       // Rollback on error
       setSelectedSessionDay({
         ...sessionDay,
         instructions: originalInstructions,
       })
-      showErrorMsg(messages.error.updateSet)
+      showErrorMsg(t('messages.error.updateSet'))
     }
   }
 
@@ -628,7 +627,7 @@ export function WorkoutSession({
     isAll?: boolean
   ): Promise<void> => {
     if (!sessionDay._id) {
-      showErrorMsg(messages.error.updateSet)
+      showErrorMsg(t('messages.error.updateSet'))
       return
     }
 
@@ -717,13 +716,13 @@ export function WorkoutSession({
         await handleAllExercisesCompleted(savedInstructions || newInstructions)
         handleOpenChange(exercise.exerciseId, false)
       }
-    } catch (err) {
+    } catch {
       // Rollback on error
       setSelectedSessionDay({
         ...sessionDay,
         instructions: originalInstructions,
       })
-      showErrorMsg(messages.error.updateSet)
+      showErrorMsg(t('messages.error.updateSet'))
     }
   }
 
@@ -732,8 +731,8 @@ export function WorkoutSession({
       setIsLoading(true)
       const savedInstructions = await instructionsService.save(newInstructions)
       return savedInstructions
-    } catch (err) {
-      showErrorMsg(messages.error.updateSet)
+    } catch {
+      showErrorMsg(t('messages.error.updateSet'))
     } finally {
       setIsLoading(false)
     }
@@ -741,14 +740,14 @@ export function WorkoutSession({
 
   async function deleteSession() {
     try {
-      if (!sessionDay._id) return showErrorMsg(messages.error.deleteSession)
+      if (!sessionDay._id) return showErrorMsg(t('messages.error.deleteSession'))
       setIsLoading(true)
       await removeSessionDay(sessionDay._id)
       if (timer?._id) await removeTimer(timer?._id)
       updateSessionDay()
       closeAlertDialog()
-    } catch (err) {
-      showErrorMsg(messages.error.deleteSession)
+    } catch {
+      showErrorMsg(t('messages.error.deleteSession'))
     } finally {
       setIsLoading(false)
     }
@@ -769,8 +768,8 @@ export function WorkoutSession({
         ),
       })
       closeAlertDialog()
-    } catch (err) {
-      showErrorMsg(messages.error.updateSet)
+    } catch {
+      showErrorMsg(t('messages.error.updateSet'))
     } finally {
       setIsLoading(false)
     }

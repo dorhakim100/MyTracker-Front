@@ -37,8 +37,8 @@ export function FixedMenu() {
     if (!user?._id) return
     try {
       loadMenus(user._id)
-    } catch (err) {
-      showErrorMsg(t('error.getMenus'))
+    } catch {
+      showErrorMsg(t('messages.error.getMenus'))
     }
   }, [user?._id])
 

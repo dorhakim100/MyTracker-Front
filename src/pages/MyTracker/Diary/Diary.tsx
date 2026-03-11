@@ -12,7 +12,6 @@ import { LinearMacrosProgress } from '../../../components/LinearMacrosProgress/L
 import { DayController } from '../../../components/DayController/DayController'
 import { dayService } from '../../../services/day/day.service'
 import { showErrorMsg } from '../../../services/event-bus.service'
-import { messages } from '../../../assets/config/messages'
 import { SlideAnimation } from '../../../components/SlideAnimation/SlideAnimation'
 import { setSelectedDiaryDay } from '../../../store/actions/user.actions'
 import DonutLargeIcon from '@mui/icons-material/DonutLarge'
@@ -70,7 +69,7 @@ export function Diary() {
         setSelectedDiaryDay(diary)
       } catch (error) {
         console.log(error)
-        showErrorMsg(messages.error.getDiary)
+        showErrorMsg(t('messages.error.getDiary'))
       }
     }
     if (!user || !selectedDayDiary) return

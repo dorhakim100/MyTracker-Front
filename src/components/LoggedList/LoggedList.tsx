@@ -7,7 +7,6 @@ import { Item } from '../../types/item/Item'
 import { searchService } from '../../services/search/search-service'
 import { searchTypes } from '../../assets/config/search-types'
 import { searchUrls } from '../../assets/config/search.urls'
-import { messages } from '../../assets/config/messages'
 import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
 import {
   optimisticUpdateUser,
@@ -122,7 +121,7 @@ export function LoggedList({
       await loadItems() // actual update from api
     } catch (err) {
       console.error(err)
-      // showErrorMsg(messages.error.getItem)
+      // showErrorMsg(t('messages.error.getItem'))
     }
   }
 
@@ -230,15 +229,14 @@ export function LoggedList({
       }
 
       if (!itemToSet) {
-        showErrorMsg(messages.error.editMeal)
+        showErrorMsg(t('messages.error.editMeal'))
         return
       }
 
       setEditMealItem({ ...mealItem })
       setItem(itemToSet as Item)
-    } catch (err) {
-      console.error(err)
-      showErrorMsg(messages.error.editMeal)
+    } catch {
+      showErrorMsg(t('messages.error.editMeal'))
     }
   }
 
@@ -255,7 +253,7 @@ export function LoggedList({
           updateMenu(newMenu)
         }
 
-        showSuccessMsg(messages.success.updateCalories)
+        showSuccessMsg(t('messages.success.updateCalories'))
         return
       }
 
@@ -272,10 +270,9 @@ export function LoggedList({
       await logService.remove(log._id as string)
 
       dayService.save(newToday as LoggedToday)
-      showSuccessMsg(messages.success.updateCalories)
-    } catch (err) {
-      console.error(err)
-      showErrorMsg(messages.error.updateCalories)
+      showSuccessMsg(t('messages.success.updateCalories'))
+    } catch {
+      showErrorMsg(t('messages.error.updateCalories'))
       if (user) optimisticUpdateUser(user)
     }
   }

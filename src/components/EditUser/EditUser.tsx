@@ -11,7 +11,6 @@ import Divider from '@mui/material/Divider'
 
 import { CustomInput } from '../../CustomMui/CustomInput/CustomInput'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
-import { messages } from '../../assets/config/messages'
 import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
 import { CustomDatePicker } from '../../CustomMui/CustomDatePicker/CustomDatePicker'
 import { CustomSelect } from '../../CustomMui/CustomSelect/CustomSelect'
@@ -147,15 +146,15 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
       const res = await uploadService.uploadImg(ev)
 
       if (res && res.secure_url) setImgUrl(res.secure_url)
-    } catch (err) {
-      showErrorMsg(messages.error.uploadImg)
+    } catch {
+      showErrorMsg(t('messages.error.uploadImg'))
     } finally {
       setIsLoading(false)
     }
   }
 
   async function handleSave() {
-    if (!selectedUser && !user) return showErrorMsg(messages.error.updateUser)
+    if (!selectedUser && !user) return showErrorMsg(t('messages.error.updateUser'))
 
     const base: User = selectedUser || (user as User)
 
@@ -174,8 +173,8 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
 
     try {
       await onSave(merged)
-    } catch (err) {
-      throw err
+    } catch {
+      showErrorMsg(t('messages.error.updateUser'))
     }
   }
 
@@ -199,9 +198,9 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
       setIsDeleteModalOpen(false)
 
       await logout()
-      showSuccessMsg(messages.success.deleteAccount)
-    } catch (err) {
-      showErrorMsg(messages.error.deleteAccount)
+      showSuccessMsg(t('messages.success.deleteAccount'))
+    } catch {
+      showErrorMsg(t('messages.error.deleteAccount'))
     } finally {
       setIsLoading(false)
     }

@@ -5,7 +5,6 @@ import { BrowserMultiFormatReader, IScannerControls } from '@zxing/browser'
 import { BarcodeFormat, DecodeHintType, Result } from '@zxing/library'
 import { searchService } from '../../services/search/search-service'
 import { showErrorMsg } from '../../services/event-bus.service'
-import { messages } from '../../assets/config/messages'
 import { ItemDetails } from '../ItemDetails/ItemDetails'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { setItem } from '../../store/actions/item.actions'
@@ -88,7 +87,7 @@ export function BarcodeScanner({
       isItemDetected.current = true
       const res = await searchService.getProductById(code)
       if (!res) {
-        showErrorMsg(messages.error.noResults)
+        showErrorMsg(t('messages.error.noResults'))
         setIsTryAgain(true)
         return
       }
@@ -96,8 +95,8 @@ export function BarcodeScanner({
       setIsItemFound(true)
 
       // onClose()
-    } catch (err) {
-      showErrorMsg(messages.error.scan)
+    } catch {
+      showErrorMsg(t('messages.error.scan'))
     }
   }
 

@@ -27,7 +27,6 @@ import RemoveCircleIcon from '@mui/icons-material/RemoveCircle'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import { instructionsService } from '../../services/instructions/instructions.service'
 import { showErrorMsg } from '../../services/event-bus.service'
-import { messages } from '../../assets/config/messages'
 import { setService } from '../../services/set/set.service'
 import { RestingTimerEdit } from '../RestingTimerEdit/RestingTimerEdit'
 import { DEFAULT_RESTING_TIME } from '../../assets/config/times'
@@ -280,10 +279,10 @@ export function ExerciseCard({
         }
         // Remove the unused RPE/RIR field - only keep the one that's actually used
         if (cleanedSet.rir) {
-          const { rpe, ...setWithoutRpe } = cleanedSet
+          const { ...setWithoutRpe } = cleanedSet
           cleanedSet = setWithoutRpe
         } else if (cleanedSet.rpe) {
-          const { rir, ...setWithoutRir } = cleanedSet
+          const { ...setWithoutRir } = cleanedSet
           cleanedSet = setWithoutRir
         }
 
@@ -291,8 +290,8 @@ export function ExerciseCard({
       })
 
       await Promise.all(promises)
-    } catch (err) {
-      showErrorMsg(messages.error.updateSet)
+    } catch {
+      showErrorMsg(t('messages.error.updateSet'))
     }
   }
 
@@ -311,8 +310,8 @@ export function ExerciseCard({
         )
 
         setExerciseSets(sets)
-      } catch (err) {
-        showErrorMsg(messages.error.getSets)
+      } catch {
+        showErrorMsg(t('messages.error.getSets'))
       }
     }
 

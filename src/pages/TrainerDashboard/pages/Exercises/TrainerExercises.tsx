@@ -12,7 +12,6 @@ import {
   filterExercises,
   getMostPopularExercises,
 } from '../../../../services/exersice-search/exersice-search'
-import { messages } from '../../../../assets/config/messages'
 import { showErrorMsg } from '../../../../services/event-bus.service'
 import { setIsLoading } from '../../../../store/actions/system.actions'
 import { useTranslation } from 'react-i18next'
@@ -50,8 +49,8 @@ export function TrainerExercises() {
       setIsLoading(true)
       const results = await exerciseSearch(exerciseFilter)
       setExerciseResults(results)
-    } catch (err) {
-      showErrorMsg(messages.error.search)
+    } catch {
+      showErrorMsg(t('messages.error.search'))
       setExerciseResults([])
     } finally {
       setIsLoading(false)

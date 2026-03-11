@@ -175,8 +175,8 @@ export function Dashboard() {
     if (userToCheck?.isFixedMenu) {
       try {
         loadMenus(userToCheck._id)
-      } catch (err) {
-        showErrorMsg(t('error.getMenus'))
+      } catch {
+        showErrorMsg(t('messages.error.getMenus'))
       }
     }
   }, [userToCheck])

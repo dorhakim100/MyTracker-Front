@@ -7,7 +7,6 @@ import { useSelector } from 'react-redux'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 
 import { showSuccessMsg, showErrorMsg } from '../../services/event-bus.service'
-import { messages } from '../../assets/config/messages'
 import {
   optimisticUpdateUser,
   setSelectedDiaryDay,
@@ -72,7 +71,7 @@ export function WeightCard() {
   }
 
   const onSave = async (value: number) => {
-    if (!user) return showErrorMsg(messages.error.updateWeight)
+    if (!user) return showErrorMsg(t('messages.error.updateWeight'))
     setWeightToAdd(value)
     try {
       const dateToSave = new Date(selectedDate).setMilliseconds(0)
@@ -103,9 +102,9 @@ export function WeightCard() {
         weight: { ...savedWeight },
       } as LoggedToday)
 
-      showSuccessMsg(messages.success.updateWeight)
-    } catch (err) {
-      showErrorMsg(messages.error.updateWeight)
+      showSuccessMsg(t('messages.success.updateWeight'))
+    } catch {
+      showErrorMsg(t('messages.error.updateWeight'))
     }
     onClose()
   }

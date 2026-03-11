@@ -13,7 +13,6 @@ import { searchService } from '../../../services/search/search-service'
 import { loadItems, setEditMealItem } from '../../../store/actions/item.actions'
 import { CustomList } from '../../../CustomMui/CustomList/CustomList'
 import { LoggedToday } from '../../../types/loggedToday/LoggedToday'
-import { messages } from '../../../assets/config/messages'
 import { showErrorMsg } from '../../../services/event-bus.service'
 import { israelLocaleStringObject } from '../../../assets/config/times'
 import EventRepeatIcon from '@mui/icons-material/EventRepeat'
@@ -27,10 +26,12 @@ import { searchTypes } from '../../../assets/config/search-types'
 import { searchUrls } from '../../../assets/config/search.urls'
 import { imageService } from '../../../services/image/image.service'
 import { Item } from '../../../types/item/Item'
+import { useTranslation } from 'react-i18next'
 
 const ONE_DAY = 24 * 60 * 60 * 1000
 
 export function Progress() {
+  const { t } = useTranslation()
   const user = useSelector((state: RootState) => state.userModule.user)
 
   const [isEditOpen, setIsEditOpen] = useState(false)
@@ -54,9 +55,8 @@ export function Progress() {
 
       setLoggedToday(loggedToday)
       return loggedToday
-    } catch (err) {
-      console.error(err)
-      showErrorMsg(messages.error.getDiary)
+    } catch {
+      showErrorMsg(t('messages.error.getDiary'))
     }
   }, [computedSelectedDate, user?._id])
 

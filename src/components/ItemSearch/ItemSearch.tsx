@@ -7,7 +7,6 @@ import { useSelector } from 'react-redux'
 
 import { searchService } from '../../services/search/search-service'
 import { searchTypes } from '../../assets/config/search-types'
-import { messages } from '../../assets/config/messages'
 
 import { RootState } from '../../store/store'
 import { ItemFilter } from '../ItemFilter/ItemFilter'
@@ -99,7 +98,7 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
     setIsLoading(true)
     try {
       if (!filter.source) {
-        showErrorMsg(messages.error.search)
+        showErrorMsg(t('messages.error.search'))
         return
       }
       const regex = new RegExp(filter.txt, 'i')
@@ -135,7 +134,7 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
       setResultsDragable(false)
       setResults(res)
     } catch {
-      showErrorMsg(messages.error.search)
+      showErrorMsg(t('messages.error.search'))
     } finally {
       setIsLoading(false)
     }
@@ -174,13 +173,13 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
 
   const onFavoriteClick = async (item: Item) => {
     try {
-      if (!user) return showErrorMsg(messages.error.favorite)
+      if (!user) return showErrorMsg(t('messages.error.favorite'))
       if (!item.searchId && !item.items)
-        return showErrorMsg(messages.error.favorite)
+        return showErrorMsg(t('messages.error.favorite'))
 
       await handleFavorite(item, user)
     } catch {
-      showErrorMsg(messages.error.favorite)
+      showErrorMsg(t('messages.error.favorite'))
     }
   }
 
@@ -210,8 +209,7 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
     optimisticUpdateUser(newUser as User)
     try {
       await updateUser(newUser as User)
-    } catch (err) {
-      console.error(err)
+    } catch {
       optimisticUpdateUser(user as User)
     }
   }

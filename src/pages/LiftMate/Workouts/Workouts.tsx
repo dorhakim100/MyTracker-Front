@@ -25,7 +25,6 @@ import {
   getDateFromISO,
 } from '../../../services/util.service'
 import { DeleteAction } from '../../../components/DeleteAction/DeleteAction'
-import { messages } from '../../../assets/config/messages'
 import {
   showErrorMsg,
   showSuccessMsg,
@@ -245,9 +244,9 @@ export function Workouts() {
       await userService.updateRequest(request._id, status)
       const updatedRequests = requests.filter((r) => r._id !== request._id)
       setRequests(updatedRequests)
-      showSuccessMsg(messages.success.updateRequest)
-    } catch (err) {
-      showErrorMsg(messages.error.updateRequest)
+      showSuccessMsg(t('messages.success.updateRequest'))
+    } catch {
+      showErrorMsg(t('messages.error.updateRequest'))
     } finally {
       setIsLoading(false)
     }
@@ -296,8 +295,8 @@ export function Workouts() {
         traineeUser || user
       )
       setSelectedSessionDay(day)
-    } catch (err) {
-      showErrorMsg(messages.error.getSessionDay)
+    } catch {
+      showErrorMsg(t('messages.error.getSessionDay'))
     } finally {
       setIsPageLoading(false)
     }
@@ -308,7 +307,7 @@ export function Workouts() {
     isSwipeable: boolean = true
   ) {
     try {
-      if (!workout._id) return showErrorMsg(messages.error.deleteWorkout)
+      if (!workout._id) return showErrorMsg(t('messages.error.deleteWorkout'))
 
       if (!isSwipeable) {
         await removeWorkout(workout._id)
@@ -317,10 +316,10 @@ export function Workouts() {
         await workoutService.remove(workout._id)
       }
 
-      showSuccessMsg(messages.success.deleteWorkout)
+      showSuccessMsg(t('messages.success.deleteWorkout'))
     } catch (err) {
       console.error(err)
-      showErrorMsg(messages.error.deleteWorkout)
+      showErrorMsg(t('messages.error.deleteWorkout'))
     }
   }
 
@@ -347,8 +346,8 @@ export function Workouts() {
       }
 
       // await saveSessionDay()
-    } catch (err) {
-      showErrorMsg(messages.error.startWorkout)
+    } catch {
+      showErrorMsg(t('messages.error.startWorkout'))
     } finally {
       setIsLoading(false)
     }
@@ -573,8 +572,8 @@ export function Workouts() {
       await playEmptyWorkout(traineeUser?._id || user?._id || '')
       setSlideDirection(-1)
       setActiveRoute('/')
-    } catch (err) {
-      showErrorMsg(messages.error.playEmptyWorkout)
+    } catch {
+      showErrorMsg(t('messages.error.playEmptyWorkout'))
     } finally {
       setEmptyWorkoutLoading(false)
     }

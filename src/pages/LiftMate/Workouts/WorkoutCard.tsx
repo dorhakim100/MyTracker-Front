@@ -31,7 +31,6 @@ import {
   showErrorMsg,
   showSuccessMsg,
 } from '../../../services/event-bus.service'
-import { messages } from '../../../assets/config/messages'
 import { CustomAlertDialog } from '../../../CustomMui/CustomAlertDialog/CustomAlertDialog'
 import { SlideDialog } from '../../../components/SlideDialog/SlideDialog'
 import { WorkoutDetails } from '../../../components/WorkoutDetails/WorkoutDetails'
@@ -90,12 +89,12 @@ export function WorkoutCard({
 
   const onDelete = useCallback(async () => {
     try {
-      if (!workout._id) return showErrorMsg(messages.error.deleteWorkout)
+      if (!workout._id) return showErrorMsg(t('messages.error.deleteWorkout'))
       await removeWorkout(workout._id)
-      showSuccessMsg(messages.success.deleteWorkout)
+      showSuccessMsg(t('messages.success.deleteWorkout'))
       setIsDeleteOpen(false)
-    } catch (err) {
-      showErrorMsg(messages.error.deleteWorkout)
+    } catch {
+      showErrorMsg(t('messages.error.deleteWorkout'))
     }
   }, [workout._id, setIsDeleteOpen])
 

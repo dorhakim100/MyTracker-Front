@@ -5,7 +5,6 @@ import { debounce } from '../../../services/util.service'
 // import { MONTH_IN_MS } from '../../../assets/config/times'
 import { CustomInput } from '../../../CustomMui/CustomInput/CustomInput'
 import { showErrorMsg } from '../../../services/event-bus.service'
-import { messages } from '../../../assets/config/messages'
 import { exerciseSearch } from '../../../services/exersice-search/exersice-search'
 import { Exercise } from '../../../types/exercise/Exercise'
 import { setIsLoading } from '../../../store/actions/system.actions'
@@ -18,6 +17,7 @@ import { Divider } from '@mui/material'
 import { capitalizeFirstLetter } from '../../../services/util.service'
 import { SlideDialog } from '../../../components/SlideDialog/SlideDialog'
 import { ExerciseDetails } from '../../../components/ExerciseDetails/ExerciseDetails'
+import { useTranslation } from 'react-i18next'
 
 type slideOptions = {
   open: boolean
@@ -26,6 +26,7 @@ type slideOptions = {
 }
 
 export function Progress() {
+  const { t } = useTranslation()
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
@@ -59,8 +60,8 @@ export function Progress() {
         equipmentValue: 'All',
       })
       setExerciseResults(results)
-    } catch (err) {
-      showErrorMsg(messages.error.search)
+    } catch {
+      showErrorMsg(t('messages.error.search'))
       setExerciseResults([])
     } finally {
       setIsLoading(false)

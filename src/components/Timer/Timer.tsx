@@ -7,12 +7,12 @@ import { CustomLinearProgress } from '../../CustomMui/CustomLinearProgress/Custo
 import { capitalizeFirstLetter, formatTime } from '../../services/util.service'
 import { SECOND_IN_MS } from '../../assets/config/times'
 import { showErrorMsg } from '../../services/event-bus.service'
-import { messages } from '../../assets/config/messages'
 import { setTimer } from '../../store/actions/workout.action'
 import { SlideAnimation } from '../SlideAnimation/SlideAnimation'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { ExerciseDetails } from '../ExerciseDetails/ExerciseDetails'
 import { Exercise } from '../../types/exercise/Exercise'
+import { useTranslation } from 'react-i18next'
 
 const colorMap: Record<string, string> = {
   primary: 'var(--primary-color)',
@@ -32,6 +32,7 @@ interface ExerciseDialogOptions {
 }
 
 export function Timer() {
+  const { t } = useTranslation()
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
 
   const currentExercise = useSelector(
@@ -91,9 +92,8 @@ export function Timer() {
         currentExercise: currentExercise,
         startTime: new Date().getTime(),
       })
-    } catch (err) {
-      console.error(err)
-      showErrorMsg(messages.error.startTimer)
+    } catch {
+      showErrorMsg(t('messages.error.startTimer'))
     }
   }
 

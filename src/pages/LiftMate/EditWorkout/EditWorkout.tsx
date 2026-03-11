@@ -10,7 +10,6 @@ import {
   showErrorMsg,
   showSuccessMsg,
 } from '../../../services/event-bus.service'
-import { messages } from '../../../assets/config/messages'
 import {
   exerciseSearch,
   getMostPopularExercises,
@@ -95,8 +94,8 @@ export function EditWorkout({
       setIsLoading(true)
       const results = await exerciseSearch(exerciseFilter)
       setExerciseResults(results)
-    } catch (err) {
-      showErrorMsg(messages.error.search)
+    } catch {
+      showErrorMsg(t('messages.error.search'))
       setExerciseResults([])
     } finally {
       setIsLoading(false)
@@ -124,8 +123,8 @@ export function EditWorkout({
 
       setWeeksStatus(statuses)
       setInstructions(instructions)
-    } catch (err) {
-      showErrorMsg(messages.error.getWorkoutInstructions)
+    } catch {
+      showErrorMsg(t('messages.error.getWorkoutInstructions'))
     } finally {
       setIsLoading(false)
     }
@@ -227,7 +226,7 @@ export function EditWorkout({
         (e) => e.exerciseId !== exercise.exerciseId
       ),
     }))
-    showSuccessMsg(messages.success.deleteExercise)
+    showSuccessMsg(t('messages.success.deleteExercise'))
   }
 
   const onReorderExercises = (exercises: Exercise[]) => {
@@ -302,12 +301,12 @@ export function EditWorkout({
     )
     if (!exerciseInstructionToUpdate) return
 
-    let newExerciseInstruction = { ...exerciseInstructionToUpdate }
+    const newExerciseInstruction = { ...exerciseInstructionToUpdate }
 
     if (value === 'rpe') {
       newExerciseInstruction.sets = newExerciseInstruction.sets.map((set) => {
         // Create a new set object without rir, but with rpe
-        const { rir, ...setWithoutRir } = set
+        const { ...setWithoutRir } = set
         return {
           ...setWithoutRir,
           rpe: {
@@ -320,7 +319,7 @@ export function EditWorkout({
     if (value === 'rir') {
       newExerciseInstruction.sets = newExerciseInstruction.sets.map((set) => {
         // Create a new set object without rpe, but with rir
-        const { rpe, ...setWithoutRpe } = set
+        const { ...setWithoutRpe } = set
         return {
           ...setWithoutRpe,
           rir: {
@@ -393,9 +392,9 @@ export function EditWorkout({
       await loadWorkouts({ forUserId: traineeUser?._id || user?._id || '' })
 
       setWeeksStatus(statuses)
-      showSuccessMsg(messages.success.saveWorkout)
-    } catch (err) {
-      showErrorMsg(messages.error.saveWorkout)
+      showSuccessMsg(t('messages.success.saveWorkout'))
+    } catch {
+      showErrorMsg(t('messages.error.saveWorkout'))
     } finally {
       setIsLoading(false)
       if (isClose) {

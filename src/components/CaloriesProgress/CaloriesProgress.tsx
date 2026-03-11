@@ -11,8 +11,7 @@ import {
   updateUser,
 } from '../../store/actions/user.actions'
 import { setIsLoading } from '../../store/actions/system.actions'
-import { showSuccessMsg } from '../../services/event-bus.service'
-import { showErrorMsg } from '../../services/event-bus.service'
+import { showSuccessMsg, showErrorMsg } from '../../services/event-bus.service'
 import { CaloriesEdit } from './CaloriesEdit'
 
 import { EditIcon } from '../EditIcon/EditIcon'
@@ -71,7 +70,7 @@ export function CaloriesProgress({
       const savedGoal = await goalService.save({ ...userToEdit.currGoal })
       await updateUser({ ...userToEdit, currGoal: savedGoal })
       showSuccessMsg(t('messages.success.updateCalories'))
-    } catch (err) {
+    } catch {
       showErrorMsg(t('messages.error.updateCalories'))
       optimisticUpdateUser(user as User)
     } finally {

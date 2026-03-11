@@ -15,7 +15,6 @@ import { EditMeal } from '../../components/EditMeal/EditMeal'
 import { Meal } from '../../types/meal/Meal'
 import { mealService } from '../../services/meal/meal.service'
 import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
-import { messages } from '../../assets/config/messages'
 import { MacrosDonut } from '../../components/MacrosDonut/MacrosDonut'
 import { searchUrls } from '../../assets/config/search.urls'
 import { User } from '../../types/user/User'
@@ -71,9 +70,9 @@ export function MealsCard() {
 
       onCloseMealDetails()
       await updateUser(newUser)
-      showSuccessMsg(messages.success.saveMeal)
-    } catch (err) {
-      showErrorMsg(messages.error.saveMeal)
+      showSuccessMsg(t('messages.success.saveMeal'))
+    } catch {
+      showErrorMsg(t('messages.error.saveMeal'))
       const index = user?.meals.findIndex(
         (meal) => meal._id === editMeal._id
       ) as number
@@ -101,9 +100,8 @@ export function MealsCard() {
 
     try {
       await updateUser(newUser)
-    } catch (err) {
-      console.error(err)
-      showErrorMsg(messages.error.saveMeal)
+    } catch {
+      showErrorMsg(t('messages.error.saveMeal'))
       optimisticUpdateUser(user as User)
     }
   }
@@ -116,9 +114,8 @@ export function MealsCard() {
 
     try {
       await updateUser(newUser as User)
-    } catch (err) {
-      console.error(err)
-      showErrorMsg(messages.error.deleteMeal)
+    } catch {
+      showErrorMsg(t('messages.error.deleteMeal'))
       optimisticUpdateUser(user as User)
     }
   }

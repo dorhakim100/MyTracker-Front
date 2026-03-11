@@ -20,7 +20,6 @@ import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import { CustomAlertDialog } from '../../CustomMui/CustomAlertDialog/CustomAlertDialog'
 import { useState } from 'react'
 import { showErrorMsg } from '../../services/event-bus.service'
-import { messages } from '../../assets/config/messages'
 import { instructionsService } from '../../services/instructions/instructions.service'
 import { NotesDisplay } from '../NotesDisplay/NotesDisplay'
 import { ExpectedActual } from '../../types/expectedActual/ExpectedActual'
@@ -51,8 +50,8 @@ function Row(props: {
       const date = new Date(sets[0].createdAt || '').toLocaleDateString('he')
 
       setAlertDialogOptions({ open: true, notes: notes, date: date })
-    } catch (err) {
-      showErrorMsg(messages.error.getNotes)
+    } catch {
+      showErrorMsg(t('messages.error.getNotes'))
     }
   }
 
@@ -111,7 +110,7 @@ function Row(props: {
             onClick={(ev) => {
               ev.stopPropagation()
               const sessionId = sets[0].sessionId
-              if (!sessionId) return showErrorMsg(messages.error.getNotes)
+              if (!sessionId) return showErrorMsg(t('messages.error.getNotes'))
               getNotes(sessionId, sets[0].exerciseId)
             }}
             isIcon={true}

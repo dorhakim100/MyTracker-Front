@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { useEffect, useMemo, useState } from 'react'
 import { showErrorMsg } from '../../services/event-bus.service'
-import { messages } from '../../assets/config/messages'
+
 import {
   filterExercises,
   getAlternateExercises,
@@ -26,6 +26,7 @@ import { instructionsService } from '../../services/instructions/instructions.se
 import { setSelectedSessionDay } from '../../store/actions/workout.action'
 import { setService } from '../../services/set/set.service'
 import { workoutService } from '../../services/workout/workout.service'
+import { useTranslation } from 'react-i18next'
 
 interface ChangeExerciseProps {
   exerciseToChange: Exercise
@@ -39,6 +40,7 @@ interface SlideDialogOptions {
 }
 
 export function ChangeExercise({ exerciseToChange }: ChangeExerciseProps) {
+  const { t } = useTranslation()
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
@@ -89,8 +91,8 @@ export function ChangeExercise({ exerciseToChange }: ChangeExerciseProps) {
       const exercises = await getAlternateExercises(exerciseToChange)
 
       setSuggestedExercises(exercises)
-    } catch (err) {
-      showErrorMsg(messages.error.getExercises)
+    } catch {
+      showErrorMsg(t('messages.error.getExercises'))
     } finally {
       setIsListLoading(false)
       setIsLoading(false)
@@ -112,12 +114,12 @@ export function ChangeExercise({ exerciseToChange }: ChangeExerciseProps) {
 
   const onChangeExercise = async (newExercise: Exercise) => {
     if (!sessionDay || !sessionDay.instructions._id)
-      return showErrorMsg(messages.error.getSessionDay)
+      return showErrorMsg(t('messages.error.getSessionDay'))
     const oldExerciseInstructions = sessionDay.instructions.exercises.find(
       (exercise) => exercise.exerciseId === exerciseToChange.exerciseId
     )
     if (!oldExerciseInstructions)
-      return showErrorMsg(messages.error.changeExercise)
+      return showErrorMsg(t('messages.error.changeExercise'))
 
     try {
       setIsLoading(true)
@@ -175,8 +177,8 @@ export function ChangeExercise({ exerciseToChange }: ChangeExerciseProps) {
       ]
 
       await Promise.all(promises)
-    } catch (err) {
-      showErrorMsg(messages.error.changeExercise)
+    } catch {
+      showErrorMsg(t('messages.error.changeExercise'))
     } finally {
       setIsLoading(false)
     }

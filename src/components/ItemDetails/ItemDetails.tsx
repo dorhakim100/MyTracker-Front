@@ -32,7 +32,6 @@ import { calculateCarbCalories } from '../../services/macros/macros.service'
 import { calculateFatCalories } from '../../services/macros/macros.service'
 import EditIcon from '@mui/icons-material/Edit'
 import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
-import { messages } from '../../assets/config/messages'
 import {
   handleFavorite,
   optimisticUpdateUser,
@@ -296,12 +295,12 @@ export function ItemDetails({
     try {
       e.stopPropagation()
 
-      if (!user) return showErrorMsg(messages.error.favorite)
-      if (!searchedItem.searchId) return showErrorMsg(messages.error.favorite)
+      if (!user) return showErrorMsg(t('messages.error.favorite'))
+      if (!searchedItem.searchId) return showErrorMsg(t('messages.error.favorite'))
 
       await handleFavorite(searchedItem, user)
     } catch {
-      showErrorMsg(messages.error.favorite)
+      showErrorMsg(t('messages.error.favorite'))
     }
   }
 
@@ -332,9 +331,9 @@ export function ItemDetails({
 
   const onAddToMeal = async () => {
     try {
-      if (!user) return showErrorMsg(messages.error.addLog)
+      if (!user) return showErrorMsg(t('messages.error.addLog'))
 
-      if (!selectedDay) return showErrorMsg(messages.error.addLog)
+      if (!selectedDay) return showErrorMsg(t('messages.error.addLog')  )
 
       if (!item.searchId && _hasItems(item)) {
         const LONGEST_FOOD_ID_LENGTH = 10
@@ -379,7 +378,7 @@ export function ItemDetails({
           })
           .filter((log) => log !== null)
 
-        if (!logsToAdd.length) return showErrorMsg(messages.error.addLog)
+        if (!logsToAdd.length) return showErrorMsg(t('messages.error.addLog'))
 
         const logsToSave = logsToAdd.map(async (log: Log) => {
           return await logService.save(log)
@@ -417,7 +416,7 @@ export function ItemDetails({
 
         setSelectedDiaryDay(dayToSave as LoggedToday)
 
-        showSuccessMsg(messages.success.addedToMeal)
+        showSuccessMsg(t('messages.success.addedToMeal'))
         return
       }
 
@@ -468,15 +467,15 @@ export function ItemDetails({
 
       setSelectedDiaryDay(dayToSave as LoggedToday)
 
-      showSuccessMsg(messages.success.addedToMeal)
+      showSuccessMsg(t('messages.success.addedToMeal'))
     } catch {
-      showErrorMsg(messages.error.addLog)
+      showErrorMsg(t('messages.error.addLog'))
     }
   }
 
   async function onEditMeal() {
     try {
-      if (!editMealItem) return showErrorMsg(messages.error.editMeal)
+      if (!editMealItem) return showErrorMsg(t('messages.error.editMeal'))
 
       const newLog = {
         ...editMealItem,
@@ -498,11 +497,11 @@ export function ItemDetails({
 
       const userLogs = selectedDay?.logs
 
-      if (!userLogs) return showErrorMsg(messages.error.editMeal)
+      if (!userLogs) return showErrorMsg(t('messages.error.editMeal'))
       const logIndex = userLogs.findIndex(
         (log) => log.time === editMealItem.time
       )
-      if (logIndex === -1) return showErrorMsg(messages.error.editMeal)
+      if (logIndex === -1) return showErrorMsg(t('messages.error.editMeal'))
 
       const newLogs = [...userLogs]
       newLogs[logIndex] = newLog
@@ -539,9 +538,9 @@ export function ItemDetails({
         await dayService.save(newSelectedDay as LoggedToday)
       }
 
-      showSuccessMsg(messages.success.saveMeal)
-    } catch (err) {
-      showErrorMsg(messages.error.saveMeal)
+      showSuccessMsg(t('messages.success.saveMeal'))
+    } catch {
+      showErrorMsg(t('messages.error.saveMeal'))
       optimisticUpdateUser(user as User)
     }
   }
@@ -600,10 +599,10 @@ export function ItemDetails({
           await logService.save(newLog as Log)
 
           updateMenu(newMenu as Menu)
-          showSuccessMsg(messages.success.saveMeal)
+          showSuccessMsg(t('messages.success.saveMeal'))
           return
-        } catch (err) {
-          showErrorMsg(messages.error.saveMeal)
+        } catch {
+          showErrorMsg(t('messages.error.saveMeal'))
         }
       }
     }

@@ -29,7 +29,6 @@ import { CustomList } from '../../../CustomMui/CustomList/CustomList'
 import { CustomAlertDialog } from '../../../CustomMui/CustomAlertDialog/CustomAlertDialog'
 import { SaveCancel } from '../../../components/SaveCancel/SaveCancel'
 import { showErrorMsg } from '../../../services/event-bus.service'
-import { messages } from '../../../assets/config/messages'
 
 type DialogType = 'add' | 'reorder' | 'alert' | null
 
@@ -299,8 +298,8 @@ export function NameExercises({
         weekNumber: desiredWeekNumber,
       })
       closeDialog()
-    } catch (err) {
-      showErrorMsg(messages.error.saveWorkout)
+    } catch {
+      showErrorMsg(t('messages.error.saveWorkout'))
     }
   }
 

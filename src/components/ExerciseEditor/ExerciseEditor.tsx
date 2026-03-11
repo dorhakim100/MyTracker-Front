@@ -16,7 +16,6 @@ import { Set } from '../../types/exercise/Exercise'
 import { ExerciseInstructions } from '../../types/exercise/ExerciseInstructions'
 import { instructionsService } from '../../services/instructions/instructions.service'
 import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
-import { messages } from '../../assets/config/messages'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import { PickerSelect } from '../Pickers/PickerSelect'
 import { ClockPicker } from '../Pickers/ClockPicker'
@@ -136,15 +135,15 @@ export function ExerciseEditor({
       } else if (addSet) {
         await addSet(updatedExercise, newSets.length - 1)
       }
-      showSuccessMsg(messages.success.addSet)
-    } catch (err) {
-      showErrorMsg(messages.error.addSet)
+      showSuccessMsg(t('messages.success.addSet'))
+    } catch {
+      showErrorMsg(t('messages.error.addSet'))
     }
   }
 
   const onDeleteSet = async (indexToRemove: number) => {
     if (indexToRemove === 0 && exercise.sets.length === 1) {
-      showErrorMsg(messages.error.deleteSet)
+      showErrorMsg(t('messages.error.deleteSet'))
       return
     }
     const newSets = exercise.sets.filter((_, index) => index !== indexToRemove)
@@ -156,8 +155,8 @@ export function ExerciseEditor({
       } else if (removeSet) {
         await removeSet(updatedExercise, indexToRemove)
       }
-    } catch (err) {
-      showErrorMsg(messages.error.deleteSet)
+    } catch {
+      showErrorMsg(t('messages.error.deleteSet'))
     }
   }
 
@@ -225,10 +224,10 @@ export function ExerciseEditor({
 
       // Remove the unused RPE/RIR field - only keep the one that's actually used
       if (cleanedSet.rir) {
-        const { rpe, ...setWithoutRpe } = cleanedSet
+        const { ...setWithoutRpe } = cleanedSet
         cleanedSet = setWithoutRpe
       } else if (cleanedSet.rpe) {
-        const { rir, ...setWithoutRir } = cleanedSet
+        const { ...setWithoutRir } = cleanedSet
         cleanedSet = setWithoutRir
       }
 
@@ -292,8 +291,8 @@ export function ExerciseEditor({
       } else if (markSetAsDone) {
         await markSetAsDone(updatedExercise, index)
       }
-    } catch (err) {
-      showErrorMsg(messages.error.updateSet)
+    } catch {
+      showErrorMsg(t('messages.error.updateSet'))
     } finally {
       setCurrUpdatedExerciseSettings({
         exerciseId: '',

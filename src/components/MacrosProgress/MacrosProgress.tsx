@@ -9,8 +9,7 @@ import { EditIcon } from '../EditIcon/EditIcon'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { GoalBanner } from '../GoalBanner/GoalBanner'
 import { EditMacros } from './EditMacros'
-import { showSuccessMsg } from '../../services/event-bus.service'
-import { showErrorMsg } from '../../services/event-bus.service'
+import { showSuccessMsg, showErrorMsg } from '../../services/event-bus.service'
 import { setIsLoading } from '../../store/actions/system.actions'
 import {
   optimisticUpdateUser,
@@ -92,7 +91,7 @@ export function MacrosProgress({
       const savedGoal = await goalService.save({ ...userToEdit.currGoal })
       await updateUser({ ...userToEdit, currGoal: savedGoal })
       showSuccessMsg(t('messages.success.updateMacros'))
-    } catch (err) {
+    } catch {
       showErrorMsg(t('messages.error.updateMacros'))
     } finally {
       setIsLoading(false)

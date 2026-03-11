@@ -14,7 +14,6 @@ import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { Goal } from '../../types/goal/Goal'
 import { Checkbox } from '@mui/material'
 import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
-import { messages } from '../../assets/config/messages'
 import { goalService } from '../../services/goal/goal.service'
 import {
   optimisticUpdateUser,
@@ -56,7 +55,7 @@ export function GoalsCard() {
 
   const saveGoal = async (goal: Goal) => {
     try {
-      if (!user) return showErrorMsg(messages.error.saveGoal)
+      if (!user) return showErrorMsg(t('messages.error.saveGoal'))
       if (!goal.title) goal.title = 'My Goal'
       goal.userId = user._id
 
@@ -78,9 +77,9 @@ export function GoalsCard() {
       optimisticUpdateUser(newUser)
       onCloseGoalDetails()
       await updateUser(newUser)
-      showSuccessMsg(messages.success.saveGoal)
-    } catch (err) {
-      showErrorMsg(messages.error.saveGoal)
+      showSuccessMsg(t('messages.success.saveGoal'))
+    } catch {
+      showErrorMsg(t('messages.error.saveGoal'))
     }
   }
 
@@ -95,7 +94,7 @@ export function GoalsCard() {
   }
 
   const onActivateGoal = async (goal: Goal) => {
-    if (!user) return showErrorMsg(messages.error.saveGoal)
+    if (!user) return showErrorMsg(t('messages.error.saveGoal'))
     const newUser = {
       ...user,
       currGoal: goal,
@@ -109,15 +108,15 @@ export function GoalsCard() {
     try {
       await goalService.selectGoal(goal._id, user._id)
 
-      showSuccessMsg(messages.success.saveGoal)
-    } catch (err) {
-      showErrorMsg(messages.error.saveGoal)
+      showSuccessMsg(t('messages.success.saveGoal'))
+    } catch {
+      showErrorMsg(t('messages.error.saveGoal'))
       optimisticUpdateUser(user as User)
     }
   }
 
   const onDeleteGoal = async (goal: Goal) => {
-    if (!user || goal.isSelected) return showErrorMsg(messages.error.deleteGoal)
+    if (!user || goal.isSelected) return showErrorMsg(t('messages.error.deleteGoal'))
 
     try {
       await goalService.remove(goal._id)
@@ -127,9 +126,9 @@ export function GoalsCard() {
       }
       await updateUser(newUser)
 
-      showSuccessMsg(messages.success.deleteGoal)
-    } catch (err) {
-      showErrorMsg(messages.error.deleteGoal)
+      showSuccessMsg(t('messages.success.deleteGoal'))
+    } catch {
+      showErrorMsg(t('messages.error.deleteGoal'))
       optimisticUpdateUser(user as User)
     }
   }
@@ -140,7 +139,7 @@ export function GoalsCard() {
     if (target === 'gain') return <ArrowUpwardIcon />
   }
 
-  if (!user || !user.goals) return <div>GoalsCard</div>
+  if (!user || !user.goals) return null
 
   return (
     <>
