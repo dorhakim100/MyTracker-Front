@@ -35,10 +35,7 @@
     }
   }
 
-  .custom-list{
-    overflow-y: auto;
-    margin-bottom: 1rem;
-  }
+
 
   .meal-footer {
     display: flex;
@@ -47,6 +44,15 @@
 
     .total-calories {
       // font-weight: 600;
+    }
+  }
+}
+
+.dashboard-container{
+  .meal-card{
+    .custom-list{
+      overflow-y: auto;
+      margin-bottom: 1rem;
     }
   }
 }
