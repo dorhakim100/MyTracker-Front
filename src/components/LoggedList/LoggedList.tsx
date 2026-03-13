@@ -160,15 +160,15 @@ export function LoggedList({
 
   const renderSecondaryText = (item: Log) => {
     if (item.source === searchTypes.custom)
-      return `${item.macros?.calories.toFixed(0)} kcal`
+      return `${item.macros?.calories.toFixed(0)} ${t('macros.kcal')}`
 
-    if (item.mealId) return `${item.macros?.calories.toFixed(0)} kcal`
+    if (item.mealId) return `${item.macros?.calories.toFixed(0)} ${t('macros.kcal')}`
 
     const cachedItem = cachedItems.find((i) => i.searchId === item.itemId)
     let caloriesToReturn
     if (cachedItem) caloriesToReturn = +item.macros?.calories
     return caloriesToReturn ? (
-      `${caloriesToReturn.toFixed(0)} kcal`
+      `${caloriesToReturn.toFixed(0)} ${t('macros.kcal')}`
     ) : (
       <CustomSkeleton
         variant='text'

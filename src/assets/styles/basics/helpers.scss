@@ -587,6 +587,8 @@ body.dark-mode {
 .divider {
   &.dark-mode {
     border-color: $white;
+    opacity: 0.35;
+
   }
 }
 
