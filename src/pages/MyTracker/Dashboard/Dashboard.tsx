@@ -147,6 +147,7 @@ export function Dashboard() {
     ]
   }, [userToCheck?._id, calories, macros, currMealPeriod, menu])
   useEffect(() => {
+    if (!userToCheck) return
     updateSessionDay()
   }, [userToCheck?._id])
   useEffect(() => {
@@ -246,8 +247,8 @@ export function Dashboard() {
       setTodaySessionDay(day)
     } catch (err) {
       console.log(err)
-
       showErrorMsg(t('messages.error.getSessionDay'))
+
     }
   }
   const renderNoSession = () => {
