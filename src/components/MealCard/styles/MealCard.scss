@@ -35,6 +35,11 @@
     }
   }
 
+  .custom-list{
+    overflow-y: auto;
+    margin-bottom: 1rem;
+  }
+
   .meal-footer {
     display: flex;
     justify-content: space-between;

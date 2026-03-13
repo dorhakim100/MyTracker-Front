@@ -65,11 +65,10 @@ export function BmrCard({ sentUser }: BmrCardProps) {
   }, [sentUser, user])
 
   const calculatedAge = useMemo(() => {
-    return viewdUser?.details?.birthdate
-      ? new Date().getFullYear() -
+    if (!viewdUser?.details?.birthdate) return DEFAULT_AGE
+    return new Date().getFullYear() -
           new Date(viewdUser.details.birthdate).getFullYear()
-      : DEFAULT_AGE
-  }, [viewdUser?.details?.birthdate])
+  }, [viewdUser])
 
   const [form, setForm] = useState<BmrFormState>({
     ...bmrService.getDefaultFormState(),
@@ -97,7 +96,7 @@ export function BmrCard({ sentUser }: BmrCardProps) {
   //   }, [bmr, form.activity])
 
   useEffect(() => {
-    let weightKg = viewdUser?.lastWeight?.kg || DEFAULT_WEIGHT
+    const weightKg = viewdUser?.lastWeight?.kg || DEFAULT_WEIGHT
 
     if (viewdUser)
       setForm({
