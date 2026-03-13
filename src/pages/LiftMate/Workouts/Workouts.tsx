@@ -455,6 +455,15 @@ export function Workouts() {
       return (
         <div className='no-workouts-container'>
           <Typography variant='body1'>{t('workout.noWorkoutsFound')}</Typography>
+          <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
+
+          <div className='past-controller'>
+                <span className='bold-header'>{t('workout.pastRoutines')}</span>
+                <DateRangeController
+                  selectedPastDate={selectedPastDate}
+                  onDateChange={setSelectedPastDate}
+                />
+          </div>
         </div>
       )
     }
