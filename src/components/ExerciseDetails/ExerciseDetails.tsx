@@ -68,11 +68,10 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
     exercise?.image || ''
   )
 
-  const [exerciseSets, setExerciseSets] = useState<Set[]>([])
   const [groupedSets, setGroupedSets] = useState<Record<string, Set[]>>({})
   const [range, setRange] = useState<LineChartRangeKey>('1M')
   const [viewBy, setViewBy] = useState<string>('Weight')
-  const [setsFilter, setSetsFilter] = useState<SetFilter>({
+  const [setsGraphFilter, setSetsGraphFilter] = useState<SetFilter>({
     exerciseId: exercise?.exerciseId,
     userId: traineeUser?._id || user?._id,
     from: getDateFromLineChartRangeKey(range),
@@ -83,20 +82,14 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
   const setsQuery = useSets({
     exerciseId: exercise?.exerciseId,
     userId: traineeUser?._id || user?._id,
-    from: setsFilter.from,
-    to: setsFilter.to,
     limit: 20,
-    initialItems: exerciseSets,
-    initialSkip: exerciseSets.length,
   })
 
   const groupedSetsForTable = useMemo(
-    () => {
-      console.log('setsQuery.items', setsQuery.items)
-      return groupSetsByDate(setsQuery.items)
-    },
+    () => groupSetsByDate([...setsQuery.items]),
     [setsQuery.items]
   )
+  const stringifiedGroupedSets = useMemo(() => JSON.stringify(groupedSets), [groupedSets])
   const setsData = useMemo(() => {
     return Object.values(groupedSets)
       .reverse()
@@ -108,7 +101,7 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
             : null
         })
       )
-  }, [groupedSets])
+  }, [stringifiedGroupedSets])
 
   const data = useMemo(() => {
     const key = viewBy === 'Weight' ? 'weight' : 'reps'
@@ -165,14 +158,13 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
     }
 
     return dataToSend
-  }, [setsData, range, viewBy])
+  }, [setsData, viewBy])
 
   useEffect(() => {
     const getExerciseSets = async () => {
       if (!exercise?.exerciseId || (!traineeUser?._id && !user?._id)) return
       try {
-        const sets = await setService.query(setsFilter)
-        setExerciseSets(sets as Set[])
+        const sets = await setService.query(setsGraphFilter)
         const groupedSetsToSet = groupSetsByDate(sets as Set[])
         setGroupedSets(groupedSetsToSet)
         
@@ -182,7 +174,7 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
       }
     }
     getExerciseSets()
-  }, [exercise, traineeUser?._id, user?._id, setsFilter, range])
+  }, [exercise?.exerciseId, traineeUser?._id, user?._id, setsGraphFilter, range])
 
   useEffect(() => {
     const getWorkoutInstructions = async () => {
@@ -196,9 +188,7 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
 
         const instructions = await getExerciseSummary(exerciseId)
         setExerciseInstructions(instructions)
-      } catch (err) {
-        // console.error(err)
-        // showErrorMsg(messages.error.getExerciseSummary)
+      } catch {
         setExerciseInstructions([t('exercise.noInstructions')])
       }
     }
@@ -240,7 +230,7 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
     setRange(val)
     const from = getDateFromLineChartRangeKey(val)
     const to = new Date()
-    setSetsFilter({
+    setSetsGraphFilter({
       exerciseId: exercise?.exerciseId,
       userId: traineeUser?._id || user?._id,
       from: from,

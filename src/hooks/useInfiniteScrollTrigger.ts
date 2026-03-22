@@ -20,6 +20,7 @@ export function useInfiniteScrollTrigger({
   threshold = 0,
 }: UseInfiniteScrollTriggerOptions) {
   const sentinelRef = useRef<HTMLDivElement | null>(null)
+  const isTriggeredRef = useRef(false)
 
   useEffect(() => {
     if (!enabled || !hasMore || isLoading) return
@@ -31,7 +32,14 @@ export function useInfiniteScrollTrigger({
     const observer = new IntersectionObserver(
       (entries) => {
         const firstEntry = entries[0]
-        if (!firstEntry?.isIntersecting) return
+        if (!firstEntry) return
+        if (!firstEntry.isIntersecting) {
+          // Allow the next load only after user leaves bottom area.
+          isTriggeredRef.current = false
+          return
+        }
+        if (isTriggeredRef.current) return
+        isTriggeredRef.current = true
         onLoadMore()
       },
       { root: observedRoot, rootMargin, threshold }

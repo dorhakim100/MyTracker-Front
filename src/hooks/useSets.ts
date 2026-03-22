@@ -6,11 +6,7 @@ import { Set } from '../types/exercise/Exercise'
 interface UseSetsOptions {
   exerciseId?: string
   userId?: string
-  from?: Date
-  to?: Date
   limit?: number
-  initialItems?: Set[]
-  initialSkip?: number
   enabled?: boolean
 }
 
@@ -22,34 +18,11 @@ interface SetsPage {
 export const useSets = ({
   exerciseId,
   userId,
-
-  to,
   limit = 20,
-  initialItems = [],
-  initialSkip = 0,
   enabled: isEnabled = true,
 }: UseSetsOptions) => {
   const enabled = Boolean(exerciseId && userId) && isEnabled
-  const queryKey = [
-    'sets',
-    exerciseId,
-    userId,
-    to?.toISOString(),
-    limit,
-  ] as const
-
-  const initialData =
-    initialItems.length > 0
-      ? ({
-          pages: [
-            {
-              items: initialItems,
-              nextSkip: initialItems.length === limit ? initialSkip : undefined,
-            },
-          ],
-          pageParams: [initialSkip],
-        } as InfiniteData<SetsPage, number>)
-      : undefined
+  const queryKey = ['sets', exerciseId, userId, limit] as const
 
   const query = useInfiniteQuery<
     SetsPage,
@@ -60,13 +33,11 @@ export const useSets = ({
   >({
     queryKey,
     enabled,
-    initialPageParam: initialSkip,
-    initialData,
+    initialPageParam: 0,
     queryFn: async ({ pageParam }) => {
       const items = (await setService.query({
         exerciseId,
         userId,
-        to,
         limit,
         skip: pageParam,
       })) as Set[]
