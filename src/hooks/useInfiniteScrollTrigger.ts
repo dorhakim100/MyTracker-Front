@@ -26,6 +26,7 @@ export function useInfiniteScrollTrigger({
 
     const sentinel = sentinelRef.current
     if (!sentinel) return
+    const observedRoot = root && root.contains(sentinel) ? root : null
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -33,7 +34,7 @@ export function useInfiniteScrollTrigger({
         if (!firstEntry?.isIntersecting) return
         onLoadMore()
       },
-      { root, rootMargin, threshold }
+      { root: observedRoot, rootMargin, threshold }
     )
 
     observer.observe(sentinel)

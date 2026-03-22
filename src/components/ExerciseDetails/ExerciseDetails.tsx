@@ -28,6 +28,8 @@ import {
 import { colors } from '../../assets/config/colors'
 import { CustomSelect } from '../../CustomMui/CustomSelect/CustomSelect'
 import { SetFilter } from '../../types/setFilter/SetFilter'
+import { useSets } from '../../hooks/useSets'
+import { BottomReachIndicator } from '../BottomReachIndicator/BottomReachIndicator'
 export interface ExerciseWithDetails extends Exercise {
   notes?: ExpectedActual<string>
   rpe?: ExpectedActual<number>
@@ -41,6 +43,7 @@ interface ExerciseDetailsProps {
 
 export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
   const { t } = useTranslation()
+
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
@@ -74,6 +77,28 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
     from: getDateFromLineChartRangeKey(range),
     to: new Date(),
   })
+  const setsQuery = useSets({
+    exerciseId: exercise?.exerciseId,
+    userId: traineeUser?._id || user?._id,
+    from: setsFilter.from,
+    to: setsFilter.to,
+    range,
+    limit: 20,
+  })
+  useEffect(() => {
+    // Temporary log to verify hook integration before UI wiring.
+    console.log('useSets hook', {
+      status: setsQuery.status,
+      pages: setsQuery.data?.pages.length ?? 0,
+      items: setsQuery.items.length,
+      hasNextPage: setsQuery.hasNextPage,
+    })
+  }, [
+    setsQuery.status,
+    setsQuery.hasNextPage,
+    setsQuery.data?.pages.length,
+    setsQuery.items.length,
+  ])
   const setsData = useMemo(() => {
     return Object.values(groupedSets)
       .reverse()
@@ -307,6 +332,13 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
         groupedSets={
           groupedSets as Record<string, (Set & { exerciseId: string })[]>
         }
+      />
+      <BottomReachIndicator
+        hasMore={true}
+        isLoading={false}
+        onReachBottom={() => {
+          console.log('Reached bottom sentinel')
+        }}
       />
     </div>
     // </div>

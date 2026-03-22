@@ -65,6 +65,8 @@ export const useSets = ({
     getNextPageParam: (lastPage) => lastPage.nextSkip,
   })
 
+  console.log('query.data', query.data)
+
   const items = query.data?.pages.flatMap((page: SetsPage) => page.items) ?? []
 
   return {
