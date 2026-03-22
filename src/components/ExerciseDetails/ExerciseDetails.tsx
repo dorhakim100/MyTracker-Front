@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import { getExerciseSummary } from '../../services/exersice-search/exersice-search'
+import { setService } from '../../services/set/set.service'
 import { Exercise } from '../../types/exercise/Exercise'
 
 import { Badge, Divider, Typography } from '@mui/material'
@@ -11,7 +12,6 @@ import { ExpectedActual } from '../../types/expectedActual/ExpectedActual'
 import { exerciseImage as exerciseImageObject } from '../../assets/config/exercise-image'
 import { CustomAccordion } from '../../CustomMui/CustomAccordion/CustomAccordion'
 import AutoStoriesIcon from '@mui/icons-material/AutoStories'
-import { setService } from '../../services/set/set.service'
 import { Set } from '../../types/exercise/Exercise'
 import {
   capitalizeFirstLetter,
@@ -30,6 +30,7 @@ import { CustomSelect } from '../../CustomMui/CustomSelect/CustomSelect'
 import { SetFilter } from '../../types/setFilter/SetFilter'
 import { useSets } from '../../hooks/useSets'
 import { BottomReachIndicator } from '../BottomReachIndicator/BottomReachIndicator'
+import { showErrorMsg } from '../../services/event-bus.service'
 export interface ExerciseWithDetails extends Exercise {
   notes?: ExpectedActual<string>
   rpe?: ExpectedActual<number>
@@ -77,28 +78,25 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
     from: getDateFromLineChartRangeKey(range),
     to: new Date(),
   })
+
+
   const setsQuery = useSets({
     exerciseId: exercise?.exerciseId,
     userId: traineeUser?._id || user?._id,
     from: setsFilter.from,
     to: setsFilter.to,
-    range,
     limit: 20,
+    initialItems: exerciseSets,
+    initialSkip: exerciseSets.length,
   })
-  useEffect(() => {
-    // Temporary log to verify hook integration before UI wiring.
-    console.log('useSets hook', {
-      status: setsQuery.status,
-      pages: setsQuery.data?.pages.length ?? 0,
-      items: setsQuery.items.length,
-      hasNextPage: setsQuery.hasNextPage,
-    })
-  }, [
-    setsQuery.status,
-    setsQuery.hasNextPage,
-    setsQuery.data?.pages.length,
-    setsQuery.items.length,
-  ])
+
+  const groupedSetsForTable = useMemo(
+    () => {
+      console.log('setsQuery.items', setsQuery.items)
+      return groupSetsByDate(setsQuery.items)
+    },
+    [setsQuery.items]
+  )
   const setsData = useMemo(() => {
     return Object.values(groupedSets)
       .reverse()
@@ -172,10 +170,16 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
   useEffect(() => {
     const getExerciseSets = async () => {
       if (!exercise?.exerciseId || (!traineeUser?._id && !user?._id)) return
-      const sets = await setService.query(setsFilter)
-      setExerciseSets(sets as Set[])
-      const groupedSetsToSet = groupSetsByDate(sets as Set[])
-      setGroupedSets(groupedSetsToSet)
+      try {
+        const sets = await setService.query(setsFilter)
+        setExerciseSets(sets as Set[])
+        const groupedSetsToSet = groupSetsByDate(sets as Set[])
+        setGroupedSets(groupedSetsToSet)
+        
+      } catch {
+        showErrorMsg(t('messages.error.getSets'))
+        
+      }
     }
     getExerciseSets()
   }, [exercise, traineeUser?._id, user?._id, setsFilter, range])
@@ -214,7 +218,7 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
       : 'hebrew-notes'
   }
 
-  const groupSetsByDate = (sets: Set[]) => {
+  function groupSetsByDate(sets: Set[]) {
     return sets
       .sort(
         (a, b) =>
@@ -322,7 +326,7 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
         {t('exercise.pastSessions')}
       </Typography>
       {/* {exerciseSets.length === 0} */}
-      {exerciseSets.length === 0 && (
+      {setsQuery.items.length === 0 && (
         <Badge
           badgeContent={t('common.new')}
           className={`${prefs.favoriteColor} new`}
@@ -330,14 +334,14 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
       )}
       <SetsTable
         groupedSets={
-          groupedSets as Record<string, (Set & { exerciseId: string })[]>
+          groupedSetsForTable as Record<string, (Set & { exerciseId: string })[]>
         }
       />
       <BottomReachIndicator
-        hasMore={true}
-        isLoading={false}
+        hasMore={Boolean(setsQuery.hasNextPage)}
+        isLoading={setsQuery.isFetchingNextPage}
         onReachBottom={() => {
-          console.log('Reached bottom sentinel')
+          setsQuery.fetchNextPage()
         }}
       />
     </div>

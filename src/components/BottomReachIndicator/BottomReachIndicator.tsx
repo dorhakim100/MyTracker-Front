@@ -1,5 +1,7 @@
 import { useInfiniteScrollTrigger } from '../../hooks/useInfiniteScrollTrigger'
-
+import CircularProgress from '@mui/material/CircularProgress';
+import { RootState } from '../../store/store';
+import { useSelector } from 'react-redux';
 interface BottomReachIndicatorProps {
   hasMore: boolean
   isLoading: boolean
@@ -17,11 +19,21 @@ export function BottomReachIndicator({
     onLoadMore: onReachBottom,
   })
 
+  const prefs = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.prefs
+  )
+
+
   return (
+    <>
     <div
       ref={sentinelRef}
-      style={{ height: 1 }}
-    />
+
+      className={`bottom-reach-indicator ${prefs.isDarkMode ? 'dark' : 'light'}`}
+      >
+
+      {hasMore && <CircularProgress className={`${prefs.favoriteColor}`} />}
+      </div>
+      </>
   )
 }
-

@@ -395,6 +395,17 @@ export function getDateFromLineChartRangeKey(
   range: LineChartRangeKey,
   baseDate: Date = new Date()
 ): Date {
+ 
+
+  if (range === 'ALL') return new Date(0)
+
+  const daysToSubtract = getNumberFromRangeKey(range)
+  const date = new Date(baseDate)
+  date.setDate(date.getDate() - daysToSubtract)
+  return date
+}
+
+export function getNumberFromRangeKey(range: LineChartRangeKey): number {
   const daysMap: Record<'1M' | '3M' | '6M' | '1Y' | '7D', number> = {
     '1M': 30,
     '3M': 90,
@@ -402,13 +413,7 @@ export function getDateFromLineChartRangeKey(
     '1Y': 365,
     '7D': 7,
   }
-
-  if (range === 'ALL') return new Date(0)
-
-  const daysToSubtract = daysMap[range as '1M' | '3M' | '6M' | '1Y' | '7D']
-  const date = new Date(baseDate)
-  date.setDate(date.getDate() - daysToSubtract)
-  return date
+  return daysMap[range as '1M' | '3M' | '6M' | '1Y' | '7D']
 }
 
 export function getPercentage(value: number, goal: number) {
