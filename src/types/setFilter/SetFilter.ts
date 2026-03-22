@@ -3,5 +3,7 @@ export interface SetFilter {
   sessionId?: string
   workoutId?: string
   userId?: string
+  from?: Date
+  to?: Date
 }
 

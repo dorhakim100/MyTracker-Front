@@ -15,6 +15,7 @@ import { setService } from '../../services/set/set.service'
 import { Set } from '../../types/exercise/Exercise'
 import {
   capitalizeFirstLetter,
+  getDateFromLineChartRangeKey,
   getDateFromISO,
   prepareSeries,
 } from '../../services/util.service'
@@ -26,6 +27,7 @@ import {
 } from '../LineChart/LineChartControls'
 import { colors } from '../../assets/config/colors'
 import { CustomSelect } from '../../CustomMui/CustomSelect/CustomSelect'
+import { SetFilter } from '../../types/setFilter/SetFilter'
 export interface ExerciseWithDetails extends Exercise {
   notes?: ExpectedActual<string>
   rpe?: ExpectedActual<number>
@@ -64,8 +66,14 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
 
   const [exerciseSets, setExerciseSets] = useState<Set[]>([])
   const [groupedSets, setGroupedSets] = useState<Record<string, Set[]>>({})
-  const [range, setRange] = useState<LineChartRangeKey>('ALL')
+  const [range, setRange] = useState<LineChartRangeKey>('1M')
   const [viewBy, setViewBy] = useState<string>('Weight')
+  const [setsFilter, setSetsFilter] = useState<SetFilter>({
+    exerciseId: exercise?.exerciseId,
+    userId: traineeUser?._id || user?._id,
+    from: getDateFromLineChartRangeKey(range),
+    to: new Date(),
+  })
   const setsData = useMemo(() => {
     return Object.values(groupedSets)
       .reverse()
@@ -139,16 +147,13 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
   useEffect(() => {
     const getExerciseSets = async () => {
       if (!exercise?.exerciseId || (!traineeUser?._id && !user?._id)) return
-      const sets = await setService.query({
-        exerciseId: exercise?.exerciseId,
-        userId: traineeUser?._id || user?._id,
-      })
+      const sets = await setService.query(setsFilter)
       setExerciseSets(sets as Set[])
       const groupedSetsToSet = groupSetsByDate(sets as Set[])
       setGroupedSets(groupedSetsToSet)
     }
     getExerciseSets()
-  }, [exercise, traineeUser?._id, user?._id])
+  }, [exercise, traineeUser?._id, user?._id, setsFilter, range])
 
   useEffect(() => {
     const getWorkoutInstructions = async () => {
@@ -200,6 +205,18 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
         acc[date].push(set)
         return acc
       }, {} as Record<string, Set[]>)
+  }
+
+  const onRangeChange = (val: LineChartRangeKey) => {
+    setRange(val)
+    const from = getDateFromLineChartRangeKey(val)
+    const to = new Date()
+    setSetsFilter({
+      exerciseId: exercise?.exerciseId,
+      userId: traineeUser?._id || user?._id,
+      from: from,
+      to: to,
+    })
   }
 
   return (
@@ -270,7 +287,7 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
         />
         <LineChartControls
           value={range}
-          onChange={(val) => setRange(val)}
+          onChange={(val) => onRangeChange(val)}
         />
       </div>
       <Typography

@@ -391,6 +391,26 @@ export function formatTime(time: number, isMinutes: boolean = true): string {
   }`
 }
 
+export function getDateFromLineChartRangeKey(
+  range: LineChartRangeKey,
+  baseDate: Date = new Date()
+): Date {
+  const daysMap: Record<'1M' | '3M' | '6M' | '1Y' | '7D', number> = {
+    '1M': 30,
+    '3M': 90,
+    '6M': 180,
+    '1Y': 365,
+    '7D': 7,
+  }
+
+  if (range === 'ALL') return new Date(0)
+
+  const daysToSubtract = daysMap[range as '1M' | '3M' | '6M' | '1Y' | '7D']
+  const date = new Date(baseDate)
+  date.setDate(date.getDate() - daysToSubtract)
+  return date
+}
+
 export function getPercentage(value: number, goal: number) {
   return (value / goal) * 100
 }
