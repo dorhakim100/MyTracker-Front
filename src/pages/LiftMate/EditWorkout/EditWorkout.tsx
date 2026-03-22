@@ -306,7 +306,7 @@ export function EditWorkout({
     if (value === 'rpe') {
       newExerciseInstruction.sets = newExerciseInstruction.sets.map((set) => {
         // Create a new set object without rir, but with rpe
-        const { ...setWithoutRir } = set
+        const { rir, ...setWithoutRir } = set
         return {
           ...setWithoutRir,
           rpe: {
@@ -319,7 +319,7 @@ export function EditWorkout({
     if (value === 'rir') {
       newExerciseInstruction.sets = newExerciseInstruction.sets.map((set) => {
         // Create a new set object without rpe, but with rir
-        const { ...setWithoutRpe } = set
+        const { rpe, ...setWithoutRpe } = set
         return {
           ...setWithoutRpe,
           rir: {
