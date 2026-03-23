@@ -45,6 +45,7 @@ import { DEFAULT_RESTING_TIME } from '../../assets/config/times'
 import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import { WorkoutDetails } from '../WorkoutDetails/WorkoutDetails'
+import { invalidateSets } from '../../lib/react-query/queryKey'
 interface WorkoutSessionProps {
   sessionDay: SessionDay
   updateSessionDay: () => void
@@ -428,7 +429,7 @@ export function WorkoutSession({
     setIndex: number,
     isAll: boolean = false
   ) => {
-    if (!sessionDay._id) {
+    if (!sessionDay._id || !sessionDay.workout.forUserId) {
       showErrorMsg(t('messages.error.updateSet'))
       return
     }
@@ -458,7 +459,9 @@ export function WorkoutSession({
         },
         setIndex,
         false // isNew - updating existing set
-      )
+      )      
+      invalidateSets(exercise.exerciseId, sessionDay.workout.forUserId, 20)
+
     } catch {
       showErrorMsg(t('messages.error.updateSet'))
       return
@@ -475,7 +478,7 @@ export function WorkoutSession({
     exercise: ExerciseInstructions,
     setIndex: number
   ) => {
-    if (!sessionDay._id) {
+    if (!sessionDay._id || !sessionDay.workout.forUserId) {
       showErrorMsg(t('messages.error.updateSet'))
       return
     }
@@ -508,7 +511,11 @@ export function WorkoutSession({
       )
       if (exerciseIndex !== -1) {
         await updateSet(exercise, setIndex)
+
+        invalidateSets(exercise.exerciseId, sessionDay.workout.forUserId, 20)
+
       }
+
     } catch (err) {
       // Rollback on error
       setSelectedSessionDay({
@@ -529,7 +536,7 @@ export function WorkoutSession({
     exercise: ExerciseInstructions,
     setIndex: number
   ): Promise<void> => {
-    if (!sessionDay._id) {
+    if (!sessionDay._id || !sessionDay.workout.forUserId) {
       showErrorMsg(t('messages.error.updateSet'))
       return
     }
@@ -565,6 +572,8 @@ export function WorkoutSession({
         setIndex,
         true // isNew
       )
+      invalidateSets(exercise.exerciseId, sessionDay.workout.forUserId, 20)
+
     } catch {
       // Rollback on error
       setSelectedSessionDay({
@@ -580,7 +589,7 @@ export function WorkoutSession({
     exercise: ExerciseInstructions,
     setIndex: number
   ): Promise<void> => {
-    if (!sessionDay._id) {
+    if (!sessionDay._id || !sessionDay.workout.forUserId) {
       showErrorMsg(t('messages.error.updateSet'))
       return
     }
@@ -610,6 +619,8 @@ export function WorkoutSession({
           instructions: savedInstructions,
         })
       }
+      invalidateSets(exercise.exerciseId, sessionDay.workout.forUserId, 20)
+
     } catch {
       // Rollback on error
       setSelectedSessionDay({
@@ -626,7 +637,7 @@ export function WorkoutSession({
     setIndex: number,
     isAll?: boolean
   ): Promise<void> => {
-    if (!sessionDay._id) {
+    if (!sessionDay._id || !sessionDay.workout.forUserId) {
       showErrorMsg(t('messages.error.updateSet'))
       return
     }
@@ -679,6 +690,7 @@ export function WorkoutSession({
             )
           })
         )
+        
       } else {
         const setToSave = cleanSet(exercise.sets[setIndex])
 
@@ -716,6 +728,9 @@ export function WorkoutSession({
         await handleAllExercisesCompleted(savedInstructions || newInstructions)
         handleOpenChange(exercise.exerciseId, false)
       }
+
+      invalidateSets(exercise.exerciseId, sessionDay.workout.forUserId, 20)
+
     } catch {
       // Rollback on error
       setSelectedSessionDay({
@@ -754,6 +769,7 @@ export function WorkoutSession({
   }
 
   async function saveExerciseNotes(exerciseId: string, notes: string) {
+    if (!sessionDay.workout.forUserId) return
     try {
       setIsLoading(true)
       await instructionsService.save({
@@ -768,6 +784,9 @@ export function WorkoutSession({
         ),
       })
       closeAlertDialog()
+
+      invalidateSets(exerciseId, sessionDay.workout.forUserId, 20)
+
     } catch {
       showErrorMsg(t('messages.error.updateSet'))
     } finally {
