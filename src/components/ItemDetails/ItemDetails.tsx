@@ -117,6 +117,10 @@ export function ItemDetails({
     [editMealItem, searchedItem]
   )
 
+  const stringifiedItem = useMemo(()=>{
+    return JSON.stringify(item)
+  },[item])
+
   const [editItem, setEditItem] = useState<EditItem>({
     totalMacros: isCustomLog ? _getDefaultMacros() : item.macros,
     servingSize: editMealItem?.servingSize || 100,
@@ -124,6 +128,7 @@ export function ItemDetails({
     meal: editMealItem?.meal || selectedMeal || getCurrMeal(),
     name: isCustomLog ? '' : editMealItem?.name || searchedItem.name,
   })
+  
 
   const [clockOpen, setClockOpen] = useState(false)
   const [macrosOpen, setMacrosOpen] = useState(false)
@@ -178,7 +183,7 @@ export function ItemDetails({
       meal: editMealItem?.meal || selectedMeal || getCurrMeal(),
       name: isCustomLog ? '' : editMealItem?.name || searchedItem.name,
     })
-  }, [item])
+  }, [stringifiedItem])
   const closeClock = () => {
     setClockOpen(false)
   }
