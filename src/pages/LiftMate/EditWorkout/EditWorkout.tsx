@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../store/store'
-import { debounce } from '../../../services/util.service'
+import debounce from 'lodash/debounce'
 import { Workout } from '../../../types/workout/Workout'
 import { workoutService } from '../../../services/workout/workout.service'
 import { Exercise, ExerciseDetail } from '../../../types/exercise/Exercise'
@@ -107,9 +107,13 @@ export function EditWorkout({
   ])
 
   const latestHandleSearchRef = useRef(handleSearch)
-  const debouncedRunSearch = useRef(
-    debounce(() => latestHandleSearchRef.current(), 300)
-  ).current
+  const debouncedRunSearch = useMemo(
+    () =>
+      debounce(() => {
+        latestHandleSearchRef.current()
+      }, 300),
+    []
+  )
 
   const getWorkoutInstructions = useCallback(async () => {
     try {
@@ -157,6 +161,10 @@ export function EditWorkout({
     exerciseFilter.equipmentValue,
     debouncedRunSearch,
   ])
+
+  useEffect(() => {
+    return () => debouncedRunSearch.cancel()
+  }, [debouncedRunSearch])
 
   useEffect(() => {
     getWorkoutInstructions()

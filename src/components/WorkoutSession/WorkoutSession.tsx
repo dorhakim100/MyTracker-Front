@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { debounce, DialogActions, Divider, Typography } from '@mui/material'
+import { DialogActions, Divider, Typography } from '@mui/material'
+import debounce from 'lodash/debounce'
 
 import { SessionDay } from '../../types/workout/SessionDay'
 import { Exercise } from '../../types/exercise/Exercise'
@@ -143,9 +144,13 @@ export function WorkoutSession({
   ])
 
   const latestHandleSearchRef = useRef(handleSearch)
-  const debouncedRunSearch = useRef(
-    debounce(() => latestHandleSearchRef.current(), 300)
-  ).current
+  const debouncedRunSearch = useMemo(
+    () =>
+      debounce(() => {
+        latestHandleSearchRef.current()
+      }, 300),
+    []
+  )
 
   useEffect(() => {
     latestHandleSearchRef.current = handleSearch
@@ -159,6 +164,10 @@ export function WorkoutSession({
     exerciseFilter.equipmentValue,
     debouncedRunSearch,
   ])
+
+  useEffect(() => {
+    return () => debouncedRunSearch.cancel()
+  }, [debouncedRunSearch])
 
   useEffect(() => {
     if (isDashboard) {

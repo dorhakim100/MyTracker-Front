@@ -30,7 +30,7 @@ import {
 } from '../../store/actions/user.actions'
 import { SearchFilter } from '../../types/searchFilter/SearchFilter'
 import { Divider, Typography } from '@mui/material'
-import { debounce } from '../../services/util.service'
+import debounce from 'lodash/debounce'
 
 import { User } from '../../types/user/User'
 import { SkeletonList } from '../SkeletonList/SkeletonList'
@@ -145,13 +145,21 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
     latestHandleSearchRef.current = handleSearch
   }, [handleSearch])
 
-  const debouncedRunSearch = useRef(
-    debounce(() => latestHandleSearchRef.current(), 500)
-  ).current
+  const debouncedRunSearch = useMemo(
+    () =>
+      debounce(() => {
+        latestHandleSearchRef.current()
+      }, 500),
+    []
+  )
 
   useEffect(() => {
     debouncedRunSearch()
   }, [filter.txt, user, debouncedRunSearch])
+
+  useEffect(() => {
+    return () => debouncedRunSearch.cancel()
+  }, [debouncedRunSearch])
 
   useEffect(() => {
     if (!filter.txt) {

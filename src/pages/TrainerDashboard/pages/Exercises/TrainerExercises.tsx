@@ -1,6 +1,7 @@
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../../store/store'
-import { Typography, Box, debounce } from '@mui/material'
+import { Typography, Box } from '@mui/material'
+import debounce from 'lodash/debounce'
 
 import { ExercisesSearch } from '../../../../components/ExercisesSearch/ExercisesSearch'
 import { ExerciseFilter } from '../../../../types/exerciseFilter/ExerciseFilter'
@@ -62,9 +63,13 @@ export function TrainerExercises() {
   ])
 
   const latestHandleSearchRef = useRef(handleSearch)
-  const debouncedRunSearch = useRef(
-    debounce(() => latestHandleSearchRef.current(), 300)
-  ).current
+  const debouncedRunSearch = useMemo(
+    () =>
+      debounce(() => {
+        latestHandleSearchRef.current()
+      }, 300),
+    []
+  )
 
   useEffect(() => {
     latestHandleSearchRef.current = handleSearch
@@ -78,6 +83,10 @@ export function TrainerExercises() {
     exerciseFilter.equipmentValue,
     debouncedRunSearch,
   ])
+
+  useEffect(() => {
+    return () => debouncedRunSearch.cancel()
+  }, [debouncedRunSearch])
 
   return (
     <Box

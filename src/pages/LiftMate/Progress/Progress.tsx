@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 // import { DateRangeController } from '../../../components/DateRangeController/DateRangeController'
-import { debounce } from '../../../services/util.service'
+import debounce from 'lodash/debounce'
 // import {getDateFromISO} from '../../../services/util.service'
 // import { MONTH_IN_MS } from '../../../assets/config/times'
 import { CustomInput } from '../../../CustomMui/CustomInput/CustomInput'
@@ -69,9 +69,13 @@ export function Progress() {
   }, [searchValue])
 
   const latestHandleSearchRef = useRef(handleSearch)
-  const debouncedRunSearch = useRef(
-    debounce(() => latestHandleSearchRef.current(), 300)
-  ).current
+  const debouncedRunSearch = useMemo(
+    () =>
+      debounce(() => {
+        latestHandleSearchRef.current()
+      }, 300),
+    []
+  )
 
   useEffect(() => {
     latestHandleSearchRef.current = handleSearch
@@ -80,6 +84,10 @@ export function Progress() {
   useEffect(() => {
     debouncedRunSearch()
   }, [searchValue, debouncedRunSearch])
+
+  useEffect(() => {
+    return () => debouncedRunSearch.cancel()
+  }, [debouncedRunSearch])
 
   // const onDateChange = (dates: { from: string; to: string }) => {
   //   setSelectedPastDate(dates)

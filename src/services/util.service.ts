@@ -3,7 +3,6 @@ import { Route } from '../assets/routes/routes'
 import { LineChartRangeKey } from '../components/LineChart/LineChartControls'
 import { App } from '../types/app/App'
 import { User } from '../types/user/User'
-import debounceLib from 'debounce'
 import { MINUTE_IN_MS } from '../assets/config/times'
 
 export function makeId(length: number = 6): string {
@@ -74,16 +73,6 @@ export function randomPastTime() {
 
   const pastTime = getRandomIntInclusive(HOUR, WEEK)
   return Date.now() - pastTime
-}
-
-export function debounce<T extends (...args: unknown[]) => unknown>(
-  func: T,
-  timeout: number = 300
-): ((...args: Parameters<T>) => void) & { clear?: () => void } {
-  // Delegate to the external debounce library while preserving useful typing
-  return debounceLib(func as (...args: Parameters<T>) => void, timeout) as ((
-    ...args: Parameters<T>
-  ) => void) & { clear?: () => void }
 }
 
 // export function saveToStorage(key, value) {

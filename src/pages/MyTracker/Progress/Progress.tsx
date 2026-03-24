@@ -3,7 +3,7 @@ import { Card, Divider, ListItemIcon, Typography } from '@mui/material'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { WeightChart } from '../../../components/WeightChart/WeightChart'
 
-import { debounce } from '../../../services/util.service'
+import debounce from 'lodash/debounce'
 
 import { getDateFromISO } from '../../../services/util.service'
 import { dayService } from '../../../services/day/day.service'
@@ -81,7 +81,7 @@ export function Progress() {
 
   useEffect(() => {
     debouncedLoadItems()
-    return () => debouncedLoadItems.clear?.()
+    return () => debouncedLoadItems.cancel()
   }, [debouncedLoadItems])
 
   const closeEdit = () => {
