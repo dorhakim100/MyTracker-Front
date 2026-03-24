@@ -1,78 +1,107 @@
-.user-msg {
-  position: fixed;
-  // top: 170px;
-  // top: 7em;
-  // right: 0.2em;
 
-  top: 0.5em;
-  right: 0.5em;
-  left: 0.5em;
+.Toastify__toast-container{
+  left: 5px;
+  right: 5px;
+  .Toastify__toast {
+    // margin:1rem;
+    width: min(720px, calc(100vw - 2rem));
 
-  margin: 0 auto;
-
-  //   right: 50em;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  //   padding: 0.2em;
-  //   padding-inline-end: 20px;
-  // background-color: $very-light-blue;
-  //   background-color: white;
-
-  border-radius: 10px;
-  border-bottom-left-radius: 15px;
-  border-bottom-right-radius: 15px;
-
-  //   color: $bold-navy;
-  font-size: 0.9em;
-  min-width: 150px;
-
-  opacity: 0;
-  transition: 600ms;
-  opacity: 1;
-  z-index: 10000;
-
-  translate: 150%; /* start right to the viewport */
-  translate: 0 -150%; /* start above the viewport */
-  width: calc(100vw - 1em) !important;
-  .user-msg-motion-container {
-    justify-self: center;
     text-align: start;
-    align-items: center;
-    width: 100vw !important;
-    .MuiPaper-root {
-      padding: 0 1em !important;
-    }
-  }
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    
+      &.Toastify__toast--success{
+        background-color: $light-gray !important;
+        color: $darker-gray !important;
+        
+        svg{
+          fill: $success-color !important;
+        }
+        
+        
+      }
+      &.Toastify__toast--error{
+        background-color: $light-gray !important;
+        color: $white !important;
+
+        svg{
+          fill: $error-color !important;
+        }
+      }
+
+      &.dark-mode{
+        color: $white !important;
+
+        &.Toastify__toast--success{
+          
+          svg{
+            fill: $success-color-dark-mode !important;
+          }
+          
+          
+        }
+
+        &.Toastify__toast--error{
+          svg{
+            fill: $error-color-dark-mode !important;
+          }
+        }
+
+        &.primary{
+          background-color: $primary-color-light !important;
+
+          &.dark-mode{
+
+          background-color: $darker-gray !important;
+          }
+        }
+
+        &.blue{
+          background-color: $darker-gray-blue !important;
+        }
+        &.yellow{
+          background-color: $darker-gray-yellow !important;
+        }
+        &.red{
+          background-color: $darker-gray-red !important;
+        }
+        &.orange{
+          background-color: $darker-gray-orange !important;
+        }
+        &.green{
+          background-color: $darker-gray-green !important;
+        }
+        &.deepPurple{
+          background-color: $darker-gray-deep-purple !important;
+        }
+        &.purple{
+          background-color: $darker-gray-purple !important;
+        }
+        &.pink{
+          background-color: $darker-gray-pink !important;
+        }
+        &.dark-mode{
+          
+          .Toastify__progress-bar--wrp{
+            .Toastify__progress-bar--success{
+              background-color: $success-color-dark-mode !important;
+            }
+            .Toastify__progress-bar--error{
+              background-color: $error-color-dark-mode !important;
+            }
+          }
+        }
+      }
+      .Toastify__progress-bar--wrp{
+        border-bottom-left-radius: 8px;
+        border-bottom-right-radius: 8px;
+        .Toastify__progress-bar--success{
+          background-color: $success-color !important;
+        }
+        .Toastify__progress-bar--error{
+          background-color: $error-color !important;
+        }
+      }
 }
-
-.user-msg.visible {
-  opacity: 1;
-  translate: 0;
-}
-
-.user-msg button {
-  background-color: $light-gray;
-  // padding: 1px 6px;
-
-  border: 0;
-  border-radius: 50%;
-  //   color: $bold-navy;
-
-  transition: 0.2s ease;
-
-  &:hover {
-    background-color: $light-red;
-  }
-}
-
-.user-msg.success {
-  // background-color: $dark-green;
-  // border-bottom: 4px solid $success-color;
-}
-.user-msg.error {
-  // border-bottom: 4px solid $light-red;
-  // background-color: $medium-red;
+  
 }

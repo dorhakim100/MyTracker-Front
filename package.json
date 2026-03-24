@@ -51,6 +51,7 @@
     "react-simple-typewriter": "^5.0.1",
     "react-swipeable": "^7.0.2",
     "react-swipeable-list": "^1.10.0",
+    "react-toastify": "^11.0.5",
     "redux": "^5.0.1",
     "swiper": "^11.2.10",
     "vite-plugin-svgr": "^4.5.0"
