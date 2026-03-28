@@ -315,6 +315,8 @@ export function removeLogAction(log: Log, loggedToday: LoggedToday) {
     calories: newCalories,
   }
 
+  setSelectedDiaryDay(newLoggedToday)
+
   return newLoggedToday
 }
 
