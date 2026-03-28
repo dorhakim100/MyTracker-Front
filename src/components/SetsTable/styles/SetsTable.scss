@@ -6,10 +6,17 @@
   .MuiTableBody-root {
     border-bottom: none !important;
   }
+  .MuiTableCell-root{
+    border-bottom: 0px solid $darker-gray !important;
+  }
 
   &.dark-mode {
     background-color: $dark-gray;
     color: $white;
+
+    .MuiTableCell-root{
+      color: $white !important;
+    }
 
     .MuiTableRow-root {
       th {
@@ -21,6 +28,7 @@
     }
 
     tr {
+
       td {
         color: $white !important;
         // border-bottom: 1px solid $darker-gray !important;

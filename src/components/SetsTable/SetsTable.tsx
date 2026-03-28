@@ -24,6 +24,7 @@ import { instructionsService } from '../../services/instructions/instructions.se
 import { NotesDisplay } from '../NotesDisplay/NotesDisplay'
 import { ExpectedActual } from '../../types/expectedActual/ExpectedActual'
 import Divider from '@mui/material/Divider'
+import { AnimatedWrapper } from '../AnimatedWrapper/AnimatedWrapper'
 
 function Row(props: {
   sets: (Set & { exerciseId: string })[]
@@ -57,7 +58,8 @@ function Row(props: {
 
   return (
     <React.Fragment>
-      <TableRow
+      <AnimatedWrapper
+        as='tr'
         // sx={{ '& > *': { borderBottom: 'unset' } }}
         onClick={() => setOpen(!open)}
         className='pointer'
@@ -122,8 +124,8 @@ function Row(props: {
             tooltipTitle={open ? t('exercise.collapse') : t('exercise.expand')}
           />
         </TableCell>
-      </TableRow>
-      <TableRow>
+      </AnimatedWrapper>
+      <AnimatedWrapper as='tr'>
         <TableCell
           style={{
             paddingBottom: 0,
@@ -217,7 +219,7 @@ function Row(props: {
             />
           )}
         </TableCell>
-      </TableRow>
+      </AnimatedWrapper>
     </React.Fragment>
   )
 }

@@ -1,10 +1,30 @@
 import { HTMLMotionProps, Transition, motion } from 'framer-motion'
-import { ReactNode } from 'react'
+import { ElementType, ReactNode } from 'react'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 
+type AnimatedElement =
+  | 'div'
+  | 'span'
+  | 'section'
+  | 'article'
+  | 'main'
+  | 'header'
+  | 'footer'
+  | 'ul'
+  | 'ol'
+  | 'li'
+  | 'p'
+  | 'tr'
+  | 'td'
+  | 'tbody'
+  | 'thead'
+  | 'button'
+
 interface AnimatedWrapperProps extends Omit<HTMLMotionProps<'div'>, 'children'> {
   children: ReactNode
+  /** Which HTML element to render (e.g. 'div', 'li', 'tr'). */
+  as?: AnimatedElement
   /** Optional class name for styling the wrapper. */
   className?: string
   /** Disable all enter animation and render as static content. */
@@ -27,6 +47,7 @@ interface AnimatedWrapperProps extends Omit<HTMLMotionProps<'div'>, 'children'> 
 
 export function AnimatedWrapper({
   children,
+  as = 'div',
   className,
   disabled = false,
   offsetX = -10,
@@ -48,9 +69,28 @@ export function AnimatedWrapper({
 
   const defaultInitial = { opacity: 0, x: effectiveXOffset, y: offsetY }
   const defaultWhileInView = { opacity: 1, x: 0, y: 0 }
+  const motionElements: Record<AnimatedElement, ElementType> = {
+    div: motion.div,
+    span: motion.span,
+    section: motion.section,
+    article: motion.article,
+    main: motion.main,
+    header: motion.header,
+    footer: motion.footer,
+    ul: motion.ul,
+    ol: motion.ol,
+    li: motion.li,
+    p: motion.p,
+    tr: motion.tr,
+    td: motion.td,
+    tbody: motion.tbody,
+    thead: motion.thead,
+    button: motion.button,
+  }
+  const MotionComponent = motionElements[as]
 
   return (
-    <motion.div
+    <MotionComponent
       className={className}
       initial={disabled ? false : (initial ?? defaultInitial)}
       whileInView={disabled ? undefined : (whileInView ?? defaultWhileInView)}
@@ -64,6 +104,6 @@ export function AnimatedWrapper({
       {...motionProps}
     >
       {children}
-    </motion.div>
+    </MotionComponent>
   )
 }
