@@ -23,6 +23,7 @@ import {
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { SkeletonList } from '../../components/SkeletonList/SkeletonList'
+import { motion } from 'framer-motion'
 // import CircularProgress from '@mui/material/CircularProgress'
 
 export interface CustomListProps<T> {
@@ -257,6 +258,8 @@ CustomListProps<T>) {
       className={`custom-list ${className ? className : ''}`}
       ref={listContainerRef}
     >
+
+  
       <List>
         <DragDropContext onDragEnd={onDragEnd} onDragStart={onDragStart}>
           <Droppable droppableId="droppable">
@@ -266,39 +269,46 @@ CustomListProps<T>) {
                   const key = getKey ? getKey(item, index) : index
                   // const draggableId = String(key)
                   const draggableId = key + ''
-
+                  
                   return (
+                    <motion.div
+                    initial={{ opacity: 0, x: -10 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.3 }}   
+                       key={draggableId}
+                    >
+                    
                     <Draggable
-                      key={draggableId}
-                      draggableId={draggableId}
-                      index={index}
-                      isDragDisabled={!isDragable}
+              
+                    draggableId={draggableId}
+                    index={index}
+                    isDragDisabled={!isDragable}
                     >
                       {(dragProvided, snapshot) => {
                         // Quick fix for dragging offset
-
+                        
                         const baseStyle =
-                          dragProvided.draggableProps.style || {}
+                        dragProvided.draggableProps.style || {}
                         const style: React.CSSProperties = { ...baseStyle }
                         if (snapshot.isDragging && dragOffsetY) {
                           const currentTransform = style.transform as
-                            | string
-                            | undefined
+                          | string
+                          | undefined
                           const extra = ` translateY(${dragOffsetY}px)`
                           style.transform = currentTransform
-                            ? `${currentTransform}${extra}`
-                            : `translateY(${dragOffsetY}px)`
+                          ? `${currentTransform}${extra}`
+                          : `translateY(${dragOffsetY}px)`
                         }
-
+                        
                         return (
                           <div
-                            ref={dragProvided.innerRef}
-                            {...dragProvided.draggableProps}
-                            style={style}
-                            className={`${
-                              snapshot.isDragging ? 'dragging' : ''
+                          ref={dragProvided.innerRef}
+                          {...dragProvided.draggableProps}
+                          style={style}
+                          className={`${
+                            snapshot.isDragging ? 'dragging' : ''
                             } ${prefs.favoriteColor}`}
-                          >
+                            >
                             <SwipeableList type={Type.IOS} fullSwipe={true}>
                               <SwipeableListItem
                                 leadingActions={
@@ -311,10 +321,10 @@ CustomListProps<T>) {
                                 threshold={0.25}
                                 blockSwipe={
                                   typeof isSwipeable === 'function'
-                                    ? !isSwipeable(item)
-                                    : !isSwipeable
+                                  ? !isSwipeable(item)
+                                  : !isSwipeable
                                 }
-                              >
+                                >
                                 {renderList(item, dragProvided)}
                               </SwipeableListItem>
                             </SwipeableList>
@@ -322,6 +332,7 @@ CustomListProps<T>) {
                         )
                       }}
                     </Draggable>
+                      </motion.div>
                   )
                 })}
                 {provided.placeholder}
@@ -336,6 +347,7 @@ CustomListProps<T>) {
           </div>
         )}
       </List>
+
     </div>
   )
 }
