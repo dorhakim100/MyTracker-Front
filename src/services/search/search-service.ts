@@ -105,10 +105,10 @@ async function search(filter: SearchFilter) {
       return Promise.all(cachedRes.map((item) => modifyItemImage(item)))
     }
 
-    const hasBackendResults = await itemService.hasCachedResults(englishWord)
+    const hasBackendResults = await itemService.hasCachedResults(safeTxt)
 
     if (hasBackendResults) {
-      const backendResults = await itemService.searchByTerm(englishWord)
+      const backendResults = await itemService.searchByTerm(safeTxt)
 
       res = handleResSorting(
         backendResults,
@@ -118,7 +118,7 @@ async function search(filter: SearchFilter) {
       )
       await Promise.all(
         res.map(async (item) => {
-          await addToCache(item as Item, englishWord)
+          await addToCache(item as Item, safeTxt)
         })
       )
       return Promise.all(res.map((item) => modifyItemImage(item)))
@@ -562,7 +562,7 @@ async function getProductById(id: string) {
     )
     const product: OFFProduct = data.product
 
-    let image = product.image_small_url || null
+    const image = product.image_small_url || null
     // if (!image) {
     //   const isEnglishWord = translateService.isEnglishWord(product.product_name)
     //   let translatedTxt = product.product_name
@@ -647,7 +647,7 @@ async function getProductsByIds(ids: string[]) {
         +(product.nutriments?.['energy-kcal'] ?? 0) ||
         +calculateCaloriesFromMacros({ protein: proteins, carbs, fats }).total
 
-      let image = product.image_small_url
+      const image = product.image_small_url
 
       return {
         searchId: product.code,
