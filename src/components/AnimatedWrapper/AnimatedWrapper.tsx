@@ -1,5 +1,7 @@
 import { HTMLMotionProps, Transition, motion } from 'framer-motion'
 import { ReactNode } from 'react'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../store/store'
 
 interface AnimatedWrapperProps extends Omit<HTMLMotionProps<'div'>, 'children'> {
   children: ReactNode
@@ -39,7 +41,12 @@ export function AnimatedWrapper({
   transition,
   ...motionProps
 }: AnimatedWrapperProps) {
-  const defaultInitial = { opacity: 0, x: offsetX, y: offsetY }
+
+  const prefs = useSelector((state: RootState) => state.systemModule.prefs)
+
+  const effectiveXOffset = prefs.lang === 'he' ? -offsetX : offsetX
+
+  const defaultInitial = { opacity: 0, x: effectiveXOffset, y: offsetY }
   const defaultWhileInView = { opacity: 1, x: 0, y: 0 }
 
   return (
@@ -48,6 +55,7 @@ export function AnimatedWrapper({
       initial={disabled ? false : (initial ?? defaultInitial)}
       whileInView={disabled ? undefined : (whileInView ?? defaultWhileInView)}
       viewport={disabled ? undefined : (viewport ?? { once, amount })}
+
       transition={
         disabled
           ? undefined
