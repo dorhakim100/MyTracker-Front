@@ -18,6 +18,7 @@ import { Box, Typography } from '@mui/material'
 import { Goal } from '../../types/goal/Goal'
 import { Macros as MacrosType } from '../../types/macros/Macros'
 import { SaveCancel } from '../SaveCancel/SaveCancel'
+import { AnimatedWrapper } from '../AnimatedWrapper/AnimatedWrapper'
 
 interface EditMacrosProps {
   goalToEdit?: Goal | Partial<Goal>
@@ -212,12 +213,16 @@ export function EditMacros({
                       value={option}
                     >
                       {({ selected }) => (
+                        <AnimatedWrapper>
+
+
                         <Typography
                           variant="h5"
                           className={`${selected ? 'selected' : ''}`}
-                        >
+                          >
                           {option}
                         </Typography>
+                          </AnimatedWrapper>
                       )}
                     </Picker.Item>
                   )

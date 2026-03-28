@@ -35,6 +35,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import AltRouteIcon from '@mui/icons-material/AltRoute'
 import { useWindowDimentions } from '../../hooks/useWindowDimentions'
 import AccessAlarmIcon from '@mui/icons-material/AccessAlarm'
+import { AnimatedWrapper } from '../AnimatedWrapper/AnimatedWrapper'
 
 interface SlideDialogOptions {
   title: string
@@ -407,6 +408,7 @@ export function ExerciseCard({
 
   return (
     <>
+      <AnimatedWrapper>
       <Card
         className={`exercise-card-container ${className} ${
           prefs.isDarkMode ? 'dark-mode' : ''
@@ -583,6 +585,7 @@ export function ExerciseCard({
           />
         )}
       </Card>
+      </AnimatedWrapper>
       <SlideDialog
         open={slideDialogOptions.open}
         onClose={() =>

@@ -9,6 +9,7 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { useEffect, useRef, useState } from 'react'
 import { getArrayOfNumbers } from '../../services/util.service'
+import { AnimatedWrapper } from '../AnimatedWrapper/AnimatedWrapper'
 
 export function ClockPicker({
   value,
@@ -120,13 +121,16 @@ export function ClockPicker({
               key={number}
               value={number}
             >
+
               {({ selected }) => (
+              <AnimatedWrapper>
                 <Typography
-                  variant='h5'
-                  className={`${selected ? 'selected' : ''}`}
+                variant='h5'
+                className={`${selected ? 'selected' : ''}`}
                 >
                   {number}
                 </Typography>
+              </AnimatedWrapper>
               )}
             </Picker.Item>
           ))}
@@ -145,12 +149,17 @@ export function ClockPicker({
                   value={number}
                 >
                   {({ selected }) => (
+                    <AnimatedWrapper>
+
+
                     <Typography
                       variant='h5'
                       className={`${selected ? 'selected' : ''}`}
-                    >
+                      >
                       {number}
                     </Typography>
+                      </AnimatedWrapper>
+
                   )}
                 </Picker.Item>
               ))}

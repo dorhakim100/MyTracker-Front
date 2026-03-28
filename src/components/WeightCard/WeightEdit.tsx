@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react'
 import { Typography } from '@mui/material'
 import { Divider } from '@mui/material'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
+import { AnimatedWrapper } from '../AnimatedWrapper/AnimatedWrapper'
 
 interface WeightEditProps {
   value: number
@@ -74,12 +75,16 @@ export function WeightEdit({
               value={number}
             >
               {({ selected }) => (
+                <AnimatedWrapper>
+                  
+
                 <Typography
                   variant='h5'
                   className={`${selected ? 'selected' : ''}`}
-                >
+                  >
                   {number}
                 </Typography>
+                  </AnimatedWrapper>
               )}
             </Picker.Item>
           ))}

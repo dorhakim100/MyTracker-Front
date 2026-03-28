@@ -23,7 +23,7 @@ import {
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { SkeletonList } from '../../components/SkeletonList/SkeletonList'
-import { motion } from 'framer-motion'
+import { AnimatedWrapper } from '../../components/AnimatedWrapper/AnimatedWrapper'
 // import CircularProgress from '@mui/material/CircularProgress'
 
 export interface CustomListProps<T> {
@@ -271,12 +271,7 @@ CustomListProps<T>) {
                   const draggableId = key + ''
                   
                   return (
-                    <motion.div
-                    initial={{ opacity: 0, x: -10 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.3 }}   
-                       key={draggableId}
-                    >
+                    <AnimatedWrapper key={draggableId}>
                     
                     <Draggable
               
@@ -332,7 +327,7 @@ CustomListProps<T>) {
                         )
                       }}
                     </Draggable>
-                      </motion.div>
+                      </AnimatedWrapper>
                   )
                 })}
                 {provided.placeholder}

@@ -7,6 +7,7 @@ import { AddItemButton } from '../AddItemButton/AddItemButton'
 import { MealPeriod } from '../../types/mealPeriod/MealPeriod'
 import { Log } from '../../types/log/Log'
 import { Menu } from '../../types/menu/Menu'
+import { AnimatedWrapper } from '../AnimatedWrapper/AnimatedWrapper'
 
 export interface MealCardMeal {
   label: string
@@ -44,25 +45,27 @@ export function MealCard({
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
 
   return (
+    <AnimatedWrapper>
+
     <Box
       className={`meal-card ${className} ${
         prefs.isDarkMode ? 'dark-mode' : ''
-      } ${prefs.favoriteColor || ''}`}
-    >
+        } ${prefs.favoriteColor || ''}`}
+        >
       <div className='header'>
         <div className='label-container'>
           {meal.icon}
           <Typography
             variant='h6'
             className='bold-header'
-          >
+            >
             {meal.label}
           </Typography>
         </div>
         <Typography
           variant='body2'
           className='period'
-        >
+          >
           {meal.rangeLabel}
         </Typography>
       </div>
@@ -75,12 +78,12 @@ export function MealCard({
         updateMenu={updateMenu}
         editMenu={editMenu}
         noEdit={noEdit}
-      />
+        />
       <div className='meal-footer'>
         <Typography
           variant='body2'
           className='total-calories'
-        >
+          >
           {`${t('macros.total')}: ${caloriesToSet.toFixed(0)} ${t(
             'macros.kcal'
           )}`}
@@ -90,5 +93,6 @@ export function MealCard({
         )}
       </div>
     </Box>
+        </AnimatedWrapper>
   )
 }

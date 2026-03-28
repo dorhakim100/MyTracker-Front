@@ -16,6 +16,7 @@ import { Box, Divider, Typography } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import RemoveIcon from '@mui/icons-material/Remove'
 import { Goal } from '../../types/goal/Goal'
+import { AnimatedWrapper } from '../AnimatedWrapper/AnimatedWrapper'
 
 interface CaloriesEditProps {
   goalToEdit?: Goal | Partial<Goal>
@@ -146,13 +147,17 @@ export function CaloriesEdit({
                 {options.map((calorie) => (
                   <Picker.Item key={calorie} value={calorie}>
                     {({ selected }) => (
+                      <AnimatedWrapper>
+                        
+
                       <Typography
                         variant="h5"
                         className={`${selected ? 'selected' : ''}`}
-                      >
+                        >
                         {`${calorie}`}
                         {/* {selected && <span className='kcal'>kcal</span>} */}
                       </Typography>
+                        </AnimatedWrapper>
                     )}
                   </Picker.Item>
                 ))}
