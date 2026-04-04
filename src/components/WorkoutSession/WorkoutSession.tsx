@@ -503,23 +503,26 @@ export function WorkoutSession({
     const originalInstructions = sessionDay.instructions
     const newInstructions = updateExerciseInInstructions(exercise)
 
-    // Skip if nothing changed
-    if (getIsStringifySame(originalInstructions, newInstructions)) return
+    if (!getIsStringifySame(originalInstructions, newInstructions)) {
+      setSelectedSessionDay({
+        ...sessionDay,
+        instructions: { ...newInstructions },
+      })
+    }
 
-    // Update state immediately
-    setSelectedSessionDay({
-      ...sessionDay,
-      instructions: { ...newInstructions },
+    setCurrUpdatedExerciseSettings({
+      exerciseId: exercise.exerciseId,
+      setIndex,
     })
-
+    
     try {
       // Save instructions to backend
       const savedInstructions = await saveNewInstructions(newInstructions)
       if (savedInstructions) {
-        setSelectedSessionDay({
-          ...sessionDay,
-          instructions: savedInstructions,
-        })
+        // setSelectedSessionDay({
+        //   ...sessionDay,
+        //   instructions: savedInstructions,
+        // })
       }
 
       // Save the updated set values to backend
@@ -530,9 +533,7 @@ export function WorkoutSession({
         await updateSet(exercise, setIndex)
 
         invalidateSets(exercise.exerciseId, sessionDay.workout.forUserId, 20)
-
       }
-
     } catch (err) {
       // Rollback on error
       setSelectedSessionDay({

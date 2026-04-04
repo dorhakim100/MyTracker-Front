@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import {
@@ -40,6 +40,7 @@ import {
   setSelectedSessionDay,
 } from '../../store/actions/workout.action'
 import { useWindowDimentions } from '../../hooks/useWindowDimentions'
+import { useDebouncedCallback } from '../../hooks/useDebouncedCallback'
 import DeleteIcon from '@mui/icons-material/Delete'
 
 export interface ExerciseEditorProps {
@@ -112,6 +113,13 @@ export function ExerciseEditor({
   const isDashboard = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.isDashboard
   )
+
+  const stableUpdateExercise = useCallback(
+    (ex: ExerciseInstructions, idx: number) => updateExercise(ex, idx),
+    [updateExercise]
+  )
+  const { debouncedFn: debouncedUpdateExercise, flush: flushUpdate } =
+    useDebouncedCallback(stableUpdateExercise, 1800)
   const onAddSet = async () => {
     const existingSet =
       exercise.sets[exercise.sets.length - 1] ||
@@ -161,6 +169,7 @@ export function ExerciseEditor({
   }
 
   const onClosePicker = () => {
+    flushUpdate()
     setPickerOptions({
       isOpen: false,
       type: null,
@@ -205,7 +214,20 @@ export function ExerciseEditor({
       if (editSet.index < index && isExpected) return editSet
       return set
     })
-    updateExercise(newExercise, editSet.index)
+
+    if (!isExpected && sessionDay?.instructions) {
+      setSelectedSessionDay({
+        ...sessionDay,
+        instructions: {
+          ...sessionDay.instructions,
+          exercises: sessionDay.instructions.exercises.map((ex) =>
+            ex.exerciseId === exercise.exerciseId ? newExercise : ex
+          ),
+        },
+      })
+    }
+
+    debouncedUpdateExercise(newExercise, editSet.index)
   }, [editSet])
 
   useEffect(() => {
@@ -440,17 +462,7 @@ export function ExerciseEditor({
                       <PickerSelect
                         className={`${prefs.favoriteColor}`}
                         openClock={() => {
-                          const isUpdatingCurrSet =
-                            currUpdatedExerciseSettings.exerciseId ===
-                              exercise.exerciseId &&
-                            currUpdatedExerciseSettings.setIndex === index
-                          if (isUpdatingCurrSet) return
-                          if (!isExpected) {
-                            setCurrUpdatedExerciseSettings({
-                              exerciseId: exercise.exerciseId,
-                              setIndex: index,
-                            })
-                          }
+                         
                           setPickerOptions({
                             type: 'reps',
                             isOpen: true,
@@ -494,18 +506,7 @@ export function ExerciseEditor({
                           isRtl ? 'rtl' : ''
                         }`}
                         openClock={() => {
-                          const isUpdatingCurrSet =
-                            currUpdatedExerciseSettings.exerciseId ===
-                              exercise.exerciseId &&
-                            currUpdatedExerciseSettings.setIndex === index
-                          if (isUpdatingCurrSet) return
-
-                          if (!isExpected) {
-                            setCurrUpdatedExerciseSettings({
-                              exerciseId: exercise.exerciseId,
-                              setIndex: index,
-                            })
-                          }
+                        
                           setPickerOptions({
                             type: 'weight',
                             isOpen: true,
@@ -559,17 +560,7 @@ export function ExerciseEditor({
                       <PickerSelect
                         className={`${prefs.favoriteColor}`}
                         openClock={() => {
-                          const isUpdatingCurrSet =
-                            currUpdatedExerciseSettings.exerciseId ===
-                              exercise.exerciseId &&
-                            currUpdatedExerciseSettings.setIndex === index
-                          if (isUpdatingCurrSet) return
-                          if (!isExpected) {
-                            setCurrUpdatedExerciseSettings({
-                              exerciseId: exercise.exerciseId,
-                              setIndex: index,
-                            })
-                          }
+                        
                           setPickerOptions({
                             type: set.rpe ? 'rpe' : 'rir',
                             isOpen: true,
@@ -654,21 +645,12 @@ export function ExerciseEditor({
         open={pickerOptions.isOpen}
         onClose={() => {
           onClosePicker()
-          setCurrUpdatedExerciseSettings({
-            exerciseId: '',
-            setIndex: -1,
-          })
         }}
         component={
           <ClockPicker
             value={currentPickerValue}
             onChange={(_, value) => onPickerChange(value)}
-            sentOnCancel={() => {
-              setCurrUpdatedExerciseSettings({
-                exerciseId: '',
-                setIndex: -1,
-              })
-            }}
+            sentOnCancel={() => {}}
             isAfterValue={getIsAfterValue(pickerOptions.type)}
             buttonsValues={
               pickerButtonsValues[

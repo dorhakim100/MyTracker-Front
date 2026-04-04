@@ -14,4 +14,8 @@ export default defineConfig({
   //   outDir: path.resolve(__dirname, '../Back Starter/public'),
   //   emptyOutDir: true,
   // },
+  // @ts-expect-error vitest extends vite config
+  test: {
+    environment: 'jsdom',
+  },
 })
