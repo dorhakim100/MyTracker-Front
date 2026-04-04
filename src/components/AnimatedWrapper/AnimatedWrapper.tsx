@@ -99,7 +99,7 @@ export function AnimatedWrapper({
       transition={
         disabled
           ? undefined
-          : (transition ?? { duration, ease: 'easeOut', delay })
+          : (transition ?? { duration, ease: 'easeOut', delay, type: "spring", stiffness: 300  })
       }
       {...motionProps}
     >
