@@ -169,10 +169,6 @@ export function WorkoutSession({
     return () => debouncedRunSearch.cancel()
   }, [debouncedRunSearch])
 
-  useEffect(() => {
-    console.log('sessionDay.instructions.isFinished', sessionDay.instructions.isFinished)
-    console.log('sessionDay.instructions.isDone', sessionDay.instructions.isDone)
-  }, [sessionDay.instructions.isFinished, sessionDay.instructions.isDone])
 
   useEffect(() => {
     if (isDashboard) {
@@ -182,7 +178,6 @@ export function WorkoutSession({
       return
     }
     const isFinished = sessionDay.instructions.isFinished || sessionDay.instructions.isDone
-    console.log('isFinished', isFinished)
 
     if (isFinished) {
       setOpenExercises(new Set([]))
