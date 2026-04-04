@@ -170,13 +170,19 @@ export function WorkoutSession({
   }, [debouncedRunSearch])
 
   useEffect(() => {
+    console.log('sessionDay.instructions.isFinished', sessionDay.instructions.isFinished)
+    console.log('sessionDay.instructions.isDone', sessionDay.instructions.isDone)
+  }, [sessionDay.instructions.isFinished, sessionDay.instructions.isDone])
+
+  useEffect(() => {
     if (isDashboard) {
       setOpenExercises(
         new Set(sessionDay.workout.exercises.map((ex) => ex.exerciseId))
       )
       return
     }
-    const isFinished = sessionDay.instructions.isFinished
+    const isFinished = sessionDay.instructions.isFinished || sessionDay.instructions.isDone
+    console.log('isFinished', isFinished)
 
     if (isFinished) {
       setOpenExercises(new Set([]))
@@ -198,7 +204,7 @@ export function WorkoutSession({
     if (firstExerciseToOpen) {
       handleOpenChange(firstExerciseToOpen.exerciseId, true)
     }
-  }, [sessionDay.instructions.exercises])
+  }, [sessionDay.instructions.exercises, sessionDay.instructions.isFinished, sessionDay.instructions.isDone])
 
   const onExerciseFilterChange = (exerciseFilter: ExerciseFilter) => {
     setExerciseFilter(exerciseFilter)
@@ -381,11 +387,13 @@ export function WorkoutSession({
   const updateExerciseInInstructions = (
     exercise: ExerciseInstructions
   ): Instructions => {
+    const isDone = sessionDay.instructions.exercises.every((e) => isExerciseDone(e))
     return {
       ...sessionDay.instructions,
       exercises: sessionDay.instructions.exercises.map((e) =>
         e.exerciseId === exercise.exerciseId ? exercise : e
       ),
+      isDone: isDone,
     }
   }
 
@@ -933,6 +941,27 @@ export function WorkoutSession({
     }
   }
 
+  
+
+  const onWorkoutDone = async ()=>{
+    try {
+      const newInstructions = {
+        ...sessionDay.instructions,
+        isDone: true,
+      }
+      setSelectedSessionDay({
+        ...sessionDay,
+        instructions: newInstructions,
+      })
+      if (!timer) return
+      removeTimer(timer._id)
+      await saveNewInstructions(newInstructions)
+    } catch  {
+      showErrorMsg(t('messages.error.updateSet'))
+      
+    }
+  }
+
   return (
     <>
       <div className='workout-container'>
@@ -968,10 +997,7 @@ export function WorkoutSession({
               icon={<CheckIcon />}
               disabled={!timer}
               size='small'
-              onClick={() => {
-                if (!timer) return
-                removeTimer(timer._id)
-              }}
+                onClick={onWorkoutDone}
               tooltipTitle={t('workout.finishWorkout')}
             />
             <CustomButton
@@ -1053,10 +1079,7 @@ export function WorkoutSession({
             icon={<CheckIcon />}
             fullWidth
             disabled={!timer}
-            onClick={() => {
-              if (!timer) return
-              removeTimer(timer._id)
-            }}
+            onClick={onWorkoutDone}
           />
         </div>
       </div>

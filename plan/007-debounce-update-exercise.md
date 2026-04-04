@@ -1,77 +1,103 @@
-# Debounce `updateExercise` and keep editing responsive
+# Debounce Exercise Set Editing
 
 ## Goal
 
-Allow the user to keep editing set fields (for example reps then weight) without waiting for the backend response, and send one debounced update that includes all changes made during the delay window.
+Debounce the `updateExercise` callback (500ms, trailing edge) inside `ExerciseEditor`, so only the final picker value triggers the parent save. The picker UI stays instantly responsive via local `editSet` state. Flush the debounce on picker close and component unmount to guarantee no data loss.
 
-## Current behavior (what blocks now)
+## Problem
 
-- `ExerciseEditor` sets `currUpdatedExerciseSettings` when opening a picker for a set.
-- The picker `openClock` handlers block reopening for the same set while `currUpdatedExerciseSettings` matches the exercise/set.
-- `updateExercise` in `WorkoutSession` currently does immediate optimistic state update + backend save, then clears `currUpdatedExerciseSettings` in `finally`.
-- This effectively serializes edits by set and makes UI wait for the PUT lifecycle.
+During a live workout session, every intermediate value from the `ClockPicker` (reps, weight, RPE/RIR) triggers `updateExercise` via a `useEffect([editSet])` in `ExerciseEditor.tsx` (lines 200-209). Each call to `WorkoutSession.updateExercise` fires **two HTTP calls**: `instructionsService.save` and `setService.saveSetBySessionIdAndExerciseId`. Rapid picker spinning creates a burst of unnecessary network requests.
 
-## Proposed approach
+## Implementation Decisions
 
-1. Keep **optimistic local updates immediately** on every picker change.
-2. Add a **debounced backend flush** for instruction updates (single save call after user pauses typing/changing).
-3. Store the **latest pending instructions snapshot** so multiple edits in the debounce window are merged naturally.
-4. Remove the coupling between backend completion and edit lock:
-   - stop using in-flight backend state to block re-editing the same set
-   - keep only lightweight visual feedback if needed (optional)
-5. On debounce flush failure, show error and keep local data; avoid hard rollback unless we define a strict conflict strategy.
+- **New hook**: `useDebouncedCallback` in `src/hooks/useDebouncedCallback.ts` wrapping `lodash/debounce`
+- **Debounce target**: Only the `useEffect([editSet])` path in `ExerciseEditor` (lines 200-209)
+- **Not debounced**: `onAddSet`, `onDeleteSet`, `onMarkAsDone` (discrete user actions)
+- **Scope**: Live workout session flow only (template editing already local-state-only)
+- **Delay**: 500ms, trailing edge (lodash default)
+- **Flush points**: picker close (`onClosePicker`) and component unmount (`useEffect` cleanup)
+- **Dependency**: `lodash/debounce` (already in the project per plan 005)
+- **No Redux changes** — the debounce wraps the prop callback, not store actions
 
-## Detailed implementation steps
+## Out of Scope
 
-1. In `WorkoutSession`:
-   - introduce refs/state for pending instructions and latest session snapshot
-   - create `debouncedSaveInstructions` with `lodash/debounce` (start with 500ms)
-   - each `updateExercise` call:
-     - compute next instructions from latest local state
-     - apply `setSelectedSessionDay` immediately
-     - update pending ref
-     - trigger debounced save
-2. Save function internals:
-   - take latest pending instructions at execution time
-   - call `saveNewInstructions` once for the latest snapshot
-   - on success, reconcile store with saved payload only if still current
-   - on error, show toast/error and keep pending edits for next retry/manual change
-3. In `ExerciseEditor`:
-   * i want to keep the blocking ui while a call to the backend has made, just only after enough delay has passed since the last call
-   - remove/block logic that prevents reopening the picker for the same set while waiting for backend
-   - keep `setCurrUpdatedExerciseSettings` only if needed for local UX, not network locking
-4. Lifecycle safety:
-   - cancel debounced callback on component unmount
-   - flush on unmount/navigation only if we decide unsent edits must be persisted immediately
-5. Validation:
-* not just reps and then weight, any sort of exerciseUpdate, it can be weight and right after weight again...
-   - fast edit reps then weight within debounce window => one backend save containing both values
-   - repeated edits while previous request is in flight do not block UI
-   for now 
-   - add/remove/mark-done flows stay unchanged
+- Debouncing the template/expected-values editing flow (no HTTP on that path)
+- Splitting optimistic Redux updates from HTTP calls (keep simple for now)
+- Debouncing `addSet`, `removeSet`, `markSetAsDone` operations
 
-## Open questions (please answer before implementation)
+## Implementation Plan
 
-1. Debounce delay preference:
-   - 300ms
-   - 500ms (default)
-   - 800ms
+### Phase 1: Create `useDebouncedCallback` hook
 
-   i think 800ms or 500ms since a new openPicker appears
+A reusable hook that accepts a callback and delay, returns a stable debounced version using `lodash/debounce`. The hook must:
 
-2. On save error after optimistic update, what do you prefer?
-   - Keep local values and retry on next edit (recommended for smooth UX)
-   - Roll back immediately to last server snapshot
+- Keep the callback ref fresh (no stale closures) via `useRef`
+- Return `flush()` and `cancel()` methods
+- Auto-cancel on unmount via `useEffect` cleanup
+- Hook API: `useDebouncedCallback(callback, delay, deps)` returns `{ debouncedFn, flush, cancel }`
 
-   keep ui consist, roll back to how server supposed to be
+**File**: `src/hooks/useDebouncedCallback.ts`
 
-3. When leaving/unmounting the screen with pending unsaved edits:
-   - Force flush immediately
-   - Let debounce handle it only (no special flush)
+### Phase 2: Integrate debounce into ExerciseEditor
 
-   no special flush
+Replace the direct `updateExercise` call inside `useEffect([editSet])` (lines 200-209) with the debounced version. The `editSet` local state continues to update immediately (picker stays responsive). Only the parent `updateExercise` prop call is debounced.
 
-4. Should we show a tiny "Saving..." state per exercise while debounce/in-flight exists, or keep the UI fully silent?
+Current code to change:
 
-the loading indicator is enough, just make sure it starts only after the delay has passed
+```typescript
+// ExerciseEditor.tsx lines 200-209:
+useEffect(() => {
+  const newExercise = { ...exercise }
+  if (!newExercise || !editSet) return
+  newExercise.sets = newExercise.sets.map((set, index) => {
+    if (editSet.index === index) return editSet
+    if (editSet.index < index && isExpected) return editSet
+    return set
+  })
+  updateExercise(newExercise, editSet.index)
+}, [editSet])
+```
 
+The `updateExercise(newExercise, editSet.index)` call becomes `debouncedUpdateExercise(newExercise, editSet.index)`.
+
+**File**: `src/components/ExerciseEditor/ExerciseEditor.tsx`
+
+### Phase 3: Add flush on picker close
+
+When the `SlideDialog` picker closes (`onClosePicker` and the dialog's `onClose`), call `flush()` on the debounced function so the last value is persisted immediately. Also ensure the `useEffect` cleanup in the hook flushes (not just cancels) on unmount to avoid data loss.
+
+**File**: `src/components/ExerciseEditor/ExerciseEditor.tsx`
+
+### Phase 4: Unit test the hook
+
+A unit test for `useDebouncedCallback` verifying:
+
+- Callback is debounced by the specified delay
+- `flush()` fires the callback immediately
+- Cleanup on unmount cancels pending calls (or flushes, per design)
+- Callback ref stays fresh (latest closure is always called)
+
+Uses fake timers for deterministic timing.
+
+**File**: `src/hooks/__tests__/useDebouncedCallback.test.ts`
+
+## Validation Checklist
+
+1. Spinner reps/weight/RPE changes no longer fire immediate HTTP calls per tick.
+2. After 500ms of inactivity the final value triggers a single `updateExercise`.
+3. Closing the picker immediately persists the pending value.
+4. Navigating away (unmount) persists the pending value.
+5. `onAddSet`, `onDeleteSet`, `onMarkAsDone` remain instant (not debounced).
+6. Picker UI stays instantly responsive during debounce.
+
+## Risks
+
+1. Stale closure in debounced callback could send outdated exercise state.
+2. Unmount before flush could lose the last edit.
+3. Rapid open/close of picker could skip flush if timing is edge-case.
+
+## Mitigation
+
+1. Use `useRef` to keep callback fresh — debounced wrapper stays stable, inner fn always current.
+2. Hook cleanup calls `flush()` (not `cancel()`) to guarantee persistence on unmount.
+3. Explicit `flush()` call on every picker close path.
