@@ -660,6 +660,10 @@ export function WorkoutSession({
     const exerciseIndex = newInstructions.exercises.findIndex(
       (e) => e.exerciseId === exercise.exerciseId
     )
+    
+    if(!exercise.sets[setIndex].isDone){
+      newInstructions.isDone = false
+    }
 
     // Update state immediately
     setSelectedSessionDay({
@@ -685,6 +689,7 @@ export function WorkoutSession({
       } else {
         // Just update timer for current exercise
         setCurrentExercise(currentExerciseToSet)
+   
         await setTimer({
           currentExercise: currentExerciseToSet,
           startTime: new Date().getTime(),
