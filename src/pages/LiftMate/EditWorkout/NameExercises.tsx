@@ -334,7 +334,7 @@ export function NameExercises({
                   weekNumber: +weekNumber,
                 })
               }}
-              options={getArrayOfNumbers(1, 10).map((weekNumber) => ({
+              options={getArrayOfNumbers(1, 20).map((weekNumber) => ({
                 label: t('workout.week'),
                 value: weekNumber.toString(),
                 icon: <span>{weekNumber}</span>,
@@ -344,12 +344,12 @@ export function NameExercises({
                   return getIsWeekNumberDisabled(+weekNumber)
                 },
               }))}
-              isBadge={true}
-              isReversedIcon={true}
-              className={`week-number-toggle ${
-                prefs.isDarkMode ? 'dark-mode' : ''
-              }`}
-            />
+                isBadge={true}
+                isReversedIcon={true}
+                className={`week-number-toggle ${
+                  prefs.isDarkMode ? 'dark-mode' : ''
+                }`}
+              />
           )}
           {!instructions._id && (
             <div className='times-per-week-container'>

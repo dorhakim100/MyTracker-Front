@@ -64,6 +64,8 @@ export function AnimatedWrapper({
 }: AnimatedWrapperProps) {
 
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
+  const isDashboard = useSelector((state: RootState) => state.systemModule.isDashboard)
+  disabled = isDashboard ? true : disabled
 
   const effectiveXOffset = prefs.lang === 'he' ? -offsetX : offsetX
 
