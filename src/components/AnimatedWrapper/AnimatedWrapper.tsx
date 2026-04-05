@@ -67,7 +67,7 @@ export function AnimatedWrapper({
 
   const effectiveXOffset = prefs.lang === 'he' ? -offsetX : offsetX
 
-  const defaultInitial = { opacity: 0, x: effectiveXOffset, y: offsetY, scale: 0.9 }
+  const defaultInitial = { opacity: 0.6, x: effectiveXOffset, y: offsetY, scale: 0.9 }
   const defaultWhileInView = { opacity: 1, x: 0, y: 0, scale: 1 }
   const motionElements: Record<AnimatedElement, ElementType> = {
     div: motion.div,
