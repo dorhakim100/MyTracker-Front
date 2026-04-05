@@ -23,6 +23,7 @@ button {
   // height: calc(100vh - $header-margin - 120px);
   height: calc(100vh - 120px);
   overflow-y: auto;
+  overflow-x: hidden !important;
 
   &.has-timer {
     padding-bottom: 70px;
