@@ -118,7 +118,7 @@ export function ExerciseEditor({
     (ex: ExerciseInstructions, idx: number) => updateExercise(ex, idx),
     [updateExercise]
   )
-  const { debouncedFn: debouncedUpdateExercise, flush: flushUpdate } =
+  const { debouncedFn: debouncedUpdateExercise, flush: flushUpdate, cancel: cancelUpdate } =
     useDebouncedCallback(stableUpdateExercise, 1800)
   const onAddSet = async () => {
     const existingSet =
@@ -275,6 +275,7 @@ export function ExerciseEditor({
   }
 
   const onMarkAsDone = async (index: number) => {
+    cancelUpdate()
     const newSets = [...exercise.sets]
     const stateToSet = !newSets[index].isDone
 
