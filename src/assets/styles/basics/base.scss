@@ -335,8 +335,17 @@ body {
       >div{
         height: 100% !important;
         padding-bottom: calc(100px) !important;
+        
         >div{
           // height: 100% !important;
+        }
+      }
+    }
+    &.has-timer {
+      >div{
+        >div{
+
+          padding-bottom: 170px !important;
         }
       }
     }

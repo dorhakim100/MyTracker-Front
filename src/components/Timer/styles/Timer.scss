@@ -1,20 +1,49 @@
 .timer-container {
   position: fixed;
   // bottom: 50px;
-  bottom: 60px;
+  bottom: 225px;
   // left: 0.5rem;
   // right: 0.5rem;
-  border-radius: 10px;
-  height: 70px !important;
-  background-color: $light-gray;
   z-index: 1000;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 3rem 0.5rem;
+  padding-top: 3.2rem;
 
-  display: grid;
-  grid-template-rows: 1fr auto;
-  grid-template-columns: auto 1fr;
-  align-items: center;
-  gap: 0rem 0.8rem;
-  text-align: start !important;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 20%,
+    black 30%
+  );
+
+  // border-top-right-radius: 17px;
+  // border-top-left-radius: 17px;
+  &.dark-mode {
+    // background-color: $darker-gray;
+  }
+  
+  .timer{
+
+    // margin: 1.5rem 0.5rem;
+    // margin-top: 3rem;
+    
+
+    height: 70px !important;
+    border-radius: 10px;
+    background-color: $light-gray;
+    display: grid;
+    grid-template-rows: 1fr auto;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 0rem 0.8rem;
+    text-align: start !important;
+    
+  }
+  
+
+  
+
+
 
   h6 {
     justify-self: start;
@@ -80,39 +109,57 @@
     }
   }
 
-  &.dark-mode {
-    background-color: $darker-gray-light;
-  }
+    &.dark-mode {
+      .timer{
+      background-color: $darker-gray-light;
+      }
+    }
 
-  &.blue {
-    background-color: $darker-gray-blue-light;
-  }
+    &.blue {
+      .timer{
+        background-color: $darker-gray-blue-light;
+      }
+    }
 
-  &.yellow {
-    background-color: $darker-gray-yellow-light;
-  }
+    &.yellow {
+      .timer{
+        background-color: $darker-gray-yellow-light;
+      }
+    }
 
-  &.red {
-    background-color: $darker-gray-red-light;
-  }
+    &.red {
+      .timer{
+        background-color: $darker-gray-red-light;
+      }
+    }
 
-  &.orange {
-    background-color: $darker-gray-orange-light;
-  }
+    &.orange {
+      .timer{
+        background-color: $darker-gray-orange-light;
+      }
+    }
 
-  &.green {
-    background-color: $darker-gray-green-light;
-  }
+    &.green {
+      .timer{
+        background-color: $darker-gray-green-light;
+      }
+    }
 
-  &.deepPurple {
-    background-color: $darker-gray-deep-purple-light;
-  }
+    &.deepPurple {
+      .timer{
+        background-color: $darker-gray-deep-purple-light;
+      }
+    }
 
-  &.purple {
-    background-color: $darker-gray-purple-light;
-  }
+    &.purple {
+      .timer{
+        background-color: $darker-gray-purple-light;
+      }
+    }
 
-  &.pink {
-    background-color: $darker-gray-pink-light;
+    &.pink {
+      .timer{
+        background-color: $darker-gray-pink-light;
+      }
+    }
   }
-}

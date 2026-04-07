@@ -72,6 +72,10 @@ function App() {
     (stateSelector: RootState) => stateSelector.userModule.traineeUser
   )
 
+  const timer = useSelector(
+    (stateSelector: RootState) => stateSelector.workoutModule.timer
+  )
+
   const slideDirection = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.slideDirection
   )
@@ -274,7 +278,7 @@ function App() {
           motionKey={activeRoute}
           direction={slideDirection}
           duration={0.25}
-          className={'main-animation-container'}
+          className={`main-animation-container ${timer ? 'has-timer' : ''}`}
         >
           {!user ? (
             <div className='page-container login-sign-up-container'>
@@ -286,8 +290,8 @@ function App() {
             <div key={activeRoute}>{_getActiveRouteComponent()}</div>
           )}
         </SlideAnimation>
-        <Timer />
       </main>
+        <Timer />
       {user && (
         <FixedBottomNavigation
           routes={filteredRoutes}

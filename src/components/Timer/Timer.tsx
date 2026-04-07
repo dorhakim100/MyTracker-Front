@@ -123,6 +123,8 @@ export function Timer() {
         {/* <div className={`timer-container ${prefs.isDarkMode ? 'dark-mode' : ''} ${
         prefs.favoriteColor
         }`}> */}
+        <div className="timer">
+
         <img src={currentExercise?.image} alt="timer" className="timer-image" />
         <div className="text-container">
           <Typography variant="h6" className="bold-header">
@@ -137,27 +139,28 @@ export function Timer() {
               orientation="vertical"
               flexItem
               className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-            />
+              />
             <Typography
               variant="body1"
               className="bold-header opacity-1 time-left"
-            >
+              >
               Time Left:{' '}
               {currentExercise?.restingTime &&
               secondsPassedState * SECOND_IN_MS < currentExercise?.restingTime
-                ? formatTime(
-                    currentExercise?.restingTime -
-                      secondsPassedState * SECOND_IN_MS,
-                    false
-                  )
-                : '0:00'}
+              ? formatTime(
+                currentExercise?.restingTime -
+                secondsPassedState * SECOND_IN_MS,
+                false
+              )
+              : '0:00'}
             </Typography>
           </div>
         </div>
         <CustomLinearProgress
           value={percentage}
           color={colorMap[prefs.favoriteColor]}
-        />
+          />
+          </div>
         {/* </div> */}
       </SlideAnimation>
       <SlideDialog
