@@ -119,9 +119,9 @@ export function ExerciseEditor({
     [updateExercise]
   )
   
-  const delay = isExpected ? 0 : 1800
+  const delay = isExpected ? 0 : 4000
 
-  const { debouncedFn: debouncedUpdateExercise, flush: flushUpdate, cancel: cancelUpdate } =
+  const { debouncedFn: debouncedUpdateExercise, cancel: cancelUpdate } =
     useDebouncedCallback(stableUpdateExercise, delay)
   const onAddSet = async () => {
     const existingSet =
@@ -172,7 +172,7 @@ export function ExerciseEditor({
   }
 
   const onClosePicker = () => {
-    flushUpdate()
+    // flushUpdate()
     setPickerOptions({
       isOpen: false,
       type: null,
