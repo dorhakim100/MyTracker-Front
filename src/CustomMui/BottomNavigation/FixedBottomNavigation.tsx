@@ -175,7 +175,6 @@ export function FixedBottomNavigation(props: {
           }`}
           sx={{
             display: timer ? 'none' : '',
-            marginBottom: isAddModal ? '' : '2rem',
             // position: 'absolute',
           }}
         >
