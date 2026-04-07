@@ -164,7 +164,7 @@ export function WorkoutSession({
     exerciseFilter.equipmentValue,
     debouncedRunSearch,
   ])
-
+  
   useEffect(() => {
     return () => debouncedRunSearch.cancel()
   }, [debouncedRunSearch])
@@ -177,9 +177,10 @@ export function WorkoutSession({
       )
       return
     }
-    const isFinished = sessionDay.instructions.isFinished || sessionDay.instructions.isDone
+    const isDone = sessionDay.instructions.isDone
+    const isFinished = sessionDay.instructions.isFinished
 
-    if (isFinished) {
+    if (isFinished || isDone) {
       setOpenExercises(new Set([]))
       return
     }
