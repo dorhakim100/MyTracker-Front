@@ -175,6 +175,7 @@ export function FixedBottomNavigation(props: {
           }`}
           sx={{
             display: timer ? 'none' : '',
+            marginBottom: isAddModal ? '' : '2rem',
             // position: 'absolute',
           }}
         >
@@ -200,7 +201,7 @@ export function FixedBottomNavigation(props: {
         ref={ref}
         className={`fixed-bottom-navigation ${
           prefs.isDarkMode ? 'dark-mode' : ''
-        } ${prefs.favoriteColor}`}
+        } ${prefs.favoriteColor} ${isAddModal ? 'show' : ''}`}
       >
         <CssBaseline />
 
@@ -214,7 +215,7 @@ export function FixedBottomNavigation(props: {
 
             // paddingBottom: '1.5em',
           }}
-          elevation={3}
+          elevation={0}
           className={`navigation ${prefs.favoriteColor} ${
             prefs.isDarkMode ? 'dark-mode' : ''
           }`}

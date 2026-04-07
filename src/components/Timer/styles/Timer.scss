@@ -23,20 +23,20 @@
   }
   
   .timer{
-
+    
     // margin: 1.5rem 0.5rem;
     // margin-top: 3rem;
     
-
+    
     height: 70px !important;
     border-radius: 10px;
-    background-color: $light-gray;
     display: grid;
     grid-template-rows: 1fr auto;
     grid-template-columns: auto 1fr;
     align-items: center;
     gap: 0rem 0.8rem;
     text-align: start !important;
+    background-color: $light-gray;
     
   }
   
@@ -113,7 +113,7 @@
       .timer{
       background-color: $darker-gray-light;
       }
-    }
+    
 
     &.blue {
       .timer{
@@ -162,4 +162,5 @@
         background-color: $darker-gray-pink-light;
       }
     }
+  }
   }

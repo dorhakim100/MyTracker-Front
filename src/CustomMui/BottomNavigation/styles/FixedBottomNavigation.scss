@@ -1,23 +1,91 @@
 .fixed-bottom-navigation {
   .MuiPaper-root {
     padding: 1em !important;
-
     z-index: 1100;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    background-color: rgba(255, 255, 255, 0.8) !important;
+    border-top: 0.5px solid rgba(0, 0, 0, 0.08);
   }
+  
+  &.show {
+    .MuiPaper-root {
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+
+    }
+  }
+
+  .MuiBottomNavigation-root,
+  .MuiBottomNavigation-root button {
+    background-color: transparent !important;
+  }
+
   padding-bottom: 1.5em !important;
 
   &.dark-mode {
     .MuiPaper-root {
-      // background-color: $darker-gray !important;
+      background-color: $darker-gray-left-menu-glass !important;
+      border-top: 0.5px solid rgba(255, 255, 255, 0.15);
     }
+    
+    &.show {
+      .MuiPaper-root {
+        background-color: $darker-gray-left-menu !important;
+      }
 
+      &.blue {
+        .MuiPaper-root {
+          background-color: $darker-gray-blue-left-menu !important;
+        }
+      }
+      &.red {
+        .MuiPaper-root {
+          background-color: $darker-gray-red-left-menu !important;
+        }
+      }
+      &.yellow {
+        .MuiPaper-root {
+          background-color: $darker-gray-yellow-left-menu !important;
+        }
+      }
+      &.green {
+        .MuiPaper-root {
+          background-color: $darker-gray-green-left-menu !important;
+        }
+      }
+      &.orange {
+        .MuiPaper-root {
+          background-color: $darker-gray-orange-left-menu !important;
+        }
+      }
+      &.deepPurple {
+        .MuiPaper-root {
+          background-color: $darker-gray-deep-purple-left-menu !important;
+        }
+      }
+      &.purple {
+        .MuiPaper-root {
+          background-color: $darker-gray-purple-left-menu !important;
+        }
+      }
+      &.pink {
+        .MuiPaper-root {
+          background-color: $darker-gray-pink-left-menu !important;
+        }
+      }
+    }
+    
+    
     .MuiBottomNavigation-root,
-    button {
-      background-color: $dark-gray;
+    .MuiBottomNavigation-root button {
+      background-color: transparent !important;
+      
+
+      
     }
 
     button:not(.Mui-selected) {
-      background-color: $dark-gray;
       color: $light-gray;
     }
 
@@ -216,96 +284,52 @@ body.dark-mode.dashboard {
 
 .navigation.dark-mode,
 .MuiBottomNavigation-root.dark-mode {
-  background-color: $darker-gray-left-menu !important;
+  background-color: $darker-gray-left-menu-glass !important;
   &.blue {
-    background-color: $darker-gray-blue-left-menu !important;
+    background-color: $darker-gray-blue-left-menu-glass !important;
   }
   &.red {
-    background-color: $darker-gray-red-left-menu !important;
+    background-color: $darker-gray-red-left-menu-glass !important;
   }
   &.yellow {
-    background-color: $darker-gray-yellow-left-menu !important;
+    background-color: $darker-gray-yellow-left-menu-glass !important;
   }
   &.green {
-    background-color: $darker-gray-green-left-menu !important;
+    background-color: $darker-gray-green-left-menu-glass !important;
   }
   &.orange {
-    background-color: $darker-gray-orange-left-menu !important;
+    background-color: $darker-gray-orange-left-menu-glass !important;
   }
   &.deepPurple {
-    background-color: $darker-gray-deep-purple-left-menu !important;
+    background-color: $darker-gray-deep-purple-left-menu-glass !important;
   }
   &.pink {
-    background-color: $darker-gray-pink-left-menu !important;
+    background-color: $darker-gray-pink-left-menu-glass !important;
   }
   &.purple {
-    background-color: $darker-gray-purple-left-menu !important;
+    background-color: $darker-gray-purple-left-menu-glass !important;
   }
 }
 
 .MuiBottomNavigation-root {
   &.dark-mode {
-    background-color: $darker-gray-left-menu !important;
+    background-color: transparent !important;
     button {
-      background-color: $darker-gray-left-menu !important;
+      background-color: transparent !important;
     }
 
-    &.blue {
-      background-color: $darker-gray-blue-left-menu !important;
-      button {
-        background-color: $darker-gray-blue-left-menu !important;
-      }
-    }
-    &.red {
-      background-color: $darker-gray-red-left-menu !important;
-      button {
-        background-color: $darker-gray-red-left-menu !important;
-      }
-    }
-    &.yellow {
-      background-color: $darker-gray-yellow-left-menu !important;
-      button {
-        background-color: $darker-gray-yellow-left-menu !important;
-      }
-    }
-    &.green {
-      background-color: $darker-gray-green-left-menu !important;
-      button {
-        background-color: $darker-gray-green-left-menu !important;
-      }
-    }
-    &.orange {
-      background-color: $darker-gray-orange-left-menu !important;
-      button {
-        background-color: $darker-gray-orange-left-menu !important;
-      }
-    }
-    &.deepPurple {
-      background-color: $darker-gray-deep-purple-left-menu !important;
-      button {
-        background-color: $darker-gray-deep-purple-left-menu !important;
-      }
-    }
-    &.purple {
-      background-color: $darker-gray-purple-left-menu !important;
-      button {
-        background-color: $darker-gray-purple-left-menu !important;
-      }
-    }
+    &.blue,
+    &.red,
+    &.yellow,
+    &.green,
+    &.orange,
+    &.deepPurple,
+    &.purple,
     &.pink {
-      background-color: $darker-gray-pink-left-menu !important;
+      background-color: transparent !important;
       button {
-        background-color: $darker-gray-pink-left-menu !important;
+        background-color: transparent !important;
       }
     }
-  }
-}
-
-.fixed-bottom-navigation{
-  .MuiPaper-root{
-
-
-
-
   }
 }
