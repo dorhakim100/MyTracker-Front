@@ -274,6 +274,7 @@ function App() {
           motionKey={activeRoute}
           direction={slideDirection}
           duration={0.25}
+          className={'main-animation-container'}
         >
           {!user ? (
             <div className='page-container login-sign-up-container'>

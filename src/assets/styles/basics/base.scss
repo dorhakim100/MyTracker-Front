@@ -288,6 +288,8 @@ body {
   background-color: $neutral-gray;
   color: $dark-gray;
   transition: color 0.3s, background-color 0.3s;
+
+
   &.dark-mode {
     background-color: $dark-gray;
     color: $neutral-gray;
@@ -323,6 +325,20 @@ body {
     &.pink {
       background-color: $dark-gray-pink;
       color: $neutral-gray;
+    }
+  }
+
+  .main-animation-container {
+    height: 100% !important;
+    >div{
+      height: 100% !important;
+      >div{
+        height: 100% !important;
+        padding-bottom: calc(100px) !important;
+        >div{
+          // height: 100% !important;
+        }
+      }
     }
   }
 }
