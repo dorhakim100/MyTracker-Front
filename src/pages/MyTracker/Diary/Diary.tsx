@@ -61,6 +61,10 @@ export function Diary() {
     return getTotalCalories('snacks')
   }, [selectedDayDiary])
 
+  const totalCalories = useMemo(() => {
+    return totalBreakfastCalories + totalLunchCalories + totalDinnerCalories + totalSnacksCalories
+  }, [totalBreakfastCalories, totalLunchCalories, totalDinnerCalories, totalSnacksCalories])
+
   useEffect(() => {
     const handleGetDiary = async () => {
       try {
@@ -149,7 +153,7 @@ export function Diary() {
             title={t('macros.macros')}
             cmp={
               <LinearMacrosProgress
-                caloriesProgress={selectedDayDiary?.calories || 0}
+                caloriesProgress={totalCalories}
                 proteinProgress={
                   getMacrosAmountFromDay(selectedDayDiary, 'protein') as number
                 }
