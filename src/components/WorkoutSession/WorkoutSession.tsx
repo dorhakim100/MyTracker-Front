@@ -663,7 +663,7 @@ export function WorkoutSession({
     )
     
     if(!exercise.sets[setIndex].isDone){
-      newInstructions.isDone = false
+      newInstructions.isFinished = false
     }
 
     // Update state immediately
