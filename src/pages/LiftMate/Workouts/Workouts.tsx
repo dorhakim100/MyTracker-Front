@@ -699,10 +699,10 @@ export function Workouts() {
             </div>
           )}
 
-          <WorkoutSession
+        {sessionDay.instructions && <WorkoutSession
             sessionDay={sessionDay}
             updateSessionDay={updateSessionDay}
-          />
+          />}
         </SlideAnimation>
       </div>
       <SlideDialog

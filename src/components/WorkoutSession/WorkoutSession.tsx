@@ -56,7 +56,7 @@ export function WorkoutSession({
   sessionDay,
   updateSessionDay,
 }: WorkoutSessionProps) {
-  if (!sessionDay.instructions) return null
+  // if (!sessionDay.instructions) return null
   const { t } = useTranslation()
 
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
@@ -177,10 +177,10 @@ export function WorkoutSession({
       )
       return
     }
-    const isDone = sessionDay.instructions.isDone
+    // const isDone = sessionDay.instructions.isDone
     const isFinished = sessionDay.instructions.isFinished
 
-    if (isFinished || isDone) {
+    if (isFinished) {
       setOpenExercises(new Set([]))
       return
     }
@@ -949,7 +949,7 @@ export function WorkoutSession({
     try {
       const newInstructions = {
         ...sessionDay.instructions,
-        isDone: true,
+        isFinished: true,
       }
       setSelectedSessionDay({
         ...sessionDay,

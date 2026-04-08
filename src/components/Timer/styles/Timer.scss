@@ -1,20 +1,21 @@
 .timer-container {
   position: fixed;
   // bottom: 50px;
-  bottom: 225px;
+  bottom: 180px;
   // left: 0.5rem;
   // right: 0.5rem;
   z-index: 1000;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  padding: 3rem 0.5rem;
-  padding-top: 3.2rem;
+  padding: 0rem 0.5rem;
+  padding-bottom:1rem;
 
-  mask-image: linear-gradient(
-    to bottom,
-    transparent 20%,
-    black 30%
-  );
+
+  // mask-image: linear-gradient(
+  //   to bottom,
+  //   transparent 20%,
+  //   black 30%
+  // );
 
   // border-top-right-radius: 17px;
   // border-top-left-radius: 17px;

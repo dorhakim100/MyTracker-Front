@@ -93,6 +93,6 @@ export function MealCard({
         )}
       </div>
     </Box>
-        </AnimatedWrapper>
+    </AnimatedWrapper>
   )
 }

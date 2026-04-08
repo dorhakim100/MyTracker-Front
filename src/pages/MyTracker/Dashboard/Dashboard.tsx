@@ -295,10 +295,10 @@ export function Dashboard() {
             {t('dashboard.workoutSession')}
           </Typography>
 
-          <WorkoutSession
+         {sessionDay.instructions && <WorkoutSession
             sessionDay={sessionDay}
             updateSessionDay={updateSessionDay}
-          />
+          />}
         </div>
       )
   }
