@@ -65,6 +65,8 @@ export function WorkoutSession({
     (stateSelector: RootState) => stateSelector.systemModule.isDashboard
   )
 
+  const timer = useSelector((state: RootState) => state.workoutModule.timer)
+
   const [openExercises, setOpenExercises] = useState<Set<string>>(new Set())
 
   const workouts = useSelector(
@@ -79,7 +81,13 @@ export function WorkoutSession({
 
   const [exerciseResults, setExerciseResults] = useState<Exercise[]>([])
 
-  const timer = useSelector((state: RootState) => state.workoutModule.timer)
+  const isAllExercisesDone = useMemo(() => {
+    if(!sessionDay) return false
+    if(!sessionDay.instructions) return false
+
+    return sessionDay.instructions.exercises.every((e) => isExerciseDone(e))
+  }, [sessionDay?.instructions?.exercises])
+
 
   const [alertDialogOptions, setAlertDialogOptions] = useState<{
     open: boolean
@@ -190,9 +198,7 @@ export function WorkoutSession({
       sessionDay.instructions.isFinished
     )
       return
-    const isExerciseDone = (exercise: ExerciseInstructions) => {
-      return exercise.sets.every((set) => set.isDone)
-    }
+
     const firstExerciseToOpen = sessionDay.instructions.exercises.find(
       (e) => !isExerciseDone(e)
     )
@@ -362,9 +368,10 @@ export function WorkoutSession({
   }
 
   // Helper function to check if exercise is done
-  const isExerciseDone = (exerciseToCheck: ExerciseInstructions): boolean => {
-    return exerciseToCheck.sets.every((set) => set.isDone)
+  function isExerciseDone(exercise: ExerciseInstructions) {
+    return exercise.sets.every((set) => set.isDone)
   }
+
 
   // Helper function to clean set (remove unused RPE/RIR field)
   const cleanSet = (set: any) => {
@@ -972,7 +979,7 @@ export function WorkoutSession({
             className='workout-name-container'
             onClick={onOpenWorkoutDetails}
           >
-            {sessionDay.instructions.isFinished ? (
+            {isAllExercisesDone ? (
               <CircleIcon color='success' />
             ) : (
               <CircleIcon color='error' />
