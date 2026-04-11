@@ -374,12 +374,15 @@ export function WorkoutSession({
 
 
   // Helper function to clean set (remove unused RPE/RIR field)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const cleanSet = (set: any) => {
     let cleanedSet = { ...set }
     if (cleanedSet.rir) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { rpe, ...setWithoutRpe } = cleanedSet
       cleanedSet = setWithoutRpe
     } else if (cleanedSet.rpe) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { rir, ...setWithoutRir } = cleanedSet
       cleanedSet = setWithoutRir
     }
@@ -537,7 +540,7 @@ export function WorkoutSession({
 
         invalidateSets(exercise.exerciseId, sessionDay.workout.forUserId, 20)
       }
-    } catch (err) {
+    } catch {
       // Rollback on error
       setSelectedSessionDay({
         ...sessionDay,
