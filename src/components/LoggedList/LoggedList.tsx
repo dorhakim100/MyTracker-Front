@@ -82,6 +82,7 @@ export function LoggedList({
         ) || []
       )
     }
+    
     if (selectedDay)
       return selectedDay?.logs?.filter((log) =>
         _filterLogsByMealPeriod(log, mealPeriod)

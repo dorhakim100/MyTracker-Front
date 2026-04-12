@@ -497,6 +497,7 @@ export function ItemDetails({
 
       delete newLog.image
       delete newLog.searchId
+
       if (!isCustomLog && (item as Log).source !== searchTypes.custom)
         delete newLog.name
 
@@ -504,7 +505,7 @@ export function ItemDetails({
 
       if (!userLogs) return showErrorMsg(t('messages.error.editMeal'))
       const logIndex = userLogs.findIndex(
-        (log) => log.time === editMealItem.time
+        (log) => (log.time === editMealItem.time && log.itemId === editMealItem.itemId)
       )
       if (logIndex === -1) return showErrorMsg(t('messages.error.editMeal'))
 
@@ -552,6 +553,7 @@ export function ItemDetails({
 
   const getOnClick = () => {
     if (onAddToMealClick) {
+      console.log('onAddToMealClick', item);
       return () => {
         const itemMealToEdit = {
           searchId: isCustomLog ? '' : item.searchId,
@@ -576,6 +578,7 @@ export function ItemDetails({
       }
     }
     if (updateMenu) {
+      console.log('updateMenu', item);
       return async () => {
         const itemIndex = editMenu?.menuLogs.findIndex(
           (log) => log._id === item._id
@@ -612,6 +615,7 @@ export function ItemDetails({
       }
     }
     if (editMealItem) {
+      console.log('editMealItem', item);
       return onEditMeal
     }
     return onAddToMeal
