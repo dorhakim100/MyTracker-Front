@@ -211,6 +211,14 @@ export function getDateFromISO(isoString: string) {
   return date.toISOString().split('T')[0]
 }
 
+export function getTimeFromISO(isoString: string) {
+  let date = isoString
+  if(isoString === '' || !isoString) {
+    date = getDateFromISO(new Date().toISOString())
+  }
+  return new Date(date).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' })
+}
+
 export function getNewDNDArray(
   originalArray: (string | null)[],
   newIndex: number,

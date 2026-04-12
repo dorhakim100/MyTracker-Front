@@ -32,6 +32,7 @@ import { DeleteAction } from '../DeleteAction/DeleteAction'
 import { imageService } from '../../services/image/image.service'
 import { mealService } from '../../services/meal/meal.service'
 import { Menu } from '../../types/menu/Menu'
+import { getTimeFromISO } from '../../services/util.service'
 
 export type LogsSource = 'diary' | 'menu'
 
@@ -157,6 +158,10 @@ export function LoggedList({
         />
       )
     )
+  }
+
+  const renderTimeText = (item: Log) => {
+    return <span className='time-text'>{getTimeFromISO(item.createdAt || '')}</span>
   }
 
   const renderSecondaryText = (item: Log) => {
@@ -306,6 +311,7 @@ export function LoggedList({
             onDeleteItem={onDeleteLog}
           />
         )}
+        renderRight={renderTimeText}
         itemClassName={`meal-item-container ${
           prefs.isDarkMode ? 'dark-mode' : ''
         }`}
