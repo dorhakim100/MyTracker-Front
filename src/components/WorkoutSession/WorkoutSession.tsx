@@ -676,10 +676,25 @@ export function WorkoutSession({
       newInstructions.isFinished = false
     }
 
+    const isExerciseDoneValue = isExerciseDone(exercise)
+    // const newMarkValue = exercise.sets[setIndex].isDone 
+  // Check if all exercises are done
+      const isAllExercisesDone = newInstructions.exercises.every(
+        (e: ExerciseInstructions) =>
+          e.exerciseId === exercise.exerciseId
+            ? isExerciseDoneValue
+            : isExerciseDone(e)
+      )
+    // When there is an interaction with state of set isDone, make sure that
+    // if exercise is not done, or all exercises are not done, make sure isFinished is false
+    if(!isExerciseDoneValue || !isAllExercisesDone){
+      newInstructions.isFinished = false
+    }
+
     // Update state immediately
     setSelectedSessionDay({
       ...sessionDay,
-      instructions: { ...newInstructions },
+      instructions: newInstructions,
     })
 
     try {
@@ -688,7 +703,7 @@ export function WorkoutSession({
 
       const currentExerciseToSet = { ...exercise, setIndex }
       // Check if exercise is done
-      if (isExerciseDone(exercise)) {
+      if (isExerciseDoneValue) {
         const nextExercise = handleMoveToNextExercise(exercise, exerciseIndex)
         if (nextExercise) {
           setCurrentExercise(nextExercise)
@@ -745,13 +760,7 @@ export function WorkoutSession({
           instructions: savedInstructions,
         })
       }
-      // Check if all exercises are done
-      const isAllExercisesDone = savedInstructions.exercises.every(
-        (e: ExerciseInstructions) =>
-          e.exerciseId === exercise.exerciseId
-            ? isExerciseDone(exercise)
-            : isExerciseDone(e)
-      )
+    
 
       if (isAllExercisesDone) {
         await handleAllExercisesCompleted(savedInstructions || newInstructions)
