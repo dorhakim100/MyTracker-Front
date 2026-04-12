@@ -393,13 +393,13 @@ export function WorkoutSession({
   const updateExerciseInInstructions = (
     exercise: ExerciseInstructions
   ): Instructions => {
-    const isDone = sessionDay.instructions.exercises.every((e) => isExerciseDone(e))
+    // const isDone = sessionDay.instructions.exercises.every((e) => isExerciseDone(e))
     return {
       ...sessionDay.instructions,
       exercises: sessionDay.instructions.exercises.map((e) =>
         e.exerciseId === exercise.exerciseId ? exercise : e
       ),
-      isDone: isDone,
+      // isDone: isDone,
     }
   }
 
