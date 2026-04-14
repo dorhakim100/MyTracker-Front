@@ -23,7 +23,9 @@ import InfoOutlineIcon from '@mui/icons-material/InfoOutline'
 import Edit from '@mui/icons-material/Edit'
 import Delete from '@mui/icons-material/Delete'
 import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox'
+import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import {
+  duplicateWorkout,
   removeWorkout,
   toggleActivateWorkout,
 } from '../../../store/actions/workout.action'
@@ -71,6 +73,10 @@ export function WorkoutCard({
   const isDashboard = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.isDashboard
   )
+  const user = useSelector((stateSelector: RootState) => stateSelector.userModule.user)
+  const traineeUser = useSelector(
+    (stateSelector: RootState) => stateSelector.userModule.traineeUser
+  )
 
   const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false)
 
@@ -81,11 +87,11 @@ export function WorkoutCard({
 
   const onViewDetails = useCallback(() => {
     setSlideOptions({ open: true, type: 'details' })
-  }, [workout._id])
+  }, [])
 
   const onEdit = useCallback(() => {
     setSlideOptions({ open: true, type: 'edit' })
-  }, [workout._id])
+  }, [])
 
   const onDelete = useCallback(async () => {
     try {
@@ -96,7 +102,28 @@ export function WorkoutCard({
     } catch {
       showErrorMsg(t('messages.error.deleteWorkout'))
     }
-  }, [workout._id, setIsDeleteOpen])
+  }, [workout._id, t])
+
+  const onDuplicate = useCallback(async () => {
+    try {
+      const forUserId = traineeUser?._id || user?._id || workout.forUserId || ''
+      if (!forUserId) return showErrorMsg(t('messages.error.duplicateWorkout'))
+
+      const duplicated = await duplicateWorkout(
+        workout,
+        forUserId,
+        t('workout.copyName', { name: workout.name })
+      )
+
+      if (duplicated?._id) {
+        onReorderWorkouts([...workouts, duplicated])
+      }
+
+      showSuccessMsg(t('messages.success.duplicateWorkout'))
+    } catch {
+      showErrorMsg(t('messages.error.duplicateWorkout'))
+    }
+  }, [traineeUser?._id, user?._id, workout, workouts, onReorderWorkouts, t])
 
   const options: DropdownOption[] = useMemo(
     () => [
@@ -109,6 +136,11 @@ export function WorkoutCard({
         title: t('workout.editRoutine'),
         icon: <Edit />,
         onClick: onEdit,
+      },
+      {
+        title: t('workout.duplicateWorkout'),
+        icon: <ContentCopyIcon />,
+        onClick: onDuplicate,
       },
       {
         title: t('workout.deactivate'),
@@ -127,7 +159,7 @@ export function WorkoutCard({
         onClick: () => setIsDeleteOpen(true),
       },
     ],
-    [onViewDetails, onEdit, setIsDeleteOpen, workout, t]
+    [onViewDetails, onEdit, onDuplicate, workout, workouts, onReorderWorkouts, t]
   )
 
   const getSlideTitle = () => {

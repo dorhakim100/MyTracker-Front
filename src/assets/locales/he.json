@@ -175,6 +175,8 @@
     "exercisesFound": "{{count}} תרגילים נמצאו",
     "viewDetails": "צפה בפרטים",
     "deactivate": "השבת",
+    "duplicateWorkout": "שכפל אימון",
+    "copyName": "{{name}} (עותק)",
     "noPastRoutinesFound": "לא נמצאו אימונים קודמים...",
     "workoutByDate": "אימון לפי תאריך",
     "noWorkoutSessionThisDay": "אין אימון מתוכנן ליום זה",
@@ -378,7 +380,8 @@
       "updateRequest": "הבקשה טופלה בהצלחה",
       "addSet": "הסט נוסף בהצלחה",
       "deleteWorkout": "האימון נמחק בהצלחה",
-      "deleteExercise": "התרגיל נמחק בהצלחה"
+      "deleteExercise": "התרגיל נמחק בהצלחה",
+      "duplicateWorkout": "האימון שוכפל בהצלחה"
     },
     "error": {
       "updateCalories": "שגיאה בעדכון הקלוריות",
@@ -424,7 +427,8 @@
       "getExercises": "שגיאה בטעינת התרגילים",
       "changeExercise": "שגיאה בהחלפת התרגיל",
       "getMenus": "שגיאה בטעינת התפריטים",
-      "saveMenu": "שגיאה בשמירת התפריט"
+      "saveMenu": "שגיאה בשמירת התפריט",
+      "duplicateWorkout": "שגיאה בשכפול האימון"
     }
   },
   "loading": {

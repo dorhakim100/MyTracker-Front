@@ -167,6 +167,8 @@
     "noPastRoutinesFound": "No past routines found",
     "viewDetails": "View Details",
     "deactivate": "Deactivate",
+    "duplicateWorkout": "Duplicate Workout",
+    "copyName": "{{name}} (Copy)",
     "mostPopularExercises": "Most Popular Exercises",
     "exercisesFound": "{{count}} exercises found",
     "activeRoutines": "Active Routines",
@@ -378,7 +380,8 @@
       "updateRequest": "Request handled successfully",
       "addSet": "Set added successfully",
       "deleteWorkout": "Workout deleted successfully",
-      "deleteExercise": "Exercise deleted successfully"
+      "deleteExercise": "Exercise deleted successfully",
+      "duplicateWorkout": "Workout duplicated successfully"
     },
     "error": {
       "updateCalories": "Failed to update calories",
@@ -424,7 +427,8 @@
       "getExercises": "Failed to get exercises",
       "changeExercise": "Failed to change exercise",
       "getMenus": "Failed to get menus",
-      "saveMenu": "Failed to save menu"
+      "saveMenu": "Failed to save menu",
+      "duplicateWorkout": "Failed to duplicate workout"
     }
   },
   "loading": {

@@ -10,4 +10,5 @@ export interface Instructions {
   timesPerWeek: number
   isDone: boolean // isDone is used to mark the session as done, not the exercises
   isFinished?: boolean // isFinished is used to mark the session as finished, including all exercises
+  doneTimes?: number
 }

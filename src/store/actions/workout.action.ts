@@ -26,6 +26,8 @@ import type { CurrUpdatedExerciseSettings } from '../../types/workout/CurrUpdate
 import { indexedDbService } from '../../services/indexeddb.service'
 import { Timer } from '../../types/timer/Timer'
 import { DEFAULT_RESTING_TIME } from '../../assets/config/times'
+import { instructionsService } from '../../services/instructions/instructions.service'
+import { Instructions } from '../../types/instructions/Instructions'
 
 export async function loadWorkouts(filter: WorkoutFilter) {
   try {
@@ -52,6 +54,93 @@ export async function saveWorkout(workout: Workout, timesPerWeek?: number) {
     })
     return savedWorkout
   } catch (err) {
+    throw err
+  }
+}
+
+function duplicateInstructionsData(
+  instructions: Instructions,
+  savedWorkoutId: string
+): Instructions {
+  return {
+    ...instructions,
+    _id: undefined,
+    workoutId: savedWorkoutId,
+    weekNumber: 1,
+    doneTimes: 0,
+    isDone: false,
+    isFinished: false,
+    exercises: instructions.exercises.map((exercise) => ({
+      ...exercise,
+      sets: exercise.sets.map((set) => ({
+        ...set,
+        isDone: false,
+      })),
+    })),
+  }
+}
+
+export async function duplicateWorkout(
+  workout: Workout,
+  forUserId: string,
+  duplicatedName?: string
+) {
+  let savedWorkout: Workout | null = null
+
+  try {
+    const workoutWithoutId = { ...workout }
+    delete workoutWithoutId._id
+
+    const workoutToDuplicate = {
+      ...workoutWithoutId,
+      _id: undefined,
+      forUserId,
+      name: duplicatedName || workout.name,
+    } as Workout
+
+    savedWorkout = await workoutService.save(workoutToDuplicate)
+
+    let timesPerWeek: number | undefined
+    if (workout._id) {
+      const weekNumberDoneStatuses = await instructionsService.getWeekNumberDone(workout._id)
+      const reversedWeekNumberDoneStatuses = weekNumberDoneStatuses.reverse()
+      const latestWeekNumberDone = reversedWeekNumberDoneStatuses[0]?.weekNumber
+      const weekNumberToSet = latestWeekNumberDone || 1
+      const instructions = await instructionsService.getByWorkoutId({
+        workoutId: workout._id,
+        forUserId,
+        weekNumber: weekNumberToSet,
+      })
+
+      if (instructions && savedWorkout && savedWorkout._id) {
+        timesPerWeek = instructions.timesPerWeek
+        const duplicatedInstructions = duplicateInstructionsData(
+          instructions,
+          savedWorkout._id
+        )
+        await instructionsService.save(duplicatedInstructions)
+      }
+    }
+
+    store.dispatch({
+      type: ADD_WORKOUT,
+      workout: {
+        ...savedWorkout,
+        isNewInstructions: true,
+        timesPerWeek,
+        doneTimes: 0,
+      },
+    })
+
+    return savedWorkout
+  } catch (err) {
+    if (savedWorkout?._id) {
+      try {
+        await workoutService.remove(savedWorkout._id)
+      } catch {
+        // best effort cleanup if instructions duplication fails
+      }
+    }
     throw err
   }
 }
