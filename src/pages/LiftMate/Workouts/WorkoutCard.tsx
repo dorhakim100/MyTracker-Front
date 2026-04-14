@@ -116,7 +116,7 @@ export function WorkoutCard({
       )
 
       if (duplicated?._id) {
-        onReorderWorkouts([...workouts, duplicated])
+        onReorderWorkouts([...workouts, duplicated as Workout])
       }
 
       showSuccessMsg(t('messages.success.duplicateWorkout'))
@@ -214,6 +214,8 @@ export function WorkoutCard({
   }
 
   const renderTimes = () => {
+    console.log(workout.isNewInstructions, workout.doneTimes);
+    
     if (workout.isNewInstructions && workout.doneTimes === 0) {
       return (
         <Badge

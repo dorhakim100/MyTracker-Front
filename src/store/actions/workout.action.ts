@@ -121,18 +121,19 @@ export async function duplicateWorkout(
         await instructionsService.save(duplicatedInstructions)
       }
     }
+    const workoutToSet = {
+      ...savedWorkout,
+      isNewInstructions: true,
+      timesPerWeek,
+      doneTimes: 0,
+    }
 
     store.dispatch({
       type: ADD_WORKOUT,
-      workout: {
-        ...savedWorkout,
-        isNewInstructions: true,
-        timesPerWeek,
-        doneTimes: 0,
-      },
+      workout: workoutToSet,
     })
 
-    return savedWorkout
+    return {...savedWorkout, isNewInstructions: true, doneTimes: 0, timesPerWeek}
   } catch (err) {
     if (savedWorkout?._id) {
       try {
