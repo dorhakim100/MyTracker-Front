@@ -86,7 +86,7 @@ export function WorkoutSession({
     if(!sessionDay.instructions) return false
 
     return sessionDay.instructions.exercises.every((e) => isExerciseDone(e))
-  }, [sessionDay?.instructions?.exercises])
+  }, [sessionDay])
 
 
   const [alertDialogOptions, setAlertDialogOptions] = useState<{
@@ -205,8 +205,10 @@ export function WorkoutSession({
 
     if (firstExerciseToOpen) {
       handleOpenChange(firstExerciseToOpen.exerciseId, true)
+    } else {
+      setOpenExercises(new Set([]))
     }
-  }, [sessionDay.instructions.exercises, sessionDay.instructions.isFinished, sessionDay.instructions.isDone])
+  }, [sessionDay.instructions.exercises, sessionDay.instructions.isFinished, sessionDay.instructions.isDone, isDashboard])
 
   const onExerciseFilterChange = (exerciseFilter: ExerciseFilter) => {
     setExerciseFilter(exerciseFilter)
