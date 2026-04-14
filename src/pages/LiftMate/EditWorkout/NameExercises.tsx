@@ -351,11 +351,10 @@ export function NameExercises({
                 }`}
               />
           )}
-          {!instructions._id && (
+           
             <div className='times-per-week-container'>
               <span className='bold-header'>{t('workout.timesPerWeek')}</span>
               <CustomSelect
-                tooltipTitle={t('workout.editTimesPerWeek')}
                 label={t('workout.times')}
                 values={getArrayOfNumbers(1, 7).map(
                   (timesNumber) => timesNumber + ''
@@ -365,7 +364,7 @@ export function NameExercises({
                 className={`${prefs.favoriteColor}`}
               />
             </div>
-          )}
+          
           <Divider
             className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
           />
