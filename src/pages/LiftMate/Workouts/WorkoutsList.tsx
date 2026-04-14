@@ -11,6 +11,7 @@ interface WorkoutsListProps {
   selectedWorkoutId: string | null
   isRenderStartButtons: boolean
   onReorderWorkouts: (workouts: Workout[]) => void
+  onDuplicateWorkout: (workout: Workout) => Promise<void>
 }
 
 export function WorkoutsList({
@@ -20,6 +21,7 @@ export function WorkoutsList({
   selectedWorkoutId,
   isRenderStartButtons = true,
   onReorderWorkouts,
+  onDuplicateWorkout,
 }: WorkoutsListProps) {
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
   return (
@@ -34,6 +36,7 @@ export function WorkoutsList({
           isRenderStartButtons={isRenderStartButtons}
           onReorderWorkouts={onReorderWorkouts}
           workouts={workouts}
+          onDuplicateWorkout={onDuplicateWorkout}
         />
       )}
       getKey={(workout, index) => workout._id || `workout-${index}`}

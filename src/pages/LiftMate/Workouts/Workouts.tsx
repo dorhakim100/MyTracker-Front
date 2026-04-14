@@ -6,6 +6,7 @@ import {
   loadWorkouts,
   removeWorkout,
   toggleActivateWorkout,
+  duplicateWorkout,
   setSelectedSessionDay,
   playWorkout,
   setTodaySessionDay,
@@ -32,6 +33,7 @@ import {
 import { WorkoutDetails } from '../../../components/WorkoutDetails/WorkoutDetails'
 import { Avatar, CircularProgress, Divider, Typography } from '@mui/material'
 import { Add, Delete, Edit } from '@mui/icons-material'
+import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import { workoutService } from '../../../services/workout/workout.service'
 import { DAY_IN_MS, MONTH_IN_MS } from '../../../assets/config/times'
 import { DateRangeController } from '../../../components/DateRangeController/DateRangeController'
@@ -158,39 +160,45 @@ export function Workouts() {
   const [selectedWorkoutForOptions, setSelectedWorkoutForOptions] =
     useState<Workout | null>(null)
 
-  const pastWorkoutOptions: DropdownOption[] = useMemo(
-    () => [
-      {
-        title: t('common.activate'),
-        icon: <CheckBoxIcon />,
-        onClick: () => {
-          if (selectedWorkoutForOptions) {
-            toggleActivateWorkout(selectedWorkoutForOptions)
-            onReorderWorkouts([...reorderedWorkouts, selectedWorkoutForOptions])
-          }
-        },
+  const pastWorkoutOptions: DropdownOption[] = [
+    {
+      title: t('common.activate'),
+      icon: <CheckBoxIcon />,
+      onClick: () => {
+        if (selectedWorkoutForOptions) {
+          toggleActivateWorkout(selectedWorkoutForOptions)
+          onReorderWorkouts([...reorderedWorkouts, selectedWorkoutForOptions])
+        }
       },
-      {
-        title: t('common.edit'),
-        icon: <Edit />,
-        onClick: () => {
-          if (selectedWorkoutForOptions) {
-            onOpenEdit(selectedWorkoutForOptions)
-          }
-        },
+    },
+    {
+      title: t('common.edit'),
+      icon: <Edit />,
+      onClick: () => {
+        if (selectedWorkoutForOptions) {
+          onOpenEdit(selectedWorkoutForOptions)
+        }
       },
-      {
-        title: t('common.delete'),
-        icon: <Delete />,
-        onClick: () => {
-          if (selectedWorkoutForOptions) {
-            onDeleteWorkout(selectedWorkoutForOptions, false)
-          }
-        },
+    },
+    {
+      title: t('workout.duplicateWorkout'),
+      icon: <ContentCopyIcon />,
+      onClick: () => {
+        if (selectedWorkoutForOptions) {
+          onDuplicateWorkout(selectedWorkoutForOptions)
+        }
       },
-    ],
-    [onDeleteWorkout, onOpenEdit, onReorderWorkouts, selectedWorkoutForOptions, t]
-  )
+    },
+    {
+      title: t('common.delete'),
+      icon: <Delete />,
+      onClick: () => {
+        if (selectedWorkoutForOptions) {
+          onDeleteWorkout(selectedWorkoutForOptions, false)
+        }
+      },
+    },
+  ]
 
   useEffect(() => {
     if (!user) return
@@ -320,6 +328,34 @@ export function Workouts() {
     } catch (err) {
       console.error(err)
       showErrorMsg(t('messages.error.deleteWorkout'))
+    }
+  }
+
+  async function onDuplicateWorkout(workout: Workout) {
+    try {
+      const forUserId = traineeUser?._id || user?._id || workout.forUserId || ''
+      if (!forUserId) return showErrorMsg(t('messages.error.duplicateWorkout'))
+
+      const duplicated = await duplicateWorkout(
+        workout,
+        forUserId,
+        t('workout.copyName', { name: workout.name })
+      )
+
+      setSelectedWorkoutForOptions(null)
+
+      if (!duplicated?._id) {
+        showErrorMsg(t('messages.error.duplicateWorkout'))
+        return
+      }
+
+      if (workout.isActive) {
+        await onReorderWorkouts([...reorderedWorkouts, duplicated])
+      }
+
+      showSuccessMsg(t('messages.success.duplicateWorkout'))
+    } catch {
+      showErrorMsg(t('messages.error.duplicateWorkout'))
     }
   }
 
@@ -486,6 +522,7 @@ export function Workouts() {
             selectedWorkoutId={selectedWorkoutId}
             isRenderStartButtons={isRenderStartButtons}
             onReorderWorkouts={onReorderWorkouts}
+            onDuplicateWorkout={onDuplicateWorkout}
           />
         </div>
         <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />

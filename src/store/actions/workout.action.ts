@@ -84,7 +84,7 @@ export async function duplicateWorkout(
   workout: Workout,
   forUserId: string,
   duplicatedName?: string
-) {
+): Promise<Workout> {
   let savedWorkout: Workout | null = null
 
   try {
@@ -95,6 +95,7 @@ export async function duplicateWorkout(
       ...workoutWithoutId,
       _id: undefined,
       forUserId,
+      isActive: true,
       name: duplicatedName || workout.name,
     } as Workout
 
@@ -121,7 +122,11 @@ export async function duplicateWorkout(
         await instructionsService.save(duplicatedInstructions)
       }
     }
-    const workoutToSet = {
+    if (!savedWorkout) {
+      throw new Error('Failed to duplicate workout')
+    }
+
+    const workoutToSet: Workout = {
       ...savedWorkout,
       isNewInstructions: true,
       timesPerWeek,
@@ -133,7 +138,7 @@ export async function duplicateWorkout(
       workout: workoutToSet,
     })
 
-    return {...savedWorkout, isNewInstructions: true, doneTimes: 0, timesPerWeek}
+    return workoutToSet
   } catch (err) {
     if (savedWorkout?._id) {
       try {
