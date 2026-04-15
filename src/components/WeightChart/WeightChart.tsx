@@ -140,11 +140,13 @@ export function WeightChart({
       true,
       range
     )
+
     const previousData = previousSeries?.data ?? []
 
     const combinedData = [...previousData, ...data]
 
-    const calcPeriod = (array: number[] | null[]) => {
+    const calcPeriod = (array: (number | null)[]) => {
+      
       return +(
         array.reduce((acc: number, curr: number | null) => {
           if (curr === null) return acc
@@ -153,19 +155,45 @@ export function WeightChart({
       ).toFixed(1)
     }
 
+    const handleNullValues = (array: (number | null)[]) => {
+
+      const filteredArray = array.filter((v)=>v)
+
+
+      const filteredSum = filteredArray.reduce((acc: number, curr: number | null) => {
+        if (curr === null) return acc
+        return +(acc + curr).toFixed(1)
+      }, 0)
+      const average = filteredSum / (filteredArray.length)
+      return array.map((value) => {
+        if (!value) {
+          return +(average).toFixed(1)
+
+        }
+        return value
+      })
+    }
+
     const res = data.map((_, index) => {
       const period = combinedData.slice(
         index,
         index + DEFAULT_MOVING_AVERAGE_PERIOD
       )
 
-      if (
-        period.includes(null) ||
-        period.length !== DEFAULT_MOVING_AVERAGE_PERIOD
-      )
-        return null
+      const hasNulls = period.includes(null)
+      const isNotFullArray = hasNulls ||
+      period.length !== DEFAULT_MOVING_AVERAGE_PERIOD
 
-      return calcPeriod(period as number[] | null[])
+      if (
+        isNotFullArray && range === 'ALL'
+      ){
+        
+        return null
+      } else if (isNotFullArray) {
+        return calcPeriod(handleNullValues(period) as (number | null)[])
+      } else {
+        return calcPeriod(period)
+      }
     })
 
     setChartLoading(false)
