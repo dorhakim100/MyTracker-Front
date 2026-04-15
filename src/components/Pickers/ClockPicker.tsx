@@ -108,9 +108,15 @@ export function ClockPicker({
         value={pickerValue}
         // wheelMode='normal'
         onChange={(next) =>
+        {
+          if(next.numberOfServings === 0 && next.afterValue === 0) {
+            next.afterValue = 0.1
+          }
           setPickerValue(
             next as unknown as { numberOfServings: number; afterValue: number }
           )
+        }
+          
         }
         wheelMode='normal'
         className='clock-picker'
