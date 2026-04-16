@@ -61,9 +61,12 @@ async function startWebScanner({
       onDetected(result.getText())
     }
   )
+  let isStopped = false
 
   return {
     stop: async () => {
+      if (isStopped) return
+      isStopped = true
       stopWebScanner(videoElement, controls)
     },
   }
@@ -126,9 +129,12 @@ async function startNativeScanner({
     formats: nativeFormats,
     lensFacing: LensFacing.Back,
   })
+  let isStopped = false
 
   return {
     stop: async () => {
+      if (isStopped) return
+      isStopped = true
       await BarcodeScanner.stopScan()
       await Promise.all(listeners.map((listener) => listener.remove()))
     },
