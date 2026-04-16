@@ -72,8 +72,8 @@ export function CustomButton({
                 ariaLabel || (typeof text === 'string' ? text : 'button')
               }
               onClick={async (e) => {
-                await Haptics.impact({ style: ImpactStyle.Light })
                 onClick?.(e)
+                await Haptics.impact({ style: ImpactStyle.Light })
               }}
               disabled={disabled}
               className={`custom-button ${className || ''} `}
@@ -104,9 +104,9 @@ export function CustomButton({
           size={size}
           fullWidth={fullWidth}
           aria-label={ariaLabel || (typeof text === 'string' ? text : 'button')}
-          onClick={async (e) => {
-            await Haptics.impact({ style: ImpactStyle.Light })
+          onClick={ async (e) => {
             onClick?.(e)
+            await Haptics.impact({ style: ImpactStyle.Light })
           }}
           disabled={disabled}
           className={`custom-button ${className || ''} ${

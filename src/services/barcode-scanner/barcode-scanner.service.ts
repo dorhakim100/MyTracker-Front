@@ -1,9 +1,7 @@
 import { Capacitor } from '@capacitor/core'
-import { PluginListenerHandle } from '@capacitor/core'
 import {
   BarcodeScanner,
   BarcodeFormat,
-  LensFacing,
 } from '@capacitor-mlkit/barcode-scanning'
 import { BrowserMultiFormatReader, IScannerControls } from '@zxing/browser'
 import {
@@ -13,7 +11,7 @@ import {
 } from '@zxing/library'
 
 type OnDetected = (code: string) => void
-type OnScanError = () => void
+type OnScanError = (message?: string) => void
 
 interface StartBarcodeScannerOptions {
   videoElement?: HTMLVideoElement | null
@@ -107,36 +105,38 @@ async function startNativeScanner({
   }
 
   await ensureNativePermission()
+  let isStopped = false
 
-  const listeners: PluginListenerHandle[] = []
-
-  listeners.push(
-    await BarcodeScanner.addListener('barcodesScanned', ({ barcodes }) => {
+  ;(async () => {
+    try {
+      const { barcodes } = await BarcodeScanner.scan({
+        formats: nativeFormats,
+        autoZoom: true,
+      })
+      if (isStopped) return
       const barcode = barcodes[0]
       const value = barcode?.rawValue || barcode?.displayValue
-      if (!value) return
+      if (!value) {
+        onError('No barcode detected')
+        return
+      }
       onDetected(value)
-    })
-  )
-
-  listeners.push(
-    await BarcodeScanner.addListener('scanError', () => {
-      onError()
-    })
-  )
-
-  await BarcodeScanner.startScan({
-    formats: nativeFormats,
-    lensFacing: LensFacing.Back,
-  })
-  let isStopped = false
+    } catch (err: unknown) {
+      if (isStopped) return
+      const message = err instanceof Error ? err.message : 'Native scan failed'
+      onError(message)
+    }
+  })()
 
   return {
     stop: async () => {
       if (isStopped) return
       isStopped = true
-      await BarcodeScanner.stopScan()
-      await Promise.all(listeners.map((listener) => listener.remove()))
+      try {
+        await BarcodeScanner.stopScan()
+      } catch {
+        // no-op: scan() may already be closed
+      }
     },
   }
 }

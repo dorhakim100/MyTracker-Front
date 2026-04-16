@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
+import { Capacitor } from '@capacitor/core'
 import { searchService } from '../../services/search/search-service'
 import { showErrorMsg } from '../../services/event-bus.service'
 import { ItemDetails } from '../ItemDetails/ItemDetails'
@@ -32,6 +33,7 @@ export function BarcodeScanner({
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
+  const isNativePlatform = Capacitor.isNativePlatform()
 
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const scannerSessionRef = useRef<{ stop: () => Promise<void> } | null>(null)
@@ -41,6 +43,12 @@ export function BarcodeScanner({
   const [isItemFound, setIsItemFound] = useState(false)
   const [isTryAgain, setIsTryAgain] = useState(false)
   const [isCustomLog, setIsCustomLog] = useState(false)
+  const [scanAttempt, setScanAttempt] = useState(0)
+  const getScanErrorMessage = useCallback(
+    (extra?: string) =>
+      extra ? `${t('messages.error.scan')} (${extra})` : t('messages.error.scan'),
+    [t]
+  )
 
   const stopScanner = useCallback(async () => {
     const activeSession = scannerSessionRef.current
@@ -53,6 +61,7 @@ export function BarcodeScanner({
     isItemDetected.current = false
     setIsScannerLocked(false)
     setIsTryAgain(false)
+    setScanAttempt((prev) => prev + 1)
   }, [])
 
   const onDetected = useCallback(
@@ -81,6 +90,8 @@ export function BarcodeScanner({
   )
 
   useEffect(() => {
+    if (isScannerLocked || isItemFound || isCustomLog) return
+
     let isUnmounted = false
 
     ;(async () => {
@@ -90,14 +101,23 @@ export function BarcodeScanner({
           onDetected: (code) => {
             onDetected(code)
           },
-          onError: () => {
-            showErrorMsg(t('messages.error.scan'))
+          onError: (message) => {
+            if(message === 'scan canceled.') {
+              onClose()
+              return 
+            }
+            showErrorMsg(getScanErrorMessage(message))
+            setIsScannerLocked(true)
             setIsTryAgain(true)
           },
         })
-      } catch {
+      } catch (err: unknown) {
         if (isUnmounted) return
-        onClose()
+        const errorMessage =
+          err instanceof Error ? err.message : 'unknown scanner startup error'
+        showErrorMsg(getScanErrorMessage(errorMessage))
+        setIsScannerLocked(true)
+        setIsTryAgain(true)
       }
     })()
 
@@ -105,7 +125,15 @@ export function BarcodeScanner({
       isUnmounted = true
       void stopScanner()
     }
-  }, [onClose, onDetected, stopScanner, t])
+  }, [
+    isCustomLog,
+    isItemFound,
+    isScannerLocked,
+    onDetected,
+    scanAttempt,
+    stopScanner,
+    getScanErrorMessage,
+  ])
 
   useEffect(() => {
     if (!isCustomLog) return
@@ -126,15 +154,21 @@ export function BarcodeScanner({
     <>
       {!isScannerLocked && (
         <div className="barcode-scanner-container">
-          <div className="barcode-scanner">
-            <video
-              ref={videoRef}
-              autoPlay
-              playsInline
-              muted
-              className="preview"
-            />
-            <div className="animation-container">
+          <div className={`barcode-scanner ${isNativePlatform ? 'native' : ''}`}>
+            {isNativePlatform ? (
+              <div className="native-preview" />
+            ) : (
+              <video
+                ref={videoRef}
+                autoPlay
+                playsInline
+                muted
+                className="preview"
+              />
+            )}
+            <div
+              className={`animation-container ${isNativePlatform ? 'native' : ''}`}
+            >
               <img src={scanAnimation} alt="scanner" />
             </div>
           </div>
@@ -146,15 +180,16 @@ export function BarcodeScanner({
           />
         </div>
       )}
-      {isScannerLocked && !isItemFound && isTryAgain && (
+      {isScannerLocked && !isItemFound && isTryAgain && !isCustomLog && (
         <CustomButton
           text={t('common.tryAgain')}
           onClick={onTryAgain}
           icon={<Refresh />}
           fullWidth
+          className="try-again-button"
         />
       )}
-      {isScannerLocked && !isTryAgain && (
+      {isScannerLocked && !isTryAgain && !isItemFound && !isCustomLog && (
         <div className="searching-animation-container">
           <Lottie
             animationData={

@@ -83,6 +83,7 @@ export function WorkoutCard({
   }>({ open: false, type: null })
 
   const onViewDetails = useCallback(async () => {
+
     await Haptics.impact({ style: ImpactStyle.Light })
     setSlideOptions({ open: true, type: 'details' })
   }, [])
