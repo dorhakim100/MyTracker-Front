@@ -18,10 +18,16 @@ export function EditIcon({ onClick, ariaLabel }: EditIconProps) {
     (state: RootState) => state.systemModule.isDashboard
   )
 
-  async function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
-    await Haptics.impact({ style: ImpactStyle.Light })
+  const isNative = useSelector(
+    (state: RootState) => state.systemModule.isNative
+  )
+
+  function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
     event.stopPropagation()
     onClick?.()
+    if(isNative) {
+      Haptics.impact({ style: ImpactStyle.Light })
+    }
   }
 
   return (
