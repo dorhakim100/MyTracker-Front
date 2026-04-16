@@ -18,6 +18,8 @@ import RemoveIcon from '@mui/icons-material/Remove'
 import { Goal } from '../../types/goal/Goal'
 import { AnimatedWrapper } from '../AnimatedWrapper/AnimatedWrapper'
 
+import { useDragHaptics } from '../../hooks/useDragHaptics'
+
 interface CaloriesEditProps {
   goalToEdit?: Goal | Partial<Goal>
   goalRef?: React.RefObject<Goal | Partial<Goal>>
@@ -35,7 +37,7 @@ export function CaloriesEdit({
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
-
+  const dragHaptics = useDragHaptics()
   const MIN = 1200
   const MAX = 5000
   const STEP = 50
@@ -133,12 +135,13 @@ export function CaloriesEdit({
           >
             {roundCaloriesToNearest50(pickerCalories.calories)} {t('macros.kcal')}
           </Typography>
-          <div className="picker-container">
+          <div className="picker-container" {...dragHaptics}>
             <Picker
               value={pickerCalories}
-              onChange={(next) =>
+              onChange={(next) =>{
                 // setPickerCalories(next as unknown as { calories: number })
                 setPickerCalories({ calories: next.calories as number })
+              }
               }
               height={150}
               wheelMode='normal'

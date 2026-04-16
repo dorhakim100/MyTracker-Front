@@ -27,6 +27,7 @@ import { showErrorMsg } from '../../services/event-bus.service'
 import { BarcodeScanner } from '../../components/BarcodeScanner/BarcodeScanner'
 import { smoothScroll } from '../../services/util.service'
 import { setActiveRoute } from '../../store/actions/system.actions'
+import { Haptics, ImpactStyle } from '@capacitor/haptics'
 
 type ModalType = 'search' | 'scan'
 
@@ -159,8 +160,9 @@ export function FixedBottomNavigation(props: {
           ariaLabel='SpeedDial basic example'
           aria-label={props.centerAction?.ariaLabel || 'center-action'}
           icon={<AddIcon />}
-          onClick={(ev) => {
+          onClick={async (ev) => {
             if (!user) return showErrorMsg(t('messages.error.register'))
+            await Haptics.impact({ style: ImpactStyle.Light })
             ev.stopPropagation()
             setIsAddModal(!isAddModal)
 
@@ -182,8 +184,10 @@ export function FixedBottomNavigation(props: {
             <SpeedDialAction
               key={action.name}
               icon={action.icon}
-              onClick={
-                action.onClick as unknown as MouseEventHandler<HTMLDivElement>
+              onClick={async ()=>{
+                await Haptics.impact({ style: ImpactStyle.Light })
+                return action.onClick as unknown as MouseEventHandler<HTMLDivElement>
+              }
               }
               className={`${prefs.favoriteColor}`}
             />

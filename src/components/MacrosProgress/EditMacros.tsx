@@ -19,6 +19,7 @@ import { Goal } from '../../types/goal/Goal'
 import { Macros as MacrosType } from '../../types/macros/Macros'
 import { SaveCancel } from '../SaveCancel/SaveCancel'
 import { AnimatedWrapper } from '../AnimatedWrapper/AnimatedWrapper'
+import { useDragHaptics } from '../../hooks/useDragHaptics'
 
 interface EditMacrosProps {
   goalToEdit?: Goal | Partial<Goal>
@@ -68,6 +69,7 @@ export function EditMacros({
   onCancel,
   onSave,
 }: EditMacrosProps) {
+  const dragHaptics = useDragHaptics()
   const macros = {
     carbs: getArrayOfNumbers(0, CARBS_LIMIT),
     protein: getArrayOfNumbers(0, PROTEIN_LIMIT),
@@ -191,10 +193,13 @@ export function EditMacros({
 
   return (
     <Box className="edit-macros-container">
-      <div className="picker-container">
+      <div className="picker-container" {...dragHaptics}>
         <Picker
           value={pickerValue}
-          onChange={(next) => setPickerValue(next as unknown as PickerValue)}
+          onChange={(next) =>{
+            setPickerValue(next as unknown as PickerValue)
+          }
+          }
           height={150}
           wheelMode='normal'
         >

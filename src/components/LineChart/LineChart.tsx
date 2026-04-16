@@ -21,6 +21,8 @@ import {
 import { getColor } from '../../services/util.service'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
+import { Haptics, ImpactStyle } from '@capacitor/haptics'
+import { throttle } from 'lodash'
 
 ChartJS.register(
   CategoryScale,
@@ -118,6 +120,10 @@ export default function LineChart({
   const chartRef = useRef<ChartJS<'line'>>(null)
   const [clickedIndex, setClickedIndex] = useState<number | null>(null)
   const isDragging = useRef(false)
+
+  const handleHaptics = useCallback(throttle(() => {
+    Haptics.impact({ style: ImpactStyle.Light })
+  }, 100, { trailing: true }), [])
 
   const lightenColor = (hex: string, amount: number) => {
     if (!hex || !hex.startsWith('#')) return hex
@@ -367,7 +373,8 @@ export default function LineChart({
   }
 
   // Touch-drag support
-  const handleTouchMove: React.TouchEventHandler<HTMLCanvasElement> = (evt) => {
+  const handleTouchMove: React.TouchEventHandler<HTMLCanvasElement> = async (evt) => {
+    handleHaptics()
     const chart = chartRef.current
     if (!chart) return
     const touch = evt.touches[0]

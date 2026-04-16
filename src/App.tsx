@@ -34,6 +34,7 @@ import { AppHeader } from './components/AppHeader/AppHeader.tsx'
 import { Timer } from './components/Timer/Timer.tsx'
 import { Capacitor } from '@capacitor/core'
 import { TrainerDashboard } from './pages/TrainerDashboard/TrainerDashboard.tsx'
+import { StatusBar, Style } from '@capacitor/status-bar';
 
 import './App.css'
 
@@ -128,7 +129,11 @@ function App() {
   }, [prefs, isDashboard])
 
   useEffect(() => {
-    setIsNative(Capacitor.isNativePlatform())
+    const native = Capacitor.isNativePlatform()
+    setIsNative(native)
+    if(native){
+      document.querySelector('body')?.classList.add('native')
+    } 
   }, [])
 
   useEffect(() => {
@@ -225,6 +230,22 @@ function App() {
     loadFavoriteItems()
   }, [user?._id, user?.favoriteItems])
 
+  useEffect(()=>{
+    const handleStatusBar = async ()=>{
+
+    // Make the content flow under the status bar (standard for Capacitor)
+    await StatusBar.setOverlaysWebView({ overlay: true });
+
+    // Set the icons to light or dark depending on your theme
+    await StatusBar.setStyle({ style: prefs.isDarkMode ? Style.Dark : Style.Light });
+
+    }
+    if(isNative){
+      handleStatusBar()
+    }
+
+  },[isNative, prefs.isDarkMode])
+
   const _getActiveRouteComponent = () => {
     const activeRouteComponent = filteredRoutes.find(
       (route) => route.path === activeRoute
@@ -272,7 +293,7 @@ function App() {
       <main
         className={`main ${prefs.isDarkMode ? 'dark-mode' : ''} ${
           user ? '' : 'no-user'
-        } ${prefs.favoriteColor || ''}`}
+        } ${prefs.favoriteColor || ''} ${isNative ? 'native' : ''}`}
       >
         <SlideAnimation
           motionKey={activeRoute}

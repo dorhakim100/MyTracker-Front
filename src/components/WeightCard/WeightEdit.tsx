@@ -8,7 +8,7 @@ import { Typography } from '@mui/material'
 import { Divider } from '@mui/material'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import { AnimatedWrapper } from '../AnimatedWrapper/AnimatedWrapper'
-
+import { useDragHaptics } from '../../hooks/useDragHaptics'
 interface WeightEditProps {
   value: number
   onChange: (value: number) => void
@@ -23,7 +23,7 @@ export function WeightEdit({
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
-
+  const dragHaptics = useDragHaptics()
   const [pickerWeight, setPickerWeight] = useState<{
     firstValue: number
     secondValue: number
@@ -56,14 +56,16 @@ export function WeightEdit({
   }, [pickerWeight])
 
   return (
-    <div className='picker-container'>
+    <div className='picker-container' {...dragHaptics}>
       <Picker
         value={pickerWeight}
-        onChange={(next) =>
+
+        onChange={(next) =>{
           setPickerWeight({
             firstValue: next.firstValue,
             secondValue: next.secondValue,
-          })
+            })
+          }
         }
         wheelMode='normal'
         className={`weight-picker ${prefs.isDarkMode ? 'dark-mode' : ''}`}

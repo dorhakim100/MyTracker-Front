@@ -4,6 +4,7 @@ import type { ReactNode, MouseEvent } from 'react'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { ClickAnimation } from '../../components/ClickAnimation/ClickAnimation'
+import { Haptics, ImpactStyle } from '@capacitor/haptics'
 
 interface CustomButtonProps {
   text?: string
@@ -70,7 +71,10 @@ export function CustomButton({
               aria-label={
                 ariaLabel || (typeof text === 'string' ? text : 'button')
               }
-              onClick={onClick}
+              onClick={async (e) => {
+                await Haptics.impact({ style: ImpactStyle.Light })
+                onClick?.(e)
+              }}
               disabled={disabled}
               className={`custom-button ${className || ''} `}
               sx={{
@@ -100,7 +104,10 @@ export function CustomButton({
           size={size}
           fullWidth={fullWidth}
           aria-label={ariaLabel || (typeof text === 'string' ? text : 'button')}
-          onClick={onClick}
+          onClick={async (e) => {
+            await Haptics.impact({ style: ImpactStyle.Light })
+            onClick?.(e)
+          }}
           disabled={disabled}
           className={`custom-button ${className || ''} ${
             prefs.favoriteColor || ''
