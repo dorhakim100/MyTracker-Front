@@ -1,8 +1,6 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
-import { BrowserMultiFormatReader, IScannerControls } from '@zxing/browser'
-import { BarcodeFormat, DecodeHintType, Result } from '@zxing/library'
 import { searchService } from '../../services/search/search-service'
 import { showErrorMsg } from '../../services/event-bus.service'
 import { ItemDetails } from '../ItemDetails/ItemDetails'
@@ -10,6 +8,7 @@ import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { setItem } from '../../store/actions/item.actions'
 import { Item } from '../../types/item/Item'
 import { RootState } from '../../store/store'
+import { barcodeScannerService } from '../../services/barcode-scanner/barcode-scanner.service'
 
 import Lottie from 'lottie-react'
 import searchingAnimation from '../../../public/searching.json'
@@ -41,64 +40,54 @@ export function BarcodeScanner({
   const [isTryAgain, setIsTryAgain] = useState(false)
   const [isCustomLog, setIsCustomLog] = useState(false)
 
-  useEffect(() => {
-    const hints = new Map<DecodeHintType, unknown>()
-    hints.set(DecodeHintType.POSSIBLE_FORMATS, [
-      BarcodeFormat.EAN_13,
-      BarcodeFormat.UPC_A,
-      BarcodeFormat.UPC_E,
-      BarcodeFormat.CODE_128,
-    ])
+  const onDetected = useCallback(
+    async (code: string) => {
+      try {
+        if (isItemDetected.current) return
+        isItemDetected.current = true
+        const res = await searchService.getProductById(code)
+        if (!res) {
+          showErrorMsg(t('messages.error.noResults'))
+          setIsTryAgain(true)
+          return
+        }
+        setItem(res as Item)
+        setIsItemFound(true)
 
-    const reader = new BrowserMultiFormatReader(hints, {
-      delayBetweenScanAttempts: 500,
-    })
-    let controls: IScannerControls | null = null
+        // onClose()
+      } catch {
+        showErrorMsg(t('messages.error.scan'))
+      }
+    },
+    [t]
+  )
+
+  useEffect(() => {
+    let scannerSession: { stop: () => Promise<void> } | null = null
+    let isUnmounted = false
 
     ;(async () => {
       try {
-        controls = await reader.decodeFromConstraints(
-          { video: { facingMode: { ideal: 'environment' } }, audio: false },
-          videoRef.current as HTMLVideoElement,
-          (result: Result | undefined) => {
-            if (result) onDetected(result.getText())
-          }
-        )
+        scannerSession = await barcodeScannerService.startScan({
+          videoElement: videoRef.current,
+          onDetected: (code) => {
+            onDetected(code)
+          },
+          onError: () => {
+            showErrorMsg(t('messages.error.scan'))
+          },
+        })
       } catch {
+        if (isUnmounted) return
         onClose()
       }
     })()
 
     return () => {
-      if (controls) controls.stop()
-
-      const videoEl = videoRef.current as HTMLVideoElement | null
-      const stream = (videoEl?.srcObject as MediaStream) || null
-      stream?.getTracks().forEach((t) => t.stop())
-      if (videoEl) {
-        videoEl.srcObject = null
-      }
+      isUnmounted = true
+      scannerSession?.stop()
     }
-  }, [onClose])
-
-  async function onDetected(code: string) {
-    try {
-      if (isItemDetected.current) return
-      isItemDetected.current = true
-      const res = await searchService.getProductById(code)
-      if (!res) {
-        showErrorMsg(t('messages.error.noResults'))
-        setIsTryAgain(true)
-        return
-      }
-      setItem(res as Item)
-      setIsItemFound(true)
-
-      // onClose()
-    } catch {
-      showErrorMsg(t('messages.error.scan'))
-    }
-  }
+  }, [onClose, onDetected, t])
 
   const onCustomLog = () => {
     setIsCustomLog(true)
