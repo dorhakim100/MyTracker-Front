@@ -122,13 +122,15 @@ export function FixedBottomNavigation(props: {
     }
   }, [activeRoute, filteredRoutes])
 
-  function onScanClick() {
+  async function onScanClick() {
+    await Haptics.impact({ style: ImpactStyle.Light })
     setModalType(modalTypes.scan)
     setSearchModalOpen(true)
     setIsAddModal(false)
   }
 
-  function onSearchClick(ev: React.MouseEvent<HTMLButtonElement>) {
+  async function onSearchClick(ev: React.MouseEvent<HTMLButtonElement>) {
+    await Haptics.impact({ style: ImpactStyle.Light })
     ev.stopPropagation()
     ev.preventDefault()
 
@@ -184,10 +186,8 @@ export function FixedBottomNavigation(props: {
             <SpeedDialAction
               key={action.name}
               icon={action.icon}
-              onClick={async ()=>{
-                await Haptics.impact({ style: ImpactStyle.Light })
-                return action.onClick as unknown as MouseEventHandler<HTMLDivElement>
-              }
+              onClick={
+                action.onClick as unknown as MouseEventHandler<HTMLDivElement>
               }
               className={`${prefs.favoriteColor}`}
             />

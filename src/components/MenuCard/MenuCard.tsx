@@ -17,6 +17,7 @@ import { SaveCancel } from '../SaveCancel/SaveCancel'
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
+import { Haptics, ImpactStyle } from '@capacitor/haptics'
 
 interface MenuCardProps {
   menu: Menu
@@ -57,7 +58,10 @@ export function MenuCard({ menu, onSelect, onDelete }: MenuCardProps) {
       {
         title: t('menu.deleteMenu'),
         icon: <DeleteIcon />,
-        onClick: () => setIsDeleteOpen(true),
+        onClick: async () => {
+          await Haptics.impact({ style: ImpactStyle.Light })
+          setIsDeleteOpen(true)
+        },
       },
     ],
     [t, setIsEditOpen, setIsDeleteOpen]
@@ -72,12 +76,14 @@ export function MenuCard({ menu, onSelect, onDelete }: MenuCardProps) {
     )
   }
 
-  function onEditMenu() {
+  async function onEditMenu() {
+    await Haptics.impact({ style: ImpactStyle.Light })
     setIsEditOpen(true)
     setMenuToEdit(menu)
   }
 
-  function onSelectMenu() {
+  async function onSelectMenu() {
+    await Haptics.impact({ style: ImpactStyle.Light })
     onSelect(menu)
   }
 

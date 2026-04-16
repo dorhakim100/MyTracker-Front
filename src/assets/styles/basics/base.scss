@@ -467,10 +467,13 @@ p {
 }
 
 body.native{
-  padding-top: 65px !important;
-  padding-bottom: 65px !important;
-
   .user-msg-container{
     top: 50pt !important;
+  }
+
+  .main {
+    padding-top: 60px !important;
+    padding-bottom: 45px !important;
+    height: calc(100vh - 100px - 120px) !important; // if you must keep fixed vh math
   }
 }

@@ -41,6 +41,7 @@ import { Badge } from '@mui/material'
 import DoneAllIcon from '@mui/icons-material/DoneAll'
 import { getWorkoutMuscles } from '../../../services/exersice-search/exersice-search'
 import EditIcon from '@mui/icons-material/Edit'
+import { Haptics, ImpactStyle } from '@capacitor/haptics'
 interface WorkoutCardProps {
   workout: Workout
   className?: string
@@ -81,11 +82,13 @@ export function WorkoutCard({
     type: 'details' | 'edit' | null
   }>({ open: false, type: null })
 
-  const onViewDetails = useCallback(() => {
+  const onViewDetails = useCallback(async () => {
+    await Haptics.impact({ style: ImpactStyle.Light })
     setSlideOptions({ open: true, type: 'details' })
   }, [])
 
-  const onEdit = useCallback(() => {
+  const onEdit = useCallback(async () => {
+    await Haptics.impact({ style: ImpactStyle.Light })
     setSlideOptions({ open: true, type: 'edit' })
   }, [])
 
@@ -124,7 +127,8 @@ export function WorkoutCard({
       {
         title: t('workout.deactivate'),
         icon: <IndeterminateCheckBoxIcon />,
-        onClick: () => {
+        onClick: async () => {
+          await Haptics.impact({ style: ImpactStyle.Light })
           toggleActivateWorkout(workout)
           const newWorkouts = workouts.filter(
             (w: Workout) => w._id !== workout._id
@@ -135,7 +139,10 @@ export function WorkoutCard({
       {
         title: t('common.delete'),
         icon: <Delete />,
-        onClick: () => setIsDeleteOpen(true),
+        onClick: async () => {
+          await Haptics.impact({ style: ImpactStyle.Light })
+          setIsDeleteOpen(true)
+        },
       },
     ],
     [onViewDetails, onEdit, onDuplicate, workout, workouts, onReorderWorkouts, t]

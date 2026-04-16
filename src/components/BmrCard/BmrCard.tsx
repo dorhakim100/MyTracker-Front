@@ -16,6 +16,7 @@ import { CustomSelect } from '../../CustomMui/CustomSelect/CustomSelect'
 import { getArrayOfNumbers } from '../../services/util.service'
 import { genderOptions } from '../helpers/GenderOptions'
 import { User } from '../../types/user/User'
+import { Haptics, ImpactStyle } from '@capacitor/haptics'
 
 export const getActivityOptions = (
   t: (key: string) => string
@@ -213,9 +214,10 @@ export function BmrCard({ sentUser }: BmrCardProps) {
                 <CustomToggle
                   value={form[option.key as keyof BmrFormState]}
                   options={option.values as ToggleOption[]}
-                  onChange={(val) =>
+                  onChange={async (val) => {
+                    await Haptics.impact({ style: ImpactStyle.Light })
                     onChange(option.key as keyof BmrFormState, val)
-                  }
+                  }}
                 />
               </div>
             )

@@ -8,6 +8,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
+import { Haptics, ImpactStyle } from '@capacitor/haptics'
 
 export interface CustomAccordionProps {
   title: React.ReactNode
@@ -67,6 +68,10 @@ export function CustomAccordion({
     ${prefs.isDarkMode ? 'dark-mode' : ''}
     ${prefs.favoriteColor ? prefs.favoriteColor : ''}
     `}
+
+    onClick={async ()=>{
+      await Haptics.impact({ style: ImpactStyle.Light })
+    }}
     >
       <Accordion
         className={`${prefs.isDarkMode ? 'dark-mode' : ''} ${

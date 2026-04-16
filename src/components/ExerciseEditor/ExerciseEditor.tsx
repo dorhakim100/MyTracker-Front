@@ -42,6 +42,7 @@ import {
 import { useWindowDimentions } from '../../hooks/useWindowDimentions'
 import { useDebouncedCallback } from '../../hooks/useDebouncedCallback'
 import DeleteIcon from '@mui/icons-material/Delete'
+import { Haptics, ImpactStyle } from '@capacitor/haptics'
 
 export interface ExerciseEditorProps {
   exercise: ExerciseInstructions
@@ -278,6 +279,7 @@ export function ExerciseEditor({
   }
 
   const onMarkAsDone = async (index: number) => {
+    await Haptics.impact({ style: ImpactStyle.Light })
     cancelUpdate()
     const newSets = [...exercise.sets]
     const stateToSet = !newSets[index].isDone

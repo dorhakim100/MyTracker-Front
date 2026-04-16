@@ -36,6 +36,7 @@ import AltRouteIcon from '@mui/icons-material/AltRoute'
 import { useWindowDimentions } from '../../hooks/useWindowDimentions'
 import AccessAlarmIcon from '@mui/icons-material/AccessAlarm'
 import { AnimatedWrapper } from '../AnimatedWrapper/AnimatedWrapper'
+import { Haptics, ImpactStyle } from '@capacitor/haptics'
 
 interface SlideDialogOptions {
   title: string
@@ -149,7 +150,8 @@ export function ExerciseCard({
     return getIsExerciseDone(exerciseInstructions)
   }, [exerciseInstructions])
 
-  const handleClick = () => {
+  const handleClick = async () => {
+    await Haptics.impact({ style: ImpactStyle.Light })
     if (!isOpen && onOpenChange) {
       onOpenChange()
       return
@@ -168,7 +170,8 @@ export function ExerciseCard({
     isExpected && {
       title: exerciseInstructions?.sets[0]?.rpe ? t('exercise.toggleToRir') : t('exercise.toggleToRpe'),
       icon: <SwitchLeftIcon />,
-      onClick: () => {
+      onClick: async () => {
+        await Haptics.impact({ style: ImpactStyle.Light })
         const modeToSet = exerciseInstructions?.sets[0]?.rpe ? 'rir' : 'rpe'
 
         if (onSwitchRpeRir) {
@@ -179,7 +182,8 @@ export function ExerciseCard({
     isExpected && {
       title: t('exercise.editRestingTime'),
       icon: <AccessAlarmIcon />,
-      onClick: () => {
+      onClick: async () => {
+        await Haptics.impact({ style: ImpactStyle.Light })
         setSlideDialogOptions((prev) => {
           return {
             ...prev,
@@ -193,14 +197,16 @@ export function ExerciseCard({
     !isExpected && {
       title: isDone ? t('exercise.markAsNotDone') : t('exercise.markAsDone'),
       icon: isDone ? <RemoveCircleIcon /> : <CheckCircleIcon />,
-      onClick: () => {
+      onClick: async () => {
+        await Haptics.impact({ style: ImpactStyle.Light })
         onMarkAsDone(!isDone)
       },
     },
     {
       title: t('exercise.addNotes'),
       icon: <EditNoteIcon />,
-      onClick: () => {
+      onClick: async () => {
+        await Haptics.impact({ style: ImpactStyle.Light })
         setIsEditNotesOpen(true)
         setEditNotes(
           isExpected
@@ -212,7 +218,8 @@ export function ExerciseCard({
     !isExpected && {
       title: t('exercise.changeExercise'),
       icon: <AltRouteIcon />,
-      onClick: () => {
+      onClick: async () => {
+        await Haptics.impact({ style: ImpactStyle.Light })
         setSlideDialogOptions({
           title: t('exercise.changeExercise'),
           type: 'change-exercise',
@@ -225,7 +232,8 @@ export function ExerciseCard({
       ? {
           title: t('workout.reorderExercises'),
           icon: <DragHandleIcon />,
-          onClick: () => {
+          onClick: async () => {
+            await Haptics.impact({ style: ImpactStyle.Light })
             if (setIsReorderExercisesOpen) {
               setIsReorderExercisesOpen(true)
             }
@@ -235,7 +243,8 @@ export function ExerciseCard({
     (isExpected && {
       title: t('common.delete'),
       icon: <DeleteIcon />,
-      onClick: () => {
+      onClick: async () => {
+        await Haptics.impact({ style: ImpactStyle.Light })
         if (onDelete) {
           onDelete(exercise)
         }
