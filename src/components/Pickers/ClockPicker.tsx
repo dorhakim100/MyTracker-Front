@@ -10,7 +10,6 @@ import { RootState } from '../../store/store'
 import { useEffect, useRef, useState } from 'react'
 import { getArrayOfNumbers } from '../../services/util.service'
 import { AnimatedWrapper } from '../AnimatedWrapper/AnimatedWrapper'
-import { Haptics, ImpactStyle } from '@capacitor/haptics'
 import { useDragHaptics } from '../../hooks/useDragHaptics'
 
 export function ClockPicker({
@@ -110,17 +109,14 @@ export function ClockPicker({
       <Picker
         value={pickerValue}
         // wheelMode='normal'
-        onChange={async (next) =>{
-
-          {
-            await Haptics.impact({ style: ImpactStyle.Light })
+        onChange={ (next) =>{
             if(next.numberOfServings === 0 && next.afterValue === 0) {
               next.afterValue = 0.1
             }
             setPickerValue(
               next as unknown as { numberOfServings: number; afterValue: number }
             )
-          }
+
         }
           
         }
