@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import { Haptics, ImpactStyle } from '@capacitor/haptics'
+import { Capacitor } from "@capacitor/core";
 
 interface UseDragHapticsProps {
   itemHeight?: number
@@ -8,14 +9,17 @@ interface UseDragHapticsProps {
 export function useDragHaptics({itemHeight = 18}: UseDragHapticsProps = {itemHeight: 18}) {
   const lastYRef = useRef<number | null>(null);
   const accRef = useRef(0);
+  const isNative = Capacitor.isNativePlatform();
 
   async function onPointerDown(e: React.PointerEvent) {
+    if(!isNative) return;
     await Haptics.impact({ style: ImpactStyle.Light })
     lastYRef.current = e.clientY;
     accRef.current = 0;
   }
 
   async function onPointerMove(e: React.PointerEvent) {
+    if(!isNative) return;
     if (lastYRef.current == null) return;
 
     const delta = Math.abs(e.clientY - lastYRef.current);
@@ -30,6 +34,7 @@ export function useDragHaptics({itemHeight = 18}: UseDragHapticsProps = {itemHei
   }
 
   async function onPointerUp() {
+    if(!isNative) return;
     await Haptics.impact({ style: ImpactStyle.Light })
     lastYRef.current = null;
     accRef.current = 0;
