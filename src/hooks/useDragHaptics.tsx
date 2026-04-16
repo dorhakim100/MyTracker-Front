@@ -1,7 +1,11 @@
 import { useRef } from "react";
 import { Haptics, ImpactStyle } from '@capacitor/haptics'
 
-export function useDragHaptics() {
+interface UseDragHapticsProps {
+  itemHeight?: number
+}
+
+export function useDragHaptics({itemHeight = 18}: UseDragHapticsProps = {itemHeight: 18}) {
   const lastYRef = useRef<number | null>(null);
   const accRef = useRef(0);
 
@@ -18,8 +22,8 @@ export function useDragHaptics() {
     lastYRef.current = e.clientY;
     accRef.current += delta;
 
-    // every ~18px of drag, give one tiny tick
-    if (accRef.current >= 18) {
+    // every ~itemHeightpx, default 18px, give one tiny tick
+    if (accRef.current >= itemHeight) {
       accRef.current = 0;
       await Haptics.impact({ style: ImpactStyle.Light })
     }

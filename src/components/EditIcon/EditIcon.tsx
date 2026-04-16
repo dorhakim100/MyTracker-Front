@@ -4,6 +4,7 @@ import EditRoundedIcon from '@mui/icons-material/EditRounded'
 import { Tooltip } from '@mui/material'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
+import { Haptics, ImpactStyle } from '@capacitor/haptics'
 
 interface EditIconProps {
   onClick?: () => void
@@ -17,7 +18,8 @@ export function EditIcon({ onClick, ariaLabel }: EditIconProps) {
     (state: RootState) => state.systemModule.isDashboard
   )
 
-  function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
+  async function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
+    await Haptics.impact({ style: ImpactStyle.Light })
     event.stopPropagation()
     onClick?.()
   }

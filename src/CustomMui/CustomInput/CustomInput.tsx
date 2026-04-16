@@ -7,6 +7,7 @@ import CloseIcon from '@mui/icons-material/Close'
 import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import type { RootState } from '../../store/store'
+import { Haptics, ImpactStyle } from '@capacitor/haptics'
 
 interface CustomInputProps {
   value: string
@@ -61,7 +62,10 @@ export function CustomInput({
         ) : isRemoveIcon ? (
           <Tooltip title={t('common.clear')}>
             <InputAdornment position='end'>
-              <IconButton onClick={() => onChange('')}>
+              <IconButton onClick={async () => {
+                await Haptics.impact({ style: ImpactStyle.Light })
+                onChange('')
+              }}>
                 <CloseIcon />
               </IconButton>
             </InputAdornment>

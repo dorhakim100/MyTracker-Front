@@ -25,6 +25,9 @@ import { RootState } from '../../store/store'
 import { SkeletonList } from '../../components/SkeletonList/SkeletonList'
 import { AnimatedWrapper } from '../../components/AnimatedWrapper/AnimatedWrapper'
 // import CircularProgress from '@mui/material/CircularProgress'
+import { useDragHaptics } from '../../hooks/useDragHaptics'
+
+const ITEM_HEIGHT = 65
 
 export interface CustomListProps<T> {
   items: T[]
@@ -73,12 +76,15 @@ export function CustomList<T>({
 }: // onDragStart,
 CustomListProps<T>) {
   const [reorderedItems, setReorderedItems] = useState<T[]>(items || [])
-
+  const { onPointerDown, onPointerMove, onPointerUp } = useDragHaptics({itemHeight: ITEM_HEIGHT})
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
 
   const isLoading = useSelector(
     (state: RootState) => state.systemModule.isLoading
   )
+
+
+  const isDragging = useRef<boolean>(false)
 
   const listContainerRef = useRef<HTMLDivElement>(null)
   const [isLoadingMoreItems, setIsLoadingMoreItems] = useState<boolean>(false)
@@ -188,10 +194,12 @@ CustomListProps<T>) {
     newItems.splice(destination.index, 0, moved)
     setReorderedItems(newItems)
     onReorder?.(newItems)
+    isDragging.current = false
   }
 
   const onDragStart = (result: DragStart) => {
     console.log(result)
+
   }
 
   const renderList = (item: T, dragProvided: DraggableProvided) => {
@@ -199,6 +207,7 @@ CustomListProps<T>) {
       <ListItemButton
         className={`custom-list-item ${itemClassName ? itemClassName : ''}`}
         onClick={onItemClick ? () => onItemClick(item) : undefined}
+ 
       >
         {renderLeft ? (
           <div className="left-content">{renderLeft(item)}</div>
@@ -230,6 +239,9 @@ CustomListProps<T>) {
             {...dragProvided.dragHandleProps}
             className="drag-handle"
             onClick={(e) => e.stopPropagation()}
+            onPointerDown={()=>{
+              isDragging.current = true
+            }}
           >
             ⋮⋮
           </span>
@@ -237,6 +249,23 @@ CustomListProps<T>) {
       </ListItemButton>
     )
   }
+
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if(!isDragging.current) return
+    return onPointerDown(e)
+
+  }
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if(!isDragging.current) return
+    return onPointerMove(e)
+  }
+
+  const handlePointerUp = () => {
+    if(!isDragging.current) return
+    return onPointerUp()
+  }
+
   if (isDefaultLoader && isLoading) {
     return (
       <div className={`custom-list ${className ? className : ''}`}>
@@ -256,7 +285,7 @@ CustomListProps<T>) {
   return (
     <div
       className={`custom-list ${className ? className : ''}`}
-      ref={listContainerRef}
+      ref={listContainerRef}  onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp}
     >
 
   

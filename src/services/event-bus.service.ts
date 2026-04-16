@@ -28,7 +28,7 @@ export const eventBus = createEventEmitter()
 
 export function showUserMsg(msg:UserMsg): void {
     eventBus.emit(SHOW_MSG, msg)
-    Haptics.impact({ style: ImpactStyle.Medium })
+    Haptics.impact({ style: ImpactStyle.Heavy })
 }
 
 export function showSuccessMsg(txt:string): void {

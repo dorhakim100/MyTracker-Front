@@ -86,7 +86,8 @@ export function CustomSelect({
         className={`custom-select ${className} ${
           prefs.isDarkMode ? 'dark-mode' : ''
         } ${isDashboard ? 'dashboard' : ''}`}
-        onClick={async () => {
+      
+        onPointerDown={async () => {
           await Haptics.impact({ style: ImpactStyle.Light })
         }}
       >

@@ -7,6 +7,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import { RootState } from '../../store/store'
 import { TimesContainer } from '../TimesContainer/TimesContainer'
 import { CustomDatePicker } from '../../CustomMui/CustomDatePicker/CustomDatePicker'
+import { Haptics, ImpactStyle } from '@capacitor/haptics'
 
 interface DayControllerProps {
   selectedDay: Date
@@ -38,7 +39,10 @@ export function DayController({
         disableTouchListener={!isDashboard}
         disableFocusListener={!isDashboard}
       >
-        <IconButton onClick={() => onDayChange(-1)}>
+        <IconButton onClick={async () => {
+          await Haptics.impact({ style: ImpactStyle.Light })
+          onDayChange(-1)
+        }}>
           {prefs.lang === 'he' ? <ArrowForwardIcon /> : <ArrowBackIcon />}
         </IconButton>
       </Tooltip>
@@ -62,7 +66,10 @@ export function DayController({
         disableTouchListener={!isDashboard}
         disableFocusListener={!isDashboard}
       >
-        <IconButton onClick={() => onDayChange(1)}>
+        <IconButton onClick={async () => {
+          await Haptics.impact({ style: ImpactStyle.Light })
+          onDayChange(1)
+        }}>
           {prefs.lang === 'he' ? <ArrowBackIcon /> : <ArrowForwardIcon />}
         </IconButton>
       </Tooltip>
