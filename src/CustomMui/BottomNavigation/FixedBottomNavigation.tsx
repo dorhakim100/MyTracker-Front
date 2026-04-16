@@ -53,6 +53,9 @@ export function FixedBottomNavigation(props: {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
+  const isNative = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.isNative
+  )
 
   const isAddModal = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.isAddModal
@@ -123,14 +126,20 @@ export function FixedBottomNavigation(props: {
   }, [activeRoute, filteredRoutes])
 
   async function onScanClick() {
-    await Haptics.impact({ style: ImpactStyle.Light })
+
+    if(isNative) {
+
+      await Haptics.impact({ style: ImpactStyle.Light })
+    }
     setModalType(modalTypes.scan)
     setSearchModalOpen(true)
     setIsAddModal(false)
   }
 
   async function onSearchClick(ev: React.MouseEvent<HTMLButtonElement>) {
-    await Haptics.impact({ style: ImpactStyle.Light })
+    if(isNative) {
+      await Haptics.impact({ style: ImpactStyle.Light })
+    }
     ev.stopPropagation()
     ev.preventDefault()
 
@@ -162,16 +171,18 @@ export function FixedBottomNavigation(props: {
           ariaLabel='SpeedDial basic example'
           aria-label={props.centerAction?.ariaLabel || 'center-action'}
           icon={<AddIcon />}
-          onClick={async (ev) => {
+          onClick={ (ev) => {
             if (!user) return showErrorMsg(t('messages.error.register'))
-            await Haptics.impact({ style: ImpactStyle.Light })
-            ev.stopPropagation()
+              ev.stopPropagation()
             setIsAddModal(!isAddModal)
-
+            
             setSelectedDiaryDay({
               ...user.loggedToday,
               weight: selectedDay?.weight,
             })
+            if(isNative) {
+              Haptics.impact({ style: ImpactStyle.Light })
+            }
           }}
           open={isAddModal}
           className={`${prefs.isDarkMode ? 'dark-mode' : ''} ${
