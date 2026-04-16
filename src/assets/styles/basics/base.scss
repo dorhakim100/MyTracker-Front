@@ -476,4 +476,7 @@ body.native{
     padding-bottom: 45px !important;
     height: calc(100vh - 100px - 120px) !important; // if you must keep fixed vh math
   }
+  .full-dialog{
+   top:calc($header-margin + 52px) !important;
+  }
 }
