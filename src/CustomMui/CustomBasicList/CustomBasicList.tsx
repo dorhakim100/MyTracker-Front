@@ -132,6 +132,7 @@ export function CustomBasicList<T>({
                 key={getKey ? getKey(item, index) : index}
                 draggableId={getKey ? getKey(item, index) + '' : index + ''}
                 index={index}
+                
               >
                 {(provided, snapshot) => (
                   <div
@@ -139,6 +140,9 @@ export function CustomBasicList<T>({
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
                     className={`draggable-item ${snapshot.isDragging ? 'dragging' : ''} ${prefs.favoriteColor}`}
+                    onPointerDown={()=>{
+                      isDraggingRef.current = true
+                    }}
                   >
                     {renderItem(item, index)}
                   </div>
