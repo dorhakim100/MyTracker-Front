@@ -56,7 +56,7 @@ export function WeightEdit({
   }, [pickerWeight])
 
   return (
-    <div className='picker-container' {...dragHaptics}>
+    <div className='picker-container'>
       <Picker
         value={pickerWeight}
 
@@ -68,7 +68,7 @@ export function WeightEdit({
           }
         }
         wheelMode='normal'
-        className={`weight-picker ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+        className={`weight-picker ${prefs.isDarkMode ? 'dark-mode' : ''}`} {...dragHaptics}
       >
         <Picker.Column name='firstValue'>
           {getArrayOfNumbers(30, 150).map((number) => (

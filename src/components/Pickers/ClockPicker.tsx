@@ -105,7 +105,7 @@ export function ClockPicker({
   }
 
   return (
-    <div className='picker-container' {...dragHaptics}>
+    <div className='picker-container' >
       <Picker
         value={pickerValue}
         // wheelMode='normal'
@@ -118,10 +118,10 @@ export function ClockPicker({
             )
 
         }
-          
+        
         }
         wheelMode='normal'
-        className='clock-picker'
+        className='clock-picker'  {...dragHaptics}
       >
         <Picker.Column name='numberOfServings'>
           {values.map((number) => (

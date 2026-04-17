@@ -135,7 +135,7 @@ export function CaloriesEdit({
           >
             {roundCaloriesToNearest50(pickerCalories.calories)} {t('macros.kcal')}
           </Typography>
-          <div className="picker-container" {...dragHaptics}>
+          <div className="picker-container">
             <Picker
               value={pickerCalories}
               onChange={(next) =>{
@@ -144,7 +144,7 @@ export function CaloriesEdit({
               }
               }
               height={150}
-              wheelMode='normal'
+              wheelMode='normal' {...dragHaptics}
             >
               <Picker.Column name="calories">
                 {options.map((calorie) => (
