@@ -16,7 +16,6 @@ import { CustomSelect } from '../../CustomMui/CustomSelect/CustomSelect'
 import { getArrayOfNumbers } from '../../services/util.service'
 import { genderOptions } from '../helpers/GenderOptions'
 import { User } from '../../types/user/User'
-import { Haptics, ImpactStyle } from '@capacitor/haptics'
 import { capacitorService } from '../../services/capacitor.service'
 
 export const getActivityOptions = (

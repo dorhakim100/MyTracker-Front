@@ -7,7 +7,6 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import { RootState } from '../../store/store'
 import { TimesContainer } from '../TimesContainer/TimesContainer'
 import { CustomDatePicker } from '../../CustomMui/CustomDatePicker/CustomDatePicker'
-import { Haptics, ImpactStyle } from '@capacitor/haptics'
 import { capacitorService } from '../../services/capacitor.service'
 
 interface DayControllerProps {
