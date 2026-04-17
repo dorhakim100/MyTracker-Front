@@ -43,7 +43,7 @@ export function ClockPicker({
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
-  const dragHaptics = useDragHaptics()
+  const dragHaptics = useDragHaptics({itemHeight:36})
 
   const originalValue = useRef(Math.floor(value))
   const originalAfterValue = useRef(

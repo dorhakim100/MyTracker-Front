@@ -23,7 +23,7 @@ export function WeightEdit({
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
-  const dragHaptics = useDragHaptics()
+  const dragHaptics = useDragHaptics({itemHeight:36})
   const [pickerWeight, setPickerWeight] = useState<{
     firstValue: number
     secondValue: number

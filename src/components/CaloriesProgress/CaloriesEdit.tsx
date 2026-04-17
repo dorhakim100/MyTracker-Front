@@ -37,7 +37,7 @@ export function CaloriesEdit({
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
-  const dragHaptics = useDragHaptics()
+  const dragHaptics = useDragHaptics({itemHeight:36})
   const MIN = 1200
   const MAX = 5000
   const STEP = 50

@@ -69,7 +69,7 @@ export function EditMacros({
   onCancel,
   onSave,
 }: EditMacrosProps) {
-  const dragHaptics = useDragHaptics()
+  const dragHaptics = useDragHaptics({itemHeight:36})
   const macros = {
     carbs: getArrayOfNumbers(0, CARBS_LIMIT),
     protein: getArrayOfNumbers(0, PROTEIN_LIMIT),
