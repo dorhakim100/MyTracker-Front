@@ -17,6 +17,7 @@ import { getArrayOfNumbers } from '../../services/util.service'
 import { genderOptions } from '../helpers/GenderOptions'
 import { User } from '../../types/user/User'
 import { Haptics, ImpactStyle } from '@capacitor/haptics'
+import { capacitorService } from '../../services/capacitor.service'
 
 export const getActivityOptions = (
   t: (key: string) => string
@@ -215,8 +216,9 @@ export function BmrCard({ sentUser }: BmrCardProps) {
                   value={form[option.key as keyof BmrFormState]}
                   options={option.values as ToggleOption[]}
                   onChange={async (val) => {
-                    await Haptics.impact({ style: ImpactStyle.Light })
+               
                     onChange(option.key as keyof BmrFormState, val)
+                    capacitorService.vibrate('Light')
                   }}
                 />
               </div>

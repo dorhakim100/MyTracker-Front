@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { capitalizeFirstLetter } from '../../services/util.service'
 import { Tooltip } from '@mui/material'
-import { Haptics, ImpactStyle } from '@capacitor/haptics'
+
 
 interface CustomSelectProps {
   label: string
@@ -86,10 +86,6 @@ export function CustomSelect({
         className={`custom-select ${className} ${
           prefs.isDarkMode ? 'dark-mode' : ''
         } ${isDashboard ? 'dashboard' : ''}`}
-      
-        onPointerDown={async () => {
-          await Haptics.impact({ style: ImpactStyle.Light })
-        }}
       >
         <InputLabel id={`${label}-select-label`}>{label}</InputLabel>
         <Select

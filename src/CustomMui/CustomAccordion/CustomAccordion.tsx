@@ -8,7 +8,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
-import { Haptics, ImpactStyle } from '@capacitor/haptics'
+import { capacitorService } from '../../services/capacitor.service'
 
 export interface CustomAccordionProps {
   title: React.ReactNode
@@ -69,8 +69,8 @@ export function CustomAccordion({
     ${prefs.favoriteColor ? prefs.favoriteColor : ''}
     `}
 
-    onClick={async ()=>{
-      await Haptics.impact({ style: ImpactStyle.Light })
+    onClick={()=>{
+      capacitorService.vibrate('Light')
     }}
     >
       <Accordion

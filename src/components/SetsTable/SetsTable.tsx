@@ -26,6 +26,7 @@ import { ExpectedActual } from '../../types/expectedActual/ExpectedActual'
 import Divider from '@mui/material/Divider'
 import { AnimatedWrapper } from '../AnimatedWrapper/AnimatedWrapper'
 import { Haptics, ImpactStyle } from '@capacitor/haptics'
+import { capacitorService } from '../../services/capacitor.service'
 
 function Row(props: {
   sets: (Set & { exerciseId: string })[]
@@ -45,7 +46,7 @@ function Row(props: {
 
   async function getNotes(sessionId: string, exerciseId: string) {
     try {
-      await Haptics.impact({ style: ImpactStyle.Light })
+
       const notes = await instructionsService.getNotesBySessionIdAndExerciseId(
         sessionId,
         exerciseId
@@ -64,8 +65,11 @@ function Row(props: {
         as='tr'
         // sx={{ '& > *': { borderBottom: 'unset' } }}
         onClick={async () => {
-          await Haptics.impact({ style: ImpactStyle.Light })
-          setOpen(!open)
+
+          const stateToSet = !open
+
+          setOpen(stateToSet)
+          if(stateToSet) capacitorService.vibrate('Light')
         }}
         className='pointer'
       >

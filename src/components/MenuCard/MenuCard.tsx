@@ -17,7 +17,7 @@ import { SaveCancel } from '../SaveCancel/SaveCancel'
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
-import { Haptics, ImpactStyle } from '@capacitor/haptics'
+import { capacitorService } from '../../services/capacitor.service'
 
 interface MenuCardProps {
   menu: Menu
@@ -59,8 +59,8 @@ export function MenuCard({ menu, onSelect, onDelete }: MenuCardProps) {
         title: t('menu.deleteMenu'),
         icon: <DeleteIcon />,
         onClick: async () => {
-          await Haptics.impact({ style: ImpactStyle.Light })
           setIsDeleteOpen(true)
+          capacitorService.vibrate('Light')
         },
       },
     ],
@@ -77,14 +77,14 @@ export function MenuCard({ menu, onSelect, onDelete }: MenuCardProps) {
   }
 
   async function onEditMenu() {
-    await Haptics.impact({ style: ImpactStyle.Light })
     setIsEditOpen(true)
     setMenuToEdit(menu)
+    capacitorService.vibrate('Light')
   }
 
   async function onSelectMenu() {
-    await Haptics.impact({ style: ImpactStyle.Light })
     onSelect(menu)
+    capacitorService.vibrate('Light')
   }
 
   return (

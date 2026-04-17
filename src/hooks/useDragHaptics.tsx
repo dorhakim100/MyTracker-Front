@@ -1,19 +1,20 @@
 import { useRef } from "react";
-import { Haptics, ImpactStyle } from '@capacitor/haptics'
 import { Capacitor } from "@capacitor/core";
+import { capacitorService } from "../services/capacitor.service";
 
 interface UseDragHapticsProps {
   itemHeight?: number
+  style?: 'Light' | 'Medium' | 'Heavy'
 }
 
-export function useDragHaptics({itemHeight = 18}: UseDragHapticsProps = {itemHeight: 18}) {
+export function useDragHaptics({itemHeight = 18, style = 'Light'}: UseDragHapticsProps = {itemHeight: 18, style: 'Light'}) {
   const lastYRef = useRef<number | null>(null);
   const accRef = useRef(0);
   const isNative = Capacitor.isNativePlatform();
 
   async function onPointerDown(e: React.PointerEvent) {
     if(!isNative) return;
-    await Haptics.impact({ style: ImpactStyle.Light })
+    capacitorService.vibrate(style)
     lastYRef.current = e.clientY;
     accRef.current = 0;
   }
@@ -29,13 +30,13 @@ export function useDragHaptics({itemHeight = 18}: UseDragHapticsProps = {itemHei
     // every ~itemHeightpx, default 18px, give one tiny tick
     if (accRef.current >= itemHeight) {
       accRef.current = 0;
-      await Haptics.impact({ style: ImpactStyle.Light })
+      capacitorService.vibrate(style)
     }
   }
 
   async function onPointerUp() {
     if(!isNative) return;
-    await Haptics.impact({ style: ImpactStyle.Light })
+    capacitorService.vibrate(style)
     lastYRef.current = null;
     accRef.current = 0;
   }

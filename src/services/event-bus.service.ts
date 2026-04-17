@@ -1,5 +1,5 @@
 export const SHOW_MSG = 'show-msg'
-import { Haptics, ImpactStyle } from '@capacitor/haptics'
+import { capacitorService } from './capacitor.service'
 
 export interface UserMsg {
     txt: string
@@ -28,7 +28,7 @@ export const eventBus = createEventEmitter()
 
 export function showUserMsg(msg:UserMsg): void {
     eventBus.emit(SHOW_MSG, msg)
-    Haptics.impact({ style: ImpactStyle.Heavy })
+    capacitorService.vibrate('Heavy')
 }
 
 export function showSuccessMsg(txt:string): void {

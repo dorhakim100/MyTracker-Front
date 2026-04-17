@@ -4,7 +4,7 @@ import EditRoundedIcon from '@mui/icons-material/EditRounded'
 import { Tooltip } from '@mui/material'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
-import { Haptics, ImpactStyle } from '@capacitor/haptics'
+import { capacitorService } from '../../services/capacitor.service'
 
 interface EditIconProps {
   onClick?: () => void
@@ -26,7 +26,7 @@ export function EditIcon({ onClick, ariaLabel }: EditIconProps) {
     event.stopPropagation()
     onClick?.()
     if(isNative) {
-      Haptics.impact({ style: ImpactStyle.Light })
+      capacitorService.vibrate('Light')
     }
   }
 

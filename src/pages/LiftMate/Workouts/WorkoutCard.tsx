@@ -41,7 +41,7 @@ import { Badge } from '@mui/material'
 import DoneAllIcon from '@mui/icons-material/DoneAll'
 import { getWorkoutMuscles } from '../../../services/exersice-search/exersice-search'
 import EditIcon from '@mui/icons-material/Edit'
-import { Haptics, ImpactStyle } from '@capacitor/haptics'
+import { capacitorService } from '../../../services/capacitor.service'
 interface WorkoutCardProps {
   workout: Workout
   className?: string
@@ -84,18 +84,19 @@ export function WorkoutCard({
 
   const onViewDetails = useCallback(async () => {
 
-    await Haptics.impact({ style: ImpactStyle.Light })
+    capacitorService.vibrate('Light')
     setSlideOptions({ open: true, type: 'details' })
   }, [])
 
   const onEdit = useCallback(async () => {
-    await Haptics.impact({ style: ImpactStyle.Light })
+    capacitorService.vibrate('Light')
     setSlideOptions({ open: true, type: 'edit' })
   }, [])
 
   const onDelete = useCallback(async () => {
     try {
       if (!workout._id) return showErrorMsg(t('messages.error.deleteWorkout'))
+      capacitorService.vibrate('Light')
       await removeWorkout(workout._id)
       showSuccessMsg(t('messages.success.deleteWorkout'))
       setIsDeleteOpen(false)
@@ -105,6 +106,7 @@ export function WorkoutCard({
   }, [workout._id, t])
 
   const onDuplicate = useCallback(async () => {
+    capacitorService.vibrate('Light')
     await onDuplicateWorkout(workout)
   }, [onDuplicateWorkout, workout])
 
@@ -129,7 +131,7 @@ export function WorkoutCard({
         title: t('workout.deactivate'),
         icon: <IndeterminateCheckBoxIcon />,
         onClick: async () => {
-          await Haptics.impact({ style: ImpactStyle.Light })
+          capacitorService.vibrate('Light')
           toggleActivateWorkout(workout)
           const newWorkouts = workouts.filter(
             (w: Workout) => w._id !== workout._id
@@ -141,7 +143,7 @@ export function WorkoutCard({
         title: t('common.delete'),
         icon: <Delete />,
         onClick: async () => {
-          await Haptics.impact({ style: ImpactStyle.Light })
+          capacitorService.vibrate('Light')
           setIsDeleteOpen(true)
         },
       },

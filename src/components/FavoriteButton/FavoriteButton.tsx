@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { IconButton } from '@mui/material'
 import FavoriteIcon from '@mui/icons-material/Favorite'
 import { motion } from 'framer-motion'
-import { Haptics, ImpactStyle } from '@capacitor/haptics'
+import { capacitorService } from '../../services/capacitor.service'
 
 export function FavoriteButton({ isFavorite }: { isFavorite: boolean }) {
   const [liked, setLiked] = useState(isFavorite)
@@ -16,7 +16,7 @@ export function FavoriteButton({ isFavorite }: { isFavorite: boolean }) {
     >
       <IconButton
         onClick={async () => {
-          await Haptics.impact({ style: ImpactStyle.Heavy })
+          capacitorService.vibrate('Heavy')
           setLiked(!liked)
         }}
         color={liked ? 'error' : 'default'}

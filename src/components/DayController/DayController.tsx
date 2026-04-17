@@ -8,6 +8,7 @@ import { RootState } from '../../store/store'
 import { TimesContainer } from '../TimesContainer/TimesContainer'
 import { CustomDatePicker } from '../../CustomMui/CustomDatePicker/CustomDatePicker'
 import { Haptics, ImpactStyle } from '@capacitor/haptics'
+import { capacitorService } from '../../services/capacitor.service'
 
 interface DayControllerProps {
   selectedDay: Date
@@ -40,8 +41,8 @@ export function DayController({
         disableFocusListener={!isDashboard}
       >
         <IconButton onClick={async () => {
-          await Haptics.impact({ style: ImpactStyle.Light })
           onDayChange(-1)
+          capacitorService.vibrate('Light')
         }}>
           {prefs.lang === 'he' ? <ArrowForwardIcon /> : <ArrowBackIcon />}
         </IconButton>
@@ -67,8 +68,8 @@ export function DayController({
         disableFocusListener={!isDashboard}
       >
         <IconButton onClick={async () => {
-          await Haptics.impact({ style: ImpactStyle.Light })
           onDayChange(1)
+          capacitorService.vibrate('Light')
         }}>
           {prefs.lang === 'he' ? <ArrowBackIcon /> : <ArrowForwardIcon />}
         </IconButton>

@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { Tooltip } from '@mui/material'
-import { Haptics, ImpactStyle } from '@capacitor/haptics'
 
 interface PickerSelectProps {
   openClock: () => void
@@ -65,9 +64,7 @@ export function PickerSelect({
           renderValue={(selected) =>
             `${selected} ${afterString ? ` ${afterString}` : ''}`
           }
-          onClick={async () => {
-            await Haptics.impact({ style: ImpactStyle.Light })
-          }}
+  
         >
           <MenuItem
             sx={{

@@ -28,6 +28,7 @@ import { BarcodeScanner } from '../../components/BarcodeScanner/BarcodeScanner'
 import { smoothScroll } from '../../services/util.service'
 import { setActiveRoute } from '../../store/actions/system.actions'
 import { Haptics, ImpactStyle } from '@capacitor/haptics'
+import { capacitorService } from '../../services/capacitor.service'
 
 type ModalType = 'search' | 'scan'
 
@@ -128,8 +129,8 @@ export function FixedBottomNavigation(props: {
   async function onScanClick() {
 
     if(isNative) {
+      capacitorService.vibrate('Light')
 
-      await Haptics.impact({ style: ImpactStyle.Light })
     }
     setModalType(modalTypes.scan)
     setSearchModalOpen(true)
@@ -138,7 +139,7 @@ export function FixedBottomNavigation(props: {
 
   async function onSearchClick(ev: React.MouseEvent<HTMLButtonElement>) {
     if(isNative) {
-      await Haptics.impact({ style: ImpactStyle.Light })
+      capacitorService.vibrate('Light')
     }
     ev.stopPropagation()
     ev.preventDefault()
@@ -181,7 +182,7 @@ export function FixedBottomNavigation(props: {
               weight: selectedDay?.weight,
             })
             if(isNative) {
-              Haptics.impact({ style: ImpactStyle.Light })
+              capacitorService.vibrate('Light')
             }
           }}
           open={isAddModal}

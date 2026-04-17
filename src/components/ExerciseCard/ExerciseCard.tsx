@@ -36,7 +36,7 @@ import AltRouteIcon from '@mui/icons-material/AltRoute'
 import { useWindowDimentions } from '../../hooks/useWindowDimentions'
 import AccessAlarmIcon from '@mui/icons-material/AccessAlarm'
 import { AnimatedWrapper } from '../AnimatedWrapper/AnimatedWrapper'
-import { Haptics, ImpactStyle } from '@capacitor/haptics'
+import { capacitorService } from '../../services/capacitor.service'
 
 interface SlideDialogOptions {
   title: string
@@ -151,7 +151,7 @@ export function ExerciseCard({
   }, [exerciseInstructions])
 
   const handleClick = async () => {
-    await Haptics.impact({ style: ImpactStyle.Light })
+    capacitorService.vibrate('Light')
     if (!isOpen && onOpenChange) {
       onOpenChange()
       return
@@ -171,7 +171,7 @@ export function ExerciseCard({
       title: exerciseInstructions?.sets[0]?.rpe ? t('exercise.toggleToRir') : t('exercise.toggleToRpe'),
       icon: <SwitchLeftIcon />,
       onClick: async () => {
-        await Haptics.impact({ style: ImpactStyle.Light })
+        capacitorService.vibrate('Light')
         const modeToSet = exerciseInstructions?.sets[0]?.rpe ? 'rir' : 'rpe'
 
         if (onSwitchRpeRir) {
@@ -183,7 +183,7 @@ export function ExerciseCard({
       title: t('exercise.editRestingTime'),
       icon: <AccessAlarmIcon />,
       onClick: async () => {
-        await Haptics.impact({ style: ImpactStyle.Light })
+        capacitorService.vibrate('Light')
         setSlideDialogOptions((prev) => {
           return {
             ...prev,
@@ -198,7 +198,7 @@ export function ExerciseCard({
       title: isDone ? t('exercise.markAsNotDone') : t('exercise.markAsDone'),
       icon: isDone ? <RemoveCircleIcon /> : <CheckCircleIcon />,
       onClick: async () => {
-        await Haptics.impact({ style: ImpactStyle.Light })
+        capacitorService.vibrate('Light')
         onMarkAsDone(!isDone)
       },
     },
@@ -206,7 +206,7 @@ export function ExerciseCard({
       title: t('exercise.addNotes'),
       icon: <EditNoteIcon />,
       onClick: async () => {
-        await Haptics.impact({ style: ImpactStyle.Light })
+        capacitorService.vibrate('Light')
         setIsEditNotesOpen(true)
         setEditNotes(
           isExpected
@@ -219,7 +219,7 @@ export function ExerciseCard({
       title: t('exercise.changeExercise'),
       icon: <AltRouteIcon />,
       onClick: async () => {
-        await Haptics.impact({ style: ImpactStyle.Light })
+        capacitorService.vibrate('Light')
         setSlideDialogOptions({
           title: t('exercise.changeExercise'),
           type: 'change-exercise',
@@ -233,7 +233,7 @@ export function ExerciseCard({
           title: t('workout.reorderExercises'),
           icon: <DragHandleIcon />,
           onClick: async () => {
-            await Haptics.impact({ style: ImpactStyle.Light })
+            capacitorService.vibrate('Light')
             if (setIsReorderExercisesOpen) {
               setIsReorderExercisesOpen(true)
             }
@@ -244,7 +244,7 @@ export function ExerciseCard({
       title: t('common.delete'),
       icon: <DeleteIcon />,
       onClick: async () => {
-        await Haptics.impact({ style: ImpactStyle.Light })
+        capacitorService.vibrate('Light')
         if (onDelete) {
           onDelete(exercise)
         }

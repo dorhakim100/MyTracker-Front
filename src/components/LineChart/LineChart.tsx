@@ -21,8 +21,8 @@ import {
 import { getColor } from '../../services/util.service'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
-import { Haptics, ImpactStyle } from '@capacitor/haptics'
 import { throttle } from 'lodash'
+import { capacitorService } from '../../services/capacitor.service'
 
 ChartJS.register(
   CategoryScale,
@@ -120,10 +120,11 @@ export default function LineChart({
   const chartRef = useRef<ChartJS<'line'>>(null)
   const [clickedIndex, setClickedIndex] = useState<number | null>(null)
   const isDragging = useRef(false)
-
+  const isNative = useSelector((state: RootState) => state.systemModule.isNative)
+  
   const handleHaptics = useCallback(throttle(() => {
-    Haptics.impact({ style: ImpactStyle.Light })
-  }, 100, { trailing: true }), [])
+    capacitorService.vibrate('Light')
+  }, 100, { trailing: true }), [isNative])
 
   const lightenColor = (hex: string, amount: number) => {
     if (!hex || !hex.startsWith('#')) return hex
