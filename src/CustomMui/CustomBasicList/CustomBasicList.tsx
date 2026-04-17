@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { DropResult } from '@hello-pangea/dnd'
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
+
 interface CustomBasicListProps<T> {
   items: T[]
   renderItem: (item: T, index: number) => ReactNode
@@ -102,9 +103,21 @@ export function CustomBasicList<T>({
             className={`custom-basic-list-container ${containerClassName} ${
               prefs.isDarkMode ? 'dark-mode' : ''
             } ${isHorizontalRtl ? 'horizontal-rtl' : ''}`}
-            onPointerDown={onPointerDown}
-            onPointerMove={onPointerMove}
-            onPointerUp={onPointerUp}
+            onPointerDown={(e) => {
+              if(isDragging) return;
+              onPointerDown?.(e)
+
+            }}
+            onPointerMove={(e) => {
+              if(!isDragging) return;
+              onPointerMove?.(e)
+
+            }}
+            onPointerUp={() => {
+              if(isDragging) return;
+              onPointerUp?.()
+
+            }}
             style={{
               ...(isDragging && containerHeight !== null
                 ? {
