@@ -27,7 +27,6 @@ import { showErrorMsg } from '../../services/event-bus.service'
 import { BarcodeScanner } from '../../components/BarcodeScanner/BarcodeScanner'
 import { smoothScroll } from '../../services/util.service'
 import { setActiveRoute } from '../../store/actions/system.actions'
-import { Haptics, ImpactStyle } from '@capacitor/haptics'
 import { capacitorService } from '../../services/capacitor.service'
 
 type ModalType = 'search' | 'scan'

@@ -103,9 +103,11 @@ export function WorkoutSession({
   const allExerciseIds = sessionDay.instructions.exercises.map(
     (ex) => ex.exerciseId
   )
-  const allExpanded =
-    allExerciseIds.length > 0 &&
-    allExerciseIds.every((id) => openExercises.has(id))
+  // const allExpanded =
+  //   allExerciseIds.length > 0 &&
+  //   allExerciseIds.every((id) => openExercises.has(id))
+
+  const hasOpenExercises = openExercises.size > 0
 
   const [exerciseNotes, setExerciseNotes] = useState<string>('')
 
@@ -349,12 +351,9 @@ export function WorkoutSession({
 
   const toggleExpandAll = () => {
     if (!sessionDay?.workout?.exercises) return
-    const allExerciseIds = sessionDay.workout.exercises.map(
-      (ex) => ex.exerciseId
-    )
-    const allExpanded = allExerciseIds.every((id) => openExercises.has(id))
+    const hasOpenExercises = openExercises.size > 0
 
-    if (allExpanded) {
+    if (hasOpenExercises) {
       setOpenExercises(new Set())
     } else {
       setOpenExercises(new Set(allExerciseIds))
@@ -1007,11 +1006,11 @@ export function WorkoutSession({
           </div>
           <div className='actions-container'>
             <CustomButton
-              icon={allExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+              icon={hasOpenExercises ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               onClick={toggleExpandAll}
               isIcon={true}
               tooltipTitle={
-                allExpanded ? t('workout.collapseAll') : t('workout.expandAll')
+                hasOpenExercises ? t('workout.collapseAll') : t('workout.expandAll')
               }
             />
             <CustomButton
