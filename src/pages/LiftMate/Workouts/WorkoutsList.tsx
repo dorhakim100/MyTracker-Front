@@ -3,7 +3,6 @@ import { CustomBasicList } from '../../../CustomMui/CustomBasicList/CustomBasicL
 import { WorkoutCard } from './WorkoutCard'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../store/store'
-import { useDragHaptics } from '../../../hooks/useDragHaptics'
 
 interface WorkoutsListProps {
   workouts: Workout[]
@@ -25,7 +24,6 @@ export function WorkoutsList({
   onDuplicateWorkout,
 }: WorkoutsListProps) {
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
-  const dragHaptics = useDragHaptics({itemHeight:120, style: 'Heavy'})
   return (
     <CustomBasicList<Workout>
       items={workouts}
@@ -45,7 +43,7 @@ export function WorkoutsList({
       containerClassName={`workouts-list-container ${className || ''}`}
       emptyMessage='No workouts found'
       onReorder={onReorderWorkouts}
-      {...dragHaptics}
+
     />
   )
 }

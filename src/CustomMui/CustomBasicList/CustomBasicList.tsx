@@ -12,9 +12,6 @@ interface CustomBasicListProps<T> {
   containerClassName?: string
   emptyMessage?: string
   onReorder?: (items: T[]) => void
-  onPointerDown?: (event: React.PointerEvent) => void
-  onPointerMove?: (event: React.PointerEvent) => void
-  onPointerUp?: () => void
 }
 
 export function CustomBasicList<T>({
@@ -25,9 +22,6 @@ export function CustomBasicList<T>({
   containerClassName = '',
   emptyMessage,
   onReorder,
-  onPointerDown,
-  onPointerMove,
-  onPointerUp,
 }: CustomBasicListProps<T>) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -103,21 +97,6 @@ export function CustomBasicList<T>({
             className={`custom-basic-list-container ${containerClassName} ${
               prefs.isDarkMode ? 'dark-mode' : ''
             } ${isHorizontalRtl ? 'horizontal-rtl' : ''}`}
-            onPointerDown={(e) => {
-              if(!isDraggingRef.current) return;
-              onPointerDown?.(e)
-
-            }}
-            onPointerMove={(e) => {
-              if(!isDraggingRef.current) return;
-              onPointerMove?.(e)
-
-            }}
-            onPointerUp={() => {
-              if(!isDraggingRef.current) return;
-              onPointerUp?.()
-
-            }}
             style={{
               ...(isDraggingRef.current && containerHeight !== null
                 ? {
@@ -140,9 +119,6 @@ export function CustomBasicList<T>({
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
                     className={`draggable-item ${snapshot.isDragging ? 'dragging' : ''} ${prefs.favoriteColor}`}
-                    onPointerDown={()=>{
-                      isDraggingRef.current = true
-                    }}
                   >
                     {renderItem(item, index)}
                   </div>
