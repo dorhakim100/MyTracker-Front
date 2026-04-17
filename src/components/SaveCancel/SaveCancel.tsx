@@ -32,11 +32,13 @@ export function SaveCancel({
         onClick={onCancel}
         className='delete-account-button'
         text={cancelText ?? t('common.cancel')}
+        shouldVibrate={false}
       />
       <CustomButton
         onClick={onSave}
         className={`${prefs.favoriteColor} save-button ${saveButtonClassName}`}
         text={saveText ?? t('common.save')}
+        shouldVibrate={false}
       />
     </div>
   )

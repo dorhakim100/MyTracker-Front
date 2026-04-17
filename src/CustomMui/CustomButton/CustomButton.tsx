@@ -21,6 +21,7 @@ interface CustomButtonProps {
   sx?: SxProps<Theme>
   isIconReverse?: boolean
   tooltipTitle?: string
+  shouldVibrate?: boolean
 }
 
 export function CustomButton({
@@ -37,6 +38,7 @@ export function CustomButton({
   sx,
   isIconReverse = false,
   tooltipTitle,
+  shouldVibrate = true,
 }: CustomButtonProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -74,7 +76,9 @@ export function CustomButton({
               }
               onClick={async (e) => {
                 onClick?.(e)
-                capacitorService.vibrate('Light')
+                if (shouldVibrate) {
+                  capacitorService.vibrate('Light')
+                }
               }}
               disabled={disabled}
               className={`custom-button ${className || ''} `}
@@ -107,7 +111,9 @@ export function CustomButton({
           aria-label={ariaLabel || (typeof text === 'string' ? text : 'button')}
           onClick={ async (e) => {
             onClick?.(e)
-            capacitorService.vibrate('Light')
+            if (shouldVibrate) {
+              capacitorService.vibrate('Light')
+            }
           }}
           disabled={disabled}
           className={`custom-button ${className || ''} ${
