@@ -104,7 +104,7 @@ export function CustomBasicList<T>({
               prefs.isDarkMode ? 'dark-mode' : ''
             } ${isHorizontalRtl ? 'horizontal-rtl' : ''}`}
             onPointerDown={(e) => {
-              if(isDraggingRef.current) return;
+              if(!isDraggingRef.current) return;
               onPointerDown?.(e)
 
             }}
@@ -114,7 +114,7 @@ export function CustomBasicList<T>({
 
             }}
             onPointerUp={() => {
-              if(isDraggingRef.current) return;
+              if(!isDraggingRef.current) return;
               onPointerUp?.()
 
             }}
