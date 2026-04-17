@@ -11,6 +11,9 @@ interface CustomBasicListProps<T> {
   containerClassName?: string
   emptyMessage?: string
   onReorder?: (items: T[]) => void
+  onPointerDown?: (event: React.PointerEvent) => void
+  onPointerMove?: (event: React.PointerEvent) => void
+  onPointerUp?: () => void
 }
 
 export function CustomBasicList<T>({
@@ -21,6 +24,9 @@ export function CustomBasicList<T>({
   containerClassName = '',
   emptyMessage,
   onReorder,
+  onPointerDown,
+  onPointerMove,
+  onPointerUp,
 }: CustomBasicListProps<T>) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -96,6 +102,9 @@ export function CustomBasicList<T>({
             className={`custom-basic-list-container ${containerClassName} ${
               prefs.isDarkMode ? 'dark-mode' : ''
             } ${isHorizontalRtl ? 'horizontal-rtl' : ''}`}
+            onPointerDown={onPointerDown}
+            onPointerMove={onPointerMove}
+            onPointerUp={onPointerUp}
             style={{
               ...(isDragging && containerHeight !== null
                 ? {
