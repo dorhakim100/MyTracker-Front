@@ -17,6 +17,10 @@
       left: 0;
       right: 0;
 
+      &.native{
+        top: 163px;
+      }
+
       &.dashboard {
         margin-top: 1em;
         left: $left-menu-width;

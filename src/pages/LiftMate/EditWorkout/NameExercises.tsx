@@ -92,6 +92,10 @@ export function NameExercises({
     (stateSelector: RootState) => stateSelector.systemModule.isDashboard
   )
 
+  const isNative = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.isNative
+  )
+
   const [dialogState, setDialogState] = useState<DialogState>({
     type: null,
     open: false,
@@ -310,7 +314,7 @@ export function NameExercises({
         ref={editWorkoutRef}
       >
         <div
-          className={`settings-controls-container ${prefs.isDarkMode ? 'dark-mode' : ''} ${isDashboard ? 'dashboard' : ''}`}
+          className={`settings-controls-container ${prefs.isDarkMode ? 'dark-mode' : ''} ${isDashboard ? 'dashboard' : ''} ${isNative ? 'native' : ''}`}
         >
           <CustomInput
             value={workout.name}
