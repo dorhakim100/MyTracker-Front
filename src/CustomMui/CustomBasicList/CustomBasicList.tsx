@@ -41,17 +41,17 @@ export function CustomBasicList<T>({
 
   const containerRef = useRef<HTMLDivElement>(null)
   const [containerHeight, setContainerHeight] = useState<number | null>(null)
-  const [isDragging, setIsDragging] = useState(false)
+  const isDraggingRef = useRef<boolean>(false)
 
   // Store the initial height when items change
   useEffect(() => {
-    if (containerRef.current && !isDragging) {
+    if (containerRef.current && !isDraggingRef.current) {
       const height = containerRef.current.offsetHeight
       if (height > 0) {
         setContainerHeight(height)
       }
     }
-  }, [items, isDragging])
+  }, [items, isDraggingRef.current])
 
   if (items.length === 0 && emptyMessage) {
     return (
@@ -62,7 +62,7 @@ export function CustomBasicList<T>({
   }
 
   const onDragStart = () => {
-    setIsDragging(true)
+    isDraggingRef.current = true
     if (containerRef.current) {
       const height = containerRef.current.offsetHeight
       if (height > 0) {
@@ -72,7 +72,7 @@ export function CustomBasicList<T>({
   }
 
   const onDragEnd = (result: DropResult) => {
-    setIsDragging(false)
+    isDraggingRef.current = false
     if (!onReorder) return
     const newItems = [...items]
     const [moved] = newItems.splice(result.source.index, 1)
@@ -104,22 +104,22 @@ export function CustomBasicList<T>({
               prefs.isDarkMode ? 'dark-mode' : ''
             } ${isHorizontalRtl ? 'horizontal-rtl' : ''}`}
             onPointerDown={(e) => {
-              if(isDragging) return;
+              if(isDraggingRef.current) return;
               onPointerDown?.(e)
 
             }}
             onPointerMove={(e) => {
-              if(!isDragging) return;
+              if(!isDraggingRef.current) return;
               onPointerMove?.(e)
 
             }}
             onPointerUp={() => {
-              if(isDragging) return;
+              if(isDraggingRef.current) return;
               onPointerUp?.()
 
             }}
             style={{
-              ...(isDragging && containerHeight !== null
+              ...(isDraggingRef.current && containerHeight !== null
                 ? {
                     height: `${containerHeight}px`,
                     minHeight: `${containerHeight}px`,
