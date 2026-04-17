@@ -118,6 +118,7 @@ export function WeightEdit({
         <CustomButton
           text='Save'
           onClick={onUpdateClick}
+          shouldVibrate={false}
         />
       )}
     </div>

@@ -184,6 +184,7 @@ export function ClockPicker({
               className={`${prefs.favoriteColor}`}
               text={button.value.toString()}
               fullWidth
+              shouldVibrate={false}
             />
           ))}
         </div>
@@ -195,12 +196,14 @@ export function ClockPicker({
             onClick={onCancel}
             className='delete-account-button'
             fullWidth
+            shouldVibrate={false}
           />
           <CustomButton
             text={t('common.save')}
             onClick={onSave}
             className={`${prefs.favoriteColor} save-button`}
             fullWidth
+            shouldVibrate={false}
           />
         </DialogActions>
       )}
