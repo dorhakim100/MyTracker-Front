@@ -65,7 +65,6 @@ import {
 } from '../../../assets/config/request-statuses'
 import { indexedDbService } from '../../../services/indexeddb.service'
 import { ACTIVE_WORKOUTS_ORDER_STORE_NAME } from '../../../constants/store.constants'
-import { SkeletonList } from '../../../components/SkeletonList/SkeletonList'
 
 const EDIT = 'edit'
 const DETAILS = 'details'
