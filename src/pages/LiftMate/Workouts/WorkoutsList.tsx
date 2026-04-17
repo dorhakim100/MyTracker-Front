@@ -25,7 +25,7 @@ export function WorkoutsList({
   onDuplicateWorkout,
 }: WorkoutsListProps) {
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
-  const dragHaptics = useDragHaptics({itemHeight:360, style: 'Heavy'})
+  const dragHaptics = useDragHaptics({itemHeight:120, style: 'Heavy'})
   return (
     <CustomBasicList<Workout>
       items={workouts}

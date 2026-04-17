@@ -65,6 +65,7 @@ import {
 } from '../../../assets/config/request-statuses'
 import { indexedDbService } from '../../../services/indexeddb.service'
 import { ACTIVE_WORKOUTS_ORDER_STORE_NAME } from '../../../constants/store.constants'
+import { SkeletonList } from '../../../components/SkeletonList/SkeletonList'
 
 const EDIT = 'edit'
 const DETAILS = 'details'
@@ -133,6 +134,8 @@ export function Workouts() {
   })
 
   const [requests, setRequests] = useState<TrainerRequest[]>([])
+
+  const [areWorkoutsLoading, setAreWorkoutsLoading] = useState(false)
   const isToday = useMemo(() => {
     const isToday =
       getDateFromISO(sessionFilter?.date) ===
@@ -202,11 +205,21 @@ export function Workouts() {
 
   useEffect(() => {
     if (!user) return
-    loadWorkouts({
-      forUserId: traineeUser?._id || user?._id,
-      from: selectedPastDate?.from,
-      to: selectedPastDate?.to,
-    })
+    const handleLoadWorkouts = async () => {
+      setAreWorkoutsLoading(true)
+      try {
+        await loadWorkouts({
+        forUserId: traineeUser?._id || user?._id,
+          from: selectedPastDate?.from,
+          to: selectedPastDate?.to,
+        })
+      } catch {
+        showErrorMsg(t('messages.error.getWorkouts'))
+      } finally {
+        setAreWorkoutsLoading(false)
+      }
+    }
+    handleLoadWorkouts()
   }, [user, traineeUser, selectedPastDate])
 
   useEffect(() => {
@@ -487,6 +500,12 @@ export function Workouts() {
   }
 
   const renderWorkoutLists = (isRenderStartButtons: boolean = true) => {
+    if (areWorkoutsLoading) {
+      return <div className='workouts-lists-container skeleton'>
+        <CustomSkeleton height='200px' width='100%' isDarkMode={prefs.isDarkMode}  />
+        <CustomSkeleton height='200px' width='100%' isDarkMode={prefs.isDarkMode}  />
+      </div>
+    }
     if (activeWorkouts.length === 0 && inactiveWorkouts.length === 0) {
       return (
         <div className='no-workouts-container'>
