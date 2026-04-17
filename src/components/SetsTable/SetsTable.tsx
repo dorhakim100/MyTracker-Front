@@ -25,7 +25,6 @@ import { NotesDisplay } from '../NotesDisplay/NotesDisplay'
 import { ExpectedActual } from '../../types/expectedActual/ExpectedActual'
 import Divider from '@mui/material/Divider'
 import { AnimatedWrapper } from '../AnimatedWrapper/AnimatedWrapper'
-import { Haptics, ImpactStyle } from '@capacitor/haptics'
 import { capacitorService } from '../../services/capacitor.service'
 
 function Row(props: {
