@@ -21,22 +21,18 @@ import { User } from '../../types/user/User'
 import { roundToNearest50 } from '../../services/macros/macros.service'
 import { goalService } from '../../services/goal/goal.service'
 // import FlagIcon from '@mui/icons-material/Flag'
-import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
-import { NativeOnly } from '../NativeOnly/NativeOnly'
 
 interface CaloriesProgressProps {
   percentageValue?: number
   current: number
   goal: number
   isEditButton?: boolean
-  burnedCalories?: number
 }
 
 export function CaloriesProgress({
   current,
   isEditButton = true,
   goal,
-  burnedCalories,
 }: CaloriesProgressProps) {
   const { t } = useTranslation()
   const prefs = useSelector(
