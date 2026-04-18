@@ -106,13 +106,6 @@ export function CaloriesProgress({
             current={currentValue}
             goal={roundToNearest50(goal || 0)}
           />
-          <NativeOnly>
-          <GoalBanner
-            current={burnedCalories || 0}
-            isGoal={false}
-            icon={<LocalFireDepartmentIcon />}
-            />
-          </NativeOnly>
    
         </div>
         <CircularProgress

@@ -143,7 +143,6 @@ export function Dashboard() {
         percentageValue={calories / userToCheck.currGoal?.dailyCalories}
         current={calories}
         goal={userToCheck.currGoal?.dailyCalories}
-        burnedCalories={burnedCalories}
       />,
       <MacrosProgress
         key='macros-progress'
