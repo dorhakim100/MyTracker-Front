@@ -3,10 +3,12 @@ import { useSelector } from 'react-redux'
 import {
   IonContent,
   IonRefresher,
-  IonRefresherContent,
+  // IonRefresherContent,
   RefresherCustomEvent,
 } from '@ionic/react'
 import { RootState } from '../../store/store'
+import { setIsLoading } from '../../store/actions/system.actions'
+import { CircularProgress } from '@mui/material'
 
 export type PullToRefreshPageProps = PropsWithChildren<{
   /** Called when user pulls to refresh; wrapper completes the refresher after this resolves. */
@@ -27,6 +29,7 @@ export function PullToRefreshPage({
   ionPadding = true,
 }: PullToRefreshPageProps) {
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
+  const isLoading = useSelector((state: RootState) => state.systemModule.isLoading)
 
   const themeClass = [
     'pull-to-refresh-page__content',
@@ -41,9 +44,13 @@ export function PullToRefreshPage({
   const handleIonRefresh = useCallback(
     async (event: RefresherCustomEvent) => {
       try {
+        setIsLoading(true)
         await onRefresh?.()
       } finally {
-        event.detail.complete()
+        setTimeout(()=>{
+          setIsLoading(false)
+          event.detail.complete()
+        },1000)
       }
     },
     [onRefresh]
@@ -57,8 +64,13 @@ export function PullToRefreshPage({
           onIonRefresh={handleIonRefresh}
           className={prefs.favoriteColor || ''}
         >
-          <IonRefresherContent />
-        </IonRefresher>
+{isLoading &&     
+
+
+<CircularProgress aria-label="Loading…" className={`pull-loader ${prefs.favoriteColor || ''}`} />
+
+
+}        </IonRefresher>
       ) : null}
       {children}
     </IonContent>

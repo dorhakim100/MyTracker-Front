@@ -388,6 +388,7 @@
       "duplicateWorkout": "האימון שוכפל בהצלחה"
     },
     "error": {
+      "refreshHealthData": "שגיאה ברענון נתוני בריאות",
       "updateCalories": "שגיאה בעדכון הקלוריות",
       "updateMacros": "שגיאה בעדכון הערכים התזונתיים",
       "search": "שגיאה בחיפוש",

@@ -7,6 +7,12 @@ ion-content.pull-to-refresh-page__content {
   --ion-color-primary: #{$primary-color};
   font-family: inherit;
   transition: color 0.3s, background-color 0.3s;
+
+}
+
+.pull-loader{
+  margin-top: 20px;
+
 }
 
 ion-content.pull-to-refresh-page__content.dark-mode {

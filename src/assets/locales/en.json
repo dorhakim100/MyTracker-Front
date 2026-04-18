@@ -388,6 +388,7 @@
       "duplicateWorkout": "Workout duplicated successfully"
     },
     "error": {
+      "refreshHealthData": "Failed to refresh health data",
       "updateCalories": "Failed to update calories",
       "updateMacros": "Failed to update macros",
       "search": "Failed to search",

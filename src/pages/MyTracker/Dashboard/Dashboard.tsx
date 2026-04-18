@@ -39,6 +39,7 @@ import { getMeals } from '../../../assets/config/meals'
 import { useCurrMealPeriod } from '../../../hooks/useCurrMealPeriod'
 import { StepsBanner } from '../../../components/StepsBanner/StepsBanner'
 import { NativeOnly } from '../../../components/NativeOnly/NativeOnly'
+import { setBurnedCalories, setSteps } from '../../../store/actions/health.actions'
 
 const CHECK_INTERVAL = 1000 * 60 // minute
 
@@ -72,6 +73,7 @@ export function Dashboard() {
   const isDashboard = useSelector(
     (state: RootState) => state.systemModule.isDashboard
   )
+
 
   const [macros, setMacros] = useState({
     protein: { percentage: 0, gram: 0 },
@@ -262,9 +264,14 @@ export function Dashboard() {
   }
 
 
-  async function handleRefresh() {
-    // Any calls to load data go here
-    await new Promise((resolve) => setTimeout(resolve, 2000))
+  async function handleRefreshHealthData() {
+    try {
+      await setSteps()
+      await setBurnedCalories()
+      } catch {
+        showErrorMsg(t('messages.error.refreshHealthData'))
+        
+      }
   }
 
   const renderNoSession = () => {
@@ -321,7 +328,7 @@ export function Dashboard() {
 
   return (
     <PullToRefreshPage
-      onRefresh={handleRefresh}
+      onRefresh={handleRefreshHealthData}
       className={`page-container dashboard-container ${
         timer ? 'has-timer' : ''
       } ${isDashboard ? 'dashboard' : ''}`}
