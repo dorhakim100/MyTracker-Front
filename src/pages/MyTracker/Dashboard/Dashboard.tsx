@@ -37,7 +37,7 @@ import { getPercentage } from '../../../services/util.service'
 import { MealCard } from '../../../components/MealCard/MealCard'
 import { getMeals } from '../../../assets/config/meals'
 import { useCurrMealPeriod } from '../../../hooks/useCurrMealPeriod'
-import { StepsBanner } from '../../../components/StepsBanner/StepsBanner'
+import { HealthStats } from '../../../components/HealthStats/HealthStats'
 import { NativeOnly } from '../../../components/NativeOnly/NativeOnly'
 import { setBurnedCalories, setSteps } from '../../../store/actions/health.actions'
 
@@ -73,6 +73,7 @@ export function Dashboard() {
   const isDashboard = useSelector(
     (state: RootState) => state.systemModule.isDashboard
   )
+  const isNative = useSelector((state: RootState) => state.systemModule.isNative)
 
 
   const [macros, setMacros] = useState({
@@ -278,12 +279,12 @@ export function Dashboard() {
     if (!todaySessionDay?.workout)
       return (
         <div className='no-session-container'>
-          {/* <Typography
+      {!isNative &&    <Typography
             variant='h6'
             className='bold-header'
           >
             {t('dashboard.noWorkoutToday')}
-          </Typography> */}
+          </Typography>}
           <div
             className={`animation-container ${isDashboard ? 'dashboard' : ''}`}
           >
@@ -359,9 +360,9 @@ export function Dashboard() {
           {statsCarouselItems.map((item) => item)}
         </div>
       )}
-      <NativeOnly>
-          <StepsBanner steps={steps || 0} />
-      </NativeOnly>
+      {/* <NativeOnly> */}
+          <HealthStats steps={steps || 0} burnedCalories={burnedCalories || 0} />
+      {/* </NativeOnly> */}
       {renderNoSession()}
       {/* <CustomAccordion title="Workout Session" cmp={renderSession()} /> */}
       {renderSession()}

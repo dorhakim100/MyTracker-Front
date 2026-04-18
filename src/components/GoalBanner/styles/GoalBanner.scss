@@ -7,5 +7,12 @@
     width: 100%;
     display: flex;
     justify-content: space-around;
+
+    .after-value {
+      margin-inline-start: 0.2rem;
+      font-size: 0.8rem;
+      opacity: 0.5;
+
+    }
   }
 }

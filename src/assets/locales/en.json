@@ -283,7 +283,9 @@
     "title": "Title",
     "macros": "Macros",
     "weight": "Weight",
-    "dates": "Dates"
+    "dates": "Dates",
+    "caloriesBurned": "Calories Burned",
+    "burned": "Burned"
   },
   "user": {
     "logout": "Logout",

@@ -276,7 +276,9 @@
     "title": "כותרת",
     "macros": "ערכים תזונתיים",
     "dates": "תאריכים",
-    "weight": "משקל"
+    "weight": "משקל",
+    "caloriesBurned": "קלוריות שנשרפו",
+    "burned": "נשרפו"
   },
   "user": {
     "logout": "התנתקות",

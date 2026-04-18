@@ -7,6 +7,7 @@ interface GoalBannerProps {
   extraValue?: string
   icon?: React.ReactNode
   isGoal?: boolean
+  afterValue?: string
 }
 
 export function GoalBanner({
@@ -15,14 +16,15 @@ export function GoalBanner({
   extraValue = '',
   icon,
   isGoal = true,
+  afterValue = '',
 }: GoalBannerProps) {
   return (
     <div className='goal-banner banner'>
       <div className='value-container'>
-        <Typography variant='body1' className='bold-header'>{current + extraValue}</Typography>
+        <Typography variant='body1' className='bold-header'>{current + extraValue}<span className='after-value'>{afterValue}</span></Typography>
         {isGoal && <>
         <span>/</span>
-        <Typography variant='body1' className='bold-header'>{goal + extraValue}</Typography>
+        <Typography variant='body1' className='bold-header'>{goal + extraValue}<span className='after-value'>{afterValue}</span></Typography>
         </>}
       </div>
       {icon || <FlagIcon />}
