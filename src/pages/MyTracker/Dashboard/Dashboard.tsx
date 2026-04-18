@@ -4,7 +4,6 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../../../store/store'
 
 import { TimesContainer } from '../../../components/TimesContainer/TimesContainer'
-import { PullToRefreshPage } from '../../../components/PullToRefreshPage/PullToRefreshPage'
 import { StatsCarousel } from '../../../components/StatsCarousel/StatsCarousel'
 
 import { CaloriesProgress } from '../../../components/CaloriesProgress/CaloriesProgress'
@@ -40,6 +39,7 @@ import { useCurrMealPeriod } from '../../../hooks/useCurrMealPeriod'
 import { HealthStats } from '../../../components/HealthStats/HealthStats'
 import { NativeOnly } from '../../../components/NativeOnly/NativeOnly'
 import { setBurnedCalories, setSteps } from '../../../store/actions/health.actions'
+import { PullToRefreshWrapper } from '../../../components/PullToRefreshWrapper/PullToRefreshWrapper'
 
 const CHECK_INTERVAL = 1000 * 60 // minute
 
@@ -331,11 +331,11 @@ export function Dashboard() {
   }
 
   return (
-    <PullToRefreshPage
+    <PullToRefreshWrapper
       onRefresh={handleRefreshHealthData}
-      className={`page-container dashboard-container ${
-        timer ? 'has-timer' : ''
-      } ${isDashboard ? 'dashboard' : ''}`}
+    //  className={`page-container dashboard-container ${
+    //     timer ? 'has-timer' : ''
+    //   } ${isDashboard ? 'dashboard' : ''}`}
     >
       {!isDashboard && (
         <TimesContainer
@@ -363,12 +363,12 @@ export function Dashboard() {
           {statsCarouselItems.map((item) => item)}
         </div>
       )}
-      {/* <NativeOnly> */}
+      <NativeOnly>
           <HealthStats steps={steps || 0} burnedCalories={burnedCalories || 0} />
-      {/* </NativeOnly> */}
+      </NativeOnly>
       {renderNoSession()}
       {/* <CustomAccordion title="Workout Session" cmp={renderSession()} /> */}
       {renderSession()}
-    </PullToRefreshPage>
+    </PullToRefreshWrapper>
   )
 }

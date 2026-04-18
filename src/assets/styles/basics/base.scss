@@ -341,7 +341,7 @@ body {
     min-width: 0;
     box-sizing: border-box;
 
-    > div,
+    > div:not(.ptr),
     > ion-content {
       height: 100% !important;
       width: 100%;
@@ -349,7 +349,7 @@ body {
       min-width: 0;
       box-sizing: border-box;
 
-      > div,
+      > div:not(.ptr),
       > ion-content {
         height: 100% !important;
         width: 100%;
@@ -358,16 +358,16 @@ body {
         box-sizing: border-box;
         padding-bottom: calc(100px) !important;
 
-        > div,
+        > div:not(.ptr),
         > ion-content {
           // height: 100% !important;
         }
       }
     }
     &.has-timer {
-      > div,
+      > div:not(.ptr),
       > ion-content {
-        > div,
+        > div:not(.ptr),
         > ion-content {
           padding-bottom: 170px !important;
         }
