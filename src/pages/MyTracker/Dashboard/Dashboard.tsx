@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../../../store/store'
 
 import { TimesContainer } from '../../../components/TimesContainer/TimesContainer'
+import { PullToRefreshPage } from '../../../components/PullToRefreshPage/PullToRefreshPage'
 import { StatsCarousel } from '../../../components/StatsCarousel/StatsCarousel'
 
 import { CaloriesProgress } from '../../../components/CaloriesProgress/CaloriesProgress'
@@ -259,16 +260,23 @@ export function Dashboard() {
 
     }
   }
+
+
+  async function handleRefresh() {
+    // Any calls to load data go here
+    await new Promise((resolve) => setTimeout(resolve, 2000))
+  }
+
   const renderNoSession = () => {
     if (!todaySessionDay?.workout)
       return (
         <div className='no-session-container'>
-          <Typography
+          {/* <Typography
             variant='h6'
             className='bold-header'
           >
             {t('dashboard.noWorkoutToday')}
-          </Typography>
+          </Typography> */}
           <div
             className={`animation-container ${isDashboard ? 'dashboard' : ''}`}
           >
@@ -312,7 +320,8 @@ export function Dashboard() {
   }
 
   return (
-    <div
+    <PullToRefreshPage
+      onRefresh={handleRefresh}
       className={`page-container dashboard-container ${
         timer ? 'has-timer' : ''
       } ${isDashboard ? 'dashboard' : ''}`}
@@ -349,6 +358,6 @@ export function Dashboard() {
       {renderNoSession()}
       {/* <CustomAccordion title="Workout Session" cmp={renderSession()} /> */}
       {renderSession()}
-    </div>
+    </PullToRefreshPage>
   )
 }

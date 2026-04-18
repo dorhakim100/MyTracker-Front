@@ -269,20 +269,21 @@ function App() {
 
   useEffect(()=>{
 
-    const handleHealthData = async () => {
-      try {
- 
-        await setSteps()
-        await setBurnedCalories()
-      } catch (err) {
-        showErrorMsg(err instanceof Error ? err.message : String(err))
-        
-      }
-    }
+   
     handleHealthData()
 
   },[healthPermited, activeRoute])
 
+  async function handleHealthData() {
+    try {
+
+      await setSteps()
+      await setBurnedCalories()
+    } catch (err) {
+      showErrorMsg(err instanceof Error ? err.message : String(err))
+      
+    }
+  }
 
   const _getActiveRouteComponent = () => {
     const activeRouteComponent = filteredRoutes.find(

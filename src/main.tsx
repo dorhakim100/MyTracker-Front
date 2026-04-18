@@ -13,6 +13,9 @@ import { queryClient } from './lib/react-query/queryClient'
 
 import './i18n'
 import './index.css'
+import '@ionic/react/css/normalize.css'
+import '@ionic/react/css/core.css'
+import '@ionic/react/css/padding.css'
 import './assets/styles/main.scss'
 
 import App from './App.tsx'

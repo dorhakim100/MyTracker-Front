@@ -24,6 +24,7 @@
     "@emotion/styled": "^11.14.0",
     "@fseehawer/react-circular-slider": "^3.2.7",
     "@hello-pangea/dnd": "^18.0.1",
+    "@ionic/react": "^8.8.4",
     "@mui/icons-material": "^7.0.1",
     "@mui/material": "^7.0.1",
     "@mui/x-date-pickers": "^8.11.3",

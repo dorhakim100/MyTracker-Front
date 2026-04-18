@@ -480,3 +480,8 @@ body.native{
    top:calc($header-margin + 52px) !important;
   }
 }
+
+ion-content{
+  --background: '' !important;
+  --color: '' !important;
+}
