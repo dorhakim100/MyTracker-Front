@@ -61,6 +61,9 @@ export function Dashboard() {
     (state: RootState) => state.workoutModule.todaySessionDay
   )
 
+  const steps = useSelector((state: RootState) => state.healthModule.steps)
+  const burnedCalories = useSelector((state: RootState) => state.healthModule.burnedCalories)
+
   const timer = useSelector((state: RootState) => state.workoutModule.timer)
 
   const isDashboard = useSelector(
@@ -131,6 +134,8 @@ export function Dashboard() {
         percentageValue={calories / userToCheck.currGoal?.dailyCalories}
         current={calories}
         goal={userToCheck.currGoal?.dailyCalories}
+        steps={steps}
+        burnedCalories={burnedCalories}
       />,
       <MacrosProgress
         key='macros-progress'
@@ -229,6 +234,8 @@ export function Dashboard() {
 
     setSelectedSessionDay(todaySessionDay)
   }, [userToCheck, todaySessionDay])
+
+
 
   async function checkDiaryDayChange() {
     if (!userToCheck) return

@@ -37,6 +37,9 @@ import { TrainerDashboard } from './pages/TrainerDashboard/TrainerDashboard.tsx'
 import { StatusBar, Style } from '@capacitor/status-bar';
 
 import './App.css'
+import { healthService } from './services/health/health.service.ts'
+import { setBurnedCalories, setPermitted, setSteps } from './store/actions/health.actions.ts'
+import { showErrorMsg } from './services/event-bus.service.ts'
 
 const isProd = import.meta.env.PROD
 
@@ -91,6 +94,10 @@ function App() {
 
   const activeRoute = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.activeRoute
+  )
+
+  const healthPermited = useSelector(
+    (stateSelector: RootState) => stateSelector.healthModule.permited
   )
 
   const filteredRoutes = useMemo(() => {
@@ -245,6 +252,37 @@ function App() {
     }
 
   },[isNative, prefs.isDarkMode])
+
+  useEffect(()=>{
+    if(!isNative) return  
+    const handleHealthPermissions = async () => {
+      const permissions = await healthService.requestReadAuthorization()
+      if (permissions.status === 'ok') {
+        setPermitted(true)
+      } else {
+        setPermitted(false)
+      }
+    }
+    handleHealthPermissions()
+  },[isNative])
+
+
+  useEffect(()=>{
+
+    const handleHealthData = async () => {
+      try {
+ 
+        await setSteps()
+        await setBurnedCalories()
+      } catch (err) {
+        showErrorMsg(err instanceof Error ? err.message : String(err))
+        
+      }
+    }
+    handleHealthData()
+
+  },[healthPermited, activeRoute])
+
 
   const _getActiveRouteComponent = () => {
     const activeRouteComponent = filteredRoutes.find(
