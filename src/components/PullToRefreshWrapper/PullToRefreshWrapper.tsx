@@ -16,6 +16,11 @@ interface PullToRefreshProps {
 export function PullToRefreshWrapper({ children, onRefresh, className }: PullToRefreshProps) {
 
 
+  const isDashboard = useSelector((state: RootState) => state.systemModule.isDashboard)
+
+  if(isDashboard)return <div className={`${className} ${isDashboard ? 'dashboard' : ''}`}>
+    {children}
+  </div>
 
   const handleRefresh = async () => {
       try {
@@ -26,8 +31,9 @@ export function PullToRefreshWrapper({ children, onRefresh, className }: PullToR
 
   
 
-    } catch (error) {
-      console.error(error)
+    } catch {
+      throw new Error('Failed to refresh')
+
     }
   }
 

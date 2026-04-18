@@ -71,7 +71,7 @@ export function Dashboard() {
   const steps = useSelector((state: RootState) => state.healthModule.steps)
   const burnedCalories = useSelector((state: RootState) => state.healthModule.burnedCalories)
 
-  const timer = useSelector((state: RootState) => state.workoutModule.timer)
+  // const timer = useSelector((state: RootState) => state.workoutModule.timer)
 
   const isDashboard = useSelector(
     (state: RootState) => state.systemModule.isDashboard
@@ -333,6 +333,7 @@ export function Dashboard() {
   return (
     <PullToRefreshWrapper
       onRefresh={handleRefreshHealthData}
+      className={`'dashboard-container' ${isDashboard ? 'page-container' : ''}`}
     //  className={`page-container dashboard-container ${
     //     timer ? 'has-timer' : ''
     //   } ${isDashboard ? 'dashboard' : ''}`}

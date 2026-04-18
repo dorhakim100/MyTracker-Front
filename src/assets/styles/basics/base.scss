@@ -365,6 +365,10 @@ body {
       }
     }
     &.has-timer {
+      .ptr__children{
+        padding-bottom: 170px !important;
+
+      }
       > div:not(.ptr),
       > ion-content {
         > div:not(.ptr),

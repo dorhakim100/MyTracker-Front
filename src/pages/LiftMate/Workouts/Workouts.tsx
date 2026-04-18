@@ -65,6 +65,7 @@ import {
 } from '../../../assets/config/request-statuses'
 import { indexedDbService } from '../../../services/indexeddb.service'
 import { ACTIVE_WORKOUTS_ORDER_STORE_NAME } from '../../../constants/store.constants'
+import { PullToRefreshWrapper } from '../../../components/PullToRefreshWrapper/PullToRefreshWrapper'
 
 const EDIT = 'edit'
 const DETAILS = 'details'
@@ -643,13 +644,22 @@ export function Workouts() {
     }
   }
 
+  async function handleRefreshWorkouts() {
+    try {
+      await loadWorkouts({ forUserId: traineeUser?._id || user?._id || '' })
+    } catch {
+      showErrorMsg(t('messages.error.loadWorkouts'))
+    }
+  }
+
   if (!sessionDay || !sessionDay._id || isPageLoading) return renderSkeleton()
   return (
     <>
-      <div
+      <PullToRefreshWrapper
         className={`page-container workouts-container ${
           timer ? 'has-timer' : ''
         } ${isDashboard ? 'dashboard' : ''}`}
+        onRefresh={handleRefreshWorkouts}
       >
         {isDashboard && (
           <Typography
@@ -759,7 +769,7 @@ export function Workouts() {
             updateSessionDay={updateSessionDay}
           />}
         </SlideAnimation>
-      </div>
+      </PullToRefreshWrapper>
       <SlideDialog
         open={dialogOptions.open}
         onClose={closeEdit}
