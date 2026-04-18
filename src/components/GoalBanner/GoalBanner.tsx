@@ -19,10 +19,10 @@ export function GoalBanner({
   return (
     <div className='goal-banner banner'>
       <div className='value-container'>
-        <Typography variant='body1'>{current + extraValue}</Typography>
+        <Typography variant='body1' className='bold-header'>{current + extraValue}</Typography>
         {isGoal && <>
         <span>/</span>
-        <Typography variant='body1'>{goal + extraValue}</Typography>
+        <Typography variant='body1' className='bold-header'>{goal + extraValue}</Typography>
         </>}
       </div>
       {icon || <FlagIcon />}

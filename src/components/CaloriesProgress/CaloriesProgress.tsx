@@ -22,14 +22,13 @@ import { roundToNearest50 } from '../../services/macros/macros.service'
 import { goalService } from '../../services/goal/goal.service'
 // import FlagIcon from '@mui/icons-material/Flag'
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
-import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
+import { NativeOnly } from '../NativeOnly/NativeOnly'
 
 interface CaloriesProgressProps {
   percentageValue?: number
   current: number
   goal: number
   isEditButton?: boolean
-  steps?: number
   burnedCalories?: number
 }
 
@@ -37,7 +36,6 @@ export function CaloriesProgress({
   current,
   isEditButton = true,
   goal,
-  steps,
   burnedCalories,
 }: CaloriesProgressProps) {
   const { t } = useTranslation()
@@ -108,16 +106,14 @@ export function CaloriesProgress({
             current={currentValue}
             goal={roundToNearest50(goal || 0)}
           />
+          <NativeOnly>
           <GoalBanner
             current={burnedCalories || 0}
             isGoal={false}
             icon={<LocalFireDepartmentIcon />}
-          />
-          <GoalBanner
-            current={steps || 0}
-            isGoal={false}
-            icon={<DirectionsRunIcon />}
-          />
+            />
+          </NativeOnly>
+   
         </div>
         <CircularProgress
           value={getPercentageValue()}
