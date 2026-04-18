@@ -9,6 +9,7 @@ import {
 import { RootState } from '../../store/store'
 import { setIsLoading } from '../../store/actions/system.actions'
 import { CircularProgress } from '@mui/material'
+import { capacitorService } from '../../services/capacitor.service'
 
 export type PullToRefreshPageProps = PropsWithChildren<{
   /** Called when user pulls to refresh; wrapper completes the refresher after this resolves. */
@@ -19,6 +20,7 @@ export type PullToRefreshPageProps = PropsWithChildren<{
   pullToRefresh?: boolean
   /** Adds Ionic `ion-padding` utility. Default true. */
   ionPadding?: boolean
+  timeout?: number
 }>
 
 export function PullToRefreshPage({
@@ -27,6 +29,7 @@ export function PullToRefreshPage({
   className = '',
   pullToRefresh = true,
   ionPadding = true,
+  timeout = 1000,
 }: PullToRefreshPageProps) {
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
   const isLoading = useSelector((state: RootState) => state.systemModule.isLoading)
@@ -45,12 +48,13 @@ export function PullToRefreshPage({
     async (event: RefresherCustomEvent) => {
       try {
         setIsLoading(true)
+        capacitorService.vibrate('Heavy')
         await onRefresh?.()
       } finally {
         setTimeout(()=>{
           setIsLoading(false)
           event.detail.complete()
-        },1000)
+        },timeout)
       }
     },
     [onRefresh]
