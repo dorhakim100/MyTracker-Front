@@ -337,21 +337,38 @@ body {
 
   .main-animation-container {
     height: 100% !important;
-    >div{
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+
+    > div,
+    > ion-content {
       height: 100% !important;
-      >div{
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+
+      > div,
+      > ion-content {
         height: 100% !important;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
         padding-bottom: calc(100px) !important;
-        
-        >div{
+
+        > div,
+        > ion-content {
           // height: 100% !important;
         }
       }
     }
     &.has-timer {
-      >div{
-        >div{
-
+      > div,
+      > ion-content {
+        > div,
+        > ion-content {
           padding-bottom: 170px !important;
         }
       }

@@ -45,6 +45,7 @@ const CHECK_INTERVAL = 1000 * 60 // minute
 
 export function Dashboard() {
   const { t } = useTranslation()
+
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
   const user = useSelector((state: RootState) => state.userModule.user)
   const traineeUser = useSelector(
@@ -53,6 +54,8 @@ export function Dashboard() {
   const sessionDay = useSelector(
     (state: RootState) => state.workoutModule.sessionDay
   )
+
+  
 
   const menu = useSelector((state: RootState) => state.userModule.menu)
 
