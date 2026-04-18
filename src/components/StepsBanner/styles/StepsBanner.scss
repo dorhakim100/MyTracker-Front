@@ -1,0 +1,15 @@
+.steps-banner-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.35rem;
+  align-items: center;
+
+  .steps-banner-title {
+    margin: 0;
+  }
+
+  .goal-banner {
+    width: 100%;
+    max-width: 150px;
+  }
+}

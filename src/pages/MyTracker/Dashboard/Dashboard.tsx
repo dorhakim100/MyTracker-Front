@@ -36,6 +36,8 @@ import { getPercentage } from '../../../services/util.service'
 import { MealCard } from '../../../components/MealCard/MealCard'
 import { getMeals } from '../../../assets/config/meals'
 import { useCurrMealPeriod } from '../../../hooks/useCurrMealPeriod'
+import { StepsBanner } from '../../../components/StepsBanner/StepsBanner'
+import { NativeOnly } from '../../../components/NativeOnly/NativeOnly'
 
 const CHECK_INTERVAL = 1000 * 60 // minute
 
@@ -134,7 +136,6 @@ export function Dashboard() {
         percentageValue={calories / userToCheck.currGoal?.dailyCalories}
         current={calories}
         goal={userToCheck.currGoal?.dailyCalories}
-        steps={steps}
         burnedCalories={burnedCalories}
       />,
       <MacrosProgress
@@ -318,15 +319,15 @@ export function Dashboard() {
     >
       {!isDashboard && (
         <TimesContainer
-          className={`${prefs.isDarkMode ? 'dark-mode' : ''} ${
-            prefs.favoriteColor
+        className={`${prefs.isDarkMode ? 'dark-mode' : ''} ${
+          prefs.favoriteColor
           }`}
-        />
-      )}
+          />
+        )}
       {isDashboard && (
         <Typography
-          variant='h4'
-          className='bold-header'
+        variant='h4'
+        className='bold-header'
         >
           {t('dashboard.title')}
         </Typography>
@@ -334,15 +335,17 @@ export function Dashboard() {
       {/* <Typography variant="h5" className="bold-header">Dashboard</Typography> */}
       {showStatsCarousel ? (
         <StatsCarousel
-          items={statsCarouselItems}
-          showSkeleton={!user}
+        items={statsCarouselItems}
+        showSkeleton={!user}
         />
       ) : (
         <div className='dashboard-items-container'>
           {statsCarouselItems.map((item) => item)}
         </div>
       )}
-
+      <NativeOnly>
+          <StepsBanner steps={steps || 0} />
+      </NativeOnly>
       {renderNoSession()}
       {/* <CustomAccordion title="Workout Session" cmp={renderSession()} /> */}
       {renderSession()}

@@ -253,6 +253,12 @@ export function getFixedNumber(number: number): number {
   return +number.toFixed(0)
 }
 
+/** Thousands separated by commas (e.g. 1234567 → `"1,234,567"`). Uses `en-US` grouping. */
+export function formatNumberWithCommas(value: number): string {
+  if (!Number.isFinite(value)) return ''
+  return value.toLocaleString('en-US')
+}
+
 export function getMonthNames(): string[] {
   return [
     'Jan',

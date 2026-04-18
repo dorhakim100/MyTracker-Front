@@ -33,6 +33,10 @@
     "noWorkoutToday": "עדיין לא נוסף אימון להיום",
     "chooseWorkout": "בחר אימון",
     "workoutSession": "אימון"
+    },
+  "steps": {
+    "stepsToday": "צעדים היום",
+    "steps": "צעדים"
   },
   "common": {
     "save": "שמור",

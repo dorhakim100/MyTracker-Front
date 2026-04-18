@@ -327,6 +327,10 @@
     "pending": "Pending",
     "searchPlaceholder": "Search by email address, phone number, or user UID"
   },
+  "steps": {
+    "stepsToday": "Steps today",
+    "steps": "Steps"
+  },
   "bmr": {
     "title": "BMR",
     "activityBuffer": "Activity buffer",
