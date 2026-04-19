@@ -149,12 +149,15 @@ export function getTodayDayName(): string {
 export function smoothScroll(): void {
   // Try to find the scrollable page-container element first
   const pageContainer = document.querySelector('.page-container') as HTMLElement
+  const ptrChildren = document.querySelector('.ptr__children') as HTMLElement
   if (pageContainer) {
     pageContainer.scrollTo({ top: 0, behavior: 'smooth' })
-  } else {
-    // Fallback to window scroll if no page-container found
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
+  } 
+  if (ptrChildren) {
+    ptrChildren.scrollTo({ top: 0, behavior: 'smooth' })
+  } 
+  // Fallback to window scroll if no page-container found
+  window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
 export function getRoutes(routes: Route[], user: User | null, app: App) {
