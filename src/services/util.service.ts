@@ -252,8 +252,8 @@ export function getNewDNDArray(
   return filteredArray
 }
 
-export function getFixedNumber(number: number): number {
-  return +number.toFixed(0)
+export function getFixedNumber(number: number, precision: number = 0): number {
+  return +number.toFixed(precision)
 }
 
 /** Distance in meters → kilometers (1 km = 1000 m). */
