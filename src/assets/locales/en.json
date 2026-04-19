@@ -28,6 +28,13 @@
     "editMacrosButton": "Edit Macros",
     "gram": "g"
   },
+  "heartRate": {
+    "bpm": "BPM",
+    "perMinute": " / min"
+  },
+  "distance": {
+    "km": "km"
+  },
   "dashboard": {
     "title": "Dashboard",
     "noWorkoutToday": "No workout today",

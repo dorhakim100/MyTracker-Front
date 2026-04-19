@@ -1,8 +1,10 @@
 .health-stats-container {
   margin: 1rem 0;
-  display: flex;
-  justify-content: space-around;
-  gap: 0.35rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+
+  gap: 1rem;
   align-items: center;
 
   .steps-banner-title {
@@ -11,6 +13,10 @@
 
   .goal-banner {
     width: 100%;
-    max-width: 120px;
+    // max-width: 140px;
+
+    .after-value {
+      margin-inline-start: 0.6rem;
+    }
   }
 }

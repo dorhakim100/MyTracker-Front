@@ -253,6 +253,11 @@ export function getFixedNumber(number: number): number {
   return +number.toFixed(0)
 }
 
+/** Distance in meters → kilometers (1 km = 1000 m). */
+export function metersToKilometers(meters: number): number {
+  return meters / 1000
+}
+
 /** Thousands separated by commas (e.g. 1234567 → `"1,234,567"`). Uses `en-US` grouping. */
 export function formatNumberWithCommas(value: number): string {
   if (!Number.isFinite(value)) return ''

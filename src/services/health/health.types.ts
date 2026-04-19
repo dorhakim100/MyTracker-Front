@@ -18,6 +18,8 @@ export type TodayActivitySummary =
       status: 'ok'
       steps: number
       activeCaloriesKcal: number
+      distance: number
+      heartRate: number
       window: { startIso: string; endIso: string }
     }
   | {

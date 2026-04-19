@@ -8,7 +8,7 @@ import {
   type HealthReadDataType,
   type TodayActivitySummary,
 } from './health.types'
-import { getFixedNumber } from '../util.service'
+import { getFixedNumber, metersToKilometers } from '../util.service'
 
 const READ_OPTIONS: { read: HealthDataType[] } = {
   read: [...HEALTH_READ_DATA_TYPES],
@@ -75,12 +75,19 @@ async function getTodayActivitySummary(): Promise<TodayActivitySummary> {
   const window = getLocalTodayWindow()
   let steps: number
   let activeCaloriesKcal: number
+  let distance: number
+  let heartRate: number
   try {
-    ;[steps, activeCaloriesKcal] = await Promise.all([
+    ;[steps, activeCaloriesKcal, distance, heartRate] = await Promise.all([
       sumAggregatedInWindow('steps', window.startIso, window.endIso),
       sumAggregatedInWindow('calories', window.startIso, window.endIso),
+      sumAggregatedInWindow('distance', window.startIso, window.endIso),
+      sumAggregatedInWindow('heartRate', window.startIso, window.endIso),
     ])
     activeCaloriesKcal = getFixedNumber(activeCaloriesKcal)
+    steps = getFixedNumber(steps)
+    distance = metersToKilometers(getFixedNumber(distance))
+    heartRate = getFixedNumber(heartRate)
   } catch (err) {
     return toErrorResult(err)
   }
@@ -89,6 +96,8 @@ async function getTodayActivitySummary(): Promise<TodayActivitySummary> {
     status: 'ok',
     steps,
     activeCaloriesKcal,
+    distance,
+    heartRate,
     window: { startIso: window.startIso, endIso: window.endIso },
   }
 }
@@ -113,7 +122,7 @@ function getLocalTodayWindow(): { startIso: string; endIso: string } {
 }
 
 async function sumAggregatedInWindow(
-  dataType: 'steps' | 'calories',
+  dataType: 'steps' | 'calories' | 'distance' | 'heartRate' ,
   startIso: string,
   endIso: string
 ): Promise<number> {
@@ -134,3 +143,4 @@ function toErrorResult(err: unknown): TodayActivitySummary {
   const message = err instanceof Error ? err.message : String(err)
   return { status: 'error', message }
 }
+

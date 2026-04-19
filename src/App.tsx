@@ -38,7 +38,7 @@ import { StatusBar, Style } from '@capacitor/status-bar';
 
 import './App.css'
 import { healthService } from './services/health/health.service.ts'
-import { setBurnedCalories, setPermitted, setSteps } from './store/actions/health.actions.ts'
+import { setHealthData, setPermitted } from './store/actions/health.actions.ts'
 import { showErrorMsg } from './services/event-bus.service.ts'
 
 const isProd = import.meta.env.PROD
@@ -277,8 +277,7 @@ function App() {
   async function handleHealthData() {
     try {
 
-      await setSteps()
-      await setBurnedCalories()
+      await setHealthData()
     } catch (err) {
       showErrorMsg(err instanceof Error ? err.message : String(err))
       

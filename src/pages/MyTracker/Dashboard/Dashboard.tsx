@@ -38,7 +38,7 @@ import { getMeals } from '../../../assets/config/meals'
 import { useCurrMealPeriod } from '../../../hooks/useCurrMealPeriod'
 import { HealthStats } from '../../../components/HealthStats/HealthStats'
 import { NativeOnly } from '../../../components/NativeOnly/NativeOnly'
-import { setBurnedCalories, setSteps } from '../../../store/actions/health.actions'
+import { setHealthData } from '../../../store/actions/health.actions'
 import { PullToRefreshWrapper } from '../../../components/PullToRefreshWrapper/PullToRefreshWrapper'
 
 const CHECK_INTERVAL = 1000 * 60 // minute
@@ -70,7 +70,8 @@ export function Dashboard() {
 
   const steps = useSelector((state: RootState) => state.healthModule.steps)
   const burnedCalories = useSelector((state: RootState) => state.healthModule.burnedCalories)
-
+  const distance = useSelector((state: RootState) => state.healthModule.distance)
+  const heartRate = useSelector((state: RootState) => state.healthModule.restingHeartRate)
   const timer = useSelector((state: RootState) => state.workoutModule.timer)
 
   const isDashboard = useSelector(
@@ -269,8 +270,7 @@ export function Dashboard() {
 
   async function handleRefreshHealthData() {
     try {
-      await setSteps()
-      await setBurnedCalories()
+      await setHealthData()
       } catch {
         showErrorMsg(t('messages.error.refreshHealthData'))
         
@@ -369,7 +369,7 @@ export function Dashboard() {
         </div>
       )}
       <NativeOnly>
-          <HealthStats steps={steps || 0} burnedCalories={burnedCalories || 0} />
+          <HealthStats steps={steps || 0} burnedCalories={burnedCalories || 0} distance={distance || 0} heartRate={heartRate || 0} />
       </NativeOnly>
       {renderNoSession()}
       {/* <CustomAccordion title="Workout Session" cmp={renderSession()} /> */}
