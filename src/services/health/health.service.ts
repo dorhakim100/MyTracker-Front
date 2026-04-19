@@ -76,18 +76,19 @@ async function getTodayActivitySummary(): Promise<TodayActivitySummary> {
   let steps: number
   let activeCaloriesKcal: number
   let distance: number
-  let heartRate: number
+  let flightsClimbed: number
   try {
-    ;[steps, activeCaloriesKcal, distance, heartRate] = await Promise.all([
+    ;[steps, activeCaloriesKcal, distance, flightsClimbed
+    ] = await Promise.all([
       sumAggregatedInWindow('steps', window.startIso, window.endIso),
       sumAggregatedInWindow('calories', window.startIso, window.endIso),
       sumAggregatedInWindow('distance', window.startIso, window.endIso),
-      sumAggregatedInWindow('heartRate', window.startIso, window.endIso),
+      sumAggregatedInWindow('flightsClimbed', window.startIso, window.endIso),
     ])
     activeCaloriesKcal = getFixedNumber(activeCaloriesKcal)
     steps = getFixedNumber(steps)
     distance = metersToKilometers(getFixedNumber(distance))
-    heartRate = getFixedNumber(heartRate)
+    flightsClimbed = getFixedNumber(flightsClimbed)
   } catch (err) {
     return toErrorResult(err)
   }
@@ -97,7 +98,7 @@ async function getTodayActivitySummary(): Promise<TodayActivitySummary> {
     steps,
     activeCaloriesKcal,
     distance,
-    heartRate,
+    flightsClimbed,
     window: { startIso: window.startIso, endIso: window.endIso },
   }
 }
@@ -122,7 +123,7 @@ function getLocalTodayWindow(): { startIso: string; endIso: string } {
 }
 
 async function sumAggregatedInWindow(
-  dataType: 'steps' | 'calories' | 'distance' | 'heartRate' ,
+  dataType: 'steps' | 'calories' | 'distance' | 'flightsClimbed' ,
   startIso: string,
   endIso: string
 ): Promise<number> {
@@ -133,6 +134,7 @@ async function sumAggregatedInWindow(
     bucket: 'day',
     aggregation: 'sum',
   })
+
   return samples.reduce((acc, s) => {
     const v = s.value
     return acc + (typeof v === 'number' && Number.isFinite(v) ? v : 0)

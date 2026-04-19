@@ -71,7 +71,7 @@ export function Dashboard() {
   const steps = useSelector((state: RootState) => state.healthModule.steps)
   const burnedCalories = useSelector((state: RootState) => state.healthModule.burnedCalories)
   const distance = useSelector((state: RootState) => state.healthModule.distance)
-  const heartRate = useSelector((state: RootState) => state.healthModule.restingHeartRate)
+  const flightsClimbed = useSelector((state: RootState) => state.healthModule.flightsClimbed)
   const timer = useSelector((state: RootState) => state.workoutModule.timer)
 
   const isDashboard = useSelector(
@@ -369,7 +369,7 @@ export function Dashboard() {
         </div>
       )}
       <NativeOnly>
-          <HealthStats steps={steps || 0} burnedCalories={burnedCalories || 0} distance={distance || 0} heartRate={heartRate || 0} />
+          <HealthStats steps={steps || 0} burnedCalories={burnedCalories || 0} distance={distance || 0} flightsClimbed={flightsClimbed || 0} />
       </NativeOnly>
       {renderNoSession()}
       {/* <CustomAccordion title="Workout Session" cmp={renderSession()} /> */}

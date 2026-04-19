@@ -5,8 +5,7 @@ import { GoalBanner } from '../GoalBanner/GoalBanner'
 import { formatNumberWithCommas, getFixedNumber } from '../../services/util.service'
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment'
 import SpeedIcon from '@mui/icons-material/Speed';
-import MonitorHeartIcon from '@mui/icons-material/MonitorHeart';
-
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 export interface HealthStatsProps {
   steps: number
   burnedCalories: number
@@ -15,10 +14,10 @@ export interface HealthStatsProps {
   burnedCaloriesGoal?: number
   className?: string
   distance: number
-  heartRate: number
+  flightsClimbed: number
 }
 
-export function HealthStats({ steps,  burnedCalories,  distance, heartRate, className }: HealthStatsProps) {
+export function HealthStats({ steps,  burnedCalories,  distance, flightsClimbed, className }: HealthStatsProps) {
   const { t } = useTranslation()
 
   // steps = 21435.151
@@ -26,9 +25,9 @@ export function HealthStats({ steps,  burnedCalories,  distance, heartRate, clas
   // distance = 12.52
   // heartRate = 60
   steps = getFixedNumber(steps)
-  
+
   burnedCalories = getFixedNumber(burnedCalories)
-  heartRate = getFixedNumber(heartRate)
+  flightsClimbed = getFixedNumber(flightsClimbed)
 
 
   const formattedSteps = formatNumberWithCommas(steps)
@@ -63,12 +62,11 @@ export function HealthStats({ steps,  burnedCalories,  distance, heartRate, clas
         />
         <GoalBanner
           // current={steps}
-          current={heartRate}
-          extraValue={t('heartRate.perMinute')}
+          current={flightsClimbed}
 
           isGoal={false}
-          icon={<MonitorHeartIcon />}
-          afterValue={t('heartRate.bpm')}
+          icon={<TrendingUpIcon />}
+          afterValue={t('floors.floors')}
 
         />
     </div>

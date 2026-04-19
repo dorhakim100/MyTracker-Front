@@ -1,7 +1,7 @@
 import type { HealthDataType } from '@capgo/capacitor-health'
 
 /** Read scopes used for v1 activity summary (active energy + steps). */
-export const HEALTH_READ_DATA_TYPES = ['steps', 'calories', 'distance', 'heartRate'] as const satisfies readonly HealthDataType[]
+export const HEALTH_READ_DATA_TYPES = ['steps', 'calories', 'distance', 'flightsClimbed'] as const satisfies readonly HealthDataType[]
 
 export type HealthReadDataType = (typeof HEALTH_READ_DATA_TYPES)[number]
 
@@ -19,7 +19,7 @@ export type TodayActivitySummary =
       steps: number
       activeCaloriesKcal: number
       distance: number
-      heartRate: number
+      flightsClimbed: number
       window: { startIso: string; endIso: string }
     }
   | {

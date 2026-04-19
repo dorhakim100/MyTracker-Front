@@ -1,7 +1,7 @@
 import {healthService} from "../../services/health/health.service"
 
 import { store } from "../store"
-  import { SET_STEPS, SET_BURNED_CALORIES, SET_PERMITTED, SET_DISTANCE, SET_RESTING_HEART_RATE } from "../reducers/health.reducer"
+  import { SET_STEPS, SET_BURNED_CALORIES, SET_PERMITTED, SET_DISTANCE, SET_FLIGHTS_CLIMBED } from "../reducers/health.reducer"
 
 export async function setPermitted(permitted: boolean) {
   store.dispatch({ type: SET_PERMITTED, permitted })
@@ -13,7 +13,7 @@ export async function setHealthData() {
     setSteps(data.steps)
     setBurnedCalories(data.activeCaloriesKcal)
     setDistance(data.distance)
-    setRestingHeartRate(data.heartRate)
+    setFlightsClimbed(data.flightsClimbed)
   }
   if(data.status === 'error') {
     throw new Error(data.message)
@@ -39,8 +39,8 @@ export async function setDistance(distance: number) {
 
 }
 
-export async function setRestingHeartRate(restingHeartRate: number) {
+export async function setFlightsClimbed(flightsClimbed: number) {
 
-    store.dispatch({ type: SET_RESTING_HEART_RATE, restingHeartRate: restingHeartRate })
+    store.dispatch({ type: SET_FLIGHTS_CLIMBED, flightsClimbed: flightsClimbed })
 
 }

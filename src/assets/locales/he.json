@@ -280,6 +280,9 @@
     "caloriesBurned": "קלוריות שנשרפו",
     "burned": "נשרפו"
   },
+  "floors": {
+    "floors": "קומות"
+  },
   "heartRate": {
     "bpm": "BPM",
     "perMinute": " / דקה"

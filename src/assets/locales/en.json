@@ -32,6 +32,9 @@
     "bpm": "BPM",
     "perMinute": " / min"
   },
+  "floors": {
+    "floors": "Floors"
+  },
   "distance": {
     "km": "km"
   },

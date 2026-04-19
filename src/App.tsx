@@ -38,7 +38,9 @@ import { StatusBar, Style } from '@capacitor/status-bar';
 
 import './App.css'
 import { healthService } from './services/health/health.service.ts'
-import { setHealthData, setPermitted } from './store/actions/health.actions.ts'
+import {
+  setHealthData,
+  setPermitted } from './store/actions/health.actions.ts'
 import { showErrorMsg } from './services/event-bus.service.ts'
 
 const isProd = import.meta.env.PROD
