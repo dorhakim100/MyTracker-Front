@@ -513,7 +513,7 @@ ion-content{
   --padding-bottom: 0px !important;
 }
 
-.page-container{
+.page-container, .ptr__children, .ptr{
 
   scrollbar-width: none !important; /* Firefox */
   -ms-overflow-style: none !important; /* Internet Explorer and Edge */
@@ -525,3 +525,4 @@ ion-content{
     z-index: -10;
   }
 }
+
