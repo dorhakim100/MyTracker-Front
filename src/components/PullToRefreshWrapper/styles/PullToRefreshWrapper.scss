@@ -1,89 +1,16 @@
 @import '../../../assets/styles/setup/variables.scss';
 
-// Match `.main` / app chrome so scrollable Ionic pages look like the rest of the app.
-ion-content.pull-to-refresh-page__content {
-  --background: #{$neutral-gray};
-  --color: #{$dark-gray};
-  --ion-color-primary: #{$primary-color};
-  font-family: inherit;
-  transition: color 0.3s, background-color 0.3s;
-
-}
 
 .pull-loader{
   margin-top: 20px;
 
 }
 
-ion-content.pull-to-refresh-page__content.dark-mode {
-  --background: #{$dark-gray};
-  --color: #{$neutral-gray};
-}
+.ptr{
+  .ptr__children{
 
-ion-content.pull-to-refresh-page__content.dark-mode.blue {
-  --background: #{$dark-gray-blue};
-}
-
-ion-content.pull-to-refresh-page__content.dark-mode.yellow {
-  --background: #{$dark-gray-yellow};
-}
-
-ion-content.pull-to-refresh-page__content.dark-mode.red {
-  --background: #{$dark-gray-red};
-}
-
-ion-content.pull-to-refresh-page__content.dark-mode.orange {
-  --background: #{$dark-gray-orange};
-}
-
-ion-content.pull-to-refresh-page__content.dark-mode.green {
-  --background: #{$dark-gray-green};
-}
-
-ion-content.pull-to-refresh-page__content.dark-mode.deepPurple {
-  --background: #{$dark-gray-deep-purple};
-}
-
-ion-content.pull-to-refresh-page__content.dark-mode.purple {
-  --background: #{$dark-gray-purple};
-}
-
-ion-content.pull-to-refresh-page__content.dark-mode.pink {
-  --background: #{$dark-gray-pink};
-}
-
-// Refresher spinner / labels follow content contrast
-ion-content.pull-to-refresh-page__content ion-refresher {
-  color: #{$primary-color};
-  left: 50%;
-  transform: translateX(-50%);
-
-  &.blue{
-    color: #{$picker-color-blue};
+    .page{
+      padding-bottom: 110px;
+    }
   }
-  &.yellow{
-    color: #{$picker-color-yellow};
-  }
-  &.red{
-    color: #{$picker-color-red};
-  }
-  &.orange{
-    color: #{$picker-color-orange};
-  }
-  &.green{
-    color: #{$picker-color-green};
-  }
-  &.deepPurple{
-    color: #{$picker-color-deep-purple};
-  }
-  &.purple{
-    color: #{$picker-color-purple};
-  }
-  &.pink{
-    color: #{$picker-color-pink};
-  }
-}
-
-ion-content.pull-to-refresh-page__content.dark-mode ion-refresher {
-  // color: #{$neutral-gray};
 }

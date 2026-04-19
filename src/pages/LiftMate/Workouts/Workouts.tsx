@@ -656,11 +656,16 @@ export function Workouts() {
   return (
     <>
       <PullToRefreshWrapper
-        className={`page-container workouts-container ${
-          timer ? 'has-timer' : ''
-        } ${isDashboard ? 'dashboard' : ''}`}
+       className='page-container'
         onRefresh={handleRefreshWorkouts}
       >
+        <div
+         className={`page workouts-container ${
+          timer ? 'has-timer' : ''
+        } ${isDashboard ? 'dashboard' : ''}`}
+        >
+
+       
         {isDashboard && (
           <Typography
             variant='h4'
@@ -769,6 +774,7 @@ export function Workouts() {
             updateSessionDay={updateSessionDay}
           />}
         </SlideAnimation>
+        </div>
       </PullToRefreshWrapper>
       <SlideDialog
         open={dialogOptions.open}

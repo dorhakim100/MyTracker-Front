@@ -71,7 +71,7 @@ export function Dashboard() {
   const steps = useSelector((state: RootState) => state.healthModule.steps)
   const burnedCalories = useSelector((state: RootState) => state.healthModule.burnedCalories)
 
-  // const timer = useSelector((state: RootState) => state.workoutModule.timer)
+  const timer = useSelector((state: RootState) => state.workoutModule.timer)
 
   const isDashboard = useSelector(
     (state: RootState) => state.systemModule.isDashboard
@@ -337,6 +337,11 @@ export function Dashboard() {
     //     timer ? 'has-timer' : ''
     //   } ${isDashboard ? 'dashboard' : ''}`}
     >
+      <div className={`page ${
+        timer ? 'has-timer' : ''
+      } ${isDashboard ? 'dashboard' : ''}`}>
+
+    
       {!isDashboard && (
         <TimesContainer
         className={`${prefs.isDarkMode ? 'dark-mode' : ''} ${
@@ -368,7 +373,7 @@ export function Dashboard() {
       </NativeOnly>
       {renderNoSession()}
       {/* <CustomAccordion title="Workout Session" cmp={renderSession()} /> */}
-      {renderSession()}
+      {renderSession()}  </div>
     </PullToRefreshWrapper>
   )
 }

@@ -19,7 +19,7 @@ button {
 
 .page-container {
   // padding: 1rem 0rem;
-  height: calc(100vh - $header-margin);
+  // height: calc(100vh - $header-margin);
   // height: calc(100vh - $header-margin - 120px);
   height: calc(100vh - 120px);
   overflow-y: auto;
@@ -27,6 +27,13 @@ button {
 
   &.has-timer {
     padding-bottom: 70px;
+  }
+}
+
+.ptr__children{
+  // height: calc(100vh - $header-margin);
+  .page-container{
+    height: 100vh;
   }
 }
 
@@ -1583,3 +1590,4 @@ body.dark-mode {
   background-color: $error-color !important;
   color: $white !important;
 }
+

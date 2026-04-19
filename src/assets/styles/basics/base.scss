@@ -366,7 +366,7 @@ body {
     }
     &.has-timer {
       .ptr__children{
-        padding-bottom: 170px !important;
+        padding-bottom: 60px !important;
 
       }
       > div:not(.ptr),
@@ -511,4 +511,17 @@ ion-content{
   --padding-end: 0px !important;
   --padding-top: 0px !important;
   --padding-bottom: 0px !important;
+}
+
+.page-container{
+
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* Internet Explorer and Edge */
+  &::-webkit-scrollbar {
+    display: none !important; /* Chrome, Safari */
+    width: 0 !important;
+    height: 0 !important;
+    background-color: transparent !important;
+    z-index: -10;
+  }
 }
