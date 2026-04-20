@@ -1049,7 +1049,7 @@ export function WorkoutSession({
           {sessionDay.instructions.exercises.map((exercise) => {
             const isOpen = openExercises.has(exercise.exerciseId)
 
-            let workoutExercise = sessionDay.workout.exercises.find(
+            let workoutExercise = sessionDay.workout?.exercises?.find(
               (e) => e.exerciseId === exercise.exerciseId
             )
 

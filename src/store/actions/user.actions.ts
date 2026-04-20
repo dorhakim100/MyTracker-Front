@@ -299,11 +299,13 @@ export function removeLogAction(log: Log, loggedToday: LoggedToday) {
   const logs = loggedToday.logs
   if (!logs) throw new Error('No logs found')
 
-  const isSameLog = (l: Log) =>
-    (log._id && l._id === log._id) ||
-    (l.itemId === log.itemId && l.time === log.time && l.meal === log.meal)
+  // const isSameLog = (l: Log) =>
+  //   (log._id && l._id === log._id) ||
+  //   (l.itemId === log.itemId && l.time === log.time && l.meal === log.meal)
 
-  const newLogs = logs.filter((l) => !isSameLog(l))
+  // const newLogs = logs.filter((l) => !isSameLog(l))
+
+  const newLogs = logs.filter((l) => l._id !== log._id)
 
   if (newLogs.length === logs.length) throw new Error('No log found')
 

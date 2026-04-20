@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
@@ -67,17 +67,21 @@ export function LoggedList({
 
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
 
-  const logs = useMemo(() => {
+
+  const [logs, setLogs] = useState<Log[]>([])
+
+  useEffect(() => {
+    let logsToSet: Log[] = []
     if (logsSource === 'menu' && editMenu) {
-      return (
+      logsToSet = (
         editMenu.menuLogs?.filter((log) =>
           _filterLogsByMealPeriod(log, mealPeriod)
         ) || []
       )
     }
-    if (logsToShow.length) return logsToShow
+    if (logsToShow.length) logsToSet =  logsToShow
     if (logsSource === 'menu') {
-      return (
+      logsToSet = (
         menu?.menuLogs?.filter((log) =>
           _filterLogsByMealPeriod(log, mealPeriod)
         ) || []
@@ -85,16 +89,15 @@ export function LoggedList({
     }
     
     if (selectedDay)
-      return selectedDay?.logs?.filter((log) =>
+      logsToSet = selectedDay?.logs?.filter((log) =>
         _filterLogsByMealPeriod(log, mealPeriod)
       )
     if (mealPeriod)
-      return user?.loggedToday?.logs?.filter((log) =>
+      logsToSet = user?.loggedToday?.logs?.filter((log) =>
         _filterLogsByMealPeriod(log, mealPeriod)
-      )
-    return user?.loggedToday?.logs
-  }, [
-    user,
+      ) || []
+    setLogs(logsToSet)
+  }, [  user,
     mealPeriod,
     selectedDay,
     user?.loggedToday?.logs,
@@ -102,8 +105,46 @@ export function LoggedList({
     menu?.menuLogs,
     editMenu?.menuLogs,
     logsSource,
-    logsToShow,
-  ])
+    logsToShow])
+
+
+  // const logs = useMemo(() => {
+  //   if (logsSource === 'menu' && editMenu) {
+  //     return (
+  //       editMenu.menuLogs?.filter((log) =>
+  //         _filterLogsByMealPeriod(log, mealPeriod)
+  //       ) || []
+  //     )
+  //   }
+  //   if (logsToShow.length) return logsToShow
+  //   if (logsSource === 'menu') {
+  //     return (
+  //       menu?.menuLogs?.filter((log) =>
+  //         _filterLogsByMealPeriod(log, mealPeriod)
+  //       ) || []
+  //     )
+  //   }
+    
+  //   if (selectedDay)
+  //     return selectedDay?.logs?.filter((log) =>
+  //       _filterLogsByMealPeriod(log, mealPeriod)
+  //     )
+  //   if (mealPeriod)
+  //     return user?.loggedToday?.logs?.filter((log) =>
+  //       _filterLogsByMealPeriod(log, mealPeriod)
+  //     )
+  //   return user?.loggedToday?.logs
+  // }, [
+  //   user,
+  //   mealPeriod,
+  //   selectedDay,
+  //   user?.loggedToday?.logs,
+  //   user?.loggedToday?.logs.length,
+  //   menu?.menuLogs,
+  //   editMenu?.menuLogs,
+  //   logsSource,
+  //   logsToShow,
+  // ])
 
   useEffect(() => {
     handleLoadItems()
@@ -264,18 +305,22 @@ export function LoggedList({
       }
 
       const newToday = removeLogAction(log, selectedDay as LoggedToday)
+      const newLoggedToday = {
+        ...newToday,
+        logs: [...newToday.logs.filter((l) => l._id !== log._id)],
+      }
 
       if (user && newToday._id === user.loggedToday._id) {
         const newUser = {
           ...user,
-          loggedToday: newToday,
+          loggedToday: {...newLoggedToday},
         }
         optimisticUpdateUser(newUser)
       }
-      setSelectedDiaryDay(newToday)
+      setSelectedDiaryDay({...newLoggedToday})
       await logService.remove(log._id as string)
 
-      dayService.save(newToday as LoggedToday)
+      dayService.save(newLoggedToday as LoggedToday)
       showSuccessMsg(t('messages.success.updateCalories'))
     } catch {
       showErrorMsg(t('messages.error.updateCalories'))
