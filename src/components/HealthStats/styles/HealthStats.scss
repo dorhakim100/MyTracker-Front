@@ -4,7 +4,7 @@
   grid-template-columns: repeat(2, 1fr);
   grid-template-rows: repeat(2, 1fr);
 
-  gap: 1rem;
+  gap: 0.5rem;
   align-items: center;
 
   .steps-banner-title {
@@ -16,7 +16,7 @@
     // max-width: 140px;
 
     .after-value {
-      margin-inline-start: 0.6rem;
+      margin-inline-start: 0.4rem;
     }
   }
 }
