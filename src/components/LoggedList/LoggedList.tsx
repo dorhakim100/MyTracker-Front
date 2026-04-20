@@ -78,20 +78,32 @@ export function LoggedList({
           _filterLogsByMealPeriod(log, mealPeriod)
         ) || []
       )
+      setLogs(logsToSet)
+      return
     }
-    if (logsToShow.length) logsToSet =  logsToShow
+    if (logsToShow.length) {
+      logsToSet =  logsToShow
+      setLogs(logsToSet)
+      return
+    }
     if (logsSource === 'menu') {
       logsToSet = (
         menu?.menuLogs?.filter((log) =>
           _filterLogsByMealPeriod(log, mealPeriod)
         ) || []
       )
+      setLogs(logsToSet)
+      return
     }
     
-    if (selectedDay)
+    if (selectedDay){
       logsToSet = selectedDay?.logs?.filter((log) =>
         _filterLogsByMealPeriod(log, mealPeriod)
-      )
+    )
+      setLogs(logsToSet)
+      return
+
+    }
     if (mealPeriod)
       logsToSet = user?.loggedToday?.logs?.filter((log) =>
         _filterLogsByMealPeriod(log, mealPeriod)
