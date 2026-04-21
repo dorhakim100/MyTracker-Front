@@ -19,6 +19,7 @@ import {
   SET_IS_NATIVE,
   SET_IS_DASHBOARD,
   SET_ACTIVE_ROUTE,
+  SET_IS_LOCAL_NOTIFICATIONS_PERMITTED,
 } from '../reducers/system.reducer'
 
 export function setIsLoading(stateToSet: boolean) {
@@ -82,4 +83,7 @@ export function setIsDashboard(isDashboardToSet: boolean) {
 }
 export function setActiveRoute(activeRouteToSet: string) {
   store.dispatch({ type: SET_ACTIVE_ROUTE, activeRoute: activeRouteToSet })
+}
+export function setIsLocalNotificationsPermitted(isLocalNotificationsPermittedToSet: boolean) {
+  store.dispatch({ type: SET_IS_LOCAL_NOTIFICATIONS_PERMITTED, isLocalNotificationsPermitted: isLocalNotificationsPermittedToSet })
 }

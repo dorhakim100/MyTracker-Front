@@ -280,6 +280,13 @@
     "caloriesBurned": "קלוריות שנשרפו",
     "burned": "נשרפו"
   },
+  "timer": {
+    "timeForNextSet": "זמן לסט הבא!",
+    "timer": "טיימר",
+    "timeLeft": "זמן שנותר",
+    "restedTime": "זמן מנוחה",
+    "sets": "סטים"
+  },
   "floors": {
     "floors": "קומות"
   },

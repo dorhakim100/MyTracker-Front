@@ -20,6 +20,7 @@ export const SET_APP = 'SET_APP'
 export const SET_IS_NATIVE = 'SET_IS_NATIVE'
 export const SET_IS_DASHBOARD = 'SET_IS_DASHBOARD'
 export const SET_ACTIVE_ROUTE = 'SET_ACTIVE_ROUTE'
+export const SET_IS_LOCAL_NOTIFICATIONS_PERMITTED = 'SET_IS_LOCAL_NOTIFICATIONS_PERMITTED'
 export interface SystemState {
   isLoading: boolean
   prefs: Prefs
@@ -34,6 +35,7 @@ export interface SystemState {
   isNative: boolean
   isDashboard: boolean
   activeRoute: string
+  isLocalNotificationsPermitted: boolean
 }
 
 const initialState: SystemState = {
@@ -50,6 +52,7 @@ const initialState: SystemState = {
   isNative: false,
   isDashboard: false,
   activeRoute: '/',
+  isLocalNotificationsPermitted: false,
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -87,6 +90,8 @@ export function systemReducer(state = initialState, action: any = {}) {
       return { ...state, isDashboard: action.isDashboard }
     case SET_ACTIVE_ROUTE:
       return { ...state, activeRoute: action.activeRoute }
+    case SET_IS_LOCAL_NOTIFICATIONS_PERMITTED:
+      return { ...state, isLocalNotificationsPermitted: action.isLocalNotificationsPermitted }
     default:
       return state
   }

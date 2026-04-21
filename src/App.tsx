@@ -22,6 +22,7 @@ import {
   loadPrefs,
   setIsNative,
   setIsDashboard,
+  setIsLocalNotificationsPermitted,
 } from './store/actions/system.actions.ts'
 import { SignIn } from './CustomMui/SignIn/SignIn.tsx'
 import { searchService } from './services/search/search-service.ts'
@@ -35,6 +36,10 @@ import { Timer } from './components/Timer/Timer.tsx'
 import { Capacitor } from '@capacitor/core'
 import { TrainerDashboard } from './pages/TrainerDashboard/TrainerDashboard.tsx'
 import { StatusBar, Style } from '@capacitor/status-bar';
+
+import { LocalNotifications } from '@capacitor/local-notifications'
+
+
 
 import './App.css'
 import { healthService } from './services/health/health.service.ts'
@@ -265,7 +270,21 @@ function App() {
         setPermitted(false)
       }
     }
-    handleHealthPermissions()
+
+    const handleLocalNotificationsPermissions = async () => {
+      const permission = await LocalNotifications.requestPermissions()
+      if (permission.display === 'granted') {
+        setIsLocalNotificationsPermitted(true)
+      } else {
+        setIsLocalNotificationsPermitted(false)
+      }
+    }
+
+    const handlePermissions = async () => {
+      await handleHealthPermissions()
+      await handleLocalNotificationsPermissions()
+    }
+    handlePermissions()
   },[isNative])
 
 

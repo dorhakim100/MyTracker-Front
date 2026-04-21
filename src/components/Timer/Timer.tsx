@@ -3,6 +3,8 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { Divider, Typography } from '@mui/material'
 
+import { LocalNotifications } from '@capacitor/local-notifications'
+
 import { CustomLinearProgress } from '../../CustomMui/CustomLinearProgress/CustomLinearProgress'
 import { capitalizeFirstLetter, formatTime } from '../../services/util.service'
 import { SECOND_IN_MS } from '../../assets/config/times'
@@ -34,7 +36,9 @@ interface ExerciseDialogOptions {
 export function Timer() {
   const { t } = useTranslation()
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
-
+  const isLocalNotificationsPermitted = useSelector(
+    (state: RootState) => state.systemModule.isLocalNotificationsPermitted
+  )
   const currentExercise = useSelector(
     (state: RootState) => state.workoutModule.currentExercise
   )
@@ -52,8 +56,14 @@ export function Timer() {
 
   const percentage = useMemo(() => {
     if (!currentExercise || !currentExercise.restingTime) return 0
+    const percentage = ((secondsPassedState * SECOND_IN_MS) / currentExercise.restingTime!) * 100
+
+  
+    if (percentage >= 100) {
+    }
+
     return (
-      ((secondsPassedState * SECOND_IN_MS) / currentExercise.restingTime!) * 100
+    percentage  
     )
   }, [currentExercise, secondsPassedState])
 
@@ -80,6 +90,9 @@ export function Timer() {
 
   useEffect(() => {
     startSet()
+    if(isLocalNotificationsPermitted && !currentExercise) {
+      cancelNotification()
+    }
   }, [currentExercise])
 
   async function startSet() {
@@ -92,6 +105,12 @@ export function Timer() {
         currentExercise: currentExercise,
         startTime: new Date().getTime(),
       })
+
+      if (isLocalNotificationsPermitted) {
+        await cancelNotification()
+      
+        setNotification(currentExercise.restingTime)
+      }
     } catch {
       showErrorMsg(t('messages.error.startTimer'))
     }
@@ -103,6 +122,38 @@ export function Timer() {
     )
     if (!exercise) return
     setExerciseDialogOptions({ open: true, exercise: exercise })
+  }
+
+  async function setNotification(secondsFromNowInMiliseconds: number) {
+    const alarmTime = new Date(Date.now() + secondsFromNowInMiliseconds)
+
+    await LocalNotifications.schedule({
+      
+      notifications: [
+        {
+          title: t('timer.timer'),
+          body: t('timer.timeForNextSet'),
+          id: 1,
+          schedule: { at: alarmTime,
+            allowWhileIdle: true,
+           },
+          channelId: '1',
+          sound: 'ding',
+        
+        },
+      ],
+    })
+    
+  }
+
+  async function cancelNotification() {
+    await LocalNotifications.cancel({
+      notifications: [
+        {
+          id: 1,
+        },
+      ],
+    })
   }
 
   if (!timer) return null
@@ -128,11 +179,11 @@ export function Timer() {
         <img src={currentExercise?.image} alt="timer" className="timer-image" />
         <div className="text-container">
           <Typography variant="h6" className="bold-header">
-            Sets: {doneSets} / {totalSets}
+            {t('timer.sets')}: {doneSets} / {totalSets}
           </Typography>
           <div className="times-container">
             <Typography variant="body1" className="bold-header opacity-1">
-              Rested Time:{' '}
+              {t('timer.restedTime')}:{' '}
               {formatTime(secondsPassedState * SECOND_IN_MS, false)}
             </Typography>
             <Divider
@@ -144,7 +195,7 @@ export function Timer() {
               variant="body1"
               className="bold-header opacity-1 time-left"
               >
-              Time Left:{' '}
+              {t('timer.timeLeft')}:{' '}
               {currentExercise?.restingTime &&
               secondsPassedState * SECOND_IN_MS < currentExercise?.restingTime
               ? formatTime(

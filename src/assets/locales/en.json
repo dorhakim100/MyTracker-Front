@@ -203,6 +203,13 @@
     "getStartedByAdding": "Get started by adding an exercise to your routine",
     "untitledWorkout": "Untitled Workout"
   },
+  "timer": {
+    "timeForNextSet": "Time for next set!",
+    "timer": "Timer",
+    "timeLeft": "Time left",
+    "restedTime": "Rested time",
+    "sets": "Sets"
+  },
   "exercise": {
     "deleteSet": "Delete Set",
     "addSet": "Add Set",
