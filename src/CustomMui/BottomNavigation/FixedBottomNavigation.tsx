@@ -6,7 +6,6 @@ import BottomNavigation from '@mui/material/BottomNavigation'
 import BottomNavigationAction from '@mui/material/BottomNavigationAction'
 import { ItemSearch } from '../../components/ItemSearch/ItemSearch'
 import { SlideDialog } from '../../components/SlideDialog/SlideDialog'
-
 import SpeedDial from '@mui/material/SpeedDial'
 import SearchIcon from '@mui/icons-material/Search'
 
@@ -155,6 +154,7 @@ export function FixedBottomNavigation(props: {
   const renderSpeedDial = () => {
     return (
       <div
+  
         className={`speed-dial-container ${isAddModal ? 'show' : ''} ${
           prefs.isDarkMode ? 'dark-mode' : ''
         } ${prefs.favoriteColor}`}
