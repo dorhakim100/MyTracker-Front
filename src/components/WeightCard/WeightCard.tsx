@@ -22,11 +22,15 @@ import { weightService } from '../../services/weight/weight.service'
 import { LoggedToday } from '../../types/loggedToday/LoggedToday'
 import { CustomDatePicker } from '../../CustomMui/CustomDatePicker/CustomDatePicker'
 import Lottie from 'lottie-react'
+import { healthService } from '../../services/health/health.service'
 
 const DEFAULT_WEIGHT = 60
 
 export function WeightCard() {
   const { t } = useTranslation()
+  const isNative = useSelector(
+    (storeState: RootState) => storeState.systemModule.isNative
+  )
   const prefs = useSelector(
     (storeState: RootState) => storeState.systemModule.prefs
   )
@@ -101,6 +105,10 @@ export function WeightCard() {
         ...selectedDay,
         weight: { ...savedWeight },
       } as LoggedToday)
+
+      if(isNative){
+        await healthService.saveWeight(value)
+      }
 
       showSuccessMsg(t('messages.success.updateWeight'))
     } catch {

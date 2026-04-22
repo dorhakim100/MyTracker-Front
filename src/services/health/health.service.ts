@@ -3,6 +3,7 @@ import { Health } from '@capgo/capacitor-health'
 import type { AuthorizationStatus, HealthDataType } from '@capgo/capacitor-health'
 import {
   HEALTH_READ_DATA_TYPES,
+  HEALTH_WRITE_DATA_TYPES,
   type HealthAvailabilityResult,
   type HealthReadAuthorizationResult,
   type HealthReadDataType,
@@ -14,10 +15,15 @@ const READ_OPTIONS: { read: HealthDataType[] } = {
   read: [...HEALTH_READ_DATA_TYPES],
 }
 
+export const WRITE_OPTIONS: { write: HealthDataType[] } = {
+  write: [...HEALTH_WRITE_DATA_TYPES],
+}
+
 export const healthService = {
   getAvailability,
   requestReadAuthorization,
   getTodayActivitySummary,
+  saveWeight
 }
 
 async function getAvailability(): Promise<HealthAvailabilityResult> {
@@ -41,7 +47,7 @@ async function requestReadAuthorization(): Promise<HealthReadAuthorizationResult
     return { status: 'unavailable', reason: 'not_native' }
   }
 
-  const status = await Health.requestAuthorization(READ_OPTIONS)
+  const status = await Health.requestAuthorization({ read: READ_OPTIONS.read, write: WRITE_OPTIONS.write })
   return { status: 'ok', ...mapReadFlags(status) }
 }
 
@@ -62,7 +68,7 @@ async function getTodayActivitySummary(): Promise<TodayActivitySummary> {
 
   let auth: AuthorizationStatus
   try {
-    auth = await Health.checkAuthorization(READ_OPTIONS)
+    auth = await Health.checkAuthorization({ read: READ_OPTIONS.read, write: WRITE_OPTIONS.write })
   } catch (err) {
     return toErrorResult(err)
   }
@@ -101,6 +107,19 @@ async function getTodayActivitySummary(): Promise<TodayActivitySummary> {
     flightsClimbed,
     window: { startIso: window.startIso, endIso: window.endIso },
   }
+}
+
+async function saveWeight(weight: number) {
+  if (!Capacitor.isNativePlatform()) {
+    return 
+  }
+
+  await Health.saveSample({
+    dataType: 'weight',
+    value: weight,
+
+  })
+
 }
 
 function mapReadFlags(status: AuthorizationStatus) {
