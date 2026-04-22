@@ -87,7 +87,7 @@ async function getTodayActivitySummary(): Promise<TodayActivitySummary> {
     ])
     activeCaloriesKcal = getFixedNumber(activeCaloriesKcal)
     steps = getFixedNumber(steps)
-    distance = metersToKilometers(getFixedNumber(distance))
+    distance = metersToKilometers(getFixedNumber(distance, 2))
     flightsClimbed = getFixedNumber(flightsClimbed)
   } catch (err) {
     return toErrorResult(err)

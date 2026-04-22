@@ -28,7 +28,7 @@ export function HealthStats({ steps,  burnedCalories,  distance, flightsClimbed,
 
   burnedCalories = getFixedNumber(burnedCalories)
   flightsClimbed = getFixedNumber(flightsClimbed)
-  distance = getFixedNumber(distance, 1)
+  distance = getFixedNumber(distance, 2)
 
 
   const formattedSteps = formatNumberWithCommas(steps)
