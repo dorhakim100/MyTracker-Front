@@ -31,7 +31,7 @@ import { ScreenLoader } from './components/ScreenLoader/ScreenLoader.tsx'
 import { getDefaultsPrefs } from './services/system/system.service.ts'
 import { PwaInstall } from './pages/PwaInstall/PwaInstall.tsx'
 import { TraineeUserCard } from './components/TraineeUserCard/TraineeUserCard.tsx'
-import { AppHeader } from './components/AppHeader/AppHeader.tsx'
+// import { AppHeader } from './components/AppHeader/AppHeader.tsx'
 import { Timer } from './components/Timer/Timer.tsx'
 import { Capacitor } from '@capacitor/core'
 import { TrainerDashboard } from './pages/TrainerDashboard/TrainerDashboard.tsx'
@@ -362,7 +362,7 @@ function App() {
         >
           {!user ? (
             <div className='page-container login-sign-up-container'>
-              <AppHeader />
+              {/* <AppHeader /> */}
 
               <SignIn />
             </div>
