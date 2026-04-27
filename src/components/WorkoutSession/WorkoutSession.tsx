@@ -82,11 +82,10 @@ export function WorkoutSession({
   const [exerciseResults, setExerciseResults] = useState<Exercise[]>([])
 
   const isAllExercisesDone = useMemo(() => {
-    if(!sessionDay) return false
-    if(!sessionDay.instructions) return false
+    if(!sessionDay.instructions.exercises) return false
 
     return sessionDay.instructions.exercises.every((e) => isExerciseDone(e))
-  }, [sessionDay])
+  }, [sessionDay.instructions.exercises])
 
 
   const [alertDialogOptions, setAlertDialogOptions] = useState<{
@@ -992,11 +991,7 @@ export function WorkoutSession({
             className='workout-name-container'
             onClick={onOpenWorkoutDetails}
           >
-            {isAllExercisesDone ? (
-              <CircleIcon color='success' />
-            ) : (
-              <CircleIcon color='error' />
-            )}
+            <CircleIcon color={isAllExercisesDone ? 'success' : 'error'} />
             <Typography
               variant='h5'
               className='bold-header'
