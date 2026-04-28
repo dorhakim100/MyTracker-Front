@@ -12,6 +12,8 @@ import { MacrosProgress } from '../../../components/MacrosProgress/MacrosProgres
 import {
   handleDiaryDayChange,
   loadMenus,
+  logout,
+  setRemembered,
   setSelectedDiaryDay,
 } from '../../../store/actions/user.actions'
 import { getDateFromISO } from '../../../services/util.service'
@@ -263,6 +265,8 @@ export function Dashboard() {
     } catch (err) {
       console.log(err)
       showErrorMsg(t('messages.error.getSessionDay'))
+      await logout()
+      setRemembered()
 
     }
   }
