@@ -205,7 +205,6 @@ export function WorkoutSession({
     )
 
     let shouldOpen = true
-    console.log(currUpdatedExerciseSettings);
     
     if (timer) {
 
@@ -789,6 +788,11 @@ export function WorkoutSession({
         await handleAllExercisesCompleted(savedInstructions || newInstructions)
         handleOpenChange(exercise.exerciseId, false)
       }
+      
+      if(isExerciseDoneValue){
+        handleOpenChange(exercise.exerciseId, false)
+      }
+
 
       invalidateSets(exercise.exerciseId, sessionDay.workout.forUserId, 20)
 
