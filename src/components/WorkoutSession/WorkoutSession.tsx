@@ -67,6 +67,7 @@ export function WorkoutSession({
 
   const timer = useSelector((state: RootState) => state.workoutModule.timer)
 
+  const currUpdatedExerciseSettings = useSelector((state: RootState) => state.workoutModule.currUpdatedExerciseSettings)
   const [openExercises, setOpenExercises] = useState<Set<string>>(new Set())
 
   const workouts = useSelector(
@@ -186,7 +187,6 @@ export function WorkoutSession({
       )
       return
     }
-    // const isDone = sessionDay.instructions.isDone
     const isFinished = sessionDay.instructions.isFinished
 
     if (isFinished) {
@@ -200,12 +200,35 @@ export function WorkoutSession({
     )
       return
 
-    const firstExerciseToOpen = sessionDay.instructions.exercises.find(
+    const firstExerciseToOpenIdx = sessionDay.instructions.exercises.findIndex(
       (e) => !isExerciseDone(e)
     )
 
-    if (firstExerciseToOpen) {
-      handleOpenChange(firstExerciseToOpen.exerciseId, true)
+    let shouldOpen = true
+    console.log(currUpdatedExerciseSettings);
+    
+    if (timer) {
+
+      const currentIndex = sessionDay.instructions.exercises.findIndex(e => e.exerciseId === timer.currentExercise.exerciseId)
+      const desiredIndex = firstExerciseToOpenIdx
+      
+      if(currentIndex > desiredIndex) {
+        shouldOpen = false
+      }
+
+    } else if (currUpdatedExerciseSettings) {
+      const currentIndex = sessionDay.instructions.exercises.findIndex(e => e.exerciseId === currUpdatedExerciseSettings.exerciseId)
+      const desiredIndex = firstExerciseToOpenIdx
+      
+      if(currentIndex > desiredIndex) {
+        shouldOpen = false
+      }
+    }
+    
+    if (firstExerciseToOpenIdx !== -1) {
+      if(shouldOpen) {
+        handleOpenChange(sessionDay.instructions.exercises[firstExerciseToOpenIdx].exerciseId, true)
+      }
     } else {
       setOpenExercises(new Set([]))
     }
