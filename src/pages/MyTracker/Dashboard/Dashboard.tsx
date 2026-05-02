@@ -56,7 +56,6 @@ export function Dashboard() {
   const sessionDay = useSelector(
     (state: RootState) => state.workoutModule.sessionDay
   )
-
   
 
   const menu = useSelector((state: RootState) => state.userModule.menu)
@@ -265,7 +264,7 @@ export function Dashboard() {
     } catch (err) {
       console.log(err)
       showErrorMsg(t('messages.error.getSessionDay'))
-      await logout()
+      await logout(false)
       setRemembered()
 
     }

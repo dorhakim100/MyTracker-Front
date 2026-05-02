@@ -221,10 +221,12 @@ async function signup(userCred: UserCred) {
   }
 }
 
-async function logout() {
+async function logout(shouldClearRemember: boolean = false) {
   sessionStorage.removeItem(STORAGE_KEY_LOGGEDIN_USER)
   try {
-    await indexedDbService.remove(REMEMBER_STORE, REMEMBER_RECORD_ID)
+    if (shouldClearRemember) {
+      await indexedDbService.remove(REMEMBER_STORE, REMEMBER_RECORD_ID)
+    }
   } catch {}
   try {
     return await httpService.post('auth/logout', null)

@@ -198,9 +198,9 @@ export async function signup(credentials: UserCred) {
   }
 }
 
-export async function logout() {
+export async function logout(shouldClearRemember: boolean = true) {
   try {
-    await userService.logout()
+    await userService.logout(shouldClearRemember)
     store.dispatch({
       type: SET_USER,
       user: null,
