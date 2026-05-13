@@ -66,7 +66,7 @@ export function LoggedList({
   const menu = useSelector((state: RootState) => state.userModule.menu)
 
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
-
+  const isLoading = useSelector((state: RootState) => state.systemModule.isLoading)
 
   const [logs, setLogs] = useState<Log[]>([])
 
@@ -300,6 +300,7 @@ export function LoggedList({
   }
 
   const onDeleteLog = async (log: Log) => {
+    if(isLoading) return
     try {
       if (logsSource === 'menu') {
         const newLogs =
@@ -345,11 +346,21 @@ export function LoggedList({
     setIsEditOpen(false)
   }
 
+
+  const getIsSwipeable = () => {
+    if (noEdit) return false
+    if(isLoading) return false
+
+    return true
+  }
+
   //   const renderLeftSwipeActions = () => (
   //     <SwipeAction onClick={() => console.info('swipe action triggered')}>
   //       Action name
   //     </SwipeAction>
   //   )
+
+
 
   return (
     <>
@@ -360,7 +371,7 @@ export function LoggedList({
         renderSecondaryText={renderSecondaryText}
         // renderRight={renderRight}
         onItemClick={onItemClick}
-        isSwipeable={noEdit ? false : true}
+        isSwipeable={getIsSwipeable()}
         // renderLeftSwipeActions={renderLeftSwipeActions}
         renderRightSwipeActions={(item) => (
           <DeleteAction
