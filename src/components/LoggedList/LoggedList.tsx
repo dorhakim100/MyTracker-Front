@@ -120,44 +120,6 @@ export function LoggedList({
     logsToShow])
 
 
-  // const logs = useMemo(() => {
-  //   if (logsSource === 'menu' && editMenu) {
-  //     return (
-  //       editMenu.menuLogs?.filter((log) =>
-  //         _filterLogsByMealPeriod(log, mealPeriod)
-  //       ) || []
-  //     )
-  //   }
-  //   if (logsToShow.length) return logsToShow
-  //   if (logsSource === 'menu') {
-  //     return (
-  //       menu?.menuLogs?.filter((log) =>
-  //         _filterLogsByMealPeriod(log, mealPeriod)
-  //       ) || []
-  //     )
-  //   }
-    
-  //   if (selectedDay)
-  //     return selectedDay?.logs?.filter((log) =>
-  //       _filterLogsByMealPeriod(log, mealPeriod)
-  //     )
-  //   if (mealPeriod)
-  //     return user?.loggedToday?.logs?.filter((log) =>
-  //       _filterLogsByMealPeriod(log, mealPeriod)
-  //     )
-  //   return user?.loggedToday?.logs
-  // }, [
-  //   user,
-  //   mealPeriod,
-  //   selectedDay,
-  //   user?.loggedToday?.logs,
-  //   user?.loggedToday?.logs.length,
-  //   menu?.menuLogs,
-  //   editMenu?.menuLogs,
-  //   logsSource,
-  //   logsToShow,
-  // ])
-
   useEffect(() => {
     handleLoadItems()
   }, [selectedDay])
