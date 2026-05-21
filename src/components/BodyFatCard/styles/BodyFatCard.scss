@@ -107,35 +107,6 @@
     align-self: center;
   }
 
-  .loading-row {
-    display: flex;
-    justify-content: center;
-  }
-
-  .body-fat-result {
-    padding: 0.75rem;
-    border-radius: 8px;
-    text-align: center;
-
-    &.success {
-      .result-range {
-        font-weight: 700;
-        margin: 0.25rem 0;
-      }
-
-      .result-note {
-        opacity: 0.9;
-      }
-    }
-
-    &.error {
-      .result-error-title {
-        font-weight: 600;
-        margin-bottom: 0.25rem;
-      }
-    }
-  }
-
   .disclaimer {
     display: block;
     text-align: center;

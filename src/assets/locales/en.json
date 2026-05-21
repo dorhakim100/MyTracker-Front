@@ -275,6 +275,8 @@
     "getEstimate": "calc body fat",
     "estimating": "Estimating",
     "resultTitle": "Estimated body fat",
+    "detailsWeight": "Weight",
+    "detailsBodyFat": "Body fat",
     "resultRange": "{{min}}% - {{max}}%",
     "unusablePhotoTitle": "Photo not usable",
     "disclaimer": "This is an approximate estimate, not medical advice.",

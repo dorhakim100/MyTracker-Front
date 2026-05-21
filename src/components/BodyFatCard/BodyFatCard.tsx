@@ -10,7 +10,8 @@ import { showErrorMsg } from '../../services/event-bus.service'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { WeightEdit } from '../WeightCard/WeightEdit'
 import type { BodyFatResult } from '../../types/bodyFat/BodyFat'
-import PercentIcon from '@mui/icons-material/Percent';
+import { BodyFatDetails } from '../BodyFatDetails/BodyFatDetails'
+import PercentIcon from '@mui/icons-material/Percent'
 
 const DEFAULT_WEIGHT = 70
 
@@ -54,7 +55,6 @@ export function BodyFatCard() {
 
     try {
       const res = await uploadService.uploadBodyFatImg(ev)
-      console.log('res', res)
       if (res?.secure_url) {
         setImageUrl(res.secure_url)
       } else {
@@ -103,53 +103,19 @@ export function BodyFatCard() {
     setSlideDialog(null)
   }
 
-  const renderResult = () => {
-    if (!result) return null
-
-    if (result.kind === 'success') {
-      return (
-        <div className='body-fat-result success'>
-          <Typography variant='h6' className='result-title'>
-            {t('bodyFat.resultTitle')}
-          </Typography>
-          <Typography variant='h5' className='result-range'>
-            {t('bodyFat.resultRange', {
-              min: result.bodyFatMin,
-              max: result.bodyFatMax,
-            })}
-          </Typography>
-          <Typography variant='body2' className='result-note'>
-            {result.note}
-          </Typography>
-        </div>
-      )
-    }
-
-    if (result.kind === 'unusable_photo') {
-      return (
-        <div className='body-fat-result error'>
-          <Typography variant='body1' className='result-error-title'>
-            {t('bodyFat.unusablePhotoTitle')}
-          </Typography>
-          <Typography variant='body2'>{result.message}</Typography>
-        </div>
-      )
-    }
-
-    return (
-      <div className='body-fat-result error'>
-        <Typography variant='body2'>{result.message}</Typography>
-      </div>
-    )
-  }
-
-
   const getSlideDialogComponent = () => {
     if (slideDialog?.component === 'weight-edit') {
       return <WeightEdit value={weightKg} onChange={onSaveWeight} />
     }
-    if (slideDialog?.component === 'body-fat-result') {
-      return renderResult()
+    if (slideDialog?.component === 'body-fat-result' && result && imageUrl) {
+      return (
+        <BodyFatDetails
+          key={`${result.kind}-${imageUrl}-${weightKg}`}
+          imageUrl={imageUrl}
+          weightKg={weightKg}
+          result={result}
+        />
+      )
     }
     return null
   }

@@ -251,6 +251,8 @@
     "getEstimate": "חישוב אחוזי שומן",
     "estimating": "מחשב",
     "resultTitle": "אחוז שומן משוער",
+    "detailsWeight": "משקל",
+    "detailsBodyFat": "אחוז שומן",
     "resultRange": "{{min}}% - {{max}}%",
     "unusablePhotoTitle": "התמונה לא שמישה",
     "disclaimer": "זו הערכה משוערת בלבד, ואינה ייעוץ רפואי.",
