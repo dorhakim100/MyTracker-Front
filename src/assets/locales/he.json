@@ -251,7 +251,7 @@
     "getEstimate": "חישוב אחוזי שומן",
     "estimating": "מחשב",
     "resultTitle": "אחוז שומן משוער",
-    "resultRange": "{{min}}% – {{max}}%",
+    "resultRange": "{{min}}% - {{max}}%",
     "unusablePhotoTitle": "התמונה לא שמישה",
     "disclaimer": "זו הערכה משוערת בלבד, ואינה ייעוץ רפואי.",
     "errorNoPhoto": "יש להעלות תמונה תחילה.",
