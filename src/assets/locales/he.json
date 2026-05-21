@@ -240,6 +240,24 @@
     "cable": "כבל",
     "bands": "גומיות"
   },
+  "bodyFat": {
+    "title": "הערכת אחוז שומן",
+    "photoGuidance": "העלה תמונה ברורה של גוף מלא או פלג גוף בתאורה טובה.",
+    "uploadPhoto": "העלה תמונה",
+    "noPhoto": "אין תמונה עדיין",
+    "photoAlt": "תמונת גוף להערכה",
+    "weightLabel": "משקל להערכה",
+    "editWeight": "עריכת משקל",
+    "getEstimate": "קבל הערכה",
+    "estimating": "מחשב",
+    "resultTitle": "אחוז שומן משוער",
+    "resultRange": "{{min}}% – {{max}}%",
+    "unusablePhotoTitle": "התמונה לא שמישה",
+    "disclaimer": "זו הערכה משוערת בלבד, ואינה ייעוץ רפואי.",
+    "errorNoPhoto": "יש להעלות תמונה תחילה.",
+    "errorInvalidWeight": "יש להזין משקל תקין.",
+    "errorGeneric": "לא ניתן לקבל הערכה. נסה שוב."
+  },
   "weight": {
     "updateWeight": "עדכון משקל",
     "kg": "ק\"ג",
@@ -316,7 +334,7 @@
     "userProfile": "פרופיל משתמש",
     "image": "תמונה",
     "uploadImage": "העלה תמונה",
-    "uploading": "מעלה...",
+    "uploading": "מעלה",
     "deleteAccount": "מחיקת חשבון",
     "accordionMeals": "ארוחות",
     "accordionGoals": "יעדים",

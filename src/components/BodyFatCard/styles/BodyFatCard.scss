@@ -1,0 +1,145 @@
+.card.body-fat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  // padding: 1rem;
+  height: fit-content;
+
+  .card-title {
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .photo-guidance {
+    text-align: center;
+    opacity: 0.85;
+  }
+
+  .controls-contianer {
+    display: grid;
+    align-items: center;
+    grid-template-columns: repeat(2, 1fr);
+    // gap: 0.5rem;
+  }
+
+  .photo-section {
+    display: grid;
+    justify-items: center;
+    gap: 0.5rem;
+
+    .image-preview {
+      width: 100%;
+      max-width: 110px;
+      aspect-ratio: 3 / 4;
+      border-radius: 8px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .placeholder {
+        font-size: 0.9rem;
+        opacity: 0.7;
+        padding: 1rem;
+        text-align: center;
+      }
+    }
+
+    .uploading-text {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .upload-button {
+      cursor: pointer;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      text-align: center;
+      background-color: $primary-color;
+
+      &.dark-mode {
+        background-color: $primary-color-dark;
+      }
+
+      &.disabled {
+        opacity: 0.6;
+        pointer-events: none;
+      }
+
+      input[type='file'] {
+        display: none;
+      }
+    }
+  }
+
+  .weight-row {
+    display: grid;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+
+    .weight-value {
+      display: flex;
+      justify-self: center;
+      align-items: baseline;
+      gap: 0.2rem;
+      font-weight: 600;
+
+      .weight-unit {
+        font-size: 0.9rem;
+        font-weight: 400;
+      }
+    }
+
+    .edit-weight-btn {
+      min-width: auto;
+    }
+  }
+
+  .estimate-btn {
+    align-self: center;
+  }
+
+  .loading-row {
+    display: flex;
+    justify-content: center;
+  }
+
+  .body-fat-result {
+    padding: 0.75rem;
+    border-radius: 8px;
+    text-align: center;
+
+    &.success {
+      .result-range {
+        font-weight: 700;
+        margin: 0.25rem 0;
+      }
+
+      .result-note {
+        opacity: 0.9;
+      }
+    }
+
+    &.error {
+      .result-error-title {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+      }
+    }
+  }
+
+  .disclaimer {
+    display: block;
+    text-align: center;
+    opacity: 0.7;
+    margin-top: 0.25rem;
+  }
+}

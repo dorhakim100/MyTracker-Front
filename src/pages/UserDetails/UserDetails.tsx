@@ -6,6 +6,7 @@ import { logout } from '../../store/actions/user.actions'
 import { CustomAccordion } from '../../CustomMui/CustomAccordion/CustomAccordion'
 import { ProfileCard } from '../../components/ProfileCard/ProfileCard'
 import { WeightCard } from '../../components/WeightCard/WeightCard'
+import { BodyFatCard } from '../../components/BodyFatCard/BodyFatCard'
 import { GoalsCard } from '../../components/GoalsCard/GoalsCard'
 import { BmrCard } from '../../components/BmrCard/BmrCard'
 import { MealsCard } from '../../components/MealsCard/MealsCard'
@@ -83,6 +84,7 @@ export function UserDetails() {
     return [
       <WeightCard />,
       <WeightChart sentUser={traineeUser || user || undefined} />,
+      <BodyFatCard />,
     ]
   }, [user, traineeUser])
 

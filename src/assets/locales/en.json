@@ -264,6 +264,24 @@
     "cable": "Cable",
     "bands": "Bands"
   },
+  "bodyFat": {
+    "title": "Body fat estimate",
+    "photoGuidance": "Upload a clear full-body or torso photo in good lighting.",
+    "uploadPhoto": "Upload photo",
+    "noPhoto": "No photo yet",
+    "photoAlt": "Body photo for estimate",
+    "weightLabel": "Weight for estimate",
+    "editWeight": "Edit weight",
+    "getEstimate": "Get estimate",
+    "estimating": "Estimating",
+    "resultTitle": "Estimated body fat",
+    "resultRange": "{{min}}% – {{max}}%",
+    "unusablePhotoTitle": "Photo not usable",
+    "disclaimer": "This is an approximate estimate, not medical advice.",
+    "errorNoPhoto": "Please upload a photo first.",
+    "errorInvalidWeight": "Please enter a valid weight.",
+    "errorGeneric": "Could not get an estimate. Please try again."
+  },
   "weight": {
     "updateWeight": "Update Weight",
     "kg": "kg",
@@ -323,7 +341,7 @@
     "userProfile": "User Profile",
     "image": "Image",
     "uploadImage": "Upload Image",
-    "uploading": "Uploading...",
+    "uploading": "Uploading",
     "deleteAccount": "Delete Account",
     "accordionMeals": "Meals",
     "accordionGoals": "Goals",
