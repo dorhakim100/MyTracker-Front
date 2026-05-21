@@ -32,7 +32,11 @@ export function BodyFatCard() {
   const [imageUrl, setImageUrl] = useState<string | null>(null)
   const [isUploading, setIsUploading] = useState(false)
   const [isEstimating, setIsEstimating] = useState(false)
-  const [weightDialogOpen, setWeightDialogOpen] = useState(false)
+  const [slideDialog, setSlideDialog] = useState<{
+    open: boolean
+    component: 'weight-edit' | 'body-fat-result'
+    title: string
+  } | null>(null)
   const [result, setResult] = useState<BodyFatResult | null>(null)
 
   useEffect(() => {
@@ -83,6 +87,7 @@ export function BodyFatCard() {
         weightKg,
       })
       setResult(estimateResult)
+      setSlideDialog({ open: true, component: 'body-fat-result', title: t('bodyFat.resultTitle') })
     } catch {
       setResult({
         kind: 'error',
@@ -95,7 +100,7 @@ export function BodyFatCard() {
 
   const onSaveWeight = (value: number) => {
     setWeightKg(value)
-    setWeightDialogOpen(false)
+    setSlideDialog(null)
   }
 
   const renderResult = () => {
@@ -136,6 +141,31 @@ export function BodyFatCard() {
         <Typography variant='body2'>{result.message}</Typography>
       </div>
     )
+  }
+
+
+  const getSlideDialogComponent = () => {
+    if (slideDialog?.component === 'weight-edit') {
+      return <WeightEdit value={weightKg} onChange={onSaveWeight} />
+    }
+    if (slideDialog?.component === 'body-fat-result') {
+      return renderResult()
+    }
+    return null
+  }
+
+  const getSlideDialogTitle = () => {
+    if (slideDialog?.component === 'weight-edit') {
+      return t('bodyFat.editWeight')
+    }
+    if (slideDialog?.component === 'body-fat-result') {
+      return t('bodyFat.resultTitle')
+    }
+    return ''
+  }
+
+  const getSlideDialogType = () => {
+    return slideDialog?.component === 'weight-edit' ? 'half' : 'full'
   }
 
   return (
@@ -187,7 +217,7 @@ export function BodyFatCard() {
           </Typography>
           <CustomButton
             text={t('bodyFat.editWeight')}
-            onClick={() => setWeightDialogOpen(true)}
+            onClick={() => setSlideDialog({ open: true, component: 'weight-edit', title: t('bodyFat.editWeight') })}
             className={`${prefs.favoriteColor} edit-weight-btn`}
             disabled={isBusy}
             />
@@ -210,20 +240,17 @@ export function BodyFatCard() {
           }
         />
 
-        {renderResult()}
-
         <Typography variant='caption' className='disclaimer'>
           {t('bodyFat.disclaimer')}
         </Typography>
       </Card>
 
       <SlideDialog
-        open={weightDialogOpen}
-        onClose={() => setWeightDialogOpen(false)}
-        component={
-          <WeightEdit value={weightKg} onChange={onSaveWeight} />
-        }
-        title={t('bodyFat.editWeight')}
+        open={slideDialog?.open || false}
+        onClose={() => setSlideDialog(null)}
+        component={getSlideDialogComponent() || <></>}
+        title={getSlideDialogTitle()}
+        type={getSlideDialogType()}
       />
     </>
   )

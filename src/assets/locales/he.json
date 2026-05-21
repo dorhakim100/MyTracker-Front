@@ -248,7 +248,7 @@
     "photoAlt": "תמונת גוף להערכה",
     "weightLabel": "משקל להערכה",
     "editWeight": "עריכת משקל",
-    "getEstimate": "קבל הערכה",
+    "getEstimate": "חישוב אחוזי שומן",
     "estimating": "מחשב",
     "resultTitle": "אחוז שומן משוער",
     "resultRange": "{{min}}% – {{max}}%",

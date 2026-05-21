@@ -272,7 +272,7 @@
     "photoAlt": "Body photo for estimate",
     "weightLabel": "Weight for estimate",
     "editWeight": "Edit weight",
-    "getEstimate": "Get estimate",
+    "getEstimate": "Get estimate body fat",
     "estimating": "Estimating",
     "resultTitle": "Estimated body fat",
     "resultRange": "{{min}}% – {{max}}%",
