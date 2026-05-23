@@ -1,12 +1,13 @@
 export interface BodyFatEstimateRequest {
   imageUrl: string
   weightKg: number
+  userId: string
 }
 
 export interface BodyFatEstimateSuccess {
   status: 'ok'
-  bodyFatMin: number
-  bodyFatMax: number
+  minPercent: number
+  maxPercent: number
   note: string
 }
 
@@ -26,6 +27,6 @@ export type BodyFatEstimateResponse =
   | BodyFatEstimateError
 
 export type BodyFatResult =
-  | { kind: 'success'; bodyFatMin: number; bodyFatMax: number; note: string }
+  | { kind: 'success'; minPercent: number; maxPercent: number; note: string }
   | { kind: 'unusable_photo'; message: string }
   | { kind: 'error'; message: string }

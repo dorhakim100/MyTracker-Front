@@ -69,6 +69,10 @@ export function BodyFatCard() {
   }
 
   const onEstimate = async () => {
+    if (!user?._id) {
+      showErrorMsg(t('messages.error.userNotFound'))
+      return
+    }
     if (!imageUrl) {
       showErrorMsg(t('bodyFat.errorNoPhoto'))
       return
@@ -85,6 +89,7 @@ export function BodyFatCard() {
       const estimateResult = await bodyFatService.estimate({
         imageUrl,
         weightKg,
+        userId: user?._id,
       })
       setResult(estimateResult)
       setSlideDialog({ open: true, component: 'body-fat-result', title: t('bodyFat.resultTitle') })

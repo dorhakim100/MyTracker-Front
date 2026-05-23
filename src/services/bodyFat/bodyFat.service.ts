@@ -3,8 +3,10 @@ import type {
   BodyFatEstimateResponse,
   BodyFatResult,
 } from '../../types/bodyFat/BodyFat'
+import { httpService } from '../http.service'
 
-const USE_MOCK = import.meta.env.VITE_BODY_FAT_USE_MOCK !== 'false'
+// const USE_MOCK = import.meta.env.VITE_BODY_FAT_USE_MOCK !== 'false'
+const USE_MOCK = false
 
 export const bodyFatService = {
   estimate,
@@ -28,12 +30,15 @@ async function estimate(
 }
 
 async function realEstimate(
-  _payload: BodyFatEstimateRequest
+  payload: BodyFatEstimateRequest
 ): Promise<BodyFatEstimateResponse> {
-  // Phase 2: wire httpService.post('body-fat/estimate', payload)
-  return {
-    status: 'error',
-    message: 'Body fat API not configured. Set VITE_BODY_FAT_USE_MOCK=true.',
+  try {
+    const response = await httpService.post('body-fat/estimate', payload)
+    return response
+    
+  } catch (err) {
+    throw err
+    
   }
 }
 
@@ -63,8 +68,8 @@ async function mockEstimate(
   const base = 14 + (payload.weightKg % 10) * 0.5
   return {
     status: 'ok',
-    bodyFatMin: Math.round((base - 2) * 10) / 10,
-    bodyFatMax: Math.round((base + 2) * 10) / 10,
+    minPercent: Math.round((base - 2) * 10) / 10,
+    maxPercent: Math.round((base + 2) * 10) / 10,
     note:
       'Mock estimate based on your weight. Connect the backend in Phase 2 for real AI analysis.',
   }
@@ -77,8 +82,8 @@ function normalizeResponse(
     case 'ok':
       return {
         kind: 'success',
-        bodyFatMin: response.bodyFatMin,
-        bodyFatMax: response.bodyFatMax,
+        minPercent: response.minPercent,
+        maxPercent: response.maxPercent,
         note: response.note,
       }
     case 'unusable_photo':

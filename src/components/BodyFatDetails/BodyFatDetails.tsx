@@ -37,8 +37,8 @@ export function BodyFatDetails({
 
   const isRtl = prefs.lang === 'he'
 
-  const minBodyFat = result.kind === 'success' ? result.bodyFatMin : 0
-  const maxBodyFat = result.kind === 'success' ? result.bodyFatMax : 0
+  const minBodyFat = result.kind === 'success' ? result.minPercent : 0
+const maxBodyFat = result.kind === 'success' ? result.maxPercent : 0
 
 
     return (

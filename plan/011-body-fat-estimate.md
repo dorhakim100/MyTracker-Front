@@ -6,7 +6,7 @@
 
 - **Routes (frontend):** No new route; feature on `/user` via `BodyFatCard` in carousel.
 - **Routes (backend):** `POST /api/body-fat/estimate`; later CRUD for history.
-- **Schema (backend, Phase 3):** `BodyFatEstimate { userId, createdAt, weightKg, imageUrl, bodyFatMin, bodyFatMax, note }`.
+- **Schema (backend, Phase 3):** `BodyFatEstimate { userId, createdAt, weightKg, imageUrl, maxPercent, maxPercentage, note }`.
 - **Key models:** `BodyFatResult` discriminated union on frontend.
 - **Auth:** Same session/cookie as `httpService`.
 - **Third-party:** Frontend → Cloudinary; Frontend → Backend → Gemini.
