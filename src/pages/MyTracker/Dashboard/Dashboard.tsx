@@ -13,7 +13,7 @@ import {
   handleDiaryDayChange,
   loadMenus,
   logout,
-  setRemembered,
+  // setRemembered,
   setSelectedDiaryDay,
 } from '../../../store/actions/user.actions'
 import { getDateFromISO } from '../../../services/util.service'
@@ -265,7 +265,7 @@ export function Dashboard() {
       console.log(err)
       showErrorMsg(t('messages.error.getSessionDay'))
       await logout(false)
-      setRemembered()
+      // setRemembered()
 
     }
   }

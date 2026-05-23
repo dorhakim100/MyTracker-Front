@@ -168,7 +168,7 @@ export function BodyFatCard() {
             <input
               type='file'
               accept='image/*'
-              capture='environment'
+              // capture='environment'
               onChange={onPickPhoto}
               disabled={isBusy}
               />
