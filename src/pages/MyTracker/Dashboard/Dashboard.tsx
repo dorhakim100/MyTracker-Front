@@ -270,7 +270,7 @@ export function Dashboard() {
     }
   }
 
-
+∆
   async function handleRefreshHealthData() {
     try {
       await setHealthData()

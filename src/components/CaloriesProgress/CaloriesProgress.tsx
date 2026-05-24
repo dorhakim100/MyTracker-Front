@@ -98,16 +98,17 @@ export function CaloriesProgress({
         </Typography>
         {isEditButton && <EditIcon onClick={edit} />}
         <div className='goal-container'>
-          <GoalBanner
+          {/* <GoalBanner
             current={currentValue}
             goal={roundToNearest50(goal || 0)}
           />
-   
+    */}
         </div>
         <CircularProgress
           value={getPercentageValue()}
           // text={`${valueToShow}`}
           text={`${currentValue}`}
+          afterText={`${roundToNearest50(goal || 0)}`}
         />
       </Card>
       <SlideDialog

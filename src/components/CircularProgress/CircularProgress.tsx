@@ -2,11 +2,15 @@ import { CircularProgressbar, buildStyles } from 'react-circular-progressbar'
 
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
+import { separateThousands } from '../../services/util.service'
+import { GoalBanner } from '../GoalBanner/GoalBanner'
+import { useTranslation } from 'react-i18next'
 
 interface CircularProgressProps {
   value: number
   text: string
   color?: string
+  afterText?: string
 }
 
 const colorMap: Record<string, string> = {
@@ -25,11 +29,12 @@ export function CircularProgress({
   value,
   text,
   color,
+  afterText,
 }: CircularProgressProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
-
+  const { t } = useTranslation()
   const progressColor = color || colorMap[prefs.favoriteColor]
 
   // if color is provided, use it
@@ -46,7 +51,9 @@ export function CircularProgress({
     <div className='circular-progress'>
       <CircularProgressbar
         value={value}
-        text={text}
+
+        // text={`${text}`}
+        text={`${separateThousands(+text)}`}
         styles={buildStyles({
           pathColor: progressColor,
           textColor: textColor,
@@ -59,6 +66,17 @@ export function CircularProgress({
           // },
         })}
       />
+      {afterText && 
+      
+      // <GoalBanner
+      // current={separateThousands(+afterText)}
+      
+      // extraValue=''
+      // isGoal={false}
+      // />
+      <span className='after-text bold-header'>{t('macros.outOf')} {separateThousands(+afterText)}
+      </span>
+      }
     </div>
   )
 }

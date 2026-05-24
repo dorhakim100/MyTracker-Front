@@ -26,7 +26,8 @@
     "kcal": "kcal",
     "total": "Total",
     "editMacrosButton": "Edit Macros",
-    "gram": "g"
+    "gram": "g",
+    "outOf": "Out of"
   },
   "heartRate": {
     "bpm": "BPM",

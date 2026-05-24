@@ -470,3 +470,8 @@ export function getCurrMealPeriod(date: Date = new Date()): string {
     return 'dinner'
   }
 }
+
+
+export function separateThousands(num: number) {
+  return Number(num).toLocaleString('en-US')
+}
