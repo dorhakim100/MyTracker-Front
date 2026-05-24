@@ -442,14 +442,14 @@ export function WorkoutSession({
   ) => {
     const exercises = sessionDay.instructions.exercises
 
-    const nextExercise = exercises.find((e, index) =>
-      !isExerciseDone(e) &&
+    const nextExercise = exercises.find((e, index) => {
+      const isExerciseDoneValue = isExerciseDone(e)
+      return (
+        !isExerciseDoneValue && (!isLastExercise ? index > exerciseIndex : true)
+      )
       // if last exercise, go back to first exercise
       // if not last exercise, go to next exercise
-      !isLastExercise
-        ? index > exerciseIndex
-        : true
-    )
+    })
 
     if (!nextExercise) return null
 
