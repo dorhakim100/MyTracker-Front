@@ -97,7 +97,7 @@ export default function Header(props: HeaderProps) {
       })
 
       setTrainees(orderedTrainees)
-    } catch (err) {
+    } catch {
       showErrorMsg(messages.error.getRequests)
     } finally {
       setIsLoading(false)
