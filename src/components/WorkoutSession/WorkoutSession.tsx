@@ -67,7 +67,9 @@ export function WorkoutSession({
 
   const timer = useSelector((state: RootState) => state.workoutModule.timer)
 
-  const currUpdatedExerciseSettings = useSelector((state: RootState) => state.workoutModule.currUpdatedExerciseSettings)
+  const currUpdatedExerciseSettings = useSelector(
+    (state: RootState) => state.workoutModule.currUpdatedExerciseSettings
+  )
   const [openExercises, setOpenExercises] = useState<Set<string>>(new Set())
 
   const workouts = useSelector(
@@ -83,11 +85,10 @@ export function WorkoutSession({
   const [exerciseResults, setExerciseResults] = useState<Exercise[]>([])
 
   const isAllExercisesDone = useMemo(() => {
-    if(!sessionDay.instructions.exercises) return false
+    if (!sessionDay.instructions.exercises) return false
 
     return sessionDay.instructions.exercises.every((e) => isExerciseDone(e))
   }, [sessionDay.instructions.exercises])
-
 
   const [alertDialogOptions, setAlertDialogOptions] = useState<{
     open: boolean
@@ -174,11 +175,10 @@ export function WorkoutSession({
     exerciseFilter.equipmentValue,
     debouncedRunSearch,
   ])
-  
+
   useEffect(() => {
     return () => debouncedRunSearch.cancel()
   }, [debouncedRunSearch])
-
 
   useEffect(() => {
     if (isDashboard) {
@@ -205,33 +205,43 @@ export function WorkoutSession({
     )
 
     let shouldOpen = true
-    
-    if (timer) {
 
-      const currentIndex = sessionDay.instructions.exercises.findIndex(e => e.exerciseId === timer.currentExercise.exerciseId)
+    if (timer) {
+      const currentIndex = sessionDay.instructions.exercises.findIndex(
+        (e) => e.exerciseId === timer.currentExercise.exerciseId
+      )
       const desiredIndex = firstExerciseToOpenIdx
-      
-      if(currentIndex > desiredIndex) {
+
+      if (currentIndex > desiredIndex) {
         shouldOpen = false
       }
-
     } else if (currUpdatedExerciseSettings) {
-      const currentIndex = sessionDay.instructions.exercises.findIndex(e => e.exerciseId === currUpdatedExerciseSettings.exerciseId)
+      const currentIndex = sessionDay.instructions.exercises.findIndex(
+        (e) => e.exerciseId === currUpdatedExerciseSettings.exerciseId
+      )
       const desiredIndex = firstExerciseToOpenIdx
-      
-      if(currentIndex > desiredIndex) {
+
+      if (currentIndex > desiredIndex) {
         shouldOpen = false
       }
     }
-    
+
     if (firstExerciseToOpenIdx !== -1) {
-      if(shouldOpen) {
-        handleOpenChange(sessionDay.instructions.exercises[firstExerciseToOpenIdx].exerciseId, true)
+      if (shouldOpen) {
+        handleOpenChange(
+          sessionDay.instructions.exercises[firstExerciseToOpenIdx].exerciseId,
+          true
+        )
       }
     } else {
       setOpenExercises(new Set([]))
     }
-  }, [sessionDay.instructions.exercises, sessionDay.instructions.isFinished, sessionDay.instructions.isDone, isDashboard])
+  }, [
+    sessionDay.instructions.exercises,
+    sessionDay.instructions.isFinished,
+    sessionDay.instructions.isDone,
+    isDashboard,
+  ])
 
   const onExerciseFilterChange = (exerciseFilter: ExerciseFilter) => {
     setExerciseFilter(exerciseFilter)
@@ -394,7 +404,6 @@ export function WorkoutSession({
     return exercise.sets.every((set) => set.isDone)
   }
 
-
   // Helper function to clean set (remove unused RPE/RIR field)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const cleanSet = (set: any) => {
@@ -428,10 +437,18 @@ export function WorkoutSession({
   // Handles moving to next exercise when current is completed
   const handleMoveToNextExercise = (
     completedExercise: ExerciseInstructions,
-    exerciseIndex: number
+    exerciseIndex: number,
+    isLastExercise: boolean
   ) => {
-    const nextExercise = sessionDay.instructions.exercises.find(
-      (e, index) => !isExerciseDone(e) && index > exerciseIndex
+    const exercises = sessionDay.instructions.exercises
+
+    const nextExercise = exercises.find((e, index) =>
+      !isExerciseDone(e) &&
+      // if last exercise, go back to first exercise
+      // if not last exercise, go to next exercise
+      !isLastExercise
+        ? index > exerciseIndex
+        : true
     )
 
     if (!nextExercise) return null
@@ -504,9 +521,8 @@ export function WorkoutSession({
         },
         setIndex,
         false // isNew - updating existing set
-      )      
+      )
       invalidateSets(exercise.exerciseId, sessionDay.workout.forUserId, 20)
-
     } catch {
       showErrorMsg(t('messages.error.updateSet'))
       return
@@ -542,7 +558,7 @@ export function WorkoutSession({
       exerciseId: exercise.exerciseId,
       setIndex,
     })
-    
+
     try {
       // Save instructions to backend
       const savedInstructions = await saveNewInstructions(newInstructions)
@@ -619,7 +635,6 @@ export function WorkoutSession({
         true // isNew
       )
       invalidateSets(exercise.exerciseId, sessionDay.workout.forUserId, 20)
-
     } catch {
       // Rollback on error
       setSelectedSessionDay({
@@ -666,7 +681,6 @@ export function WorkoutSession({
         })
       }
       invalidateSets(exercise.exerciseId, sessionDay.workout.forUserId, 20)
-
     } catch {
       // Rollback on error
       setSelectedSessionDay({
@@ -693,23 +707,23 @@ export function WorkoutSession({
     const exerciseIndex = newInstructions.exercises.findIndex(
       (e) => e.exerciseId === exercise.exerciseId
     )
-    
-    if(!exercise.sets[setIndex].isDone){
+
+    if (!exercise.sets[setIndex].isDone) {
       newInstructions.isFinished = false
     }
 
     const isExerciseDoneValue = isExerciseDone(exercise)
-    // const newMarkValue = exercise.sets[setIndex].isDone 
-  // Check if all exercises are done
-      const isAllExercisesDone = newInstructions.exercises.every(
-        (e: ExerciseInstructions) =>
-          e.exerciseId === exercise.exerciseId
-            ? isExerciseDoneValue
-            : isExerciseDone(e)
-      )
+    // const newMarkValue = exercise.sets[setIndex].isDone
+    // Check if all exercises are done
+    const isAllExercisesDone = newInstructions.exercises.every(
+      (e: ExerciseInstructions) =>
+        e.exerciseId === exercise.exerciseId
+          ? isExerciseDoneValue
+          : isExerciseDone(e)
+    )
     // When there is an interaction with state of set isDone, make sure that
     // if exercise is not done, or all exercises are not done, make sure isFinished is false
-    if(!isExerciseDoneValue || !isAllExercisesDone){
+    if (!isExerciseDoneValue || !isAllExercisesDone) {
       newInstructions.isFinished = false
     }
 
@@ -726,7 +740,14 @@ export function WorkoutSession({
       const currentExerciseToSet = { ...exercise, setIndex }
       // Check if exercise is done
       if (isExerciseDoneValue) {
-        const nextExercise = handleMoveToNextExercise(exercise, exerciseIndex)
+        const isLastExercise =
+          exerciseIndex === sessionDay.instructions.exercises.length - 1
+
+        const nextExercise = handleMoveToNextExercise(
+          exercise,
+          exerciseIndex,
+          isLastExercise
+        )
         if (nextExercise) {
           setCurrentExercise(nextExercise)
           await setTimer({
@@ -737,7 +758,7 @@ export function WorkoutSession({
       } else {
         // Just update timer for current exercise
         setCurrentExercise(currentExerciseToSet)
-   
+
         await setTimer({
           currentExercise: currentExerciseToSet,
           startTime: new Date().getTime(),
@@ -756,7 +777,6 @@ export function WorkoutSession({
             )
           })
         )
-        
       } else {
         const setToSave = cleanSet(exercise.sets[setIndex])
 
@@ -782,20 +802,17 @@ export function WorkoutSession({
           instructions: savedInstructions,
         })
       }
-    
 
       if (isAllExercisesDone) {
         await handleAllExercisesCompleted(savedInstructions || newInstructions)
         handleOpenChange(exercise.exerciseId, false)
       }
-      
-      if(isExerciseDoneValue){
+
+      if (isExerciseDoneValue) {
         handleOpenChange(exercise.exerciseId, false)
       }
 
-
       invalidateSets(exercise.exerciseId, sessionDay.workout.forUserId, 20)
-
     } catch {
       // Rollback on error
       setSelectedSessionDay({
@@ -820,7 +837,8 @@ export function WorkoutSession({
 
   async function deleteSession() {
     try {
-      if (!sessionDay._id) return showErrorMsg(t('messages.error.deleteSession'))
+      if (!sessionDay._id)
+        return showErrorMsg(t('messages.error.deleteSession'))
       setIsLoading(true)
       await removeSessionDay(sessionDay._id)
       if (timer?._id) await removeTimer(timer?._id)
@@ -851,7 +869,6 @@ export function WorkoutSession({
       closeAlertDialog()
 
       invalidateSets(exerciseId, sessionDay.workout.forUserId, 20)
-
     } catch {
       showErrorMsg(t('messages.error.updateSet'))
     } finally {
@@ -989,9 +1006,7 @@ export function WorkoutSession({
     }
   }
 
-  
-
-  const onWorkoutDone = async ()=>{
+  const onWorkoutDone = async () => {
     try {
       const newInstructions = {
         ...sessionDay.instructions,
@@ -1004,9 +1019,8 @@ export function WorkoutSession({
       if (!timer) return
       removeTimer(timer._id)
       await saveNewInstructions(newInstructions)
-    } catch  {
+    } catch {
       showErrorMsg(t('messages.error.updateSet'))
-      
     }
   }
 
@@ -1032,7 +1046,9 @@ export function WorkoutSession({
               onClick={toggleExpandAll}
               isIcon={true}
               tooltipTitle={
-                hasOpenExercises ? t('workout.collapseAll') : t('workout.expandAll')
+                hasOpenExercises
+                  ? t('workout.collapseAll')
+                  : t('workout.expandAll')
               }
             />
             <CustomButton
@@ -1041,7 +1057,7 @@ export function WorkoutSession({
               icon={<CheckIcon />}
               disabled={!timer}
               size='small'
-                onClick={onWorkoutDone}
+              onClick={onWorkoutDone}
               tooltipTitle={t('workout.finishWorkout')}
             />
             <CustomButton
