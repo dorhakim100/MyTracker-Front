@@ -178,34 +178,35 @@ export function Timer() {
 
         <img src={currentExercise?.image} alt="timer" className="timer-image" />
         <div className="text-container">
-          <Typography variant="h6" className="bold-header">
-            {t('timer.sets')}: {doneSets} / {totalSets}
-          </Typography>
+       
           <div className="times-container">
-            <Typography variant="body1" className="bold-header opacity-1">
-              {t('timer.restedTime')}:{' '}
-              {formatTime(secondsPassedState * SECOND_IN_MS, false)}
+            <Typography
+              variant="body1"
+              className="bold-header opacity-1 time-left"
+              >
+
+              {currentExercise?.restingTime &&
+              secondsPassedState * SECOND_IN_MS < currentExercise?.restingTime
+              ? formatTime(
+                currentExercise?.restingTime -
+                secondsPassedState * SECOND_IN_MS + 1000,
+                false
+              )
+              : '0:00'}
             </Typography>
             <Divider
               orientation="vertical"
               flexItem
               className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
               />
-            <Typography
-              variant="body1"
-              className="bold-header opacity-1 time-left"
-              >
-              {t('timer.timeLeft')}:{' '}
-              {currentExercise?.restingTime &&
-              secondsPassedState * SECOND_IN_MS < currentExercise?.restingTime
-              ? formatTime(
-                currentExercise?.restingTime -
-                secondsPassedState * SECOND_IN_MS,
-                false
-              )
-              : '0:00'}
+            <Typography variant="body1" className="bold-header opacity-1">
+
+              {formatTime((secondsPassedState) * SECOND_IN_MS, false)}
             </Typography>
           </div>
+             <Typography variant="h6" className="bold-header sets-text">
+            {t('timer.sets')}: {doneSets} / {totalSets}
+          </Typography>
         </div>
         <CustomLinearProgress
           value={percentage}

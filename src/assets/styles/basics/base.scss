@@ -367,14 +367,14 @@ body {
     }
     &.has-timer {
       .ptr__children{
-        padding-bottom: 60px !important;
+        padding-bottom: 90px !important;
 
       }
       > div:not(.ptr),
       > ion-content {
         > div:not(.ptr),
         > ion-content {
-          padding-bottom: 170px !important;
+          padding-bottom: 200px !important;
         }
       }
     }
