@@ -16,7 +16,7 @@ import { CaloriesEdit } from './CaloriesEdit'
 
 import { EditIcon } from '../EditIcon/EditIcon'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
-import { GoalBanner } from '../GoalBanner/GoalBanner'
+// import { GoalBanner } from '../GoalBanner/GoalBanner'
 import { User } from '../../types/user/User'
 import { roundToNearest50 } from '../../services/macros/macros.service'
 import { goalService } from '../../services/goal/goal.service'

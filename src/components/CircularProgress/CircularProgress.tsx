@@ -3,7 +3,7 @@ import { CircularProgressbar, buildStyles } from 'react-circular-progressbar'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { separateThousands } from '../../services/util.service'
-import { GoalBanner } from '../GoalBanner/GoalBanner'
+// import { GoalBanner } from '../GoalBanner/GoalBanner'
 import { useTranslation } from 'react-i18next'
 
 interface CircularProgressProps {
