@@ -21,7 +21,12 @@ export function CustomLinearProgress({
   return (
     <div className='linear-progress-container'>
       <div className='header-container'>
-        <Typography variant='body1'>{header}</Typography>
+        <Typography
+          variant='body1'
+          className='bold-header'
+        >
+          {header}
+        </Typography>
       </div>
       <LinearProgress
         variant='determinate'

@@ -11,7 +11,7 @@ import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
 import {
   optimisticUpdateUser,
   removeLogAction,
-  setSelectedDiaryDay,
+  // setSelectedDiaryDay,
 } from '../../store/actions/user.actions'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { ItemDetails } from '../ItemDetails/ItemDetails'
@@ -297,7 +297,7 @@ export function LoggedList({
         }
         optimisticUpdateUser(newUser)
       }
-      setSelectedDiaryDay({ ...newLoggedToday })
+      // setSelectedDiaryDay({ ...newLoggedToday })
       setLogs(newLogs)
       await logService.remove(log._id as string)
 

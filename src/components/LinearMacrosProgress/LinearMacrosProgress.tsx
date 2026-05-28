@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 
 import { CustomLinearProgress } from '../../CustomMui/CustomLinearProgress/CustomLinearProgress'
+import { Divider } from '@mui/material'
 
 const caloriesColor = 'var(--primary-color)'
 
@@ -27,7 +28,9 @@ export function LinearMacrosProgress({
   const user = useSelector(
     (stateSelector: RootState) => stateSelector.userModule.user
   )
-
+  const prefs = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.prefs
+  )
   if (user)
     return (
       <div className='linear-macros-progress'>
@@ -40,6 +43,7 @@ export function LinearMacrosProgress({
             color={caloriesColor}
           />
         )}
+        <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
         {proteinProgress !== undefined && (
           <CustomLinearProgress
             currentValue={proteinProgress + ''}
@@ -50,6 +54,7 @@ export function LinearMacrosProgress({
             isGram={true}
           />
         )}
+        <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
         {carbsProgress !== undefined && (
           <CustomLinearProgress
             currentValue={carbsProgress + ''}
@@ -60,6 +65,7 @@ export function LinearMacrosProgress({
             isGram={true}
           />
         )}
+        <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
         {fatsProgress !== undefined && (
           <CustomLinearProgress
             currentValue={fatsProgress + ''}

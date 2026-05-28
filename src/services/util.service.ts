@@ -152,10 +152,10 @@ export function smoothScroll(): void {
   const ptrChildren = document.querySelector('.ptr__children') as HTMLElement
   if (pageContainer) {
     pageContainer.scrollTo({ top: 0, behavior: 'smooth' })
-  } 
+  }
   if (ptrChildren) {
     ptrChildren.scrollTo({ top: 0, behavior: 'smooth' })
-  } 
+  }
   // Fallback to window scroll if no page-container found
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
@@ -216,10 +216,13 @@ export function getDateFromISO(isoString: string) {
 
 export function getTimeFromISO(isoString: string) {
   let date = isoString
-  if(isoString === '' || !isoString) {
+  if (isoString === '' || !isoString) {
     date = getDateFromISO(new Date().toISOString())
   }
-  return new Date(date).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' })
+  return new Date(date).toLocaleTimeString('he-IL', {
+    hour: '2-digit',
+    minute: '2-digit',
+  })
 }
 
 export function getNewDNDArray(
@@ -406,8 +409,6 @@ export function getDateFromLineChartRangeKey(
   range: LineChartRangeKey,
   baseDate: Date = new Date()
 ): Date {
- 
-
   if (range === 'ALL') return new Date(0)
 
   const daysToSubtract = getNumberFromRangeKey(range)
@@ -469,9 +470,4 @@ export function getCurrMealPeriod(date: Date = new Date()): string {
   } else {
     return 'dinner'
   }
-}
-
-
-export function separateThousands(num: number) {
-  return Number(num).toLocaleString('en-US')
 }

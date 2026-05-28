@@ -2,7 +2,7 @@ import { CircularProgressbar, buildStyles } from 'react-circular-progressbar'
 
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
-import { separateThousands } from '../../services/util.service'
+import { formatNumberWithCommas } from '../../services/util.service'
 // import { GoalBanner } from '../GoalBanner/GoalBanner'
 import { useTranslation } from 'react-i18next'
 
@@ -51,32 +51,30 @@ export function CircularProgress({
     <div className='circular-progress'>
       <CircularProgressbar
         value={value}
-
         // text={`${text}`}
-        text={`${separateThousands(+text)}`}
+        text={`${formatNumberWithCommas(+text)}`}
         styles={buildStyles({
           pathColor: progressColor,
           textColor: textColor,
           trailColor: '#e6e6e6',
           textSize: '1.8rem',
 
-
           // textStyle: {
           //   fontWeight: 700,
           // },
         })}
       />
-      {afterText && 
-      
-      // <GoalBanner
-      // current={separateThousands(+afterText)}
-      
-      // extraValue=''
-      // isGoal={false}
-      // />
-      <span className='after-text bold-header'>{t('macros.outOf')} {separateThousands(+afterText)}
-      </span>
-      }
+      {afterText && (
+        // <GoalBanner
+        // current={separateThousands(+afterText)}
+
+        // extraValue=''
+        // isGoal={false}
+        // />
+        <span className='after-text bold-header'>
+          {t('macros.outOf')} {formatNumberWithCommas(+afterText)}
+        </span>
+      )}
     </div>
   )
 }
