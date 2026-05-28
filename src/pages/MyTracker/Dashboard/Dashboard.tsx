@@ -56,7 +56,6 @@ export function Dashboard() {
   const sessionDay = useSelector(
     (state: RootState) => state.workoutModule.sessionDay
   )
-  
 
   const menu = useSelector((state: RootState) => state.userModule.menu)
 
@@ -70,16 +69,23 @@ export function Dashboard() {
   )
 
   const steps = useSelector((state: RootState) => state.healthModule.steps)
-  const burnedCalories = useSelector((state: RootState) => state.healthModule.burnedCalories)
-  const distance = useSelector((state: RootState) => state.healthModule.distance)
-  const flightsClimbed = useSelector((state: RootState) => state.healthModule.flightsClimbed)
+  const burnedCalories = useSelector(
+    (state: RootState) => state.healthModule.burnedCalories
+  )
+  const distance = useSelector(
+    (state: RootState) => state.healthModule.distance
+  )
+  const flightsClimbed = useSelector(
+    (state: RootState) => state.healthModule.flightsClimbed
+  )
   const timer = useSelector((state: RootState) => state.workoutModule.timer)
 
   const isDashboard = useSelector(
     (state: RootState) => state.systemModule.isDashboard
   )
-  const isNative = useSelector((state: RootState) => state.systemModule.isNative)
-
+  const isNative = useSelector(
+    (state: RootState) => state.systemModule.isNative
+  )
 
   const [macros, setMacros] = useState({
     protein: { percentage: 0, gram: 0 },
@@ -244,8 +250,6 @@ export function Dashboard() {
     setSelectedSessionDay(todaySessionDay)
   }, [userToCheck, todaySessionDay])
 
-
-
   async function checkDiaryDayChange() {
     if (!userToCheck) return
     const dateToCheck = getDateFromISO(new Date().toISOString())
@@ -266,30 +270,29 @@ export function Dashboard() {
       showErrorMsg(t('messages.error.getSessionDay'))
       await logout(false)
       // setRemembered()
-
     }
   }
-
 
   async function handleRefreshHealthData() {
     try {
       await setHealthData()
-      } catch {
-        showErrorMsg(t('messages.error.refreshHealthData'))
-        
-      }
+    } catch {
+      showErrorMsg(t('messages.error.refreshHealthData'))
+    }
   }
 
   const renderNoSession = () => {
     if (!todaySessionDay?.workout)
       return (
         <div className='no-session-container'>
-      {!isNative &&    <Typography
-            variant='h6'
-            className='bold-header'
-          >
-            {t('dashboard.noWorkoutToday')}
-          </Typography>}
+          {!isNative && (
+            <Typography
+              variant='h6'
+              className='bold-header'
+            >
+              {t('dashboard.noWorkoutToday')}
+            </Typography>
+          )}
           <div
             className={`animation-container ${isDashboard ? 'dashboard' : ''}`}
           >
@@ -324,10 +327,12 @@ export function Dashboard() {
             {t('dashboard.workoutSession')}
           </Typography>
 
-         {sessionDay.instructions && <WorkoutSession
-            sessionDay={sessionDay}
-            updateSessionDay={updateSessionDay}
-          />}
+          {sessionDay.instructions && (
+            <WorkoutSession
+              sessionDay={sessionDay}
+              updateSessionDay={updateSessionDay}
+            />
+          )}
         </div>
       )
   }
@@ -336,47 +341,53 @@ export function Dashboard() {
     <PullToRefreshWrapper
       onRefresh={handleRefreshHealthData}
       className={`'dashboard-container' ${isDashboard ? 'page-container' : ''}`}
-    //  className={`page-container dashboard-container ${
-    //     timer ? 'has-timer' : ''
-    //   } ${isDashboard ? 'dashboard' : ''}`}
+      //  className={`page-container dashboard-container ${
+      //     timer ? 'has-timer' : ''
+      //   } ${isDashboard ? 'dashboard' : ''}`}
     >
-      <div className={`page ${
-        timer ? 'has-timer' : ''
-      } ${isDashboard ? 'dashboard' : ''}`}>
-
-    
-      {!isDashboard && (
-        <TimesContainer
-        className={`${prefs.isDarkMode ? 'dark-mode' : ''} ${
-          prefs.favoriteColor
-          }`}
+      <div
+        className={`page ${timer ? 'has-timer' : ''} ${
+          isDashboard ? 'dashboard' : ''
+        }`}
+      >
+        {!isDashboard && (
+          <TimesContainer
+            className={`${prefs.isDarkMode ? 'dark-mode' : ''} ${
+              prefs.favoriteColor
+            }`}
           />
         )}
-      {isDashboard && (
-        <Typography
-        variant='h4'
-        className='bold-header'
-        >
-          {t('dashboard.title')}
-        </Typography>
-      )}
-      {/* <Typography variant="h5" className="bold-header">Dashboard</Typography> */}
-      {showStatsCarousel ? (
-        <StatsCarousel
-        items={statsCarouselItems}
-        showSkeleton={!user}
-        />
-      ) : (
-        <div className='dashboard-items-container'>
-          {statsCarouselItems.map((item) => item)}
-        </div>
-      )}
-      <NativeOnly>
-          <HealthStats steps={steps || 0} burnedCalories={burnedCalories || 0} distance={distance || 0} flightsClimbed={flightsClimbed || 0} />
-      </NativeOnly>
-      {renderNoSession()}
-      {/* <CustomAccordion title="Workout Session" cmp={renderSession()} /> */}
-      {renderSession()}  </div>
+        {isDashboard && (
+          <Typography
+            variant='h4'
+            className='bold-header'
+          >
+            {t('dashboard.title')}
+          </Typography>
+        )}
+        {/* <Typography variant="h5" className="bold-header">Dashboard</Typography> */}
+        {showStatsCarousel ? (
+          <StatsCarousel
+            items={statsCarouselItems}
+            showSkeleton={!user}
+          />
+        ) : (
+          <div className='dashboard-items-container'>
+            {statsCarouselItems.map((item) => item)}
+          </div>
+        )}
+        <NativeOnly>
+          <HealthStats
+            steps={steps || 0}
+            burnedCalories={burnedCalories || 0}
+            distance={distance || 0}
+            flightsClimbed={flightsClimbed || 0}
+          />
+        </NativeOnly>
+        {renderNoSession()}
+        {/* <CustomAccordion title="Workout Session" cmp={renderSession()} /> */}
+        {renderSession()}{' '}
+      </div>
     </PullToRefreshWrapper>
   )
 }

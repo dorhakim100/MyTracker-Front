@@ -1,11 +1,10 @@
-
 import DirectionsRunIcon from '@mui/icons-material/DirectionsRun'
 import { useTranslation } from 'react-i18next'
 import { GoalBanner } from '../GoalBanner/GoalBanner'
-import { formatNumberWithCommas, getFixedNumber } from '../../services/util.service'
+import { getFixedNumber } from '../../services/util.service'
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment'
-import SpeedIcon from '@mui/icons-material/Speed';
-import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import SpeedIcon from '@mui/icons-material/Speed'
+import TrendingUpIcon from '@mui/icons-material/TrendingUp'
 export interface HealthStatsProps {
   steps: number
   burnedCalories: number
@@ -17,7 +16,13 @@ export interface HealthStatsProps {
   flightsClimbed: number
 }
 
-export function HealthStats({ steps,  burnedCalories,  distance, flightsClimbed, className }: HealthStatsProps) {
+export function HealthStats({
+  steps,
+  burnedCalories,
+  distance,
+  flightsClimbed,
+  className,
+}: HealthStatsProps) {
   const { t } = useTranslation()
 
   // steps = 21435.151
@@ -30,46 +35,32 @@ export function HealthStats({ steps,  burnedCalories,  distance, flightsClimbed,
   flightsClimbed = getFixedNumber(flightsClimbed)
   distance = getFixedNumber(distance, 2)
 
-
-  const formattedSteps = formatNumberWithCommas(steps)
-  const formattedBurnedCalories = formatNumberWithCommas(burnedCalories)
-
   return (
     <div className={`health-stats-container ${className ?? ''}`.trim()}>
-
       <GoalBanner
-        // current={steps}
-        current={formattedSteps}
+        current={steps}
         isGoal={false}
         icon={<DirectionsRunIcon />}
         afterValue={t('steps.steps')}
-
       />
-        <GoalBanner
-          // current={steps}
-          current={formattedBurnedCalories}
-          isGoal={false}
-          icon={<LocalFireDepartmentIcon />}
-          afterValue={t('macros.kcal')}
-
-        />
-        <GoalBanner
-          // current={steps}
-          current={distance}
-          isGoal={false}
-          icon={<SpeedIcon />}
-          afterValue={t('distance.km')}
-
-        />
-        <GoalBanner
-          // current={steps}
-          current={flightsClimbed}
-
-          isGoal={false}
-          icon={<TrendingUpIcon />}
-          afterValue={t('floors.floors')}
-
-        />
+      <GoalBanner
+        current={burnedCalories}
+        isGoal={false}
+        icon={<LocalFireDepartmentIcon />}
+        afterValue={t('macros.kcal')}
+      />
+      <GoalBanner
+        current={distance}
+        isGoal={false}
+        icon={<SpeedIcon />}
+        afterValue={t('distance.km')}
+      />
+      <GoalBanner
+        current={flightsClimbed}
+        isGoal={false}
+        icon={<TrendingUpIcon />}
+        afterValue={t('floors.floors')}
+      />
     </div>
   )
 }
