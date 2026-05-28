@@ -66,50 +66,51 @@ export function LoggedList({
   const menu = useSelector((state: RootState) => state.userModule.menu)
 
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
-  const isLoading = useSelector((state: RootState) => state.systemModule.isLoading)
+  const isLoading = useSelector(
+    (state: RootState) => state.systemModule.isLoading
+  )
 
   const [logs, setLogs] = useState<Log[]>([])
 
   useEffect(() => {
     let logsToSet: Log[] = []
     if (logsSource === 'menu' && editMenu) {
-      logsToSet = (
+      logsToSet =
         editMenu.menuLogs?.filter((log) =>
           _filterLogsByMealPeriod(log, mealPeriod)
         ) || []
-      )
       setLogs(logsToSet)
       return
     }
     if (logsToShow.length) {
-      logsToSet =  logsToShow
+      logsToSet = logsToShow
       setLogs(logsToSet)
       return
     }
     if (logsSource === 'menu') {
-      logsToSet = (
+      logsToSet =
         menu?.menuLogs?.filter((log) =>
           _filterLogsByMealPeriod(log, mealPeriod)
         ) || []
+      setLogs(logsToSet)
+      return
+    }
+
+    if (selectedDay) {
+      logsToSet = selectedDay?.logs?.filter((log) =>
+        _filterLogsByMealPeriod(log, mealPeriod)
       )
       setLogs(logsToSet)
       return
     }
-    
-    if (selectedDay){
-      logsToSet = selectedDay?.logs?.filter((log) =>
-        _filterLogsByMealPeriod(log, mealPeriod)
-    )
-      setLogs(logsToSet)
-      return
-
-    }
     if (mealPeriod)
-      logsToSet = user?.loggedToday?.logs?.filter((log) =>
-        _filterLogsByMealPeriod(log, mealPeriod)
-      ) || []
+      logsToSet =
+        user?.loggedToday?.logs?.filter((log) =>
+          _filterLogsByMealPeriod(log, mealPeriod)
+        ) || []
     setLogs(logsToSet)
-  }, [  user,
+  }, [
+    user,
     mealPeriod,
     selectedDay,
     user?.loggedToday?.logs,
@@ -117,8 +118,8 @@ export function LoggedList({
     menu?.menuLogs,
     editMenu?.menuLogs,
     logsSource,
-    logsToShow])
-
+    logsToShow,
+  ])
 
   useEffect(() => {
     handleLoadItems()
@@ -176,14 +177,17 @@ export function LoggedList({
   }
 
   const renderTimeText = (item: Log) => {
-    return <span className='time-text'>{getTimeFromISO(item.createdAt || '')}</span>
+    return (
+      <span className='time-text'>{getTimeFromISO(item.createdAt || '')}</span>
+    )
   }
 
   const renderSecondaryText = (item: Log) => {
     if (item.source === searchTypes.custom)
       return `${item.macros?.calories.toFixed(0)} ${t('macros.kcal')}`
 
-    if (item.mealId) return `${item.macros?.calories.toFixed(0)} ${t('macros.kcal')}`
+    if (item.mealId)
+      return `${item.macros?.calories.toFixed(0)} ${t('macros.kcal')}`
 
     const cachedItem = cachedItems.find((i) => i.searchId === item.itemId)
     let caloriesToReturn
@@ -262,7 +266,7 @@ export function LoggedList({
   }
 
   const onDeleteLog = async (log: Log) => {
-    if(isLoading) return
+    if (isLoading) return
     try {
       if (logsSource === 'menu') {
         const newLogs =
@@ -280,21 +284,23 @@ export function LoggedList({
       }
 
       const newToday = removeLogAction(log, selectedDay as LoggedToday)
+      const newLogs = newToday.logs.filter((l) => l._id !== log._id)
       const newLoggedToday = {
         ...newToday,
-        logs: [...newToday.logs.filter((l) => l._id !== log._id)],
+        logs: newLogs,
       }
 
       if (user && newToday._id === user.loggedToday._id) {
         const newUser = {
           ...user,
-          loggedToday: {...newLoggedToday},
+          loggedToday: { ...newLoggedToday },
         }
         optimisticUpdateUser(newUser)
       }
-      setSelectedDiaryDay({...newLoggedToday})
+      setSelectedDiaryDay({ ...newLoggedToday })
       await logService.remove(log._id as string)
 
+      setLogs(newLogs)
       dayService.save(newLoggedToday as LoggedToday)
       showSuccessMsg(t('messages.success.updateCalories'))
     } catch {
@@ -308,10 +314,9 @@ export function LoggedList({
     setIsEditOpen(false)
   }
 
-
   const getIsSwipeable = () => {
     if (noEdit) return false
-    if(isLoading) return false
+    if (isLoading) return false
 
     return true
   }
@@ -321,8 +326,6 @@ export function LoggedList({
   //       Action name
   //     </SwipeAction>
   //   )
-
-
 
   return (
     <>
