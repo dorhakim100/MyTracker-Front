@@ -298,9 +298,9 @@ export function LoggedList({
         optimisticUpdateUser(newUser)
       }
       setSelectedDiaryDay({ ...newLoggedToday })
+      setLogs(newLogs)
       await logService.remove(log._id as string)
 
-      setLogs(newLogs)
       dayService.save(newLoggedToday as LoggedToday)
       showSuccessMsg(t('messages.success.updateCalories'))
     } catch {
