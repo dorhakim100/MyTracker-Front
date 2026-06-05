@@ -43,7 +43,7 @@ export function ClockPicker({
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
-  const dragHaptics = useDragHaptics({itemHeight:36})
+  const dragHaptics = useDragHaptics({ itemHeight: 36 })
 
   const originalValue = useRef(Math.floor(value))
   const originalAfterValue = useRef(
@@ -104,24 +104,27 @@ export function ClockPicker({
     onChange('numberOfServings', newValue)
   }
 
+  const getSecondValueString = (value: number) => {
+    if (value === 0) return '.0'
+    return `.${value.toString().split('.')[1]}`
+  }
+
   return (
-    <div className='picker-container' >
+    <div className='picker-container'>
       <Picker
         value={pickerValue}
         // wheelMode='normal'
-        onChange={ (next) =>{
-            if(next.numberOfServings === 0 && next.afterValue === 0) {
-              next.afterValue = 0.1
-            }
-            setPickerValue(
-              next as unknown as { numberOfServings: number; afterValue: number }
-            )
-
-        }
-        
-        }
+        onChange={(next) => {
+          if (next.numberOfServings === 0 && next.afterValue === 0) {
+            next.afterValue = 0.1
+          }
+          setPickerValue(
+            next as unknown as { numberOfServings: number; afterValue: number }
+          )
+        }}
         wheelMode='normal'
-        className='clock-picker'  {...dragHaptics}
+        className='clock-picker'
+        {...dragHaptics}
       >
         <Picker.Column name='numberOfServings'>
           {values.map((number) => (
@@ -129,16 +132,15 @@ export function ClockPicker({
               key={number}
               value={number}
             >
-
               {({ selected }) => (
-              <AnimatedWrapper>
-                <Typography
-                variant='h5'
-                className={`${selected ? 'selected' : ''}`}
-                >
-                  {number}
-                </Typography>
-              </AnimatedWrapper>
+                <AnimatedWrapper>
+                  <Typography
+                    variant='h5'
+                    className={`${selected ? 'selected' : ''}`}
+                  >
+                    {number}
+                  </Typography>
+                </AnimatedWrapper>
               )}
             </Picker.Item>
           ))}
@@ -158,16 +160,13 @@ export function ClockPicker({
                 >
                   {({ selected }) => (
                     <AnimatedWrapper>
-
-
-                    <Typography
-                      variant='h5'
-                      className={`${selected ? 'selected' : ''}`}
+                      <Typography
+                        variant='h5'
+                        className={`${selected ? 'selected' : ''}`}
                       >
-                      {number}
-                    </Typography>
-                      </AnimatedWrapper>
-
+                        {getSecondValueString(number)}
+                      </Typography>
+                    </AnimatedWrapper>
                   )}
                 </Picker.Item>
               ))}
