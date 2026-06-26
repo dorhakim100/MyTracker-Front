@@ -26,6 +26,8 @@ import { RootState } from '../../store/store'
 //import logoDark from '../../../public/logo-dark.png'
 import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
 import { login, signup } from '../../store/actions/user.actions'
+import { startGoogleAuth } from '../../services/auth/google-auth.service'
+import { GoogleIcon } from './components/CustomIcons'
 
 import { usePwaDetect } from '../../hooks/usePwaDetect'
 import CircularProgress from '@mui/material/CircularProgress'
@@ -227,6 +229,10 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
     }
   }, [prefs.isDarkMode])
 
+  const onGoogleSignIn = () => {
+    startGoogleAuth('login')
+  }
+
   const toggleRememberMe = () => {
     // credientials.isRemember = !credientials.isRemember || false
     setIsRemember(!isRemember)
@@ -332,7 +338,9 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
               </FormControl>
               {isSignup && (
                 <FormControl>
-                  <FormLabel htmlFor='password'>{t('auth.validatePassword')}</FormLabel>
+                  <FormLabel htmlFor='password'>
+                    {t('auth.validatePassword')}
+                  </FormLabel>
                   <TextField
                     error={validatePasswordError}
                     helperText={validatePasswordMessage}
@@ -392,22 +400,15 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
             </Box>
             <Divider>{t('common.or')}</Divider>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              {/* <Button
+              <Button
                 fullWidth
                 variant='outlined'
-                onClick={() => alert('Sign in with Google')}
+                onClick={onGoogleSignIn}
                 startIcon={<GoogleIcon />}
+                className='google-sign-in-button'
               >
-                Sign in with Google
-              </Button> */}
-              {/* <Button
-              fullWidth
-              variant='outlined'
-              onClick={() => alert('Sign in with Facebook')}
-              startIcon={<FacebookIcon />}
-              >
-              Sign in with Facebook
-            </Button> */}
+                {t('auth.signInWithGoogle')}
+              </Button>
               <div
                 className='sign-up-button-container'
                 onClick={handleSignup}
@@ -418,15 +419,19 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
                     sx={{ textAlign: 'center', cursor: 'pointer' }}
                   >
                     {t('auth.alreadyHaveAccount')}
-                    <Link style={{ alignSelf: 'center' }}>{t('auth.loginIn')}</Link>
+                    <Link style={{ alignSelf: 'center' }}>
+                      {t('auth.loginIn')}
+                    </Link>
                   </Typography>
                 ) : (
                   <Typography
                     variant='body2'
                     sx={{ textAlign: 'center', cursor: 'pointer' }}
                   >
-{t('auth.dontHaveAccount')}
-                  <Link style={{ alignSelf: 'center' }}>{t('auth.signUp')}</Link>
+                    {t('auth.dontHaveAccount')}
+                    <Link style={{ alignSelf: 'center' }}>
+                      {t('auth.signUp')}
+                    </Link>
                   </Typography>
                 )}
               </div>

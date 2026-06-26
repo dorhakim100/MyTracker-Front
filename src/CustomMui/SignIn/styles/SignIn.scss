@@ -15,6 +15,10 @@
       // object-fit: cover;
       object-fit: contain;
     }
+    .google-sign-in-button {
+      background-color: $white !important;
+      color: $dark-gray !important;
+    }
   }
 }
 

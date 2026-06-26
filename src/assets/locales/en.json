@@ -95,7 +95,10 @@
     "signInError": "An error occurred while signing in. Please try again.",
     "pleaseEnterFullName": "Please enter your full name.",
     "passwordMinLength": "Password must be at least 6 characters long.",
-    "validatePasswordMustMatch": "Validate password must be identical"
+    "validatePasswordMustMatch": "Validate password must be identical",
+    "signInWithGoogle": "Sign in with Google",
+    "googleSignInError": "Google sign-in failed. Please try again.",
+    "googleSignInLoading": "Completing Google sign-in..."
   },
   "meals": {
     "breakfast": "Breakfast",

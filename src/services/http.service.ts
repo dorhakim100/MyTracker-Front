@@ -43,6 +43,14 @@ const getBaseUrl = (): string => {
   return '//localhost:3030/api/'
 }
 
+export function getApiBaseUrl(): string {
+  const baseUrl = getBaseUrl()
+  if (baseUrl.startsWith('//')) {
+    return `${window.location.protocol}${baseUrl}`
+  }
+  return baseUrl
+}
+
 const BASE_URL = getBaseUrl()
 
 const axios = Axios.create({ withCredentials: true })

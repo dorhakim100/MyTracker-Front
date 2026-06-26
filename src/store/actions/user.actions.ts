@@ -67,22 +67,42 @@ export async function login(credentials: UserCred) {
       return null
     }
 
-    const user = {
-      ...retrived,
-      meals: retrived.meals.map((meal: Meal) => mealService.modifyMeal(meal)),
-    }
-
-    store.dispatch({
-      type: SET_USER,
-      user: user,
-    })
-
-    setSelectedDiaryDay(user.loggedToday)
-    setUserToEdit(user)
-    return user
+    return hydrateLoggedInUser(retrived)
   } catch (err) {
     throw err
   }
+}
+
+export async function loginWithGoogle(code: string, isRemember = false) {
+  try {
+    await logout()
+
+    const retrived = await userService.loginWithGoogle(code, isRemember)
+
+    if (!retrived) {
+      return null
+    }
+
+    return hydrateLoggedInUser(retrived)
+  } catch (err) {
+    throw err
+  }
+}
+
+function hydrateLoggedInUser(retrived: User) {
+  const user = {
+    ...retrived,
+    meals: retrived.meals.map((meal: Meal) => mealService.modifyMeal(meal)),
+  }
+
+  store.dispatch({
+    type: SET_USER,
+    user: user,
+  })
+
+  setSelectedDiaryDay(user.loggedToday)
+  setUserToEdit(user)
+  return user
 }
 
 export async function deleteAccount(user: User) {

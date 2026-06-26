@@ -89,7 +89,10 @@
     "signInError": "אירעה שגיאה בעת ההתחברות. אנא נסה שוב.",
     "pleaseEnterFullName": "אנא הזן את שמך המלא.",
     "passwordMinLength": "הסיסמה חייבת להכיל לפחות 6 תווים.",
-    "validatePasswordMustMatch": "אימות הסיסמה חייב להיות זהה"
+    "validatePasswordMustMatch": "אימות הסיסמה חייב להיות זהה",
+    "signInWithGoogle": "התחברות עם Google",
+    "googleSignInError": "ההתחברות עם Google נכשלה. נסה שוב.",
+    "googleSignInLoading": "משלים התחברות עם Google..."
   },
   "meals": {
     "breakfast": "ארוחת בוקר",

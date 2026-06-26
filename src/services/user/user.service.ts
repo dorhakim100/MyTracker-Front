@@ -20,12 +20,14 @@ import {
   REJECTED_STATUS,
 } from '../../assets/config/request-statuses'
 import { AddTraineeForm } from '../../pages/TrainerDashboard/pages/Trainees/Trainees'
+import { completeGoogleAuth } from '../auth/google-auth.service'
 // import { getPrefs, setPrefs } from '../system/system.service'
 
 export const userService = {
   login,
   logout,
   signup,
+  loginWithGoogle,
   getUsers,
   getById,
   remove,
@@ -149,46 +151,65 @@ async function login(userCred: UserCred) {
       return null
     }
 
-    await indexedDbService.put(REMEMBER_STORE, {
-      _id: REMEMBER_RECORD_ID,
-      userId: user._id,
-      token: loginToken,
-    })
-
-    if (userCred.isRemember) {
-      saveRememberedUser(user, loginToken)
-    }
-
-    const favoriteIDs = user.favoriteItems
-    // Get cached results immediately and set them
-    const cachedItems = await searchService.searchFavoriteItems(
-      favoriteIDs,
-      // Callback when background fetch completes
-      (completeItems) => {
-        setFavoriteItems(completeItems)
-      }
-    )
-
-    // Set cached items immediately (user can see them right away)
-    setFavoriteItems(cachedItems)
-
-    const LONGEST_FOOD_ID_LENGTH = 10
-
-    user.meals.forEach((meal: Meal) => {
-      meal.items.forEach((item: MealItem) => {
-        if (!item.searchId) return
-        const source =
-          item.searchId.length < LONGEST_FOOD_ID_LENGTH
-            ? searchTypes.usda
-            : searchTypes.openFoodFacts
-        searchService.searchById(item.searchId, source)
-      })
-    })
-
+    await persistLoginSession(user, loginToken, userCred.isRemember)
     return saveLoggedinUser(user)
   } catch (err) {
     throw err
   }
+}
+
+async function loginWithGoogle(code: string, isRemember = false) {
+  try {
+    const { user, loginToken } = await completeGoogleAuth(code)
+
+    if (!user) {
+      return null
+    }
+
+    await persistLoginSession(user, loginToken, isRemember)
+    return saveLoggedinUser(user)
+  } catch (err) {
+    throw err
+  }
+}
+
+async function persistLoginSession(
+  user: User,
+  loginToken: string,
+  isRemember?: boolean
+) {
+  await indexedDbService.put(REMEMBER_STORE, {
+    _id: REMEMBER_RECORD_ID,
+    userId: user._id,
+    token: loginToken,
+  })
+
+  if (isRemember) {
+    saveRememberedUser(user, loginToken)
+  }
+
+  const favoriteIDs = user.favoriteItems
+  const cachedItems = await searchService.searchFavoriteItems(
+    favoriteIDs,
+    (completeItems) => {
+      setFavoriteItems(completeItems)
+    }
+  )
+
+  setFavoriteItems(cachedItems)
+
+  const LONGEST_FOOD_ID_LENGTH = 10
+
+  user.meals.forEach((meal: Meal) => {
+    meal.items.forEach((item: MealItem) => {
+      if (!item.searchId) return
+      const source =
+        item.searchId.length < LONGEST_FOOD_ID_LENGTH
+          ? searchTypes.usda
+          : searchTypes.openFoodFacts
+      searchService.searchById(item.searchId, source)
+    })
+  })
 }
 
 async function signup(userCred: UserCred) {

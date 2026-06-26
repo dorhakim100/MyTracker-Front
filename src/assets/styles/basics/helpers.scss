@@ -858,7 +858,9 @@ select {
     .MuiFab-circular
   ):not(.MuiPickersDay-root):not(.delete-account-button):not(
     .MuiBottomNavigationAction-root
-  ):not(.disable-button):not(.save-button.alternative),
+  ):not(.disable-button):not(.save-button.alternative):not(
+    .google-sign-in-button
+  ),
 .MuiToolbar-gutters,
 .MuiToolbar-root,
 .MuiFab-root,
