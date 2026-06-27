@@ -121,6 +121,27 @@ function App() {
     (stateSelector: RootState) => stateSelector.healthModule.steps
   )
 
+  const loggedCalories = useSelector(
+    (stateSelector: RootState) =>
+      stateSelector.userModule.user?.loggedToday?.calories
+  )
+
+  const burnedCalories = useSelector(
+    (stateSelector: RootState) => stateSelector.healthModule.burnedCalories
+  )
+
+  const distance = useSelector(
+    (stateSelector: RootState) => stateSelector.healthModule.distance
+  )
+
+  const flightsClimbed = useSelector(
+    (stateSelector: RootState) => stateSelector.healthModule.flightsClimbed
+  )
+
+  const loggedTodayLogs = useSelector(
+    (stateSelector: RootState) => stateSelector.userModule.user?.loggedToday?.logs
+  )
+
   const filteredRoutes = useMemo(() => {
     if (user) {
       return routes.filter((route) => route.path !== '/signin')
@@ -364,10 +385,19 @@ function App() {
     isNative,
     user?._id,
     steps,
+    loggedCalories,
+    burnedCalories,
+    distance,
+    flightsClimbed,
+    loggedTodayLogs,
     prefs.favoriteColor,
     prefs.isDarkMode,
     prefs.lang,
     user?.details?.dailyStepsGoal,
+    user?.currGoal?.dailyCalories,
+    user?.currGoal?.macros?.protein,
+    user?.currGoal?.macros?.carbs,
+    user?.currGoal?.macros?.fat,
   ])
 
   useEffect(() => {

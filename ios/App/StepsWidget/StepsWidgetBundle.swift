@@ -5,5 +5,7 @@ import WidgetKit
 struct StepsWidgetBundle: WidgetBundle {
     var body: some Widget {
         StepsWidget()
+        CaloriesWidget()
+        StepsCaloriesWidget()
     }
 }

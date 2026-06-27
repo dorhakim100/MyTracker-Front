@@ -31,7 +31,7 @@ struct StepsWidget: Widget {
                 .widgetURL(URL(string: StepsWidgetConstants.deepLink)!)
         }
         .configurationDisplayName("Steps")
-        .description("Today's step progress")
+        .description("Today's step progress and activity stats")
         .supportedFamilies([.systemSmall, .systemMedium])
     }
 }

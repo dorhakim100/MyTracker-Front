@@ -11,9 +11,19 @@ public class StepsWidgetPlugin: CAPPlugin, CAPBridgedPlugin {
     ]
 
     @objc func update(_ call: CAPPluginCall) {
-        // Capacitor passes JS numbers as NSNumber; getInt/getDouble often fail on them.
         let steps = call.jsInt("steps")
         let goal = call.jsInt("goal", default: 10_000)
+        let calories = call.jsInt("calories")
+        let caloriesGoal = call.jsInt("caloriesGoal", default: 2_000)
+        let distance = call.jsDouble("distance")
+        let burnedCalories = call.jsInt("burnedCalories")
+        let flightsClimbed = call.jsInt("flightsClimbed")
+        let proteinCurrent = call.jsInt("proteinCurrent")
+        let proteinGoal = call.jsInt("proteinGoal")
+        let carbsCurrent = call.jsInt("carbsCurrent")
+        let carbsGoal = call.jsInt("carbsGoal")
+        let fatsCurrent = call.jsInt("fatsCurrent")
+        let fatsGoal = call.jsInt("fatsGoal")
         let favoriteColor = call.getString("favoriteColor") ?? "primary"
         let accentHex = call.getString("accentHex") ?? "#009688"
         let isDarkMode = call.jsBool("isDarkMode")
@@ -23,6 +33,17 @@ public class StepsWidgetPlugin: CAPPlugin, CAPBridgedPlugin {
         let data = StepsWidgetData(
             steps: steps,
             goal: goal,
+            calories: calories,
+            caloriesGoal: caloriesGoal,
+            distance: distance,
+            burnedCalories: burnedCalories,
+            flightsClimbed: flightsClimbed,
+            proteinCurrent: proteinCurrent,
+            proteinGoal: proteinGoal,
+            carbsCurrent: carbsCurrent,
+            carbsGoal: carbsGoal,
+            fatsCurrent: fatsCurrent,
+            fatsGoal: fatsGoal,
             favoriteColor: favoriteColor,
             accentHex: accentHex,
             isDarkMode: isDarkMode,
@@ -44,8 +65,9 @@ public class StepsWidgetPlugin: CAPPlugin, CAPBridgedPlugin {
         }
 
         if #available(iOS 14.0, *) {
-            WidgetCenter.shared.reloadTimelines(ofKind: StepsWidgetConstants.widgetKind)
-            WidgetCenter.shared.reloadAllTimelines()
+            for kind in StepsWidgetConstants.widgetKinds {
+                WidgetCenter.shared.reloadTimelines(ofKind: kind)
+            }
         }
 
         call.resolve([
