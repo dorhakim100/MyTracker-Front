@@ -1,5 +1,6 @@
 import { healthService } from '../../services/health/health.service'
 import { googleHealthService } from '../../services/health/google-health.service'
+import { syncStepsWidget } from '../../services/widget/steps-widget.service'
 import { store } from '../store'
 import {
   SET_STEPS,
@@ -58,12 +59,13 @@ export async function setHealthData() {
     setBurnedCalories(data.activeCaloriesKcal)
     setDistance(data.distance)
     setFlightsClimbed(data.flightsClimbed)
+    await syncStepsWidget()
   }
   if (data.status === 'not_connected') {
     // await setGoogleHealthConnected(false)
   }
   if (data.status === 'error') {
-    throw new Error(data.message)
+    // throw new Error(data.message)
   }
 }
 

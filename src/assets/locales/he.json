@@ -105,7 +105,13 @@
     "providerNativeHint": "שימוש בנתוני בריאות של המכשיר (HealthKit / Health Connect)",
     "providerGoogleHint": "שימוש בנתוני Google Health בענן",
     "providerCaption": "ייתכנו הבדלים קלים בין נתוני המכשיר ל-Google Health.",
-    "providerSwitchError": "לא ניתן להחליף מקור נתוני בריאות."
+    "providerSwitchError": "לא ניתן להחליף מקור נתוני בריאות.",
+    "stepsGoalLabel": "יעד צעדים יומי",
+    "stepsGoalCaption": "משמש להתקדמות הצעדים בווידג'ט iOS.",
+    "stepsGoalCaptionNative": "משמש לווידג'ט iOS ולהתקדמות הצעדים.",
+    "stepsGoalInvalid": "הזן יעד צעדים בין 1,000 ל-100,000.",
+    "stepsGoalSaved": "יעד הצעדים נשמר.",
+    "stepsGoalSaveError": "לא ניתן לשמור את יעד הצעדים."
   },
   "meals": {
     "breakfast": "ארוחת בוקר",

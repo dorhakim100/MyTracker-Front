@@ -36,4 +36,5 @@ export interface UserDetails {
   gender: Gender
   imgUrl: string
   activity: ActivityLevel
+  dailyStepsGoal?: number
 }

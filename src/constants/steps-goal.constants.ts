@@ -1,0 +1,3 @@
+export const DEFAULT_DAILY_STEPS_GOAL = 10_000
+export const MIN_DAILY_STEPS_GOAL = 1_000
+export const MAX_DAILY_STEPS_GOAL = 100_000

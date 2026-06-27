@@ -8,6 +8,7 @@ import { CustomIOSSwitch } from '../../CustomMui/CustomIOSSwitch/CustomIOSSwitch
 import { reloadHealthForCurrentProvider } from '../../store/actions/health.actions'
 import { showErrorMsg } from '../../services/event-bus.service'
 import { HealthConnect } from '../HealthConnect/HealthConnect'
+import { StepsGoalCard } from '../StepsGoalCard/StepsGoalCard'
 import './styles/HealthProviderCard.scss'
 import { healthService } from '../../services/health/health.service'
 
@@ -73,6 +74,8 @@ export function HealthProviderCard() {
           />
         </>
       )}
+      <StepsGoalCard />
+      <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
       {isGoogleHealthPlatform ? (
         <Typography variant='body1'>{t('health.connectSuccess')}</Typography>
       ) : (

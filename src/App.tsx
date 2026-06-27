@@ -46,6 +46,7 @@ import {
   setPermitted,
   loadGoogleHealthConnection,
 } from './store/actions/health.actions.ts'
+import { syncStepsWidget } from './services/widget/steps-widget.service.ts'
 import { showErrorMsg } from './services/event-bus.service.ts'
 
 const isProd = import.meta.env.PROD
@@ -322,6 +323,21 @@ function App() {
   useEffect(() => {
     handleHealthData()
   }, [healthPermited, activeRoute, healthProvider])
+
+  useEffect(() => {
+    if (!isNative || Capacitor.getPlatform() !== 'ios' || !user?._id) {
+      return
+    }
+
+    const onResume = () => {
+      if (document.visibilityState === 'visible') {
+        syncStepsWidget()
+      }
+    }
+
+    document.addEventListener('visibilitychange', onResume)
+    return () => document.removeEventListener('visibilitychange', onResume)
+  }, [isNative, user?._id, prefs.favoriteColor, prefs.isDarkMode, prefs.lang])
 
   async function handleHealthData() {
     try {

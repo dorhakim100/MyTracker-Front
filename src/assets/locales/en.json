@@ -111,7 +111,13 @@
     "providerNativeHint": "Using device health (HealthKit / Health Connect)",
     "providerGoogleHint": "Using Google Health cloud data",
     "providerCaption": "Numbers may differ slightly between device health and Google Health.",
-    "providerSwitchError": "Could not switch health data source."
+    "providerSwitchError": "Could not switch health data source.",
+    "stepsGoalLabel": "Daily steps goal",
+    "stepsGoalCaption": "Used for step progress on iOS home screen widget.",
+    "stepsGoalCaptionNative": "Used for your iOS home screen widget and step progress.",
+    "stepsGoalInvalid": "Enter a step goal between 1,000 and 100,000.",
+    "stepsGoalSaved": "Steps goal saved.",
+    "stepsGoalSaveError": "Could not save steps goal."
   },
   "meals": {
     "breakfast": "Breakfast",
