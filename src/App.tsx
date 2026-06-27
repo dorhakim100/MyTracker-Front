@@ -35,17 +35,17 @@ import { TraineeUserCard } from './components/TraineeUserCard/TraineeUserCard.ts
 import { Timer } from './components/Timer/Timer.tsx'
 import { Capacitor } from '@capacitor/core'
 import { TrainerDashboard } from './pages/TrainerDashboard/TrainerDashboard.tsx'
-import { StatusBar, Style } from '@capacitor/status-bar';
+import { StatusBar, Style } from '@capacitor/status-bar'
 
 import { LocalNotifications } from '@capacitor/local-notifications'
-
-
 
 import './App.css'
 import { healthService } from './services/health/health.service.ts'
 import {
   setHealthData,
-  setPermitted } from './store/actions/health.actions.ts'
+  setPermitted,
+  loadGoogleHealthConnection,
+} from './store/actions/health.actions.ts'
 import { showErrorMsg } from './services/event-bus.service.ts'
 
 const isProd = import.meta.env.PROD
@@ -107,6 +107,11 @@ function App() {
     (stateSelector: RootState) => stateSelector.healthModule.permited
   )
 
+  const googleHealthConnected = useSelector(
+    (stateSelector: RootState) =>
+      stateSelector.healthModule.googleHealthConnected
+  )
+
   const filteredRoutes = useMemo(() => {
     if (user) {
       return routes.filter((route) => route.path !== '/signin')
@@ -145,9 +150,9 @@ function App() {
   useEffect(() => {
     const native = Capacitor.isNativePlatform()
     setIsNative(native)
-    if(native){
+    if (native) {
       document.querySelector('body')?.classList.add('native')
-    } 
+    }
   }, [])
 
   useEffect(() => {
@@ -244,26 +249,27 @@ function App() {
     loadFavoriteItems()
   }, [user?._id, user?.favoriteItems])
 
-  useEffect(()=>{
-    const handleStatusBar = async ()=>{
+  useEffect(() => {
+    const handleStatusBar = async () => {
+      // Make the content flow under the status bar (standard for Capacitor)
+      await StatusBar.setOverlaysWebView({ overlay: true })
 
-    // Make the content flow under the status bar (standard for Capacitor)
-    await StatusBar.setOverlaysWebView({ overlay: true });
-
-    // Set the icons to light or dark depending on your theme
-    await StatusBar.setStyle({ style: prefs.isDarkMode ? Style.Dark : Style.Light });
-
+      // Set the icons to light or dark depending on your theme
+      await StatusBar.setStyle({
+        style: prefs.isDarkMode ? Style.Dark : Style.Light,
+      })
     }
-    if(isNative){
+    if (isNative) {
       handleStatusBar()
     }
+  }, [isNative, prefs.isDarkMode])
 
-  },[isNative, prefs.isDarkMode])
-
-  useEffect(()=>{
-    if(!isNative) return  
+  useEffect(() => {
+    if (!isNative) return
     const handleHealthPermissions = async () => {
-      const permissions = await healthService.requestReadAuthorization()
+      const permissions = await healthService.requestReadAuthorization(
+        user?._id
+      )
       if (permissions.status === 'ok') {
         setPermitted(true)
       } else {
@@ -285,23 +291,34 @@ function App() {
       await handleLocalNotificationsPermissions()
     }
     handlePermissions()
-  },[isNative])
+  }, [isNative, user?._id])
 
+  useEffect(() => {
+    if (isNative || !user || !user?._id || googleHealthConnected) return
+    const userId = user?._id
+    const loadWebHealth = async () => {
+      try {
+        const connected = await loadGoogleHealthConnection(userId)
+        if (connected) {
+          await setHealthData()
+        }
+      } catch (err) {
+        showErrorMsg(err instanceof Error ? err.message : String(err))
+      }
+    }
 
-  useEffect(()=>{
+    loadWebHealth()
+  }, [isNative, user?._id, googleHealthConnected])
 
-   
+  useEffect(() => {
     handleHealthData()
-
-  },[healthPermited, activeRoute])
+  }, [healthPermited, activeRoute])
 
   async function handleHealthData() {
     try {
-
       await setHealthData()
     } catch (err) {
       showErrorMsg(err instanceof Error ? err.message : String(err))
-      
     }
   }
 
@@ -371,7 +388,7 @@ function App() {
           )}
         </SlideAnimation>
       </main>
-        <Timer />
+      <Timer />
       {user && (
         <FixedBottomNavigation
           routes={filteredRoutes}

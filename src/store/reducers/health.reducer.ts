@@ -1,11 +1,13 @@
 export const SET_PERMITTED = 'SET_PERMITTED'
+export const SET_GOOGLE_HEALTH_CONNECTED = 'SET_GOOGLE_HEALTH_CONNECTED'
 export const SET_STEPS = 'SET_STEPS'
 export const SET_BURNED_CALORIES = 'SET_BURNED_CALORIES'
 export const SET_DISTANCE = 'SET_DISTANCE'
 export const SET_FLIGHTS_CLIMBED = 'SET_FLIGHTS_CLIMBED'
 
 export interface HealthState {
-permited: boolean
+  permited: boolean
+  googleHealthConnected: boolean
   steps: number
   burnedCalories: number
   distance: number
@@ -14,6 +16,7 @@ permited: boolean
 
 const initialState: HealthState = {
   permited: false,
+  googleHealthConnected: false,
   steps: 0,
   burnedCalories: 0,
   distance: 0,
@@ -26,6 +29,12 @@ export function healthReducer(state = initialState, action: any): HealthState {
   switch (action.type) {
     case SET_PERMITTED:
       newState = { ...state, permited: action.permited }
+      break
+    case SET_GOOGLE_HEALTH_CONNECTED:
+      newState = {
+        ...state,
+        googleHealthConnected: action.googleHealthConnected,
+      }
       break
     case SET_STEPS:
       newState = { ...state, steps: action.steps }

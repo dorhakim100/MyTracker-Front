@@ -32,4 +32,5 @@ export type TodayActivitySummary =
       platform?: 'ios' | 'android' | 'web'
     }
   | { status: 'permission_required'; missingRead: HealthReadDataType[] }
+  | { status: 'not_connected' }
   | { status: 'error'; message: string }

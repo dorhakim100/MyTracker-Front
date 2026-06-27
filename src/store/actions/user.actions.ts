@@ -34,6 +34,7 @@ import { setIsFirstLoading } from './system.actions'
 import { AddTraineeForm } from '../../pages/TrainerDashboard/pages/Trainees/Trainees'
 import { Menu } from '../../types/menu/Menu'
 import { menuService } from '../../services/menu/menu.service'
+import { loadGoogleHealthConnection, setHealthData } from './health.actions'
 
 export async function loadUsers(filter: UserFilter) {
   try {
@@ -306,6 +307,9 @@ export async function setRemembered() {
       type: SET_USER,
       user,
     })
+
+    await loadGoogleHealthConnection(user._id)
+    await setHealthData()
 
     setUserToEdit(user as User & { meals: Meal[] | string[] })
   } catch (err) {

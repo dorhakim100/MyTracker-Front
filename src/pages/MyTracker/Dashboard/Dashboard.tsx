@@ -40,6 +40,7 @@ import { getMeals } from '../../../assets/config/meals'
 import { useCurrMealPeriod } from '../../../hooks/useCurrMealPeriod'
 import { HealthStats } from '../../../components/HealthStats/HealthStats'
 import { NativeOnly } from '../../../components/NativeOnly/NativeOnly'
+import { HealthConnect } from '../../../components/HealthConnect/HealthConnect'
 import { setHealthData } from '../../../store/actions/health.actions'
 import { PullToRefreshWrapper } from '../../../components/PullToRefreshWrapper/PullToRefreshWrapper'
 
@@ -77,6 +78,9 @@ export function Dashboard() {
   )
   const flightsClimbed = useSelector(
     (state: RootState) => state.healthModule.flightsClimbed
+  )
+  const googleHealthConnected = useSelector(
+    (state: RootState) => state.healthModule.googleHealthConnected
   )
   const timer = useSelector((state: RootState) => state.workoutModule.timer)
 
@@ -376,14 +380,25 @@ export function Dashboard() {
             {statsCarouselItems.map((item) => item)}
           </div>
         )}
-        <NativeOnly>
+        {isNative ? (
+          <NativeOnly>
+            <HealthStats
+              steps={steps || 0}
+              burnedCalories={burnedCalories || 0}
+              distance={distance || 0}
+              flightsClimbed={flightsClimbed || 0}
+            />
+          </NativeOnly>
+        ) : googleHealthConnected ? (
           <HealthStats
             steps={steps || 0}
             burnedCalories={burnedCalories || 0}
             distance={distance || 0}
             flightsClimbed={flightsClimbed || 0}
           />
-        </NativeOnly>
+        ) : (
+          <HealthConnect />
+        )}
         {renderNoSession()}
         {/* <CustomAccordion title="Workout Session" cmp={renderSession()} /> */}
         {renderSession()}{' '}

@@ -21,6 +21,25 @@ export function startGoogleAuth(intent: GoogleAuthIntent = 'login') {
   )
 }
 
+export async function startGoogleHealthConnect({
+  userId,
+  returnTo = '/',
+}: {
+  userId: string
+  returnTo: string
+}) {
+  try {
+    const { url } = await httpService.post('auth/google/connect-url', {
+      userId,
+      returnTo,
+    })
+    console.log('url', url)
+    window.location.assign(url)
+  } catch (err) {
+    throw err
+  }
+}
+
 export async function completeGoogleAuth(code: string) {
   try {
     const response = await httpService.post('auth/google/complete', { code })

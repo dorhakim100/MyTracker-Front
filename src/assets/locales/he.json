@@ -34,7 +34,7 @@
     "noWorkoutToday": "עדיין לא נוסף אימון להיום",
     "chooseWorkout": "בחר אימון",
     "workoutSession": "אימון"
-    },
+  },
   "steps": {
     "stepsToday": "צעדים היום",
     "steps": "צעדים"
@@ -62,7 +62,8 @@
     "name": "שם",
     "previous": "הקודם",
     "next": "הבא",
-    "loading": "טוען"
+    "loading": "טוען",
+    "connect": "חיבור"
   },
   "auth": {
     "signIn": "כניסה",
@@ -93,6 +94,13 @@
     "signInWithGoogle": "התחברות עם Google",
     "googleSignInError": "ההתחברות עם Google נכשלה. נסה שוב.",
     "googleSignInLoading": "משלים התחברות עם Google..."
+  },
+  "health": {
+    "connectTitle": "חיבור Google Health",
+    "connectDescription": "חבר את חשבון Google Health שלך כדי לראות צעדים, קלוריות, מרחק וקומות מהיום בלוח הבקרה.",
+    "connectButton": "חבר Google Health",
+    "connectSuccess": "Google Health חובר בהצלחה.",
+    "connectError": "לא ניתן לחבר את Google Health. נסה שוב."
   },
   "meals": {
     "breakfast": "ארוחת בוקר",

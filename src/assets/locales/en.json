@@ -68,7 +68,8 @@
     "name": "Name",
     "previous": "Previous",
     "next": "Next",
-    "loading": "Loading"
+    "loading": "Loading",
+    "connect": "Connect"
   },
   "auth": {
     "signIn": "Sign in",
@@ -99,6 +100,13 @@
     "signInWithGoogle": "Sign in with Google",
     "googleSignInError": "Google sign-in failed. Please try again.",
     "googleSignInLoading": "Completing Google sign-in..."
+  },
+  "health": {
+    "connectTitle": "Connect Google Health",
+    "connectDescription": "Link your Google Health account to see today's steps, calories, distance, and floors on the dashboard.",
+    "connectButton": "Connect Google Health",
+    "connectSuccess": "Google Health connected successfully.",
+    "connectError": "Could not connect Google Health. Please try again."
   },
   "meals": {
     "breakfast": "Breakfast",
