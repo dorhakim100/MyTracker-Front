@@ -5,6 +5,12 @@ import DirectionsRunIcon from '@mui/icons-material/DirectionsRun'
 import { startGoogleHealthConnect } from '../../../services/auth/google-auth.service'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../store/store'
+import { showErrorMsg, showSuccessMsg } from '../../../services/event-bus.service'
+import {
+  loadGoogleHealthConnection,
+  setGoogleHealthConnected,
+  setHealthData,
+} from '../../../store/actions/health.actions'
 
 export function Prompt() {
   const { t } = useTranslation()
@@ -14,9 +20,20 @@ export function Prompt() {
       if (!user?._id) {
         return
       }
-      await startGoogleHealthConnect({ userId: user._id, returnTo: '/' })
+
+      const result = await startGoogleHealthConnect({
+        userId: user._id,
+        returnTo: '/',
+      })
+
+      if (result?.connected) {
+        await loadGoogleHealthConnection(user._id)
+        await setHealthData()
+        await setGoogleHealthConnected(true)
+        showSuccessMsg(t('health.connectSuccess'))
+      }
     } catch {
-      // httpService already surfaces auth errors via redirect/login flow
+      showErrorMsg(t('health.connectError'))
     }
   }
 

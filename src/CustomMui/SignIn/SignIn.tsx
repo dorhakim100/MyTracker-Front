@@ -25,8 +25,18 @@ import { RootState } from '../../store/store'
 //import logo from '../../../public/logo.png'
 //import logoDark from '../../../public/logo-dark.png'
 import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
-import { login, signup } from '../../store/actions/user.actions'
+import {
+  login,
+  loginWithGoogleNative,
+  signup,
+} from '../../store/actions/user.actions'
 import { startGoogleAuth } from '../../services/auth/google-auth.service'
+import {
+  loadGoogleHealthConnection,
+  setGoogleHealthConnected,
+  setHealthData,
+} from '../../store/actions/health.actions'
+import { setActiveRoute } from '../../store/actions/system.actions'
 import { GoogleIcon } from './components/CustomIcons'
 
 import { usePwaDetect } from '../../hooks/usePwaDetect'
@@ -98,6 +108,7 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
   const credientials: any = {}
 
   const [isRemember, setIsRemember] = React.useState(false)
+  const [isGoogleLoading, setIsGoogleLoading] = React.useState(false)
 
   const isLoading = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.isLoading
@@ -229,8 +240,41 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
     }
   }, [prefs.isDarkMode])
 
-  const onGoogleSignIn = () => {
-    startGoogleAuth('login')
+  const onGoogleSignIn = async () => {
+    try {
+      setIsGoogleLoading(true)
+      const result = await startGoogleAuth('login')
+
+      if (!result) {
+        return
+      }
+
+      const user = await loginWithGoogleNative(
+        result.user,
+        result.loginToken,
+        isRemember
+      )
+
+      if (!user) {
+        showErrorMsg(t('auth.googleSignInError'))
+        return
+      }
+
+      if (user._id) {
+        await loadGoogleHealthConnection(user._id)
+        await setHealthData()
+        await setGoogleHealthConnected(true)
+      }
+
+      showSuccessMsg(t('auth.loginSuccess'))
+      const route = user.isTrainer && platform === 'desktop' ? '/trainer' : '/'
+      setActiveRoute(route)
+      navigate(route)
+    } catch {
+      showErrorMsg(t('auth.googleSignInError'))
+    } finally {
+      setIsGoogleLoading(false)
+    }
   }
 
   const toggleRememberMe = () => {
@@ -404,7 +448,14 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
                 fullWidth
                 variant='outlined'
                 onClick={onGoogleSignIn}
-                startIcon={<GoogleIcon />}
+                disabled={isGoogleLoading}
+                startIcon={
+                  isGoogleLoading ? (
+                    <CircularProgress size={18} />
+                  ) : (
+                    <GoogleIcon />
+                  )
+                }
                 className='google-sign-in-button'
               >
                 {t('auth.signInWithGoogle')}

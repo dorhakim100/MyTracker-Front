@@ -6,7 +6,12 @@ import GoogleIcon from '@mui/icons-material/Google'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import Typography from '@mui/material/Typography'
-import { showErrorMsg } from '../../services/event-bus.service'
+import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
+import {
+  loadGoogleHealthConnection,
+  setGoogleHealthConnected,
+  setHealthData,
+} from '../../store/actions/health.actions'
 
 export function HealthConnect() {
   const { t } = useTranslation()
@@ -19,11 +24,16 @@ export function HealthConnect() {
       return
     }
     try {
-      await startGoogleHealthConnect({ userId, returnTo: '/' })
+      const result = await startGoogleHealthConnect({ userId, returnTo: '/' })
+
+      if (result?.connected) {
+        await loadGoogleHealthConnection(userId)
+        await setHealthData()
+        await setGoogleHealthConnected(true)
+        showSuccessMsg(t('health.connectSuccess'))
+      }
     } catch {
       showErrorMsg(t('health.connectError'))
-
-      // httpService already surfaces auth errors via redirect/login flow
     }
   }
 

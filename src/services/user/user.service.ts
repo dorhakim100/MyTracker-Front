@@ -28,6 +28,7 @@ export const userService = {
   logout,
   signup,
   loginWithGoogle,
+  loginWithGoogleNative,
   getUsers,
   getById,
   remove,
@@ -162,6 +163,23 @@ async function loginWithGoogle(code: string, isRemember = false) {
   try {
     const { user, loginToken } = await completeGoogleAuth(code)
 
+    if (!user) {
+      return null
+    }
+
+    await persistLoginSession(user, loginToken, isRemember)
+    return saveLoggedinUser(user)
+  } catch (err) {
+    throw err
+  }
+}
+
+async function loginWithGoogleNative(
+  user: User,
+  loginToken: string,
+  isRemember = false
+) {
+  try {
     if (!user) {
       return null
     }

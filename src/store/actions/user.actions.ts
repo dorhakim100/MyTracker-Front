@@ -90,6 +90,30 @@ export async function loginWithGoogle(code: string, isRemember = false) {
   }
 }
 
+export async function loginWithGoogleNative(
+  user: User,
+  loginToken: string,
+  isRemember = false
+) {
+  try {
+    await logout()
+
+    const retrived = await userService.loginWithGoogleNative(
+      user,
+      loginToken,
+      isRemember
+    )
+
+    if (!retrived) {
+      return null
+    }
+
+    return hydrateLoggedInUser(retrived)
+  } catch (err) {
+    throw err
+  }
+}
+
 function hydrateLoggedInUser(retrived: User) {
   const user = {
     ...retrived,
