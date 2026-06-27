@@ -30,6 +30,16 @@
 				<string>com.googleusercontent.apps.673990139603-deord58vknevsn3bqhcj9m3l132i5hru</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>MyTrackerDeepLink</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>mytracker</string>
+			</array>
+		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>

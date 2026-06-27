@@ -1,88 +1,37 @@
-//
-//  StepsWidget.swift
-//  StepsWidget
-//
-//  Created by Dor Hakim on 27/06/2026.
-//
-
-import WidgetKit
 import SwiftUI
+import WidgetKit
 
-struct Provider: AppIntentTimelineProvider {
-    func placeholder(in context: Context) -> SimpleEntry {
-        SimpleEntry(date: Date(), configuration: ConfigurationAppIntent())
-    }
-
-    func snapshot(for configuration: ConfigurationAppIntent, in context: Context) async -> SimpleEntry {
-        SimpleEntry(date: Date(), configuration: configuration)
-    }
-    
-    func timeline(for configuration: ConfigurationAppIntent, in context: Context) async -> Timeline<SimpleEntry> {
-        var entries: [SimpleEntry] = []
-
-        // Generate a timeline consisting of five entries an hour apart, starting from the current date.
-        let currentDate = Date()
-        for hourOffset in 0 ..< 5 {
-            let entryDate = Calendar.current.date(byAdding: .hour, value: hourOffset, to: currentDate)!
-            let entry = SimpleEntry(date: entryDate, configuration: configuration)
-            entries.append(entry)
-        }
-
-        return Timeline(entries: entries, policy: .atEnd)
-    }
-
-//    func relevances() async -> WidgetRelevances<ConfigurationAppIntent> {
-//        // Generate a list containing the contexts this widget is relevant in.
-//    }
-}
-
-struct SimpleEntry: TimelineEntry {
+struct StepsWidgetEntry: TimelineEntry {
     let date: Date
-    let configuration: ConfigurationAppIntent
+    let data: StepsWidgetData
 }
 
-struct StepsWidgetEntryView : View {
-    var entry: Provider.Entry
+struct StepsTimelineProvider: TimelineProvider {
+    func placeholder(in context: Context) -> StepsWidgetEntry {
+        StepsWidgetEntry(date: Date(), data: .placeholder)
+    }
 
-    var body: some View {
-        VStack {
-            Text("Time:")
-            Text(entry.date, style: .time)
+    func getSnapshot(in context: Context, completion: @escaping (StepsWidgetEntry) -> Void) {
+        completion(StepsWidgetEntry(date: Date(), data: StepsWidgetStore.load()))
+    }
 
-            Text("Favorite Emoji:")
-            Text(entry.configuration.favoriteEmoji)
-        }
+    func getTimeline(in context: Context, completion: @escaping (Timeline<StepsWidgetEntry>) -> Void) {
+        let entry = StepsWidgetEntry(date: Date(), data: StepsWidgetStore.load())
+        let nextUpdate = Calendar.current.date(byAdding: .minute, value: 15, to: Date()) ?? Date().addingTimeInterval(900)
+        completion(Timeline(entries: [entry], policy: .after(nextUpdate)))
     }
 }
 
 struct StepsWidget: Widget {
-    let kind: String = "StepsWidget"
+    let kind: String = StepsWidgetConstants.widgetKind
 
     var body: some WidgetConfiguration {
-        AppIntentConfiguration(kind: kind, intent: ConfigurationAppIntent.self, provider: Provider()) { entry in
+        StaticConfiguration(kind: kind, provider: StepsTimelineProvider()) { entry in
             StepsWidgetEntryView(entry: entry)
-                .containerBackground(.fill.tertiary, for: .widget)
+                .widgetURL(URL(string: StepsWidgetConstants.deepLink)!)
         }
+        .configurationDisplayName("Steps")
+        .description("Today's step progress")
+        .supportedFamilies([.systemSmall, .systemMedium])
     }
-}
-
-extension ConfigurationAppIntent {
-    fileprivate static var smiley: ConfigurationAppIntent {
-        let intent = ConfigurationAppIntent()
-        intent.favoriteEmoji = "😀"
-        return intent
-    }
-    
-    fileprivate static var starEyes: ConfigurationAppIntent {
-        let intent = ConfigurationAppIntent()
-        intent.favoriteEmoji = "🤩"
-        return intent
-    }
-}
-
-#Preview(as: .systemSmall) {
-    StepsWidget()
-} timeline: {
-    SimpleEntry(date: .now, configuration: .smiley)
-    SimpleEntry(date: .now, configuration: .starEyes)
 }

@@ -43,8 +43,9 @@ export async function syncStepsWidget() {
   }
 
   try {
-    await StepsWidget.update(buildPayload())
-  } catch {
-    // Native plugin is wired in a later phase; ignore until StepsWidget exists.
+    const payload = buildPayload()
+    await StepsWidget.update(payload)
+  } catch (err) {
+    console.warn('[StepsWidget] sync failed', err)
   }
 }

@@ -23,6 +23,7 @@ import {
   setIsNative,
   setIsDashboard,
   setIsLocalNotificationsPermitted,
+  setActiveRoute,
 } from './store/actions/system.actions.ts'
 import { SignIn } from './CustomMui/SignIn/SignIn.tsx'
 import { searchService } from './services/search/search-service.ts'
@@ -34,6 +35,7 @@ import { TraineeUserCard } from './components/TraineeUserCard/TraineeUserCard.ts
 // import { AppHeader } from './components/AppHeader/AppHeader.tsx'
 import { Timer } from './components/Timer/Timer.tsx'
 import { Capacitor } from '@capacitor/core'
+import { App as CapApp } from '@capacitor/app'
 import { TrainerDashboard } from './pages/TrainerDashboard/TrainerDashboard.tsx'
 import { StatusBar, Style } from '@capacitor/status-bar'
 
@@ -114,6 +116,10 @@ function App() {
   )
 
   const healthProvider = prefs.healthProvider
+
+  const steps = useSelector(
+    (stateSelector: RootState) => stateSelector.healthModule.steps
+  )
 
   const filteredRoutes = useMemo(() => {
     if (user) {
@@ -321,8 +327,45 @@ function App() {
   }, [isNative, user?._id, googleHealthConnected, healthProvider])
 
   useEffect(() => {
+    if (!isNative || Capacitor.getPlatform() !== 'ios') {
+      return
+    }
+
+    const listener = CapApp.addListener('appUrlOpen', ({ url }) => {
+      try {
+        const parsed = new URL(url)
+        if (parsed.hostname === 'dashboard' || parsed.pathname === '/dashboard') {
+          setActiveRoute('/')
+        }
+      } catch {
+        // Ignore malformed widget deep links.
+      }
+    })
+
+    return () => {
+      listener.then((handle) => handle.remove())
+    }
+  }, [isNative])
+
+  useEffect(() => {
     handleHealthData()
   }, [healthPermited, activeRoute, healthProvider])
+
+  useEffect(() => {
+    if (!isNative || Capacitor.getPlatform() !== 'ios' || !user?._id) {
+      return
+    }
+
+    syncStepsWidget()
+  }, [
+    isNative,
+    user?._id,
+    steps,
+    prefs.favoriteColor,
+    prefs.isDarkMode,
+    prefs.lang,
+    user?.details?.dailyStepsGoal,
+  ])
 
   useEffect(() => {
     if (!isNative || Capacitor.getPlatform() !== 'ios' || !user?._id) {

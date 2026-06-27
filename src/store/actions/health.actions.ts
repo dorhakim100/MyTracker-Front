@@ -55,10 +55,10 @@ export async function setHealthData() {
   const userId = store.getState().userModule.user?._id
   const data = await healthService.getTodayActivitySummary(userId)
   if (data.status === 'ok') {
-    setSteps(data.steps)
-    setBurnedCalories(data.activeCaloriesKcal)
-    setDistance(data.distance)
-    setFlightsClimbed(data.flightsClimbed)
+    await setSteps(data.steps)
+    await setBurnedCalories(data.activeCaloriesKcal)
+    await setDistance(data.distance)
+    await setFlightsClimbed(data.flightsClimbed)
     await syncStepsWidget()
   }
   if (data.status === 'not_connected') {
