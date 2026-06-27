@@ -18,8 +18,10 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
 import CalculateIcon from '@mui/icons-material/Calculate'
 import SettingsIcon from '@mui/icons-material/Settings'
 import ModeStandbyIcon from '@mui/icons-material/ModeStandby'
+import DirectionsRunIcon from '@mui/icons-material/DirectionsRun'
 import { WeightChart } from '../../components/WeightChart/WeightChart'
 import { StatsCarousel } from '../../components/StatsCarousel/StatsCarousel'
+import { HealthProviderCard } from '../../components/HealthProviderCard/HealthProviderCard'
 
 export function UserDetails() {
   const { t } = useTranslation()
@@ -65,6 +67,12 @@ export function UserDetails() {
       cmp: <BmrCard sentUser={traineeUser || user || undefined} />,
       icon: <CalculateIcon />,
       key: 'bmr-calculator',
+    },
+    {
+      title: t('user.accordionHealth'),
+      cmp: <HealthProviderCard />,
+      icon: <DirectionsRunIcon />,
+      key: 'health',
     },
     {
       title: t('user.accordionPreferences'),

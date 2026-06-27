@@ -100,7 +100,12 @@
     "connectDescription": "חבר את חשבון Google Health שלך כדי לראות צעדים, קלוריות, מרחק וקומות מהיום בלוח הבקרה.",
     "connectButton": "חבר Google Health",
     "connectSuccess": "Google Health חובר בהצלחה.",
-    "connectError": "לא ניתן לחבר את Google Health. נסה שוב."
+    "connectError": "לא ניתן לחבר את Google Health. נסה שוב.",
+    "providerLabel": "Google Health",
+    "providerNativeHint": "שימוש בנתוני בריאות של המכשיר (HealthKit / Health Connect)",
+    "providerGoogleHint": "שימוש בנתוני Google Health בענן",
+    "providerCaption": "ייתכנו הבדלים קלים בין נתוני המכשיר ל-Google Health.",
+    "providerSwitchError": "לא ניתן להחליף מקור נתוני בריאות."
   },
   "meals": {
     "breakfast": "ארוחת בוקר",
@@ -354,6 +359,7 @@
     "accordionGoals": "יעדים",
     "accordionFavoriteItems": "פריטים מועדפים",
     "accordionBmrCalculator": "מחשבון BMR",
+    "accordionHealth": "בריאות",
     "accordionPreferences": "העדפות",
     "cm": "סנטימטר",
     "kg": "קילו"

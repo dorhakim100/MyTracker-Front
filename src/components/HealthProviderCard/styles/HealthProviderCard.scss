@@ -1,0 +1,28 @@
+.health-provider-card-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  .health-provider-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .health-provider-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+  }
+
+  .health-provider-hint {
+    opacity: 0.75;
+  }
+
+  .health-provider-caption {
+    opacity: 0.65;
+    line-height: 1.4;
+  }
+}

@@ -24,6 +24,7 @@ type StoredPrefs = {
   isEnglish?: boolean
   favoriteColor?: string
   weightChartSettings?: Prefs['weightChartSettings']
+  healthProvider?: Prefs['healthProvider']
 }
 
 export async function getPrefs(): Promise<Prefs> {
@@ -51,6 +52,7 @@ export async function getPrefs(): Promise<Prefs> {
         favoriteColor: entity.favoriteColor ?? defaults.favoriteColor,
         weightChartSettings:
           entity.weightChartSettings ?? defaults.weightChartSettings,
+        healthProvider: entity.healthProvider ?? defaults.healthProvider,
       }
     }
   } catch {
@@ -73,6 +75,7 @@ export async function getPrefs(): Promise<Prefs> {
         favoriteColor: parsed.favoriteColor ?? defaults.favoriteColor,
         weightChartSettings:
           parsed.weightChartSettings ?? defaults.weightChartSettings,
+        healthProvider: parsed.healthProvider ?? defaults.healthProvider,
       }
       await indexedDbService.put(STORE_NAME, { _id: RECORD_ID, ...migrated })
       localStorage.removeItem(LS_KEY)
@@ -101,6 +104,7 @@ export async function setPrefs(prefs: Prefs): Promise<void> {
     isDarkMode: !!prefs.isDarkMode,
     favoriteColor: prefs.favoriteColor,
     weightChartSettings: prefs.weightChartSettings,
+    healthProvider: prefs.healthProvider,
   }
   await indexedDbService.put(STORE_NAME, toSave)
 }
@@ -116,5 +120,6 @@ export function getDefaultsPrefs(): Prefs {
       isMovingAverage: true,
       isDisplayWeeklyChange: true,
     },
+    healthProvider: 'native',
   }
 }

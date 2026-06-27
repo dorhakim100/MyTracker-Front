@@ -30,6 +30,26 @@ export async function loadGoogleHealthConnection(userId: string) {
   return status.connected
 }
 
+export async function reloadHealthForCurrentProvider(userId?: string) {
+  if (!userId) return
+
+  if (healthService.isGoogleHealthPlatform()) {
+    const connected = await loadGoogleHealthConnection(userId)
+    if (connected) {
+      await setHealthData()
+    } else {
+      await setGoogleHealthConnected(false)
+    }
+    return
+  }
+
+  const permissions = await healthService.requestReadAuthorization(userId)
+  await setPermitted(permissions.status === 'ok')
+  if (permissions.status === 'ok') {
+    await setHealthData()
+  }
+}
+
 export async function setHealthData() {
   const userId = store.getState().userModule.user?._id
   const data = await healthService.getTodayActivitySummary(userId)

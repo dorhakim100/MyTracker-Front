@@ -112,6 +112,8 @@ function App() {
       stateSelector.healthModule.googleHealthConnected
   )
 
+  const healthProvider = prefs.healthProvider
+
   const filteredRoutes = useMemo(() => {
     if (user) {
       return routes.filter((route) => route.path !== '/signin')
@@ -291,10 +293,17 @@ function App() {
       await handleLocalNotificationsPermissions()
     }
     handlePermissions()
-  }, [isNative, user?._id])
+  }, [isNative, user?._id, healthProvider])
 
   useEffect(() => {
-    if (isNative || !user || !user?._id || googleHealthConnected) return
+    if (
+      !healthService.isGoogleHealthPlatform() ||
+      !user ||
+      !user?._id ||
+      googleHealthConnected
+    ) {
+      return
+    }
     const userId = user?._id
     const loadWebHealth = async () => {
       try {
@@ -308,11 +317,11 @@ function App() {
     }
 
     loadWebHealth()
-  }, [isNative, user?._id, googleHealthConnected])
+  }, [isNative, user?._id, googleHealthConnected, healthProvider])
 
   useEffect(() => {
     handleHealthData()
-  }, [healthPermited, activeRoute])
+  }, [healthPermited, activeRoute, healthProvider])
 
   async function handleHealthData() {
     try {

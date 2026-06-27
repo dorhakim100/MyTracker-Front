@@ -106,7 +106,12 @@
     "connectDescription": "Link your Google Health account to see today's steps, calories, distance, and floors on the dashboard.",
     "connectButton": "Connect Google Health",
     "connectSuccess": "Google Health connected successfully.",
-    "connectError": "Could not connect Google Health. Please try again."
+    "connectError": "Could not connect Google Health. Please try again.",
+    "providerLabel": "Google Health",
+    "providerNativeHint": "Using device health (HealthKit / Health Connect)",
+    "providerGoogleHint": "Using Google Health cloud data",
+    "providerCaption": "Numbers may differ slightly between device health and Google Health.",
+    "providerSwitchError": "Could not switch health data source."
   },
   "meals": {
     "breakfast": "Breakfast",
@@ -361,6 +366,7 @@
     "accordionGoals": "Goals",
     "accordionFavoriteItems": "Favorite Items",
     "accordionBmrCalculator": "BMR Calculator",
+    "accordionHealth": "Health",
     "accordionPreferences": "Preferences",
     "cm": "cm",
     "kg": "kg"

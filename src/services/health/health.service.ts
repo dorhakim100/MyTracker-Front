@@ -14,6 +14,7 @@ import {
 } from './health.types'
 import { googleHealthService } from './google-health.service'
 import { getFixedNumber, metersToKilometers } from '../util.service'
+import { store } from '../../store/store'
 
 const READ_OPTIONS: { read: HealthDataType[] } = {
   read: [...HEALTH_READ_DATA_TYPES],
@@ -32,7 +33,13 @@ export const healthService = {
 }
 
 function isGoogleHealthPlatform() {
-  return !Capacitor.isNativePlatform()
+  if (!Capacitor.isNativePlatform()) {
+    return true
+  }
+
+  const healthProvider =
+    store.getState().systemModule.prefs.healthProvider ?? 'native'
+  return healthProvider === 'google'
 }
 
 async function getAvailability(
