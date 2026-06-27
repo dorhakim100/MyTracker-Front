@@ -334,7 +334,10 @@ function App() {
     const listener = CapApp.addListener('appUrlOpen', ({ url }) => {
       try {
         const parsed = new URL(url)
-        if (parsed.hostname === 'dashboard' || parsed.pathname === '/dashboard') {
+        if (
+          parsed.hostname === 'dashboard' ||
+          parsed.pathname === '/dashboard'
+        ) {
           setActiveRoute('/')
         }
       } catch {
