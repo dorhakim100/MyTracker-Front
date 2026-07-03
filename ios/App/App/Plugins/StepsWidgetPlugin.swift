@@ -1,6 +1,5 @@
 import Foundation
 import Capacitor
-import WidgetKit
 
 @objc(StepsWidgetPlugin)
 public class StepsWidgetPlugin: CAPPlugin, CAPBridgedPlugin {
@@ -64,11 +63,7 @@ public class StepsWidgetPlugin: CAPPlugin, CAPBridgedPlugin {
             return
         }
 
-        if #available(iOS 14.0, *) {
-            for kind in StepsWidgetConstants.widgetKinds {
-                WidgetCenter.shared.reloadTimelines(ofKind: kind)
-            }
-        }
+        StepsWidgetRefresh.reloadTimelinesIfAvailable()
 
         call.resolve([
             "steps": steps,

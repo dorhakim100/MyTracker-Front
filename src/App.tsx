@@ -405,6 +405,24 @@ function App() {
       return
     }
 
+    const listener = CapApp.addListener('appStateChange', ({ isActive }) => {
+      if (isActive) {
+        setHealthData().catch((err) => {
+          showErrorMsg(err instanceof Error ? err.message : String(err))
+        })
+      }
+    })
+
+    return () => {
+      listener.then((handle) => handle.remove())
+    }
+  }, [isNative, user?._id, healthProvider])
+
+  useEffect(() => {
+    if (!isNative || Capacitor.getPlatform() !== 'ios' || !user?._id) {
+      return
+    }
+
     const onResume = () => {
       if (document.visibilityState === 'visible') {
         syncStepsWidget()

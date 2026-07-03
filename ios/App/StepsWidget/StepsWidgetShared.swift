@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+import WidgetKit
 
 enum StepsWidgetConstants {
     static let appGroupId = "group.com.dorhakim.mytracker"
@@ -183,6 +184,52 @@ enum StepsWidgetStore {
         _ = save(decoded)
         defaults.removeObject(forKey: "stepsWidgetData")
         return decoded
+    }
+
+    @discardableResult
+    static func updateHealthMetrics(
+        steps: Int,
+        burnedCalories: Int,
+        distance: Double,
+        flightsClimbed: Int
+    ) -> Bool {
+        let existing = load()
+        let updated = StepsWidgetData(
+            steps: steps,
+            goal: existing.goal,
+            calories: existing.calories,
+            caloriesGoal: existing.caloriesGoal,
+            distance: distance,
+            burnedCalories: burnedCalories,
+            flightsClimbed: flightsClimbed,
+            proteinCurrent: existing.proteinCurrent,
+            proteinGoal: existing.proteinGoal,
+            carbsCurrent: existing.carbsCurrent,
+            carbsGoal: existing.carbsGoal,
+            fatsCurrent: existing.fatsCurrent,
+            fatsGoal: existing.fatsGoal,
+            favoriteColor: existing.favoriteColor,
+            accentHex: existing.accentHex,
+            isDarkMode: existing.isDarkMode,
+            lang: existing.lang,
+            updatedAt: Date().timeIntervalSince1970 * 1000
+        )
+
+        let saved = save(updated)
+        if saved {
+            StepsWidgetRefresh.reloadTimelinesIfAvailable()
+        }
+        return saved
+    }
+}
+
+enum StepsWidgetRefresh {
+    static func reloadTimelinesIfAvailable() {
+        if #available(iOS 14.0, *) {
+            for kind in StepsWidgetConstants.widgetKinds {
+                WidgetCenter.shared.reloadTimelines(ofKind: kind)
+            }
+        }
     }
 }
 

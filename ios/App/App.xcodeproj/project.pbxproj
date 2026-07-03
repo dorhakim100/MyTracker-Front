@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 70;
+	objectVersion = 77;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -22,6 +22,7 @@
 		A1B2C3D51FED796500168521 /* StepsWidgetShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D41FED796500168521 /* StepsWidgetShared.swift */; };
 		A1B2C3D71FED796500168521 /* StepsWidgetPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D61FED796500168521 /* StepsWidgetPlugin.swift */; };
 		B2C3D4E51FED796500168521 /* MyBridgeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D4E41FED796500168521 /* MyBridgeViewController.swift */; };
+		C3D4E5F61FED796500168521 /* StepsWidgetHealthBackgroundSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D4E5F51FED796500168521 /* StepsWidgetHealthBackgroundSync.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -68,6 +69,7 @@
 		AF277DCFFFF123FFC6DF26C7 /* Pods_App.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_App.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AF51FD2D460BCFE21FA515B2 /* Pods-App.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App.release.xcconfig"; path = "Pods/Target Support Files/Pods-App/Pods-App.release.xcconfig"; sourceTree = "<group>"; };
 		B2C3D4E41FED796500168521 /* MyBridgeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyBridgeViewController.swift; sourceTree = "<group>"; };
+		C3D4E5F51FED796500168521 /* StepsWidgetHealthBackgroundSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepsWidgetHealthBackgroundSync.swift; sourceTree = "<group>"; };
 		FC68EB0AF532CFC21C3344DD /* Pods-App.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App.debug.xcconfig"; path = "Pods/Target Support Files/Pods-App/Pods-App.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -145,6 +147,7 @@
 				50379B222058CBB4000EE86E /* capacitor.config.json */,
 				504EC3071FED79650016851F /* AppDelegate.swift */,
 				B2C3D4E41FED796500168521 /* MyBridgeViewController.swift */,
+				C3D4E5F51FED796500168521 /* StepsWidgetHealthBackgroundSync.swift */,
 				A1B2C3E81FED796500168521 /* Plugins */,
 				504EC30B1FED79650016851F /* Main.storyboard */,
 				504EC30E1FED79650016851F /* Assets.xcassets */,
@@ -334,6 +337,7 @@
 			files = (
 				504EC3081FED79650016851F /* AppDelegate.swift in Sources */,
 				B2C3D4E51FED796500168521 /* MyBridgeViewController.swift in Sources */,
+				C3D4E5F61FED796500168521 /* StepsWidgetHealthBackgroundSync.swift in Sources */,
 				A1B2C3D51FED796500168521 /* StepsWidgetShared.swift in Sources */,
 				A1B2C3D71FED796500168521 /* StepsWidgetPlugin.swift in Sources */,
 			);
