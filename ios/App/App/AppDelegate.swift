@@ -22,7 +22,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
-        StepsWidgetHealthBackgroundSync.shared.syncTodayActivityToWidget()
+        // Widget refresh while active is handled by JS (syncStepsWidget).
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {

@@ -1,5 +1,6 @@
 import Foundation
 import HealthKit
+import UIKit
 
 /// Keeps the steps widget fresh while the app is backgrounded by listening for
 /// HealthKit updates and writing today's activity into the App Group store.
@@ -10,6 +11,7 @@ final class StepsWidgetHealthBackgroundSync {
     private var observerQueries: [HKObserverQuery] = []
     private var isStarted = false
     private var syncInProgress = false
+    private var syncPending = false
 
     private let observedTypes: [(HKQuantityType, HKUnit)] = [
         (HKQuantityType(.stepCount), .count()),
@@ -39,12 +41,22 @@ final class StepsWidgetHealthBackgroundSync {
                 }
             }
         }
-
-        syncTodayActivityToWidget()
     }
 
     func syncTodayActivityToWidget() {
-        guard HKHealthStore.isHealthDataAvailable(), !syncInProgress else { return }
+        guard HKHealthStore.isHealthDataAvailable() else { return }
+
+        // While the app is active, JS owns widget updates via syncStepsWidget().
+        // Native sync only runs in background to avoid clobbering fresher JS data
+        // with a stale HealthKit snapshot (often missing Apple Watch samples).
+        let appState = UIApplication.shared.applicationState
+        guard appState == .background else { return }
+
+        guard !syncInProgress else {
+            syncPending = true
+            return
+        }
+
         syncInProgress = true
 
         let group = DispatchGroup()
@@ -73,6 +85,8 @@ final class StepsWidgetHealthBackgroundSync {
         }
 
         group.notify(queue: .main) { [weak self] in
+            guard let self else { return }
+
             let distanceKm = (distanceMeters / 1000 * 100).rounded() / 100
             _ = StepsWidgetStore.updateHealthMetrics(
                 steps: steps,
@@ -80,7 +94,12 @@ final class StepsWidgetHealthBackgroundSync {
                 distance: distanceKm,
                 flightsClimbed: flightsClimbed
             )
-            self?.syncInProgress = false
+
+            self.syncInProgress = false
+            if self.syncPending {
+                self.syncPending = false
+                self.syncTodayActivityToWidget()
+            }
         }
     }
 

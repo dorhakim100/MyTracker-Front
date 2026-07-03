@@ -405,11 +405,16 @@ function App() {
       return
     }
 
-    const listener = CapApp.addListener('appStateChange', ({ isActive }) => {
-      if (isActive) {
-        setHealthData().catch((err) => {
-          showErrorMsg(err instanceof Error ? err.message : String(err))
-        })
+    const listener = CapApp.addListener('appStateChange', async ({ isActive }) => {
+      if (!isActive) {
+        return
+      }
+
+      try {
+        await setHealthData()
+        await syncStepsWidget()
+      } catch (err) {
+        showErrorMsg(err instanceof Error ? err.message : String(err))
       }
     })
 

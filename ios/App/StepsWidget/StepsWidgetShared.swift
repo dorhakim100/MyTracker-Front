@@ -194,14 +194,34 @@ enum StepsWidgetStore {
         flightsClimbed: Int
     ) -> Bool {
         let existing = load()
+        let sameDay = Calendar.current.isDate(
+            Date(timeIntervalSince1970: existing.updatedAt / 1000),
+            inSameDayAs: Date()
+        )
+
+        // Never regress today's totals; background HealthKit reads can lag behind
+        // the full multi-source count that JS reads while the app is active.
+        let resolvedSteps = sameDay ? max(steps, existing.steps) : steps
+        let resolvedBurnedCalories = sameDay ? max(burnedCalories, existing.burnedCalories) : burnedCalories
+        let resolvedDistance = sameDay ? max(distance, existing.distance) : distance
+        let resolvedFlightsClimbed = sameDay ? max(flightsClimbed, existing.flightsClimbed) : flightsClimbed
+
+        if sameDay,
+           resolvedSteps == existing.steps,
+           resolvedBurnedCalories == existing.burnedCalories,
+           resolvedDistance == existing.distance,
+           resolvedFlightsClimbed == existing.flightsClimbed {
+            return true
+        }
+
         let updated = StepsWidgetData(
-            steps: steps,
+            steps: resolvedSteps,
             goal: existing.goal,
             calories: existing.calories,
             caloriesGoal: existing.caloriesGoal,
-            distance: distance,
-            burnedCalories: burnedCalories,
-            flightsClimbed: flightsClimbed,
+            distance: resolvedDistance,
+            burnedCalories: resolvedBurnedCalories,
+            flightsClimbed: resolvedFlightsClimbed,
             proteinCurrent: existing.proteinCurrent,
             proteinGoal: existing.proteinGoal,
             carbsCurrent: existing.carbsCurrent,
