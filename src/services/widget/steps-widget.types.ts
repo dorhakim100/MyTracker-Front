@@ -1,5 +1,12 @@
 import type { Lang } from '../../types/system/Prefs'
 
+export type StepsWidgetHealthOverrides = {
+  steps: number
+  burnedCalories: number
+  distance: number
+  flightsClimbed: number
+}
+
 export type StepsWidgetPayload = {
   steps: number
   goal: number

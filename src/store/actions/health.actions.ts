@@ -1,6 +1,10 @@
 import { healthService } from '../../services/health/health.service'
 import { googleHealthService } from '../../services/health/google-health.service'
-import { syncStepsWidget } from '../../services/widget/steps-widget.service'
+import {
+  syncStepsWidget,
+  toStepsWidgetHealthOverrides,
+} from '../../services/widget/steps-widget.service'
+import type { HealthSocketPayload } from '../../services/socket/health-socket.types'
 import { store } from '../store'
 import {
   SET_STEPS,
@@ -55,11 +59,7 @@ export async function setHealthData() {
   const userId = store.getState().userModule.user?._id
   const data = await healthService.getTodayActivitySummary(userId)
   if (data.status === 'ok') {
-    await setSteps(data.steps)
-    await setBurnedCalories(data.activeCaloriesKcal)
-    await setDistance(data.distance)
-    await setFlightsClimbed(data.flightsClimbed)
-    await syncStepsWidget()
+    await applyHealthSnapshot(data)
   }
   if (data.status === 'not_connected') {
     // await setGoogleHealthConnected(false)
@@ -67,6 +67,14 @@ export async function setHealthData() {
   if (data.status === 'error') {
     // throw new Error(data.message)
   }
+}
+
+export async function applyHealthSnapshot(payload: HealthSocketPayload) {
+  await setSteps(payload.steps)
+  await setBurnedCalories(payload.activeCaloriesKcal)
+  await setDistance(payload.distance)
+  await setFlightsClimbed(payload.flightsClimbed)
+  await syncStepsWidget(toStepsWidgetHealthOverrides(payload))
 }
 
 export async function setSteps(steps: number) {

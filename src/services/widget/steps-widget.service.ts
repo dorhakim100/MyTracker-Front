@@ -4,7 +4,11 @@ import { roundToNearest50 } from '../macros/macros.service'
 import { getFixedNumber } from '../util.service'
 import { store } from '../../store/store'
 import { getAccentHex } from './steps-widget.colors'
-import type { StepsWidgetPayload, StepsWidgetPlugin } from './steps-widget.types'
+import type {
+  StepsWidgetHealthOverrides,
+  StepsWidgetPayload,
+  StepsWidgetPlugin,
+} from './steps-widget.types'
 
 const StepsWidget = registerPlugin<StepsWidgetPlugin>('StepsWidget', {
   web: () => ({
@@ -26,7 +30,9 @@ function sumLoggedMacro(
   )
 }
 
-function buildPayload(): StepsWidgetPayload {
+function buildPayload(
+  healthOverrides?: StepsWidgetHealthOverrides
+): StepsWidgetPayload {
   const state = store.getState()
   const { steps, burnedCalories, distance, flightsClimbed } = state.healthModule
   const { prefs } = state.systemModule
@@ -36,13 +42,17 @@ function buildPayload(): StepsWidgetPayload {
   const logs = user?.loggedToday?.logs ?? []
 
   return {
-    steps: steps ?? 0,
+    steps: healthOverrides?.steps ?? steps ?? 0,
     goal: user?.details?.dailyStepsGoal ?? DEFAULT_DAILY_STEPS_GOAL,
     calories: Math.round(user?.loggedToday?.calories ?? 0),
     caloriesGoal: roundToNearest50(caloriesGoal),
-    distance: getFixedNumber(distance ?? 0, 2),
-    burnedCalories: getFixedNumber(burnedCalories ?? 0),
-    flightsClimbed: getFixedNumber(flightsClimbed ?? 0),
+    distance: getFixedNumber(healthOverrides?.distance ?? distance ?? 0, 2),
+    burnedCalories: getFixedNumber(
+      healthOverrides?.burnedCalories ?? burnedCalories ?? 0
+    ),
+    flightsClimbed: getFixedNumber(
+      healthOverrides?.flightsClimbed ?? flightsClimbed ?? 0
+    ),
     proteinCurrent: sumLoggedMacro(logs, 'protein'),
     proteinGoal: Math.round(user?.currGoal?.macros.protein ?? 0),
     carbsCurrent: sumLoggedMacro(logs, 'carbs'),
@@ -57,7 +67,9 @@ function buildPayload(): StepsWidgetPayload {
   }
 }
 
-export async function syncStepsWidget() {
+export async function syncStepsWidget(
+  healthOverrides?: StepsWidgetHealthOverrides
+) {
   if (!Capacitor.isNativePlatform() || Capacitor.getPlatform() !== 'ios') {
     return
   }
@@ -67,9 +79,23 @@ export async function syncStepsWidget() {
   }
 
   try {
-    const payload = buildPayload()
+    const payload = buildPayload(healthOverrides)
     await StepsWidget.update(payload)
   } catch (err) {
     console.warn('[StepsWidget] sync failed', err)
+  }
+}
+
+export function toStepsWidgetHealthOverrides(payload: {
+  steps: number
+  activeCaloriesKcal: number
+  distance: number
+  flightsClimbed: number
+}): StepsWidgetHealthOverrides {
+  return {
+    steps: payload.steps,
+    burnedCalories: payload.activeCaloriesKcal,
+    distance: payload.distance,
+    flightsClimbed: payload.flightsClimbed,
   }
 }

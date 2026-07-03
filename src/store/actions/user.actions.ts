@@ -35,6 +35,7 @@ import { AddTraineeForm } from '../../pages/TrainerDashboard/pages/Trainees/Trai
 import { Menu } from '../../types/menu/Menu'
 import { menuService } from '../../services/menu/menu.service'
 import { loadGoogleHealthConnection, setHealthData } from './health.actions'
+import { socketService } from '../../services/socket/socket.service'
 
 export async function loadUsers(filter: UserFilter) {
   try {
@@ -127,6 +128,7 @@ function hydrateLoggedInUser(retrived: User) {
 
   setSelectedDiaryDay(user.loggedToday)
   setUserToEdit(user)
+  void socketService.connect(user._id)
   return user
 }
 
@@ -233,10 +235,7 @@ export async function signup(credentials: UserCred) {
     })
 
     setUserToEdit(user)
-    return user
-
-    // if (user && credentials.isRemember) return
-    // socketService.login(user._id)
+    void socketService.connect(user._id)
     return user
   } catch (err) {
     throw err
@@ -245,6 +244,7 @@ export async function signup(credentials: UserCred) {
 
 export async function logout(shouldClearRemember: boolean = true) {
   try {
+    socketService.disconnect()
     await userService.logout(shouldClearRemember)
     store.dispatch({
       type: SET_USER,
@@ -252,8 +252,6 @@ export async function logout(shouldClearRemember: boolean = true) {
     })
     setSelectedDiaryDay(null)
     setUserToEdit(null)
-
-    // socketService.logout()
   } catch (err) {
     throw err
   }
@@ -336,6 +334,7 @@ export async function setRemembered() {
     await setHealthData()
 
     setUserToEdit(user as User & { meals: Meal[] | string[] })
+    void socketService.connect(user._id)
   } catch (err) {
     throw err
   } finally {

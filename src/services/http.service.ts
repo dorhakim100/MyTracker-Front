@@ -51,6 +51,25 @@ export function getApiBaseUrl(): string {
   return baseUrl
 }
 
+export function getSocketUrl(): string {
+  return getApiBaseUrl().replace(/\/api\/?$/, '')
+}
+
+export async function getLoginToken(): Promise<string | null> {
+  try {
+    const rememberedUserObject = await indexedDbService.get(
+      REMEMBER_STORE,
+      STORAGE_KEY_REMEMBERED_USER
+    )
+    if (!rememberedUserObject) return null
+    const { token } = rememberedUserObject as { token: string | null }
+    if (!token) return null
+    return token
+  } catch (err) {
+    throw err
+  }
+}
+
 const BASE_URL = getBaseUrl()
 
 const axios = Axios.create({ withCredentials: true })
@@ -98,21 +117,6 @@ async function ajax(endpoint: string, method = 'GET', data = null) {
       sessionStorage.clear()
       window.location.assign('/')
     }
-    throw err
-  }
-}
-
-async function getLoginToken() {
-  try {
-    const rememberedUserObject = await indexedDbService.get(
-      REMEMBER_STORE,
-      STORAGE_KEY_REMEMBERED_USER
-    )
-    if (!rememberedUserObject) return null
-    const { token } = rememberedUserObject as { token: string | null }
-    if (!token) return null
-    return token
-  } catch (err) {
     throw err
   }
 }
