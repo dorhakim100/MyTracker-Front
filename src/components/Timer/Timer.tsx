@@ -15,6 +15,8 @@ import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { ExerciseDetails } from '../ExerciseDetails/ExerciseDetails'
 import { Exercise } from '../../types/exercise/Exercise'
 import { useTranslation } from 'react-i18next'
+import { CachedImage } from '../CachedImage/CachedImage'
+import { exerciseImage } from '../../assets/config/exercise-image'
 
 const colorMap: Record<string, string> = {
   primary: 'var(--primary-color)',
@@ -56,15 +58,13 @@ export function Timer() {
 
   const percentage = useMemo(() => {
     if (!currentExercise || !currentExercise.restingTime) return 0
-    const percentage = ((secondsPassedState * SECOND_IN_MS) / currentExercise.restingTime!) * 100
+    const percentage =
+      ((secondsPassedState * SECOND_IN_MS) / currentExercise.restingTime!) * 100
 
-  
     if (percentage >= 100) {
     }
 
-    return (
-    percentage  
-    )
+    return percentage
   }, [currentExercise, secondsPassedState])
 
   const doneSets = useMemo(() => {
@@ -90,7 +90,7 @@ export function Timer() {
 
   useEffect(() => {
     startSet()
-    if(isLocalNotificationsPermitted && !currentExercise) {
+    if (isLocalNotificationsPermitted && !currentExercise) {
       cancelNotification()
     }
   }, [currentExercise])
@@ -108,7 +108,7 @@ export function Timer() {
 
       if (isLocalNotificationsPermitted) {
         await cancelNotification()
-      
+
         setNotification(currentExercise.restingTime)
       }
     } catch {
@@ -128,22 +128,17 @@ export function Timer() {
     const alarmTime = new Date(Date.now() + secondsFromNowInMiliseconds)
 
     await LocalNotifications.schedule({
-      
       notifications: [
         {
           title: t('timer.timer'),
           body: t('timer.timeForNextSet'),
           id: 1,
-          schedule: { at: alarmTime,
-            allowWhileIdle: true,
-           },
+          schedule: { at: alarmTime, allowWhileIdle: true },
           channelId: '1',
           sound: 'ding',
-        
         },
       ],
     })
-    
   }
 
   async function cancelNotification() {
@@ -174,45 +169,53 @@ export function Timer() {
         {/* <div className={`timer-container ${prefs.isDarkMode ? 'dark-mode' : ''} ${
         prefs.favoriteColor
         }`}> */}
-        <div className="timer">
-
-        <img src={currentExercise?.image} alt="timer" className="timer-image" />
-        <div className="text-container">
-       
-          <div className="times-container">
-            <Typography
-              variant="body1"
-              className="bold-header opacity-1 time-left"
-              >
-
-              {currentExercise?.restingTime &&
-              secondsPassedState * SECOND_IN_MS < currentExercise?.restingTime
-              ? formatTime(
-                currentExercise?.restingTime -
-                secondsPassedState * SECOND_IN_MS + 1000,
-                false
-              )
-              : '0:00'}
-            </Typography>
-            <Divider
-              orientation="vertical"
-              flexItem
-              className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-              />
-            <Typography variant="body1" className="bold-header opacity-1">
-
-              {formatTime((secondsPassedState) * SECOND_IN_MS, false)}
-            </Typography>
-          </div>
-             <Typography variant="h6" className="bold-header sets-text">
-            {t('timer.sets')}: {doneSets} / {totalSets}
-          </Typography>
-        </div>
-        <CustomLinearProgress
-          value={percentage}
-          color={colorMap[prefs.favoriteColor]}
+        <div className='timer'>
+          <CachedImage
+            url={currentExercise?.image || exerciseImage.ERROR_IMAGE}
+            fallback={exerciseImage.ERROR_IMAGE}
+            alt='timer'
+            className='timer-image'
           />
+          <div className='text-container'>
+            <div className='times-container'>
+              <Typography
+                variant='body1'
+                className='bold-header opacity-1 time-left'
+              >
+                {currentExercise?.restingTime &&
+                secondsPassedState * SECOND_IN_MS < currentExercise?.restingTime
+                  ? formatTime(
+                      currentExercise?.restingTime -
+                        secondsPassedState * SECOND_IN_MS +
+                        1000,
+                      false
+                    )
+                  : '0:00'}
+              </Typography>
+              <Divider
+                orientation='vertical'
+                flexItem
+                className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+              />
+              <Typography
+                variant='body1'
+                className='bold-header opacity-1'
+              >
+                {formatTime(secondsPassedState * SECOND_IN_MS, false)}
+              </Typography>
+            </div>
+            <Typography
+              variant='h6'
+              className='bold-header sets-text'
+            >
+              {t('timer.sets')}: {doneSets} / {totalSets}
+            </Typography>
           </div>
+          <CustomLinearProgress
+            value={percentage}
+            color={colorMap[prefs.favoriteColor]}
+          />
+        </div>
         {/* </div> */}
       </SlideAnimation>
       <SlideDialog
@@ -226,7 +229,7 @@ export function Timer() {
         title={capitalizeFirstLetter(
           exerciseDialogOptions.exercise?.name || ''
         )}
-        type="full"
+        type='full'
       />
     </>
   )

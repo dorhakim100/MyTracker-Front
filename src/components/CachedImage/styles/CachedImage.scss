@@ -1,0 +1,21 @@
+.cached-image-container {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+
+  .cached-image-skeleton {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+  }
+
+  .cached-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.2s ease;
+  }
+}

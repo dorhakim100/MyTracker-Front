@@ -9,6 +9,7 @@ export interface Exercise {
   mainMuscles?: string[]
   secondaryMuscles?: string[]
   details?: ExerciseDetail
+  gifUrl?: string
 }
 
 export interface ExerciseDetail {
@@ -30,7 +31,7 @@ export interface Set {
   setNumber?: number
   createdAt?: Date
   sessionId?: string
-  isDone?: Boolean
+  isDone?: boolean
   exerciseId?: string
 
   // just for editing
