@@ -4,7 +4,7 @@ export const SET_STEPS = 'SET_STEPS'
 export const SET_BURNED_CALORIES = 'SET_BURNED_CALORIES'
 export const SET_DISTANCE = 'SET_DISTANCE'
 export const SET_FLIGHTS_CLIMBED = 'SET_FLIGHTS_CLIMBED'
-
+export const SET_HEALTH_LOADING = 'SET_HEALTH_LOADING'
 export interface HealthState {
   permited: boolean
   googleHealthConnected: boolean
@@ -12,6 +12,7 @@ export interface HealthState {
   burnedCalories: number
   distance: number
   flightsClimbed: number
+  healthLoading: boolean
 }
 
 const initialState: HealthState = {
@@ -21,6 +22,7 @@ const initialState: HealthState = {
   burnedCalories: 0,
   distance: 0,
   flightsClimbed: 0,
+  healthLoading: true,
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -47,6 +49,9 @@ export function healthReducer(state = initialState, action: any): HealthState {
       break
     case SET_FLIGHTS_CLIMBED:
       newState = { ...state, flightsClimbed: action.flightsClimbed }
+      break
+    case SET_HEALTH_LOADING:
+      newState = { ...state, healthLoading: action.healthLoading }
       break
     default:
       newState = state

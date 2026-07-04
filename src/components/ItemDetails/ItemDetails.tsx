@@ -117,9 +117,9 @@ export function ItemDetails({
     [editMealItem, searchedItem]
   )
 
-  const stringifiedItem = useMemo(()=>{
+  const stringifiedItem = useMemo(() => {
     return JSON.stringify(item)
-  },[item])
+  }, [item])
 
   const [editItem, setEditItem] = useState<EditItem>({
     totalMacros: isCustomLog ? _getDefaultMacros() : item.macros,
@@ -128,7 +128,6 @@ export function ItemDetails({
     meal: editMealItem?.meal || selectedMeal || getCurrMeal(),
     name: isCustomLog ? '' : editMealItem?.name || searchedItem.name,
   })
-  
 
   const [clockOpen, setClockOpen] = useState(false)
   const [macrosOpen, setMacrosOpen] = useState(false)
@@ -301,7 +300,8 @@ export function ItemDetails({
       e.stopPropagation()
 
       if (!user) return showErrorMsg(t('messages.error.favorite'))
-      if (!searchedItem.searchId) return showErrorMsg(t('messages.error.favorite'))
+      if (!searchedItem.searchId)
+        return showErrorMsg(t('messages.error.favorite'))
 
       await handleFavorite(searchedItem, user)
     } catch {
@@ -338,7 +338,7 @@ export function ItemDetails({
     try {
       if (!user) return showErrorMsg(t('messages.error.addLog'))
 
-      if (!selectedDay) return showErrorMsg(t('messages.error.addLog')  )
+      if (!selectedDay) return showErrorMsg(t('messages.error.addLog'))
 
       if (!item.searchId && _hasItems(item)) {
         const LONGEST_FOOD_ID_LENGTH = 10
@@ -505,7 +505,8 @@ export function ItemDetails({
 
       if (!userLogs) return showErrorMsg(t('messages.error.editMeal'))
       const logIndex = userLogs.findIndex(
-        (log) => (log.time === editMealItem.time && log.itemId === editMealItem.itemId)
+        (log) =>
+          log.time === editMealItem.time && log.itemId === editMealItem.itemId
       )
       if (logIndex === -1) return showErrorMsg(t('messages.error.editMeal'))
 
@@ -657,7 +658,7 @@ export function ItemDetails({
                 />
               )) || (
                 <CustomSkeleton
-                  variant='circular'
+                  variant='rectangular'
                   width={60}
                   height={60}
                   isDarkMode={prefs.isDarkMode}

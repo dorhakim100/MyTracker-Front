@@ -5,6 +5,8 @@ import { getFixedNumber } from '../../services/util.service'
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment'
 import SpeedIcon from '@mui/icons-material/Speed'
 import TrendingUpIcon from '@mui/icons-material/TrendingUp'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../store/store'
 export interface HealthStatsProps {
   steps: number
   burnedCalories: number
@@ -25,6 +27,10 @@ export function HealthStats({
 }: HealthStatsProps) {
   const { t } = useTranslation()
 
+  const healthLoading = useSelector(
+    (state: RootState) => state.healthModule.healthLoading
+  )
+
   // steps = 21435.151
   // burnedCalories = 1252.123
   // distance = 12.52
@@ -42,24 +48,28 @@ export function HealthStats({
         isGoal={false}
         icon={<DirectionsRunIcon />}
         afterValue={t('steps.steps')}
+        loading={healthLoading}
       />
       <GoalBanner
         current={burnedCalories}
         isGoal={false}
         icon={<LocalFireDepartmentIcon />}
         afterValue={t('macros.kcal')}
+        loading={healthLoading}
       />
       <GoalBanner
         current={distance}
         isGoal={false}
         icon={<SpeedIcon />}
         afterValue={t('distance.km')}
+        loading={healthLoading}
       />
       <GoalBanner
         current={flightsClimbed}
         isGoal={false}
         icon={<TrendingUpIcon />}
         afterValue={t('floors.floors')}
+        loading={healthLoading}
       />
     </div>
   )

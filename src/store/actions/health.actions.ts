@@ -13,6 +13,7 @@ import {
   SET_DISTANCE,
   SET_FLIGHTS_CLIMBED,
   SET_GOOGLE_HEALTH_CONNECTED,
+  SET_HEALTH_LOADING,
 } from '../reducers/health.reducer'
 
 export async function setPermitted(permitted: boolean) {
@@ -57,15 +58,22 @@ export async function reloadHealthForCurrentProvider(userId?: string) {
 
 export async function setHealthData() {
   const userId = store.getState().userModule.user?._id
-  const data = await healthService.getTodayActivitySummary(userId)
-  if (data.status === 'ok') {
-    await applyHealthSnapshot(data)
-  }
-  if (data.status === 'not_connected') {
-    // await setGoogleHealthConnected(false)
-  }
-  if (data.status === 'error') {
-    // throw new Error(data.message)
+  setHealthLoading(true)
+  try {
+    const data = await healthService.getTodayActivitySummary(userId)
+    if (data.status === 'ok') {
+      await applyHealthSnapshot(data)
+    }
+    if (data.status === 'not_connected') {
+      // await setGoogleHealthConnected(false)
+    }
+    if (data.status === 'error') {
+      // throw new Error(data.message)
+    }
+  } catch (err) {
+    throw err
+  } finally {
+    setHealthLoading(false)
   }
 }
 
@@ -91,4 +99,8 @@ export async function setDistance(distance: number) {
 
 export async function setFlightsClimbed(flightsClimbed: number) {
   store.dispatch({ type: SET_FLIGHTS_CLIMBED, flightsClimbed: flightsClimbed })
+}
+
+export async function setHealthLoading(loading: boolean) {
+  store.dispatch({ type: SET_HEALTH_LOADING, healthLoading: loading })
 }
