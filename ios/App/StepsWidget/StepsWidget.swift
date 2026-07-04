@@ -1,6 +1,27 @@
 import SwiftUI
 import WidgetKit
 
+enum StepsWidgetDataLoader {
+    static func loadFresh(completion: @escaping (StepsWidgetData) -> Void) {
+        let stored = StepsWidgetStore.load()
+        StepsWidgetHealthReader.fetchTodayActivity { metrics in
+            guard let metrics else {
+                completion(stored)
+                return
+            }
+            completion(stored.refreshedWithLiveHealth(metrics))
+        }
+    }
+
+    static func nextTimelineDate(from date: Date = Date()) -> Date {
+        Calendar.current.date(
+            byAdding: .minute,
+            value: StepsWidgetConstants.timelineRefreshMinutes,
+            to: date
+        ) ?? date.addingTimeInterval(TimeInterval(StepsWidgetConstants.timelineRefreshMinutes * 60))
+    }
+}
+
 struct StepsWidgetEntry: TimelineEntry {
     let date: Date
     let data: StepsWidgetData
@@ -12,13 +33,22 @@ struct StepsTimelineProvider: TimelineProvider {
     }
 
     func getSnapshot(in context: Context, completion: @escaping (StepsWidgetEntry) -> Void) {
-        completion(StepsWidgetEntry(date: Date(), data: StepsWidgetStore.load()))
+        if context.isPreview {
+            completion(StepsWidgetEntry(date: Date(), data: StepsWidgetStore.load()))
+            return
+        }
+
+        StepsWidgetDataLoader.loadFresh { data in
+            completion(StepsWidgetEntry(date: Date(), data: data))
+        }
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<StepsWidgetEntry>) -> Void) {
-        let entry = StepsWidgetEntry(date: Date(), data: StepsWidgetStore.load())
-        let nextUpdate = Calendar.current.date(byAdding: .minute, value: 15, to: Date()) ?? Date().addingTimeInterval(900)
-        completion(Timeline(entries: [entry], policy: .after(nextUpdate)))
+        StepsWidgetDataLoader.loadFresh { data in
+            let entry = StepsWidgetEntry(date: Date(), data: data)
+            let nextUpdate = StepsWidgetDataLoader.nextTimelineDate()
+            completion(Timeline(entries: [entry], policy: .after(nextUpdate)))
+        }
     }
 }
 

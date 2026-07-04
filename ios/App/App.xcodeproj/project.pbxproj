@@ -16,6 +16,7 @@
 		50B271D11FEDC1A000F3C39B /* public in Resources */ = {isa = PBXBuildFile; fileRef = 50B271D01FEDC1A000F3C39B /* public */; };
 		731539E02FF0119900E3373E /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 731539DF2FF0119800E3373E /* WidgetKit.framework */; };
 		731539E22FF0119900E3373E /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 731539E12FF0119900E3373E /* SwiftUI.framework */; };
+		731539E52FF0119900E3373F /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 731539E62FF0119900E3373F /* HealthKit.framework */; };
 		731539F32FF0119A00E3373E /* StepsWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 731539DE2FF0119800E3373E /* StepsWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		73A0C6A42F978A4B0001608A /* ding.wav in Resources */ = {isa = PBXBuildFile; fileRef = 73A0C6A32F978A4B0001608A /* ding.wav */; };
 		A084ECDBA7D38E1E42DFC39D /* Pods_App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AF277DCFFFF123FFC6DF26C7 /* Pods_App.framework */; };
@@ -62,6 +63,7 @@
 		731539DE2FF0119800E3373E /* StepsWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = StepsWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		731539DF2FF0119800E3373E /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		731539E12FF0119900E3373E /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		731539E62FF0119900E3373F /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = System/Library/Frameworks/HealthKit.framework; sourceTree = SDKROOT; };
 		733D8C652F93547000883FA4 /* App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = App.entitlements; sourceTree = "<group>"; };
 		73A0C6A32F978A4B0001608A /* ding.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = ding.wav; sourceTree = "<group>"; };
 		A1B2C3D41FED796500168521 /* StepsWidgetShared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = StepsWidgetShared.swift; path = StepsWidget/StepsWidgetShared.swift; sourceTree = "<group>"; };
@@ -102,6 +104,7 @@
 			files = (
 				731539E22FF0119900E3373E /* SwiftUI.framework in Frameworks */,
 				731539E02FF0119900E3373E /* WidgetKit.framework in Frameworks */,
+				731539E52FF0119900E3373F /* HealthKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -114,6 +117,7 @@
 				AF277DCFFFF123FFC6DF26C7 /* Pods_App.framework */,
 				731539DF2FF0119800E3373E /* WidgetKit.framework */,
 				731539E12FF0119900E3373E /* SwiftUI.framework */,
+				731539E62FF0119900E3373F /* HealthKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -557,6 +561,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = StepsWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = StepsWidget;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "This widget reads your step count to show today's activity progress.";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -601,6 +606,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = StepsWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = StepsWidget;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "This widget reads your step count to show today's activity progress.";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
 				LD_RUNPATH_SEARCH_PATHS = (

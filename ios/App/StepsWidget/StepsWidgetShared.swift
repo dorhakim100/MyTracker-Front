@@ -9,12 +9,20 @@ enum StepsWidgetConstants {
     static let caloriesWidgetKind = "CaloriesWidget"
     static let stepsCaloriesWidgetKind = "StepsCaloriesWidget"
     static let deepLink = "mytracker://dashboard"
+    static let timelineRefreshMinutes = 5
 
     static let widgetKinds = [
         widgetKind,
         caloriesWidgetKind,
         stepsCaloriesWidgetKind,
     ]
+}
+
+struct StepsWidgetHealthMetrics {
+    let steps: Int
+    let burnedCalories: Int
+    let distance: Double
+    let flightsClimbed: Int
 }
 
 struct StepsWidgetData: Codable {
@@ -132,6 +140,57 @@ struct StepsWidgetData: Codable {
         lang: "en",
         updatedAt: 0
     )
+
+    func refreshedWithLiveHealth(_ metrics: StepsWidgetHealthMetrics) -> StepsWidgetData {
+        let sameDay = Calendar.current.isDate(
+            Date(timeIntervalSince1970: updatedAt / 1000),
+            inSameDayAs: Date()
+        )
+
+        if !sameDay {
+            return StepsWidgetData(
+                steps: metrics.steps,
+                goal: goal,
+                calories: calories,
+                caloriesGoal: caloriesGoal,
+                distance: metrics.distance,
+                burnedCalories: metrics.burnedCalories,
+                flightsClimbed: metrics.flightsClimbed,
+                proteinCurrent: proteinCurrent,
+                proteinGoal: proteinGoal,
+                carbsCurrent: carbsCurrent,
+                carbsGoal: carbsGoal,
+                fatsCurrent: fatsCurrent,
+                fatsGoal: fatsGoal,
+                favoriteColor: favoriteColor,
+                accentHex: accentHex,
+                isDarkMode: isDarkMode,
+                lang: lang,
+                updatedAt: Date().timeIntervalSince1970 * 1000
+            )
+        }
+
+        return StepsWidgetData(
+            steps: max(metrics.steps, steps),
+            goal: goal,
+            calories: calories,
+            caloriesGoal: caloriesGoal,
+            distance: max(metrics.distance, distance),
+            burnedCalories: max(metrics.burnedCalories, burnedCalories),
+            flightsClimbed: max(metrics.flightsClimbed, flightsClimbed),
+            proteinCurrent: proteinCurrent,
+            proteinGoal: proteinGoal,
+            carbsCurrent: carbsCurrent,
+            carbsGoal: carbsGoal,
+            fatsCurrent: fatsCurrent,
+            fatsGoal: fatsGoal,
+            favoriteColor: favoriteColor,
+            accentHex: accentHex,
+            isDarkMode: isDarkMode,
+            lang: lang,
+            updatedAt: Date().timeIntervalSince1970 * 1000
+        )
+    }
 }
 
 enum StepsWidgetStore {
