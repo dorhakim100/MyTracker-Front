@@ -26,8 +26,13 @@ export type StepsWidgetPayload = {
   isDarkMode: boolean
   lang: Lang
   updatedAt: number
+  userId?: string
+  authToken?: string
+  apiBaseUrl?: string
 }
 
 export interface StepsWidgetPlugin {
   update(options: StepsWidgetPayload): Promise<void>
+  clearAuth(): Promise<void>
+  reloadTimelines(): Promise<void>
 }

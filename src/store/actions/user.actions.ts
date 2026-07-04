@@ -1,5 +1,6 @@
 import { store } from '../store'
 import { userService } from '../../services/user/user.service'
+import { clearStepsWidgetAuth } from '../../services/widget/steps-widget.service'
 
 import {
   SET_USER,
@@ -244,6 +245,7 @@ export async function signup(credentials: UserCred) {
 
 export async function logout(shouldClearRemember: boolean = true) {
   try {
+    await clearStepsWidgetAuth()
     socketService.disconnect()
     await userService.logout(shouldClearRemember)
     store.dispatch({

@@ -16,14 +16,12 @@
 		50B271D11FEDC1A000F3C39B /* public in Resources */ = {isa = PBXBuildFile; fileRef = 50B271D01FEDC1A000F3C39B /* public */; };
 		731539E02FF0119900E3373E /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 731539DF2FF0119800E3373E /* WidgetKit.framework */; };
 		731539E22FF0119900E3373E /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 731539E12FF0119900E3373E /* SwiftUI.framework */; };
-		731539E52FF0119900E3373F /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 731539E62FF0119900E3373F /* HealthKit.framework */; };
 		731539F32FF0119A00E3373E /* StepsWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 731539DE2FF0119800E3373E /* StepsWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		73A0C6A42F978A4B0001608A /* ding.wav in Resources */ = {isa = PBXBuildFile; fileRef = 73A0C6A32F978A4B0001608A /* ding.wav */; };
 		A084ECDBA7D38E1E42DFC39D /* Pods_App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AF277DCFFFF123FFC6DF26C7 /* Pods_App.framework */; };
 		A1B2C3D51FED796500168521 /* StepsWidgetShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D41FED796500168521 /* StepsWidgetShared.swift */; };
 		A1B2C3D71FED796500168521 /* StepsWidgetPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D61FED796500168521 /* StepsWidgetPlugin.swift */; };
 		B2C3D4E51FED796500168521 /* MyBridgeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D4E41FED796500168521 /* MyBridgeViewController.swift */; };
-		C3D4E5F61FED796500168521 /* StepsWidgetHealthBackgroundSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D4E5F51FED796500168521 /* StepsWidgetHealthBackgroundSync.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,7 +61,6 @@
 		731539DE2FF0119800E3373E /* StepsWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = StepsWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		731539DF2FF0119800E3373E /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		731539E12FF0119900E3373E /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
-		731539E62FF0119900E3373F /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = System/Library/Frameworks/HealthKit.framework; sourceTree = SDKROOT; };
 		733D8C652F93547000883FA4 /* App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = App.entitlements; sourceTree = "<group>"; };
 		73A0C6A32F978A4B0001608A /* ding.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = ding.wav; sourceTree = "<group>"; };
 		A1B2C3D41FED796500168521 /* StepsWidgetShared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = StepsWidgetShared.swift; path = StepsWidget/StepsWidgetShared.swift; sourceTree = "<group>"; };
@@ -71,7 +68,6 @@
 		AF277DCFFFF123FFC6DF26C7 /* Pods_App.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_App.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AF51FD2D460BCFE21FA515B2 /* Pods-App.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App.release.xcconfig"; path = "Pods/Target Support Files/Pods-App/Pods-App.release.xcconfig"; sourceTree = "<group>"; };
 		B2C3D4E41FED796500168521 /* MyBridgeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyBridgeViewController.swift; sourceTree = "<group>"; };
-		C3D4E5F51FED796500168521 /* StepsWidgetHealthBackgroundSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepsWidgetHealthBackgroundSync.swift; sourceTree = "<group>"; };
 		FC68EB0AF532CFC21C3344DD /* Pods-App.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App.debug.xcconfig"; path = "Pods/Target Support Files/Pods-App/Pods-App.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -104,7 +100,6 @@
 			files = (
 				731539E22FF0119900E3373E /* SwiftUI.framework in Frameworks */,
 				731539E02FF0119900E3373E /* WidgetKit.framework in Frameworks */,
-				731539E52FF0119900E3373F /* HealthKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -117,7 +112,6 @@
 				AF277DCFFFF123FFC6DF26C7 /* Pods_App.framework */,
 				731539DF2FF0119800E3373E /* WidgetKit.framework */,
 				731539E12FF0119900E3373E /* SwiftUI.framework */,
-				731539E62FF0119900E3373F /* HealthKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -151,7 +145,6 @@
 				50379B222058CBB4000EE86E /* capacitor.config.json */,
 				504EC3071FED79650016851F /* AppDelegate.swift */,
 				B2C3D4E41FED796500168521 /* MyBridgeViewController.swift */,
-				C3D4E5F51FED796500168521 /* StepsWidgetHealthBackgroundSync.swift */,
 				A1B2C3E81FED796500168521 /* Plugins */,
 				504EC30B1FED79650016851F /* Main.storyboard */,
 				504EC30E1FED79650016851F /* Assets.xcassets */,
@@ -341,7 +334,6 @@
 			files = (
 				504EC3081FED79650016851F /* AppDelegate.swift in Sources */,
 				B2C3D4E51FED796500168521 /* MyBridgeViewController.swift in Sources */,
-				C3D4E5F61FED796500168521 /* StepsWidgetHealthBackgroundSync.swift in Sources */,
 				A1B2C3D51FED796500168521 /* StepsWidgetShared.swift in Sources */,
 				A1B2C3D71FED796500168521 /* StepsWidgetPlugin.swift in Sources */,
 			);

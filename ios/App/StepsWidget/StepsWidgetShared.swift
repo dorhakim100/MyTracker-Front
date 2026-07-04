@@ -5,11 +5,12 @@ import WidgetKit
 enum StepsWidgetConstants {
     static let appGroupId = "group.com.dorhakim.mytracker"
     static let storageFileName = "stepsWidgetData.json"
+    static let credentialsFileName = "stepsWidgetCredentials.json"
     static let widgetKind = "StepsWidget"
     static let caloriesWidgetKind = "CaloriesWidget"
     static let stepsCaloriesWidgetKind = "StepsCaloriesWidget"
     static let deepLink = "mytracker://dashboard"
-    static let timelineRefreshMinutes = 5
+    static let timelineRefreshSeconds = 30
 
     static let widgetKinds = [
         widgetKind,
@@ -190,6 +191,59 @@ struct StepsWidgetData: Codable {
             lang: lang,
             updatedAt: Date().timeIntervalSince1970 * 1000
         )
+    }
+}
+
+struct StepsWidgetCredentials: Codable {
+    let userId: String
+    let authToken: String
+    let apiBaseUrl: String
+
+    var isValid: Bool {
+        !userId.isEmpty && !authToken.isEmpty && !apiBaseUrl.isEmpty
+    }
+}
+
+enum StepsWidgetCredentialsStore {
+    private static var fileURL: URL? {
+        FileManager.default.containerURL(
+            forSecurityApplicationGroupIdentifier: StepsWidgetConstants.appGroupId
+        )?.appendingPathComponent(StepsWidgetConstants.credentialsFileName)
+    }
+
+    @discardableResult
+    static func save(_ credentials: StepsWidgetCredentials) -> Bool {
+        guard credentials.isValid, let url = fileURL else {
+            return false
+        }
+
+        do {
+            let encoded = try JSONEncoder().encode(credentials)
+            try encoded.write(to: url, options: [.atomic])
+            return true
+        } catch {
+            return false
+        }
+    }
+
+    static func load() -> StepsWidgetCredentials? {
+        guard let url = fileURL,
+              FileManager.default.fileExists(atPath: url.path),
+              let encoded = try? Data(contentsOf: url),
+              let credentials = try? JSONDecoder().decode(StepsWidgetCredentials.self, from: encoded) else {
+            return nil
+        }
+
+        return credentials.isValid ? credentials : nil
+    }
+
+    static func clear() {
+        guard let url = fileURL,
+              FileManager.default.fileExists(atPath: url.path) else {
+            return
+        }
+
+        try? FileManager.default.removeItem(at: url)
     }
 }
 

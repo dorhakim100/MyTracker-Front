@@ -2,6 +2,7 @@ import { Capacitor, registerPlugin } from '@capacitor/core'
 import { DEFAULT_DAILY_STEPS_GOAL } from '../../constants/steps-goal.constants'
 import { roundToNearest50 } from '../macros/macros.service'
 import { getFixedNumber } from '../util.service'
+import { getApiBaseUrl, getLoginToken } from '../http.service'
 import { store } from '../../store/store'
 import { getAccentHex } from './steps-widget.colors'
 import type {
@@ -13,11 +14,15 @@ import type {
 const StepsWidget = registerPlugin<StepsWidgetPlugin>('StepsWidget', {
   web: () => ({
     update: async () => undefined,
+    clearAuth: async () => undefined,
+    reloadTimelines: async () => undefined,
   }),
 })
 
 export const stepsWidgetService = {
   syncStepsWidget,
+  clearStepsWidgetAuth,
+  reloadStepsWidgetTimelines,
   buildPayload,
 }
 
@@ -74,15 +79,48 @@ export async function syncStepsWidget(
     return
   }
 
-  if (!store.getState().userModule.user?._id) {
+  const userId = store.getState().userModule.user?._id
+  if (!userId) {
     return
   }
 
   try {
     const payload = buildPayload(healthOverrides)
-    await StepsWidget.update(payload)
+    const authToken = await getLoginToken()
+    const apiBaseUrl = getApiBaseUrl()
+
+    await StepsWidget.update({
+      ...payload,
+      userId,
+      authToken: authToken ?? undefined,
+      apiBaseUrl,
+    })
   } catch (err) {
     console.warn('[StepsWidget] sync failed', err)
+  }
+}
+
+export async function clearStepsWidgetAuth() {
+  if (!Capacitor.isNativePlatform() || Capacitor.getPlatform() !== 'ios') {
+    return
+  }
+
+  try {
+    await StepsWidget.clearAuth()
+  } catch (err) {
+    console.warn('[StepsWidget] clear auth failed', err)
+  }
+}
+
+export async function reloadStepsWidgetTimelines() {
+  if (!Capacitor.isNativePlatform() || Capacitor.getPlatform() !== 'ios') {
+    return
+  }
+
+  try {
+    await StepsWidget.reloadTimelines()
+  } catch (err) {
+    console.warn('[StepsWidget] reload timelines failed', err)
   }
 }
 

@@ -6,7 +6,9 @@ public class StepsWidgetPlugin: CAPPlugin, CAPBridgedPlugin {
     public let identifier = "StepsWidgetPlugin"
     public let jsName = "StepsWidget"
     public let pluginMethods: [CAPPluginMethod] = [
-        CAPPluginMethod(name: "update", returnType: CAPPluginReturnPromise)
+        CAPPluginMethod(name: "update", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "clearAuth", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "reloadTimelines", returnType: CAPPluginReturnPromise),
     ]
 
     @objc func update(_ call: CAPPluginCall) {
@@ -65,11 +67,33 @@ public class StepsWidgetPlugin: CAPPlugin, CAPBridgedPlugin {
 
         StepsWidgetRefresh.reloadTimelinesIfAvailable()
 
+        if let userId = call.getString("userId"),
+           let authToken = call.getString("authToken"),
+           let apiBaseUrl = call.getString("apiBaseUrl") {
+            _ = StepsWidgetCredentialsStore.save(
+                StepsWidgetCredentials(
+                    userId: userId,
+                    authToken: authToken,
+                    apiBaseUrl: apiBaseUrl
+                )
+            )
+        }
+
         call.resolve([
             "steps": steps,
             "goal": goal,
             "updatedAt": updatedAt,
         ])
+    }
+
+    @objc func clearAuth(_ call: CAPPluginCall) {
+        StepsWidgetCredentialsStore.clear()
+        call.resolve()
+    }
+
+    @objc func reloadTimelines(_ call: CAPPluginCall) {
+        StepsWidgetRefresh.reloadTimelinesIfAvailable()
+        call.resolve()
     }
 }
 

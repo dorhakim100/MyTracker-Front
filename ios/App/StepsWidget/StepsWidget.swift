@@ -4,21 +4,25 @@ import WidgetKit
 enum StepsWidgetDataLoader {
     static func loadFresh(completion: @escaping (StepsWidgetData) -> Void) {
         let stored = StepsWidgetStore.load()
-        StepsWidgetHealthReader.fetchTodayActivity { metrics in
+
+        StepsWidgetBackendClient.fetchTodayHealth { metrics in
             guard let metrics else {
                 completion(stored)
                 return
             }
-            completion(stored.refreshedWithLiveHealth(metrics))
+
+            let data = stored.refreshedWithLiveHealth(metrics)
+            _ = StepsWidgetStore.save(data)
+            completion(data)
         }
     }
 
     static func nextTimelineDate(from date: Date = Date()) -> Date {
         Calendar.current.date(
-            byAdding: .minute,
-            value: StepsWidgetConstants.timelineRefreshMinutes,
+            byAdding: .second,
+            value: StepsWidgetConstants.timelineRefreshSeconds,
             to: date
-        ) ?? date.addingTimeInterval(TimeInterval(StepsWidgetConstants.timelineRefreshMinutes * 60))
+        ) ?? date.addingTimeInterval(TimeInterval(StepsWidgetConstants.timelineRefreshSeconds))
     }
 }
 
