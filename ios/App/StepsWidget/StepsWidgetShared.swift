@@ -10,7 +10,13 @@ enum StepsWidgetConstants {
     static let caloriesWidgetKind = "CaloriesWidget"
     static let stepsCaloriesWidgetKind = "StepsCaloriesWidget"
     static let deepLink = "mytracker://dashboard"
-    static let timelineRefreshSeconds = 30
+    // Must match BGTaskSchedulerPermittedIdentifiers in the App target's Info.plist.
+    static let backgroundRefreshTaskId = "com.dorhakim.mytracker.widget-refresh"
+    // WidgetKit throttles background refreshes to ~40-70/day and ignores sub-minute
+    // intervals, so we request a realistic cadence for the passive case. Immediate
+    // "on view" freshness comes from the host app calling reloadTimelines() when it
+    // backgrounds (see AppDelegate), which re-runs getTimeline's HTTPS fetch.
+    static let timelineRefreshSeconds = 15 * 60
 
     static let widgetKinds = [
         widgetKind,

@@ -37,7 +37,7 @@ export function GoalBanner({
         <div className='value-container'>
           <CustomSkeleton
             width={80}
-            height={24}
+            height={21}
             isDarkMode={prefs.isDarkMode}
           />
         </div>

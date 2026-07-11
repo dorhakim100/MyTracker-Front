@@ -20,6 +20,7 @@
 		73A0C6A42F978A4B0001608A /* ding.wav in Resources */ = {isa = PBXBuildFile; fileRef = 73A0C6A32F978A4B0001608A /* ding.wav */; };
 		A084ECDBA7D38E1E42DFC39D /* Pods_App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AF277DCFFFF123FFC6DF26C7 /* Pods_App.framework */; };
 		A1B2C3D51FED796500168521 /* StepsWidgetShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D41FED796500168521 /* StepsWidgetShared.swift */; };
+		A1B2C3E01FED796500168521 /* StepsWidgetBackendClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3E11FED796500168521 /* StepsWidgetBackendClient.swift */; };
 		A1B2C3D71FED796500168521 /* StepsWidgetPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D61FED796500168521 /* StepsWidgetPlugin.swift */; };
 		B2C3D4E51FED796500168521 /* MyBridgeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D4E41FED796500168521 /* MyBridgeViewController.swift */; };
 /* End PBXBuildFile section */
@@ -64,6 +65,7 @@
 		733D8C652F93547000883FA4 /* App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = App.entitlements; sourceTree = "<group>"; };
 		73A0C6A32F978A4B0001608A /* ding.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = ding.wav; sourceTree = "<group>"; };
 		A1B2C3D41FED796500168521 /* StepsWidgetShared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = StepsWidgetShared.swift; path = StepsWidget/StepsWidgetShared.swift; sourceTree = "<group>"; };
+		A1B2C3E11FED796500168521 /* StepsWidgetBackendClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = StepsWidgetBackendClient.swift; path = StepsWidget/StepsWidgetBackendClient.swift; sourceTree = "<group>"; };
 		A1B2C3D61FED796500168521 /* StepsWidgetPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepsWidgetPlugin.swift; sourceTree = "<group>"; };
 		AF277DCFFFF123FFC6DF26C7 /* Pods_App.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_App.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AF51FD2D460BCFE21FA515B2 /* Pods-App.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App.release.xcconfig"; path = "Pods/Target Support Files/Pods-App/Pods-App.release.xcconfig"; sourceTree = "<group>"; };
@@ -335,6 +337,7 @@
 				504EC3081FED79650016851F /* AppDelegate.swift in Sources */,
 				B2C3D4E51FED796500168521 /* MyBridgeViewController.swift in Sources */,
 				A1B2C3D51FED796500168521 /* StepsWidgetShared.swift in Sources */,
+				A1B2C3E01FED796500168521 /* StepsWidgetBackendClient.swift in Sources */,
 				A1B2C3D71FED796500168521 /* StepsWidgetPlugin.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

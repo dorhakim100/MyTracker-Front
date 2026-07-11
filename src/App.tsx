@@ -48,7 +48,7 @@ import {
   setPermitted,
   loadGoogleHealthConnection,
 } from './store/actions/health.actions.ts'
-import { syncStepsWidget } from './services/widget/steps-widget.service.ts'
+import { syncStepsWidget, reloadStepsWidgetTimelines } from './services/widget/steps-widget.service.ts'
 import { showErrorMsg } from './services/event-bus.service.ts'
 
 const isProd = import.meta.env.PROD
@@ -406,16 +406,18 @@ function App() {
     }
 
     const listener = CapApp.addListener('appStateChange', async ({ isActive }) => {
-      if (!isActive) {
+      if (isActive) {
+        try {
+          await setHealthData()
+          await syncStepsWidget()
+        } catch (err) {
+          showErrorMsg(err instanceof Error ? err.message : String(err))
+        }
         return
       }
 
-      try {
-        await setHealthData()
-        await syncStepsWidget()
-      } catch (err) {
-        showErrorMsg(err instanceof Error ? err.message : String(err))
-      }
+      // Lock / home while app stays in memory — widget refetches via HTTPS on its own.
+      await reloadStepsWidgetTimelines()
     })
 
     return () => {

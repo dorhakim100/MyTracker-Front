@@ -45,7 +45,7 @@ import { healthService } from '../../../services/health/health.service'
 import { setHealthData } from '../../../store/actions/health.actions'
 import { PullToRefreshWrapper } from '../../../components/PullToRefreshWrapper/PullToRefreshWrapper'
 
-const CHECK_INTERVAL = 1000 * 60 // minute
+const CHECK_INTERVAL = 1000 * 60 * 10 // 10 minutes
 
 export function Dashboard() {
   const { t } = useTranslation()
