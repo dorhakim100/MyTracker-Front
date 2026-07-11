@@ -45,7 +45,7 @@ import { healthService } from '../../../services/health/health.service'
 import { setHealthData } from '../../../store/actions/health.actions'
 import { PullToRefreshWrapper } from '../../../components/PullToRefreshWrapper/PullToRefreshWrapper'
 
-const CHECK_INTERVAL = 1000 * 60 * 10 // 10 minutes
+// const CHECK_INTERVAL = 1000 * 60 * 10 // 10 minutes
 
 export function Dashboard() {
   const { t } = useTranslation()
@@ -188,8 +188,8 @@ export function Dashboard() {
   useEffect(() => {
     if (!userToCheck) return
 
-    const interval = setInterval(checkDiaryDayChange, CHECK_INTERVAL)
-    return () => clearInterval(interval)
+    // const interval = setInterval(checkDiaryDayChange, CHECK_INTERVAL)
+    // return () => clearInterval(interval)
   }, [userToCheck])
 
   useEffect(() => {

@@ -46,9 +46,12 @@ import { healthService } from './services/health/health.service.ts'
 import {
   setHealthData,
   setPermitted,
-  loadGoogleHealthConnection,
+  // loadGoogleHealthConnection,
 } from './store/actions/health.actions.ts'
-import { syncStepsWidget, reloadStepsWidgetTimelines } from './services/widget/steps-widget.service.ts'
+import {
+  syncStepsWidget,
+  reloadStepsWidgetTimelines,
+} from './services/widget/steps-widget.service.ts'
 import { showErrorMsg } from './services/event-bus.service.ts'
 
 const isProd = import.meta.env.PROD
@@ -139,7 +142,8 @@ function App() {
   )
 
   const loggedTodayLogs = useSelector(
-    (stateSelector: RootState) => stateSelector.userModule.user?.loggedToday?.logs
+    (stateSelector: RootState) =>
+      stateSelector.userModule.user?.loggedToday?.logs
   )
 
   const filteredRoutes = useMemo(() => {
@@ -332,20 +336,23 @@ function App() {
     ) {
       return
     }
-    const userId = user?._id
-    const loadWebHealth = async () => {
-      try {
-        const connected = await loadGoogleHealthConnection(userId)
-        if (connected) {
-          await setHealthData()
-        }
-      } catch (err) {
-        showErrorMsg(err instanceof Error ? err.message : String(err))
-      }
+    if (activeRoute === '/dashboard') {
+      return
     }
+    // const userId = user?._id
+    // const loadWebHealth = async () => {
+    //   try {
+    //     const connected = await loadGoogleHealthConnection(userId)
+    //     if (connected) {
+    //       await setHealthData()
+    //     }
+    //   } catch (err) {
+    //     showErrorMsg(err instanceof Error ? err.message : String(err))
+    //   }
+    // }
 
-    loadWebHealth()
-  }, [isNative, user?._id, googleHealthConnected, healthProvider])
+    // loadWebHealth()
+  }, [isNative, user?._id, googleHealthConnected, healthProvider, activeRoute])
 
   useEffect(() => {
     if (!isNative || Capacitor.getPlatform() !== 'ios') {
@@ -405,20 +412,23 @@ function App() {
       return
     }
 
-    const listener = CapApp.addListener('appStateChange', async ({ isActive }) => {
-      if (isActive) {
-        try {
-          await setHealthData()
-          await syncStepsWidget()
-        } catch (err) {
-          showErrorMsg(err instanceof Error ? err.message : String(err))
+    const listener = CapApp.addListener(
+      'appStateChange',
+      async ({ isActive }) => {
+        if (isActive) {
+          try {
+            await setHealthData()
+            await syncStepsWidget()
+          } catch (err) {
+            showErrorMsg(err instanceof Error ? err.message : String(err))
+          }
+          return
         }
-        return
-      }
 
-      // Lock / home while app stays in memory — widget refetches via HTTPS on its own.
-      await reloadStepsWidgetTimelines()
-    })
+        // Lock / home while app stays in memory — widget refetches via HTTPS on its own.
+        await reloadStepsWidgetTimelines()
+      }
+    )
 
     return () => {
       listener.then((handle) => handle.remove())
