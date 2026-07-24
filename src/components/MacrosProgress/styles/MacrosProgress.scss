@@ -7,12 +7,18 @@
   .macros-container {
     // align-self: center;
     display: flex;
-    gap: 1.5rem;
+    justify-content: space-between;
+
     place-items: center;
 
     .macro-container {
       display: grid;
+      justify-items: center;
       gap: 0.8rem;
+
+      .circular-progress {
+        max-width: 90px;
+      }
 
       span {
         font-weight: 700;
