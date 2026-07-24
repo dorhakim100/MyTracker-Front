@@ -7,12 +7,11 @@
     background-color: rgba(255, 255, 255, 0.8) !important;
     border-top: 0.5px solid rgba(0, 0, 0, 0.08);
   }
-  
+
   &.show {
     .MuiPaper-root {
       backdrop-filter: none;
       -webkit-backdrop-filter: none;
-
     }
   }
 
@@ -28,7 +27,7 @@
       background-color: $darker-gray-left-menu-glass !important;
       border-top: 0.5px solid rgba(255, 255, 255, 0.15);
     }
-    
+
     &.show {
       .MuiPaper-root {
         background-color: $darker-gray-left-menu !important;
@@ -75,14 +74,10 @@
         }
       }
     }
-    
-    
+
     .MuiBottomNavigation-root,
     .MuiBottomNavigation-root button {
       background-color: transparent !important;
-      
-
-      
     }
 
     button:not(.Mui-selected) {
@@ -110,6 +105,10 @@
   grid-template-rows: 1fr;
 
   justify-items: center;
+
+  .MuiBottomNavigationAction-root {
+    gap: 3px;
+  }
 
   button {
     padding: 0px !important;
@@ -150,8 +149,7 @@
   padding: 1rem !important;
   margin-bottom: 0.8rem !important;
 
-  box-shadow:
-    rgba(0, 0, 0, 0.308) 0px 10px 20px,
+  box-shadow: rgba(0, 0, 0, 0.308) 0px 10px 20px,
     rgba(0, 0, 0, 0.23) 0px 6px 6px;
 
   .MuiButtonBase-root {
@@ -287,51 +285,44 @@ body.dark-mode.dashboard {
   background-color: $darker-gray-left-menu-glass !important;
   &.blue {
     background-color: $darker-gray-blue-left-menu-glass !important;
-    .MuiBox-root{
+    .MuiBox-root {
       background-color: transparent !important;
-  
     }
   }
   &.red {
     background-color: $darker-gray-red-left-menu-glass !important;
-    .MuiBox-root{
+    .MuiBox-root {
       background-color: transparent !important;
-  
     }
   }
   &.yellow {
     background-color: $darker-gray-yellow-left-menu-glass !important;
-    .MuiBox-root{
+    .MuiBox-root {
       background-color: transparent !important;
-  
     }
   }
   &.green {
     background-color: $darker-gray-green-left-menu-glass !important;
-    .MuiBox-root{
+    .MuiBox-root {
       background-color: transparent !important;
-  
     }
   }
   &.orange {
     background-color: $darker-gray-orange-left-menu-glass !important;
-    .MuiBox-root{
+    .MuiBox-root {
       background-color: transparent !important;
-  
     }
   }
   &.deepPurple {
     background-color: $darker-gray-deep-purple-left-menu-glass !important;
-    .MuiBox-root{
+    .MuiBox-root {
       background-color: transparent !important;
-  
     }
   }
   &.pink {
     background-color: $darker-gray-pink-left-menu-glass !important;
-    .MuiBox-root{
+    .MuiBox-root {
       background-color: transparent !important;
-  
     }
   }
   &.purple {

@@ -8,12 +8,20 @@
     color: $white !important;
   }
 
+  .search-container {
+    z-index: 100 !important;
+  }
+
   .search-header {
     padding: 0em 1rem;
 
     &:nth-of-type(2) {
       margin-top: 1rem;
     }
+  }
+
+  .item-image {
+    z-index: 20;
   }
 
   .no-results {

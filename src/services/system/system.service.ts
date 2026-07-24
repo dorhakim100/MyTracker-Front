@@ -1,5 +1,6 @@
 import { indexedDbService } from '../indexeddb.service'
-import type { Lang, Prefs } from '../../types/system/Prefs'
+import type { AppFont, Lang, Prefs } from '../../types/system/Prefs'
+import { APP_FONTS } from '../../types/system/Prefs'
 
 const LS_KEY = 'my-tracker-prefs'
 
@@ -8,6 +9,15 @@ function toLang(value: unknown): Lang {
 
   return 'en'
 }
+
+function toAppFont(value: unknown): AppFont {
+  if (typeof value === 'string' && APP_FONTS.includes(value as AppFont)) {
+    return value as AppFont
+  }
+
+  return 'font-rubik'
+}
+
 const STORE_NAME = 'prefs'
 const RECORD_ID = 'prefs'
 
@@ -23,6 +33,7 @@ type StoredPrefs = {
   lang?: unknown
   isEnglish?: boolean
   favoriteColor?: string
+  font?: unknown
   weightChartSettings?: Prefs['weightChartSettings']
   healthProvider?: Prefs['healthProvider']
 }
@@ -50,6 +61,7 @@ export async function getPrefs(): Promise<Prefs> {
         lang,
         isDarkMode: !!entity.isDarkMode,
         favoriteColor: entity.favoriteColor ?? defaults.favoriteColor,
+        font: toAppFont(entity.font ?? defaults.font),
         weightChartSettings:
           entity.weightChartSettings ?? defaults.weightChartSettings,
         healthProvider: entity.healthProvider ?? defaults.healthProvider,
@@ -73,6 +85,7 @@ export async function getPrefs(): Promise<Prefs> {
         lang,
         isDarkMode: !!parsed.isDarkMode,
         favoriteColor: parsed.favoriteColor ?? defaults.favoriteColor,
+        font: toAppFont(parsed.font ?? defaults.font),
         weightChartSettings:
           parsed.weightChartSettings ?? defaults.weightChartSettings,
         healthProvider: parsed.healthProvider ?? defaults.healthProvider,
@@ -103,6 +116,7 @@ export async function setPrefs(prefs: Prefs): Promise<void> {
     lang: prefs.lang,
     isDarkMode: !!prefs.isDarkMode,
     favoriteColor: prefs.favoriteColor,
+    font: toAppFont(prefs.font),
     weightChartSettings: prefs.weightChartSettings,
     healthProvider: prefs.healthProvider,
   }
@@ -115,6 +129,7 @@ export function getDefaultsPrefs(): Prefs {
     isDarkMode: true,
     lang: 'en',
     favoriteColor: 'primary',
+    font: 'font-rubik',
     weightChartSettings: {
       movingAverageColor: 'orange',
       isMovingAverage: true,

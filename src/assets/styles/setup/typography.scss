@@ -1,4 +1,39 @@
 @font-face {
-    font-family: 'assistantRegular';
-    src: url('/fonts/Assistant-Regular.ttf');
-  }
+  font-family: 'Rubik';
+  src: url('/fonts/Rubik/Rubik-Variable.ttf') format('truetype');
+  font-weight: 300 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Heebo';
+  src: url('/fonts/Heebo/Heebo-Variable.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Assistant';
+  src: url('/fonts/Assistant/Assistant-Variable.ttf') format('truetype');
+  font-weight: 200 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --app-font-family: 'Rubik', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+body.font-rubik {
+  --app-font-family: 'Rubik', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+body.font-heebo {
+  --app-font-family: 'Heebo', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+body.font-assistant {
+  --app-font-family: 'Assistant', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}

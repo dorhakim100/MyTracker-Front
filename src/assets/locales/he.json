@@ -414,7 +414,8 @@
     "darkMode": "מסך כהה",
     "language": "שפה",
     "favoriteColor": "צבע מועדף",
-    "fixedMenu": "תפריט קבוע"
+    "fixedMenu": "תפריט קבוע",
+    "font": "גופן"
   },
   "menu": {
     "viewMenus": "צפייה בתפריטים",
