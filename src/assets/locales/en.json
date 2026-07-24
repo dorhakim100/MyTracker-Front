@@ -29,7 +29,8 @@
     "gram": "g",
     "outOf": "Out of",
     "dayProgress": "Day progress",
-    "beyondMacros": "Beyond macros"
+    "beyondMacros": "Beyond macros",
+    "beyondCalories": "Beyond calories"
   },
   "heartRate": {
     "bpm": "BPM",

@@ -8,12 +8,16 @@ export interface DayProgressMacros {
   fat: number
 }
 
+export type BeyondGoalWarningKey = 'beyondCalories' | 'beyondMacros'
+
 export interface DayProgressPreview {
   goals: DayProgressMacros
   baseline: DayProgressMacros
   diff: DayProgressMacros
   projected: DayProgressMacros
   isBeyondMacros: boolean
+  /** i18n key under `macros.*`, or null when under goals. */
+  beyondWarningKey: BeyondGoalWarningKey | null
   /** Pale ring segment basis (goal or projected grams). */
   ring: DayProgressMacros
   /** Denominator for fill/blink clamping so shrink wedges still fit. */
@@ -71,16 +75,39 @@ function maxMacros(a: DayProgressMacros, b: DayProgressMacros): DayProgressMacro
   }
 }
 
-function isBeyond(
+function isBeyondMacros(
   projected: DayProgressMacros,
   goals: DayProgressMacros
 ): boolean {
   return (
-    projected.calories > goals.calories ||
     projected.protein > goals.protein ||
     projected.carbs > goals.carbs ||
     projected.fat > goals.fat
   )
+}
+
+function isBeyondCalories(
+  projected: DayProgressMacros,
+  goals: DayProgressMacros
+): boolean {
+  return projected.calories > goals.calories
+}
+
+function isBeyond(
+  projected: DayProgressMacros,
+  goals: DayProgressMacros
+): boolean {
+  return isBeyondCalories(projected, goals) || isBeyondMacros(projected, goals)
+}
+
+/** Calories overshoot wins when both macros and calories are past goal. */
+export function getBeyondGoalWarningKey(
+  projected: DayProgressMacros,
+  goals: DayProgressMacros
+): BeyondGoalWarningKey | null {
+  if (isBeyondCalories(projected, goals)) return 'beyondCalories'
+  if (isBeyondMacros(projected, goals)) return 'beyondMacros'
+  return null
 }
 
 /**
@@ -119,6 +146,7 @@ export function getItemDetailsDayProgressPreview(params: {
     diff,
     projected,
     isBeyondMacros: beyond,
+    beyondWarningKey: getBeyondGoalWarningKey(projected, goals),
     ring,
     fillDenom,
     calorieDelta,

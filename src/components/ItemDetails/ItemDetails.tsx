@@ -819,19 +819,19 @@ export function ItemDetails({
               </div>
               <div
                 className={`beyond-macros-warning ${
-                  showDayProgress && dayProgressPreview?.isBeyondMacros
-                    ? 'visible'
-                    : ''
+                  dayProgressPreview?.beyondWarningKey ? 'visible' : ''
                 }`}
-                aria-hidden={
-                  !(showDayProgress && dayProgressPreview?.isBeyondMacros)
-                }
+                aria-hidden={!dayProgressPreview?.beyondWarningKey}
               >
                 <WarningAmberRoundedIcon
                   className='beyond-macros-icon'
                   fontSize='small'
                 />
-                <span>{t('macros.beyondMacros')}</span>
+                <span>
+                  {dayProgressPreview?.beyondWarningKey
+                    ? t(`macros.${dayProgressPreview.beyondWarningKey}`)
+                    : ''}
+                </span>
               </div>
             </div>
           )}
