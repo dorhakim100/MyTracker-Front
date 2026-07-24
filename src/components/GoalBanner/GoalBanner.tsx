@@ -1,4 +1,4 @@
-import { Typography } from '@mui/material'
+import { LinearProgress, Typography } from '@mui/material'
 import FlagIcon from '@mui/icons-material/Flag'
 import { formatNumberWithCommas } from '../../services/util.service'
 import CustomSkeleton from '../../CustomMui/CustomSkeleton/CustomSkeleton'
@@ -31,7 +31,7 @@ export function GoalBanner({
     formattedGoal = formatNumberWithCommas(+goal)
   }
 
-  if (loading) {
+  if (loading && current === 0) {
     return (
       <div className='goal-banner banner'>
         <div className='value-container'>
@@ -69,6 +69,11 @@ export function GoalBanner({
         )}
       </div>
       {icon || <FlagIcon />}
+      <LinearProgress
+        className={`linear-progress ${prefs.favoriteColor} ${
+          loading ? 'show' : ''
+        }`}
+      />
     </div>
   )
 }
