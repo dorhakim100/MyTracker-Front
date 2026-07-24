@@ -16,8 +16,6 @@ export const AddItemButton = ({ mealPeriod }: AddItemButtonProps) => {
   const { t } = useTranslation()
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
 
-  const timer = useSelector((state: RootState) => state.workoutModule.timer)
-
   return (
     <CustomButton
       text={t('meals.addItem')}
@@ -30,7 +28,6 @@ export const AddItemButton = ({ mealPeriod }: AddItemButtonProps) => {
         setSelectedMeal(capitalizeFirstLetter(mealPeriod as MealPeriod))
       }}
       className={`${prefs.favoriteColor}`}
-      disabled={timer}
     />
   )
 }
