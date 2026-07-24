@@ -51,7 +51,9 @@ export function PickerSelect({
         sx={{ m: 1, minWidth: isAutoWidth ? 'auto' : minWidth || 150 }}
         size='small'
         onClick={openClock}
-        className={`picker-select ${className}`}
+        className={`picker-select ${className} ${prefs.favoriteColor} ${
+          prefs.isDarkMode ? 'dark-mode' : ''
+        }`}
       >
         <InputLabel id={`${option.label}-label`}>{option.label}</InputLabel>
         <Select
@@ -64,7 +66,6 @@ export function PickerSelect({
           renderValue={(selected) =>
             `${selected} ${afterString ? ` ${afterString}` : ''}`
           }
-  
         >
           <MenuItem
             sx={{

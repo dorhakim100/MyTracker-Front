@@ -1,65 +1,59 @@
 body.dashboard {
   .select-paper {
-    .custom-select-img,.custom-select-icon  {
+    .custom-select-img,
+    .custom-select-icon {
       width: 60px;
       height: 60px;
- 
     }
-  
-
   }
 }
 
 .select-paper {
+  &.dark-mode {
+    outline: 1px solid rgba(255, 255, 255, 0.3) !important;
 
-
-
-&.dark-mode {
-  outline: 1px solid rgba(255, 255, 255, 0.3) !important;
-
-  &.blue {
-    li {
-      background-color: $darker-gray-blue !important;
+    &.blue {
+      li {
+        background-color: $darker-gray-blue !important;
+      }
     }
-  }
-  &.green {
-    li {
-      background-color: $darker-gray-green !important;
+    &.green {
+      li {
+        background-color: $darker-gray-green !important;
+      }
     }
-  }
-  &.yellow {
-    li {
-      background-color: $darker-gray-yellow !important;
+    &.yellow {
+      li {
+        background-color: $darker-gray-yellow !important;
+      }
     }
-  }
-  &.red {
-    li {
-      background-color: $darker-gray-red !important;
+    &.red {
+      li {
+        background-color: $darker-gray-red !important;
+      }
     }
-  }
-  &.orange {
-    li {
-      background-color: $darker-gray-orange !important;
+    &.orange {
+      li {
+        background-color: $darker-gray-orange !important;
+      }
     }
-  }
-  &.purple {
-    li {
-      background-color: $darker-gray-purple !important;
+    &.purple {
+      li {
+        background-color: $darker-gray-purple !important;
+      }
     }
-  }
-  &.pink {
-    li {
-      background-color: $darker-gray-pink !important;
+    &.pink {
+      li {
+        background-color: $darker-gray-pink !important;
+      }
     }
-  }
-  &.deep-purple {
-    li {
-      background-color: $darker-gray-deep-purple !important;
+    &.deep-purple {
+      li {
+        background-color: $darker-gray-deep-purple !important;
+      }
     }
   }
 }
-}
-
 
 .MuiMenu-list {
   max-height: 350px;
@@ -83,7 +77,7 @@ body.dashboard {
     justify-content: center;
   }
   &.dashboard {
-    .custom-select-img, 
+    .custom-select-img,
     .custom-select-icon {
       width: 50px;
       height: 50px;
@@ -91,7 +85,6 @@ body.dashboard {
   }
 }
 .MuiInputBase-root.with-imgs {
-
   .MuiSelect-select {
     display: flex;
     align-items: center;
@@ -102,7 +95,7 @@ body.dashboard {
       object-fit: cover;
       border-radius: 50%;
     }
-    
+
     .custom-select-icon {
       width: 40px;
       height: 40px;
@@ -110,8 +103,6 @@ body.dashboard {
       align-items: center;
       justify-content: center;
     }
-    
-    
   }
   &.dashboard {
     img {
@@ -131,10 +122,16 @@ body.dashboard {
   text-align: center;
   &.picker-select {
   }
+  .MuiFormLabel-root {
+    padding: 0 5px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    font-size: 14px;
+  }
   &.primary {
     &.dark-mode {
       .MuiFormLabel-root {
-        background-color: $dark-gray !important;
+        background-color: $darker-gray !important;
       }
     }
     .MuiInputBase-colorPrimary,
@@ -231,6 +228,13 @@ body.dashboard {
         fieldset {
           border-color: $picker-color-purple !important;
         }
+      }
+    }
+  }
+  &.deepPurple {
+    &.dark-mode {
+      .MuiFormLabel-root {
+        background-color: $dark-gray-deep-purple !important;
       }
     }
   }
