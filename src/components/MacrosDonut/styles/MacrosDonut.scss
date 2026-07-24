@@ -2,6 +2,7 @@
   align-self: center;
   --size: 160px;
   --thickness: 18px;
+  position: relative;
   width: var(--size);
   height: var(--size);
   border-radius: 50%;
@@ -12,9 +13,43 @@
   );
   display: grid;
   place-items: center;
+
+  &.show-progress {
+    background: none;
+
+    .donut-pale,
+    .donut-fill {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .donut-pale {
+      opacity: 0.3;
+      background: conic-gradient(
+        var(--pColor) 0 var(--p),
+        var(--cColor) var(--p) calc(var(--p) + var(--c)),
+        var(--fColor) calc(var(--p) + var(--c)) 100%
+      );
+    }
+
+    .donut-fill {
+      background: conic-gradient(
+        var(--pColor) 0 var(--pFill),
+        transparent var(--pFill) var(--p),
+        var(--cColor) var(--p) var(--cFillEnd),
+        transparent var(--cFillEnd) calc(var(--p) + var(--c)),
+        var(--fColor) calc(var(--p) + var(--c)) var(--fFillEnd),
+        transparent var(--fFillEnd) 100%
+      );
+    }
+  }
 }
 
 .donut .donut-inner {
+  position: relative;
+  z-index: 1;
   width: calc(var(--size) - var(--thickness));
   height: calc(var(--size) - var(--thickness));
   border-radius: 50%;
@@ -50,4 +85,14 @@
 
   display: grid;
   place-items: center;
+
+  .totals {
+    text-align: center;
+
+    .after-text {
+      font-size: 0.9rem;
+      opacity: 0.5;
+      white-space: nowrap;
+    }
+  }
 }

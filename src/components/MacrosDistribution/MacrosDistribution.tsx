@@ -23,6 +23,12 @@ interface MacrosDistributionProps {
   fats: number
   hideEditAndHeader?: boolean
   className?: string
+  isGoal?: boolean
+  currentProtein?: number
+  currentCarbs?: number
+  currentFats?: number
+  currentCalories?: number
+  goalCalories?: number
 }
 
 export const proteinColor = 'var(--macro-protein)'
@@ -35,6 +41,12 @@ export function MacrosDistribution({
   fats,
   hideEditAndHeader = false,
   className = '',
+  isGoal = false,
+  currentProtein,
+  currentCarbs,
+  currentFats,
+  currentCalories,
+  goalCalories,
 }: MacrosDistributionProps) {
   const { t } = useTranslation()
   const prefs = useSelector(
@@ -95,6 +107,12 @@ export function MacrosDistribution({
           protein={protein}
           carbs={carbs}
           fats={fats}
+          showProgress={!isGoal}
+          currentProtein={currentProtein}
+          currentCarbs={currentCarbs}
+          currentFats={currentFats}
+          currentCalories={currentCalories}
+          goalCalories={goalCalories}
         />
 
         <Macros
