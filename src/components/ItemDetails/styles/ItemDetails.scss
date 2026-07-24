@@ -2,7 +2,7 @@
   display: grid;
   align-items: start;
 
-  gap: 1.5rem;
+  gap: 1rem;
   padding: 1rem;
   // height: 100%;
 
@@ -11,6 +11,7 @@
     grid-template-columns: auto 1fr auto;
     grid-template-rows: 1fr, auto;
     gap: 0.2rem 1rem;
+    margin-bottom: 1rem;
 
     .image {
       grid-column: 1/2;
@@ -87,6 +88,61 @@
               font-size: 1.2rem;
               text-align: center;
             }
+          }
+        }
+      }
+    }
+
+    .day-progress-controls {
+      margin-inline-start: 1.5rem;
+
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.35rem;
+      justify-items: start;
+
+      .day-progress-switch {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+
+        .day-progress-label {
+          opacity: 0.85;
+          font-weight: 500;
+        }
+      }
+
+      .beyond-macros-warning {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.35rem;
+        min-height: 1.35rem;
+        font-size: 0.8rem;
+        font-weight: 500;
+        visibility: hidden;
+        color: $error-color;
+
+        .beyond-macros-icon {
+          color: $error-color;
+        }
+
+        span {
+          margin-top: 2px;
+        }
+
+        &.visible {
+          visibility: visible;
+        }
+      }
+
+      &.dark-mode {
+        .beyond-macros-warning {
+          color: $error-color-dark-mode;
+
+          .beyond-macros-icon {
+            color: $error-color-dark-mode;
           }
         }
       }

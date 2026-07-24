@@ -36,6 +36,7 @@ type StoredPrefs = {
   font?: unknown
   weightChartSettings?: Prefs['weightChartSettings']
   healthProvider?: Prefs['healthProvider']
+  showDayProgress?: boolean
 }
 
 export async function getPrefs(): Promise<Prefs> {
@@ -65,6 +66,8 @@ export async function getPrefs(): Promise<Prefs> {
         weightChartSettings:
           entity.weightChartSettings ?? defaults.weightChartSettings,
         healthProvider: entity.healthProvider ?? defaults.healthProvider,
+        showDayProgress:
+          entity.showDayProgress ?? defaults.showDayProgress,
       }
     }
   } catch {
@@ -89,6 +92,8 @@ export async function getPrefs(): Promise<Prefs> {
         weightChartSettings:
           parsed.weightChartSettings ?? defaults.weightChartSettings,
         healthProvider: parsed.healthProvider ?? defaults.healthProvider,
+        showDayProgress:
+          parsed.showDayProgress ?? defaults.showDayProgress,
       }
       await indexedDbService.put(STORE_NAME, { _id: RECORD_ID, ...migrated })
       localStorage.removeItem(LS_KEY)
@@ -119,6 +124,7 @@ export async function setPrefs(prefs: Prefs): Promise<void> {
     font: toAppFont(prefs.font),
     weightChartSettings: prefs.weightChartSettings,
     healthProvider: prefs.healthProvider,
+    showDayProgress: !!prefs.showDayProgress,
   }
   await indexedDbService.put(STORE_NAME, toSave)
 }
@@ -136,5 +142,6 @@ export function getDefaultsPrefs(): Prefs {
       isDisplayWeeklyChange: true,
     },
     healthProvider: 'native',
+    showDayProgress: false,
   }
 }

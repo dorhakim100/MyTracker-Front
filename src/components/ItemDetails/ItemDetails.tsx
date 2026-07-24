@@ -42,10 +42,14 @@ import { dayService } from '../../services/day/day.service'
 import { LoggedToday } from '../../types/loggedToday/LoggedToday'
 import { imageService } from '../../services/image/image.service'
 import { loadItems, setSelectedMeal } from '../../store/actions/item.actions'
+import { setPrefs } from '../../store/actions/system.actions'
 import { ClockPicker } from '../Pickers/ClockPicker'
 import { PickerSelect } from '../Pickers/PickerSelect'
 import CustomSkeleton from '../../CustomMui/CustomSkeleton/CustomSkeleton'
 import { Menu } from '../../types/menu/Menu'
+import { CustomIOSSwitch } from '../../CustomMui/CustomIOSSwitch/CustomIOSSwitch'
+import { getItemDetailsDayProgressPreview } from '../../services/macros/day-progress-preview.service'
+import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded'
 
 interface ItemDetailsProps {
   onAddToMealClick?: (item: MealItem) => void
@@ -631,6 +635,86 @@ export function ItemDetails({
     if (searchedItem) searchedItem.image = undefined
   }
 
+  const canShowDayProgress = !!(
+    !noEdit &&
+    user &&
+    selectedDay &&
+    user.currGoal?.macros &&
+    user.currGoal?.dailyCalories
+  )
+
+  const dayProgressPreview = useMemo(() => {
+    if (!canShowDayProgress || !selectedDay || !user?.currGoal) return null
+
+    return getItemDetailsDayProgressPreview({
+      selectedDay,
+      goals: {
+        calories: user.currGoal.dailyCalories,
+        protein: user.currGoal.macros.protein,
+        carbs: user.currGoal.macros.carbs,
+        fat: user.currGoal.macros.fat,
+      },
+      editedMacros: editItem.totalMacros,
+      originalMacros: editMealItem?.macros ?? null,
+    })
+  }, [
+    canShowDayProgress,
+    selectedDay,
+    user?.currGoal,
+    editItem.totalMacros,
+    editMealItem?.macros,
+  ])
+
+  const showDayProgress = !!(
+    canShowDayProgress &&
+    prefs.showDayProgress &&
+    dayProgressPreview
+  )
+
+  const onToggleDayProgress = () => {
+    setPrefs({
+      ...prefs,
+      showDayProgress: !prefs.showDayProgress,
+    })
+  }
+
+  function getMacrosDonutProps() {
+    const macros = editItem.totalMacros
+
+    if (!showDayProgress || !dayProgressPreview) {
+      console.log(macros?.calories)
+      return {
+        protein: macros?.protein,
+        carbs: macros?.carbs,
+        fats: macros?.fat,
+        calories: macros?.calories,
+      }
+    }
+
+    const { ring, baseline, goals, projected, fillDenom, calorieDelta } =
+      dayProgressPreview
+    const pending = dayProgressPreview.hasPendingChange
+
+    return {
+      protein: ring.protein,
+      carbs: ring.carbs,
+      fats: ring.fat,
+      showProgress: true,
+      currentProtein: baseline.protein,
+      currentCarbs: baseline.carbs,
+      currentFats: baseline.fat,
+      currentCalories: baseline.calories,
+      goalCalories: goals.calories,
+      previewProtein: pending ? projected.protein : undefined,
+      previewCarbs: pending ? projected.carbs : undefined,
+      previewFats: pending ? projected.fat : undefined,
+      fillDenomProtein: fillDenom.protein,
+      fillDenomCarbs: fillDenom.carbs,
+      fillDenomFats: fillDenom.fat,
+      calorieDelta: pending ? calorieDelta : undefined,
+    }
+  }
+
   return (
     <>
       <div
@@ -696,18 +780,52 @@ export function ItemDetails({
 
         <div className='content'>
           <div className='macros-container'>
-            <MacrosDonut
-              protein={editItem.totalMacros?.protein}
-              carbs={editItem.totalMacros?.carbs}
-              fats={editItem.totalMacros?.fat}
-              calories={editItem.totalMacros?.calories}
-            />
+            <MacrosDonut {...getMacrosDonutProps()} />
             <Macros
               protein={editItem.totalMacros?.protein}
               carbs={editItem.totalMacros?.carbs}
               fats={editItem.totalMacros?.fat}
             />
           </div>
+          {canShowDayProgress && (
+            <div
+              className={`day-progress-controls ${
+                prefs.isDarkMode ? 'dark-mode' : ''
+              }`}
+            >
+              <div
+                className='day-progress-switch'
+                onClick={onToggleDayProgress}
+              >
+                <Typography
+                  variant='body2'
+                  className='day-progress-label'
+                >
+                  {t('macros.dayProgress')}
+                </Typography>
+                <CustomIOSSwitch
+                  color={prefs.favoriteColor}
+                  checked={!!prefs.showDayProgress}
+                />
+              </div>
+              <div
+                className={`beyond-macros-warning ${
+                  showDayProgress && dayProgressPreview?.isBeyondMacros
+                    ? 'visible'
+                    : ''
+                }`}
+                aria-hidden={
+                  !(showDayProgress && dayProgressPreview?.isBeyondMacros)
+                }
+              >
+                <WarningAmberRoundedIcon
+                  className='beyond-macros-icon'
+                  fontSize='small'
+                />
+                <span>{t('macros.beyondMacros')}</span>
+              </div>
+            </div>
+          )}
         </div>
 
         <div className='edit'>
