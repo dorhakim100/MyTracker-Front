@@ -425,7 +425,8 @@
     "darkMode": "Dark mode",
     "language": "Language",
     "favoriteColor": "Favorite color",
-    "fixedMenu": "Fixed menu"
+    "fixedMenu": "Fixed menu",
+    "font": "Font"
   },
   "date": {
     "from": "From",
