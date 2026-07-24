@@ -20,6 +20,9 @@ export function DirectionThemeProvider({ children }: DirectionThemeProviderProps
     () =>
       createTheme({
         direction: lang === 'he' ? 'rtl' : 'ltr',
+        typography: {
+          fontFamily: "var(--app-font-family, 'Rubik', system-ui, sans-serif)",
+        },
       }),
     [lang]
   )
