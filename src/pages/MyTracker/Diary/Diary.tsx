@@ -66,12 +66,15 @@ export function Diary() {
   }, [totalBreakfastCalories, totalLunchCalories, totalDinnerCalories, totalSnacksCalories])
 
   useEffect(() => {
+    let ignore = false
     const handleGetDiary = async () => {
       try {
         const diary = await dayService.query(diaryFilter)
 
+        if (ignore) return
         setSelectedDiaryDay(diary)
       } catch (error) {
+        if (ignore) return
         console.log(error)
         showErrorMsg(t('messages.error.getDiary'))
       }
@@ -79,7 +82,10 @@ export function Diary() {
     if (!user || !selectedDayDiary) return
 
     handleGetDiary()
-  }, [selectedDay, user])
+    return () => {
+      ignore = true
+    }
+  }, [selectedDay, user?._id])
 
   useEffect(() => {
     const loggedToday = user?.loggedToday
