@@ -6,7 +6,7 @@ import { searchService } from '../../services/search/search-service'
 import { showErrorMsg } from '../../services/event-bus.service'
 import { ItemDetails } from '../ItemDetails/ItemDetails'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
-import { setItem } from '../../store/actions/item.actions'
+import { setItem, setEditMealItem } from '../../store/actions/item.actions'
 import { Item } from '../../types/item/Item'
 import { RootState } from '../../store/store'
 import { barcodeScannerService } from '../../services/barcode-scanner/barcode-scanner.service'
@@ -76,6 +76,7 @@ export function BarcodeScanner({
           setIsTryAgain(true)
           return
         }
+        setEditMealItem(null)
         setItem(res as Item)
         setIsItemFound(true)
         await stopScanner()

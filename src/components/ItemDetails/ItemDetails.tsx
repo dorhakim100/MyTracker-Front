@@ -41,7 +41,11 @@ import { dayService } from '../../services/day/day.service'
 
 import { LoggedToday } from '../../types/loggedToday/LoggedToday'
 import { imageService } from '../../services/image/image.service'
-import { loadItems, setSelectedMeal } from '../../store/actions/item.actions'
+import {
+  loadItems,
+  setSelectedMeal,
+  setEditMealItem,
+} from '../../store/actions/item.actions'
 import { ClockPicker } from '../Pickers/ClockPicker'
 import { PickerSelect } from '../Pickers/PickerSelect'
 import CustomSkeleton from '../../CustomMui/CustomSkeleton/CustomSkeleton'
@@ -421,6 +425,7 @@ export function ItemDetails({
 
         setSelectedDiaryDay(dayToSave as LoggedToday)
 
+        setEditMealItem(null)
         showSuccessMsg(t('messages.success.addedToMeal'))
         return
       }
@@ -472,6 +477,7 @@ export function ItemDetails({
 
       setSelectedDiaryDay(dayToSave as LoggedToday)
 
+      setEditMealItem(null)
       showSuccessMsg(t('messages.success.addedToMeal'))
     } catch {
       showErrorMsg(t('messages.error.addLog'))
@@ -606,6 +612,7 @@ export function ItemDetails({
           await logService.save(newLog as Log)
 
           updateMenu(newMenu as Menu)
+
           showSuccessMsg(t('messages.success.saveMeal'))
           return
         } catch {
@@ -627,7 +634,9 @@ export function ItemDetails({
   }
 
   const renderErrorImage = () => {
-    if (editMealItem) editMealItem.image = undefined
+    if (editMealItem) {
+      setEditMealItem({ ...editMealItem, image: undefined })
+    }
     if (searchedItem) searchedItem.image = undefined
   }
 

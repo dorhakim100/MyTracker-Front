@@ -13,7 +13,7 @@ import foodAnimation from '../../../public/food-animation.json'
 import { CustomList } from '../../CustomMui/CustomList/CustomList'
 
 import { MealItem } from '../../types/mealItem/MealItem'
-import { setItem } from '../../store/actions/item.actions'
+import { setItem, setEditMealItem } from '../../store/actions/item.actions'
 import { ItemDetails } from '../ItemDetails/ItemDetails'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { MacrosDistribution } from '../MacrosDistribution/MacrosDistribution'
@@ -236,6 +236,7 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
 
   function onSelectItem(item: MealItem) {
     const originalMacros = _calcOriginalMacros(item)
+    setEditMealItem(null)
     setIsOpenModal(true)
     setModalType('edit')
     setItem({ ...item, macros: originalMacros })
@@ -256,6 +257,7 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
   }
 
   function onCloseItemDetails() {
+    setEditMealItem(null)
     setIsOpenModal(false)
   }
 

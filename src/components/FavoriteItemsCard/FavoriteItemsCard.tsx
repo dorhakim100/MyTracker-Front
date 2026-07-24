@@ -8,7 +8,7 @@ import {
   optimisticUpdateUser,
   updateUser,
 } from '../../store/actions/user.actions'
-import { setItem } from '../../store/actions/item.actions'
+import { setItem, setEditMealItem } from '../../store/actions/item.actions'
 import { CustomList } from '../../CustomMui/CustomList/CustomList'
 import { SkeletonList } from '../../components/SkeletonList/SkeletonList'
 import { FavoriteButton } from '../../components/FavoriteButton/FavoriteButton'
@@ -34,11 +34,13 @@ export function FavoriteItemsCard() {
   const [isItemSelected, setIsItemSelected] = useState<boolean>(false)
 
   const onSelectItem = (item: Item) => {
+    setEditMealItem(null)
     setIsItemSelected(true)
     setItem(item)
   }
 
   const onCloseItemDetails = () => {
+    setEditMealItem(null)
     setIsItemSelected(false)
   }
 

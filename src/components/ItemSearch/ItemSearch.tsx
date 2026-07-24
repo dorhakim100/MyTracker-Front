@@ -19,6 +19,7 @@ import {
   loadItems,
   setItem,
   setSelectedMeal,
+  setEditMealItem,
 } from '../../store/actions/item.actions'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { ItemDetails } from '../ItemDetails/ItemDetails'
@@ -174,6 +175,7 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
   }
 
   const onItemClick = (item: Item) => {
+    setEditMealItem(null)
     setItem(item)
     setIsItemSelected(true)
     setIsCustomLog(false)
@@ -192,12 +194,14 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
   }
 
   const onCloseItemDetails = () => {
+    setEditMealItem(null)
     setIsItemSelected(false)
     setSelectedMeal(null)
     setIsCustomLog(false)
   }
 
   const onCustomLog = () => {
+    setEditMealItem(null)
     setIsCustomLog(true)
     setIsItemSelected(true)
   }

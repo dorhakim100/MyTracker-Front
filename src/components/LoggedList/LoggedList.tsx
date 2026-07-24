@@ -206,51 +206,52 @@ export function LoggedList({
 
   const onItemClick = async (mealItem: Log) => {
     setIsEditOpen(true)
+    const logToEdit = { ...mealItem }
     let itemToSet
 
-    if (mealItem.source === searchTypes.custom) {
-      setEditMealItem(mealItem)
+    if (logToEdit.source === searchTypes.custom) {
+      setEditMealItem(logToEdit)
       setItem({
-        ...mealItem,
+        ...logToEdit,
         type: searchTypes.custom,
       } as Item)
       return
     }
 
     try {
-      const cachedItem = cachedItems.find((i) => i.searchId === mealItem.itemId)
+      const cachedItem = cachedItems.find((i) => i.searchId === logToEdit.itemId)
 
       if (cachedItem) {
-        mealItem.name = cachedItem.name
-        mealItem.image = cachedItem.image
+        logToEdit.name = cachedItem.name
+        logToEdit.image = cachedItem.image
         itemToSet = cachedItem
-      } else if (mealItem.source !== searchTypes.meal && mealItem.itemId) {
+      } else if (logToEdit.source !== searchTypes.meal && logToEdit.itemId) {
         const searchedItem = await searchService.searchById(
-          mealItem.itemId,
-          mealItem.source ||
-            (mealItem.searchId && mealItem.searchId.length >= 10)
+          logToEdit.itemId,
+          logToEdit.source ||
+            (logToEdit.searchId && logToEdit.searchId.length >= 10)
             ? searchTypes.openFoodFacts
             : searchTypes.usda
         )
-        mealItem.name = searchedItem?.name || 'Unknown'
-        mealItem.image = searchedItem?.image || searchUrls.DEFAULT_IMAGE
+        logToEdit.name = searchedItem?.name || 'Unknown'
+        logToEdit.image = searchedItem?.image || searchUrls.DEFAULT_IMAGE
         itemToSet = searchedItem
-      } else if (mealItem.mealId) {
-        const meal = await mealService.getById(mealItem.mealId)
+      } else if (logToEdit.mealId) {
+        const meal = await mealService.getById(logToEdit.mealId)
 
-        mealItem.name = mealItem.name || meal.name
-        mealItem.image =
+        logToEdit.name = logToEdit.name || meal.name
+        logToEdit.image =
           meal.image ||
           meal.items.find((item) => item.image)?.image ||
           searchUrls.DEFAULT_IMAGE
         itemToSet = meal
       }
-      mealItem.searchId = mealItem.itemId
+      logToEdit.searchId = logToEdit.itemId
 
       if (!itemToSet.image) {
         const image = await imageService.getSingleImage(itemToSet.name)
         itemToSet.image = image
-        mealItem.image = image
+        logToEdit.image = image
       }
 
       if (!itemToSet) {
@@ -258,7 +259,7 @@ export function LoggedList({
         return
       }
 
-      setEditMealItem({ ...mealItem })
+      setEditMealItem({ ...logToEdit })
       setItem(itemToSet as Item)
     } catch {
       showErrorMsg(t('messages.error.editMeal'))
