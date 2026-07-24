@@ -154,6 +154,7 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
               carbs={editMeal.macros.carbs}
               fats={editMeal.macros.fat}
               hideEditAndHeader={true}
+              isGoal={true}
               className={`edit-meal-macros-distribution`}
             />
             <div className='buttons-container'>

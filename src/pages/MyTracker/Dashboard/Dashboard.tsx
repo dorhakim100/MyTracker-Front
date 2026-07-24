@@ -94,9 +94,9 @@ export function Dashboard() {
   )
 
   const [macros, setMacros] = useState({
-    protein: { percentage: 0, gram: 0 },
-    carbs: { percentage: 0, gram: 0 },
-    fats: { percentage: 0, gram: 0 },
+    protein: { percentage: 0, gram: 0, current: 0 },
+    carbs: { percentage: 0, gram: 0, current: 0 },
+    fats: { percentage: 0, gram: 0, current: 0 },
   })
 
   const [userToCheck, setUserToCheck] = useState(traineeUser || user)
@@ -128,6 +128,11 @@ export function Dashboard() {
             protein={macros.protein.gram}
             carbs={macros.carbs.gram}
             fats={macros.fats.gram}
+            currentProtein={macros.protein.current}
+            currentCarbs={macros.carbs.current}
+            currentFats={macros.fats.current}
+            currentCalories={calories}
+            goalCalories={userToCheck.currGoal?.dailyCalories}
           />,
         ]
       return [
@@ -147,6 +152,11 @@ export function Dashboard() {
           protein={macros.protein.gram}
           carbs={macros.carbs.gram}
           fats={macros.fats.gram}
+          currentProtein={macros.protein.current}
+          currentCarbs={macros.carbs.current}
+          currentFats={macros.fats.current}
+          currentCalories={calories}
+          goalCalories={userToCheck.currGoal?.dailyCalories}
         />,
       ]
     }
@@ -169,6 +179,11 @@ export function Dashboard() {
         protein={macros.protein.gram}
         carbs={macros.carbs.gram}
         fats={macros.fats.gram}
+        currentProtein={macros.protein.current}
+        currentCarbs={macros.carbs.current}
+        currentFats={macros.fats.current}
+        currentCalories={calories}
+        goalCalories={userToCheck.currGoal?.dailyCalories}
       />,
     ]
   }, [userToCheck?._id, calories, macros, currMealPeriod, menu])
@@ -230,14 +245,17 @@ export function Dashboard() {
           userToCheck?.currGoal?.macros.protein
         ),
         gram: userToCheck?.currGoal?.macros.protein,
+        current: protein,
       },
       carbs: {
         percentage: getPercentage(carbs, userToCheck?.currGoal?.macros.carbs),
         gram: userToCheck?.currGoal?.macros.carbs,
+        current: carbs,
       },
       fats: {
         percentage: getPercentage(fats, userToCheck?.currGoal?.macros.fat),
         gram: userToCheck?.currGoal?.macros.fat,
+        current: fats,
       },
     }
     setMacros(macrosToSet)
