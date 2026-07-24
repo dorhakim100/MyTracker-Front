@@ -68,6 +68,8 @@ const colors = [
   'pink',
 ]
 
+const fontClasses = ['font-rubik', 'font-heebo', 'font-assistant'] as const
+
 function App() {
   const { i18n } = useTranslation()
   const { shouldShowInstallGuide, promptInstall, platform, isInstallable } =
@@ -173,6 +175,9 @@ function App() {
     document.body.classList.add(
       prefs.favoriteColor || defaultPrefs.favoriteColor
     )
+
+    document.body.classList.remove(...fontClasses)
+    document.body.classList.add(prefs.font || defaultPrefs.font)
 
     if (isDashboard) {
       document.body.classList.add('dashboard')

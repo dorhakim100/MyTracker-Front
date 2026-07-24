@@ -58,6 +58,14 @@
   justify-content: space-between;
 }
 
+.font-prefs-container {
+  gap: 1rem;
+
+  .prefs-font-select {
+    min-width: 9rem;
+  }
+}
+
 .color-prefs-container {
   display: grid;
   grid-template-columns: 1fr 1fr;

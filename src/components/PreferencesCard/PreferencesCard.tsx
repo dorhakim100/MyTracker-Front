@@ -4,13 +4,21 @@ import { Divider, Typography } from '@mui/material'
 import { RootState } from '../../store/store'
 import { setPrefs } from '../../store/actions/system.actions'
 import { updateUser } from '../../store/actions/user.actions'
-import type { Prefs } from '../../types/system/Prefs'
+import type { AppFont, Prefs } from '../../types/system/Prefs'
+import { APP_FONTS } from '../../types/system/Prefs'
 import { DarkModeSwitch } from '../../components/DarkModeSwitch/DarkModeSwitch'
 import { ColorPicker } from '../../components/ColorPicker/ColorPicker'
 import { LanguageSwitch } from '../../components/LanguageSwitch/LanguageSwitch'
 import { useTranslation } from 'react-i18next'
 import { showErrorMsg } from '../../services/event-bus.service'
 import { CustomIOSSwitch } from '../../CustomMui/CustomIOSSwitch/CustomIOSSwitch'
+import { CustomSelect } from '../../CustomMui/CustomSelect/CustomSelect'
+
+const FONT_VALUE_LABELS: Record<AppFont, string> = {
+  'font-rubik': 'Rubik',
+  'font-heebo': 'Heebo',
+  'font-assistant': 'Assistant',
+}
 
 export function PreferencesCard() {
   const { t } = useTranslation()
@@ -37,6 +45,11 @@ export function PreferencesCard() {
   function onChangeFavoriteColor(color: string) {
     setFavoriteColor(color)
     const newPrefs: Prefs = { ...prefs, favoriteColor: color }
+    setPrefs(newPrefs)
+  }
+
+  function onChangeFont(font: string) {
+    const newPrefs: Prefs = { ...prefs, font: font as AppFont }
     setPrefs(newPrefs)
   }
 
@@ -103,6 +116,26 @@ export function PreferencesCard() {
           color={prefs.favoriteColor}
           checked={!!displayUser?.isFixedMenu}
           onClick={onToggleFixedMenu}
+        />
+      </div>
+      <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
+
+      <div className='prefs-switch-container font-prefs-container'>
+        <Typography
+          variant='body1'
+          className='prefs-label'
+        >
+          {t('prefs.font')}
+        </Typography>
+        <CustomSelect
+          label={t('prefs.font')}
+          values={[...APP_FONTS]}
+          value={prefs.font || 'font-rubik'}
+          onChange={onChangeFont}
+          valueLabels={FONT_VALUE_LABELS}
+          className={`prefs-font-select ${prefs.favoriteColor} ${
+            prefs.isDarkMode ? 'dark-mode' : ''
+          }`}
         />
       </div>
       <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
