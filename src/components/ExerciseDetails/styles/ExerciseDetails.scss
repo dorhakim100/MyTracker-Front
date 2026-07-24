@@ -10,7 +10,7 @@
     max-width: $max-width;
     margin: 0 auto;
 
-    img{
+    img {
       grid-column: 1/2;
       grid-row: 1/1;
       width: 20vw;
@@ -19,25 +19,26 @@
 
       max-width: 300px;
       max-height: 300px;
-
     }
-    .line-chart-container{
+    .line-chart-container {
       grid-column: 2/3;
       grid-row: 1/1;
     }
 
-
-    .divider, .sets-table, .new, .past-sessions, .instructions-accordion{
+    .divider,
+    .sets-table,
+    .new,
+    .past-sessions,
+    .instructions-accordion {
       grid-column: 1/-1;
     }
-    .past-sessions{
-
+    .past-sessions {
       grid-row: 2/3;
     }
-    .sets-table,.new{
+    .sets-table,
+    .new {
       grid-row: 3/4;
     }
-
   }
 
   &.dark-mode {
@@ -45,8 +46,8 @@
   }
 
   img {
-    width: 200px;
-    height: 200px;
+    width: calc(100vw - 2rem);
+    height: calc((100vw - 2rem));
     object-fit: cover;
     border-radius: 8px;
     justify-self: center;

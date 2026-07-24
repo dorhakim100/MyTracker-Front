@@ -147,7 +147,7 @@ body.dashboard {
   &.blue {
     &.dark-mode {
       .MuiFormLabel-root {
-        background-color: $dark-gray-blue !important;
+        background-color: $darker-gray-blue !important;
       }
     }
 
@@ -163,7 +163,7 @@ body.dashboard {
   &.green {
     &.dark-mode {
       .MuiFormLabel-root {
-        background-color: $dark-gray-green !important;
+        background-color: $darker-gray-green !important;
       }
     }
     .MuiOutlinedInput-root {
@@ -178,7 +178,7 @@ body.dashboard {
   &.yellow {
     &.dark-mode {
       .MuiFormLabel-root {
-        background-color: $dark-gray-yellow !important;
+        background-color: $darker-gray-yellow !important;
       }
     }
     .MuiOutlinedInput-root {
@@ -192,7 +192,7 @@ body.dashboard {
   &.red {
     &.dark-mode {
       .MuiFormLabel-root {
-        background-color: $dark-gray-red !important;
+        background-color: $darker-gray-red !important;
       }
     }
     .MuiOutlinedInput-root {
@@ -206,7 +206,7 @@ body.dashboard {
   &.orange {
     &.dark-mode {
       .MuiFormLabel-root {
-        background-color: $dark-gray-orange !important;
+        background-color: $darker-gray-orange !important;
       }
     }
     .MuiOutlinedInput-root {
@@ -220,7 +220,7 @@ body.dashboard {
   &.purple {
     &.dark-mode {
       .MuiFormLabel-root {
-        background-color: $dark-gray-purple !important;
+        background-color: $darker-gray-purple !important;
       }
     }
     .MuiOutlinedInput-root {
@@ -234,14 +234,14 @@ body.dashboard {
   &.deepPurple {
     &.dark-mode {
       .MuiFormLabel-root {
-        background-color: $dark-gray-deep-purple !important;
+        background-color: $darker-gray-deep-purple !important;
       }
     }
   }
   &.pink {
     &.dark-mode {
       .MuiFormLabel-root {
-        background-color: $dark-gray-pink !important;
+        background-color: $darker-gray-pink !important;
       }
     }
 
@@ -263,6 +263,60 @@ body.dashboard {
       &.Mui-focused {
         fieldset {
           border-color: $picker-color-deep-purple !important;
+        }
+      }
+    }
+  }
+}
+
+.slide-dialog-content:not(:has(.item-search)) {
+  .custom-select,
+  .MuiInputBase-root,
+  .picker-select {
+    &.dark-mode {
+      &.primary {
+        .MuiFormLabel-root {
+          background-color: $dark-gray !important;
+        }
+      }
+      &.blue {
+        .MuiFormLabel-root {
+          background-color: $dark-gray-blue !important;
+        }
+      }
+      &.green {
+        .MuiFormLabel-root {
+          background-color: $dark-gray-green !important;
+        }
+      }
+      &.yellow {
+        .MuiFormLabel-root {
+          background-color: $dark-gray-yellow !important;
+        }
+      }
+      &.red {
+        .MuiFormLabel-root {
+          background-color: $dark-gray-red !important;
+        }
+      }
+      &.orange {
+        .MuiFormLabel-root {
+          background-color: $dark-gray-orange !important;
+        }
+      }
+      &.purple {
+        .MuiFormLabel-root {
+          background-color: $dark-gray-purple !important;
+        }
+      }
+      &.deep-purple {
+        .MuiFormLabel-root {
+          background-color: $dark-gray-deep-purple !important;
+        }
+      }
+      &.pink {
+        .MuiFormLabel-root {
+          background-color: $dark-gray-pink !important;
         }
       }
     }
