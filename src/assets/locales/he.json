@@ -27,7 +27,9 @@
     "total": "סה\"כ",
     "editMacrosButton": "עריכת ערכים תזונתיים",
     "gram": "גרם",
-    "outOf": "מתוך"
+    "outOf": "מתוך",
+    "dayProgress": "התקדמות היום",
+    "beyondMacros": "מעבר ליעד"
   },
   "dashboard": {
     "title": "דף הבית",

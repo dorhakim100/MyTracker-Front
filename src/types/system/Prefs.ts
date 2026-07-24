@@ -21,4 +21,5 @@ export interface Prefs {
   font: AppFont
   weightChartSettings: ChartSettings
   healthProvider: HealthProvider
+  showDayProgress: boolean
 }

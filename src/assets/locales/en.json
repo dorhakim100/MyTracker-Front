@@ -27,7 +27,9 @@
     "total": "Total",
     "editMacrosButton": "Edit Macros",
     "gram": "g",
-    "outOf": "Out of"
+    "outOf": "Out of",
+    "dayProgress": "Day progress",
+    "beyondMacros": "Beyond macros"
   },
   "heartRate": {
     "bpm": "BPM",

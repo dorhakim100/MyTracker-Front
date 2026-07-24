@@ -18,7 +18,8 @@
     background: none;
 
     .donut-pale,
-    .donut-fill {
+    .donut-fill,
+    .donut-blink {
       position: absolute;
       inset: 0;
       border-radius: 50%;
@@ -44,6 +45,29 @@
         transparent var(--fFillEnd) 100%
       );
     }
+
+    .donut-blink {
+      background: conic-gradient(
+        transparent 0 var(--pBlinkStart),
+        var(--pColor) var(--pBlinkStart) var(--pBlinkEnd),
+        transparent var(--pBlinkEnd) var(--cBlinkStart),
+        var(--cColor) var(--cBlinkStart) var(--cBlinkEnd),
+        transparent var(--cBlinkEnd) var(--fBlinkStart),
+        var(--fColor) var(--fBlinkStart) var(--fBlinkEnd),
+        transparent var(--fBlinkEnd) 100%
+      );
+      animation: donut-preview-blink 1.6s ease-in-out infinite;
+    }
+  }
+}
+
+@keyframes donut-preview-blink {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.9;
   }
 }
 
@@ -88,6 +112,35 @@
 
   .totals {
     text-align: center;
+
+    .value-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 0.35rem;
+      flex-wrap: wrap;
+    }
+
+    .calorie-delta {
+      font-size: 0.95rem;
+      font-weight: 600;
+      opacity: 0.85;
+      line-height: 1;
+
+      &.positive {
+        color: $color-success;
+        &.dark-mode {
+          color: $color-success-light;
+        }
+      }
+
+      &.negative {
+        color: $color-danger;
+        &.dark-mode {
+          color: $color-danger-light;
+        }
+      }
+    }
 
     .after-text {
       font-size: 0.9rem;

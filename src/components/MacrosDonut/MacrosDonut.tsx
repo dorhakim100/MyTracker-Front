@@ -20,6 +20,16 @@ interface MacrosDonutProps {
   currentFats?: number
   currentCalories?: number
   goalCalories?: number
+  /** When set with showProgress, draws blinking pending-change wedges. */
+  previewProtein?: number
+  previewCarbs?: number
+  previewFats?: number
+  /** Denominator for fill/blink (defaults to protein/carbs/fats ring props). */
+  fillDenomProtein?: number
+  fillDenomCarbs?: number
+  fillDenomFats?: number
+  /** Signed calorie delta shown next to baseline in progress mode. */
+  calorieDelta?: number
 }
 
 const proteinColor = 'var(--macro-protein)'
@@ -29,6 +39,24 @@ const fatsColor = 'var(--macro-fats)'
 function clampProgress(current: number, goal: number) {
   if (!goal || goal <= 0) return 0
   return Math.min(1, Math.max(0, current / goal))
+}
+
+function segmentEnds(
+  segmentStart: number,
+  segmentPct: number,
+  baseline: number,
+  projected: number,
+  denom: number
+) {
+  const a = segmentStart + segmentPct * clampProgress(baseline, denom)
+  const b = segmentStart + segmentPct * clampProgress(projected, denom)
+  // Solid stays on the shared portion; blink covers add wedge or removal zone.
+  // On decrease, fill must end at projected so the removed arc can pulse over pale.
+  return {
+    fillEnd: Math.min(a, b),
+    blinkStart: Math.min(a, b),
+    blinkEnd: Math.max(a, b),
+  }
 }
 
 export function MacrosDonut({
@@ -42,6 +70,13 @@ export function MacrosDonut({
   currentFats = 0,
   currentCalories,
   goalCalories,
+  previewProtein,
+  previewCarbs,
+  previewFats,
+  fillDenomProtein,
+  fillDenomCarbs,
+  fillDenomFats,
+  calorieDelta,
 }: MacrosDonutProps) {
   const { t } = useTranslation()
   const prefs = useSelector(
@@ -60,22 +95,44 @@ export function MacrosDonut({
   const cPct = (carbsCalories / total) * 100
   const fPct = (fatsCalories / total) * 100
 
-  const pProgress = clampProgress(currentProtein, protein)
-  const cProgress = clampProgress(currentCarbs, carbs)
-  const fProgress = clampProgress(currentFats, fats)
+  const pDenom = fillDenomProtein ?? protein
+  const cDenom = fillDenomCarbs ?? carbs
+  const fDenom = fillDenomFats ?? fats
 
-  const pFill = pPct * pProgress
-  const cFillEnd = pPct + cPct * cProgress
-  const fFillEnd = pPct + cPct + fPct * fProgress
+  const hasPreview =
+    showProgress &&
+    previewProtein !== undefined &&
+    previewCarbs !== undefined &&
+    previewFats !== undefined
+
+  const pProjected = hasPreview ? previewProtein : currentProtein
+  const cProjected = hasPreview ? previewCarbs : currentCarbs
+  const fProjected = hasPreview ? previewFats : currentFats
+
+  const pSeg = segmentEnds(0, pPct, currentProtein, pProjected, pDenom)
+  const cSeg = segmentEnds(pPct, cPct, currentCarbs, cProjected, cDenom)
+  const fSeg = segmentEnds(pPct + cPct, fPct, currentFats, fProjected, fDenom)
+
+  const showBlink =
+    hasPreview &&
+    (Math.abs(pSeg.blinkEnd - pSeg.blinkStart) > 0.05 ||
+      Math.abs(cSeg.blinkEnd - cSeg.blinkStart) > 0.05 ||
+      Math.abs(fSeg.blinkEnd - fSeg.blinkStart) > 0.05)
 
   type CSSVars = CSSProperties & Record<string, string | number>
   const donutStyle: CSSVars = {
     '--p': `${pPct}%`,
     '--c': `${cPct}%`,
     '--f': `${fPct}%`,
-    '--pFill': `${pFill}%`,
-    '--cFillEnd': `${cFillEnd}%`,
-    '--fFillEnd': `${fFillEnd}%`,
+    '--pFill': `${pSeg.fillEnd}%`,
+    '--cFillEnd': `${cSeg.fillEnd}%`,
+    '--fFillEnd': `${fSeg.fillEnd}%`,
+    '--pBlinkStart': `${pSeg.blinkStart}%`,
+    '--pBlinkEnd': `${pSeg.blinkEnd}%`,
+    '--cBlinkStart': `${cSeg.blinkStart}%`,
+    '--cBlinkEnd': `${cSeg.blinkEnd}%`,
+    '--fBlinkStart': `${fSeg.blinkStart}%`,
+    '--fBlinkEnd': `${fSeg.blinkEnd}%`,
     '--pColor': proteinColor,
     '--cColor': carbsColor,
     '--fColor': fatsColor,
@@ -88,16 +145,33 @@ export function MacrosDonut({
       calculateFatCalories(currentFats)
 
   const centerGoal = goalCalories ?? total
+  const roundedDelta = calorieDelta !== undefined ? Math.round(calorieDelta) : 0
+  const showDelta = showProgress && roundedDelta !== 0
+  const deltaLabel = roundedDelta > 0 ? `+${roundedDelta}` : `${roundedDelta}`
 
   return (
     <div
-      className={`donut${showProgress ? ' show-progress' : ''}`}
+      className={`donut${showProgress ? ' show-progress' : ''}${
+        showBlink ? ' show-preview-blink' : ''
+      }`}
       style={donutStyle}
     >
       {showProgress && (
         <>
-          <div className='donut-pale' aria-hidden />
-          <div className='donut-fill' aria-hidden />
+          <div
+            className='donut-pale'
+            aria-hidden
+          />
+          <div
+            className='donut-fill'
+            aria-hidden
+          />
+          {showBlink && (
+            <div
+              className='donut-blink'
+              aria-hidden
+            />
+          )}
         </>
       )}
       <div
@@ -108,8 +182,19 @@ export function MacrosDonut({
         <div className='totals'>
           {showProgress ? (
             <>
-              <div className='value'>
-                {formatNumberWithCommas(+centerCurrent.toFixed(0))}
+              <div className='value-row'>
+                <div className='value'>
+                  {formatNumberWithCommas(+centerCurrent.toFixed(0))}
+                </div>
+                {showDelta && (
+                  <div
+                    className={`calorie-delta ${
+                      roundedDelta > 0 ? 'positive' : 'negative'
+                    } ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+                  >
+                    {deltaLabel}
+                  </div>
+                )}
               </div>
               <div className='after-text bold-header'>
                 {t('macros.outOf')}{' '}
@@ -118,7 +203,9 @@ export function MacrosDonut({
             </>
           ) : (
             <>
-              <div className='value'>{total.toFixed(0)}</div>
+              <div className='value'>
+                {formatNumberWithCommas(+total.toFixed(0))}
+              </div>
               <div className='label'>{t('macros.kcal')}</div>
             </>
           )}
