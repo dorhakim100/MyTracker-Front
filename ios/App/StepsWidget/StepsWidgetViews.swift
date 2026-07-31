@@ -315,6 +315,11 @@ private struct WidgetMacroGoalView: View {
         WidgetMacroColors.color(for: macro, isDarkMode: theme.isDarkMode)
     }
 
+    private var progress: Double {
+        guard goal > 0 else { return 0 }
+        return min(Double(current) / Double(goal), 1)
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 3) {
             HStack(spacing: 5) {
@@ -333,7 +338,8 @@ private struct WidgetMacroGoalView: View {
                 current: StepsWidgetFormatting.formattedNumber(current),
                 goal: StepsWidgetFormatting.formattedNumber(goal),
                 suffix: StepsWidgetFormatting.gramSuffix(lang: theme.data.lang),
-                accentColor: macroColor
+                accentColor: macroColor,
+                progress: progress
             )
         }
     }
@@ -345,6 +351,10 @@ private struct WidgetGoalBannerView: View {
     let goal: String
     let suffix: String
     var accentColor: Color?
+    var progress: Double = 1
+
+    private let horizontalInset: CGFloat = 8
+    private let barHeight: CGFloat = 2
 
     var body: some View {
         HStack(spacing: 6) {
@@ -377,7 +387,7 @@ private struct WidgetGoalBannerView: View {
                 .font(.system(size: 11, weight: .semibold))
                 .foregroundStyle(theme.textColor.opacity(0.85))
         }
-        .padding(.horizontal, 8)
+        .padding(.horizontal, horizontalInset)
         .padding(.vertical, 4)
         .background(
             RoundedRectangle(cornerRadius: 8, style: .continuous)
@@ -386,8 +396,10 @@ private struct WidgetGoalBannerView: View {
         .overlay(alignment: .bottom) {
             Rectangle()
                 .fill(accentColor ?? theme.accentColor)
-                .frame(height: 2)
-                .padding(.horizontal, 8)
+                .frame(height: barHeight)
+                .scaleEffect(x: CGFloat(progress), y: 1, anchor: .leading)
+                .padding(.horizontal, horizontalInset)
+                .animation(.easeInOut(duration: 0.4), value: progress)
         }
     }
 }
