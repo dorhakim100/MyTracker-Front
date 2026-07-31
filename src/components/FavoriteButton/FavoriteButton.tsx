@@ -16,7 +16,7 @@ export function FavoriteButton({
   const [liked, setLiked] = useState(isFavorite)
 
   const unlikedColor = isDarkMode ? '#dfdfdf45' : 'default'
-  const likedColor = isDarkMode ? 'error' : 'error'
+  // const likedColor = isDarkMode ? 'error' : 'error'
 
   return (
     <motion.div
