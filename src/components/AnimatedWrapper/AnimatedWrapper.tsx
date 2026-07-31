@@ -21,7 +21,8 @@ type AnimatedElement =
   | 'thead'
   | 'button'
 
-interface AnimatedWrapperProps extends Omit<HTMLMotionProps<'div'>, 'children'> {
+interface AnimatedWrapperProps
+  extends Omit<HTMLMotionProps<'div'>, 'children'> {
   children: ReactNode
   /** Which HTML element to render (e.g. 'div', 'li', 'tr'). */
   as?: AnimatedElement
@@ -62,15 +63,25 @@ export function AnimatedWrapper({
   transition,
   ...motionProps
 }: AnimatedWrapperProps) {
-
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
-  const isDashboard = useSelector((state: RootState) => state.systemModule.isDashboard)
+  const isDashboard = useSelector(
+    (state: RootState) => state.systemModule.isDashboard
+  )
   disabled = isDashboard ? true : disabled
 
   const effectiveXOffset = prefs.lang === 'he' ? -offsetX : offsetX
 
-  const defaultInitial = { opacity: 0.6, x: effectiveXOffset, y: offsetY, scale: 0.9 }
+  let defaultInitial = {
+    opacity: 0.5,
+    x: effectiveXOffset,
+    y: offsetY,
+    // scale: 0.9,
+    scale: 1,
+  }
   const defaultWhileInView = { opacity: 1, x: 0, y: 0, scale: 1 }
+  if (disabled) {
+    defaultInitial = { ...defaultWhileInView }
+  }
   const motionElements: Record<AnimatedElement, ElementType> = {
     div: motion.div,
     span: motion.span,
@@ -94,14 +105,19 @@ export function AnimatedWrapper({
   return (
     <MotionComponent
       className={className}
-      initial={disabled ? false : (initial ?? defaultInitial)}
-      whileInView={disabled ? undefined : (whileInView ?? defaultWhileInView)}
-      viewport={disabled ? undefined : (viewport ?? { once, amount })}
-
+      initial={disabled ? false : initial ?? defaultInitial}
+      whileInView={disabled ? undefined : whileInView ?? defaultWhileInView}
+      viewport={disabled ? undefined : viewport ?? { once, amount }}
       transition={
         disabled
           ? undefined
-          : (transition ?? { duration, ease: 'easeOut', delay, type: "spring", stiffness: 300  })
+          : transition ?? {
+              duration,
+              ease: 'easeOut',
+              delay,
+              // type: 'spring',
+              // stiffness: 300,
+            }
       }
       {...motionProps}
     >

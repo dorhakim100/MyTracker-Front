@@ -420,7 +420,7 @@ export function ExerciseCard({
 
   return (
     <>
-      <AnimatedWrapper>
+      <AnimatedWrapper disabled={isOpen}>
         <Card
           className={`exercise-card-container ${className} ${
             prefs.isDarkMode ? 'dark-mode' : ''

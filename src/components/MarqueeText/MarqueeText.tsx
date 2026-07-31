@@ -4,7 +4,7 @@ import Marquee from 'react-fast-marquee'
 import Typography, { TypographyProps } from '@mui/material/Typography'
 import { RootState } from '../../store/store'
 
-const CYCLE_PAUSE_MS = 3000
+const CYCLE_PAUSE_MS = 5000
 
 interface MarqueeTextProps extends Omit<TypographyProps, 'children'> {
   children: string
@@ -79,7 +79,7 @@ export function MarqueeText({
         >
           <Marquee
             play={isPlaying}
-            delay={3}
+            delay={5}
             pauseOnHover={false}
             pauseOnClick={false}
             direction={isRtl ? 'right' : 'left'}
