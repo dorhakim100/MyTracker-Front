@@ -4,8 +4,19 @@ import FavoriteIcon from '@mui/icons-material/Favorite'
 import { motion } from 'framer-motion'
 import { capacitorService } from '../../services/capacitor.service'
 
-export function FavoriteButton({ isFavorite }: { isFavorite: boolean }) {
+interface FavoriteButtonProps {
+  isFavorite: boolean
+  isDarkMode?: boolean
+}
+
+export function FavoriteButton({
+  isFavorite,
+  isDarkMode = false,
+}: FavoriteButtonProps) {
   const [liked, setLiked] = useState(isFavorite)
+
+  const unlikedColor = isDarkMode ? '#dfdfdf45' : 'default'
+  const likedColor = isDarkMode ? 'error' : 'error'
 
   return (
     <motion.div
@@ -31,7 +42,7 @@ export function FavoriteButton({ isFavorite }: { isFavorite: boolean }) {
       >
         <FavoriteIcon
           sx={{
-            fill: liked ? '#d32f2f' : 'default',
+            fill: liked ? '#d32f2f' : unlikedColor,
           }}
         />
       </IconButton>

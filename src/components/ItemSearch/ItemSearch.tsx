@@ -282,8 +282,6 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
       setResults(newResults)
     }
 
-    console.log(sortedResults)
-
     return (
       <Box className='results'>
         {isShowMeals && (

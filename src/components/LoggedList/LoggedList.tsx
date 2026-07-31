@@ -219,7 +219,9 @@ export function LoggedList({
     }
 
     try {
-      const cachedItem = cachedItems.find((i) => i.searchId === logToEdit.itemId)
+      const cachedItem = cachedItems.find(
+        (i) => i.searchId === logToEdit.itemId
+      )
 
       if (cachedItem) {
         logToEdit.name = cachedItem.name
@@ -359,6 +361,7 @@ export function LoggedList({
             updateMenu={updateMenu}
             editMenu={editMenu}
             noEdit={noEdit}
+            shouldDefaultItemMacros={true}
           />
         }
         onSave={closeEdit}

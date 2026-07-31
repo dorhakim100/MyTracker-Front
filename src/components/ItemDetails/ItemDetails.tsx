@@ -61,6 +61,7 @@ interface ItemDetailsProps {
   isCustomLog?: boolean
   updateMenu?: (newMenu: Menu) => void
   editMenu?: Menu
+  shouldDefaultItemMacros?: boolean
 }
 
 interface EditOption {
@@ -95,6 +96,7 @@ export function ItemDetails({
   isCustomLog = false,
   updateMenu,
   editMenu,
+  shouldDefaultItemMacros = false,
 }: ItemDetailsProps) {
   const { t } = useTranslation()
   const searchedItem: Item = useSelector(
@@ -152,6 +154,43 @@ export function ItemDetails({
     [t]
   )
 
+  const canShowDayProgress = !!(
+    !noEdit &&
+    user &&
+    selectedDay &&
+    user.currGoal?.macros &&
+    user.currGoal?.dailyCalories
+  )
+
+  const dayProgressPreview = useMemo(() => {
+    if (!canShowDayProgress || !selectedDay || !user?.currGoal) return null
+
+    return getItemDetailsDayProgressPreview({
+      selectedDay,
+      goals: {
+        calories: user.currGoal.dailyCalories,
+        protein: user.currGoal.macros.protein,
+        carbs: user.currGoal.macros.carbs,
+        fat: user.currGoal.macros.fat,
+      },
+      editedMacros: editItem.totalMacros,
+      originalMacros: editMealItem?.macros ?? null,
+    })
+  }, [
+    canShowDayProgress,
+    selectedDay,
+    user?.currGoal,
+    editItem.totalMacros,
+    editMealItem?.macros,
+  ])
+
+  const [shouldShowDayProgress, setShouldShowDayProgress] = useState(
+    !shouldDefaultItemMacros && prefs.showDayProgress
+  )
+
+  const showDayProgress =
+    shouldShowDayProgress &&
+    !!(canShowDayProgress && prefs.showDayProgress && dayProgressPreview)
   const editOptions: EditOption[] =
     !isCustomLog && (item as Log).source !== searchTypes.custom
       ? [
@@ -644,46 +683,10 @@ export function ItemDetails({
     if (searchedItem) searchedItem.image = undefined
   }
 
-  const canShowDayProgress = !!(
-    !noEdit &&
-    user &&
-    selectedDay &&
-    user.currGoal?.macros &&
-    user.currGoal?.dailyCalories
-  )
-
-  const dayProgressPreview = useMemo(() => {
-    if (!canShowDayProgress || !selectedDay || !user?.currGoal) return null
-
-    return getItemDetailsDayProgressPreview({
-      selectedDay,
-      goals: {
-        calories: user.currGoal.dailyCalories,
-        protein: user.currGoal.macros.protein,
-        carbs: user.currGoal.macros.carbs,
-        fat: user.currGoal.macros.fat,
-      },
-      editedMacros: editItem.totalMacros,
-      originalMacros: editMealItem?.macros ?? null,
-    })
-  }, [
-    canShowDayProgress,
-    selectedDay,
-    user?.currGoal,
-    editItem.totalMacros,
-    editMealItem?.macros,
-  ])
-
-  const showDayProgress = !!(
-    canShowDayProgress &&
-    prefs.showDayProgress &&
-    dayProgressPreview
-  )
-
-  const onToggleDayProgress = () => {
+  const onToggleDayProgress = (stateToSet: boolean) => {
     setPrefs({
       ...prefs,
-      showDayProgress: !prefs.showDayProgress,
+      showDayProgress: stateToSet,
     })
   }
 
@@ -691,7 +694,6 @@ export function ItemDetails({
     const macros = editItem.totalMacros
 
     if (!showDayProgress || !dayProgressPreview) {
-      console.log(macros?.calories)
       return {
         protein: macros?.protein,
         carbs: macros?.carbs,
@@ -774,6 +776,7 @@ export function ItemDetails({
                   isFavorite={
                     searchService.isFavorite(searchedItem, user) || false
                   }
+                  isDarkMode={prefs.isDarkMode}
                 />
               </div>
             )}
@@ -804,7 +807,16 @@ export function ItemDetails({
             >
               <div
                 className='day-progress-switch'
-                onClick={onToggleDayProgress}
+                onClick={() => {
+                  let stateToSet
+                  if (shouldShowDayProgress) {
+                    stateToSet = false
+                  } else {
+                    stateToSet = true
+                  }
+                  onToggleDayProgress(stateToSet)
+                  setShouldShowDayProgress(stateToSet)
+                }}
               >
                 <Typography
                   variant='body2'
@@ -814,7 +826,7 @@ export function ItemDetails({
                 </Typography>
                 <CustomIOSSwitch
                   color={prefs.favoriteColor}
-                  checked={!!prefs.showDayProgress}
+                  checked={shouldShowDayProgress}
                 />
               </div>
               <div

@@ -114,7 +114,12 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
       case 'search':
         return <ItemSearch onAddToMealClick={onAddToMealClick} />
       case 'edit':
-        return <ItemDetails onAddToMealClick={onAddToMealClick} />
+        return (
+          <ItemDetails
+            onAddToMealClick={onAddToMealClick}
+            shouldDefaultItemMacros={true}
+          />
+        )
       case 'scan':
         return (
           <BarcodeScanner
