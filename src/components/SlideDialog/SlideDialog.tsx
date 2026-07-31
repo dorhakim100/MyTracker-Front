@@ -14,6 +14,7 @@ import { RootState } from '../../store/store'
 import CircularProgress from '@mui/material/CircularProgress'
 import { stylesVariables } from '../../assets/config/styles.variables'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
+import { MarqueeText } from '../MarqueeText/MarqueeText'
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -211,7 +212,9 @@ export function SlideDialog({
     <React.Fragment>
       <Dialog
         fullScreen
-        className={`${type === 'half' ? 'half-dialog' : 'full-dialog'} ${isDashboard ? 'dashboard' : ''}`}
+        className={`${type === 'half' ? 'half-dialog' : 'full-dialog'} ${
+          isDashboard ? 'dashboard' : ''
+        }`}
         open={open}
         onClose={handleSave}
         sx={{
@@ -280,13 +283,13 @@ export function SlideDialog({
                   onClick={onClose}
                   tooltipTitle={t('common.close')}
                 />
-                <Typography
+                <MarqueeText
                   sx={{ marginInlineStart: 2, flex: 1 }}
                   variant='h6'
                   component='div'
                 >
                   {title ?? t('common.edit')}
-                </Typography>
+                </MarqueeText>
                 <div className='slide-drag-handle'></div>
                 {isLoading && (
                   <CircularProgress

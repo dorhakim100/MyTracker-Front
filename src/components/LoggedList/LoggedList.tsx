@@ -33,6 +33,7 @@ import { imageService } from '../../services/image/image.service'
 import { mealService } from '../../services/meal/meal.service'
 import { Menu } from '../../types/menu/Menu'
 import { getTimeFromISO } from '../../services/util.service'
+import { MarqueeText } from '../MarqueeText/MarqueeText'
 
 export type LogsSource = 'diary' | 'menu'
 
@@ -161,18 +162,22 @@ export function LoggedList({
     item._id || item.itemId || item.mealId || item.time
 
   const renderPrimaryText = (item: Log) => {
-    if (item.name) return item.name
-    if (item.source === searchTypes.custom) return t('meals.customLog')
-    const cachedItem = cachedItems.find((i) => i.searchId === item.itemId)
+    const name =
+      item.name ||
+      (item.source === searchTypes.custom ? t('meals.customLog') : null) ||
+      cachedItems.find((i) => i.searchId === item.itemId)?.name
+
+    if (name) {
+      return <MarqueeText variant='body1'>{name}</MarqueeText>
+    }
+
     return (
-      cachedItem?.name || (
-        <CustomSkeleton
-          variant='text'
-          width='100%'
-          height={20}
-          isDarkMode={prefs.isDarkMode}
-        />
-      )
+      <CustomSkeleton
+        variant='text'
+        width='100%'
+        height={20}
+        isDarkMode={prefs.isDarkMode}
+      />
     )
   }
 

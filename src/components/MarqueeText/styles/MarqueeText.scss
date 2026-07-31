@@ -1,0 +1,52 @@
+.marquee-text-container {
+  position: relative;
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  line-height: 0;
+  // Prevent nowrap / marquee children from expanding parents (MealCard, lists)
+  contain: inline-size;
+
+  .marquee-text-measure {
+    position: absolute;
+    visibility: hidden;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  .marquee-text-track {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    line-height: normal;
+
+    .rfm-marquee-container {
+      max-width: 100%;
+      overflow: hidden;
+      line-height: normal;
+    }
+
+    .rfm-marquee,
+    .rfm-initial-child-container,
+    .rfm-child {
+      line-height: normal;
+    }
+  }
+
+  .marquee-text {
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+    max-width: 100%;
+    min-width: 0;
+    line-height: normal;
+  }
+
+  .rfm-marquee .marquee-text {
+    max-width: none;
+    margin-inline-end: 2rem;
+  }
+}

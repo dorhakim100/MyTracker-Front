@@ -76,13 +76,14 @@ export function CustomList<T>({
 }: // onDragStart,
 CustomListProps<T>) {
   const [reorderedItems, setReorderedItems] = useState<T[]>(items || [])
-  const { onPointerDown, onPointerMove, onPointerUp } = useDragHaptics({itemHeight: ITEM_HEIGHT})
+  const { onPointerDown, onPointerMove, onPointerUp } = useDragHaptics({
+    itemHeight: ITEM_HEIGHT,
+  })
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
 
   const isLoading = useSelector(
     (state: RootState) => state.systemModule.isLoading
   )
-
 
   const isDragging = useRef<boolean>(false)
 
@@ -199,7 +200,6 @@ CustomListProps<T>) {
 
   const onDragStart = (result: DragStart) => {
     console.log(result)
-
   }
 
   const renderList = (item: T, dragProvided: DraggableProvided) => {
@@ -207,10 +207,9 @@ CustomListProps<T>) {
       <ListItemButton
         className={`custom-list-item ${itemClassName ? itemClassName : ''}`}
         onClick={onItemClick ? () => onItemClick(item) : undefined}
- 
       >
         {renderLeft ? (
-          <div className="left-content">{renderLeft(item)}</div>
+          <div className='left-content'>{renderLeft(item)}</div>
         ) : null}
         <ListItemText
           primary={renderPrimaryText ? renderPrimaryText(item) : undefined}
@@ -220,7 +219,7 @@ CustomListProps<T>) {
         />
         {renderRight ? (
           <div
-            className="right-content"
+            className='right-content'
             onClick={
               onRightClick
                 ? (event) => {
@@ -237,9 +236,9 @@ CustomListProps<T>) {
         {isDragable && (
           <span
             {...dragProvided.dragHandleProps}
-            className="drag-handle"
+            className='drag-handle'
             onClick={(e) => e.stopPropagation()}
-            onPointerDown={()=>{
+            onPointerDown={() => {
               isDragging.current = true
             }}
           >
@@ -251,18 +250,17 @@ CustomListProps<T>) {
   }
 
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    if(!isDragging.current) return
+    if (!isDragging.current) return
     return onPointerDown(e)
-
   }
 
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    if(!isDragging.current) return
+    if (!isDragging.current) return
     return onPointerMove(e)
   }
 
   const handlePointerUp = () => {
-    if(!isDragging.current) return
+    if (!isDragging.current) return
     return onPointerUp()
   }
 
@@ -276,7 +274,7 @@ CustomListProps<T>) {
 
   if (!reorderedItems.length) {
     return (
-      <div className="no-results-container">
+      <div className='no-results-container'>
         <span>{noResultsMessage}</span>
       </div>
     )
@@ -285,78 +283,86 @@ CustomListProps<T>) {
   return (
     <div
       className={`custom-list ${className ? className : ''}`}
-      ref={listContainerRef}  onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp}
+      ref={listContainerRef}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
     >
-
-  
       <List>
-        <DragDropContext onDragEnd={onDragEnd} onDragStart={onDragStart}>
-          <Droppable droppableId="droppable">
+        <DragDropContext
+          onDragEnd={onDragEnd}
+          onDragStart={onDragStart}
+        >
+          <Droppable droppableId='droppable'>
             {(provided) => (
-              <div ref={provided.innerRef} {...provided.droppableProps}>
+              <div
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+              >
                 {reorderedItems.map((item, index) => {
                   const key = getKey ? getKey(item, index) : index
                   // const draggableId = String(key)
                   const draggableId = key + ''
-                  
+
                   return (
                     <AnimatedWrapper key={draggableId}>
-                    
-                    <Draggable
-              
-                    draggableId={draggableId}
-                    index={index}
-                    isDragDisabled={!isDragable}
-                    >
-                      {(dragProvided, snapshot) => {
-                        // Quick fix for dragging offset
-                        
-                        const baseStyle =
-                        dragProvided.draggableProps.style || {}
-                        const style: React.CSSProperties = { ...baseStyle }
-                        if (snapshot.isDragging && dragOffsetY) {
-                          const currentTransform = style.transform as
-                          | string
-                          | undefined
-                          const extra = ` translateY(${dragOffsetY}px)`
-                          style.transform = currentTransform
-                          ? `${currentTransform}${extra}`
-                          : `translateY(${dragOffsetY}px)`
-                        }
-                        
-                        return (
-                          <div
-                          ref={dragProvided.innerRef}
-                          {...dragProvided.draggableProps}
-                          style={style}
-                          className={`${
-                            snapshot.isDragging ? 'dragging' : ''
-                            } ${prefs.favoriteColor}`}
+                      <Draggable
+                        draggableId={draggableId}
+                        index={index}
+                        isDragDisabled={!isDragable}
+                      >
+                        {(dragProvided, snapshot) => {
+                          // Quick fix for dragging offset
+
+                          const baseStyle =
+                            dragProvided.draggableProps.style || {}
+                          const style: React.CSSProperties = { ...baseStyle }
+                          if (snapshot.isDragging && dragOffsetY) {
+                            const currentTransform = style.transform as
+                              | string
+                              | undefined
+                            const extra = ` translateY(${dragOffsetY}px)`
+                            style.transform = currentTransform
+                              ? `${currentTransform}${extra}`
+                              : `translateY(${dragOffsetY}px)`
+                          }
+
+                          return (
+                            <div
+                              ref={dragProvided.innerRef}
+                              {...dragProvided.draggableProps}
+                              style={style}
+                              className={`${
+                                snapshot.isDragging ? 'dragging' : ''
+                              } ${prefs.favoriteColor}`}
                             >
-                            <SwipeableList type={Type.IOS} fullSwipe={true}>
-                              <SwipeableListItem
-                                leadingActions={
-                                  isSwipeable && leadingActions(item)
-                                }
-                                trailingActions={
-                                  isSwipeable && trailingActions(item)
-                                }
-                                scrollStartThreshold={20}
-                                threshold={0.25}
-                                blockSwipe={
-                                  typeof isSwipeable === 'function'
-                                  ? !isSwipeable(item)
-                                  : !isSwipeable
-                                }
+                              <SwipeableList
+                                type={Type.IOS}
+                                fullSwipe={true}
+                              >
+                                <SwipeableListItem
+                                  leadingActions={
+                                    isSwipeable && leadingActions(item)
+                                  }
+                                  trailingActions={
+                                    isSwipeable && trailingActions(item)
+                                  }
+                                  scrollStartThreshold={20}
+                                  threshold={0.25}
+                                  blockSwipe={
+                                    typeof isSwipeable === 'function'
+                                      ? !isSwipeable(item)
+                                      : !isSwipeable
+                                  }
                                 >
-                                {renderList(item, dragProvided)}
-                              </SwipeableListItem>
-                            </SwipeableList>
-                          </div>
-                        )
-                      }}
-                    </Draggable>
-                      </AnimatedWrapper>
+                                  {renderList(item, dragProvided)}
+                                </SwipeableListItem>
+                              </SwipeableList>
+                            </div>
+                          )
+                        }}
+                      </Draggable>
+                    </AnimatedWrapper>
                   )
                 })}
                 {provided.placeholder}
@@ -365,13 +371,12 @@ CustomListProps<T>) {
           </Droppable>
         </DragDropContext>
         {isLoadingMoreItems && (
-          <div className="loading-more-items-container">
+          <div className='loading-more-items-container'>
             {/* <CircularProgress /> */}
             <SkeletonList SKELETON_NUMBER={3} />
           </div>
         )}
       </List>
-
     </div>
   )
 }

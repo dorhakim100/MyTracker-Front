@@ -42,6 +42,7 @@ import DoneAllIcon from '@mui/icons-material/DoneAll'
 import { getWorkoutMuscles } from '../../../services/exersice-search/exersice-search'
 import EditIcon from '@mui/icons-material/Edit'
 import { capacitorService } from '../../../services/capacitor.service'
+import { MarqueeText } from '../../../components/MarqueeText/MarqueeText'
 interface WorkoutCardProps {
   workout: Workout
   className?: string
@@ -83,7 +84,6 @@ export function WorkoutCard({
   }>({ open: false, type: null })
 
   const onViewDetails = useCallback(async () => {
-
     capacitorService.vibrate('Light')
     setSlideOptions({ open: true, type: 'details' })
   }, [])
@@ -148,7 +148,15 @@ export function WorkoutCard({
         },
       },
     ],
-    [onViewDetails, onEdit, onDuplicate, workout, workouts, onReorderWorkouts, t]
+    [
+      onViewDetails,
+      onEdit,
+      onDuplicate,
+      workout,
+      workouts,
+      onReorderWorkouts,
+      t,
+    ]
   )
 
   const getSlideTitle = () => {
@@ -203,7 +211,6 @@ export function WorkoutCard({
   }
 
   const renderTimes = () => {
-    
     if (workout.isNewInstructions && workout.doneTimes === 0) {
       return (
         <Badge
@@ -249,21 +256,21 @@ export function WorkoutCard({
             />
           </div>
         </div>
-        <Typography
+        <MarqueeText
           variant='body1'
           className='muscle-groups-list hide-text-overflow'
         >
           {getWorkoutMuscles(workout).join(', ')}
-        </Typography>
+        </MarqueeText>
         <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
-        <Typography
+        <MarqueeText
           variant='body2'
-          className='exercises-list hide-text-overflow opacity-70'
+          className='exercises-list opacity-70'
         >
           {workout.exercises
             .map((exercise) => capitalizeFirstLetter(exercise.name))
             .join(', ')}
-        </Typography>
+        </MarqueeText>
 
         {workout.isNewInstructions && isRenderStartButtons && (
           <>

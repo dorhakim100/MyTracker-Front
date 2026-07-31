@@ -35,11 +35,6 @@
     }
   }
 
-
-
-
-
-
   .meal-footer {
     display: flex;
     justify-content: space-between;
@@ -51,9 +46,9 @@
   }
 }
 
-.dashboard-container{
-  .meal-card{
-    .custom-list{
+.dashboard-container {
+  .meal-card {
+    .custom-list {
       overflow-y: auto;
       margin-bottom: 1rem;
     }

@@ -54,6 +54,7 @@ import { Menu } from '../../types/menu/Menu'
 import { CustomIOSSwitch } from '../../CustomMui/CustomIOSSwitch/CustomIOSSwitch'
 import { getItemDetailsDayProgressPreview } from '../../services/macros/day-progress-preview.service'
 import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded'
+import { MarqueeText } from '../MarqueeText/MarqueeText'
 
 interface ItemDetailsProps {
   onAddToMealClick?: (item: MealItem) => void
@@ -760,7 +761,12 @@ export function ItemDetails({
                 />
               )}
             </div>
-            <div className='title'>{item.name}</div>
+            <MarqueeText
+              variant='body1'
+              className='title'
+            >
+              {item.name || ''}
+            </MarqueeText>
             <div className='subtitle'>{`${(+item.macros?.calories).toFixed(
               0
             )} ${t('macros.kcal')} ${t('meals.for')} ${

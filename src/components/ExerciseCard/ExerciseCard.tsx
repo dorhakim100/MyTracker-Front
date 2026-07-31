@@ -37,6 +37,7 @@ import { useWindowDimentions } from '../../hooks/useWindowDimentions'
 import AccessAlarmIcon from '@mui/icons-material/AccessAlarm'
 import { AnimatedWrapper } from '../AnimatedWrapper/AnimatedWrapper'
 import { capacitorService } from '../../services/capacitor.service'
+import { MarqueeText } from '../MarqueeText/MarqueeText'
 
 interface SlideDialogOptions {
   title: string
@@ -168,7 +169,9 @@ export function ExerciseCard({
       onClick: openDetailsDialog,
     },
     isExpected && {
-      title: exerciseInstructions?.sets[0]?.rpe ? t('exercise.toggleToRir') : t('exercise.toggleToRpe'),
+      title: exerciseInstructions?.sets[0]?.rpe
+        ? t('exercise.toggleToRir')
+        : t('exercise.toggleToRpe'),
       icon: <SwitchLeftIcon />,
       onClick: async () => {
         capacitorService.vibrate('Light')
@@ -418,182 +421,192 @@ export function ExerciseCard({
   return (
     <>
       <AnimatedWrapper>
-      <Card
-        className={`exercise-card-container ${className} ${
-          prefs.isDarkMode ? 'dark-mode' : ''
-        } ${prefs.favoriteColor} ${isDone ? 'done' : ''} ${
-          isOpen ? 'open' : 'closed'
-        } ${isDashboard ? 'dashboard' : ''} ${windowWidth < 900 ? 'mobile' : 'desktop'}`}
-        onClick={handleClick}
-      >
-        <div className='exercise-card-actions'>
-          <CustomOptionsMenu
-            className='more-options-container'
-            options={menuOptions}
-            triggerElement={
-              <CustomButton
-                isIcon={true}
-                icon={<MoreHorizIcon />}
-                className={`more-options ${prefs.favoriteColor} ${
-                  prefs.isDarkMode ? 'dark-mode' : ''
-                }`}
-              />
-            }
-          />
-
-          {onOpenChange && (
-            <CustomButton
-              icon={isOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-              onClick={(e) => {
-                e.stopPropagation()
-                onOpenChange?.()
-              }}
-              isIcon={true}
-              tooltipTitle={isOpen ? t('exercise.collapse') : t('exercise.expand')}
-            />
-          )}
-        </div>
-        <div
-          className='exercise-card-content'
-          onClick={() => {
-            if (!isOpen && onOpenChange) {
-              onOpenChange()
-              return
-            }
-            openDetailsDialog()
-          }}
+        <Card
+          className={`exercise-card-container ${className} ${
+            prefs.isDarkMode ? 'dark-mode' : ''
+          } ${prefs.favoriteColor} ${isDone ? 'done' : ''} ${
+            isOpen ? 'open' : 'closed'
+          } ${isDashboard ? 'dashboard' : ''} ${
+            windowWidth < 900 ? 'mobile' : 'desktop'
+          }`}
+          onClick={handleClick}
         >
-          {exercise.image && (
-            <img
-              src={exercise.image}
-              alt={exercise.name}
-              className='exercise-card-image'
-              onError={(e) => {
-                e.currentTarget.style.display = 'none'
-              }}
-            />
-          )}
-
-          <div className='exercise-card-info'>
-            <Typography
-              variant='h6'
-              className='exercise-card-name'
-            >
-              {capitalizeFirstLetter(exercise.name)}
-            </Typography>
-            {exercise.muscleGroups && exercise.muscleGroups.length > 0 && (
-              <Typography
-                variant='body2'
-                className='exercise-card-muscle-groups'
-              >
-                {exercise.muscleGroups
-                  .map((muscleGroup) => capitalizeFirstLetter(muscleGroup))
-                  .join(', ')}
-              </Typography>
-            )}
-            {/* if expected is false and expected notes are empty, don't show expected notes */}
-            {!isExpected && !exerciseInstructions?.notes?.expected ? null : (
-              <Typography
-                variant='body2'
-                className='exercise-card-notes'
-              >
-                {`Expected Notes: ${
-                  exerciseInstructions?.notes?.expected || ''
-                }`}
-              </Typography>
-            )}
-            {/* if there are actual notes, show them */}
-            {!exerciseInstructions?.notes?.actual ? null : (
-              <Typography
-                variant='body2'
-                className='exercise-card-notes'
-              >
-                {`${t('exercise.actualNotesLabel')} ${exerciseInstructions?.notes?.actual || ''}`}
-              </Typography>
-            )}
-            {showEquipment &&
-              exercise.equipments &&
-              exercise.equipments.length > 0 && (
-                <>
-                  <Typography
-                    variant='body2'
-                    className='exercise-card-equipment'
-                  >
-                    {exercise.equipments
-                      .map((eq) => capitalizeFirstLetter(eq))
-                      .join(', ')}
-                  </Typography>
-                </>
-              )}
-            {isExpected && (
-              <>
-                <Divider
-                  className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+          <div className='exercise-card-actions'>
+            <CustomOptionsMenu
+              className='more-options-container'
+              options={menuOptions}
+              triggerElement={
+                <CustomButton
+                  isIcon={true}
+                  icon={<MoreHorizIcon />}
+                  className={`more-options ${prefs.favoriteColor} ${
+                    prefs.isDarkMode ? 'dark-mode' : ''
+                  }`}
                 />
-                <div className='resting-time-container'>
-                  <AccessAlarmIcon />
-                  <span>
-                    {t('exercise.restingTime')}{' '}
-                    {formatTime(
-                      exerciseInstructions.restingTime || DEFAULT_RESTING_TIME
-                    )}
-                  </span>
-                </div>
-              </>
+              }
+            />
+
+            {onOpenChange && (
+              <CustomButton
+                icon={isOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onOpenChange?.()
+                }}
+                isIcon={true}
+                tooltipTitle={
+                  isOpen ? t('exercise.collapse') : t('exercise.expand')
+                }
+              />
             )}
           </div>
-        </div>
+          <div
+            className='exercise-card-content'
+            onClick={() => {
+              if (!isOpen && onOpenChange) {
+                onOpenChange()
+                return
+              }
+              openDetailsDialog()
+            }}
+          >
+            {exercise.image && (
+              <img
+                src={exercise.image}
+                alt={exercise.name}
+                className='exercise-card-image'
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none'
+                }}
+              />
+            )}
 
-        {exerciseInstructions && exerciseInstructions.sets && (
-          <ExerciseEditor
-            exerciseSets={exerciseSets}
-            previousInstructions={previousInstructions}
-            exercise={exerciseInstructions}
-            isOpen={isOpen}
-            updateExercise={
-              isExpected
-                ? updateExerciseInInstructions
-                : (exerciseToUpdate, setIndex) =>
-                    updateExercise?.(
-                      {
-                        ...exerciseToUpdate,
-                        image: exercise.image,
-                      },
-                      setIndex
-                    )
-            }
-            addSet={
-              isExpected
-                ? undefined
-                : (exerciseToUpdate, setIndex) =>
-                    addSet?.(
-                      { ...exerciseToUpdate, image: exercise.image },
-                      setIndex
-                    )
-            }
-            removeSet={
-              isExpected
-                ? undefined
-                : (exerciseToUpdate, setIndex) =>
-                    removeSet?.(
-                      { ...exerciseToUpdate, image: exercise.image },
-                      setIndex
-                    )
-            }
-            markSetAsDone={
-              isExpected
-                ? undefined
-                : (exerciseToUpdate, setIndex, isAll?: boolean) =>
-                    markSetAsDone?.(
-                      { ...exerciseToUpdate, image: exercise.image },
-                      setIndex,
-                      isAll
-                    )
-            }
-            isExpected={isExpected}
-          />
-        )}
-      </Card>
+            <div className='exercise-card-info'>
+              <Typography
+                variant='h6'
+                className='exercise-card-name'
+              >
+                <MarqueeText variant='h6'>
+                  {capitalizeFirstLetter(exercise.name)}
+                </MarqueeText>
+              </Typography>
+              {exercise.muscleGroups && exercise.muscleGroups.length > 0 && (
+                <Typography
+                  variant='body2'
+                  className='exercise-card-muscle-groups'
+                >
+                  <MarqueeText variant='body2'>
+                    {exercise.muscleGroups
+                      .map((muscleGroup) => capitalizeFirstLetter(muscleGroup))
+                      .join(', ')}
+                  </MarqueeText>
+                </Typography>
+              )}
+              {/* if expected is false and expected notes are empty, don't show expected notes */}
+              {!isExpected && !exerciseInstructions?.notes?.expected ? null : (
+                <Typography
+                  variant='body2'
+                  className='exercise-card-notes'
+                >
+                  {`Expected Notes: ${
+                    exerciseInstructions?.notes?.expected || ''
+                  }`}
+                </Typography>
+              )}
+              {/* if there are actual notes, show them */}
+              {!exerciseInstructions?.notes?.actual ? null : (
+                <Typography
+                  variant='body2'
+                  className='exercise-card-notes'
+                >
+                  {`${t('exercise.actualNotesLabel')} ${
+                    exerciseInstructions?.notes?.actual || ''
+                  }`}
+                </Typography>
+              )}
+              {showEquipment &&
+                exercise.equipments &&
+                exercise.equipments.length > 0 && (
+                  <>
+                    <Typography
+                      variant='body2'
+                      className='exercise-card-equipment'
+                    >
+                      {exercise.equipments
+                        .map((eq) => capitalizeFirstLetter(eq))
+                        .join(', ')}
+                    </Typography>
+                  </>
+                )}
+              {isExpected && (
+                <>
+                  <Divider
+                    className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+                  />
+                  <div className='resting-time-container'>
+                    <AccessAlarmIcon />
+                    <span>
+                      {t('exercise.restingTime')}{' '}
+                      {formatTime(
+                        exerciseInstructions.restingTime || DEFAULT_RESTING_TIME
+                      )}
+                    </span>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+
+          {exerciseInstructions && exerciseInstructions.sets && (
+            <ExerciseEditor
+              exerciseSets={exerciseSets}
+              previousInstructions={previousInstructions}
+              exercise={exerciseInstructions}
+              isOpen={isOpen}
+              updateExercise={
+                isExpected
+                  ? updateExerciseInInstructions
+                  : (exerciseToUpdate, setIndex) =>
+                      updateExercise?.(
+                        {
+                          ...exerciseToUpdate,
+                          image: exercise.image,
+                        },
+                        setIndex
+                      )
+              }
+              addSet={
+                isExpected
+                  ? undefined
+                  : (exerciseToUpdate, setIndex) =>
+                      addSet?.(
+                        { ...exerciseToUpdate, image: exercise.image },
+                        setIndex
+                      )
+              }
+              removeSet={
+                isExpected
+                  ? undefined
+                  : (exerciseToUpdate, setIndex) =>
+                      removeSet?.(
+                        { ...exerciseToUpdate, image: exercise.image },
+                        setIndex
+                      )
+              }
+              markSetAsDone={
+                isExpected
+                  ? undefined
+                  : (exerciseToUpdate, setIndex, isAll?: boolean) =>
+                      markSetAsDone?.(
+                        { ...exerciseToUpdate, image: exercise.image },
+                        setIndex,
+                        isAll
+                      )
+              }
+              isExpected={isExpected}
+            />
+          )}
+        </Card>
       </AnimatedWrapper>
       <SlideDialog
         open={slideDialogOptions.open}
@@ -619,7 +632,9 @@ export function ExerciseCard({
         <CustomInput
           value={editNotes || ''}
           onChange={setEditNotes}
-          placeholder={t('exercise.notesPlaceholder', { name: capitalizeFirstLetter(exercise.name) })}
+          placeholder={t('exercise.notesPlaceholder', {
+            name: capitalizeFirstLetter(exercise.name),
+          })}
           isRemoveIcon={true}
           className={`${prefs.favoriteColor}`}
         />

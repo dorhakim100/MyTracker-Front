@@ -15,11 +15,14 @@
 }
 
 .meal-item-container {
+  // Allow primary text column to shrink so MarqueeText can clip
+  .MuiListItemText-root {
+    min-width: 0;
+  }
 
   .time-text {
     font-size: 0.8em;
     color: $medium-gray;
     font-weight: 500;
-
   }
 }

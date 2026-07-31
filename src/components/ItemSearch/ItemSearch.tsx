@@ -44,6 +44,7 @@ import searchDark from '../../../public/searching-dark.json'
 
 import { imageService } from '../../services/image/image.service'
 import CustomSkeleton from '../../CustomMui/CustomSkeleton/CustomSkeleton'
+import { MarqueeText } from '../MarqueeText/MarqueeText'
 
 interface ItemSearchProps {
   onAddToMealClick?: (item: MealItem) => void
@@ -404,7 +405,13 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
             </div>
           )}
           renderPrimaryText={(item) => (
-            <div className='hide-text-overflow'>{item.name}</div>
+            // <div className='hide-text-overflow'>{item.name}</div>
+            <MarqueeText
+              variant='body1'
+              className='primary-text'
+            >
+              {item.name}
+            </MarqueeText>
           )}
           renderSecondaryText={(item) => {
             let caloriesToDisplay
