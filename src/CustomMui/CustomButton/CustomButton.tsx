@@ -54,7 +54,7 @@ export function CustomButton({
   return (
     <ClickAnimation
       disabled={isDashboard ? true : disabled}
-      className={`custom-button-wrapper ${className || ''} ${
+      className={`custom-button-wrapper ${
         prefs.isDarkMode ? 'dark-mode' : ''
       } ${disabled ? 'disabled' : ''} ${prefs.favoriteColor || ''}`}
     >
