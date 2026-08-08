@@ -45,8 +45,11 @@
     line-height: normal;
   }
 
-  .rfm-marquee .marquee-text {
-    max-width: none;
-    margin-inline-end: 2rem;
+  .rfm-marquee {
+    .marquee-text {
+      max-width: none;
+      margin-inline-end: 2rem;
+      padding-inline-start: 2px;
+    }
   }
 }

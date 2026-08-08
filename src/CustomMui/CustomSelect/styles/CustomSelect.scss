@@ -269,7 +269,9 @@ body.dashboard {
   }
 }
 
-.slide-dialog-content:not(:has(.item-search)) {
+.slide-dialog-content:not(:has(.item-search)):not(
+    :has(.edit-workout-container)
+  ) {
   .custom-select,
   .MuiInputBase-root,
   .picker-select {

@@ -54,7 +54,7 @@ export function CustomButton({
   return (
     <ClickAnimation
       disabled={isDashboard ? true : disabled}
-      className={`custom-button-wrapper ${
+      className={`custom-button-wrapper ${className || ''} ${
         prefs.isDarkMode ? 'dark-mode' : ''
       } ${disabled ? 'disabled' : ''} ${prefs.favoriteColor || ''}`}
     >
@@ -109,7 +109,7 @@ export function CustomButton({
           size={size}
           fullWidth={fullWidth}
           aria-label={ariaLabel || (typeof text === 'string' ? text : 'button')}
-          onClick={ async (e) => {
+          onClick={async (e) => {
             onClick?.(e)
             if (shouldVibrate) {
               capacitorService.vibrate('Light')

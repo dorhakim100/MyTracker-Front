@@ -67,7 +67,7 @@
 
   .exercise-card-content {
     display: grid;
-    grid-template-columns: auto 1fr 60px;
+    grid-template-columns: auto 1fr 20px;
     gap: 1rem;
     align-items: start;
     .more-options-container {
@@ -76,16 +76,17 @@
     }
   }
   .exercise-card-actions {
-    // display: grid;
+    display: grid;
     display: flex;
     flex-direction: column;
     display: flex;
-    flex-direction: row;
+    // flex-direction: row;
     // gap: 0.5rem;
     grid-template-columns: 1fr;
     position: absolute;
     top: 0.5rem;
     inset-inline-end: 0.5rem;
+
     z-index: 2;
   }
 

@@ -57,7 +57,6 @@ export function AnimatedWrapper({
   delay = 0,
   once = false,
   amount = 0.1,
-  initial,
   whileInView,
   viewport,
   transition,
@@ -71,17 +70,15 @@ export function AnimatedWrapper({
 
   const effectiveXOffset = prefs.lang === 'he' ? -offsetX : offsetX
 
-  let defaultInitial = {
-    opacity: 0.5,
-    x: effectiveXOffset,
+  const defaultInitial = {
+    opacity: disabled ? 1 : 0.5,
+    x: disabled ? 0 : effectiveXOffset,
     y: offsetY,
     // scale: 0.9,
     scale: 1,
   }
   const defaultWhileInView = { opacity: 1, x: 0, y: 0, scale: 1 }
-  if (disabled) {
-    defaultInitial = { ...defaultWhileInView }
-  }
+
   const motionElements: Record<AnimatedElement, ElementType> = {
     div: motion.div,
     span: motion.span,
@@ -105,19 +102,17 @@ export function AnimatedWrapper({
   return (
     <MotionComponent
       className={className}
-      initial={disabled ? false : initial ?? defaultInitial}
-      whileInView={disabled ? undefined : whileInView ?? defaultWhileInView}
-      viewport={disabled ? undefined : viewport ?? { once, amount }}
+      initial={defaultInitial}
+      whileInView={whileInView ?? defaultWhileInView}
+      viewport={viewport ?? { once, amount }}
       transition={
-        disabled
-          ? undefined
-          : transition ?? {
-              duration,
-              ease: 'easeOut',
-              delay,
-              // type: 'spring',
-              // stiffness: 300,
-            }
+        transition ?? {
+          duration,
+          ease: 'easeOut',
+          delay,
+          // type: 'spring',
+          // stiffness: 300,
+        }
       }
       {...motionProps}
     >
