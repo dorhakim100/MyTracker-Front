@@ -23,6 +23,8 @@
     .line-chart-container {
       grid-column: 2/3;
       grid-row: 1/1;
+      width: 100%;
+      min-width: 0;
     }
 
     .divider,
@@ -79,6 +81,8 @@
   .line-chart-container {
     display: grid;
     gap: 1rem;
+    width: 100%;
+    min-width: 0;
   }
 
   .sets-table {

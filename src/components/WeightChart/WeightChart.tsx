@@ -13,7 +13,11 @@ import { weightService } from '../../services/weight/weight.service'
 import { Weight } from '../../types/weight/Weight'
 
 import { TimesContainer } from '../TimesContainer/TimesContainer'
-import { getFullDate } from '../../services/util.service'
+import {
+  getFullDate,
+  getColor,
+  prepareSeries,
+} from '../../services/util.service'
 import { Card, LinearProgress, Typography } from '@mui/material'
 
 import ScaleIcon from '@mui/icons-material/Scale'
@@ -26,9 +30,9 @@ import { CustomAlertDialog } from '../../CustomMui/CustomAlertDialog/CustomAlert
 import { ColorPicker } from '../ColorPicker/ColorPicker'
 import { setPrefs } from '../../store/actions/system.actions'
 import { CustomIOSSwitch } from '../../CustomMui/CustomIOSSwitch/CustomIOSSwitch'
-import { prepareSeries } from '../../services/util.service'
 import { User } from '../../types/user/User'
 import { WeightChangeDisplay } from '../WeightChangeDisplay/WeightChangeDisplay'
+import CustomSkeleton from '../../CustomMui/CustomSkeleton/CustomSkeleton'
 
 interface WeightChartProps {
   className?: string
@@ -78,7 +82,7 @@ export function WeightChart({
   })
 
   const [openSettings, setOpenSettings] = useState(false)
-  const [selectedIndex, setSelectedIndex] = useState(0)
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
 
   const data = useMemo(() => {
     setChartLoading(true)
@@ -146,7 +150,6 @@ export function WeightChart({
     const combinedData = [...previousData, ...data]
 
     const calcPeriod = (array: (number | null)[]) => {
-      
       return +(
         array.reduce((acc: number, curr: number | null) => {
           if (curr === null) return acc
@@ -156,19 +159,19 @@ export function WeightChart({
     }
 
     const handleNullValues = (array: (number | null)[]) => {
+      const filteredArray = array.filter((v) => v)
 
-      const filteredArray = array.filter((v)=>v)
-
-
-      const filteredSum = filteredArray.reduce((acc: number, curr: number | null) => {
-        if (curr === null) return acc
-        return +(acc + curr).toFixed(1)
-      }, 0)
-      const average = filteredSum / (filteredArray.length)
+      const filteredSum = filteredArray.reduce(
+        (acc: number, curr: number | null) => {
+          if (curr === null) return acc
+          return +(acc + curr).toFixed(1)
+        },
+        0
+      )
+      const average = filteredSum / filteredArray.length
       return array.map((value) => {
         if (!value) {
-          return +(average).toFixed(1)
-
+          return +average.toFixed(1)
         }
         return value
       })
@@ -181,13 +184,10 @@ export function WeightChart({
       )
 
       const hasNulls = period.includes(null)
-      const isNotFullArray = hasNulls ||
-      period.length !== DEFAULT_MOVING_AVERAGE_PERIOD
+      const isNotFullArray =
+        hasNulls || period.length !== DEFAULT_MOVING_AVERAGE_PERIOD
 
-      if (
-        isNotFullArray && range === 'ALL'
-      ){
-        
+      if (isNotFullArray && range === 'ALL') {
         return null
       } else if (isNotFullArray) {
         return calcPeriod(handleNullValues(period) as (number | null)[])
@@ -202,6 +202,7 @@ export function WeightChart({
   }, [weights, previousWeights, range])
 
   const weeklyChange = useMemo(() => {
+    if (selectedIndex == null) return 0
     const currAverage = movingAverageData[selectedIndex]
     let prevAverage =
       movingAverageData[selectedIndex - DEFAULT_MOVING_AVERAGE_PERIOD]
@@ -236,6 +237,9 @@ export function WeightChart({
     const diff = +(lastAverage - firstAverage).toFixed(1)
     return diff
   }, [movingAverageData, range])
+
+  const weeklyAverageValue =
+    selectedIndex != null ? movingAverageData[selectedIndex] : null
 
   useEffect(() => {
     const fetchWeights = async () => {
@@ -307,12 +311,11 @@ export function WeightChart({
       setPrevious2WeeksWeights(previous2WeeksWeight)
       setStats({
         selectedDate: new Date(),
-        selectedWeight: weights[0]?.kg || 0,
+        selectedWeight: weights[weights.length - 1]?.kg || 0,
         message: '',
         isGoal: false,
       })
       setChartLoading(false)
-      setSelectedIndex(weights.length - 1)
     }
     fetchWeights()
   }, [sentUser?._id, user?._id, range, user?.lastWeight])
@@ -342,13 +345,16 @@ export function WeightChart({
 
     setSelectedIndex(index)
 
+    const label = data.labels[index]
+    if (!label) return
+
     setStats({
-      selectedDate: getFullDate(data.labels[index]),
+      selectedDate: getFullDate(label),
       selectedWeight: weight ?? estimatedValue,
       message: messageToSet || '',
       isGoal: isBaseline || false,
     })
-    setSelectedDate?.(getFullDate(data.labels[index]))
+    setSelectedDate?.(getFullDate(label))
   }
 
   const onOpenSettings = () => {
@@ -364,14 +370,18 @@ export function WeightChart({
       <div className={`weight-chart ${className}`}>
         <Card
           variant='outlined'
-          className={`card weight   ${prefs.isDarkMode ? 'dark-mode' : ''} ${prefs.favoriteColor}`}
+          className={`card weight   ${prefs.isDarkMode ? 'dark-mode' : ''} ${
+            prefs.favoriteColor
+          }`}
         >
           <div className='header'>
             <div className='weight-container'>
               <h3 className='title'>
                 {stats.isGoal ? <FlagIcon /> : <ScaleIcon />}
                 {stats.selectedWeight}
-                {stats.selectedWeight && <span className='kg'>{t('weight.kg')}</span>}
+                {stats.selectedWeight && (
+                  <span className='kg'>{t('weight.kg')}</span>
+                )}
               </h3>
 
               {prefs.weightChartSettings.isDisplayWeeklyChange &&
@@ -418,7 +428,9 @@ export function WeightChart({
               data={data}
               interpolateGaps={true}
               spanGaps={true}
+              selectedIndex={selectedIndex}
               onLineClick={handleLineClick}
+              readoutAfterLabel={t('weight.kg')}
               baseline={
                 sentUser?.currGoal?.targetWeight || user?.currGoal?.targetWeight
               }
@@ -427,10 +439,53 @@ export function WeightChart({
               secondData={movingAverageData}
               secondDataLabel={t('weight.weeklyAverage')}
             />
+            {chartLoading ? (
+              <CustomSkeleton
+                variant='text'
+                width={180}
+                height={24}
+                isDarkMode={prefs.isDarkMode}
+                className='chart-legend-skeleton'
+              />
+            ) : (
+              prefs.weightChartSettings.isMovingAverage && (
+                <div
+                  className={`chart-legend container ${
+                    prefs.isDarkMode ? 'dark-mode' : ''
+                  }`}
+                >
+                  <span
+                    className='legend-swatch'
+                    style={{
+                      backgroundColor: getColor(
+                        prefs.weightChartSettings.movingAverageColor
+                      ),
+                    }}
+                  />
+                  <Typography
+                    variant='caption'
+                    className='legend-label'
+                  >
+                    {t('weight.weeklyAverage')}
+                  </Typography>
+                  {weeklyAverageValue != null && (
+                    <Typography
+                      variant='caption'
+                      className='legend-value'
+                    >
+                      {weeklyAverageValue}
+                      <span className='kg'>{t('weight.kg')}</span>
+                    </Typography>
+                  )}
+                </div>
+              )
+            )}
           </div>
           {chartLoading && (
             <LinearProgress
-              className={`${prefs.isDarkMode ? 'dark-mode' : ''} ${prefs.favoriteColor}`}
+              className={`${prefs.isDarkMode ? 'dark-mode' : ''} ${
+                prefs.favoriteColor
+              }`}
             />
           )}
         </Card>

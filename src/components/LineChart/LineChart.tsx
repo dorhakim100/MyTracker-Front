@@ -1,4 +1,3 @@
-// LineChart.tsx
 import { Line } from 'react-chartjs-2'
 import { useMemo, useRef, useState, useCallback, useEffect } from 'react'
 import type {
@@ -6,7 +5,6 @@ import type {
   ChartDataset,
   ChartOptions,
   ScriptableContext,
-  TooltipItem,
 } from 'chart.js'
 import {
   Chart as ChartJS,
@@ -21,8 +19,22 @@ import {
 import { getColor } from '../../services/util.service'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
-import { throttle } from 'lodash'
-import { capacitorService } from '../../services/capacitor.service'
+import {
+  lastRealIndex,
+  nearestRealIndex,
+  POINT_ACTIVE_BORDER,
+  POINT_ACTIVE_RADIUS,
+  POINT_RADIUS,
+  shouldShowPointDots,
+  useLineChartScrub,
+  indexFromScaleValue,
+  type LineChartScrubMeta,
+  type SeriesValue,
+} from '../../hooks/useLineChartScrub'
+import {
+  LineChartReadout,
+  type LineChartReadoutContent,
+} from './LineChartReadout'
 
 ChartJS.register(
   CategoryScale,
@@ -33,8 +45,6 @@ ChartJS.register(
   Tooltip,
   Legend
 )
-
-type SeriesValue = number | null
 
 export interface LineChartProps {
   data: {
@@ -61,10 +71,36 @@ export interface LineChartProps {
   secondDataLabel?: string
   isDisplaySecondLine?: boolean
   isDisplayPoints?: boolean
+  selectedIndex?: number | null
+  showReadout?: boolean
+  formatReadout?: (
+    index: number,
+    value: number | null
+  ) => LineChartReadoutContent
+  onDismissSelection?: () => void
+  readoutAfterLabel?: string
 }
 
 const DARK_MODE_WHITE = '#fff'
 const LIGHT_MODE_GRAY = 'rgba(0,0,0,0.35)'
+const MAIN_DATASET_INDEX = 0
+
+function defaultReadout(
+  index: number,
+  value: number | null,
+  labels: string[]
+): LineChartReadoutContent {
+  const title =
+    value == null
+      ? '—'
+      : Number.isInteger(value)
+      ? String(value)
+      : value.toFixed(1)
+  return {
+    title,
+    subtitle: labels[index] ?? '',
+  }
+}
 
 export default function LineChart({
   data,
@@ -77,7 +113,14 @@ export default function LineChart({
   secondData,
   secondDataLabel = 'Weekly Average',
   isDisplayPoints = false,
+  selectedIndex: selectedIndexProp,
+  showReadout = false,
+  formatReadout,
+  onDismissSelection,
+  readoutAfterLabel,
 }: LineChartProps) {
+  void isDisplayPoints
+
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
@@ -118,35 +161,24 @@ export default function LineChart({
   const chartSettings = useMemo(() => prefs.weightChartSettings, [prefs])
 
   const chartRef = useRef<ChartJS<'line'>>(null)
-  const [clickedIndex, setClickedIndex] = useState<number | null>(null)
-  const isDragging = useRef(false)
-  const isNative = useSelector((state: RootState) => state.systemModule.isNative)
-  
-  const handleHaptics = useCallback(throttle(() => {
-    capacitorService.vibrate('Light')
-  }, 100, { trailing: true }), [isNative])
+  const isControlled = selectedIndexProp !== undefined
+  const [internalIndex, setInternalIndex] = useState<number | null>(null)
+  const selectedIndex = isControlled ? selectedIndexProp ?? null : internalIndex
 
-  const lightenColor = (hex: string, amount: number) => {
-    if (!hex || !hex.startsWith('#')) return hex
-    const num = parseInt(hex.slice(1), 16)
-    let r = (num >> 16) & 0xff
-    let g = (num >> 8) & 0xff
-    let b = num & 0xff
-    r = Math.min(255, Math.round(r + (255 - r) * amount))
-    g = Math.min(255, Math.round(g + (255 - g) * amount))
-    b = Math.min(255, Math.round(b + (255 - b) * amount))
-    const toHex = (v: number) => v.toString(16).padStart(2, '0')
-    return `#${toHex(r)}${toHex(g)}${toHex(b)}`
-  }
+  const onLineClickRef = useRef(onLineClick)
+  onLineClickRef.current = onLineClick
 
-  const toRgba = (hex: string, alpha: number) => {
-    if (!hex || !hex.startsWith('#')) return hex
-    const num = parseInt(hex.slice(1), 16)
-    const r = (num >> 16) & 0xff
-    const g = (num >> 8) & 0xff
-    const b = num & 0xff
-    return `rgba(${r},${g},${b},${alpha})`
-  }
+  const originalNullIndices = useMemo(() => {
+    if (!interpolateGaps || !data.datasets[0]) return new Set<number>()
+    const set = new Set<number>()
+    data.datasets.forEach((ds) => {
+      ds.data.forEach((v, i) => {
+        if (v == null) set.add(i)
+      })
+    })
+
+    return set
+  }, [data.datasets, interpolateGaps])
 
   const interpolateSeries = useCallback(
     (series: SeriesValue[]): SeriesValue[] => {
@@ -174,18 +206,27 @@ export default function LineChart({
     [interpolateGaps]
   )
 
-  // Indices where the main series had null (filled by interpolation) — hide tooltip for these
-  const originalNullIndices = useMemo(() => {
-    if (!interpolateGaps || !data.datasets[0]) return new Set<number>()
-    const set = new Set<number>()
-    data.datasets.forEach((ds) => {
-      ds.data.forEach((v, i) => {
-        if (v == null) set.add(i)
-      })
-    })
+  const lightenColor = (hex: string, amount: number) => {
+    if (!hex || !hex.startsWith('#')) return hex
+    const num = parseInt(hex.slice(1), 16)
+    let r = (num >> 16) & 0xff
+    let g = (num >> 8) & 0xff
+    let b = num & 0xff
+    r = Math.min(255, Math.round(r + (255 - r) * amount))
+    g = Math.min(255, Math.round(g + (255 - g) * amount))
+    b = Math.min(255, Math.round(b + (255 - b) * amount))
+    const toHex = (v: number) => v.toString(16).padStart(2, '0')
+    return `#${toHex(r)}${toHex(g)}${toHex(b)}`
+  }
 
-    return set
-  }, [data.datasets, interpolateGaps])
+  const toRgba = (hex: string, alpha: number) => {
+    if (!hex || !hex.startsWith('#')) return hex
+    const num = parseInt(hex.slice(1), 16)
+    const r = (num >> 16) & 0xff
+    const g = (num >> 8) & 0xff
+    const b = num & 0xff
+    return `rgba(${r},${g},${b},${alpha})`
+  }
 
   const processedData = useMemo<
     ChartData<'line', SeriesValue[], string>
@@ -199,10 +240,6 @@ export default function LineChart({
           : ds.borderColor,
         tension: ds.tension,
         borderWidth: isDarkMode ? 2 : undefined,
-        pointRadius: isDisplayPoints
-          ? (ctx: ScriptableContext<'line'>) =>
-              originalNullIndices.has(ctx.dataIndex) ? 0.1 : 3
-          : undefined,
       }))
 
     if (typeof baseline === 'number' && data.labels?.length) {
@@ -213,6 +250,8 @@ export default function LineChart({
         tension: 0,
         borderDash: [6, 4],
         pointRadius: 0,
+        pointHoverRadius: 0,
+        pointHitRadius: 0,
       })
     }
 
@@ -238,10 +277,11 @@ export default function LineChart({
         borderWidth: 2,
         tension: 0.2,
         pointRadius: 0,
+        pointHoverRadius: 0,
         pointHitRadius: 0,
         borderJoinStyle: 'round',
         borderCapStyle: 'round',
-        order: -1, // draw behind the main line
+        order: -1,
       } as ChartDataset<'line', SeriesValue[]>)
     }
 
@@ -270,198 +310,319 @@ export default function LineChart({
     secondDataLabel,
   ])
 
-  const options: ChartOptions<'line'> = {
-    responsive: true,
-    spanGaps,
+  const labelCount = data.labels?.length ?? 0
+  const showDots = shouldShowPointDots(labelCount)
+  const safeIndex =
+    selectedIndex != null && selectedIndex >= 0 && selectedIndex < labelCount
+      ? selectedIndex
+      : null
+  const safeIndexRef = useRef(safeIndex)
+  safeIndexRef.current = safeIndex
 
-    interaction: { mode: 'index', intersect: false, axis: 'x' },
-    plugins: {
-      legend: { display: false },
-      tooltip: {
-        filter: (ctx: TooltipItem<'line'>) => {
-          if (ctx.raw == null) return false
+  const seriesKey = useMemo(() => {
+    const labels = data.labels ?? []
+    const series = data.datasets[0]?.data ?? []
+    let lastVal = ''
+    let count = 0
+    for (let i = 0; i < series.length; i++) {
+      if (series[i] != null) {
+        count++
+        lastVal = String(series[i])
+      }
+    }
+    return `${labels[0] ?? ''}:${labels[labels.length - 1] ?? ''}:${
+      labels.length
+    }:${count}:${lastVal}`
+  }, [data.labels, data.datasets])
 
-          // Hide tooltip for interpolated (filled) points on the main dataset
-          if (originalNullIndices.has(ctx.dataIndex)) return false
-          return true
+  const mainPointRadius = useCallback(
+    (ctx: ScriptableContext<'line'>) => {
+      if (ctx.datasetIndex !== MAIN_DATASET_INDEX) return 0
+      if (ctx.raw == null) return 0
+      if (originalNullIndices.has(ctx.dataIndex)) return 0
+      if (ctx.dataIndex === safeIndexRef.current) return POINT_ACTIVE_RADIUS
+      return showDots ? POINT_RADIUS : 0
+    },
+    [originalNullIndices, showDots]
+  )
+
+  const options: ChartOptions<'line'> = useMemo(
+    () => ({
+      responsive: true,
+      maintainAspectRatio: true,
+      spanGaps,
+      events: [],
+      interaction: { mode: 'index', intersect: false, axis: 'x' },
+      layout: {
+        autoPadding: false,
+        padding: { top: 10, right: 10, left: 4 },
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: { enabled: false },
+      },
+      elements: {
+        point: {
+          radius: mainPointRadius,
+          hoverRadius: mainPointRadius,
+          hitRadius: 12,
+          borderWidth: (ctx: ScriptableContext<'line'>) =>
+            ctx.datasetIndex === MAIN_DATASET_INDEX &&
+            ctx.dataIndex === safeIndexRef.current
+              ? POINT_ACTIVE_BORDER
+              : 0,
+          backgroundColor: (ctx: ScriptableContext<'line'>) => {
+            if (
+              ctx.datasetIndex === MAIN_DATASET_INDEX &&
+              ctx.dataIndex === safeIndexRef.current
+            ) {
+              return isDarkMode ? '#111' : '#fff'
+            }
+            return ctx.dataset.borderColor as string
+          },
+          borderColor: (ctx: ScriptableContext<'line'>) => {
+            if (
+              ctx.datasetIndex === MAIN_DATASET_INDEX &&
+              ctx.dataIndex === safeIndexRef.current
+            ) {
+              return isDarkMode ? DARK_MODE_WHITE : '#111'
+            }
+            return ctx.dataset.borderColor as string
+          },
         },
-        titleColor: isDarkMode ? DARK_MODE_WHITE : undefined,
-        bodyColor: isDarkMode ? DARK_MODE_WHITE : undefined,
-        backgroundColor: isDarkMode ? 'rgba(0,0,0,0.8)' : undefined,
       },
+      scales: {
+        x: {
+          ticks: { color: isDarkMode ? DARK_MODE_WHITE : undefined },
+          grid: { color: isDarkMode ? 'rgba(255,255,255,0.08)' : undefined },
+        },
+        y: {
+          ticks: { color: isDarkMode ? DARK_MODE_WHITE : undefined },
+          grid: { color: isDarkMode ? 'rgba(255,255,255,0.08)' : undefined },
+          min: min,
+          max: max,
+        },
+      },
+    }),
+    [spanGaps, mainPointRadius, isDarkMode, min, max]
+  )
+
+  const emitSelection = useCallback(
+    (index: number, isBaseline: boolean) => {
+      safeIndexRef.current = index
+      chartRef.current?.update('none')
+      if (!isControlled) setInternalIndex(index)
+      const chart = chartRef.current
+      const firstDs = chart?.data.datasets[MAIN_DATASET_INDEX]
+      const val = (firstDs?.data as SeriesValue[] | undefined)?.[index]
+      onLineClickRef.current?.(
+        index,
+        typeof val === 'number' ? val : 0,
+        isBaseline
+      )
     },
-    elements: {
-      point: {
-        radius: (ctx: ScriptableContext<'line'>) => (ctx.raw == null ? 0 : 0.3),
-        hitRadius: 12,
-        hoverRadius: isDisplayPoints
-          ? (ctx: ScriptableContext<'line'>) =>
-              originalNullIndices.has(ctx.dataIndex) ? 3 : 5
-          : undefined,
-      },
-    },
-    scales: {
-      x: {
-        ticks: { color: isDarkMode ? DARK_MODE_WHITE : undefined },
-        grid: { color: isDarkMode ? 'rgba(255,255,255,0.08)' : undefined },
-      },
-      y: {
-        ticks: { color: isDarkMode ? DARK_MODE_WHITE : undefined },
-        grid: { color: isDarkMode ? 'rgba(255,255,255,0.08)' : undefined },
+    [isControlled]
+  )
 
-        min: min,
-        max: max,
-      },
-    },
-  }
-
-  // Click handler (mouse)
-  const handleClick: React.MouseEventHandler<HTMLCanvasElement> = (e) => {
-    if (isDragging.current) return
-    const chart = chartRef.current
-    if (!chart) return
-    e.stopPropagation()
-    e.preventDefault()
-
-    // Try hit-test first
-    const elements = chart.getElementsAtEventForMode(
-      e.nativeEvent as unknown as Event,
-      'nearest',
-      { intersect: false },
-      true
-    )
-    if (elements.length) {
-      const { datasetIndex, index } = elements[0]
-      const ds = chart.data.datasets[datasetIndex]
-      const estimatedValue = (ds.data as SeriesValue[])[index]
-      const isBaselineHit = ds.label === baselineLabel
-      const isMovingAverage = ds.label === 'Moving Average'
-      // setClickedIndex(index)
-
-      if (isMovingAverage) {
-        const firstDs = chart.data.datasets[0]
-        const val = (firstDs?.data as SeriesValue[] | undefined)?.[index]
-        onLineClick?.(index, typeof val === 'number' ? val : 0, false)
+  const onScrubSelect = useCallback(
+    (index: number, meta: LineChartScrubMeta) => {
+      if (meta.kind === 'scrub') {
+        emitSelection(index, false)
         return
       }
 
-      onLineClick?.(
-        index,
-        typeof estimatedValue === 'number' ? estimatedValue : 0,
-        isBaselineHit
+      const chart = chartRef.current
+      if (!chart) {
+        emitSelection(index, false)
+        return
+      }
+
+      const elements = chart.getElementsAtEventForMode(
+        meta.nativeEvent,
+        'nearest',
+        { intersect: false },
+        true
       )
+      if (elements.length) {
+        const { datasetIndex } = elements[0]
+        const ds = chart.data.datasets[datasetIndex]
+        if (ds?.label === baselineLabel) {
+          emitSelection(index, true)
+          return
+        }
+      }
+
+      emitSelection(index, false)
+    },
+    [baselineLabel, emitSelection]
+  )
+
+  const getIndexFromClientX = useCallback(
+    (clientX: number) => {
+      const chart = chartRef.current
+      if (!chart) return null
+      const xScale = chart.scales?.x
+      if (!xScale) return null
+      const rect = chart.canvas.getBoundingClientRect()
+      const px = clientX - rect.left
+      const clampedPx = Math.min(Math.max(px, xScale.left), xScale.right)
+      const rawIndex = indexFromScaleValue(
+        xScale.getValueForPixel(clampedPx),
+        data.labels
+      )
+      if (rawIndex == null) return null
+      return nearestRealIndex(
+        data.datasets[0]?.data,
+        rawIndex,
+        selectedIndex
+      )
+    },
+    [data.labels, data.datasets, selectedIndex]
+  )
+
+  const {
+    containerRef,
+    isScrubbing,
+    syncLastIndex,
+    onPointerDown,
+    onPointerMove,
+    onPointerUp,
+    onPointerCancel,
+    onLostPointerCapture,
+  } = useLineChartScrub({
+    getIndexFromClientX,
+    onSelect: onScrubSelect,
+  })
+
+  useEffect(() => {
+    syncLastIndex(safeIndex)
+  }, [safeIndex, syncLastIndex])
+
+  useEffect(() => {
+    const last = lastRealIndex(data.datasets[0]?.data)
+    if (last == null) {
+      if (!isControlled) setInternalIndex(null)
       return
     }
+    if (!isControlled) setInternalIndex(last)
+    const val = data.datasets[0]?.data[last]
+    onLineClickRef.current?.(last, typeof val === 'number' ? val : 0, false)
+    // Reset only when the series identity changes, not when the user scrubs.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [seriesKey, isControlled])
 
-    // Fallback: map pixel → x-value → index
-    const native = e.nativeEvent as MouseEvent
-    const rect = (e.target as HTMLCanvasElement).getBoundingClientRect()
-    const px = native.clientX - rect.left
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const xScale: any = (chart as any).scales?.x
-    if (!xScale) return
-
-    const v = xScale.getValueForPixel(px)
-    let idx =
-      typeof v === 'number' ? Math.round(v) : data.labels.indexOf(v as string)
-    if (idx < 0) return
-    if (idx >= data.labels.length) idx = data.labels.length - 1
-    // setClickedIndex(idx)
-
-    const firstDs = chart.data.datasets[0]
-    const val = (firstDs?.data as SeriesValue[] | undefined)?.[idx]
-    onLineClick?.(idx, typeof val === 'number' ? val : 0, false)
-  }
-
-  // Touch-drag support
-  const handleTouchMove: React.TouchEventHandler<HTMLCanvasElement> = async (evt) => {
-    handleHaptics()
-    const chart = chartRef.current
-    if (!chart) return
-    const touch = evt.touches[0]
-    if (!touch) return
-
-    const rect = (evt.target as HTMLCanvasElement).getBoundingClientRect()
-    const px = touch.clientX - rect.left
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const xScale: any = (chart as any).scales?.x
-    if (!xScale) return
-
-    const v = xScale.getValueForPixel(px)
-    const idx =
-      typeof v === 'number' ? Math.round(v) : data.labels.indexOf(v as string)
-    if (idx < 0 || idx >= data.labels.length) return
-
-    setClickedIndex(idx)
-
-    const firstDs = chart.data.datasets[0]
-    const val = (firstDs?.data as SeriesValue[] | undefined)?.[idx]
-    onLineClick?.(idx, typeof val === 'number' ? val : 0, false)
-  }
-
-  // Guideline plugin (vertical line)
   const guidelinePlugin = useMemo(
     () => ({
       id: 'vertical-guideline',
       afterDatasetsDraw: (chart: ChartJS<'line'>) => {
-        if (clickedIndex == null) return
+        const index = safeIndexRef.current
+        if (index == null) return
         const { ctx, chartArea } = chart
+        if (!chartArea) return
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const xScale: any = (chart as any).scales?.x
-        if (!xScale) return
-
-        const labelOrIndex =
-          Array.isArray(chart.data.labels) &&
-          chart.data.labels[clickedIndex] != null
-            ? chart.data.labels[clickedIndex]
-            : clickedIndex
-
-        const x = xScale.getPixelForValue(labelOrIndex)
+        const meta = chart.getDatasetMeta(MAIN_DATASET_INDEX)
+        const pt = meta?.data?.[index]
+        const xScale = chart.scales?.x
+        const xFromScale = xScale
+          ? xScale.getPixelForTick(index)
+          : undefined
+        const x = Number.isFinite(pt?.x)
+          ? pt.x
+          : Number.isFinite(xFromScale)
+            ? xFromScale
+            : null
         if (x == null) return
+
+        const glowColor = isDarkMode
+          ? 'rgba(255,255,255,0.14)'
+          : 'rgba(0,0,0,0.08)'
+        const lineColor = isDarkMode
+          ? 'rgba(255,255,255,0.5)'
+          : 'rgba(0,0,0,0.35)'
 
         ctx.save()
         ctx.beginPath()
-        ctx.setLineDash([6, 4])
+        ctx.rect(
+          chartArea.left,
+          chartArea.top,
+          chartArea.right - chartArea.left,
+          chartArea.bottom - chartArea.top
+        )
+        ctx.clip()
+
+        ctx.fillStyle = glowColor
+        ctx.fillRect(x - 1.5, chartArea.top, 3, chartArea.bottom - chartArea.top)
+
+        ctx.beginPath()
         ctx.lineWidth = 2
-        ctx.strokeStyle = isDarkMode
-          ? 'rgba(255,255,255,0.85)'
-          : 'rgba(0,0,0,0.75)'
+        ctx.strokeStyle = lineColor
         ctx.moveTo(x, chartArea.top)
         ctx.lineTo(x, chartArea.bottom)
         ctx.stroke()
         ctx.restore()
       },
     }),
-    [clickedIndex, isDarkMode]
+    [isDarkMode]
   )
 
-  // Redraw after index/color change so the line appears immediately
-  useEffect(() => {
-    const chart = chartRef.current
-    if (!chart) return
-    chart.update('none')
-  }, [clickedIndex, isDarkMode])
+  const onDismiss = useCallback(() => {
+    safeIndexRef.current = null
+    chartRef.current?.update('none')
+    if (!isControlled) setInternalIndex(null)
+    syncLastIndex(null)
+    onDismissSelection?.()
+  }, [isControlled, onDismissSelection, syncLastIndex])
 
-  const handleTouchEnd: React.TouchEventHandler<HTMLCanvasElement> = () => {
-    isDragging.current = false
-  }
+  const processedValue =
+    safeIndex == null
+      ? null
+      : (processedData.datasets[MAIN_DATASET_INDEX]?.data as SeriesValue[])?.[
+          safeIndex
+        ] ?? null
 
-  const handleTouchStart: React.TouchEventHandler<HTMLCanvasElement> = () => {
-    isDragging.current = true
-  }
+  const readoutContent =
+    showReadout && safeIndex != null
+      ? formatReadout
+        ? formatReadout(safeIndex, processedValue)
+        : defaultReadout(safeIndex, processedValue, data.labels)
+      : null
 
   return (
-    <Line
-      data={processedData}
-      options={options}
-      onClick={handleClick}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
-      onTouchStart={handleTouchStart}
-      ref={chartRef}
-      plugins={[guidelinePlugin]}
-    />
+    <div className={`line-chart container ${isDarkMode ? 'dark-mode' : ''}`}>
+      {showReadout && (
+        <div className='readout-slot'>
+          {readoutContent && (
+            <LineChartReadout
+              title={
+                readoutAfterLabel
+                  ? `${readoutContent.title} ${readoutAfterLabel}`
+                  : readoutContent.title
+              }
+              subtitle={readoutContent.subtitle}
+              onDismiss={onDismiss}
+              isDarkMode={isDarkMode}
+            />
+          )}
+        </div>
+      )}
+      <div
+        ref={containerRef}
+        className={`chart-canvas-container ${
+          isScrubbing ? 'is-scrubbing' : ''
+        }`}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerCancel}
+        onLostPointerCapture={onLostPointerCapture}
+      >
+        <Line
+          data={processedData}
+          options={options}
+          ref={chartRef}
+          plugins={[guidelinePlugin]}
+        />
+      </div>
+    </div>
   )
 }

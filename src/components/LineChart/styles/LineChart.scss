@@ -1,0 +1,27 @@
+.line-chart.container {
+  width: 100%;
+  min-width: 0;
+  display: grid;
+  gap: 0.8rem;
+
+  .readout-slot {
+    min-height: 50px;
+  }
+
+  .chart-canvas-container {
+    width: 100%;
+    min-width: 0;
+    touch-action: pan-y;
+    cursor: crosshair;
+
+    canvas {
+      display: block;
+      width: 100% !important;
+      max-width: 100%;
+    }
+
+    &.is-scrubbing {
+      cursor: grabbing;
+    }
+  }
+}

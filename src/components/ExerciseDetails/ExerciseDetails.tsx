@@ -78,7 +78,6 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
     to: new Date(),
   })
 
-
   const setsQuery = useSets({
     exerciseId: exercise?.exerciseId,
     userId: traineeUser?._id || user?._id,
@@ -89,7 +88,10 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
     () => groupSetsByDate([...setsQuery.items]),
     [setsQuery.items]
   )
-  const stringifiedGroupedSets = useMemo(() => JSON.stringify(groupedSets), [groupedSets])
+  const stringifiedGroupedSets = useMemo(
+    () => JSON.stringify(groupedSets),
+    [groupedSets]
+  )
   const setsData = useMemo(() => {
     return Object.values(groupedSets)
       .reverse()
@@ -167,14 +169,18 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
         const sets = await setService.query(setsGraphFilter)
         const groupedSetsToSet = groupSetsByDate(sets as Set[])
         setGroupedSets(groupedSetsToSet)
-        
       } catch {
         showErrorMsg(t('messages.error.getSets'))
-        
       }
     }
     getExerciseSets()
-  }, [exercise?.exerciseId, traineeUser?._id, user?._id, setsGraphFilter, range])
+  }, [
+    exercise?.exerciseId,
+    traineeUser?._id,
+    user?._id,
+    setsGraphFilter,
+    range,
+  ])
 
   useEffect(() => {
     const getWorkoutInstructions = async () => {
@@ -300,6 +306,8 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
           interpolateGaps={true}
           spanGaps={true}
           isDisplaySecondLine={false}
+          showReadout={true}
+          readoutAfterLabel={viewBy === 'Weight' ? 'kg' : t('exercise.reps')}
           secondDataLabel={
             viewBy === 'Weight' ? t('exercise.reps') : t('exercise.weight')
           }
@@ -324,7 +332,10 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
       )}
       <SetsTable
         groupedSets={
-          groupedSetsForTable as Record<string, (Set & { exerciseId: string })[]>
+          groupedSetsForTable as Record<
+            string,
+            (Set & { exerciseId: string })[]
+          >
         }
       />
       <BottomReachIndicator
