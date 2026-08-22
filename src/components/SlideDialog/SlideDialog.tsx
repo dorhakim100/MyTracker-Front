@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
 import CloseIcon from '@mui/icons-material/Close'
-import { animate, useTransform } from 'motion/react'
+import { animate } from 'motion/react'
 import { Sheet } from 'react-modal-sheet'
 
 import { useSelector } from 'react-redux'
@@ -24,10 +24,11 @@ interface SlideDialogProps {
 }
 
 const SHEET_BASE_Z_INDEX = 1200
-const DRAG_VELOCITY_THRESHOLD = 900
-const DRAG_CLOSE_THRESHOLD = 0.35
-const SHEET_EASE: [number, number, number, number] = [0.32, 0.72, 0, 1]
-const SHEET_DURATION = 0.5
+const DRAG_VELOCITY_THRESHOLD = 750
+const DRAG_CLOSE_THRESHOLD = 0.15
+const SWIPE_DISTANCE_THRESHOLD = 100
+const SHEET_EASE: [number, number, number, number] = [0, 0, 0.2, 1]
+const SHEET_DURATION = 0.225
 const DISMISS_MOVE_THRESHOLD = 8
 const HORIZONTAL_LOCK_THRESHOLD = 10
 
@@ -157,19 +158,15 @@ function useOverscrollDismiss({
   enabled,
   scroller,
   onClose,
-  onDragActiveChange,
 }: {
   enabled: boolean
   scroller: HTMLDivElement | null
   onClose: () => void
-  onDragActiveChange: (isDragging: boolean) => void
 }) {
-  const { y, height } = Sheet.useContext()
+  const { y } = Sheet.useContext()
   const onCloseRef = React.useRef(onClose)
-  const onDragActiveChangeRef = React.useRef(onDragActiveChange)
 
   onCloseRef.current = onClose
-  onDragActiveChangeRef.current = onDragActiveChange
 
   React.useEffect(() => {
     if (!enabled || !scroller) return
@@ -180,16 +177,15 @@ function useOverscrollDismiss({
     let lastY = 0
     let lastTime = 0
     let velocityY = 0
-    let sheetHeight = 0
     let locked = false
     let dismissing = false
+    let fingerOffsetY = 0
     const previousTouchAction = scroller.style.touchAction
 
     const reset = () => {
       locked = false
       dismissing = false
       scroller.style.touchAction = previousTouchAction
-      onDragActiveChangeRef.current(false)
       window.removeEventListener('touchmove', onTouchMove, true)
       window.removeEventListener('touchend', onTouchEnd, true)
       window.removeEventListener('touchcancel', onTouchEnd, true)
@@ -202,6 +198,7 @@ function useOverscrollDismiss({
 
       const offsetX = clientX - startX
       const offsetY = clientY - startY
+      fingerOffsetY = offsetY
       const now = performance.now()
       const dt = now - lastTime
       if (dt > 0) velocityY = ((clientY - lastY) / dt) * 1000
@@ -224,7 +221,6 @@ function useOverscrollDismiss({
 
         dismissing = true
         scroller.style.touchAction = 'none'
-        onDragActiveChangeRef.current(true)
       }
 
       if (event.cancelable) event.preventDefault()
@@ -238,13 +234,11 @@ function useOverscrollDismiss({
         return
       }
 
-      const currentY = y.get()
       const shouldClose =
-        velocityY > DRAG_VELOCITY_THRESHOLD ||
-        currentY > sheetHeight * DRAG_CLOSE_THRESHOLD
+        fingerOffsetY > SWIPE_DISTANCE_THRESHOLD ||
+        velocityY > DRAG_VELOCITY_THRESHOLD
 
       swallowNextClick()
-      onDragActiveChangeRef.current(false)
 
       if (shouldClose) {
         onCloseRef.current()
@@ -291,16 +285,12 @@ function useOverscrollDismiss({
       if (isPickerColumn(target)) return false
       if (!isGestureFromTop(target, scroller)) return false
 
-      const container = scroller.closest(
-        '.react-modal-sheet-container'
-      ) as HTMLElement | null
       startX = clientX
       startY = clientY
       lastY = clientY
       lastTime = performance.now()
       velocityY = 0
       originSheetY = y.get()
-      sheetHeight = height || container?.offsetHeight || window.innerHeight
       locked = false
       dismissing = false
       return true
@@ -338,33 +328,30 @@ function useOverscrollDismiss({
       scroller.removeEventListener('touchstart', onTouchStart, true)
       scroller.removeEventListener('mousedown', onMouseDown, true)
     }
-  }, [enabled, height, scroller, y])
+  }, [enabled, scroller, y])
 }
 
 function SlideDialogSheet({
   onClose,
   component,
   title,
-  isDragging,
+  fadeWithSheet,
   enableSwipeToClose,
   prefs,
   isLoading,
-  onDragActiveChange,
 }: {
   onClose: () => void
   component: React.ReactElement
   title?: string
-  isDragging: boolean
+  fadeWithSheet: boolean
   enableSwipeToClose: boolean
   prefs: RootState['systemModule']['prefs']
   isLoading: boolean
-  onDragActiveChange: (isDragging: boolean) => void
 }) {
   const { t } = useTranslation()
-  const { y } = Sheet.useContext()
+  const { yProgress } = Sheet.useContext()
   const scrollerNode = React.useRef<HTMLDivElement | null>(null)
   const [scroller, setScroller] = React.useState<HTMLDivElement | null>(null)
-  const dragOpacity = useTransform(y, [0, 480], [1, 0.35])
 
   const scrollerRef = React.useMemo(
     () => ({
@@ -383,7 +370,6 @@ function SlideDialogSheet({
     enabled: enableSwipeToClose,
     scroller,
     onClose,
-    onDragActiveChange,
   })
 
   return (
@@ -391,7 +377,7 @@ function SlideDialogSheet({
       className={`slide-dialog MuiPaper-root MuiDialog-paper ${
         prefs.isDarkMode ? 'dark-mode' : ''
       } ${prefs.favoriteColor || ''}`}
-      style={{ opacity: isDragging ? dragOpacity : 1 }}
+      style={{ opacity: fadeWithSheet ? yProgress : 1 }}
     >
       <Sheet.Header className='slide-dialog-header'>
         <AppBar sx={{ position: 'relative' }}>
@@ -456,7 +442,7 @@ export function SlideDialog({
 
   const { zIndex, setHandleSave } = useSlideDialogLayer(open)
   const [isMounted, setIsMounted] = React.useState(open)
-  const [isDragging, setIsDragging] = React.useState(false)
+  const [hasOpened, setHasOpened] = React.useState(false)
 
   if (open && !isMounted) {
     setIsMounted(true)
@@ -484,7 +470,9 @@ export function SlideDialog({
       unstyled
       isOpen={open}
       onClose={onClose}
+      onOpenEnd={() => setHasOpened(true)}
       onCloseEnd={() => {
+        setHasOpened(false)
         if (!open) setIsMounted(false)
       }}
       disableDrag={!enableSwipeToClose}
@@ -493,8 +481,6 @@ export function SlideDialog({
       dragVelocityThreshold={DRAG_VELOCITY_THRESHOLD}
       dragCloseThreshold={DRAG_CLOSE_THRESHOLD}
       tweenConfig={{ ease: SHEET_EASE, duration: SHEET_DURATION }}
-      onDragStart={() => setIsDragging(true)}
-      onDragEnd={() => setIsDragging(false)}
       className={`MuiDialog-root MuiDialog-container ${
         type === 'half' ? 'half-dialog' : 'full-dialog'
       } ${isDashboard ? 'dashboard' : ''}`}
@@ -511,11 +497,10 @@ export function SlideDialog({
         onClose={onClose}
         component={component}
         title={title}
-        isDragging={isDragging}
+        fadeWithSheet={hasOpened}
         enableSwipeToClose={enableSwipeToClose}
         prefs={prefs}
         isLoading={isLoading}
-        onDragActiveChange={setIsDragging}
       />
       <Sheet.Backdrop
         unstyled={false}

@@ -12,7 +12,7 @@ import { MacrosProgress } from '../../../components/MacrosProgress/MacrosProgres
 import {
   handleDiaryDayChange,
   loadMenus,
-  logout,
+  // logout,
   // setRemembered,
   setSelectedDiaryDay,
 } from '../../../store/actions/user.actions'
