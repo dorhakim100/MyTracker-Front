@@ -23,7 +23,7 @@ export function WeightEdit({
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
-  const dragHaptics = useDragHaptics({itemHeight:36})
+  const dragHaptics = useDragHaptics({ itemHeight: 36 })
   const [pickerWeight, setPickerWeight] = useState<{
     firstValue: number
     secondValue: number
@@ -59,16 +59,15 @@ export function WeightEdit({
     <div className='picker-container'>
       <Picker
         value={pickerWeight}
-
-        onChange={(next) =>{
+        onChange={(next) => {
           setPickerWeight({
             firstValue: next.firstValue,
             secondValue: next.secondValue,
-            })
-          }
-        }
+          })
+        }}
         wheelMode='normal'
-        className={`weight-picker ${prefs.isDarkMode ? 'dark-mode' : ''}`} {...dragHaptics}
+        className={`weight-picker ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+        {...dragHaptics}
       >
         <Picker.Column name='firstValue'>
           {getArrayOfNumbers(30, 150).map((number) => (
@@ -78,15 +77,13 @@ export function WeightEdit({
             >
               {({ selected }) => (
                 <AnimatedWrapper>
-                  
-
-                <Typography
-                  variant='h5'
-                  className={`${selected ? 'selected' : ''}`}
+                  <Typography
+                    variant='h5'
+                    className={`${selected ? 'selected' : ''}`}
                   >
-                  {number}
-                </Typography>
-                  </AnimatedWrapper>
+                    {number}
+                  </Typography>
+                </AnimatedWrapper>
               )}
             </Picker.Item>
           ))}
@@ -107,7 +104,7 @@ export function WeightEdit({
                   variant='h5'
                   className={`${selected ? 'selected' : ''}`}
                 >
-                  {number}
+                  {`.${number}`}
                 </Typography>
               )}
             </Picker.Item>

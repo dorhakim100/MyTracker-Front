@@ -119,7 +119,7 @@ export function ExerciseEditor({
     (ex: ExerciseInstructions, idx: number) => updateExercise(ex, idx),
     [updateExercise]
   )
-  
+
   const delay = isExpected ? 0 : 4000
 
   const { debouncedFn: debouncedUpdateExercise, cancel: cancelUpdate } =
@@ -468,7 +468,6 @@ export function ExerciseEditor({
                       <PickerSelect
                         className={`${prefs.favoriteColor}`}
                         openClock={() => {
-                         
                           setPickerOptions({
                             type: 'reps',
                             isOpen: true,
@@ -512,7 +511,6 @@ export function ExerciseEditor({
                           isRtl ? 'rtl' : ''
                         }`}
                         openClock={() => {
-                        
                           setPickerOptions({
                             type: 'weight',
                             isOpen: true,
@@ -566,7 +564,6 @@ export function ExerciseEditor({
                       <PickerSelect
                         className={`${prefs.favoriteColor}`}
                         openClock={() => {
-                        
                           setPickerOptions({
                             type: set.rpe ? 'rpe' : 'rir',
                             isOpen: true,

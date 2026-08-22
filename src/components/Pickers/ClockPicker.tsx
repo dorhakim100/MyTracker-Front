@@ -126,7 +126,10 @@ export function ClockPicker({
         className='clock-picker'
         {...dragHaptics}
       >
-        <Picker.Column name='numberOfServings'>
+        <Picker.Column
+          name='numberOfServings'
+          className='clock-picker-column'
+        >
           {values.map((number) => (
             <Picker.Item
               key={number}
@@ -152,7 +155,10 @@ export function ClockPicker({
               flexItem
               className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
             />
-            <Picker.Column name='afterValue'>
+            <Picker.Column
+              name='afterValue'
+              className='clock-picker-column'
+            >
               {afterValues.map((number) => (
                 <Picker.Item
                   key={number}

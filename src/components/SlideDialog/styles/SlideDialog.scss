@@ -1,24 +1,65 @@
-.MuiDialog-root.half-dialog {
-  top: calc($header-margin + $card-height + 200px) !important;
-  &.dashboard {
-
-  }
-}
-
-.MuiDialog-root.full-dialog {
+.MuiDialog-root.full-dialog,
+.react-modal-sheet-root.full-dialog {
   top: $header-margin !important;
   bottom: 0 !important;
-  // height: 100% !important;
 }
 
 .MuiDialog-container,
-.MuiDialog-root {
+.MuiDialog-root,
+.react-modal-sheet-root {
   background-color: transparent !important;
   border-top-right-radius: 10px;
   border-top-left-radius: 10px;
-  .MuiPaper-root {
-    // background-color: transparent !important;
+}
+
+.react-modal-sheet-root.half-dialog {
+  .react-modal-sheet-container,
+  .slide-dialog {
+    height: 800px !important;
+    max-height: calc(100dvh - #{$header-margin} - #{$card-height}) !important;
   }
+}
+
+.react-modal-sheet-root.dashboard {
+  .react-modal-sheet-container,
+  .slide-dialog {
+    left: auto !important;
+    right: auto !important;
+    inset-inline-start: var(--slide-dialog-dashboard-inset, 280px) !important;
+    width: calc(100% - var(--slide-dialog-dashboard-inset, 280px)) !important;
+  }
+}
+
+.react-modal-sheet-root:not(.dashboard) {
+  .slide-dialog {
+    padding-bottom: 1.5em;
+  }
+}
+
+.react-modal-sheet-header-container,
+.slide-dialog-header {
+  flex-shrink: 0;
+  touch-action: none;
+
+  .MuiToolbar-root {
+    gap: 0.5em;
+  }
+}
+
+.react-modal-sheet-content,
+.slide-dialog-body {
+  min-height: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.react-modal-sheet-content-scroller,
+.slide-dialog-content {
+  height: 100%;
+  min-height: 0;
+  flex: 1;
+  touch-action: pan-y !important;
 }
 
 .MuiAppBar-positionFixed {
@@ -29,6 +70,9 @@
 .slide-dialog {
   border-top-right-radius: 10px;
   border-top-left-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 
   &.MuiPaper-root {
     .slide-drag-handle {
@@ -113,28 +157,37 @@
     }
   }
 }
-.MuiDialog-container {
-  &:has(.blue) {
-    .MuiPaper-root {
-      // background-color: $dark-gray-blue !important;
-    }
-  }
-}
-
 .slide-dialog-content {
   background-color: $white !important;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  overscroll-behavior-y: contain;
 
   &.dark-mode {
     background-color: $dark-gray !important;
   }
-  // Native mobile scrolling
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
-  // Smooth scrolling
-  scroll-behavior: smooth;
-  // Prevent pull-to-refresh interference
 
-  overscroll-behavior-y: contain;
+  .slide-dialog-body-inner {
+    min-height: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .results,
+  .custom-list,
+  .item-search,
+  .item-details,
+  .workout-details-container {
+    overflow: visible !important;
+    max-height: none !important;
+  }
+
+  .clock-picker,
+  .weight-picker,
+  .clock-picker-column {
+    touch-action: none;
+  }
 }
 
 body.dark-mode {
@@ -146,9 +199,17 @@ body.dark-mode {
 .slide-dialog.dark-mode:not(.blue):not(.yellow):not(.red):not(.orange):not(
     .green
   ):not(.deepPurple):not(.purple):not(.pink).MuiPaper-root {
-  background-color: transparent !important;
+  // background-color: transparent !important;
 }
 
 .slide-dialog.dark-mode.MuiPaper-root {
   background-color: transparent !important;
+}
+
+body:has(.react-modal-sheet-root[data-sheet-state='open']),
+body:has(.react-modal-sheet-root[data-sheet-state='opening']) {
+  .page-container,
+  .main {
+    overflow: hidden !important;
+  }
 }

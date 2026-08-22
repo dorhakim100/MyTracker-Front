@@ -16,6 +16,17 @@
 
   .clock-picker {
     direction: ltr;
+    width: 65%;
+    min-width: 65%;
+    justify-self: center;
+
+    .clock-picker-column {
+      padding-inline: 0.4em;
+
+      h5 {
+        white-space: nowrap;
+      }
+    }
   }
 
   .buttons-container {
