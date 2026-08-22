@@ -46,7 +46,8 @@
     "title": "Dashboard",
     "noWorkoutToday": "No workout today",
     "chooseWorkout": "Choose Workout",
-    "workoutSession": "Workout Session"
+    "workoutSession": "Workout Session",
+    "sessionLoadFailed": "Today's workout didn't load"
   },
   "common": {
     "save": "Save",

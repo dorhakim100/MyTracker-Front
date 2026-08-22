@@ -17,8 +17,9 @@ import {
   setSelectedDiaryDay,
 } from '../../../store/actions/user.actions'
 import { getDateFromISO } from '../../../services/util.service'
-import { Typography } from '@mui/material'
+import { CircularProgress, Typography } from '@mui/material'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
+import ReplayIcon from '@mui/icons-material/Replay'
 import { CustomButton } from '../../../CustomMui/CustomButton/CustomButton'
 import {
   setActiveRoute,
@@ -104,6 +105,10 @@ export function Dashboard() {
   const [calories, setCalories] = useState(
     userToCheck?.loggedToday?.calories || 0
   )
+  const [isSessionLoading, setIsSessionLoading] = useState(
+    Boolean(traineeUser || user)
+  )
+  const [hasSessionError, setHasSessionError] = useState(false)
 
   const showStatsCarousel = useMemo(() => {
     return width < 1100
@@ -282,18 +287,26 @@ export function Dashboard() {
 
   async function updateSessionDay() {
     try {
-      if (!userToCheck) return
+      if (!userToCheck) {
+        setIsSessionLoading(false)
+        return
+      }
+      setIsSessionLoading(true)
       const day = await handleSessionDayChange(
         getDateFromISO(new Date().toISOString()),
         userToCheck
       )
 
       setTodaySessionDay(day)
+      setHasSessionError(false)
     } catch (err) {
       console.log(err)
+      setHasSessionError(true)
       showErrorMsg(t('messages.error.getSessionDay'))
-      await logout(false)
+      // await logout(false)
       // setRemembered()
+    } finally {
+      setIsSessionLoading(false)
     }
   }
 
@@ -334,6 +347,7 @@ export function Dashboard() {
   }
 
   const renderNoSession = () => {
+    if (isSessionLoading || hasSessionError) return
     if (!todaySessionDay?.workout)
       return (
         <div className='no-session-container'>
@@ -369,7 +383,15 @@ export function Dashboard() {
   }
 
   const renderSession = () => {
-    if (sessionDay?.workout)
+    const hasUsableSession = Boolean(
+      sessionDay?.workout && sessionDay.instructions
+    )
+    const isIncompleteSession = Boolean(
+      sessionDay?.workout && !sessionDay.instructions
+    )
+    const showRetry = hasSessionError || isIncompleteSession
+
+    if (hasUsableSession && sessionDay) {
       return (
         <div className='dashboard-session-container'>
           <Typography
@@ -378,15 +400,74 @@ export function Dashboard() {
           >
             {t('dashboard.workoutSession')}
           </Typography>
-
-          {sessionDay.instructions && (
-            <WorkoutSession
-              sessionDay={sessionDay}
-              updateSessionDay={updateSessionDay}
-            />
-          )}
+          <WorkoutSession
+            sessionDay={sessionDay}
+            updateSessionDay={updateSessionDay}
+          />
         </div>
       )
+    }
+
+    if (isSessionLoading && !showRetry) {
+      return (
+        <div className='dashboard-session-container'>
+          <div
+            className={`session-retry-container loading ${
+              prefs.isDarkMode ? 'dark-mode' : ''
+            }`}
+          >
+            <CircularProgress
+              size={28}
+              className={prefs.favoriteColor}
+              aria-label={t('common.loading')}
+            />
+          </div>
+        </div>
+      )
+    }
+
+    if (!showRetry) return
+
+    return (
+      <div className='dashboard-session-container'>
+        <div
+          className={`session-retry-container ${
+            prefs.isDarkMode ? 'dark-mode' : ''
+          } ${prefs.favoriteColor}`}
+          role='status'
+          aria-live='polite'
+        >
+          <div
+            className='session-retry-indicator'
+            aria-hidden='true'
+          >
+            <ReplayIcon />
+          </div>
+          <Typography
+            variant='body1'
+            className='session-retry-message'
+          >
+            {t('dashboard.sessionLoadFailed')}
+          </Typography>
+          <CustomButton
+            text={t('common.tryAgain')}
+            icon={
+              isSessionLoading ? (
+                <CircularProgress
+                  size={20}
+                  color='inherit'
+                />
+              ) : (
+                <ReplayIcon />
+              )
+            }
+            onClick={updateSessionDay}
+            disabled={isSessionLoading}
+            isIconReverse={prefs.lang === 'he'}
+          />
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -431,7 +512,7 @@ export function Dashboard() {
         {renderHealthSection()}
         {renderNoSession()}
         {/* <CustomAccordion title="Workout Session" cmp={renderSession()} /> */}
-        {renderSession()}{' '}
+        {renderSession()}
       </div>
     </PullToRefreshWrapper>
   )

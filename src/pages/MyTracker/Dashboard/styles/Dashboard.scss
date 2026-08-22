@@ -102,3 +102,101 @@ body.dashboard {
     }
   }
 }
+
+.session-retry-container {
+  display: grid;
+  justify-items: center;
+  gap: 0.75rem;
+  padding: 1.25rem 1rem;
+  border-radius: 16px;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.04);
+
+  &.dark-mode {
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  &.loading {
+    padding: 1.5rem 1rem;
+  }
+
+  .session-retry-message {
+    max-width: 22rem;
+  }
+
+  .session-retry-indicator {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: 50%;
+    color: $primary-color;
+    background: color-mix(in srgb, currentColor 14%, transparent);
+
+    svg {
+      font-size: 1.6rem;
+    }
+
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      inset: -5px;
+      border-radius: 50%;
+      border: 2px solid currentColor;
+      opacity: 0;
+      animation: session-retry-pulse 2s ease-out infinite;
+    }
+
+    &::after {
+      animation-delay: 1s;
+    }
+  }
+
+  &.blue .session-retry-indicator {
+    color: $picker-color-blue;
+  }
+  &.yellow .session-retry-indicator {
+    color: $picker-color-yellow;
+  }
+  &.red .session-retry-indicator {
+    color: $picker-color-red;
+  }
+  &.orange .session-retry-indicator {
+    color: $picker-color-orange;
+  }
+  &.green .session-retry-indicator {
+    color: $picker-color-green;
+  }
+  &.deepPurple .session-retry-indicator {
+    color: $picker-color-deep-purple;
+  }
+  &.purple .session-retry-indicator {
+    color: $picker-color-purple;
+  }
+  &.pink .session-retry-indicator {
+    color: $picker-color-pink;
+  }
+}
+
+@keyframes session-retry-pulse {
+  0% {
+    transform: scale(0.92);
+    opacity: 0.45;
+  }
+  100% {
+    transform: scale(1.28);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .session-retry-container .session-retry-indicator {
+    &::before,
+    &::after {
+      animation: none;
+      opacity: 0.28;
+    }
+  }
+}

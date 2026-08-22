@@ -36,7 +36,8 @@
     "title": "דף הבית",
     "noWorkoutToday": "עדיין לא נוסף אימון להיום",
     "chooseWorkout": "בחר אימון",
-    "workoutSession": "אימון"
+    "workoutSession": "אימון",
+    "sessionLoadFailed": "האימון להיום לא נטען"
   },
   "steps": {
     "stepsToday": "צעדים היום",
