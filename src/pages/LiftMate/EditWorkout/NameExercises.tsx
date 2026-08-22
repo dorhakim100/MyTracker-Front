@@ -62,6 +62,7 @@ interface NameExercisesProps {
   onEditExerciseNotes: (exerciseId: string, notes: string) => void
   onSaveWorkout: (isClose?: boolean) => void
   onSwitchRpeRir: (exerciseId: string, value: 'rpe' | 'rir') => void
+  onChangeExercise: (oldExercise: Exercise, newExercise: Exercise) => void
 }
 
 export function NameExercises({
@@ -82,6 +83,7 @@ export function NameExercises({
   onEditExerciseNotes,
   onSaveWorkout,
   onSwitchRpeRir,
+  onChangeExercise,
 }: NameExercisesProps) {
   const { t } = useTranslation()
   const prefs = useSelector(
@@ -228,6 +230,7 @@ export function NameExercises({
             (i) => i.exerciseId === exercise.exerciseId
           )}
           isExpected={true}
+          onChangeExercise={onChangeExercise}
         />
       )
     })

@@ -1,5 +1,6 @@
 import { capitalizeFirstLetter } from '../../services/util.service'
 import { Exercise } from '../../types/exercise/Exercise'
+import { ExerciseInstructions } from '../../types/exercise/ExerciseInstructions'
 import { Divider, Typography } from '@mui/material'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
@@ -27,9 +28,16 @@ import { setSelectedSessionDay } from '../../store/actions/workout.action'
 import { setService } from '../../services/set/set.service'
 import { workoutService } from '../../services/workout/workout.service'
 import { useTranslation } from 'react-i18next'
-
+import { CustomInput } from '../../CustomMui/CustomInput/CustomInput'
+import CloseIcon from '@mui/icons-material/Close'
+import { matchesExerciseSearch } from '../../services/search/search.utils'
 interface ChangeExerciseProps {
   exerciseToChange: Exercise
+  instructionExercises?: ExerciseInstructions[]
+  onRoutineChange?: (
+    oldExercise: Exercise,
+    newExercise: Exercise
+  ) => Promise<void> | void
 }
 
 interface SlideDialogOptions {
@@ -39,7 +47,11 @@ interface SlideDialogOptions {
   type: 'full' | 'half'
 }
 
-export function ChangeExercise({ exerciseToChange }: ChangeExerciseProps) {
+export function ChangeExercise({
+  exerciseToChange,
+  instructionExercises,
+  onRoutineChange,
+}: ChangeExerciseProps) {
   const { t } = useTranslation()
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -69,14 +81,20 @@ export function ChangeExercise({ exerciseToChange }: ChangeExerciseProps) {
     muscleGroupValue: 'All',
   })
 
+  const currentInstructionExercises =
+    instructionExercises ?? sessionDay?.instructions.exercises
+
   const filteredSuggestedExercises = useMemo(() => {
-    return filterExercises(exerciseFilter, suggestedExercises).filter(
-      (exercise) => !isInInstructions(exercise)
-    )
+    const search = exerciseFilter.searchValue
+
+    return filterExercises(exerciseFilter, suggestedExercises)
+      .filter((exercise) => !isInInstructions(exercise))
+      .filter((exercise) => matchesExerciseSearch(exercise.name, search))
   }, [
     suggestedExercises,
     exerciseFilter.equipmentValue,
-    sessionDay?.instructions.exercises,
+    exerciseFilter.searchValue,
+    currentInstructionExercises,
   ])
 
   useEffect(() => {
@@ -113,6 +131,18 @@ export function ChangeExercise({ exerciseToChange }: ChangeExerciseProps) {
   }
 
   const onChangeExercise = async (newExercise: Exercise) => {
+    if (onRoutineChange) {
+      try {
+        setIsLoading(true)
+        await onRoutineChange(exerciseToChange, newExercise)
+      } catch {
+        showErrorMsg(t('messages.error.changeExercise'))
+      } finally {
+        setIsLoading(false)
+      }
+      return
+    }
+
     if (!sessionDay || !sessionDay.instructions._id)
       return showErrorMsg(t('messages.error.getSessionDay'))
     const oldExerciseInstructions = sessionDay.instructions.exercises.find(
@@ -185,15 +215,36 @@ export function ChangeExercise({ exerciseToChange }: ChangeExerciseProps) {
   }
 
   function isInInstructions(exercise: Exercise) {
-    return sessionDay?.instructions.exercises.find(
+    return currentInstructionExercises?.find(
       (e) => e.exerciseId === exercise.exerciseId
     )
   }
   return (
     <>
-      <div className="change-exercise-container">
-        <div className="filters-container">
-          <Typography variant="h6" className="bold-header">
+      <div className='change-exercise-container'>
+        <CustomInput
+          placeholder='Search'
+          value={exerciseFilter.searchValue}
+          className={`${prefs.favoriteColor}`}
+          onChange={(value) => {
+            onExerciseFilterChange({
+              ...exerciseFilter,
+              searchValue: value,
+            })
+          }}
+          endIconFn={() => (
+            <CloseIcon
+              onClick={() =>
+                onExerciseFilterChange({ ...exerciseFilter, searchValue: '' })
+              }
+            />
+          )}
+        />
+        <div className='filters-container'>
+          <Typography
+            variant='h6'
+            className='bold-header'
+          >
             Equipment:
           </Typography>
           <EquipmentSelect
@@ -202,7 +253,10 @@ export function ChangeExercise({ exerciseToChange }: ChangeExerciseProps) {
           />
         </div>
         <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
-        <Typography variant="h6" className="bold-header">
+        <Typography
+          variant='h6'
+          className='bold-header'
+        >
           Change to:
         </Typography>
         {isListLoading && isLoading ? (
@@ -237,7 +291,7 @@ export function ChangeExercise({ exerciseToChange }: ChangeExerciseProps) {
                   onChangeExercise(exercise)
                 }}
                 isIcon={true}
-                tooltipTitle="Change exercise"
+                tooltipTitle='Change exercise'
               />
             )}
           />

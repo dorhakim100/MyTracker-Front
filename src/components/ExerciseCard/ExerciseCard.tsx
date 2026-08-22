@@ -78,6 +78,10 @@ interface ExerciseCardProps {
   ) => Promise<void> | void
   isOpen?: boolean
   onOpenChange?: () => void
+  onChangeExercise?: (
+    oldExercise: Exercise,
+    newExercise: Exercise
+  ) => Promise<void> | void
 }
 
 export function ExerciseCard({
@@ -99,6 +103,7 @@ export function ExerciseCard({
   markSetAsDone,
   isOpen = true,
   onOpenChange,
+  onChangeExercise,
 }: ExerciseCardProps) {
   const { t } = useTranslation()
   const prefs = useSelector(
@@ -230,6 +235,19 @@ export function ExerciseCard({
         })
       },
     },
+    isExpected &&
+      onChangeExercise && {
+        title: t('exercise.changeExercise'),
+        icon: <AltRouteIcon />,
+        onClick: async () => {
+          capacitorService.vibrate('Light')
+          setSlideDialogOptions({
+            title: t('exercise.changeExercise'),
+            type: 'change-exercise',
+            open: true,
+          })
+        },
+      },
 
     isExpected
       ? {
@@ -387,7 +405,25 @@ export function ExerciseCard({
           />
         )
       case 'change-exercise':
-        return <ChangeExercise exerciseToChange={exercise} />
+        return (
+          <ChangeExercise
+            exerciseToChange={exercise}
+            instructionExercises={
+              onChangeExercise ? instructions.exercises : undefined
+            }
+            onRoutineChange={
+              onChangeExercise
+                ? async (oldExercise, newExercise) => {
+                    await onChangeExercise(oldExercise, newExercise)
+                    setSlideDialogOptions((prev) => ({
+                      ...prev,
+                      open: false,
+                    }))
+                  }
+                : undefined
+            }
+          />
+        )
       default:
         return <></>
     }

@@ -299,6 +299,28 @@ export function EditWorkout({
     })
   }
 
+  const onChangeExercise = (oldExercise: Exercise, newExercise: Exercise) => {
+    const updatedExercises = workout.exercises.map((exercise) =>
+      exercise.exerciseId === oldExercise.exerciseId
+        ? {
+            ...newExercise,
+            details: exercise.details,
+          }
+        : exercise
+    )
+
+    setWorkout({ ...workout, exercises: updatedExercises })
+
+    setInstructions((prev) => ({
+      ...prev,
+      exercises: prev.exercises.map((exercise) =>
+        exercise.exerciseId === oldExercise.exerciseId
+          ? { ...exercise, exerciseId: newExercise.exerciseId }
+          : exercise
+      ),
+    }))
+  }
+
   const onSwitchRpeRir = (exerciseId: string, value: 'rpe' | 'rir') => {
     const exerciseInstructionToUpdate = instructions.exercises.find(
       (e) => e.exerciseId === exerciseId
@@ -433,6 +455,7 @@ export function EditWorkout({
         setInstructions={setInstructions}
         onEditExerciseNotes={onEditExerciseNotes}
         onSwitchRpeRir={onSwitchRpeRir}
+        onChangeExercise={onChangeExercise}
         onSaveWorkout={(isClose?: boolean) => onFinish(isClose)}
       />
     </div>
