@@ -126,6 +126,13 @@ export function LoggedList({
     handleLoadItems()
   }, [selectedDay])
 
+  useEffect(() => {
+    const isIncomplete = logs.some((log) => !log.name)
+    if (isIncomplete) {
+      handleRefreshLogs()
+    }
+  }, [logs])
+
   function _filterLogsByMealPeriod(log: Log, mealPeriod: string) {
     return log.meal.toLocaleLowerCase() === mealPeriod
   }
@@ -137,7 +144,9 @@ export function LoggedList({
 
       await searchService.searchBulkIds(logs) // actual update from api
 
-      await loadItems() // actual update from api
+      const items = await loadItems() // actual update from api
+
+      return items
     } catch (err) {
       console.error(err)
       // showErrorMsg(t('messages.error.getItem'))
@@ -197,6 +206,7 @@ export function LoggedList({
     const cachedItem = cachedItems.find((i) => i.searchId === item.itemId)
     let caloriesToReturn
     if (cachedItem) caloriesToReturn = +item.macros?.calories
+    else caloriesToReturn = +item.macros?.calories
     return caloriesToReturn ? (
       `${caloriesToReturn.toFixed(0)} ${t('macros.kcal')}`
     ) : (
@@ -207,6 +217,24 @@ export function LoggedList({
         isDarkMode={prefs.isDarkMode}
       />
     )
+  }
+
+  async function handleRefreshLogs() {
+    try {
+      const items = await handleLoadItems()
+      setLogs(
+        logs.map((log) => {
+          const item = items?.find((item: Item) => item.searchId === log.itemId)
+          return {
+            ...log,
+            name: item?.name,
+          }
+        })
+      )
+    } catch (err) {
+      console.error(err)
+      showErrorMsg(t('messages.error.updateCalories'))
+    }
   }
 
   const onItemClick = async (mealItem: Log) => {
