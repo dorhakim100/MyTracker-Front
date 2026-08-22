@@ -109,6 +109,7 @@ export function Dashboard() {
     Boolean(traineeUser || user)
   )
   const [hasSessionError, setHasSessionError] = useState(false)
+  const [shouldLoadAgainSession, setShouldLoadAgainSession] = useState(false)
 
   const showStatsCarousel = useMemo(() => {
     return width < 1100
@@ -313,6 +314,10 @@ export function Dashboard() {
   async function handleRefreshHealthData() {
     try {
       await setHealthData()
+      if (shouldLoadAgainSession) {
+        setShouldLoadAgainSession(false)
+        await updateSessionDay()
+      }
     } catch {
       showErrorMsg(t('messages.error.refreshHealthData'))
     }
@@ -428,6 +433,7 @@ export function Dashboard() {
 
     if (!showRetry) return
 
+    setShouldLoadAgainSession(true)
     return (
       <div className='dashboard-session-container'>
         <div
