@@ -1,0 +1,44 @@
+---
+description: Repo's frontend defaults — always apply conventions, UX, and testing stance
+alwaysApply: true
+---
+
+# Frontend
+
+## Before implementing
+
+**Read each always-on `SKILL.md` below in full before writing or editing code.** Do not implement from this rule's summaries. Live skills are under `.cursor/skills/` — do not follow superseded `.github/skills/` (`cmpStructure`, `styling`, `customCmps`, `serviceLayer`, `tdd`).
+
+## Always-on skills
+
+- `.cursor/skills/respect-manual-code/SKILL.md` — **never auto-edit developer-written code**; suggest only unless they explicitly ask to apply
+- `.cursor/skills/simple-readable/SKILL.md` — **minimal, human-readable code**; simple beats complex
+- `.cursor/skills/conventions/SKILL.md` — structure, i18n locals, withSuspense, **dark mode** (`html.dark-mode` + MUI ThemeModeSync), SCSS, CustomMui, Redux
+- `.cursor/skills/reuse-libraries/SKILL.md` — **prefer MUI + small proven libs**; CustomMui / thin wrappers when usage repeats
+- `.cursor/skills/senior-ux/SKILL.md` — senior UX/UI, anti-AI-slop, both color modes
+- `.cursor/skills/animation-guidance/SKILL.md` — **subtle, visible motion**; improve UX without excess
+- `.cursor/skills/testing/SKILL.md` — **no tests unless explicitly requested**
+
+Format with Prettier using `.prettierrc.json` (single quotes, no semis, jsxSingleQuote, singleAttributePerLine).
+
+User-facing copy: put strings in the component's `locals/eng.json` and `locals/heb.json` — never a central locales dump.
+
+Exported feature cmps / pages: `export const Name = withSuspense(NameComponent)`. Parent may pass `isSuspense`, `fallback`, `fallbackSize`.
+
+Dark mode: only flip `prefs.isDarkMode`. `ThemeModeSync` sets `html.dark-mode` + MUI `setMode`. SCSS overrides use `html.dark-mode &` — do not hand-add `dark-mode` classes on cmps.
+
+Colors: edit only `src/theme/tokens.ts` (feeds MUI `appTheme` + generated SCSS CSS vars).
+
+## Planning
+
+When the user says **start** / kickoff / begin planning, use `.cursor/skills/start/SKILL.md` (grill-me → write-a-prd → prd-to-plan).
+
+Plans and PRDs live in `./plans/`.
+
+## MCPs
+
+Work PC has GitLab, Figma, and Jira MCPs. Prefer them for tickets, designs, and repo context before inventing.
+
+## Speed
+
+Demoable vertical slices > perfect architecture. Reuse existing modules first. No drive-by refactors.
