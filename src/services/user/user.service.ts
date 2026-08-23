@@ -66,7 +66,17 @@ async function getById(userId: string) {
 }
 async function getRememberedById(userId: string) {
   try {
-    const user = await httpService.get(`user/remember/${userId}`, null)
+    const data = await httpService.get(`user/remember/${userId}`, null)
+    const loginToken = data?.loginToken
+    const user = data?.user && loginToken ? data.user : data
+
+    if (loginToken && user?._id) {
+      await indexedDbService.put(REMEMBER_STORE, {
+        _id: REMEMBER_RECORD_ID,
+        userId: user._id,
+        token: loginToken,
+      })
+    }
 
     return user
   } catch (err) {
