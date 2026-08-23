@@ -126,12 +126,14 @@ export function LoggedList({
     handleLoadItems()
   }, [selectedDay])
 
-  useEffect(() => {
-    const isIncomplete = logs.some((log) => !log.name)
-    if (isIncomplete) {
-      handleRefreshLogs()
-    }
-  }, [logs])
+  // useEffect(() => {
+  // const isIncomplete = logs.some(
+  //   (log) => !log.name && log.source !== searchTypes.custom
+  // )
+  // if (isIncomplete) {
+  //   handleRefreshLogs()
+  // }
+  // }, [logs])
 
   function _filterLogsByMealPeriod(log: Log, mealPeriod: string) {
     return log.meal.toLocaleLowerCase() === mealPeriod
@@ -219,23 +221,27 @@ export function LoggedList({
     )
   }
 
-  async function handleRefreshLogs() {
-    try {
-      const items = await handleLoadItems()
-      setLogs(
-        logs.map((log) => {
-          const item = items?.find((item: Item) => item.searchId === log.itemId)
-          return {
-            ...log,
-            name: item?.name,
-          }
-        })
-      )
-    } catch (err) {
-      console.error(err)
-      showErrorMsg(t('messages.error.updateCalories'))
-    }
-  }
+  // async function handleRefreshLogs() {
+  //   try {
+  //     const items = await handleLoadItems()
+  //     setLogs(
+  // logs
+  // .filter((log) => log.meal.toLocaleLowerCase() === mealPeriod)
+  //           .map((log) => {
+  //             const item = items?.find(
+  //               (item: Item) => item.searchId === log.itemId
+  //             )
+  //             return {
+  //             ...log,
+  //             name: item?.name,
+  //           }
+  //         })
+  //     )
+  //   } catch (err) {
+  //     console.error(err)
+  //     showErrorMsg(t('messages.error.updateCalories'))
+  //   }
+  // }
 
   const onItemClick = async (mealItem: Log) => {
     setIsEditOpen(true)
