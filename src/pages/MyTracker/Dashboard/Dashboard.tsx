@@ -389,10 +389,10 @@ export function Dashboard() {
 
   const renderSession = () => {
     const hasUsableSession = Boolean(
-      sessionDay?.workout && sessionDay.instructions
+      sessionDay && sessionDay?.workout && sessionDay.instructions
     )
     const isIncompleteSession = Boolean(
-      sessionDay?.workout && !sessionDay.instructions
+      sessionDay && sessionDay?.workout && !sessionDay.instructions
     )
     const showRetry = hasSessionError || isIncompleteSession
 
