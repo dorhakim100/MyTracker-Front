@@ -520,6 +520,7 @@ export function ExerciseCard({
             <div className='exercise-card-info'>
               <Typography
                 variant='h6'
+                component='div'
                 className='exercise-card-name'
               >
                 <MarqueeText variant='h6'>
@@ -529,6 +530,7 @@ export function ExerciseCard({
               {exercise.muscleGroups && exercise.muscleGroups.length > 0 && (
                 <Typography
                   variant='body2'
+                  component='div'
                   className='exercise-card-muscle-groups'
                 >
                   <MarqueeText variant='body2'>

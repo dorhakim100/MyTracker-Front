@@ -230,7 +230,7 @@ export function Dashboard() {
   }, [userToCheck])
 
   useEffect(() => {
-    if (!userToCheck || !userToCheck?.loggedToday.date) return
+    if (!userToCheck || !userToCheck?.loggedToday?.date) return
 
     const protein = userToCheck?.loggedToday?.logs.reduce(
       (acc, log) => acc + log.macros.protein,
@@ -279,6 +279,14 @@ export function Dashboard() {
 
     setSelectedSessionDay(todaySessionDay)
   }, [userToCheck, todaySessionDay])
+
+  useEffect(() => {
+    const isIncompleteSession = Boolean(
+      sessionDay && sessionDay.workout && !sessionDay.instructions
+    )
+    if (!(hasSessionError || isIncompleteSession)) return
+    setShouldLoadAgainSession(true)
+  }, [hasSessionError, sessionDay])
 
   async function checkDiaryDayChange() {
     if (!userToCheck) return
@@ -433,7 +441,6 @@ export function Dashboard() {
 
     if (!showRetry) return
 
-    setShouldLoadAgainSession(true)
     return (
       <div className='dashboard-session-container'>
         <div
