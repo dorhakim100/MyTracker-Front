@@ -1,24 +1,18 @@
 import { useTranslation } from 'react-i18next'
 import { getArrayOfNumbers } from '../../services/util.service'
-import Picker from 'react-mobile-picker'
 import { setUserToEdit } from '../../store/actions/user.actions'
 import { User } from '../../types/user/User'
 import {
   calculateCarbsFromCalories,
   roundCaloriesToNearest50,
 } from '../../services/macros/macros.service'
-import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
-import { SaveCancel } from '../SaveCancel/SaveCancel'
-import { useEffect, useMemo, useState } from 'react'
-import { Box, Divider, Typography } from '@mui/material'
-import AddIcon from '@mui/icons-material/Add'
-import RemoveIcon from '@mui/icons-material/Remove'
+import { useMemo } from 'react'
+import { Box, Typography } from '@mui/material'
 import { Goal } from '../../types/goal/Goal'
-import { AnimatedWrapper } from '../AnimatedWrapper/AnimatedWrapper'
-
-import { useDragHaptics } from '../../hooks/useDragHaptics'
+import { ClockPicker } from '../Pickers/ClockPicker'
+import type { ClockPickerValues } from '../Pickers/ClockPicker'
 
 interface CaloriesEditProps {
   goalToEdit?: Goal | Partial<Goal>
@@ -26,6 +20,10 @@ interface CaloriesEditProps {
   onCancel?: () => void
   onSave?: () => void
 }
+
+const MIN = 1200
+const MAX = 5000
+const STEP = 50
 
 export function CaloriesEdit({
   goalToEdit,
@@ -37,10 +35,12 @@ export function CaloriesEdit({
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
-  const dragHaptics = useDragHaptics({itemHeight:36})
-  const MIN = 1200
-  const MAX = 5000
-  const STEP = 50
+  const user = useSelector(
+    (stateSelector: RootState) => stateSelector.userModule.user
+  )
+  const userToEdit = useSelector(
+    (stateSelector: RootState) => stateSelector.userModule.userToEdit
+  )
 
   const options = useMemo(
     () =>
@@ -48,43 +48,19 @@ export function CaloriesEdit({
     []
   )
 
-  const user = useSelector(
-    (stateSelector: RootState) => stateSelector.userModule.user
+  const initialCalories = roundCaloriesToNearest50(
+    (goalRef?.current?.dailyCalories as number) ||
+      goalToEdit?.dailyCalories ||
+      user?.currGoal?.dailyCalories ||
+      2400
   )
 
-  const userToEdit = useSelector(
-    (stateSelector: RootState) => stateSelector.userModule.userToEdit
-  )
-
-  const [pickerCalories, setPickerCalories] = useState<{ calories: number }>({
-    calories: roundCaloriesToNearest50(
-      goalToEdit?.dailyCalories || user?.currGoal?.dailyCalories || 2400
-    ),
-  })
-
-  const onFixedChange = (value: number) => {
-    const valueToSet = pickerCalories.calories + value
-    if (valueToSet > MAX) {
-      setPickerCalories({ calories: MAX })
-    } else if (valueToSet < MIN) {
-      setPickerCalories({ calories: MIN })
-    } else {
-      setPickerCalories({ calories: valueToSet })
-    }
-  }
-
-  useEffect(() => {
-    if (goalRef && goalRef.current) {
-      setPickerCalories({ calories: goalRef.current.dailyCalories as number })
-    }
-  }, [])
-
-  useEffect(() => {
+  function applyCalories(calories: number) {
     const currCalories =
       goalToEdit?.dailyCalories || user?.currGoal?.dailyCalories
 
     if (!currCalories) return
-    const diff = (currCalories - pickerCalories.calories) * -1
+    const diff = (currCalories - calories) * -1
 
     let carbsToEdit = calculateCarbsFromCalories(diff)
 
@@ -98,7 +74,7 @@ export function CaloriesEdit({
     if (goalToEdit && goalRef) {
       goalRef.current = {
         ...goalToEdit,
-        dailyCalories: pickerCalories.calories,
+        dailyCalories: calories,
         macros: {
           ...goalToEdit?.macros,
           carbs: newCarbs,
@@ -111,7 +87,7 @@ export function CaloriesEdit({
       ...userToEdit,
       currGoal: {
         ...userToEdit?.currGoal,
-        dailyCalories: roundCaloriesToNearest50(pickerCalories.calories),
+        dailyCalories: roundCaloriesToNearest50(calories),
         macros: {
           ...userToEdit?.currGoal?.macros,
           carbs: newCarbs,
@@ -120,73 +96,37 @@ export function CaloriesEdit({
     } as User
 
     setUserToEdit(userToUpdate)
-  }, [pickerCalories.calories])
+  }
+
+  function handleSave(values: ClockPickerValues) {
+    applyCalories(values.calories)
+    onSave?.()
+  }
 
   return (
-    <>
-      <Box sx={{ p: 2 }}>
-        <Box
-          sx={{ position: 'relative' }}
-          className="calories-amount-container"
-        >
-          <Typography
-            variant="h3"
-            className={`calories-amount ${prefs.favoriteColor || ''}`}
-          >
-            {roundCaloriesToNearest50(pickerCalories.calories)} {t('macros.kcal')}
-          </Typography>
-          <div className="picker-container">
-            <Picker
-              value={pickerCalories}
-              onChange={(next) =>{
-                // setPickerCalories(next as unknown as { calories: number })
-                setPickerCalories({ calories: next.calories as number })
-              }
-              }
-              height={150}
-              wheelMode='normal' {...dragHaptics}
+    <Box sx={{ p: 2 }}>
+      <Box
+        sx={{ position: 'relative' }}
+        className='calories-amount-container'
+      >
+        <ClockPicker
+          columns={[{ name: 'calories', values: options }]}
+          columnValues={{ calories: initialCalories }}
+          header={(values) => (
+            <Typography
+              variant='h3'
+              className={`calories-amount ${prefs.favoriteColor || ''}`}
             >
-              <Picker.Column name="calories">
-                {options.map((calorie) => (
-                  <Picker.Item key={calorie} value={calorie}>
-                    {({ selected }) => (
-                      <AnimatedWrapper>
-                        
-
-                      <Typography
-                        variant="h5"
-                        className={`${selected ? 'selected' : ''}`}
-                        >
-                        {`${calorie}`}
-                        {/* {selected && <span className='kcal'>kcal</span>} */}
-                      </Typography>
-                        </AnimatedWrapper>
-                    )}
-                  </Picker.Item>
-                ))}
-              </Picker.Column>
-            </Picker>
-            <div className="buttons-container">
-              <CustomButton
-                onClick={() => onFixedChange(-400)}
-                icon={<RemoveIcon />}
-                className={`${prefs.favoriteColor}`}
-                text="400"
-              />
-              <CustomButton
-                onClick={() => onFixedChange(400)}
-                icon={<AddIcon />}
-                className={`${prefs.favoriteColor}`}
-                text="400"
-              />
-            </div>
-            <Divider
-              className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-            />
-            <SaveCancel onCancel={onCancel} onSave={onSave} />
-          </div>
-        </Box>
+              {roundCaloriesToNearest50(values.calories)} {t('macros.kcal')}
+            </Typography>
+          )}
+          incrementButtons={[-400, 400]}
+          buttonsValues={[]}
+          height={150}
+          onSaveValues={handleSave}
+          onClose={onCancel}
+        />
       </Box>
-    </>
+    </Box>
   )
 }

@@ -1,5 +1,4 @@
 import { useTranslation } from 'react-i18next'
-import Picker from 'react-mobile-picker'
 import {
   getArrayOfNumbers,
   getFixedNumber,
@@ -13,13 +12,11 @@ import {
 } from '../../services/macros/macros.service'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
-import { useEffect, useState } from 'react'
 import { Box, Typography } from '@mui/material'
 import { Goal } from '../../types/goal/Goal'
 import { Macros as MacrosType } from '../../types/macros/Macros'
-import { SaveCancel } from '../SaveCancel/SaveCancel'
-import { AnimatedWrapper } from '../AnimatedWrapper/AnimatedWrapper'
-import { useDragHaptics } from '../../hooks/useDragHaptics'
+import { ClockPicker } from '../Pickers/ClockPicker'
+import type { ClockPickerValues } from '../Pickers/ClockPicker'
 
 interface EditMacrosProps {
   goalToEdit?: Goal | Partial<Goal>
@@ -37,27 +34,6 @@ const CARBS_LIMIT = 800
 const PROTEIN_LIMIT = 350
 const FATS_LIMIT = 200
 
-// const macrosAddButtons = {
-//   carbs: {
-//     value: 35,
-//     limit: CARBS_LIMIT,
-//   },
-//   protein: {
-//     value: 20,
-//     limit: PROTEIN_LIMIT,
-//   },
-//   fats: {
-//     value: 10,
-//     limit: FATS_LIMIT,
-//   },
-// }
-
-interface PickerValue {
-  carbs: number
-  protein: number
-  fats: number
-  [key: string]: number
-}
 export function EditMacros({
   goalToEdit,
   goalRef,
@@ -69,47 +45,37 @@ export function EditMacros({
   onCancel,
   onSave,
 }: EditMacrosProps) {
-  const dragHaptics = useDragHaptics({itemHeight:36})
-  const macros = {
-    carbs: getArrayOfNumbers(0, CARBS_LIMIT),
-    protein: getArrayOfNumbers(0, PROTEIN_LIMIT),
-    fats: getArrayOfNumbers(0, FATS_LIMIT),
-  }
-
+  const { t } = useTranslation()
   const userToEdit = useSelector(
     (stateSelector: RootState) => stateSelector.userModule.userToEdit
   )
-
   const user = useSelector(
     (stateSelector: RootState) => stateSelector.userModule.user
   )
 
-  const [pickerValue, setPickerValue] = useState<PickerValue>({
+  const initialValues = {
     carbs: getFixedNumber(
       (isCustomLog && carbs) ||
-      goalToEdit?.macros?.carbs ||
-      userToEdit?.currGoal?.macros.carbs ||
-      user?.currGoal?.macros.carbs ||
-      0
+        goalToEdit?.macros?.carbs ||
+        userToEdit?.currGoal?.macros.carbs ||
+        user?.currGoal?.macros.carbs ||
+        0
     ),
     protein: getFixedNumber(
       (isCustomLog && protein) ||
-      goalToEdit?.macros?.protein ||
-      userToEdit?.currGoal?.macros.protein ||
-      user?.currGoal?.macros.protein ||
-      0
+        goalToEdit?.macros?.protein ||
+        userToEdit?.currGoal?.macros.protein ||
+        user?.currGoal?.macros.protein ||
+        0
     ),
     fats: getFixedNumber(
       (isCustomLog && fats) ||
-      goalToEdit?.macros?.fat ||
-      userToEdit?.currGoal?.macros.fat ||
-      user?.currGoal?.macros.fat ||
-      0
+        goalToEdit?.macros?.fat ||
+        userToEdit?.currGoal?.macros.fat ||
+        user?.currGoal?.macros.fat ||
+        0
     ),
-  })
-
-  const { t } = useTranslation()
-  const macroKeys = Object.keys(macros) as (keyof typeof macros)[]
+  }
 
   const macroNameKeys: Record<string, string> = {
     carbs: 'macros.carbs',
@@ -117,27 +83,22 @@ export function EditMacros({
     fats: 'macros.fats',
   }
 
-  useEffect(() => {
-    pickerValue.protein = +pickerValue.protein.toFixed(0)
-    pickerValue.carbs = +pickerValue.carbs.toFixed(0)
-    pickerValue.fats = +pickerValue.fats.toFixed(0)
-  }, [userToEdit, user, goalToEdit])
-
-  useEffect(() => {
-    const proteinCalories = calculateProteinCalories(pickerValue.protein)
-    const carbsCalories = calculateCarbCalories(pickerValue.carbs)
-    const fatsCalories = calculateFatCalories(pickerValue.fats)
-
-    const totalCalories = proteinCalories + carbsCalories + fatsCalories
+  function applyMacros(values: ClockPickerValues) {
+    const nextCarbs = +values.carbs.toFixed(0)
+    const nextProtein = +values.protein.toFixed(0)
+    const nextFats = +values.fats.toFixed(0)
+    const totalCalories =
+      calculateProteinCalories(nextProtein) +
+      calculateCarbCalories(nextCarbs) +
+      calculateFatCalories(nextFats)
 
     if (isCustomLog) {
       editCustomLog?.({
         calories: totalCalories,
-        carbs: pickerValue.carbs,
-        protein: pickerValue.protein,
-        fat: pickerValue.fats,
+        carbs: nextCarbs,
+        protein: nextProtein,
+        fat: nextFats,
       })
-
       return
     }
 
@@ -146,14 +107,14 @@ export function EditMacros({
       dailyCalories: totalCalories,
       macros: {
         ...goalToEdit?.macros,
-        carbs: pickerValue.carbs,
-        protein: pickerValue.protein,
-        fat: pickerValue.fats,
+        carbs: nextCarbs,
+        protein: nextProtein,
+        fat: nextFats,
       },
     } as Goal
 
     if (goalToEdit && goalRef) {
-      goalRef.current = goalToUpdate as Goal
+      goalRef.current = goalToUpdate
       return
     }
 
@@ -164,137 +125,65 @@ export function EditMacros({
         dailyCalories: totalCalories,
         macros: {
           ...userToEdit?.currGoal?.macros,
-          carbs: pickerValue.carbs,
-          protein: pickerValue.protein,
-          fat: pickerValue.fats,
+          carbs: nextCarbs,
+          protein: nextProtein,
+          fat: nextFats,
         },
       },
     } as User
 
     setUserToEdit(userToUpdate)
-  }, [pickerValue])
+  }
 
-  useEffect(() => {
-    const userToSet = {
-      ...userToEdit,
-      currGoal: {
-        ...userToEdit?.currGoal,
-        macros: {
-          ...userToEdit?.currGoal?.macros,
-          carbs: pickerValue.carbs,
-          protein: pickerValue.protein,
-          fat: pickerValue.fats,
-        },
-      },
-    } as User
+  function handleSave(values: ClockPickerValues) {
+    applyMacros(values)
+    onSave?.()
+  }
 
-    setUserToEdit(userToSet)
-  }, [user])
+  function getLabel(name: string) {
+    return (macroValue: number) => (
+      <div className='macro-container'>
+        <div className={`banner ${name}`}>
+          <span className='title'>{t(macroNameKeys[name])}</span>
+        </div>
+        <Typography
+          variant='h6'
+          className='value'
+        >
+          {macroValue.toFixed(0)}
+          {t('macros.gram')}
+        </Typography>
+      </div>
+    )
+  }
 
   return (
-    <Box className="edit-macros-container">
-      <div className="picker-container" {...dragHaptics}>
-        <Picker
-          value={pickerValue}
-          onChange={(next) =>{
-            setPickerValue(next as unknown as PickerValue)
-          }
-          }
-          height={150}
-          wheelMode='normal'
-        >
-          {macroKeys.map((name) => {
-            const macroName = name as string
-            return (
-              <Picker.Column key={`${macroName}-picker`} name={macroName}>
-                {macros[name].map((option: number | string) => {
-                  if (typeof option === 'string') {
-                    option = +option
-                  }
-
-                  return (
-                    <Picker.Item
-                      key={`${option.toFixed(0)}-${macroName}`}
-                      value={option}
-                    >
-                      {({ selected }) => (
-                        <AnimatedWrapper>
-
-
-                        <Typography
-                          variant="h5"
-                          className={`${selected ? 'selected' : ''}`}
-                          >
-                          {option}
-                        </Typography>
-                          </AnimatedWrapper>
-                      )}
-                    </Picker.Item>
-                  )
-                })}
-              </Picker.Column>
-            )
-          })}
-        </Picker>
-      </div>
-
-      <div className="macros-title-container">
-        {macroKeys.map((name) => {
-          const macroName = name as string
-
-          // const getButtonDisabled = () => {
-          //   return (
-          //     pickerValue[macroName] +
-          //       macrosAddButtons[macroName as keyof typeof macrosAddButtons]
-          //         .value >
-          //     macrosAddButtons[macroName as keyof typeof macrosAddButtons].limit
-          //   )
-          // }
-
-          // const buttonValue =
-          //   macrosAddButtons[macroName as keyof typeof macrosAddButtons].value
-
-          return (
-            <div className="macro-container" key={`name-${macroName}`}>
-              <div className={`banner ${macroName}`}>
-                <span className="title">
-                  {t(macroNameKeys[macroName])}
-                </span>
-              </div>
-              <Typography variant="h6" className="value">
-                {pickerValue[macroName].toFixed(0)}{t('macros.gram')}
-              </Typography>
-              {/* <div className="add-remove-buttons-container">
-                <CustomButton
-                  text={`${buttonValue}`}
-                  icon={<AddIcon />}
-                  isIconReverse
-                  disabled={getButtonDisabled()}
-                  onClick={() =>
-                    setPickerValue({
-                      ...pickerValue,
-                      [macroName]: pickerValue[macroName] + buttonValue,
-                    })
-                  }
-                />
-                <CustomButton
-                  text={`${buttonValue}`}
-                  icon={<RemoveIcon />}
-                  isIconReverse
-                  disabled={pickerValue[macroName] - buttonValue < 0}
-                  onClick={() =>
-                    setPickerValue({
-                      ...pickerValue,
-                      [macroName]: pickerValue[macroName] - buttonValue,
-                    })
-                  }
-                />
-              </div> */}
-            </div>
-          )
-        })}
-      </div>
-      <SaveCancel onCancel={onCancel} onSave={onSave} />
+    <Box className='edit-macros-container'>
+      <ClockPicker
+        columns={[
+          {
+            name: 'carbs',
+            values: getArrayOfNumbers(0, CARBS_LIMIT) as number[],
+            label: getLabel('carbs'),
+          },
+          {
+            name: 'protein',
+            values: getArrayOfNumbers(0, PROTEIN_LIMIT) as number[],
+            label: getLabel('protein'),
+          },
+          {
+            name: 'fats',
+            values: getArrayOfNumbers(0, FATS_LIMIT) as number[],
+            label: getLabel('fats'),
+          },
+        ]}
+        columnValues={initialValues}
+        labelsClassName='macros-title-container'
+        buttonsValues={[]}
+        height={150}
+        onSaveValues={handleSave}
+        onClose={onCancel}
+      />
     </Box>
   )
 }

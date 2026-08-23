@@ -190,6 +190,7 @@ export function WeightCard() {
           <WeightEdit
             value={weightToAdd}
             onChange={onSave}
+            onClose={onClose}
           />
         }
         title={t('weight.updateWeight')}

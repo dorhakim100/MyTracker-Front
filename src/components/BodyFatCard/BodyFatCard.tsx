@@ -110,7 +110,13 @@ export function BodyFatCard() {
 
   const getSlideDialogComponent = () => {
     if (slideDialog?.component === 'weight-edit') {
-      return <WeightEdit value={weightKg} onChange={onSaveWeight} />
+      return (
+        <WeightEdit
+          value={weightKg}
+          onChange={onSaveWeight}
+          onClose={() => setSlideDialog(null)}
+        />
+      )
     }
     if (slideDialog?.component === 'body-fat-result' && result && imageUrl) {
       return (

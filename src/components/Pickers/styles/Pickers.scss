@@ -19,14 +19,109 @@
     width: 65%;
     min-width: 65%;
     justify-self: center;
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+    mask-image: linear-gradient(
+      to top,
+      transparent,
+      transparent 5%,
+      white 20%,
+      white 80%,
+      transparent 95%,
+      transparent
+    );
+    -webkit-mask-image: linear-gradient(
+      to top,
+      transparent,
+      transparent 5%,
+      white 20%,
+      white 80%,
+      transparent 95%,
+      transparent
+    );
 
     .clock-picker-column {
+      flex: 1 1 0;
+      min-width: 0;
       padding-inline: 0.4em;
+      position: relative;
+      z-index: 1;
 
       h5 {
         white-space: nowrap;
       }
     }
+
+    .divider {
+      align-self: stretch;
+      height: auto;
+      margin-block: 2.2em;
+      border-color: var(--border-color);
+    }
+
+    .clock-picker-wheel {
+      height: 100%;
+      overflow-y: auto;
+      overscroll-behavior-y: contain;
+      touch-action: none;
+      scrollbar-width: none;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+
+    .clock-picker-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .clock-picker-highlight {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      height: 36px;
+      margin-top: -18px;
+      pointer-events: none;
+      z-index: 2;
+
+      .clock-picker-highlight-line {
+        position: absolute;
+        left: 0;
+        width: 100%;
+        height: 1px;
+        background: $light-gray;
+        transform: scaleY(0.5);
+
+        &.top {
+          top: 0;
+        }
+
+        &.bottom {
+          bottom: 0;
+        }
+      }
+    }
+
+    html.dark-mode & .clock-picker-highlight-line {
+      background: rgba($white, 0.28);
+    }
+
+    &.clock-picker-multi {
+      width: 100%;
+      min-width: 100%;
+    }
+  }
+
+  .clock-picker-labels {
+    display: flex;
+    justify-content: space-around;
+    gap: 1em;
+    text-align: center;
   }
 
   .buttons-container {
