@@ -11,11 +11,13 @@
   background-color: $white;
   padding: 1rem;
   border-radius: 3px;
-  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: $card-lift-shadow;
+  color: var(--ink-on-surface);
 
   &.dark-mode {
     background-color: $darker-gray;
     box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
+    color: var(--ink-on-surface);
   }
 
   .header {

@@ -18,6 +18,7 @@
     .google-sign-in-button {
       background-color: $white !important;
       color: $dark-gray !important;
+      border: 1px solid rgba(0, 0, 0, 0.16) !important;
     }
   }
 }
@@ -26,13 +27,19 @@
   p.Mui-error {
     color: $medium-red;
   }
+
+  .google-sign-in-button {
+    background-color: #131314 !important;
+    color: #e3e3e3 !important;
+    border: 1px solid #8e918f !important;
+  }
 }
 
 .main {
   .login-sign-up-container {
     .MuiPaper-root {
-      background-color: $neutral-gray;
-      color: $dark-gray;
+      background-color: $white;
+      color: var(--ink-on-surface);
 
       a {
         color: $picker-color-blue;
@@ -76,6 +83,12 @@
 
   &.dark-mode {
     .login-sign-up-container {
+      .google-sign-in-button {
+        background-color: #131314 !important;
+        color: #e3e3e3 !important;
+        border: 1px solid #8e918f !important;
+      }
+
       .MuiPaper-root {
         background-color: $darker-gray;
         color: $white;

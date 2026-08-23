@@ -13,10 +13,16 @@
 
   .goal-banner {
     width: 100%;
-    // max-width: 140px;
+    background-color: $white;
 
     .after-value {
       margin-inline-start: 0.4rem;
     }
+  }
+}
+
+.dark-mode .health-stats-container {
+  .goal-banner {
+    background-color: rgba(255, 255, 255, 0.08);
   }
 }

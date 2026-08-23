@@ -1,3 +1,7 @@
+.slide-dialog-backdrop {
+  margin: 0 !important;
+}
+
 .MuiDialog-root.full-dialog,
 .react-modal-sheet-root.full-dialog {
   top: $header-margin !important;
@@ -73,8 +77,12 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  background: var(--canvas-color) !important;
+  color: var(--ink-on-canvas);
 
   &.MuiPaper-root {
+    background: var(--canvas-color) !important;
+
     .slide-drag-handle {
       cursor: grab;
       position: absolute;
@@ -94,23 +102,19 @@
       padding: 1em;
       border-top-right-radius: 10px;
       border-top-left-radius: 10px;
+
+      .slide-dialog-close,
+      .slide-dialog-close svg {
+        color: $white !important;
+        fill: $white !important;
+      }
     }
   }
 
   &.dark-mode {
     &.MuiPaper-root {
-      background-color: $dark-gray !important;
-      color: $white !important;
-    }
-    &:has(.blue) {
-      background-color: $dark-gray-blue !important;
-    }
-
-    &.yellow.MuiPaper-root {
-      background-color: $dark-gray-yellow !important;
-    }
-    &.red.MuiPaper-root {
-      background-color: $dark-gray-red !important;
+      background-color: var(--canvas-color) !important;
+      color: var(--ink-on-canvas) !important;
     }
 
     // Toolbar with darker picker colors in dark mode
@@ -146,25 +150,17 @@
         background-color: $primary-color-dark !important;
       }
     }
-
-    // Dialog background colors based on favorite color
-    background-color: transparent !important;
-
-    &:not(.blue):not(.yellow):not(.red):not(.orange):not(.green):not(
-        .deepPurple
-      ):not(.purple):not(.pink).MuiPaper-root {
-      background-color: $dark-gray !important;
-    }
   }
 }
 .slide-dialog-content {
-  background-color: $white !important;
+  background: var(--canvas-color) !important;
+  color: var(--ink-on-canvas);
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
   overscroll-behavior-y: contain;
 
   &.dark-mode {
-    background-color: $dark-gray !important;
+    background-color: var(--canvas-color) !important;
   }
 
   .slide-dialog-body-inner {
@@ -190,20 +186,16 @@
   }
 }
 
-body.dark-mode {
-  .slide-dialog-content {
-    background-color: $dark-gray !important;
-  }
+.react-modal-sheet-container {
+  background: var(--canvas-color) !important;
+  color: var(--ink-on-canvas);
 }
 
-.slide-dialog.dark-mode:not(.blue):not(.yellow):not(.red):not(.orange):not(
-    .green
-  ):not(.deepPurple):not(.purple):not(.pink).MuiPaper-root {
-  // background-color: transparent !important;
-}
-
-.slide-dialog.dark-mode.MuiPaper-root {
-  background-color: transparent !important;
+.react-modal-sheet-content,
+.react-modal-sheet-content-scroller,
+.slide-dialog-body,
+.slide-dialog-body-inner {
+  background: var(--canvas-color) !important;
 }
 
 body:has(.react-modal-sheet-root[data-sheet-state='open']),

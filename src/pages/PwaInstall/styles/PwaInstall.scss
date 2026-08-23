@@ -1,6 +1,6 @@
 .pwa-install-container {
   display: grid;
-  background-color: $white;
+  background-color: transparent;
 
   align-items: center;
   gap: 1.5rem;
@@ -36,6 +36,11 @@
 
   h6 {
     text-align: center;
+    color: inherit;
+  }
+
+  &.dark-mode {
+    color: $neutral-gray;
   }
 
   .ios-instructions-image {

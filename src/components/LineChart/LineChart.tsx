@@ -159,6 +159,7 @@ export default function LineChart({
   }, [data])
 
   const chartSettings = useMemo(() => prefs.weightChartSettings, [prefs])
+  const favoriteHex = getColor(prefs.favoriteColor || 'primary')
 
   const chartRef = useRef<ChartJS<'line'>>(null)
   const isControlled = selectedIndexProp !== undefined
@@ -232,15 +233,19 @@ export default function LineChart({
     ChartData<'line', SeriesValue[], string>
   >(() => {
     const baseDatasets: ChartDataset<'line', SeriesValue[]>[] =
-      data.datasets.map((ds) => ({
-        label: ds.label,
-        data: ds.data,
-        borderColor: isDarkMode
-          ? lightenColor(ds.borderColor as string, 0.25)
-          : ds.borderColor,
-        tension: ds.tension,
-        borderWidth: isDarkMode ? 2 : undefined,
-      }))
+      data.datasets.map((ds, index) => {
+        const lineColor =
+          index === 0 ? favoriteHex : (ds.borderColor as string)
+        return {
+          label: ds.label,
+          data: ds.data,
+          borderColor: isDarkMode
+            ? lightenColor(lineColor, 0.25)
+            : lineColor,
+          tension: ds.tension,
+          borderWidth: isDarkMode ? 2 : undefined,
+        }
+      })
 
     if (typeof baseline === 'number' && data.labels?.length) {
       baseDatasets.push({
@@ -308,6 +313,7 @@ export default function LineChart({
     secondData,
     chartSettings,
     secondDataLabel,
+    favoriteHex,
   ])
 
   const labelCount = data.labels?.length ?? 0
@@ -617,6 +623,7 @@ export default function LineChart({
         onLostPointerCapture={onLostPointerCapture}
       >
         <Line
+          key={prefs.favoriteColor}
           data={processedData}
           options={options}
           ref={chartRef}

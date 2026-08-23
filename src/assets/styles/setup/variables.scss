@@ -64,6 +64,35 @@
 
   --success-color-dark-mode: #6fd38c;
   --error-color-dark-mode: #f28b82;
+
+  // Light-mode page paper (whisper of favorite color). Cards stay white.
+  --light-paper: #edf8f7;
+  --light-paper: color-mix(in srgb, var(--primary-color) 7%, white);
+  --light-paper-blue: #eff5fc;
+  --light-paper-blue: color-mix(in srgb, var(--picker-color-blue) 7%, white);
+  --light-paper-yellow: #fffdf4;
+  --light-paper-yellow: color-mix(in srgb, var(--picker-color-yellow) 7%, white);
+  --light-paper-red: #fbf0f0;
+  --light-paper-red: color-mix(in srgb, var(--picker-color-red) 7%, white);
+  --light-paper-orange: #fef5ed;
+  --light-paper-orange: color-mix(in srgb, var(--picker-color-orange) 7%, white);
+  --light-paper-green: #edfcf8;
+  --light-paper-green: color-mix(in srgb, var(--picker-color-green) 7%, white);
+  --light-paper-deep-purple: #f4f4fe;
+  --light-paper-deep-purple: color-mix(
+    in srgb,
+    var(--picker-color-deep-purple) 7%,
+    white
+  );
+  --light-paper-purple: #f8f0f9;
+  --light-paper-purple: color-mix(in srgb, var(--picker-color-purple) 7%, white);
+  --light-paper-pink: #fff4fa;
+  --light-paper-pink: color-mix(in srgb, var(--picker-color-pink) 7%, white);
+
+  --canvas-color: var(--light-paper);
+
+  --ink-on-canvas: #05090a;
+  --ink-on-surface: #1c292a;
 }
 
 // Colors
@@ -225,6 +254,23 @@ $neutral-gray: #f5f5f5;
 
 $white: #fff;
 $black: #000;
+
+$light-paper: var(--light-paper);
+$light-paper-blue: var(--light-paper-blue);
+$light-paper-yellow: var(--light-paper-yellow);
+$light-paper-red: var(--light-paper-red);
+$light-paper-orange: var(--light-paper-orange);
+$light-paper-green: var(--light-paper-green);
+$light-paper-deep-purple: var(--light-paper-deep-purple);
+$light-paper-purple: var(--light-paper-purple);
+$light-paper-pink: var(--light-paper-pink);
+$canvas-color: var(--canvas-color);
+
+$card-lift-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.04),
+  inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+
+$ink-on-canvas: var(--ink-on-canvas);
+$ink-on-surface: var(--ink-on-surface);
 
 // $header-height: 68px;
 $header-height: 55px;

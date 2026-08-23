@@ -74,7 +74,7 @@
     top: 0rem;
     z-index: 10;
     padding: 1rem 0;
-    background-color: $neutral-gray;
+    background-color: var(--canvas-color);
 
     &.dark-mode {
       background-color: $dark-gray;

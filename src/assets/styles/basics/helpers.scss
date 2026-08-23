@@ -49,10 +49,15 @@ button {
   }
 
   background-color: $white;
+  color: var(--ink-on-surface);
+
+  &:not(.dark-mode) {
+    box-shadow: $card-lift-shadow;
+  }
 
   &.dark-mode {
     background-color: $darker-gray;
-    color: $white;
+    color: var(--ink-on-surface);
 
     // Color-specific card backgrounds
     // Note: "primary" uses default $darker-gray (no specific color case needed)
@@ -872,8 +877,9 @@ select {
   &.primary {
     background-color: $primary-color !important;
     color: $white;
-    &.disabled {
-      background-color: $primary-color-dark !important;
+    &.disabled,
+    &.Mui-disabled {
+      background-color: $primary-color-light !important;
     }
 
     &.dark-mode {
@@ -888,8 +894,9 @@ select {
     background-color: $picker-color-blue !important;
     color: $white;
 
-    &.disabled {
-      background-color: $picker-color-blue-dark !important;
+    &.disabled,
+    &.Mui-disabled {
+      background-color: $picker-color-blue-light !important;
     }
     &.dark-mode {
       background-color: $picker-color-blue-dark !important;
@@ -902,8 +909,9 @@ select {
   &.red {
     background-color: $picker-color-red !important;
     color: $white;
-    &.disabled {
-      background-color: $picker-color-red-dark !important;
+    &.disabled,
+    &.Mui-disabled {
+      background-color: $picker-color-red-light !important;
     }
     &.dark-mode {
       background-color: $picker-color-red-dark !important;
@@ -916,8 +924,9 @@ select {
   &.yellow {
     background-color: $picker-color-yellow !important;
     color: $black;
-    &.disabled {
-      background-color: $picker-color-yellow-dark !important;
+    &.disabled,
+    &.Mui-disabled {
+      background-color: $picker-color-yellow-light !important;
     }
     &.dark-mode {
       background-color: $picker-color-yellow-dark !important;
@@ -934,8 +943,9 @@ select {
     background-color: $picker-color-green !important;
     color: $dark-gray;
 
-    &.disabled {
-      background-color: $picker-color-green-dark !important;
+    &.disabled,
+    &.Mui-disabled {
+      background-color: $picker-color-green-light !important;
     }
     &.dark-mode {
       background-color: $picker-color-green-dark !important;
@@ -948,8 +958,9 @@ select {
     background-color: $picker-color-orange !important;
     color: $white;
 
-    &.disabled {
-      background-color: $picker-color-orange-dark !important;
+    &.disabled,
+    &.Mui-disabled {
+      background-color: $picker-color-orange-light !important;
     }
     &.dark-mode {
       background-color: $picker-color-orange-dark !important;
@@ -963,8 +974,9 @@ select {
     background-color: $picker-color-deep-purple !important;
     color: $white;
 
-    &.disabled {
-      background-color: $picker-color-deep-purple-dark !important;
+    &.disabled,
+    &.Mui-disabled {
+      background-color: $picker-color-deep-purple-light !important;
     }
     &.dark-mode {
       background-color: $picker-color-deep-purple-dark !important;
@@ -976,8 +988,9 @@ select {
   &.purple {
     background-color: $picker-color-purple !important;
     color: $white;
-    &.disabled {
-      background-color: $picker-color-purple-dark !important;
+    &.disabled,
+    &.Mui-disabled {
+      background-color: $picker-color-purple-light !important;
     }
 
     &.dark-mode {
@@ -991,8 +1004,9 @@ select {
     background-color: $picker-color-pink !important;
     color: $white;
 
-    &.disabled {
-      background-color: $picker-color-pink-dark !important;
+    &.disabled,
+    &.Mui-disabled {
+      background-color: $picker-color-pink-light !important;
     }
     &.dark-mode {
       background-color: $picker-color-pink-dark !important;

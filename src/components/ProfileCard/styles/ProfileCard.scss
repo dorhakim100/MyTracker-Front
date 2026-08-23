@@ -42,7 +42,8 @@
 .user-details {
   border-inline-start: 8px solid transparent !important;
 
-  &.selected {
+  &.selected,
+  &.primary {
     border-inline-start: 8px solid $primary-color !important;
   }
 

@@ -16,7 +16,7 @@
     position: sticky;
     top: 0;
     z-index: 100;
-    background-color: $neutral-gray;
+    background-color: var(--canvas-color);
     padding: 0.5rem;
 
     &.dark-mode {

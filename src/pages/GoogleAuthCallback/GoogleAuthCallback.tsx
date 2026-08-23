@@ -11,15 +11,46 @@ import {
   setGoogleHealthConnected,
 } from '../../store/actions/health.actions'
 import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
-import { setActiveRoute } from '../../store/actions/system.actions'
+import { loadPrefs, setActiveRoute } from '../../store/actions/system.actions'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
+import { getDefaultsPrefs } from '../../services/system/system.service'
+
+const colors = [
+  'primary',
+  'blue',
+  'red',
+  'yellow',
+  'green',
+  'orange',
+  'deepPurple',
+  'purple',
+  'pink',
+]
 
 export function GoogleAuthCallback() {
   const { t } = useTranslation()
   const user = useSelector((state: RootState) => state.userModule.user)
+  const prefs = useSelector((state: RootState) => state.systemModule.prefs)
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
+
+  useEffect(() => {
+    loadPrefs()
+  }, [])
+
+  useEffect(() => {
+    const defaultPrefs = getDefaultsPrefs()
+    if (prefs.isDarkMode) {
+      document.body.classList.add('dark-mode')
+    } else {
+      document.body.classList.remove('dark-mode')
+    }
+    document.body.classList.remove(...colors)
+    document.body.classList.add(
+      prefs.favoriteColor || defaultPrefs.favoriteColor
+    )
+  }, [prefs.isDarkMode, prefs.favoriteColor])
 
   useEffect(() => {
     const completeAuth = async () => {
@@ -82,9 +113,12 @@ export function GoogleAuthCallback() {
 
   return (
     <Stack
+      className={`google-auth-callback-container ${
+        prefs.isDarkMode ? 'dark-mode' : ''
+      } ${prefs.favoriteColor || ''}`}
       alignItems='center'
       justifyContent='center'
-      sx={{ minHeight: '100dvh', gap: 2, p: 3 }}
+      sx={{ minHeight: '100dvh', gap: 2, p: 3, color: 'inherit' }}
     >
       <CircularProgress />
       <Typography variant='body1'>{t('auth.googleSignInLoading')}</Typography>

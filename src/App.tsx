@@ -211,8 +211,14 @@ function App() {
       'meta[name="theme-color"]'
     )
     if (themeColorMeta) {
-      if (prefs.isDarkMode) {
-        // Map favorite colors to their dark-gray variants
+      const canvas = getComputedStyle(document.body).backgroundColor
+      if (
+        canvas &&
+        canvas !== 'transparent' &&
+        canvas !== 'rgba(0, 0, 0, 0)'
+      ) {
+        themeColorMeta.content = canvas
+      } else if (prefs.isDarkMode) {
         const darkColors: Record<string, string> = {
           primary: '#0b1415',
           blue: '#0b0f17',
@@ -225,8 +231,6 @@ function App() {
           pink: '#120a0e',
         }
         themeColorMeta.content = darkColors[prefs.favoriteColor] || '#0b1415'
-      } else {
-        themeColorMeta.content = '#f5f5f5' // light mode
       }
     }
   }, [prefs.isDarkMode, prefs.favoriteColor])
@@ -472,7 +476,11 @@ function App() {
 
   if (platform !== 'desktop' && shouldShowInstallGuide && isProd && !isNative) {
     return (
-      <main className={`main ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
+      <main
+        className={`main ${prefs.isDarkMode ? 'dark-mode' : ''} ${
+          prefs.favoriteColor || ''
+        }`}
+      >
         {/* <AppHeader /> */}
         <div className=''>
           <PwaInstall

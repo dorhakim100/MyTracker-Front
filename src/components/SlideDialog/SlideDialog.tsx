@@ -387,6 +387,7 @@ function SlideDialogSheet({
               icon={<CloseIcon />}
               onClick={onClose}
               tooltipTitle={t('common.close')}
+              className='slide-dialog-close'
             />
             <MarqueeText
               sx={{ marginInlineStart: 2, flex: 1 }}

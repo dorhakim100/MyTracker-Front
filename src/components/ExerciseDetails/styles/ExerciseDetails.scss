@@ -85,6 +85,46 @@
     min-width: 0;
   }
 
+  .line-chart-paper {
+    width: 100%;
+    min-width: 0;
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    background-color: $white;
+    color: var(--ink-on-surface);
+    box-shadow: $card-lift-shadow;
+
+    &.dark-mode {
+      background-color: $darker-gray;
+      box-shadow: none;
+
+      &.blue {
+        background-color: $darker-gray-blue;
+      }
+      &.yellow {
+        background-color: $darker-gray-yellow;
+      }
+      &.red {
+        background-color: $darker-gray-red;
+      }
+      &.orange {
+        background-color: $darker-gray-orange;
+      }
+      &.green {
+        background-color: $darker-gray-green;
+      }
+      &.deepPurple {
+        background-color: $darker-gray-deep-purple;
+      }
+      &.purple {
+        background-color: $darker-gray-purple;
+      }
+      &.pink {
+        background-color: $darker-gray-pink;
+      }
+    }
+  }
+
   .sets-table {
     margin-top: 0rem;
   }

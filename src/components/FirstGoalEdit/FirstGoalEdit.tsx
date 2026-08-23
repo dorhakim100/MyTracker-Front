@@ -15,7 +15,11 @@ export function FirstGoalEdit() {
 
   if (user)
     return (
-      <main className={`main ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
+      <main
+        className={`main ${prefs.isDarkMode ? 'dark-mode' : ''} ${
+          prefs.favoriteColor || ''
+        }`}
+      >
         <div className="first-time-edit-goal-container">
           <EditGoal saveGoal={(goal) => handleFirstGoal(goal, user)} />
         </div>

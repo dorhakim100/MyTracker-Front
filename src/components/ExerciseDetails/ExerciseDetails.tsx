@@ -299,19 +299,25 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
             className={`${prefs.favoriteColor}`}
           />
         </div>
-        <LineChart
-          isDisplayPoints={true}
-          data={data as any}
-          isDarkMode={prefs.isDarkMode}
-          interpolateGaps={true}
-          spanGaps={true}
-          isDisplaySecondLine={false}
-          showReadout={true}
-          readoutAfterLabel={viewBy === 'Weight' ? 'kg' : t('exercise.reps')}
-          secondDataLabel={
-            viewBy === 'Weight' ? t('exercise.reps') : t('exercise.weight')
-          }
-        />
+        <div
+          className={`line-chart-paper ${
+            prefs.isDarkMode ? 'dark-mode' : ''
+          } ${prefs.favoriteColor || ''}`}
+        >
+          <LineChart
+            isDisplayPoints={true}
+            data={data as any}
+            isDarkMode={prefs.isDarkMode}
+            interpolateGaps={true}
+            spanGaps={true}
+            isDisplaySecondLine={false}
+            showReadout={true}
+            readoutAfterLabel={viewBy === 'Weight' ? 'kg' : t('exercise.reps')}
+            secondDataLabel={
+              viewBy === 'Weight' ? t('exercise.reps') : t('exercise.weight')
+            }
+          />
+        </div>
         <LineChartControls
           value={range}
           onChange={(val) => onRangeChange(val)}
