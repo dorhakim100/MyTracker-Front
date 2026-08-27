@@ -82,36 +82,37 @@ export function LoggedList({
         editMenu.menuLogs?.filter((log) =>
           _filterLogsByMealPeriod(log, mealPeriod)
         ) || []
-      setLogs(logsToSet)
-      return
-    }
-    if (logsToShow.length) {
+    } else if (logsToShow.length) {
       logsToSet = logsToShow
-      setLogs(logsToSet)
-      return
-    }
-    if (logsSource === 'menu') {
+    } else if (logsSource === 'menu') {
       logsToSet =
         menu?.menuLogs?.filter((log) =>
           _filterLogsByMealPeriod(log, mealPeriod)
         ) || []
-      setLogs(logsToSet)
-      return
-    }
-
-    if (selectedDay) {
+    } else if (selectedDay) {
       logsToSet = selectedDay?.logs?.filter((log) =>
         _filterLogsByMealPeriod(log, mealPeriod)
       )
-      setLogs(logsToSet)
-      return
-    }
-    if (mealPeriod)
+    } else if (mealPeriod) {
       logsToSet =
         user?.loggedToday?.logs?.filter((log) =>
           _filterLogsByMealPeriod(log, mealPeriod)
         ) || []
-    setLogs(logsToSet)
+    }
+
+    setLogs(
+      logsToSet.map((log) => {
+        const name =
+          itemNameService.getItemDisplayName(log.name, i18n.language) ||
+          (log.source === searchTypes.custom ? t('meals.customLog') : '') ||
+          itemNameService.getItemDisplayName(
+            cachedItems.find((item) => item.searchId === log.itemId)?.name,
+            i18n.language
+          )
+        if (!name) return log
+        return { ...log, name }
+      })
+    )
   }, [
     user,
     mealPeriod,
@@ -122,6 +123,9 @@ export function LoggedList({
     editMenu?.menuLogs,
     logsSource,
     logsToShow,
+    cachedItems,
+    i18n.language,
+    t,
   ])
 
   useEffect(() => {
@@ -144,9 +148,15 @@ export function LoggedList({
   async function handleLoadItems() {
     try {
       // loadItems() // optimistic update from cache, no need to await
-      if (!logs || !logs.length) return
+      const logsToLoad =
+        logsSource === 'menu'
+          ? editMenu?.menuLogs || menu?.menuLogs || []
+          : logsToShow.length
+          ? logsToShow
+          : selectedDay?.logs || user?.loggedToday?.logs || []
+      if (!logsToLoad.length) return
 
-      await searchService.searchBulkIds(logs) // actual update from api
+      await searchService.searchBulkIds(logsToLoad) // actual update from api
 
       const items = await loadItems() // actual update from api
 

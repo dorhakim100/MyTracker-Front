@@ -163,13 +163,14 @@ function LogsList({
         items={loggedToday.logs}
         getKey={(item) => item._id + ''}
         renderPrimaryText={(i) => {
-          if (i.name) return i.name
-          if (i.source === searchTypes.custom) return 'Custom Log'
-          const cachedName = itemNameService.getItemDisplayName(
-            cachedItems.find((item) => item.searchId === i.itemId)?.name,
-            i18n.language
-          )
-          if (cachedName) return cachedName
+          const name =
+            itemNameService.getItemDisplayName(i.name, i18n.language) ||
+            (i.source === searchTypes.custom ? 'Custom Log' : '') ||
+            itemNameService.getItemDisplayName(
+              cachedItems.find((item) => item.searchId === i.itemId)?.name,
+              i18n.language
+            )
+          if (name) return name
           return (
             <CustomSkeleton
               variant='text'
