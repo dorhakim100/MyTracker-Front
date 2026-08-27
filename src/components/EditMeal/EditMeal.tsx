@@ -29,6 +29,7 @@ import SearchIcon from '@mui/icons-material/Search'
 import QrCode2Icon from '@mui/icons-material/QrCode2'
 import { BarcodeScanner } from '../BarcodeScanner/BarcodeScanner'
 import { itemService } from '../../services/item/item.service'
+import { itemNameService } from '../../services/item/item-name.service'
 
 const stages = ['name', 'items']
 
@@ -38,7 +39,7 @@ interface EditMealProps {
 }
 
 export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const stagesTitles = [t('meals.mealName'), t('meals.items')]
   const user = useSelector(
     (stateSelector: RootState) => stateSelector.userModule.user
@@ -184,13 +185,19 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
               renderPrimaryText={(item) => {
                 if (item.source === searchTypes.custom && !item.name)
                   return t('meals.customItem')
-                return item.name
+                return itemNameService.getItemDisplayName(
+                  item.name,
+                  i18n.language
+                )
               }}
               renderLeft={(item) => (
                 <img
                   className='item-image'
                   src={item.image || searchUrls.DEFAULT_IMAGE}
-                  alt={item.name}
+                  alt={itemNameService.getItemDisplayName(
+                    item.name,
+                    i18n.language
+                  )}
                 />
               )}
               renderSecondaryText={(item) => {
@@ -199,7 +206,10 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
                 return `${+item.servingSize * +item.numberOfServings}gr`
               }}
               getKey={(item) =>
-                item._id || item.searchId || item.name || makeId()
+                item._id ||
+                item.searchId ||
+                itemNameService.getItemSearchText(item.name) ||
+                makeId()
               }
               isSwipeable={true}
               renderRightSwipeActions={(item) => (

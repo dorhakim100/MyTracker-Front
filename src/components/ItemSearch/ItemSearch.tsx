@@ -37,6 +37,7 @@ import { User } from '../../types/user/User'
 import { SkeletonList } from '../SkeletonList/SkeletonList'
 import { MealItem } from '../../types/mealItem/MealItem'
 import { itemService } from '../../services/item/item.cache.service'
+import { itemNameService } from '../../services/item/item-name.service'
 
 import Lottie from 'lottie-react'
 import searchLight from '../../../public/searching.json'
@@ -57,8 +58,34 @@ export interface Filter {
   sortBy: string
 }
 
+function getSearchItemKey(item: Item) {
+  return item.searchId || item._id || ''
+}
+
+function mergeNewItemsToTop(prev: Item[], next: Item[]) {
+  const prevIds = new Set(prev.map(getSearchItemKey).filter(Boolean))
+  const nextIds = new Set(next.map(getSearchItemKey).filter(Boolean))
+  const incoming = next.filter((item) => !prevIds.has(getSearchItemKey(item)))
+  const kept = prev.filter((item) => nextIds.has(getSearchItemKey(item)))
+  return [...incoming, ...kept]
+}
+
+function scrollSearchToTop(node: HTMLElement | null) {
+  if (!node) return
+  const scroller =
+    node.closest('.slide-dialog-content, .react-modal-sheet-content-scroller') ||
+    node
+  const reduceMotion = window.matchMedia(
+    '(prefers-reduced-motion: reduce)'
+  ).matches
+  scroller.scrollTo({
+    top: 0,
+    behavior: reduceMotion ? 'auto' : 'smooth',
+  })
+}
+
 export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
 
   const user = useSelector((state: RootState) => state.userModule.user)
@@ -69,6 +96,8 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
 
   const [results, setResults] = useState<Item[]>([])
   const [resultsDragable, setResultsDragable] = useState(false)
+  const resultsRef = useRef<HTMLDivElement>(null)
+  const searchRequestIdRef = useRef(0)
 
   const [filter, setFilter] = useState<Filter>({
     txt: '',
@@ -97,6 +126,7 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
   }, [results, filter.sortBy])
 
   const handleSearch = useCallback(async () => {
+    const requestId = ++searchRequestIdRef.current
     setIsLoading(true)
     try {
       if (!filter.source) {
@@ -108,15 +138,22 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
       if (filter.source === searchTypes.meal) {
         const meals = user?.meals
           .map((meal) => itemService.convertMealToItem(meal))
-          .filter((meal) => regex.test(meal.name))
+          .filter((meal) =>
+            regex.test(itemNameService.getItemSearchText(meal.name))
+          )
 
+        if (requestId !== searchRequestIdRef.current) return
         setResults(meals || [])
         setResultsDragable(false)
         setIsLoading(false)
         return
       }
 
-      setResults(favoriteItems.filter((item) => regex.test(item.name)))
+      setResults(
+        favoriteItems.filter((item) =>
+          regex.test(itemNameService.getItemSearchText(item.name))
+        )
+      )
 
       if (!filter.txt) {
         setResultsDragable(true)
@@ -132,13 +169,22 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
       }
 
       const res = await searchService.search(searchQuery)
+      if (requestId !== searchRequestIdRef.current) return
 
+      setResults((prev) => {
+        const merged = mergeNewItemsToTop(prev, res)
+        const prevIds = new Set(prev.map(getSearchItemKey).filter(Boolean))
+        const hasNew = res.some((item) => !prevIds.has(getSearchItemKey(item)))
+        if (hasNew) {
+          requestAnimationFrame(() => scrollSearchToTop(resultsRef.current))
+        }
+        return merged
+      })
       setResultsDragable(false)
-      setResults(res)
     } catch {
       showErrorMsg(t('messages.error.search'))
     } finally {
-      setIsLoading(false)
+      if (requestId === searchRequestIdRef.current) setIsLoading(false)
     }
   }, [filter.txt, user, favoriteItems])
 
@@ -284,7 +330,10 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
     }
 
     return (
-      <Box className='results'>
+      <Box
+        className='results'
+        ref={resultsRef}
+      >
         {isShowMeals && (
           <>
             <Typography
@@ -312,7 +361,10 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
                     {(item.image && (
                       <img
                         src={item.image}
-                        alt={item.name}
+                        alt={itemNameService.getItemDisplayName(
+                          item.name,
+                          i18n.language
+                        )}
                         className='item-image'
                         referrerPolicy='no-referrer'
                         onError={async (e) => {
@@ -333,7 +385,9 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
                 </div>
               )}
               renderPrimaryText={(item) => (
-                <div className='hide-text-overflow'>{item.name}</div>
+                <div className='hide-text-overflow'>
+                  {itemNameService.getItemDisplayName(item.name, i18n.language)}
+                </div>
               )}
               renderSecondaryText={(item) => {
                 let caloriesToDisplay
@@ -373,6 +427,7 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
           itemClassName={`search-item-container ${
             prefs.isDarkMode ? 'dark-mode' : ''
           }`}
+          slideIncomingToTop
           renderLeft={(item) => (
             <div className='left-content macros-image-container'>
               <MacrosDonut
@@ -384,7 +439,10 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
                 {(item.image && (
                   <img
                     src={item.image}
-                    alt={item.name}
+                    alt={itemNameService.getItemDisplayName(
+                      item.name,
+                      i18n.language
+                    )}
                     className='item-image'
                     referrerPolicy='no-referrer'
                     onError={async (e) => {
@@ -410,7 +468,7 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
               variant='body1'
               className='primary-text'
             >
-              {item.name}
+              {itemNameService.getItemDisplayName(item.name, i18n.language)}
             </MarqueeText>
           )}
           renderSecondaryText={(item) => {

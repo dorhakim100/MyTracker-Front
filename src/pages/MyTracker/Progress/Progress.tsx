@@ -27,6 +27,7 @@ import { searchUrls } from '../../../assets/config/search.urls'
 import { imageService } from '../../../services/image/image.service'
 import { Item } from '../../../types/item/Item'
 import { useTranslation } from 'react-i18next'
+import { itemNameService } from '../../../services/item/item-name.service'
 
 const ONE_DAY = 24 * 60 * 60 * 1000
 
@@ -134,6 +135,7 @@ function LogsList({
   )
 
   const cachedItems = useSelector((state: RootState) => state.itemModule.items)
+  const { i18n } = useTranslation()
 
   const hebrewDate = useMemo(() => {
     if (!loggedToday) return ''
@@ -145,7 +147,10 @@ function LogsList({
     const cachedItem = cachedItems.find((i) => i.searchId === item.itemId)
     if (cachedItem) {
       item.image = cachedItem.image
-      item.name = cachedItem.name
+      item.name = itemNameService.getItemDisplayName(
+        cachedItem.name,
+        i18n.language
+      )
     }
     setEditMealItem(item)
     onItemClick(item)
@@ -160,15 +165,18 @@ function LogsList({
         renderPrimaryText={(i) => {
           if (i.name) return i.name
           if (i.source === searchTypes.custom) return 'Custom Log'
+          const cachedName = itemNameService.getItemDisplayName(
+            cachedItems.find((item) => item.searchId === i.itemId)?.name,
+            i18n.language
+          )
+          if (cachedName) return cachedName
           return (
-            cachedItems.find((item) => item.searchId === i.itemId)?.name || (
-              <CustomSkeleton
-                variant='text'
-                width='100%'
-                height={20}
-                isDarkMode={prefs.isDarkMode}
-              />
-            )
+            <CustomSkeleton
+              variant='text'
+              width='100%'
+              height={20}
+              isDarkMode={prefs.isDarkMode}
+            />
           )
         }}
         renderSecondaryText={(i) => {

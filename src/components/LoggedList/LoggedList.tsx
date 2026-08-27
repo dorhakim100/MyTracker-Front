@@ -34,6 +34,8 @@ import { mealService } from '../../services/meal/meal.service'
 import { Menu } from '../../types/menu/Menu'
 import { getTimeFromISO } from '../../services/util.service'
 import { MarqueeText } from '../MarqueeText/MarqueeText'
+import { itemNameService } from '../../services/item/item-name.service'
+import { isBarcodeSearchId } from '../../services/item/item-id.service'
 
 export type LogsSource = 'diary' | 'menu'
 
@@ -56,7 +58,7 @@ export function LoggedList({
   editMenu,
   noEdit = false,
 }: LoggedListProps) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const user = useSelector((state: RootState) => state.userModule.user)
   const cachedItems = useSelector((state: RootState) => state.itemModule.items)
   const [isEditOpen, setIsEditOpen] = useState(false)
@@ -174,9 +176,12 @@ export function LoggedList({
 
   const renderPrimaryText = (item: Log) => {
     const name =
-      item.name ||
+      itemNameService.getItemDisplayName(item.name, i18n.language) ||
       (item.source === searchTypes.custom ? t('meals.customLog') : null) ||
-      cachedItems.find((i) => i.searchId === item.itemId)?.name
+      itemNameService.getItemDisplayName(
+        cachedItems.find((i) => i.searchId === item.itemId)?.name,
+        i18n.language
+      )
 
     if (name) {
       return <MarqueeText variant='body1'>{name}</MarqueeText>
@@ -263,18 +268,25 @@ export function LoggedList({
       )
 
       if (cachedItem) {
-        logToEdit.name = cachedItem.name
+        logToEdit.name = itemNameService.getItemDisplayName(
+          cachedItem.name,
+          i18n.language
+        )
         logToEdit.image = cachedItem.image
         itemToSet = cachedItem
       } else if (logToEdit.source !== searchTypes.meal && logToEdit.itemId) {
         const searchedItem = await searchService.searchById(
           logToEdit.itemId,
           logToEdit.source ||
-            (logToEdit.searchId && logToEdit.searchId.length >= 10)
-            ? searchTypes.openFoodFacts
-            : searchTypes.usda
+            (isBarcodeSearchId(logToEdit.searchId || logToEdit.itemId)
+              ? searchTypes.openFoodFacts
+              : searchTypes.usda)
         )
-        logToEdit.name = searchedItem?.name || 'Unknown'
+        logToEdit.name =
+          itemNameService.getItemDisplayName(
+            searchedItem?.name,
+            i18n.language
+          ) || 'Unknown'
         logToEdit.image = searchedItem?.image || searchUrls.DEFAULT_IMAGE
         itemToSet = searchedItem
       } else if (logToEdit.mealId) {
@@ -290,7 +302,9 @@ export function LoggedList({
       logToEdit.searchId = logToEdit.itemId
 
       if (!itemToSet.image) {
-        const image = await imageService.getSingleImage(itemToSet.name)
+        const image = await imageService.getSingleImage(
+          itemNameService.getItemDisplayName(itemToSet.name, i18n.language)
+        )
         itemToSet.image = image
         logToEdit.image = image
       }

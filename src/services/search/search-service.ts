@@ -19,6 +19,8 @@ import { imageService } from '../image/image.service'
 
 import { itemService } from '../item/item.service'
 import { mealService } from '../meal/meal.service'
+import { itemNameService } from '../item/item-name.service'
+import { isBarcodeSearchId } from '../item/item-id.service'
 
 const {
   OPEN_FOOD_FACTS_API_URL,
@@ -48,8 +50,9 @@ export const searchService = {
   getSortedResults,
 }
 
-const LONGEST_FOOD_ID_LENGTH = 10
 const MAX_CONCURRENT_OPERATIONS = 3 // Limit concurrent async operations
+const FALLBACK_OFF_LIMIT = 8
+const FALLBACK_USDA_LIMIT = 3
 
 // Utility function to process items with concurrency limit
 async function processWithConcurrencyLimit<T, R>(
@@ -74,97 +77,66 @@ async function processWithConcurrencyLimit<T, R>(
 async function search(filter: SearchFilter) {
   try {
     const { txt, favoriteItems } = filter
-    let res: Item[] = []
-    // const { food, product } = favoriteItems || { food: [], product: [] }
-    // const isFavoriteItems = food.length > 0 || product.length > 0
 
     if (!txt && favoriteItems && favoriteItems.length > 0) {
-      res = await searchFavoriteItems(favoriteItems)
-      return res
+      return searchFavoriteItems(favoriteItems)
     }
 
     const safeTxt = txt ?? ''
+    if (!safeTxt) return []
+
+    const backendResults = await itemService.searchByTerm(safeTxt)
+    if (backendResults.length > 0) {
+      const sorted = handleResSorting(backendResults, safeTxt, favoriteItems)
+      await Promise.all(
+        sorted.map((item) => addToCache(item as Item, ITEMS_CACHE))
+      )
+      return Promise.all(sorted.map((item) => modifyItemImage(item)))
+    }
 
     const isEnglishWord = translateService.isEnglishWord(safeTxt)
-    let englishWord = ''
-
+    let englishWord = safeTxt
     if (!isEnglishWord) {
-      englishWord = await translateService.translate(safeTxt)
-    } else englishWord = safeTxt
-
-    let cachedRes = await indexedDbService.query<Item>(safeTxt, 0)
-
-    if (cachedRes.length > 0) {
-      cachedRes = filterDuplicates(cachedRes)
-      cachedRes = handleResSorting(
-        cachedRes,
-        safeTxt,
-        favoriteItems,
-        englishWord
-      )
-      return Promise.all(cachedRes.map((item) => modifyItemImage(item)))
+      try {
+        englishWord = await translateService.translate(safeTxt)
+      } catch {
+        englishWord = safeTxt
+      }
     }
 
-    const hasBackendResults = await itemService.hasCachedResults(safeTxt)
-
-    if (hasBackendResults) {
-      const backendResults = await itemService.searchByTerm(safeTxt)
-
-      res = handleResSorting(
-        backendResults,
-        safeTxt,
-        favoriteItems,
-        englishWord
-      )
-      await Promise.all(
-        res.map(async (item) => {
-          await addToCache(item as Item, safeTxt)
-        })
-      )
-      return Promise.all(res.map((item) => modifyItemImage(item)))
-    }
-
-    // Fetch both sources in parallel, tolerate failures
-    const [offRes, usdaRes, offResTranslated, usdaResTranslated] =
-      await Promise.allSettled([
-        searchOpenFoodFacts(safeTxt),
-        searchRawUSDA(safeTxt),
-        searchOpenFoodFacts(englishWord),
-        searchRawUSDA(englishWord),
-      ])
+    const [offRes, usdaRes] = await Promise.allSettled([
+      searchOpenFoodFacts(safeTxt),
+      searchRawUSDA(englishWord),
+    ])
 
     const openFoodFacts: Item[] =
-      offRes.status === 'fulfilled' ? offRes.value : []
-    const usda: Item[] = usdaRes.status === 'fulfilled' ? usdaRes.value : []
+      offRes.status === 'fulfilled'
+        ? offRes.value.slice(0, FALLBACK_OFF_LIMIT)
+        : []
+    const usda: Item[] =
+      usdaRes.status === 'fulfilled'
+        ? usdaRes.value.slice(0, FALLBACK_USDA_LIMIT)
+        : []
 
-    const openFoodFactsTranslated: Item[] =
-      offResTranslated.status === 'fulfilled' ? offResTranslated.value : []
-    const usdaTranslated: Item[] =
-      usdaResTranslated.status === 'fulfilled' ? usdaResTranslated.value : []
-
-    res = [
-      ...openFoodFacts,
-      ...openFoodFactsTranslated,
-      ...usda,
-      ...usdaTranslated,
-    ]
-
-    res = filterDuplicates(res)
+    let res: Item[] = filterDuplicates([...openFoodFacts, ...usda]).map(
+      (item) => ({
+        ...item,
+        name: itemNameService.fromExternalName(
+          itemNameService.getItemDisplayName(item.name, 'en')
+        ),
+        popularity: item.popularity ?? 8,
+        isCurated: false,
+      })
+    )
 
     if (res.length > 0) {
-      // Batch cache operations instead of sequential forEach
       await Promise.all(
-        res.flatMap((item) => [
-          addToCache(item as Item, englishWord),
-          addToCache(item as Item, ITEMS_CACHE),
-        ])
+        res.map((item) => addToCache(item as Item, ITEMS_CACHE))
       )
+      await itemService.saveSearchResults(safeTxt, res)
     }
 
     res = handleResSorting(res, safeTxt, favoriteItems, englishWord)
-
-    await itemService.saveSearchResults(safeTxt, res)
-
     return Promise.all(res.map((item) => modifyItemImage(item)))
   } catch (err) {
     console.error(err)
@@ -203,9 +175,9 @@ async function searchFavoriteItems(
     const favoriteCopy = favoriteItems.slice()
 
     const favoriteFoods =
-      favoriteItems.filter((id) => id.length <= LONGEST_FOOD_ID_LENGTH) || []
+      favoriteItems.filter((id) => !isBarcodeSearchId(id)) || []
     const favoriteProducts =
-      favoriteItems.filter((id) => id.length >= LONGEST_FOOD_ID_LENGTH) || []
+      favoriteItems.filter((id) => isBarcodeSearchId(id)) || []
 
     if (cached && cached.length) {
       cached.forEach((item: Item) => {
@@ -253,7 +225,9 @@ async function searchFavoriteItems(
           ...item,
           image:
             item.image ||
-            (await imageService.getSingleImage(item.name || '')) ||
+            (await imageService.getSingleImage(
+              itemNameService.getItemDisplayName(item.name, 'en')
+            )) ||
             DEFAULT_IMAGE,
         }))
       )
@@ -372,11 +346,9 @@ async function searchBulkIds(logs: Log[]) {
       .concat(mealIds)
       .filter((id) => !backendRes.some((item: Item) => item.searchId === id))
 
-    const missingProducts = missingIds.filter(
-      (id) => id.length >= LONGEST_FOOD_ID_LENGTH
-    )
+    const missingProducts = missingIds.filter((id) => isBarcodeSearchId(id))
     const missingFoods = missingIds.filter(
-      (id) => id.length <= LONGEST_FOOD_ID_LENGTH
+      (id) => !isBarcodeSearchId(id) && !mealIds.includes(id)
     )
     const missingMeals = missingIds.filter((id) => mealIds.includes(id))
 
@@ -416,8 +388,10 @@ async function searchById(id: string, source: string) {
     }
 
     if (!res?.image) {
-      const isEnglishWord = translateService.isEnglishWord(res?.name || '')
-      let translatedTxt = res?.name || ''
+      const isEnglishWord = translateService.isEnglishWord(
+        itemNameService.getItemDisplayName(res?.name, 'en')
+      )
+      let translatedTxt = itemNameService.getItemDisplayName(res?.name, 'en')
       if (!isEnglishWord) {
         translatedTxt = await translateService.translate(translatedTxt)
       }
@@ -525,12 +499,16 @@ async function searchOpenFoodFacts(query: string) {
 
         return {
           searchId: product.code,
-          name: product.brands
-            ? `${product.product_name} - ${product.brands}`
-            : product.product_name,
+          name: itemNameService.fromExternalName(
+            product.brands
+              ? `${product.product_name} - ${product.brands}`
+              : product.product_name
+          ),
           macros: { calories, protein: proteins, carbs, fat: fats },
           image: image,
-          type: 'product',
+          type: 'product' as const,
+          popularity: 8,
+          isCurated: false,
         }
       }
     )
@@ -576,7 +554,7 @@ async function getProductById(id: string) {
 
     const modifiedItem = {
       searchId: product.code,
-      name: product.product_name,
+      name: itemNameService.fromExternalName(product.product_name),
       macros: (() => {
         const protein = +(product.nutriments?.proteins_100g ?? 0)
         const carbs = +(product.nutriments?.carbohydrates_100g ?? 0)
@@ -589,7 +567,9 @@ async function getProductById(id: string) {
         return { protein, carbs, fat: fats, calories }
       })(),
       image: image,
-      type: 'product',
+      type: 'product' as const,
+      popularity: 8,
+      isCurated: false,
     }
 
     await itemService.save(modifiedItem as Item)
@@ -622,7 +602,9 @@ async function getProductsByIds(ids: string[]) {
           ...item,
           image:
             item.image ||
-            (await imageService.getSingleImage(item.name || '')) ||
+            (await imageService.getSingleImage(
+              itemNameService.getItemDisplayName(item.name, 'en')
+            )) ||
             DEFAULT_IMAGE,
         }))
       )
@@ -651,12 +633,16 @@ async function getProductsByIds(ids: string[]) {
 
       return {
         searchId: product.code,
-        name: product.brands
-          ? `${product.product_name} - ${product.brands}`
-          : product.product_name,
+        name: itemNameService.fromExternalName(
+          product.brands
+            ? `${product.product_name} - ${product.brands}`
+            : product.product_name
+        ),
         macros: { calories, protein: proteins, carbs, fat: fats },
         image: image,
-        type: 'product',
+        type: 'product' as const,
+        popularity: 8,
+        isCurated: false,
       }
     })
 
@@ -673,7 +659,9 @@ async function getProductsByIds(ids: string[]) {
           ...product,
           image:
             product.image ||
-            (await imageService.getSingleImage(product.name || '')),
+            (await imageService.getSingleImage(
+              itemNameService.getItemDisplayName(product.name, 'en')
+            )),
         }
       })
     )
@@ -709,10 +697,12 @@ async function searchRawUSDA(query: string) {
 
       return {
         searchId: food.fdcId + '',
-        name: food.description,
+        name: itemNameService.fromExternalName(food.description),
         macros,
         image: image,
-        type: 'food',
+        type: 'food' as const,
+        popularity: 8,
+        isCurated: false,
       }
     })
   } catch (error) {
@@ -753,10 +743,12 @@ async function getFoodById(id: string) {
 
     const modifiedItem = {
       searchId: food.fdcId + '',
-      name: food.description,
+      name: itemNameService.fromExternalName(food.description),
       macros,
       image: image,
-      type: 'food',
+      type: 'food' as const,
+      popularity: 8,
+      isCurated: false,
     }
 
     await itemService.save(modifiedItem as Item)
@@ -818,7 +810,9 @@ async function getFoodsByIds(ids: string[]) {
           ...item,
           image:
             item.image ||
-            (await imageService.getSingleImage(item.name || '')) ||
+            (await imageService.getSingleImage(
+              itemNameService.getItemDisplayName(item.name, 'en')
+            )) ||
             DEFAULT_IMAGE,
         }))
       )
@@ -850,10 +844,12 @@ async function getFoodsByIds(ids: string[]) {
       const macros = _getMacrosFromUSDA(food)
       return {
         searchId: food.fdcId + '',
-        name: food.description,
+        name: itemNameService.fromExternalName(food.description),
         macros,
         image: images[idx] || DEFAULT_IMAGE,
-        type: 'food',
+        type: 'food' as const,
+        popularity: 8,
+        isCurated: false,
       }
     })
   } catch (err) {
@@ -891,24 +887,35 @@ function computeRelevanceScore(
   translatedTxt: string = ''
 ) {
   const q = normalizeText(query)
-  const name = normalizeText(item.name || '')
+  const name = normalizeText(
+    itemNameService.getItemSearchText(item.name)
+  )
+  const displayEng = normalizeText(
+    itemNameService.getItemDisplayName(item.name, 'en')
+  )
+  const displayHe = normalizeText(
+    itemNameService.getItemDisplayName(item.name, 'he')
+  )
 
   const isEnglishWord = translateService.isEnglishWord(q)
 
-  let translatedName = name
-
+  let translatedName = displayEng
   if (!isEnglishWord) {
-    translatedName = normalizeText(translatedTxt)
+    translatedName = normalizeText(translatedTxt || displayHe)
   }
 
-  if (!q || !name) return 0
+  if (!q || !name) return item.popularity || 0
 
   let score = 0
-  if (name === q) score += 100
-  if (translatedName === q) score += 100
+  if (displayEng === q || displayHe === q || name === q) score += 100
 
-  if (name.startsWith(q)) score += 50
-  if (translatedName.startsWith(q)) score += 50
+  if (
+    displayEng.startsWith(q) ||
+    displayHe.startsWith(q) ||
+    name.startsWith(q)
+  ) {
+    score += 50
+  }
 
   const qTokens = getTokens(q)
   const nTokens = getTokens(name)
@@ -919,17 +926,20 @@ function computeRelevanceScore(
     translatedNTokens.includes(t)
   ).length
 
-  score += Math.floor((overlap / Math.max(qTokens.length, 1)) * 40) // up to +40
-  score += Math.floor((translatedOverlap / Math.max(qTokens.length, 1)) * 40) // up to +40
+  score += Math.floor((overlap / Math.max(qTokens.length, 1)) * 40)
+  score += Math.floor((translatedOverlap / Math.max(qTokens.length, 1)) * 40)
 
   if (favoriteIds?.includes(item.searchId || '')) score += 20
+  score += Math.min(item.popularity || 0, 120)
 
   return score
 }
 
 async function modifyItemImage(item: Item) {
   if (item.image) return item
-  const image = await getImageFromQuery(item.name)
+  const image = await getImageFromQuery(
+    itemNameService.getItemDisplayName(item.name, 'en')
+  )
   return { ...item, image: image }
 }
 

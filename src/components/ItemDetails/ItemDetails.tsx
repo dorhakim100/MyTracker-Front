@@ -55,6 +55,8 @@ import { CustomIOSSwitch } from '../../CustomMui/CustomIOSSwitch/CustomIOSSwitch
 import { getItemDetailsDayProgressPreview } from '../../services/macros/day-progress-preview.service'
 import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded'
 import { MarqueeText } from '../MarqueeText/MarqueeText'
+import { itemNameService } from '../../services/item/item-name.service'
+import { isBarcodeSearchId } from '../../services/item/item-id.service'
 
 interface ItemDetailsProps {
   onAddToMealClick?: (item: MealItem) => void
@@ -99,7 +101,7 @@ export function ItemDetails({
   editMenu,
   shouldDefaultItemMacros = false,
 }: ItemDetailsProps) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const searchedItem: Item = useSelector(
     (stateSelector: RootState) => stateSelector.itemModule.item
   )
@@ -137,7 +139,12 @@ export function ItemDetails({
     servingSize: editMealItem?.servingSize || 100,
     numberOfServings: editMealItem?.numberOfServings || 1,
     meal: editMealItem?.meal || selectedMeal || getCurrMeal(),
-    name: isCustomLog ? '' : editMealItem?.name || searchedItem.name,
+    name: isCustomLog
+      ? ''
+      : itemNameService.getItemDisplayName(
+          editMealItem?.name || searchedItem.name,
+          i18n.language
+        ),
   })
 
   const [clockOpen, setClockOpen] = useState(false)
@@ -228,7 +235,12 @@ export function ItemDetails({
       servingSize: editMealItem?.servingSize || 100,
       numberOfServings: editMealItem?.numberOfServings || 1,
       meal: editMealItem?.meal || selectedMeal || getCurrMeal(),
-      name: isCustomLog ? '' : editMealItem?.name || searchedItem.name,
+      name: isCustomLog
+      ? ''
+      : itemNameService.getItemDisplayName(
+          editMealItem?.name || searchedItem.name,
+          i18n.language
+        ),
     })
   }, [stringifiedItem])
   const closeClock = () => {
@@ -389,8 +401,6 @@ export function ItemDetails({
       if (!selectedDay) return showErrorMsg(t('messages.error.addLog'))
 
       if (!item.searchId && _hasItems(item)) {
-        const LONGEST_FOOD_ID_LENGTH = 10
-
         const mealNumberOfServings = editItem.numberOfServings
 
         const logsToAdd = item.items
@@ -403,9 +413,9 @@ export function ItemDetails({
               source =
                 isCustomLog || item.source === searchTypes.custom
                   ? searchTypes.custom
-                  : item.searchId.length < LONGEST_FOOD_ID_LENGTH
-                  ? searchTypes.usda
-                  : searchTypes.openFoodFacts
+                  : isBarcodeSearchId(item.searchId)
+                  ? searchTypes.openFoodFacts
+                  : searchTypes.usda
             }
 
             return {
@@ -425,7 +435,10 @@ export function ItemDetails({
               createdBy: user._id,
               name:
                 isCustomLog || item.source === searchTypes.custom || item.mealId
-                  ? item.name
+                  ? itemNameService.getItemDisplayName(
+                      item.name,
+                      i18n.language
+                    )
                   : '',
             }
           })
@@ -542,7 +555,10 @@ export function ItemDetails({
         name:
           isCustomLog || (item as Log).source === searchTypes.custom
             ? editItem.name
-            : editMealItem.name,
+            : itemNameService.getItemDisplayName(
+                editMealItem.name,
+                i18n.language
+              ),
       }
 
       delete newLog.image
@@ -607,7 +623,10 @@ export function ItemDetails({
       return () => {
         const itemMealToEdit = {
           searchId: isCustomLog ? '' : item.searchId,
-          name: isCustomLog ? editItem.name : item.name || editItem.name,
+          name: isCustomLog
+            ? editItem.name
+            : itemNameService.getItemDisplayName(item.name, i18n.language) ||
+              editItem.name,
           macros: editItem.totalMacros,
           image: item.image,
           servingSize: editItem.servingSize,
@@ -743,7 +762,10 @@ export function ItemDetails({
               {(item.image && (
                 <img
                   src={item.image}
-                  alt={item.name}
+                  alt={itemNameService.getItemDisplayName(
+                    item.name,
+                    i18n.language
+                  )}
                   referrerPolicy='no-referrer'
                   onError={async (e) => {
                     renderErrorImage()
@@ -765,7 +787,8 @@ export function ItemDetails({
               variant='body1'
               className='title'
             >
-              {item.name || ''}
+              {itemNameService.getItemDisplayName(item.name, i18n.language) ||
+                ''}
             </MarqueeText>
             <div className='subtitle'>{`${(+item.macros?.calories).toFixed(
               0
@@ -980,12 +1003,17 @@ export function ItemDetails({
         <CustomAlertDialog
           open={isImageModalOpen}
           onClose={closeImageModal}
-          title={item.name || ''}
+          title={
+            itemNameService.getItemDisplayName(item.name, i18n.language) || ''
+          }
         >
           <div className='modal-image-container'>
             <img
               src={item.image}
-              alt={item.name}
+              alt={itemNameService.getItemDisplayName(
+                item.name,
+                i18n.language
+              )}
               className={`box-shadow white-outline`}
               referrerPolicy='no-referrer'
               onError={async (e) => {

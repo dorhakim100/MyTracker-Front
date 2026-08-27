@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import List from '@mui/material/List'
 import ListItemButton from '@mui/material/ListItemButton'
@@ -51,6 +51,7 @@ export interface CustomListProps<T> {
   dragOffsetY?: number
   isDefaultLoader?: boolean
   onLoadMore?: () => Promise<void>
+  slideIncomingToTop?: boolean
 }
 
 export function CustomList<T>({
@@ -73,13 +74,20 @@ export function CustomList<T>({
   onReorder,
   dragOffsetY = 0,
   isDefaultLoader = false,
+  slideIncomingToTop = false,
 }: // onDragStart,
 CustomListProps<T>) {
   const [reorderedItems, setReorderedItems] = useState<T[]>(items || [])
+  const seenKeysRef = useRef<Set<string>>(new Set())
+  const getKeyRef = useRef(getKey)
+  getKeyRef.current = getKey
   const { onPointerDown, onPointerMove, onPointerUp } = useDragHaptics({
     itemHeight: ITEM_HEIGHT,
   })
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
+  const prefersReducedMotion =
+    typeof window !== 'undefined' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
   const isLoading = useSelector(
     (state: RootState) => state.systemModule.isLoading
@@ -105,6 +113,28 @@ CustomListProps<T>) {
   useEffect(() => {
     setReorderedItems([...items])
   }, [items])
+
+  const incomingKeys = useMemo(() => {
+    if (!slideIncomingToTop) return new Set<string>()
+    const resolveKey = getKeyRef.current
+    return new Set(
+      reorderedItems
+        .map((item, index) =>
+          String(resolveKey ? resolveKey(item, index) : index)
+        )
+        .filter((key) => key && !seenKeysRef.current.has(key))
+    )
+  }, [reorderedItems, slideIncomingToTop])
+
+  useEffect(() => {
+    if (!slideIncomingToTop) return
+    const resolveKey = getKeyRef.current
+    seenKeysRef.current = new Set(
+      reorderedItems.map((item, index) =>
+        String(resolveKey ? resolveKey(item, index) : index)
+      )
+    )
+  }, [reorderedItems, slideIncomingToTop])
 
   useEffect(() => {
     if (!onLoadMore) return
@@ -305,7 +335,20 @@ CustomListProps<T>) {
                   const draggableId = key + ''
 
                   return (
-                    <AnimatedWrapper key={draggableId}>
+                    <AnimatedWrapper
+                      key={draggableId}
+                      disabled={
+                        slideIncomingToTop && !incomingKeys.has(draggableId)
+                      }
+                      {...(slideIncomingToTop
+                        ? {
+                            offsetX: 0,
+                            offsetY: prefersReducedMotion ? 0 : 8,
+                            duration: prefersReducedMotion ? 0 : 0.28,
+                            once: true,
+                          }
+                        : {})}
+                    >
                       <Draggable
                         draggableId={draggableId}
                         index={index}

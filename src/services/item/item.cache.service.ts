@@ -5,6 +5,7 @@ import { indexedDbService } from '../indexeddb.service'
 import { ItemFilter } from '../../types/itemFilter/ItemFilter'
 import { Item } from '../../types/item/Item'
 import { cache } from '../../assets/config/cache'
+import { itemNameService } from './item-name.service'
 import { Meal } from '../../types/meal/Meal'
 import { MealItem } from '../../types/mealItem/MealItem'
 import { searchUrls } from '../../assets/config/search.urls'
@@ -53,7 +54,9 @@ async function remove(itemId: string) {
 function isItem(value: Item | Partial<Item> | null | undefined): value is Item {
   if (!value) return false
   const candidate = value as Item
-  const hasName = typeof candidate.name === 'string'
+  const hasName =
+    typeof candidate.name === 'string' ||
+    itemNameService.isLocalizedName(candidate.name)
   const hasMacros =
     typeof candidate.macros === 'object' && candidate.macros !== null
   const hasType = typeof candidate.type === 'string'
@@ -63,7 +66,7 @@ function isItem(value: Item | Partial<Item> | null | undefined): value is Item {
 function getEmptyItem(): Item {
   return {
     _id: makeId(),
-    name: '',
+    name: { eng: '', he: '', default: '' },
     searchId: '',
     image: '',
     macros: { calories: 0, protein: 0, carbs: 0, fat: 0 },

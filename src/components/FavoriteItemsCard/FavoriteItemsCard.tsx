@@ -17,9 +17,10 @@ import { Item } from '../../types/item/Item'
 import { SlideDialog } from '../../components/SlideDialog/SlideDialog'
 import { ItemDetails } from '../../components/ItemDetails/ItemDetails'
 import { MacrosDonut } from '../../components/MacrosDonut/MacrosDonut'
+import { itemNameService } from '../../services/item/item-name.service'
 
 export function FavoriteItemsCard() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const user = useSelector(
     (storeState: RootState) => storeState.userModule.user
   )
@@ -73,7 +74,9 @@ export function FavoriteItemsCard() {
       <CustomList
         items={favoriteItems || []}
         // dragOffsetY={-64}
-        renderPrimaryText={(item) => item.name}
+        renderPrimaryText={(item) =>
+          itemNameService.getItemDisplayName(item.name, i18n.language)
+        }
         renderLeft={(item) => (
           <div className="left-content macros-image-container">
             <MacrosDonut
@@ -82,7 +85,11 @@ export function FavoriteItemsCard() {
               fats={item.macros?.fat}
             />
             <ListItemIcon className="item-image-container">
-              <img src={item.image} alt={item.name} className="item-image" />
+              <img
+                src={item.image}
+                alt={itemNameService.getItemDisplayName(item.name, i18n.language)}
+                className="item-image"
+              />
             </ListItemIcon>
           </div>
         )}

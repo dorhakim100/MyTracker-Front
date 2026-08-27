@@ -2,6 +2,8 @@ import axios from 'axios'
 import { searchUrls } from '../../assets/config/search.urls'
 import { translateService } from '../translate/translate.service'
 import { Item } from '../../types/item/Item'
+import { ItemName } from '../../types/item/LocalizedName'
+import { itemNameService } from '../item/item-name.service'
 import { searchService } from '../search/search-service'
 import { Exercise } from '../../types/exercise/Exercise'
 import { exerciseImage } from '../../assets/config/exercise-image'
@@ -37,23 +39,22 @@ async function getImage(query: string) {
   }
 }
 
-async function getSingleImage(query: string) {
-  if (!query) return null
+async function getSingleImage(query: string | ItemName) {
+  const resolved = itemNameService.getItemDisplayName(query, 'en')
+  if (!resolved) return null
 
   try {
-    // trim and normalize query
-    query = query.toLowerCase().trim()
+    const text = resolved.toLowerCase().trim()
 
-    const res = await fetchPixabay(query, 3)
+    const res = await fetchPixabay(text, 3)
 
     const { hits } = res
 
     if (hits?.length > 0) return hits[0].webformatURL
 
-    const firstWord = query.split(/[^a-zA-Z]+/)[0]
+    const firstWord = text.split(/[^a-zA-Z]+/)[0]
 
-    // optional fallback: try first word if multi-word search failed
-    if (firstWord !== query) {
+    if (firstWord !== text) {
       const retryRes = await fetchPixabay(firstWord, 3)
       const { hits: retryHits } = retryRes
       if (retryHits?.length > 0) return retryHits[0].webformatURL
@@ -88,7 +89,7 @@ async function fetchOnError(
   e: React.SyntheticEvent<HTMLImageElement, Event>,
   item: Item
 ) {
-  const itemName = item.name
+  const itemName = itemNameService.getItemDisplayName(item.name, 'en')
   const img = e.currentTarget
   // prevent infinite loops on this element
   if (img.dataset.errored === '1') {

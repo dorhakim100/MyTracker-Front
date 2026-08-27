@@ -27,6 +27,7 @@ import { CircularProgress, Divider } from '@mui/material'
 import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
 import { CustomInput } from '../../CustomMui/CustomInput/CustomInput'
 import { setMenus } from '../../store/actions/user.actions'
+import { itemNameService } from '../../services/item/item-name.service'
 
 interface EditMenuProps {
   closeDialog: () => void
@@ -34,7 +35,7 @@ interface EditMenuProps {
 }
 
 export function EditMenu({ closeDialog, menuToEdit }: EditMenuProps) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
   const user = useSelector((state: RootState) => state.userModule.user)
   const isLoading = useSelector(
@@ -127,7 +128,9 @@ export function EditMenu({ closeDialog, menuToEdit }: EditMenuProps) {
       mealId: item.mealId,
       createdBy: user._id,
       isFixedMenuLog: true,
-      name: item.name || t('menu.customItem'),
+      name:
+        itemNameService.getItemDisplayName(item.name, i18n.language) ||
+        t('menu.customItem'),
     } as Log
 
     try {

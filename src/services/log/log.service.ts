@@ -1,6 +1,7 @@
 import { httpService } from '../http.service'
 import { makeId } from '../util.service'
 import { Log } from '../../types/log/Log'
+import { itemService } from '../item/item.service'
 
 const KEY = 'log'
 
@@ -53,6 +54,10 @@ async function save(log: Log) {
       savedLog = await httpService.put(`${KEY}/${log._id}`, log)
     } else {
       savedLog = await httpService.post(KEY, log)
+    }
+    const searchId = log.itemId || log.searchId
+    if (searchId) {
+      itemService.bumpPopularity(searchId)
     }
     return savedLog
   } catch (err) {

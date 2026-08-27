@@ -29,6 +29,7 @@ export const itemService = {
 
   // Item image operations
   isImageNative,
+  bumpPopularity,
 }
 
 // Main CRUD operations
@@ -164,10 +165,19 @@ async function isImageNative(searchId: string) {
   }
 }
 
+async function bumpPopularity(searchId: string) {
+  try {
+    if (!searchId) return null
+    return await httpService.post(`${KEY}/popularity`, { searchId })
+  } catch {
+    return null
+  }
+}
+
 function getEmptyItem() {
   return {
     _id: makeId(),
-    name: '',
+    name: { eng: '', he: '', default: '' },
     image: '',
     macros: { calories: 0, protein: 0, carbs: 0, fat: 0 },
   }

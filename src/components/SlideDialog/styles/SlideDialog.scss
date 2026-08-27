@@ -46,7 +46,11 @@
   touch-action: none;
 
   .MuiToolbar-root {
-    gap: 0.5em;
+    gap: 0;
+
+    .marquee-text-container {
+      padding-inline-end: 8px;
+    }
   }
 }
 
@@ -100,8 +104,13 @@
     }
     .MuiToolbar-root {
       padding: 1em;
+      gap: 0;
       border-top-right-radius: 10px;
       border-top-left-radius: 10px;
+
+      .marquee-text-container {
+        padding-inline-end: 8px;
+      }
 
       .slide-dialog-close,
       .slide-dialog-close svg {

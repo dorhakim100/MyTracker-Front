@@ -15,6 +15,7 @@ import { Gender } from '../bmr/bmr.service'
 import { MealItem } from '../../types/mealItem/MealItem'
 import { Meal } from '../../types/meal/Meal'
 import { searchTypes } from '../../assets/config/search-types'
+import { isBarcodeSearchId } from '../item/item-id.service'
 import {
   APPROVED_STATUS,
   REJECTED_STATUS,
@@ -226,15 +227,12 @@ async function persistLoginSession(
 
   setFavoriteItems(cachedItems)
 
-  const LONGEST_FOOD_ID_LENGTH = 10
-
   user.meals.forEach((meal: Meal) => {
     meal.items.forEach((item: MealItem) => {
       if (!item.searchId) return
-      const source =
-        item.searchId.length < LONGEST_FOOD_ID_LENGTH
-          ? searchTypes.usda
-          : searchTypes.openFoodFacts
+      const source = isBarcodeSearchId(item.searchId)
+        ? searchTypes.openFoodFacts
+        : searchTypes.usda
       searchService.searchById(item.searchId, source)
     })
   })
