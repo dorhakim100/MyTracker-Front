@@ -88,6 +88,19 @@ button {
   }
 }
 
+.subtle-bg {
+  background: rgba(0, 0, 0, 0.04);
+
+  &.dark-mode {
+    background: rgba(255, 255, 255, 0.06);
+  }
+}
+
+.dark-mode .subtle-bg,
+html.dark-mode .subtle-bg {
+  background: rgba(255, 255, 255, 0.06);
+}
+
 .banner {
   display: grid;
   grid-auto-flow: column;

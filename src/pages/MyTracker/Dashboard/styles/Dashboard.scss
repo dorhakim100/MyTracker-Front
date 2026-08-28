@@ -53,8 +53,19 @@
 .dashboard-session-container {
   margin-top: 0.5rem;
 
-  .bold-header {
-    text-align: start;
+  .header-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    .workout-icon-container {
+      width: 2.5rem;
+      height: 2.5rem;
+    }
+
+    .bold-header {
+      text-align: start;
+    }
   }
 }
 .dashboard-items-container {
@@ -92,14 +103,9 @@ body.dashboard {
   padding: 1.25rem 1rem;
   border-radius: 16px;
   text-align: center;
-  background: rgba(0, 0, 0, 0.04);
   animation: no-session-enter 280ms ease-out;
   border-radius: 16px;
-  background: rgba(0, 0, 0, 0.04);
 
-  &.dark-mode {
-    background: rgba(255, 255, 255, 0.06);
-  }
   .bold-header {
     text-align: center;
   }
@@ -152,11 +158,6 @@ body.dashboard {
   padding: 1.25rem 1rem;
   border-radius: 16px;
   text-align: center;
-  background: rgba(0, 0, 0, 0.04);
-
-  &.dark-mode {
-    background: rgba(255, 255, 255, 0.06);
-  }
 
   &.loading {
     padding: 1.5rem 1rem;

@@ -360,9 +360,9 @@ export function Dashboard() {
     if (!todaySessionDay?.workout)
       return (
         <div
-          className={`no-session-panel ${prefs.isDarkMode ? 'dark-mode' : ''} ${
-            isDashboard ? 'dashboard' : ''
-          }`}
+          className={`no-session-panel subtle-bg ${
+            prefs.isDarkMode ? 'dark-mode' : ''
+          } ${isDashboard ? 'dashboard' : ''}`}
           role='status'
         >
           <WorkoutIcon />
@@ -414,12 +414,15 @@ export function Dashboard() {
     if (hasUsableSession && sessionDay) {
       return (
         <div className='dashboard-session-container'>
-          <Typography
-            variant='h5'
-            className='bold-header'
-          >
-            {t('dashboard.workoutSession')}
-          </Typography>
+          <div className='header-container'>
+            <WorkoutIcon />
+            <Typography
+              variant='h5'
+              className='bold-header'
+            >
+              {t('dashboard.workoutSession')}
+            </Typography>
+          </div>
           <WorkoutSession
             sessionDay={sessionDay}
             updateSessionDay={updateSessionDay}
@@ -432,7 +435,7 @@ export function Dashboard() {
       return (
         <div className='dashboard-session-container'>
           <div
-            className={`session-retry-container loading ${
+            className={`session-retry-container loading subtle-bg ${
               prefs.isDarkMode ? 'dark-mode' : ''
             }`}
           >
@@ -451,7 +454,7 @@ export function Dashboard() {
     return (
       <div className='dashboard-session-container'>
         <div
-          className={`session-retry-container ${
+          className={`session-retry-container subtle-bg ${
             prefs.isDarkMode ? 'dark-mode' : ''
           } ${prefs.favoriteColor}`}
           role='status'

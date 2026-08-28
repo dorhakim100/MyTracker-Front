@@ -75,7 +75,7 @@ const maxBodyFat = result.kind === 'success' ? result.maxPercent : 0
 
         </div>
 
-        <div className='details-note typewriter-container'>
+        <div className='details-note typewriter-container subtle-bg'>
           <Typography variant='body1' component='div' className='note-text'>
             <span>{typedText}</span>
             <Cursor cursorStyle='|' />

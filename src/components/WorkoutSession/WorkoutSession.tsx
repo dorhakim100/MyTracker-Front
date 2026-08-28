@@ -1027,12 +1027,16 @@ export function WorkoutSession({
   return (
     <>
       <div className='workout-container'>
-        <div className='workout-header-container'>
+        <div
+          className={`workout-header-container subtle-bg ${
+            prefs.isDarkMode ? 'dark-mode' : ''
+          } ${isAllExercisesDone ? 'finished' : ''}`}
+        >
           <div
             className='workout-name-container'
             onClick={onOpenWorkoutDetails}
           >
-            <CircleIcon color={isAllExercisesDone ? 'success' : 'error'} />
+            {/* <CircleIcon color={isAllExercisesDone ? 'success' : 'error'} /> */}
             <Typography
               variant='h5'
               className='bold-header'
@@ -1074,13 +1078,15 @@ export function WorkoutSession({
               tooltipTitle={t('workout.deleteWorkout')}
             />
           </div>
+          <div className='muscles-container'>
+            <Typography
+              variant='body1'
+              className='bold-header'
+            >
+              {getWorkoutMuscles(sessionDay.workout).join(', ')}
+            </Typography>
+          </div>
         </div>
-        <Typography
-          variant='body1'
-          className='bold-header'
-        >
-          {getWorkoutMuscles(sessionDay.workout).join(', ')}
-        </Typography>
         <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
         {/* <CustomButton text="Add Exercise" icon={<AddIcon />} /> */}
         <div className='exercises-container'>

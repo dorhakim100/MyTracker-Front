@@ -771,7 +771,7 @@ export function Workouts() {
           >
             {!sessionDay.instructions && (
               <div
-                className={`no-session-panel ${
+                className={`no-session-panel subtle-bg ${
                   prefs.isDarkMode ? 'dark-mode' : ''
                 }`}
                 role='status'
