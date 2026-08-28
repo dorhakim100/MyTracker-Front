@@ -164,118 +164,101 @@ function filterDuplicates(res: Item[]) {
   )
 }
 
+function withLocalizedName(item: Item): Item {
+  return {
+    ...item,
+    name: itemNameService.toLocalizedName(item.name),
+  }
+}
+
+function mergeFavoriteItem(cached: Item | undefined, fresh: Item): Item {
+  return {
+    ...cached,
+    ...fresh,
+    image: fresh.image || cached?.image,
+    name: itemNameService.toLocalizedName(fresh.name),
+  }
+}
+
 async function searchFavoriteItems(
   favoriteItems: string[],
   onComplete?: (completeItems: Item[]) => void
 ) {
   try {
-    let res: Item[] = []
     const cached = await indexedDbService.query<Item>(ITEMS_CACHE, 0)
+    const cachedBySearchId = new Map<string, Item>()
+    cached?.forEach((item) => {
+      if (item.searchId) cachedBySearchId.set(item.searchId, item)
+    })
 
-    const favoriteCopy = favoriteItems.slice()
+    const completeRes: Item[] = []
+    favoriteItems.forEach((searchId, index) => {
+      const item = cachedBySearchId.get(searchId)
+      if (!item) return
+      completeRes[index] = withLocalizedName(item)
+    })
 
-    const favoriteFoods =
-      favoriteItems.filter((id) => !isBarcodeSearchId(id)) || []
-    const favoriteProducts =
-      favoriteItems.filter((id) => isBarcodeSearchId(id)) || []
-
-    if (cached && cached.length) {
-      cached.forEach((item: Item) => {
-        const indexToRemove = favoriteCopy.findIndex(
-          (id) => id === item.searchId
-        )
-        if (indexToRemove === -1) return
-
-        favoriteCopy.splice(indexToRemove, 1)
-        const indexToAdd = favoriteItems.findIndex((id) => id === item.searchId)
-        res[indexToAdd] = item
-
-        if (favoriteFoods.includes(item.searchId as string)) {
-          favoriteFoods.splice(
-            favoriteFoods.indexOf(item.searchId as string),
-            1,
-            ''
-          )
-        }
-        if (favoriteProducts.includes(item.searchId as string)) {
-          favoriteProducts.splice(
-            favoriteProducts.indexOf(item.searchId as string),
-            1,
-            ''
-          )
-        }
-      })
-    }
-
-    // Filter out empty strings to get actual missing items
-    const missingFoods = favoriteFoods.filter((id) => id !== '')
-    const missingProducts = favoriteProducts.filter((id) => id !== '')
-
-    res = res.filter((item): item is Item => item !== undefined)
-
-    // Build result array maintaining order (res is sparse, so map over favoriteItems indices)
     const cachedResults = favoriteItems
-      .map((searchId) => res.find((item: Item) => item.searchId === searchId))
+      .map((_, index) => completeRes[index])
       .filter((item): item is Item => item !== undefined)
 
-    // If all items are cached, return immediately
-    if (missingFoods.length === 0 && missingProducts.length === 0) {
-      return Promise.all(
-        cachedResults.map(async (item: Item) => ({
-          ...item,
-          image:
-            item.image ||
-            (await imageService.getSingleImage(
-              itemNameService.getItemDisplayName(item.name, 'en')
-            )) ||
-            DEFAULT_IMAGE,
-        }))
-      )
-    }
-
-    // Start background fetch for missing items
     const backgroundFetch = async () => {
       try {
-        const promises = [
+        let backendItems: Item[] = []
+        try {
+          backendItems = await itemService.getBulkBySearchIds(
+            favoriteItems.filter(Boolean)
+          )
+        } catch (err) {
+          console.error('Error refreshing favorite items from backend:', err)
+        }
+
+        backendItems.forEach((item: Item) => {
+          const originalIndex = favoriteItems.findIndex(
+            (id) => id === item.searchId
+          )
+          if (originalIndex === -1) return
+          completeRes[originalIndex] = mergeFavoriteItem(
+            completeRes[originalIndex],
+            item
+          )
+        })
+
+        const stillMissing = favoriteItems.filter(
+          (id, index) => id && !completeRes[index]
+        )
+        const missingFoods = stillMissing.filter((id) => !isBarcodeSearchId(id))
+        const missingProducts = stillMissing.filter((id) =>
+          isBarcodeSearchId(id)
+        )
+
+        const [foods, products] = await Promise.all([
           getFoodsByIds(missingFoods),
           getProductsByIds(missingProducts),
-        ]
+        ])
 
-        const [foods, products] = await Promise.all(promises)
-
-        const completeRes = [...res]
-
-        foods.forEach((item: Item) => {
+        const fetchedItems = [...foods, ...products]
+        fetchedItems.forEach((item: Item) => {
           const originalIndex = favoriteItems.findIndex(
             (id) => id === item.searchId
           )
-          if (originalIndex !== -1) {
-            completeRes[originalIndex] = item as Item
-          }
-        })
-        products.forEach((item: Item) => {
-          const originalIndex = favoriteItems.findIndex(
-            (id) => id === item.searchId
+          if (originalIndex === -1) return
+          completeRes[originalIndex] = mergeFavoriteItem(
+            completeRes[originalIndex],
+            item
           )
-
-          if (originalIndex !== -1) {
-            completeRes[originalIndex] = item as Item
-          }
         })
 
-        // Build final result maintaining order (completeRes is sparse, so map over favoriteItems indices)
         const finalRes = favoriteItems
           .map((_, idx) => completeRes[idx])
           .filter((item): item is Item => item !== undefined)
 
-        // Batch cache operations - run in background without blocking
-        // Promise.all(
-        //   finalRes.map((item) => addToCache(item as Item, FAVORITE_CACHE))
-        // ).catch((err) => {
-        //   console.error('Error caching favorite items:', err)
-        // })
+        Promise.all(
+          finalRes.map((item) => addToCache(item as Item, ITEMS_CACHE))
+        ).catch((err) => {
+          console.error('Error caching favorite items:', err)
+        })
 
-        // Call callback with complete results if provided
         if (onComplete) {
           onComplete(finalRes)
         }
@@ -283,7 +266,6 @@ async function searchFavoriteItems(
         return finalRes
       } catch (err) {
         console.error('Error fetching favorite items in background:', err)
-        // Call callback with cached results even if background fetch fails
         if (onComplete) {
           onComplete(cachedResults)
         }
@@ -291,10 +273,8 @@ async function searchFavoriteItems(
       }
     }
 
-    // Start background fetch (don't await)
     backgroundFetch()
 
-    // Return cached results immediately (maintaining order)
     return cachedResults
   } catch (err) {
     throw err

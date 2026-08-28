@@ -429,7 +429,7 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
           itemClassName={`search-item-container ${
             prefs.isDarkMode ? 'dark-mode' : ''
           }`}
-          slideIncomingToTop
+          slideIncomingToTop={!!filter.txt}
           renderLeft={(item) => (
             <div className='left-content macros-image-container'>
               <MacrosDonut

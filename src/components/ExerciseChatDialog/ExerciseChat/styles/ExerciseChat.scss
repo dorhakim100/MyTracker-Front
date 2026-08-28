@@ -320,9 +320,9 @@ body.dark-mode .exercise-chat-container.green {
   .MuiChatMessage-roleUser .MuiChatMessage-inlineMeta *,
   .MuiChatMessage-roleUser .MuiChatMessage-meta,
   .MuiChatMessage-roleUser .MuiChatMessage-meta * {
-    color: $neutral-gray !important;
-    -webkit-text-fill-color: $neutral-gray !important;
-    fill: $neutral-gray !important;
+    color: $neutral-gray;
+    -webkit-text-fill-color: $neutral-gray;
+    fill: $neutral-gray;
     // opacity: 1 !important;
   }
 }
@@ -359,22 +359,20 @@ body.dark-mode .exercise-chat-edit-dialog {
   }
 }
 
-html.dark-mode .exercise-chat-container,
-body.dark-mode .exercise-chat-container {
-  // sent to me, time + name
-  .MuiChatMessage-roleAssistant .MuiChatMessage-inlineMeta,
-  .MuiChatMessage-roleAssistant .MuiChatMessage-inlineMeta *,
-  .MuiChatMessage-roleAssistant .MuiChatMessage-groupAuthorName {
+body.dark-mode {
+  // sent to me, time
+  .css-15tj2fj-MuiChatMessage-inlineMeta,
+  // sent to me, name
+  .css-lzdtim-MuiChatMessage-groupAuthorName {
     color: $medium-gray !important;
     -webkit-text-fill-color: $medium-gray !important;
   }
-
-  // sent by me, time + name
-  .MuiChatMessage-roleUser .MuiChatMessage-inlineMeta,
-  .MuiChatMessage-roleUser .MuiChatMessage-inlineMeta *,
-  .MuiChatMessage-roleUser .MuiChatMessage-groupAuthorName {
+  // sent by me, time
+  .css-14b81mi-MuiChatMessage-inlineMeta,
+  // sent by me, name
+  .css-eak0ip-MuiChatMessage-groupAuthorName {
     color: $medium-gray !important;
-    -webkit-text-fill-color: $medium-gray !important;
+
     opacity: 0.75 !important;
   }
 }
