@@ -27,6 +27,7 @@ import { BarcodeScanner } from '../../components/BarcodeScanner/BarcodeScanner'
 import { smoothScroll } from '../../services/util.service'
 import { setActiveRoute } from '../../store/actions/system.actions'
 import { capacitorService } from '../../services/capacitor.service'
+import { ChatUnreadBadge } from '../ChatUnreadBadge/ChatUnreadBadge'
 
 type ModalType = 'search' | 'scan'
 
@@ -70,6 +71,9 @@ export function FixedBottomNavigation(props: {
 
   const timer = useSelector(
     (stateSelector: RootState) => stateSelector.workoutModule.timer
+  )
+  const workoutsUnreadCount = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.workoutsUnreadCount
   )
 
   const [searchModalOpen, setSearchModalOpen] = useState(false)
@@ -149,6 +153,18 @@ export function FixedBottomNavigation(props: {
 
   function closeSearchModal() {
     setSearchModalOpen(false)
+  }
+
+  function getNavIcon(route: Route) {
+    const Icon = route.icon
+    if (route.path !== '/lift-mate/workouts') {
+      return <Icon />
+    }
+    return (
+      <ChatUnreadBadge count={workoutsUnreadCount}>
+        <Icon />
+      </ChatUnreadBadge>
+    )
   }
 
   const renderSpeedDial = () => {
@@ -253,7 +269,7 @@ export function FixedBottomNavigation(props: {
                   <BottomNavigationAction
                     key={route.path}
                     label={t(route.titleKey)}
-                    icon={<route.icon />}
+                    icon={getNavIcon(route)}
                     onClick={() => {
                       setSlideDirection(index < currIndex ? -1 : 1)
 
@@ -277,7 +293,7 @@ export function FixedBottomNavigation(props: {
                   <BottomNavigationAction
                     key={route.path}
                     label={t(route.titleKey)}
-                    icon={<route.icon />}
+                    icon={getNavIcon(route)}
                     onClick={() => {
                       setSlideDirection(
                         index + leftRoutes.length > currIndex ? 1 : -1

@@ -28,7 +28,6 @@ import { setService } from '../../services/set/set.service'
 import { Instructions } from '../../types/instructions/Instructions'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { CustomAlertDialog } from '../../CustomMui/CustomAlertDialog/CustomAlertDialog'
-import { CustomInput } from '../../CustomMui/CustomInput/CustomInput'
 import { ExerciseCard } from '../ExerciseCard/ExerciseCard'
 import {
   filterExercises,
@@ -109,8 +108,6 @@ export function WorkoutSession({
   //   allExerciseIds.every((id) => openExercises.has(id))
 
   const hasOpenExercises = openExercises.size > 0
-
-  const [exerciseNotes, setExerciseNotes] = useState<string>('')
 
   const [slideDialogOptions, setSlideDialogOptions] = useState<{
     open: boolean
@@ -851,31 +848,6 @@ export function WorkoutSession({
     }
   }
 
-  async function saveExerciseNotes(exerciseId: string, notes: string) {
-    if (!sessionDay.workout.forUserId) return
-    try {
-      setIsLoading(true)
-      await instructionsService.save({
-        ...sessionDay.instructions,
-        exercises: sessionDay.instructions.exercises.map((e) =>
-          e.exerciseId === exerciseId
-            ? {
-                ...e,
-                notes: { expected: e.notes?.expected || '', actual: notes },
-              }
-            : e
-        ),
-      })
-      closeAlertDialog()
-
-      invalidateSets(exerciseId, sessionDay.workout.forUserId, 20)
-    } catch {
-      showErrorMsg(t('messages.error.updateSet'))
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
   function closeAlertDialog() {
     setAlertDialogOptions({
       open: false,
@@ -883,7 +855,6 @@ export function WorkoutSession({
       component: null,
       exerciseId: '',
     })
-    setExerciseNotes('')
   }
 
   function getIsStringifySame(
@@ -974,36 +945,6 @@ export function WorkoutSession({
           </DialogActions>
         </div>
       )
-
-    if (alertDialogOptions.component === 'note') {
-      return (
-        <div className='notes-edit-container'>
-          <CustomInput
-            value={exerciseNotes}
-            onChange={setExerciseNotes}
-            placeholder={t('exercise.enterNotes')}
-            isRemoveIcon={true}
-            className={`${prefs.favoriteColor}`}
-          />
-          <DialogActions>
-            <CustomButton
-              text={t('common.cancel')}
-              fullWidth
-              onClick={closeAlertDialog}
-              className={`${prefs.favoriteColor}`}
-            />
-            <CustomButton
-              text={t('common.save')}
-              fullWidth
-              onClick={() =>
-                saveExerciseNotes(alertDialogOptions.exerciseId, exerciseNotes)
-              }
-              className={`${prefs.favoriteColor}`}
-            />
-          </DialogActions>
-        </div>
-      )
-    }
   }
 
   const onWorkoutDone = async () => {
@@ -1117,9 +1058,7 @@ export function WorkoutSession({
                 markSetAsDone={markSetAsDone}
                 instructions={sessionDay.instructions}
                 exerciseInstructions={exercise}
-                onEditExerciseNotes={(exerciseId, notes) =>
-                  saveExerciseNotes(exerciseId, notes)
-                }
+                workoutName={sessionDay.workout.name}
                 isOpen={isOpen}
                 onOpenChange={() =>
                   handleOpenChange(exercise.exerciseId, !isOpen)

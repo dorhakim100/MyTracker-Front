@@ -8,6 +8,17 @@
     flex-shrink: 0;
   }
 
+  .accordion-badge {
+    margin-inline-start: auto;
+    margin-inline-end: 0.25rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
   p {
     align-self: center;
   }

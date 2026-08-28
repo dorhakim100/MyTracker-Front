@@ -43,6 +43,9 @@ import { getWorkoutMuscles } from '../../../services/exersice-search/exersice-se
 import EditIcon from '@mui/icons-material/Edit'
 import { capacitorService } from '../../../services/capacitor.service'
 import { MarqueeText } from '../../../components/MarqueeText/MarqueeText'
+import { ChatUnreadBadge } from '../../../CustomMui/ChatUnreadBadge/ChatUnreadBadge'
+import { useUnreadSummary } from '../../../hooks/useUnreadSummary'
+import { useChatRole } from '../../../hooks/useChatRole'
 interface WorkoutCardProps {
   workout: Workout
   className?: string
@@ -77,6 +80,8 @@ export function WorkoutCard({
     (stateSelector: RootState) => stateSelector.systemModule.isDashboard
   )
   const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false)
+  const chatRole = useChatRole()
+  const { getWorkoutCount } = useUnreadSummary(chatRole)
 
   const [slideOptions, setSlideOptions] = useState<{
     open: boolean
@@ -242,7 +247,9 @@ export function WorkoutCard({
         onClick={onViewDetails}
       >
         <div className='header-container'>
-          <Typography variant='h6'>{workout.name}</Typography>
+          <ChatUnreadBadge count={getWorkoutCount(workout._id)}>
+            <Typography variant='h6'>{workout.name}</Typography>
+          </ChatUnreadBadge>
           <div className='header-actions-container'>
             {renderTimes()}
             <CustomOptionsMenu

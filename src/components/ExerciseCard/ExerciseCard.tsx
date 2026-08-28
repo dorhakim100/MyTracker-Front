@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Card, Typography, Divider, DialogActions } from '@mui/material'
+import { Card, Typography, Divider } from '@mui/material'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { Exercise, Set } from '../../types/exercise/Exercise'
@@ -13,15 +13,18 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
 import { Instructions } from '../../types/instructions/Instructions'
 import { ChangeExercise } from '../ChangeExercise/ChangeExercise'
 
-import EditNoteIcon from '@mui/icons-material/EditNote'
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline'
 import DeleteIcon from '@mui/icons-material/Delete'
 import InfoOutlineIcon from '@mui/icons-material/InfoOutline'
 import { DropdownOption } from '../../types/DropdownOption'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { ExerciseDetails } from '../ExerciseDetails/ExerciseDetails'
 import SwitchLeftIcon from '@mui/icons-material/SwitchLeft'
-import { CustomAlertDialog } from '../../CustomMui/CustomAlertDialog/CustomAlertDialog'
-import { CustomInput } from '../../CustomMui/CustomInput/CustomInput'
+import { ChatUnreadBadge } from '../../CustomMui/ChatUnreadBadge/ChatUnreadBadge'
+import { ExerciseChatDialog } from '../ExerciseChatDialog/ExerciseChatDialog'
+import { exerciseChatNs } from '../ExerciseChatDialog/locals'
+import { useUnreadSummary } from '../../hooks/useUnreadSummary'
+import { useChatRole } from '../../hooks/useChatRole'
 import DragHandleIcon from '@mui/icons-material/DragHandle'
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
@@ -54,7 +57,7 @@ interface ExerciseCardProps {
   showEquipment?: boolean
   exerciseInstructions?: ExerciseInstructions
   isExpected?: boolean
-  onEditExerciseNotes: (exerciseId: string, notes: string) => void
+  workoutName?: string
   setInstructions?: (instructions: Instructions) => void
   instructions: Instructions
   onSwitchRpeRir?: (exerciseId: string, value: 'rpe' | 'rir') => void
@@ -92,7 +95,7 @@ export function ExerciseCard({
   showEquipment = false,
   instructions,
   isExpected = false,
-  onEditExerciseNotes,
+  workoutName,
   setInstructions,
   exerciseInstructions,
   onSwitchRpeRir,
@@ -106,6 +109,7 @@ export function ExerciseCard({
   onChangeExercise,
 }: ExerciseCardProps) {
   const { t } = useTranslation()
+  const { t: tChat } = useTranslation(exerciseChatNs)
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
@@ -136,7 +140,18 @@ export function ExerciseCard({
   }
 
   const [exerciseSets, setExerciseSets] = useState<Set[]>([])
-  const [isEditNotesOpen, setIsEditNotesOpen] = useState(false)
+  const [isChatOpen, setIsChatOpen] = useState(false)
+  const chatRole = useChatRole(isExpected)
+  const { getExerciseCount, hasExerciseMessages } = useUnreadSummary(chatRole)
+  const resolvedWorkoutName =
+    workoutName ||
+    sessionDay?.workout?.name ||
+    instructions.workout?.name ||
+    ''
+  const traineeName =
+    chatRole === 'trainer' && traineeUser && traineeUser._id !== user?._id
+      ? traineeUser.details.fullname
+      : undefined
 
   const [slideDialogOptions, setSlideDialogOptions] =
     useState<SlideDialogOptions>({
@@ -144,12 +159,6 @@ export function ExerciseCard({
       type: 'exercise-details',
       open: false,
     })
-
-  const [editNotes, setEditNotes] = useState(
-    isExpected
-      ? exerciseInstructions?.notes?.expected
-      : exerciseInstructions?.notes?.actual
-  )
 
   const isDone = useMemo(() => {
     if (!exerciseInstructions) return false
@@ -211,16 +220,11 @@ export function ExerciseCard({
       },
     },
     {
-      title: t('exercise.addNotes'),
-      icon: <EditNoteIcon />,
+      title: tChat('openChat'),
+      icon: <ChatBubbleOutlineIcon />,
       onClick: async () => {
         capacitorService.vibrate('Light')
-        setIsEditNotesOpen(true)
-        setEditNotes(
-          isExpected
-            ? exerciseInstructions?.notes?.expected
-            : exerciseInstructions?.notes?.actual
-        )
+        setIsChatOpen(true)
       },
     },
     !isExpected && {
@@ -388,7 +392,14 @@ export function ExerciseCard({
   function getSlideDialogComponent() {
     switch (slideDialogOptions.type) {
       case 'exercise-details':
-        return <ExerciseDetails exercise={exercise} />
+        return (
+          <ExerciseDetails
+            exercise={exercise}
+            workoutId={instructions.workoutId}
+            chatRole={chatRole}
+            workoutName={resolvedWorkoutName}
+          />
+        )
       case 'resting-timer':
         return (
           <RestingTimerEdit
@@ -482,6 +493,29 @@ export function ExerciseCard({
               }
             />
 
+            {instructions.workoutId && (
+              <ChatUnreadBadge
+                count={getExerciseCount(
+                  instructions.workoutId,
+                  exercise.exerciseId
+                )}
+                hasMessages={hasExerciseMessages(
+                  instructions.workoutId,
+                  exercise.exerciseId
+                )}
+              >
+                <CustomButton
+                  isIcon={true}
+                  icon={<ChatBubbleOutlineIcon />}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setIsChatOpen(true)
+                  }}
+                  tooltipTitle={tChat('openChat')}
+                />
+              </ChatUnreadBadge>
+            )}
+
             {onOpenChange && (
               <CustomButton
                 icon={isOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
@@ -538,28 +572,6 @@ export function ExerciseCard({
                       .map((muscleGroup) => capitalizeFirstLetter(muscleGroup))
                       .join(', ')}
                   </MarqueeText>
-                </Typography>
-              )}
-              {/* if expected is false and expected notes are empty, don't show expected notes */}
-              {!isExpected && !exerciseInstructions?.notes?.expected ? null : (
-                <Typography
-                  variant='body2'
-                  className='exercise-card-notes'
-                >
-                  {`Expected Notes: ${
-                    exerciseInstructions?.notes?.expected || ''
-                  }`}
-                </Typography>
-              )}
-              {/* if there are actual notes, show them */}
-              {!exerciseInstructions?.notes?.actual ? null : (
-                <Typography
-                  variant='body2'
-                  className='exercise-card-notes'
-                >
-                  {`${t('exercise.actualNotesLabel')} ${
-                    exerciseInstructions?.notes?.actual || ''
-                  }`}
                 </Typography>
               )}
               {showEquipment &&
@@ -660,41 +672,18 @@ export function ExerciseCard({
         component={getSlideDialogComponent()}
         type={getSlideDialogHeight()}
       />
-      <CustomAlertDialog
-        open={isEditNotesOpen}
-        onClose={() => setIsEditNotesOpen(false)}
-        title={capitalizeFirstLetter(exercise.name)}
-      >
-        <Typography variant='h6'>{t('exercise.addNotes')}</Typography>
-
-        <CustomInput
-          value={editNotes || ''}
-          onChange={setEditNotes}
-          placeholder={t('exercise.notesPlaceholder', {
-            name: capitalizeFirstLetter(exercise.name),
-          })}
-          isRemoveIcon={true}
-          className={`${prefs.favoriteColor}`}
+      {instructions.workoutId && (
+        <ExerciseChatDialog
+          open={isChatOpen}
+          onClose={() => setIsChatOpen(false)}
+          workoutId={instructions.workoutId}
+          exerciseId={exercise.exerciseId}
+          role={chatRole}
+          exerciseName={exercise.name}
+          workoutName={resolvedWorkoutName}
+          traineeName={traineeName}
         />
-        <DialogActions>
-          <CustomButton
-            text={t('common.cancel')}
-            fullWidth
-            onClick={() => setIsEditNotesOpen(false)}
-            className={`${prefs.favoriteColor}`}
-          />
-          <CustomButton
-            text={t('common.save')}
-            fullWidth
-            onClick={() => {
-              onEditExerciseNotes(exercise.exerciseId, editNotes || '')
-              setIsEditNotesOpen(false)
-              setEditNotes('')
-            }}
-            className={`${prefs.favoriteColor}`}
-          />
-        </DialogActions>
-      </CustomAlertDialog>
+      )}
     </>
   )
 }

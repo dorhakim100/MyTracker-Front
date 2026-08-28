@@ -21,6 +21,7 @@ export const SET_IS_NATIVE = 'SET_IS_NATIVE'
 export const SET_IS_DASHBOARD = 'SET_IS_DASHBOARD'
 export const SET_ACTIVE_ROUTE = 'SET_ACTIVE_ROUTE'
 export const SET_IS_LOCAL_NOTIFICATIONS_PERMITTED = 'SET_IS_LOCAL_NOTIFICATIONS_PERMITTED'
+export const SET_WORKOUTS_UNREAD_COUNT = 'SET_WORKOUTS_UNREAD_COUNT'
 export interface SystemState {
   isLoading: boolean
   prefs: Prefs
@@ -36,6 +37,7 @@ export interface SystemState {
   isDashboard: boolean
   activeRoute: string
   isLocalNotificationsPermitted: boolean
+  workoutsUnreadCount: number
 }
 
 const initialState: SystemState = {
@@ -53,6 +55,7 @@ const initialState: SystemState = {
   isDashboard: false,
   activeRoute: '/',
   isLocalNotificationsPermitted: false,
+  workoutsUnreadCount: 0,
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -92,6 +95,8 @@ export function systemReducer(state = initialState, action: any = {}) {
       return { ...state, activeRoute: action.activeRoute }
     case SET_IS_LOCAL_NOTIFICATIONS_PERMITTED:
       return { ...state, isLocalNotificationsPermitted: action.isLocalNotificationsPermitted }
+    case SET_WORKOUTS_UNREAD_COUNT:
+      return { ...state, workoutsUnreadCount: action.workoutsUnreadCount }
     default:
       return state
   }

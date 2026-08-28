@@ -11,17 +11,16 @@ import Paper from '@mui/material/Paper'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import { Set } from '../../types/exercise/Exercise'
-import { Badge, DialogActions, Typography } from '@mui/material'
+import { Badge, Typography } from '@mui/material'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import NoteAltIcon from '@mui/icons-material/NoteAlt'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
-import { CustomAlertDialog } from '../../CustomMui/CustomAlertDialog/CustomAlertDialog'
 import { useState } from 'react'
 import { showErrorMsg } from '../../services/event-bus.service'
-import { instructionsService } from '../../services/instructions/instructions.service'
-import { NotesDisplay } from '../NotesDisplay/NotesDisplay'
-import { ExpectedActual } from '../../types/expectedActual/ExpectedActual'
+import { ExerciseChatDialog } from '../ExerciseChatDialog/ExerciseChatDialog'
+import { MessageRole } from '../../types/message/Message'
+import { useChatRole } from '../../hooks/useChatRole'
 import Divider from '@mui/material/Divider'
 import { AnimatedWrapper } from '../AnimatedWrapper/AnimatedWrapper'
 import { capacitorService } from '../../services/capacitor.service'
@@ -34,14 +33,11 @@ import {
 function Row(props: {
   sets: (Set & { exerciseId: string })[]
   mainValue: ExerciseViewBy
-  setAlertDialogOptions: (options: {
-    open: boolean
-    notes: ExpectedActual<string>
-    date: string
-  }) => void
+  onOpenChat: (exerciseId: string) => void
+  canOpenChat: boolean
   divider?: boolean
 }) {
-  const { sets, mainValue, setAlertDialogOptions, divider = true } = props
+  const { sets, mainValue, onOpenChat, canOpenChat, divider = true } = props
   const { t } = useTranslation()
   const [open, setOpen] = React.useState(false)
   const prefs = useSelector(
@@ -49,20 +45,6 @@ function Row(props: {
   )
 
   const bestSet = pickBestSet(sets, getPickMetric(mainValue))
-
-  async function getNotes(sessionId: string, exerciseId: string) {
-    try {
-      const notes = await instructionsService.getNotesBySessionIdAndExerciseId(
-        sessionId,
-        exerciseId
-      )
-      const date = new Date(sets[0].createdAt || '').toLocaleDateString('he')
-
-      setAlertDialogOptions({ open: true, notes: notes, date: date })
-    } catch {
-      showErrorMsg(t('messages.error.getNotes'))
-    }
-  }
 
   return (
     <React.Fragment>
@@ -123,10 +105,11 @@ function Row(props: {
               icon={<NoteAltIcon />}
               onClick={(ev) => {
                 ev.stopPropagation()
-                const sessionId = sets[0].sessionId
-                if (!sessionId)
-                  return showErrorMsg(t('messages.error.getNotes'))
-                getNotes(sessionId, sets[0].exerciseId)
+                if (!canOpenChat) {
+                  showErrorMsg(t('messages.error.getNotes'))
+                  return
+                }
+                onOpenChat(sets[0].exerciseId)
               }}
               isIcon={true}
               tooltipTitle={t('exercise.viewNotes')}
@@ -242,26 +225,26 @@ function Row(props: {
 export default function SetsTable({
   groupedSets,
   mainValue = 'weight',
+  workoutId,
+  workoutName = '',
+  exerciseName = '',
+  chatRole,
 }: {
   groupedSets: Record<string, (Set & { exerciseId: string })[]>
   mainValue?: ExerciseViewBy
+  workoutId?: string
+  workoutName?: string
+  exerciseName?: string
+  chatRole?: MessageRole
 }) {
   const { t } = useTranslation()
+  const fallbackRole = useChatRole()
+  const role = chatRole ?? fallbackRole
   const entries = Object.entries(groupedSets)
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
-  const [alertDialogOptions, setAlertDialogOptions] = useState<{
-    open: boolean
-    notes: ExpectedActual<string>
-    date: string
-  }>({
-    open: false,
-    notes: instructionsService.getEmptyExpectedActual(
-      'notes'
-    ) as ExpectedActual<string>,
-    date: '',
-  })
+  const [chatExerciseId, setChatExerciseId] = useState<string | null>(null)
 
   if (groupedSets)
     return (
@@ -295,7 +278,8 @@ export default function SetsTable({
                     <Row
                       sets={sets}
                       mainValue={mainValue}
-                      setAlertDialogOptions={setAlertDialogOptions}
+                      onOpenChat={setChatExerciseId}
+                      canOpenChat={Boolean(workoutId)}
                       divider={index !== entries.length - 1}
                     />
                   </React.Fragment>
@@ -312,35 +296,17 @@ export default function SetsTable({
             </TableBody>
           </Table>
         </TableContainer>
-        <CustomAlertDialog
-          open={alertDialogOptions.open}
-          onClose={() =>
-            setAlertDialogOptions({
-              open: false,
-              notes: { expected: '', actual: '' },
-              date: '',
-            })
-          }
-          title={t('exercise.notes')}
-        >
-          <NotesDisplay
-            notes={alertDialogOptions.notes}
-            date={alertDialogOptions.date}
+        {workoutId && (
+          <ExerciseChatDialog
+            open={Boolean(chatExerciseId)}
+            onClose={() => setChatExerciseId(null)}
+            workoutId={workoutId}
+            exerciseId={chatExerciseId || ''}
+            role={role}
+            exerciseName={exerciseName}
+            workoutName={workoutName}
           />
-
-          <DialogActions>
-            <CustomButton
-              text={t('common.close')}
-              onClick={() =>
-                setAlertDialogOptions({
-                  open: false,
-                  notes: { expected: '', actual: '' },
-                  date: '',
-                })
-              }
-            />
-          </DialogActions>
-        </CustomAlertDialog>
+        )}
       </>
     )
 }

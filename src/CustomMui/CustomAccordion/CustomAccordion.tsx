@@ -20,6 +20,7 @@ export interface CustomAccordionProps {
   disableGutters?: boolean
   square?: boolean
   icon?: React.ReactNode
+  badge?: React.ReactNode
 }
 
 export function CustomAccordion({
@@ -32,6 +33,7 @@ export function CustomAccordion({
   disableGutters,
   square,
   icon,
+  badge,
 }: CustomAccordionProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -92,6 +94,7 @@ export function CustomAccordion({
           ) : (
             title
           )}
+          {badge ? <span className="accordion-badge">{badge}</span> : null}
         </AccordionSummary>
         <AccordionDetails>
           <div className="accordion-content">{cmp}</div>

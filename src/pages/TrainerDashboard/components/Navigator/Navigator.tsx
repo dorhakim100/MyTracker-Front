@@ -14,6 +14,7 @@ import { trainerRoutes } from '../../../../assets/routes/trainer.routes'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../../store/store'
 import { Typography } from '@mui/material'
+import { ChatUnreadBadge } from '../../../../CustomMui/ChatUnreadBadge/ChatUnreadBadge'
 
 const item = {
   py: '2px',
@@ -38,6 +39,9 @@ export default function Navigator(props: DrawerProps) {
   const location = useLocation()
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
+  )
+  const workoutsUnreadCount = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.workoutsUnreadCount
   )
   const handleNavigation = (path: string) => {
     navigate(path)
@@ -96,6 +100,14 @@ export default function Navigator(props: DrawerProps) {
           {trainerRoutes.map((route) => {
             const isActive = location.pathname === route.path
             const Icon = route.icon
+            const icon =
+              route.path === '/trainer/workouts' ? (
+                <ChatUnreadBadge count={workoutsUnreadCount}>
+                  <Icon />
+                </ChatUnreadBadge>
+              ) : (
+                <Icon />
+              )
 
             return (
               <ListItem
@@ -110,9 +122,7 @@ export default function Navigator(props: DrawerProps) {
                   }}
                   onClick={() => handleNavigation(route.path)}
                 >
-                  <ListItemIcon>
-                    <Icon />
-                  </ListItemIcon>
+                  <ListItemIcon>{icon}</ListItemIcon>
                   <ListItemText>{t(route.titleKey)}</ListItemText>
                 </ListItemButton>
               </ListItem>

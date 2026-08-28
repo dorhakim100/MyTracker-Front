@@ -4,10 +4,10 @@ import { useSelector } from 'react-redux'
 import { getExerciseSummary } from '../../services/exersice-search/exersice-search'
 import { setService } from '../../services/set/set.service'
 import { Exercise } from '../../types/exercise/Exercise'
+import { MessageRole } from '../../types/message/Message'
 
 import { Badge, Divider, Typography } from '@mui/material'
 import { RootState } from '../../store/store'
-import { translateService } from '../../services/translate/translate.service'
 import { ExpectedActual } from '../../types/expectedActual/ExpectedActual'
 import { exerciseImage as exerciseImageObject } from '../../assets/config/exercise-image'
 import { CustomAccordion } from '../../CustomMui/CustomAccordion/CustomAccordion'
@@ -29,6 +29,7 @@ import { colors } from '../../assets/config/colors'
 import { CustomSelect } from '../../CustomMui/CustomSelect/CustomSelect'
 import { SetFilter } from '../../types/setFilter/SetFilter'
 import { useSets } from '../../hooks/useSets'
+import { useChatRole } from '../../hooks/useChatRole'
 import { BottomReachIndicator } from '../BottomReachIndicator/BottomReachIndicator'
 import { showErrorMsg } from '../../services/event-bus.service'
 import {
@@ -53,10 +54,20 @@ export interface ExerciseWithDetails extends Exercise {
 }
 interface ExerciseDetailsProps {
   exercise: ExerciseWithDetails | null
+  workoutId?: string
+  workoutName?: string
+  chatRole?: MessageRole
 }
 
-export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
+export function ExerciseDetails({
+  exercise,
+  workoutId,
+  workoutName = '',
+  chatRole,
+}: ExerciseDetailsProps) {
   const { t } = useTranslation()
+  const watchedRole = useChatRole()
+  const role = chatRole ?? watchedRole
 
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -215,12 +226,6 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
     getWorkoutInstructions()
   }, [exercise, t])
 
-  const getNotesClass = (notes: string) => {
-    return translateService.isLtrString(notes)
-      ? 'english-notes'
-      : 'hebrew-notes'
-  }
-
   function groupSetsByDate(sets: Set[]) {
     return sets
       .sort(
@@ -263,24 +268,6 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
         onError={() => setExerciseImage(exerciseImageObject.ERROR_IMAGE)}
       />
       <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
-      {/* <div className="exercise-details"> */}
-      {exercise?.notes?.expected && (
-        <>
-          <Typography
-            variant='h5'
-            className='bold-header'
-          >
-            {t('exercise.notes')}
-          </Typography>
-          <div
-            className={`notes-container ${getNotesClass(
-              exercise?.notes?.expected || ''
-            )}`}
-          >
-            {exercise?.notes?.expected}
-          </div>
-        </>
-      )}
 
       <CustomAccordion
         title={t('exercise.instructions')}
@@ -398,6 +385,10 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
           >
         }
         mainValue={viewBy}
+        workoutId={workoutId}
+        workoutName={workoutName}
+        exerciseName={exercise?.name || ''}
+        chatRole={role}
       />
       <BottomReachIndicator
         hasMore={Boolean(setsQuery.hasNextPage)}

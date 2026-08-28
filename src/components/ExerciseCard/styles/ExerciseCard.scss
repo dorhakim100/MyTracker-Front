@@ -70,6 +70,7 @@
     grid-template-columns: auto 1fr 20px;
     gap: 1rem;
     align-items: start;
+    // min-height: 100px;
     .more-options-container {
       grid-column: 3/4;
       justify-self: end;
@@ -88,6 +89,13 @@
     inset-inline-end: 0.5rem;
 
     z-index: 2;
+    padding-inline-end: 0.2rem;
+
+    span,
+    div {
+      height: 30px;
+      width: 30px;
+    }
   }
 
   .exercise-card-image {

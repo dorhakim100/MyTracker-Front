@@ -20,6 +20,7 @@ import {
   SET_IS_DASHBOARD,
   SET_ACTIVE_ROUTE,
   SET_IS_LOCAL_NOTIFICATIONS_PERMITTED,
+  SET_WORKOUTS_UNREAD_COUNT,
 } from '../reducers/system.reducer'
 
 export function setIsLoading(stateToSet: boolean) {
@@ -86,4 +87,11 @@ export function setActiveRoute(activeRouteToSet: string) {
 }
 export function setIsLocalNotificationsPermitted(isLocalNotificationsPermittedToSet: boolean) {
   store.dispatch({ type: SET_IS_LOCAL_NOTIFICATIONS_PERMITTED, isLocalNotificationsPermitted: isLocalNotificationsPermittedToSet })
+}
+
+export function setWorkoutsUnreadCount(workoutsUnreadCount: number) {
+  if (store.getState().systemModule.workoutsUnreadCount === workoutsUnreadCount) {
+    return
+  }
+  store.dispatch({ type: SET_WORKOUTS_UNREAD_COUNT, workoutsUnreadCount })
 }

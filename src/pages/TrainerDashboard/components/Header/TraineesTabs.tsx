@@ -21,6 +21,8 @@ import {
   TRAINEE_ORDER_STORE_NAME,
   LAST_TRAINEE_STORE_NAME,
 } from '../../../../constants/store.constants'
+import { ChatUnreadBadge } from '../../../../CustomMui/ChatUnreadBadge/ChatUnreadBadge'
+import { useUnreadSummary } from '../../../../hooks/useUnreadSummary'
 
 interface TraineesTabsProps {
   trainees: User[]
@@ -34,6 +36,7 @@ export function TraineesTabs({ trainees }: TraineesTabsProps) {
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
 
   const [reorderedTrainees, setReorderedTrainees] = useState<User[]>(trainees)
+  const { getTraineeCount } = useUnreadSummary('trainer')
 
   useEffect(() => {
     setReorderedTrainees(trainees)
@@ -127,8 +130,12 @@ export function TraineesTabs({ trainees }: TraineesTabsProps) {
                         }}
                         className={`trainee-tab ${snapshot.isDragging ? 'dragging' : ''} ${prefs.isDarkMode ? 'dark-mode' : ''}`}
                       >
-                        {trainee.details.fullname}{' '}
-                        {trainee._id === user?._id ? ' (Me)' : ''}
+                        <ChatUnreadBadge count={getTraineeCount(trainee._id)}>
+                          <span>
+                            {trainee.details.fullname}{' '}
+                            {trainee._id === user?._id ? ' (Me)' : ''}
+                          </span>
+                        </ChatUnreadBadge>
                       </div>
                     )}
                   </Draggable>

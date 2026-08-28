@@ -116,4 +116,13 @@
       }
     }
   }
+
+  .MuiListItemIcon-root {
+    overflow: visible;
+
+    .chat-unread-badge .MuiBadge-badge:not(.MuiBadge-invisible) {
+      top: 2px;
+      right: -2px;
+    }
+  }
 }

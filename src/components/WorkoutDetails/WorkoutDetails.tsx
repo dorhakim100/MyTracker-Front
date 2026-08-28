@@ -15,6 +15,13 @@ import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { ExerciseDetails } from '../ExerciseDetails/ExerciseDetails'
 import { getWorkoutMuscles } from '../../services/exersice-search/exersice-search'
 import { MarqueeText } from '../MarqueeText/MarqueeText'
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline'
+import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
+import { ChatUnreadBadge } from '../../CustomMui/ChatUnreadBadge/ChatUnreadBadge'
+import { ExerciseChatDialog } from '../ExerciseChatDialog/ExerciseChatDialog'
+import { exerciseChatNs } from '../ExerciseChatDialog/locals'
+import { useUnreadSummary } from '../../hooks/useUnreadSummary'
+import { useChatRole } from '../../hooks/useChatRole'
 interface WorkoutDetailsProps {
   workout: Workout | null
 }
@@ -26,6 +33,7 @@ interface ExerciseDialogOptions {
 
 export function WorkoutDetails({ workout }: WorkoutDetailsProps) {
   const { t } = useTranslation()
+  const { t: tChat } = useTranslation(exerciseChatNs)
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
@@ -33,12 +41,22 @@ export function WorkoutDetails({ workout }: WorkoutDetailsProps) {
   const isDashboard = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.isDashboard
   )
+  const { user, traineeUser } = useSelector(
+    (stateSelector: RootState) => stateSelector.userModule
+  )
+  const chatRole = useChatRole()
+  const { getExerciseCount, hasExerciseMessages } = useUnreadSummary(chatRole)
+  const traineeName =
+    chatRole === 'trainer' && traineeUser && traineeUser._id !== user?._id
+      ? traineeUser.details.fullname
+      : undefined
 
   const [exersiceDialogOptions, setExersiceDialogOptions] =
     useState<ExerciseDialogOptions>({
       open: false,
       exercise: null,
     })
+  const [chatExercise, setChatExercise] = useState<Exercise | null>(null)
 
   const onOpenExerciseDetails = (exercise: Exercise) => {
     setExersiceDialogOptions({ open: true, exercise })
@@ -95,6 +113,27 @@ export function WorkoutDetails({ workout }: WorkoutDetailsProps) {
           )}
           getKey={(exercise) => exercise.exerciseId}
           onItemClick={(exercise) => onOpenExerciseDetails(exercise)}
+          renderRight={(exercise) =>
+            workout._id ? (
+              <ChatUnreadBadge
+                count={getExerciseCount(workout._id, exercise.exerciseId)}
+                hasMessages={hasExerciseMessages(
+                  workout._id,
+                  exercise.exerciseId
+                )}
+              >
+                <CustomButton
+                  isIcon={true}
+                  icon={<ChatBubbleOutlineIcon />}
+                  tooltipTitle={tChat('openChat')}
+                />
+              </ChatUnreadBadge>
+            ) : null
+          }
+          onRightClick={(exercise) => {
+            if (!workout._id) return
+            setChatExercise(exercise)
+          }}
         />
       </div>
       <SlideDialog
@@ -103,13 +142,30 @@ export function WorkoutDetails({ workout }: WorkoutDetailsProps) {
           setExersiceDialogOptions({ open: false, exercise: null })
         }
         component={
-          <ExerciseDetails exercise={exersiceDialogOptions.exercise} />
+          <ExerciseDetails
+            exercise={exersiceDialogOptions.exercise}
+            workoutId={workout._id}
+            workoutName={workout.name}
+            chatRole={chatRole}
+          />
         }
         title={capitalizeFirstLetter(
           exersiceDialogOptions.exercise?.name || ''
         )}
         type='full'
       />
+      {workout._id && (
+        <ExerciseChatDialog
+          open={Boolean(chatExercise)}
+          onClose={() => setChatExercise(null)}
+          workoutId={workout._id}
+          exerciseId={chatExercise?.exerciseId || ''}
+          role={chatRole}
+          exerciseName={chatExercise?.name || ''}
+          workoutName={workout.name}
+          traineeName={traineeName}
+        />
+      )}
     </>
   )
 }

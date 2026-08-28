@@ -5,7 +5,7 @@ import { RootState } from '../../../store/store'
 import debounce from 'lodash/debounce'
 import { Workout } from '../../../types/workout/Workout'
 import { workoutService } from '../../../services/workout/workout.service'
-import { Exercise, ExerciseDetail } from '../../../types/exercise/Exercise'
+import { Exercise } from '../../../types/exercise/Exercise'
 import {
   showErrorMsg,
   showSuccessMsg,
@@ -251,54 +251,6 @@ export function EditWorkout({
     }))
   }
 
-  const onEditExerciseNotes = (exerciseId: string, notes: string) => {
-    const exerciseToUpdate = workout.exercises.find(
-      (e) => e.exerciseId === exerciseId
-    )
-    if (!exerciseToUpdate) return
-
-    // Update workout exercise notes
-    const updatedExercises = [...workout.exercises]
-    const exerciseIndex = updatedExercises.findIndex(
-      (e) => e.exerciseId === exerciseId
-    )
-    if (exerciseIndex === -1) return
-
-    updatedExercises[exerciseIndex] = {
-      ...updatedExercises[exerciseIndex],
-      details: {
-        ...updatedExercises[exerciseIndex].details,
-        notes: {
-          expected: notes,
-          actual: '',
-        },
-      } as ExerciseDetail,
-    }
-    setWorkout({ ...workout, exercises: updatedExercises })
-
-    // Update instructions
-    setInstructions((prev) => {
-      const instructionIndex = prev.exercises.findIndex(
-        (e) => e.exerciseId === exerciseId
-      )
-      if (instructionIndex === -1) return prev
-
-      const updatedExercises = [...prev.exercises]
-      updatedExercises[instructionIndex] = {
-        ...updatedExercises[instructionIndex],
-        notes: {
-          expected: notes,
-          actual: prev.exercises[instructionIndex].notes.actual,
-        },
-      }
-
-      return {
-        ...prev,
-        exercises: updatedExercises,
-      }
-    })
-  }
-
   const onChangeExercise = (oldExercise: Exercise, newExercise: Exercise) => {
     const updatedExercises = workout.exercises.map((exercise) =>
       exercise.exerciseId === oldExercise.exerciseId
@@ -453,7 +405,6 @@ export function EditWorkout({
         instructionsFilter={instructionsFilter}
         onInstructionsFilterChange={setInstructionsFilter}
         setInstructions={setInstructions}
-        onEditExerciseNotes={onEditExerciseNotes}
         onSwitchRpeRir={onSwitchRpeRir}
         onChangeExercise={onChangeExercise}
         onSaveWorkout={(isClose?: boolean) => onFinish(isClose)}

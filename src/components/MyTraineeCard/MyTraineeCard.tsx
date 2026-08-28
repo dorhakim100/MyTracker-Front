@@ -26,6 +26,8 @@ import {
   removeTraineeUser,
   setTraineeUser,
 } from '../../store/actions/user.actions'
+import { ChatUnreadBadge } from '../../CustomMui/ChatUnreadBadge/ChatUnreadBadge'
+import { useUnreadSummary } from '../../hooks/useUnreadSummary'
 
 interface MyTraineeCardProps {
   displayTrainees?: boolean
@@ -45,6 +47,7 @@ export function MyTraineeCard({ displayTrainees = true }: MyTraineeCardProps) {
   const [trainees, setTrainees] = useState<User[]>(user?.trainees ?? [])
   
   const [requests, setRequests] = useState<TrainerRequest[]>([])
+  const { getTraineeCount } = useUnreadSummary('trainer')
   
   const [search, setSearch] = useState<string>('')
   
@@ -204,16 +207,18 @@ export function MyTraineeCard({ displayTrainees = true }: MyTraineeCardProps) {
             className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
           />
 
-          <CustomList
-            items={trainees ?? []}
-            renderPrimaryText={(trainee) => trainee.details.fullname}
-            renderSecondaryText={(trainee) => trainee.email}
-            renderLeft={(trainee) => (
-              <img
-                src={trainee.details.imgUrl}
-                alt={trainee.details.fullname}
-              />
-            )}
+      <CustomList
+        items={trainees ?? []}
+        renderPrimaryText={(trainee) => trainee.details.fullname}
+        renderSecondaryText={(trainee) => trainee.email}
+        renderLeft={(trainee) => (
+          <ChatUnreadBadge count={getTraineeCount(trainee._id)}>
+            <img
+              src={trainee.details.imgUrl}
+              alt={trainee.details.fullname}
+            />
+          </ChatUnreadBadge>
+        )}
             renderRight={(trainee) => renderRequestStatus(trainee)}
             getKey={(trainee) => `${trainee._id}-assigned-trainee-card`}
             noResultsMessage={t('trainer.noAssignedTrainees')}

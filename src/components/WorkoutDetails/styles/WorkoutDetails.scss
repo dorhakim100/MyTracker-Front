@@ -35,6 +35,14 @@
       gap: 1rem;
       
       grid-template-columns: 50px 1fr auto;
+      overflow: visible;
+
+      .right-content {
+        display: flex;
+        align-items: center;
+        overflow: visible;
+        position: relative;
+      }
       
       img {
         width: 50px;

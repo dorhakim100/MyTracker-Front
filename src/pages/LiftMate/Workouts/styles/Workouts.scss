@@ -73,6 +73,11 @@
     padding: 1rem 0;
     background-color: var(--canvas-color);
 
+    .MuiAccordionSummary-content {
+      align-items: center;
+      gap: 0.5rem;
+    }
+
     &.dark-mode {
       background-color: $dark-gray;
 

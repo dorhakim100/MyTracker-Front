@@ -5,7 +5,6 @@ import {
   capitalizeFirstLetter,
   getArrayOfNumbers,
 } from '../../../services/util.service'
-import { CustomInput } from '../../../CustomMui/CustomInput/CustomInput'
 import { Divider } from '@mui/material'
 import { SlideDialog } from '../../../components/SlideDialog/SlideDialog'
 import { CustomToggle } from '../../../CustomMui/CustomToggle/CustomToggle'
@@ -22,6 +21,13 @@ import { ExerciseDetails } from '../../../components/ExerciseDetails/ExerciseDet
 import { CustomSelect } from '../../../CustomMui/CustomSelect/CustomSelect'
 import { ExerciseEditor } from '../../../components/ExerciseEditor/ExerciseEditor'
 import { ExerciseInstructions } from '../../../types/exercise/ExerciseInstructions'
+import { ExerciseChatDialog } from '../../../components/ExerciseChatDialog/ExerciseChatDialog'
+import { ChatUnreadBadge } from '../../../CustomMui/ChatUnreadBadge/ChatUnreadBadge'
+import { useUnreadSummary } from '../../../hooks/useUnreadSummary'
+import { useChatRole } from '../../../hooks/useChatRole'
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline'
+import { exerciseChatNs } from '../../../components/ExerciseChatDialog/locals'
+import { useTranslation } from 'react-i18next'
 
 interface DetailsStageProps {
   workout: Workout
@@ -38,8 +44,6 @@ interface DetailsStageProps {
     forUserId: string
     workoutId: string
   }) => void
-  onEditExerciseNotes: (exerciseId: string, notes: string) => void
-  // onChangeRpeRir: (exerciseId: string, value: 'rpe' | 'rir') => void
   setInstructions: (instructions: Instructions) => void
 }
 
@@ -60,13 +64,18 @@ export function DetailsStage({
   weeksStatus,
   instructionsFilter,
   onInstructionsFilterChange,
-  onEditExerciseNotes,
-  // onChangeRpeRir,
   setInstructions,
 }: DetailsStageProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
+  const { t: tChat } = useTranslation(exerciseChatNs)
+  const chatRole = useChatRole(true)
+  const { getExerciseCount, hasExerciseMessages } = useUnreadSummary(chatRole)
+  const [chatExercise, setChatExercise] = useState<{
+    exerciseId: string
+    name: string
+  } | null>(null)
 
   const [pickerModal, setPickerModal] = useState({
     isOpen: false,
@@ -263,17 +272,27 @@ export function DetailsStage({
                 updateExercise={updateExercise}
               />
 
-              <CustomInput
-                value={exercise?.notes?.expected || ''}
-                onChange={(notes: string) =>
-                  onEditExerciseNotes(exercise.exerciseId, notes)
-                }
-                placeholder={`${capitalizeFirstLetter(
-                  exerciseDetails.name || ''
-                )} notes`}
-                isRemoveIcon={true}
-                className={`${prefs.favoriteColor}`}
-              />
+              {workout._id && (
+                <ChatUnreadBadge
+                  count={getExerciseCount(workout._id, exercise.exerciseId)}
+                  hasMessages={hasExerciseMessages(
+                    workout._id,
+                    exercise.exerciseId
+                  )}
+                >
+                  <CustomButton
+                    isIcon={true}
+                    icon={<ChatBubbleOutlineIcon />}
+                    onClick={() =>
+                      setChatExercise({
+                        exerciseId: exercise.exerciseId,
+                        name: exerciseDetails.name,
+                      })
+                    }
+                    tooltipTitle={tChat('openChat')}
+                  />
+                </ChatUnreadBadge>
+              )}
               <Divider
                 className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
               />
@@ -284,10 +303,28 @@ export function DetailsStage({
       <SlideDialog
         open={getIsDialogOpen()}
         onClose={closeSlideDialog}
-        component={<ExerciseDetails exercise={exerciseInfoDialog.exercise} />}
+        component={
+          <ExerciseDetails
+            exercise={exerciseInfoDialog.exercise}
+            workoutId={workout._id}
+            workoutName={workout.name}
+            chatRole={chatRole}
+          />
+        }
         title={getDialogTitle()}
         type={getDialogHeight()}
       />
+      {workout._id && chatExercise && (
+        <ExerciseChatDialog
+          open={Boolean(chatExercise)}
+          onClose={() => setChatExercise(null)}
+          workoutId={workout._id}
+          exerciseId={chatExercise.exerciseId}
+          role={chatRole}
+          exerciseName={chatExercise.name}
+          workoutName={workout.name}
+        />
+      )}
     </>
   )
 }

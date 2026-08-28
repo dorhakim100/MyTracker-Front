@@ -19,6 +19,10 @@
   background-color: transparent;
   cursor: pointer;
 
+  .chat-unread-badge {
+    max-width: 100%;
+  }
+
   &.dark-mode {
     opacity: 0.6;
   }

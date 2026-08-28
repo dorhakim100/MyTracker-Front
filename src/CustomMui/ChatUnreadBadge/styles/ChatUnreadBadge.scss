@@ -1,0 +1,108 @@
+.chat-unread-badge {
+  position: relative;
+
+  .MuiBadge-badge {
+    min-width: 1rem !important;
+    width: 1rem !important;
+    height: 1rem !important;
+    padding: 0 !important;
+    font-size: 0.55rem !important;
+    font-weight: 700;
+    line-height: 1rem;
+    letter-spacing: 0;
+    border-radius: 50% !important;
+    pointer-events: none;
+    color: $white;
+  }
+
+  .exercise-card-actions & .MuiBadge-badge:not(.MuiBadge-invisible) {
+    top: -0.15rem;
+    right: -0.15rem;
+    transform: none !important;
+  }
+
+  &.seen {
+    .MuiBadge-badge {
+      width: 0.55rem !important;
+      min-width: 0.55rem !important;
+      height: 0.55rem !important;
+      background-color: transparent;
+      border: 2px solid $primary-color;
+      opacity: 0.7;
+    }
+
+    &.blue .MuiBadge-badge {
+      border-color: $picker-color-blue;
+    }
+    &.red .MuiBadge-badge {
+      border-color: $picker-color-red;
+    }
+    &.yellow .MuiBadge-badge {
+      border-color: $picker-color-yellow;
+    }
+    &.green .MuiBadge-badge {
+      border-color: $picker-color-green;
+    }
+    &.orange .MuiBadge-badge {
+      border-color: $picker-color-orange;
+    }
+    &.deepPurple .MuiBadge-badge {
+      border-color: $picker-color-deep-purple;
+    }
+    &.purple .MuiBadge-badge {
+      border-color: $picker-color-purple;
+    }
+    &.pink .MuiBadge-badge {
+      border-color: $picker-color-pink;
+    }
+  }
+
+  .chat-unread-badge-anchor {
+    display: inline-block;
+    width: 0.5rem;
+    height: 0.5rem;
+  }
+
+  &.inline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: static;
+    width: 1.5rem;
+    height: 1.5rem;
+    min-width: 1.5rem;
+    border-radius: 50%;
+    font-size: 0.7rem;
+    font-weight: 700;
+    line-height: 1;
+    color: $white;
+    background-color: $primary-color;
+
+    &.blue {
+      background-color: $picker-color-blue;
+    }
+    &.red {
+      background-color: $picker-color-red;
+    }
+    &.yellow {
+      background-color: $picker-color-yellow;
+      color: $dark-gray;
+    }
+    &.green {
+      background-color: $picker-color-green;
+      color: $dark-gray;
+    }
+    &.orange {
+      background-color: $picker-color-orange;
+    }
+    &.deepPurple {
+      background-color: $picker-color-deep-purple;
+    }
+    &.purple {
+      background-color: $picker-color-purple;
+    }
+    &.pink {
+      background-color: $picker-color-pink;
+    }
+  }
+}

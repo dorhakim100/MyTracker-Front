@@ -52,6 +52,8 @@ import {
 } from '../../../store/actions/system.actions'
 import CustomSkeleton from '../../../CustomMui/CustomSkeleton/CustomSkeleton'
 import { MyTraineeCard } from '../../../components/MyTraineeCard/MyTraineeCard'
+import { ChatUnreadBadge } from '../../../CustomMui/ChatUnreadBadge/ChatUnreadBadge'
+import { useUnreadSummary } from '../../../hooks/useUnreadSummary'
 import { CustomAccordion } from '../../../CustomMui/CustomAccordion/CustomAccordion'
 import { CustomIcon } from '../../../CustomMui/CustomIcon/CustomIcon'
 import workoutAnimation from '../../../../public/gain-weight.json'
@@ -134,6 +136,7 @@ export function Workouts() {
   })
 
   const [requests, setRequests] = useState<TrainerRequest[]>([])
+  const { total: traineesUnreadTotal } = useUnreadSummary('trainer')
 
   const [areWorkoutsLoading, setAreWorkoutsLoading] = useState(false)
   const isToday = useMemo(() => {
@@ -718,7 +721,17 @@ export function Workouts() {
           )}
           {user?.isTrainer && !isDashboard && (
             <CustomAccordion
-              title={t('workout.myTrainees')}
+              title={
+                <Typography className='bold-header'>
+                  {t('workout.myTrainees')}
+                </Typography>
+              }
+              badge={
+                <ChatUnreadBadge
+                  count={traineesUnreadTotal}
+                  variant='inline'
+                />
+              }
               cmp={<MyTraineeCard />}
               icon={
                 <CustomIcon

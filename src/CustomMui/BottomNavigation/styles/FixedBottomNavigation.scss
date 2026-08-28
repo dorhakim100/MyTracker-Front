@@ -108,6 +108,16 @@
 
   .MuiBottomNavigationAction-root {
     gap: 3px;
+    overflow: visible;
+
+    .chat-unread-badge {
+      overflow: visible;
+
+      .MuiBadge-badge:not(.MuiBadge-invisible) {
+        top: 2px;
+        right: -2px;
+      }
+    }
   }
 
   button {

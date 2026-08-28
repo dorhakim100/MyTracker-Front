@@ -1,0 +1,16 @@
+{
+  "title": "Chat",
+  "empty": "Write a note about this exercise",
+  "emptyHint": "You and your trainer share this thread.",
+  "placeholder": "Message",
+  "edit": "Edit",
+  "delete": "Delete",
+  "edited": "Edited",
+  "save": "Save",
+  "cancel": "Cancel",
+  "deleteConfirm": "Delete this message?",
+  "editTitle": "Edit message",
+  "openChat": "Chat",
+  "trainer": "Trainer",
+  "trainee": "Trainee"
+}

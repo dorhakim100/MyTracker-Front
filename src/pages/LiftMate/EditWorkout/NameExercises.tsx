@@ -59,7 +59,6 @@ interface NameExercisesProps {
     workoutId: string
   }) => void
   setInstructions: (instructions: Instructions) => void
-  onEditExerciseNotes: (exerciseId: string, notes: string) => void
   onSaveWorkout: (isClose?: boolean) => void
   onSwitchRpeRir: (exerciseId: string, value: 'rpe' | 'rir') => void
   onChangeExercise: (oldExercise: Exercise, newExercise: Exercise) => void
@@ -80,7 +79,6 @@ export function NameExercises({
   instructionsFilter,
   onInstructionsFilterChange,
   setInstructions,
-  onEditExerciseNotes,
   onSaveWorkout,
   onSwitchRpeRir,
   onChangeExercise,
@@ -218,7 +216,7 @@ export function NameExercises({
           key={exercise.exerciseId}
           exercise={exercise}
           onDelete={onDeleteExercise}
-          onEditExerciseNotes={onEditExerciseNotes}
+          workoutName={workout.name}
           setInstructions={setInstructions}
           onSwitchRpeRir={onSwitchRpeRir}
           setIsReorderExercisesOpen={(isOpen: boolean) => {
