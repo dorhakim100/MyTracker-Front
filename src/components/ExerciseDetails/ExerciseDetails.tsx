@@ -14,13 +14,12 @@ import { CustomAccordion } from '../../CustomMui/CustomAccordion/CustomAccordion
 import AutoStoriesIcon from '@mui/icons-material/AutoStories'
 import { Set } from '../../types/exercise/Exercise'
 import {
-  capitalizeFirstLetter,
   getDateFromLineChartRangeKey,
   getDateFromISO,
   prepareSeries,
 } from '../../services/util.service'
 import SetsTable from '../SetsTable/SetsTable'
-import LineChart from '../LineChart/LineChart'
+import LineChart, { LineChartProps } from '../LineChart/LineChart'
 import {
   LineChartControls,
   LineChartRangeKey,
@@ -31,6 +30,19 @@ import { SetFilter } from '../../types/setFilter/SetFilter'
 import { useSets } from '../../hooks/useSets'
 import { BottomReachIndicator } from '../BottomReachIndicator/BottomReachIndicator'
 import { showErrorMsg } from '../../services/event-bus.service'
+import {
+  ExerciseViewBy,
+  getPickMetric,
+  getSessionVolume,
+  pickBestSet,
+} from '../../services/set/set.helpers'
+
+const VIEW_BY_VALUES: ExerciseViewBy[] = ['weight', 'reps', 'volume']
+
+function formatReadoutNumber(value: number) {
+  return Number.isInteger(value) ? String(value) : value.toFixed(1)
+}
+
 export interface ExerciseWithDetails extends Exercise {
   notes?: ExpectedActual<string>
   rpe?: ExpectedActual<number>
@@ -70,7 +82,7 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
 
   const [groupedSets, setGroupedSets] = useState<Record<string, Set[]>>({})
   const [range, setRange] = useState<LineChartRangeKey>('1M')
-  const [viewBy, setViewBy] = useState<string>('Weight')
+  const [viewBy, setViewBy] = useState<ExerciseViewBy>('weight')
   const [setsGraphFilter, setSetsGraphFilter] = useState<SetFilter>({
     exerciseId: exercise?.exerciseId,
     userId: traineeUser?._id || user?._id,
@@ -88,29 +100,40 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
     () => groupSetsByDate([...setsQuery.items]),
     [setsQuery.items]
   )
-  const stringifiedGroupedSets = useMemo(
-    () => JSON.stringify(groupedSets),
-    [groupedSets]
-  )
   const setsData = useMemo(() => {
+    const pickMetric = getPickMetric(viewBy)
+    const secondaryMetric = pickMetric === 'weight' ? 'reps' : 'weight'
+
     return Object.values(groupedSets)
       .reverse()
-      .map((date) =>
-        date.find((set) => {
-          return set.weight.actual ===
-            Math.max(...date.map((set) => set.weight.actual))
-            ? { weight: set.weight.actual, createdAt: set.createdAt }
-            : null
-        })
+      .map((daySets) => {
+        const createdAt = daySets[0]?.createdAt as unknown as string
+        if (viewBy === 'volume') {
+          return {
+            createdAt,
+            value: getSessionVolume(daySets),
+          }
+        }
+
+        const best = pickBestSet(daySets, pickMetric)
+        return {
+          createdAt,
+          value: best?.[pickMetric].actual,
+          secondary: best?.[secondaryMetric].actual,
+        }
+      })
+      .filter(
+        (
+          item
+        ): item is { createdAt: string; value: number; secondary?: number } =>
+          Boolean(item.createdAt) && item.value != null
       )
-  }, [stringifiedGroupedSets])
+  }, [groupedSets, viewBy])
 
-  const data = useMemo(() => {
-    const key = viewBy === 'Weight' ? 'weight' : 'reps'
-
+  const chart = useMemo(() => {
     const dateToSend = setsData.map((set) => ({
-      createdAt: set?.createdAt as unknown as string,
-      value: set?.[key]?.actual as number,
+      createdAt: set.createdAt,
+      value: set.value,
     }))
     const series = prepareSeries(
       range,
@@ -119,15 +142,12 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
       range
     )
 
-    const labelsToShow = series?.labels
-    const firstData = series?.data ?? []
-
-    const dataToSend = {
-      labels: labelsToShow,
+    const data: LineChartProps['data'] = {
+      labels: series?.labels ?? [],
       datasets: [
         {
-          label: [viewBy],
-          data: firstData,
+          label: t(`exercise.${viewBy}`),
+          data: series?.data ?? [],
           borderColor:
             colors[prefs.favoriteColor as keyof typeof colors] ||
             colors.primary,
@@ -136,31 +156,23 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
       ],
     }
 
-    const secondKey = viewBy === 'Weight' ? 'reps' : 'weight'
-
-    const secondDateToSend = setsData.map((set) => ({
-      createdAt: set?.createdAt as unknown as string,
-      value: set?.[secondKey]?.actual as number,
-    }))
-
-    const secondSeries = prepareSeries(
-      range,
-      secondDateToSend as (Set & { createdAt: string; value: number })[],
-      false,
-      range
-    )
-
-    if (secondSeries?.data?.length) {
-      dataToSend.datasets.push({
-        label: [capitalizeFirstLetter(secondKey)],
-        data: secondSeries?.data ?? [],
-        borderColor: 'transparent',
-        tension: 0,
-      })
+    let secondaryData: (number | null)[] = []
+    if (viewBy !== 'volume') {
+      const secondDateToSend = setsData.map((set) => ({
+        createdAt: set.createdAt,
+        value: set.secondary as number,
+      }))
+      const secondSeries = prepareSeries(
+        range,
+        secondDateToSend as (Set & { createdAt: string; value: number })[],
+        false,
+        range
+      )
+      secondaryData = secondSeries?.data ?? []
     }
 
-    return dataToSend
-  }, [setsData, viewBy])
+    return { data, secondaryData }
+  }, [setsData, viewBy, range, prefs.favoriteColor, t])
 
   useEffect(() => {
     const getExerciseSets = async () => {
@@ -291,11 +303,18 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
           </Typography>
           <CustomSelect
             label={t('exercise.viewBy')}
-            values={[t('exercise.weight'), t('exercise.reps')]}
-            value={
-              viewBy === 'Weight' ? t('exercise.weight') : t('exercise.reps')
-            }
-            onChange={(val) => setViewBy(val)}
+            values={VIEW_BY_VALUES}
+            value={viewBy}
+            valueLabels={{
+              weight: t('exercise.weight'),
+              reps: t('exercise.reps'),
+              volume: t('exercise.volume'),
+            }}
+            onChange={(val) => {
+              if (VIEW_BY_VALUES.includes(val as ExerciseViewBy)) {
+                setViewBy(val as ExerciseViewBy)
+              }
+            }}
             className={`${prefs.favoriteColor}`}
           />
         </div>
@@ -306,16 +325,42 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
         >
           <LineChart
             isDisplayPoints={true}
-            data={data as any}
+            data={chart.data}
             isDarkMode={prefs.isDarkMode}
             interpolateGaps={true}
             spanGaps={true}
             isDisplaySecondLine={false}
             showReadout={true}
-            readoutAfterLabel={viewBy === 'Weight' ? 'kg' : t('exercise.reps')}
-            secondDataLabel={
-              viewBy === 'Weight' ? t('exercise.reps') : t('exercise.weight')
-            }
+            formatReadout={(index, value) => {
+              const subtitle = chart.data.labels[index] ?? ''
+              if (value == null) return { title: '—', subtitle }
+
+              if (viewBy === 'volume') {
+                return {
+                  title: `${formatReadoutNumber(value)} ${t('weight.kg')}`,
+                  subtitle,
+                }
+              }
+
+              const mainUnit =
+                viewBy === 'weight' ? t('weight.kg') : t('exercise.reps')
+              const secondary = chart.secondaryData[index]
+              if (secondary == null) {
+                return {
+                  title: `${formatReadoutNumber(value)} ${mainUnit}`,
+                  subtitle,
+                }
+              }
+
+              const secondaryUnit =
+                viewBy === 'weight' ? t('exercise.reps') : t('weight.kg')
+              return {
+                title: `${formatReadoutNumber(value)} ${mainUnit} · ${formatReadoutNumber(
+                  secondary
+                )} ${secondaryUnit}`,
+                subtitle,
+              }
+            }}
           />
         </div>
         <LineChartControls
@@ -343,6 +388,7 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
             (Set & { exerciseId: string })[]
           >
         }
+        mainValue={viewBy}
       />
       <BottomReachIndicator
         hasMore={Boolean(setsQuery.hasNextPage)}

@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { useTranslation } from 'react-i18next'
-import Box from '@mui/material/Box'
 import Collapse from '@mui/material/Collapse'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
@@ -26,9 +25,15 @@ import { ExpectedActual } from '../../types/expectedActual/ExpectedActual'
 import Divider from '@mui/material/Divider'
 import { AnimatedWrapper } from '../AnimatedWrapper/AnimatedWrapper'
 import { capacitorService } from '../../services/capacitor.service'
+import {
+  ExerciseViewBy,
+  getPickMetric,
+  pickBestSet,
+} from '../../services/set/set.helpers'
 
 function Row(props: {
   sets: (Set & { exerciseId: string })[]
+  mainValue: ExerciseViewBy
   setAlertDialogOptions: (options: {
     open: boolean
     notes: ExpectedActual<string>
@@ -36,16 +41,17 @@ function Row(props: {
   }) => void
   divider?: boolean
 }) {
-  const { sets, setAlertDialogOptions, divider = true } = props
+  const { sets, mainValue, setAlertDialogOptions, divider = true } = props
   const { t } = useTranslation()
   const [open, setOpen] = React.useState(false)
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
 
+  const bestSet = pickBestSet(sets, getPickMetric(mainValue))
+
   async function getNotes(sessionId: string, exerciseId: string) {
     try {
-
       const notes = await instructionsService.getNotesBySessionIdAndExerciseId(
         sessionId,
         exerciseId
@@ -64,73 +70,75 @@ function Row(props: {
         as='tr'
         // sx={{ '& > *': { borderBottom: 'unset' } }}
         onClick={async () => {
-
           const stateToSet = !open
 
           setOpen(stateToSet)
-          if(stateToSet) capacitorService.vibrate('Light')
+          if (stateToSet) capacitorService.vibrate('Light')
         }}
-        className='pointer'
+        className={`pointer session-row ${prefs.isDarkMode ? 'dark-mode' : ''}`}
       >
         <TableCell
           component='th'
           scope='row'
-          sx={{ width: '30%', textAlign: 'start' }}
+          sx={{ width: '26%', textAlign: 'start' }}
         >
-          {sets[0].createdAt
-            ? new Date(sets[0].createdAt).toLocaleDateString('he')
-            : ''}
+          <Typography
+            variant='body2'
+            className='bold-header'
+          >
+            {sets[0].createdAt
+              ? new Date(sets[0].createdAt).toLocaleDateString('he')
+              : ''}
+          </Typography>
         </TableCell>
 
         <TableCell
           align='center'
-          sx={{ width: '25%' }}
+          sx={{ width: '22%' }}
         >
-          {
-            sets.find(
-              (set) =>
-                set.weight.actual ===
-                Math.max(...sets.map((set) => set.weight.actual))
-            )?.weight.actual
-          }{' '}
-          {t('weight.kg')}
+          <Typography
+            variant='body2'
+            className='bold-header'
+          >
+            {bestSet?.weight.actual} {t('weight.kg')}
+          </Typography>
         </TableCell>
         <TableCell
           align='center'
-          sx={{ width: '25%' }}
+          sx={{ width: '22%' }}
         >
-          {
-            sets.find(
-              (set) =>
-                set.reps.actual ===
-                Math.max(...sets.map((set) => set.reps.actual))
-            )?.reps.actual
-          }
+          <Typography
+            variant='body2'
+            className='bold-header'
+          >
+            {bestSet?.reps.actual}
+          </Typography>
         </TableCell>
         <TableCell
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'end',
-            // width: '20%',
-          }}
+          className='session-row-actions-cell'
+          sx={{ width: '30%' }}
         >
-          <CustomButton
-            icon={<NoteAltIcon />}
-            onClick={(ev) => {
-              ev.stopPropagation()
-              const sessionId = sets[0].sessionId
-              if (!sessionId) return showErrorMsg(t('messages.error.getNotes'))
-              getNotes(sessionId, sets[0].exerciseId)
-            }}
-            isIcon={true}
-            tooltipTitle={t('exercise.viewNotes')}
-          />
-          <CustomButton
-            icon={open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-            isIcon={true}
-            tooltipTitle={open ? t('exercise.collapse') : t('exercise.expand')}
-          />
+          <div className='session-row-actions'>
+            <CustomButton
+              icon={<NoteAltIcon />}
+              onClick={(ev) => {
+                ev.stopPropagation()
+                const sessionId = sets[0].sessionId
+                if (!sessionId)
+                  return showErrorMsg(t('messages.error.getNotes'))
+                getNotes(sessionId, sets[0].exerciseId)
+              }}
+              isIcon={true}
+              tooltipTitle={t('exercise.viewNotes')}
+            />
+            <CustomButton
+              icon={open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+              isIcon={true}
+              tooltipTitle={
+                open ? t('exercise.collapse') : t('exercise.expand')
+              }
+            />
+          </div>
         </TableCell>
       </AnimatedWrapper>
       <AnimatedWrapper as='tr'>
@@ -148,7 +156,7 @@ function Row(props: {
             timeout='auto'
             unmountOnExit
           >
-            <Box sx={{ margin: 0, padding: 1 }}>
+            <div className='session-sets'>
               <Table
                 size='small'
                 aria-label='sets'
@@ -158,25 +166,25 @@ function Row(props: {
                   <TableRow>
                     <TableCell
                       align='center'
-                      sx={{ width: '30%' }}
+                      sx={{ width: '26%' }}
                     >
                       {t('exercise.set')}
                     </TableCell>
                     <TableCell
                       align='center'
-                      sx={{ width: '25%' }}
+                      sx={{ width: '22%' }}
                     >
                       {t('exercise.weight')}
                     </TableCell>
                     <TableCell
                       align='center'
-                      sx={{ width: '25%' }}
+                      sx={{ width: '22%' }}
                     >
                       {t('exercise.reps')}
                     </TableCell>
                     <TableCell
                       align='center'
-                      sx={{ width: '20%' }}
+                      sx={{ width: '30%' }}
                     >
                       {sets[0].rpe ? t('exercise.rpe') : t('exercise.rir')}
                     </TableCell>
@@ -189,7 +197,7 @@ function Row(props: {
                       <TableRow key={set._id}>
                         <TableCell
                           align='center'
-                          sx={{ width: '30%' }}
+                          sx={{ width: '26%' }}
                         >
                           <Badge
                             badgeContent={set.setNumber}
@@ -198,19 +206,19 @@ function Row(props: {
                         </TableCell>
                         <TableCell
                           align='center'
-                          sx={{ width: '25%' }}
+                          sx={{ width: '22%' }}
                         >
                           {set.weight.actual} {t('weight.kg')}
                         </TableCell>
                         <TableCell
                           align='center'
-                          sx={{ width: '25%' }}
+                          sx={{ width: '22%' }}
                         >
                           {set.reps.actual}
                         </TableCell>
                         <TableCell
                           align='center'
-                          sx={{ width: '20%' }}
+                          sx={{ width: '30%' }}
                         >
                           {set.rpe?.actual ? set.rpe.actual : set.rir?.actual}
                         </TableCell>
@@ -218,7 +226,7 @@ function Row(props: {
                     ))}
                 </TableBody>
               </Table>
-            </Box>
+            </div>
           </Collapse>
           {divider && (
             <Divider
@@ -233,8 +241,10 @@ function Row(props: {
 }
 export default function SetsTable({
   groupedSets,
+  mainValue = 'weight',
 }: {
   groupedSets: Record<string, (Set & { exerciseId: string })[]>
+  mainValue?: ExerciseViewBy
 }) {
   const { t } = useTranslation()
   const entries = Object.entries(groupedSets)
@@ -266,16 +276,16 @@ export default function SetsTable({
           >
             <TableHead>
               <TableRow>
-                <TableCell sx={{ width: '30%', textAlign: 'start' }}>
+                <TableCell sx={{ width: '26%', textAlign: 'start' }}>
                   {t('exercise.date')}
                 </TableCell>
-                <TableCell sx={{ textAlign: 'center', width: '25%' }}>
-                  {t('exercise.topWeight')}
+                <TableCell sx={{ textAlign: 'center', width: '22%' }}>
+                  {t('exercise.weight')}
                 </TableCell>
-                <TableCell sx={{ textAlign: 'center', width: '25%' }}>
-                  {t('exercise.topReps')}
+                <TableCell sx={{ textAlign: 'center', width: '22%' }}>
+                  {t('exercise.reps')}
                 </TableCell>
-                <TableCell sx={{ width: '20%' }}></TableCell>
+                <TableCell sx={{ width: '30%' }}></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -284,6 +294,7 @@ export default function SetsTable({
                   <React.Fragment key={date}>
                     <Row
                       sets={sets}
+                      mainValue={mainValue}
                       setAlertDialogOptions={setAlertDialogOptions}
                       divider={index !== entries.length - 1}
                     />

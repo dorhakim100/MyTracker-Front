@@ -6,15 +6,57 @@
   .MuiTableBody-root {
     border-bottom: none !important;
   }
-  .MuiTableCell-root{
+  .MuiTableCell-root {
     border-bottom: 0px solid $darker-gray !important;
+  }
+
+  .session-row {
+  }
+  .MuiTableCell-root {
+    padding: 0.8rem 0.6rem;
+  }
+
+  .session-row-actions-cell {
+    padding-inline: 0.25rem;
+  }
+
+  .session-row-actions {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    white-space: nowrap;
+
+    .custom-button-wrapper,
+    button {
+      margin: 0;
+    }
+
+    .MuiIconButton-root {
+      padding: 6px;
+    }
+  }
+
+  .session-sets {
+    background-color: color-mix(in srgb, var(--ink-on-surface) 8%, transparent);
+    box-shadow: inset 0 1px 0
+      color-mix(in srgb, var(--ink-on-surface) 18%, transparent);
+    margin-bottom: 0.8rem;
+
+    .MuiTable-root {
+      width: 100%;
+    }
+
+    .MuiTableCell-root {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
   }
 
   &.dark-mode {
     background-color: $dark-gray;
     color: $white;
 
-    .MuiTableCell-root{
+    .MuiTableCell-root {
       color: $white !important;
     }
 
@@ -28,24 +70,23 @@
     }
 
     tr {
-
       td {
         color: $white !important;
         // border-bottom: 1px solid $darker-gray !important;
         border-color: $darker-gray !important;
       }
     }
-  }
-  // Ensure nested table columns align with main table columns
-  .MuiCollapse-root {
-    .MuiTable-root {
-      width: 100%;
 
-      // Match the column widths of the main table
-      .MuiTableCell-root {
-        padding-left: 16px;
-        padding-right: 16px;
-      }
+    .session-sets {
+      background-color: $darker-gray;
+      box-shadow: inset 0 1px 0 $dark-mode-border;
+    }
+  }
+
+  html.dark-mode & {
+    .session-sets {
+      background-color: $darker-gray;
+      box-shadow: inset 0 1px 0 $dark-mode-border;
     }
   }
 }
