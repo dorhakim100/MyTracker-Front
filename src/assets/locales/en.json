@@ -45,6 +45,7 @@
   "dashboard": {
     "title": "Dashboard",
     "noWorkoutToday": "No workout today",
+    "noWorkoutTodayHint": "Pick a routine to start today's session.",
     "chooseWorkout": "Choose Workout",
     "workoutSession": "Workout Session",
     "sessionLoadFailed": "Today's workout didn't load"
@@ -201,6 +202,7 @@
     "noWorkoutsFound": "No workouts found",
     "workoutByDate": "Workout by date",
     "noWorkoutSessionThisDay": "No workout session this day",
+    "noWorkoutSessionThisDayHint": "Start a routine above to log this day.",
     "noPastRoutinesFound": "No past routines found",
     "viewDetails": "View Details",
     "deactivate": "Deactivate",

@@ -1,0 +1,43 @@
+.workout-icon-container {
+  display: grid;
+  place-items: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 50%;
+  color: $primary-color;
+  background: color-mix(in srgb, currentColor 14%, transparent);
+
+  .MuiSvgIcon-root {
+    font-size: 1.6rem;
+    color: inherit;
+    fill: currentColor;
+  }
+
+  &.primary {
+    color: $primary-color;
+  }
+  &.blue {
+    color: $picker-color-blue;
+  }
+  &.yellow {
+    color: $picker-color-yellow;
+  }
+  &.red {
+    color: $picker-color-red;
+  }
+  &.orange {
+    color: $picker-color-orange;
+  }
+  &.green {
+    color: $picker-color-green;
+  }
+  &.deepPurple {
+    color: $picker-color-deep-purple;
+  }
+  &.purple {
+    color: $picker-color-purple;
+  }
+  &.pink {
+    color: $picker-color-pink;
+  }
+}

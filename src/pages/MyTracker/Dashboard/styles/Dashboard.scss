@@ -1,17 +1,13 @@
 .dashboard-container {
-
   gap: 0.5rem;
   // align-items: start;
   // grid-template-rows: auto minmax(310px, 1fr) 1fr;
-  
-  
+
   &.dashboard {
-
-
     display: grid;
     grid-template-rows: auto auto minmax(310px, 1fr) 1fr;
   }
-  
+
   .times-container {
     position: sticky;
     top: 0;
@@ -52,12 +48,10 @@
   .meal-card {
     // height: 250px;
   }
-
 }
 
 .dashboard-session-container {
   margin-top: 0.5rem;
-
 
   .bold-header {
     text-align: start;
@@ -88,18 +82,62 @@ body.dashboard {
   margin-top: 0.5rem;
   display: grid;
   gap: 0.2rem;
+}
+
+.no-session-panel {
+  margin-top: 0.5rem;
+  display: grid;
+  justify-items: center;
+  gap: 0.75rem;
+  padding: 1.25rem 1rem;
+  border-radius: 16px;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.04);
+  animation: no-session-enter 280ms ease-out;
+  border-radius: 16px;
+  background: rgba(0, 0, 0, 0.04);
+
+  &.dark-mode {
+    background: rgba(255, 255, 255, 0.06);
+  }
+  .bold-header {
+    text-align: center;
+  }
+
+  .no-session-hint {
+    max-width: 22rem;
+    opacity: 0.72;
+  }
+
   .animation-container {
-    width: 160px;
-    height: 160px;
+    width: 140px;
+    height: 140px;
     justify-self: center;
 
     &.dashboard {
-      min-width: 300px;
-      min-height: 300px;
-
-      max-width: 500px;
-      max-height: 500px;
+      width: 180px;
+      height: 180px;
     }
+  }
+
+  .custom-button-wrapper {
+    width: min(100%, 18rem);
+    margin-top: 0.15rem;
+
+    .custom-button {
+      width: 100%;
+    }
+  }
+}
+
+@keyframes no-session-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -192,6 +230,14 @@ body.dashboard {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .no-session-panel {
+    animation: none;
+
+    .animation-container {
+      display: none;
+    }
+  }
+
   .session-retry-container .session-retry-indicator {
     &::before,
     &::after {

@@ -32,9 +32,8 @@ import {
   setSelectedSessionDay,
   setTodaySessionDay,
 } from '../../../store/actions/workout.action'
-import Lottie from 'lottie-react'
-import workoutAnimation from '../../../../public/gain-weight.json'
 import { useWindowDimentions } from '../../../hooks/useWindowDimentions'
+import { WorkoutIcon } from '../../../components/WorkoutIcon/WorkoutIcon'
 import { getPercentage } from '../../../services/util.service'
 import { MealCard } from '../../../components/MealCard/MealCard'
 import { getMeals } from '../../../assets/config/meals'
@@ -89,9 +88,6 @@ export function Dashboard() {
 
   const isDashboard = useSelector(
     (state: RootState) => state.systemModule.isDashboard
-  )
-  const isNative = useSelector(
-    (state: RootState) => state.systemModule.isNative
   )
 
   const [macros, setMacros] = useState({
@@ -363,23 +359,33 @@ export function Dashboard() {
     if (isSessionLoading || hasSessionError) return
     if (!todaySessionDay?.workout)
       return (
-        <div className='no-session-container'>
-          {!isNative && (
-            <Typography
-              variant='h6'
-              className='bold-header'
-            >
-              {t('dashboard.noWorkoutToday')}
-            </Typography>
-          )}
-          <div
+        <div
+          className={`no-session-panel ${prefs.isDarkMode ? 'dark-mode' : ''} ${
+            isDashboard ? 'dashboard' : ''
+          }`}
+          role='status'
+        >
+          <WorkoutIcon />
+          <Typography
+            variant='h6'
+            className='bold-header'
+          >
+            {t('dashboard.noWorkoutToday')}
+          </Typography>
+          <Typography
+            variant='body2'
+            className='no-session-hint'
+          >
+            {t('dashboard.noWorkoutTodayHint')}
+          </Typography>
+          {/* <div
             className={`animation-container ${isDashboard ? 'dashboard' : ''}`}
           >
             <Lottie
               animationData={workoutAnimation}
               loop={true}
             />
-          </div>
+          </div> */}
           {!isDashboard && (
             <CustomButton
               text={t('dashboard.chooseWorkout')}
@@ -388,7 +394,8 @@ export function Dashboard() {
                 setSlideDirection(1)
                 setActiveRoute('/lift-mate/workouts')
               }}
-              isIconReverse={prefs.lang === 'he' ? true : false}
+              isIconReverse={prefs.lang === 'he'}
+              fullWidth={true}
             />
           )}
         </div>

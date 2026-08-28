@@ -54,6 +54,7 @@ import CustomSkeleton from '../../../CustomMui/CustomSkeleton/CustomSkeleton'
 import { MyTraineeCard } from '../../../components/MyTraineeCard/MyTraineeCard'
 import { CustomAccordion } from '../../../CustomMui/CustomAccordion/CustomAccordion'
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
+import { WorkoutIcon } from '../../../components/WorkoutIcon/WorkoutIcon'
 import workoutAnimation from '../../../../public/gain-weight.json'
 import Lottie from 'lottie-react'
 import { TrainerRequest } from '../../../types/trainerRequest/TrainerRequest'
@@ -209,7 +210,7 @@ export function Workouts() {
       setAreWorkoutsLoading(true)
       try {
         await loadWorkouts({
-        forUserId: traineeUser?._id || user?._id,
+          forUserId: traineeUser?._id || user?._id,
           from: selectedPastDate?.from,
           to: selectedPastDate?.to,
         })
@@ -488,7 +489,9 @@ export function Workouts() {
   const getDialogTitle = () => {
     switch (dialogOptions.type) {
       case EDIT:
-        return selectedWorkout ? t('workout.editWorkout') : t('workout.createWorkout')
+        return selectedWorkout
+          ? t('workout.editWorkout')
+          : t('workout.createWorkout')
       case DETAILS:
         return t('workout.workoutDetails')
       case ROUTINES:
@@ -501,23 +504,37 @@ export function Workouts() {
 
   const renderWorkoutLists = (isRenderStartButtons: boolean = true) => {
     if (areWorkoutsLoading) {
-      return <div className='workouts-lists-container skeleton'>
-        <CustomSkeleton height='200px' width='100%' isDarkMode={prefs.isDarkMode}  />
-        <CustomSkeleton height='200px' width='100%' isDarkMode={prefs.isDarkMode}  />
-      </div>
+      return (
+        <div className='workouts-lists-container skeleton'>
+          <CustomSkeleton
+            height='200px'
+            width='100%'
+            isDarkMode={prefs.isDarkMode}
+          />
+          <CustomSkeleton
+            height='200px'
+            width='100%'
+            isDarkMode={prefs.isDarkMode}
+          />
+        </div>
+      )
     }
     if (activeWorkouts.length === 0 && inactiveWorkouts.length === 0) {
       return (
         <div className='no-workouts-container'>
-          <Typography variant='body1'>{t('workout.noWorkoutsFound')}</Typography>
-          <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
+          <Typography variant='body1'>
+            {t('workout.noWorkoutsFound')}
+          </Typography>
+          <Divider
+            className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+          />
 
           <div className='past-controller'>
-                <span className='bold-header'>{t('workout.pastRoutines')}</span>
-                <DateRangeController
-                  selectedPastDate={selectedPastDate}
-                  onDateChange={setSelectedPastDate}
-                />
+            <span className='bold-header'>{t('workout.pastRoutines')}</span>
+            <DateRangeController
+              selectedPastDate={selectedPastDate}
+              onDateChange={setSelectedPastDate}
+            />
           </div>
         </div>
       )
@@ -530,9 +547,9 @@ export function Workouts() {
         )}
 
         <div
-          className={`workouts-list-container ${isDashboard ? 'dashboard' : ''} ${
-            prefs.isDarkMode ? 'dark-mode' : ''
-          } active`}
+          className={`workouts-list-container ${
+            isDashboard ? 'dashboard' : ''
+          } ${prefs.isDarkMode ? 'dark-mode' : ''} active`}
         >
           <WorkoutsList
             workouts={reorderedWorkouts}
@@ -656,124 +673,138 @@ export function Workouts() {
   return (
     <>
       <PullToRefreshWrapper
-       className='page-container'
+        className='page-container'
         onRefresh={handleRefreshWorkouts}
       >
         <div
-         className={`page workouts-container ${
-          timer ? 'has-timer' : ''
-        } ${isDashboard ? 'dashboard' : ''}`}
+          className={`page workouts-container ${timer ? 'has-timer' : ''} ${
+            isDashboard ? 'dashboard' : ''
+          }`}
         >
+          {isDashboard && (
+            <Typography
+              variant='h4'
+              className='bold-header'
+              style={{ textAlign: 'center' }}
+            >
+              {t('workout.workouts')}
+            </Typography>
+          )}
+          <>
+            <div className='workouts-header routines'>
+              <Typography
+                variant='h5'
+                className='bold-header'
+              >
+                {t('workout.routines')}
+              </Typography>
 
-       
-        {isDashboard && (
-          <Typography
-            variant='h4'
-            className='bold-header'
-            style={{ textAlign: 'center' }}
-          >
-            {t('workout.workouts')}
-          </Typography>
-        )}
-        <>
-          <div className='workouts-header routines'>
+              <CustomButton
+                text={t('workout.addNewRoutine')}
+                onClick={() => setDialogOptions({ open: true, type: EDIT })}
+                icon={<Add />}
+                fullWidth={true}
+              />
+            </div>
+            <Divider
+              className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+            />
+          </>
+          {requests.length > 0 && (
+            <TrainerRequestCard
+              request={requests[0]}
+              onAccept={(request) => onUpdateRequest(request, APPROVED_STATUS)}
+              onReject={(request) => onUpdateRequest(request, REJECTED_STATUS)}
+            />
+          )}
+          {user?.isTrainer && !isDashboard && (
+            <CustomAccordion
+              title={t('workout.myTrainees')}
+              cmp={<MyTraineeCard />}
+              icon={<PersonAddIcon />}
+              className={`my-trainees-accordion`}
+            />
+          )}
+          {renderWorkoutLists(
+            !sessionDay?.workoutId || !sessionDay?.instructions
+          )}
+          <Divider
+            className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+          />
+          <div className='workouts-header'>
             <Typography
               variant='h5'
               className='bold-header'
             >
-              {t('workout.routines')}
+              {t('workout.workoutByDate')}
             </Typography>
-
-            <CustomButton
-              text={t('workout.addNewRoutine')}
-              onClick={() => setDialogOptions({ open: true, type: EDIT })}
-              icon={<Add />}
-              fullWidth={true}
-            />
+            {!sessionDay.instructions && !isDashboard && (
+              <CustomButton
+                text={t('workout.startEmptyWorkout')}
+                onClick={onPlayEmptyWorkout}
+                icon={
+                  emptyWorkoutLoading ? (
+                    <CircularProgress
+                      size={20}
+                      color='inherit'
+                    />
+                  ) : (
+                    <Add />
+                  )
+                }
+                className={`${prefs.favoriteColor} empty-workout-button`}
+                fullWidth={true}
+              />
+            )}
           </div>
-          <Divider
-            className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+          <DayController
+            selectedDay={selectedDay}
+            selectedDayDate={sessionFilter.date}
+            isToday={isToday}
+            onDayChange={onDayChange}
+            onDateChange={onDateChange}
           />
-        </>
-        {requests.length > 0 && (
-          <TrainerRequestCard
-            request={requests[0]}
-            onAccept={(request) => onUpdateRequest(request, APPROVED_STATUS)}
-            onReject={(request) => onUpdateRequest(request, REJECTED_STATUS)}
-          />
-        )}
-        {user?.isTrainer && !isDashboard && (
-          <CustomAccordion
-            title={t('workout.myTrainees')}
-            cmp={<MyTraineeCard />}
-            icon={<PersonAddIcon />}
-            className={`my-trainees-accordion`}
-          />
-        )}
-        {renderWorkoutLists(
-          !sessionDay?.workoutId || !sessionDay?.instructions
-        )}
-        <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
-        <div className='workouts-header'>
-          <Typography
-            variant='h5'
-            className='bold-header'
+
+          <SlideAnimation
+            motionKey={sessionDay._id}
+            direction={direction}
           >
-            {t('workout.workoutByDate')}
-          </Typography>
-          {!sessionDay.instructions && !isDashboard && (
-            <CustomButton
-              text={t('workout.startEmptyWorkout')}
-              onClick={onPlayEmptyWorkout}
-              icon={
-                emptyWorkoutLoading ? (
-                  <CircularProgress
-                    size={20}
-                    color='inherit'
-                  />
-                ) : (
-                  <Add />
-                )
-              }
-              className={`${prefs.favoriteColor} empty-workout-button`}
-              fullWidth={true}
-            />
-          )}
-        </div>
-        <DayController
-          selectedDay={selectedDay}
-          selectedDayDate={sessionFilter.date}
-          isToday={isToday}
-          onDayChange={onDayChange}
-          onDateChange={onDateChange}
-        />
-
-        <SlideAnimation
-          motionKey={sessionDay._id}
-          direction={direction}
-        >
-          {!sessionDay.instructions && (
-            <div className='workouts-header'>
-              <Typography
-                variant='h6'
-                className='bold-header'
+            {!sessionDay.instructions && (
+              <div
+                className={`no-session-panel ${
+                  prefs.isDarkMode ? 'dark-mode' : ''
+                }`}
+                role='status'
               >
-                {t('workout.noWorkoutSessionThisDay')}
-              </Typography>
-              <div className='animation-container'>
-                <Lottie
-                  animationData={workoutAnimation}
-                  loop={true}
-                />
+                <WorkoutIcon />
+                <Typography
+                  variant='h6'
+                  className='bold-header'
+                >
+                  {t('workout.noWorkoutSessionThisDay')}
+                </Typography>
+                <Typography
+                  variant='body2'
+                  className='no-session-hint'
+                >
+                  {t('workout.noWorkoutSessionThisDayHint')}
+                </Typography>
+                <div className='animation-container'>
+                  <Lottie
+                    animationData={workoutAnimation}
+                    loop={true}
+                  />
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
-        {sessionDay.instructions && <WorkoutSession
-            sessionDay={sessionDay}
-            updateSessionDay={updateSessionDay}
-          />}
-        </SlideAnimation>
+            {sessionDay.instructions && (
+              <WorkoutSession
+                sessionDay={sessionDay}
+                updateSessionDay={updateSessionDay}
+              />
+            )}
+          </SlideAnimation>
         </div>
       </PullToRefreshWrapper>
       <SlideDialog

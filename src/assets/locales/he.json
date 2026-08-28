@@ -35,6 +35,7 @@
   "dashboard": {
     "title": "דף הבית",
     "noWorkoutToday": "עדיין לא נוסף אימון להיום",
+    "noWorkoutTodayHint": "בחר אימון כדי להתחיל את האימון להיום.",
     "chooseWorkout": "בחר אימון",
     "workoutSession": "אימון",
     "sessionLoadFailed": "האימון להיום לא נטען"
@@ -211,6 +212,7 @@
     "noPastRoutinesFound": "לא נמצאו אימונים קודמים...",
     "workoutByDate": "אימון לפי תאריך",
     "noWorkoutSessionThisDay": "אין אימון מתוכנן ליום זה",
+    "noWorkoutSessionThisDayHint": "התחל אימון מהרשימה למעלה כדי לתעד את היום.",
     "exercises": "תרגילים"
   },
   "exercise": {
