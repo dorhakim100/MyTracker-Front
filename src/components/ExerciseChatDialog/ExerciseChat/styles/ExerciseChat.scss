@@ -359,18 +359,22 @@ body.dark-mode .exercise-chat-edit-dialog {
   }
 }
 
-body.dark-mode {
-  // sent to me, time
-  .css-15tj2fj-MuiChatMessage-inlineMeta,
-  // sent to me, name
-  .css-lzdtim-MuiChatMessage-groupAuthorName {
+html.dark-mode .exercise-chat-container,
+body.dark-mode .exercise-chat-container {
+  // sent to me, time + name
+  .MuiChatMessage-roleAssistant .MuiChatMessage-inlineMeta,
+  .MuiChatMessage-roleAssistant .MuiChatMessage-inlineMeta *,
+  .MuiChatMessage-roleAssistant .MuiChatMessage-groupAuthorName {
     color: $medium-gray !important;
+    -webkit-text-fill-color: $medium-gray !important;
   }
-  // sent by me, time
-  .css-14b81mi-MuiChatMessage-inlineMeta,
-  // sent by me, name
-  .css-eak0ip-MuiChatMessage-groupAuthorName {
+
+  // sent by me, time + name
+  .MuiChatMessage-roleUser .MuiChatMessage-inlineMeta,
+  .MuiChatMessage-roleUser .MuiChatMessage-inlineMeta *,
+  .MuiChatMessage-roleUser .MuiChatMessage-groupAuthorName {
     color: $medium-gray !important;
+    -webkit-text-fill-color: $medium-gray !important;
     opacity: 0.75 !important;
   }
 }
