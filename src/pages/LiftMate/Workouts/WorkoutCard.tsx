@@ -247,21 +247,28 @@ export function WorkoutCard({
         onClick={onViewDetails}
       >
         <div className='header-container'>
-          <ChatUnreadBadge count={getWorkoutCount(workout._id)}>
-            <Typography variant='h6'>{workout.name}</Typography>
-          </ChatUnreadBadge>
-          <div className='header-actions-container'>
-            {renderTimes()}
-            <CustomOptionsMenu
-              options={options}
-              triggerElement={
-                <CustomButton
-                  isIcon={true}
-                  icon={<MoreHorizIcon />}
-                />
-              }
+          <MarqueeText
+            variant='h6'
+            className='workout-name'
+          >
+            {workout.name}
+          </MarqueeText>
+          <span className='workout-unread'>
+            <ChatUnreadBadge
+              count={getWorkoutCount(workout._id)}
+              variant='inline'
             />
-          </div>
+          </span>
+          <span className='workout-times'>{renderTimes()}</span>
+          <CustomOptionsMenu
+            options={options}
+            triggerElement={
+              <CustomButton
+                isIcon={true}
+                icon={<MoreHorizIcon />}
+              />
+            }
+          />
         </div>
         <MarqueeText
           variant='body1'

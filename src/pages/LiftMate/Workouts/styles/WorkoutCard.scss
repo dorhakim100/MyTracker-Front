@@ -1,5 +1,7 @@
 .workout-card-container {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
   box-shadow: 0 0 0.5rem 0 rgba(0, 0, 0, 0.1);
@@ -18,19 +20,28 @@
   }
 
     .header-container {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto auto;
     align-items: center;
+    column-gap: 0.5rem;
+    min-width: 0;
+    width: 100%;
     margin-bottom: 0.5rem;
 
-    .chat-unread-badge {
+    .workout-name {
       min-width: 0;
     }
 
-    .header-actions-container {
+    .workout-unread,
+    .workout-times {
       display: flex;
       align-items: center;
-      gap: 0.8rem;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .workout-times {
+      white-space: nowrap;
     }
   }
 
