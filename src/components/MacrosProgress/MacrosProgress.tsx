@@ -6,6 +6,7 @@ import { CircularProgress } from '../CircularProgress/CircularProgress'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { EditIcon } from '../EditIcon/EditIcon'
+import { CustomIcon } from '../../CustomMui/CustomIcon/CustomIcon'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { GoalBanner } from '../GoalBanner/GoalBanner'
 import { EditMacros } from './EditMacros'
@@ -105,12 +106,19 @@ export function MacrosProgress({
           prefs.isDarkMode ? 'dark-mode' : ''
         } ${prefs.favoriteColor}`}
       >
-        <Typography
-          variant='h6'
-          className='bold-header'
-        >
-          {t('macros.macros')}
-        </Typography>
+        <div className='title-row'>
+          <CustomIcon
+            name='macros'
+            size='m'
+            padded={false}
+          />
+          <Typography
+            variant='h6'
+            className='bold-header'
+          >
+            {t('macros.macros')}
+          </Typography>
+        </div>
         {isEditButton && <EditIcon onClick={edit} />}
         <div className='macros-container'>
           {macros.map((macro) => (

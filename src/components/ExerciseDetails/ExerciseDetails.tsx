@@ -11,7 +11,7 @@ import { translateService } from '../../services/translate/translate.service'
 import { ExpectedActual } from '../../types/expectedActual/ExpectedActual'
 import { exerciseImage as exerciseImageObject } from '../../assets/config/exercise-image'
 import { CustomAccordion } from '../../CustomMui/CustomAccordion/CustomAccordion'
-import AutoStoriesIcon from '@mui/icons-material/AutoStories'
+import { CustomIcon } from '../../CustomMui/CustomIcon/CustomIcon'
 import { Set } from '../../types/exercise/Exercise'
 import {
   getDateFromLineChartRangeKey,
@@ -290,7 +290,13 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
       <CustomAccordion
         title={t('exercise.instructions')}
         cmp={exerciseInstructions?.map(renderExerciseInstructions)}
-        icon={<AutoStoriesIcon />}
+        icon={
+          <CustomIcon
+            name='instructions'
+            size='m'
+            variant='subtle'
+          />
+        }
         className='instructions-accordion'
       />
       <div className='line-chart-container'>

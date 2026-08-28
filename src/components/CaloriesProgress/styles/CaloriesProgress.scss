@@ -18,6 +18,28 @@
     grid-row: 1;
   }
 
+  .title-row {
+    display: flex;
+    align-items: start;
+    justify-content: flex-start;
+    justify-self: start;
+    gap: 0.5rem;
+    width: 100%;
+    grid-column: 1 / -1;
+    grid-row: 1;
+    padding-inline-end: 2.4rem;
+    text-align: start;
+
+    .custom-icon-bare {
+      align-self: center;
+      margin-bottom: 3px;
+    }
+
+    h6 {
+      text-align: start;
+    }
+  }
+
   .goal-container {
     align-self: center;
     display: grid;

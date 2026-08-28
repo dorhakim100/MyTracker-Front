@@ -3,6 +3,13 @@
 
   .accordion-icon {
     margin-inline-end: 0.8rem;
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  p {
+    align-self: center;
   }
 
   &.dark-mode {

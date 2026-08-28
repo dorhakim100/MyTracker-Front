@@ -27,6 +27,10 @@
   }
 
   .exercises-list {
+    .MuiListItemText-root {
+      min-width: 0;
+    }
+
     .custom-list-item {
       gap: 1rem;
       

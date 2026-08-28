@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next'
-import DirectionsRunIcon from '@mui/icons-material/DirectionsRun'
 import { startGoogleHealthConnect } from '../../services/auth/google-auth.service'
+import MonitorHeartRoundedIcon from '@mui/icons-material/MonitorHeartRounded'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import GoogleIcon from '@mui/icons-material/Google'
 import { useSelector } from 'react-redux'
@@ -44,7 +44,7 @@ export function HealthConnect() {
       }`}
     >
       <div className='title-container'>
-        <DirectionsRunIcon />
+        <MonitorHeartRoundedIcon className='health-connect-icon' />
         <Typography
           variant='body1'
           className='bold-header'

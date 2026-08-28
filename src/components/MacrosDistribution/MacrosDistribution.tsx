@@ -5,6 +5,7 @@ import { Macros } from '../Macros/Macros'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { EditIcon } from '../EditIcon/EditIcon'
+import { CustomIcon } from '../../CustomMui/CustomIcon/CustomIcon'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import {
   optimisticUpdateUser,
@@ -95,12 +96,19 @@ export function MacrosDistribution({
         } ${className} ${prefs.favoriteColor}`}
       >
         {!hideEditAndHeader && (
-          <Typography
-            variant='h6'
-            className='bold-header'
-          >
-            {t('macros.distribution')}
-          </Typography>
+          <div className='title-row'>
+            <CustomIcon
+              name='distribution'
+              size='m'
+              padded={false}
+            />
+            <Typography
+              variant='h6'
+              className='bold-header'
+            >
+              {t('macros.distribution')}
+            </Typography>
+          </div>
         )}
         {!hideEditAndHeader && <EditIcon onClick={edit} />}
         <MacrosDonut

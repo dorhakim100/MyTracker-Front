@@ -13,12 +13,7 @@ import { MealsCard } from '../../components/MealsCard/MealsCard'
 import { FavoriteItemsCard } from '../../components/FavoriteItemsCard/FavoriteItemsCard'
 import { PreferencesCard } from '../../components/PreferencesCard/PreferencesCard'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
-import RestaurantMenuIcon from '@mui/icons-material/RestaurantMenu'
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
-import CalculateIcon from '@mui/icons-material/Calculate'
-import SettingsIcon from '@mui/icons-material/Settings'
-import ModeStandbyIcon from '@mui/icons-material/ModeStandby'
-import DirectionsRunIcon from '@mui/icons-material/DirectionsRun'
+import { CustomIcon } from '../../CustomMui/CustomIcon/CustomIcon'
 import { WeightChart } from '../../components/WeightChart/WeightChart'
 import { StatsCarousel } from '../../components/StatsCarousel/StatsCarousel'
 import { HealthProviderCard } from '../../components/HealthProviderCard/HealthProviderCard'
@@ -47,37 +42,73 @@ export function UserDetails() {
     {
       title: t('user.accordionMeals'),
       cmp: <MealsCard />,
-      icon: <RestaurantMenuIcon />,
+      icon: (
+        <CustomIcon
+          name='meals'
+          size='m'
+          variant='subtle'
+        />
+      ),
       key: 'meals',
     },
     {
       title: t('user.accordionGoals'),
       cmp: <GoalsCard />,
-      icon: <ModeStandbyIcon />,
+      icon: (
+        <CustomIcon
+          name='goals'
+          size='m'
+          variant='subtle'
+        />
+      ),
       key: 'goals',
     },
     {
       title: t('user.accordionFavoriteItems'),
       cmp: <FavoriteItemsCard />,
-      icon: <FavoriteBorderIcon />,
+      icon: (
+        <CustomIcon
+          name='favorites'
+          size='m'
+          variant='subtle'
+        />
+      ),
       key: 'favorite-items',
     },
     {
       title: t('user.accordionBmrCalculator'),
       cmp: <BmrCard sentUser={traineeUser || user || undefined} />,
-      icon: <CalculateIcon />,
+      icon: (
+        <CustomIcon
+          name='bmr'
+          size='m'
+          variant='subtle'
+        />
+      ),
       key: 'bmr-calculator',
     },
     {
       title: t('user.accordionHealth'),
       cmp: <HealthProviderCard />,
-      icon: <DirectionsRunIcon />,
+      icon: (
+        <CustomIcon
+          name='health'
+          size='m'
+          variant='subtle'
+        />
+      ),
       key: 'health',
     },
     {
       title: t('user.accordionPreferences'),
       cmp: <PreferencesCard />,
-      icon: <SettingsIcon />,
+      icon: (
+        <CustomIcon
+          name='preferences'
+          size='m'
+          variant='subtle'
+        />
+      ),
       key: 'preferences',
     },
   ].filter(Boolean) as {

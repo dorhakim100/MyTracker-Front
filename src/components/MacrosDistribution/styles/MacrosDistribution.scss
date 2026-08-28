@@ -5,6 +5,26 @@
   // grid-template-rows: auto 1fr;
   // gap: 1.5rem;
   gap: 0rem 1rem;
+
+  .title-row {
+    display: flex;
+    align-items: start;
+    justify-content: flex-start;
+    justify-self: start;
+    gap: 0.5rem;
+    width: 100%;
+    grid-column: 1 / -1;
+    padding-inline-end: 2.4rem;
+    text-align: start;
+
+    .custom-icon-bare {
+      margin-top: 3px;
+    }
+
+    h6 {
+      text-align: start;
+    }
+  }
   // padding: 1rem;
   .banner {
     // width: 100%;

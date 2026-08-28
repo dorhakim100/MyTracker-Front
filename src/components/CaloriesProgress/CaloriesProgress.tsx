@@ -15,6 +15,7 @@ import { showSuccessMsg, showErrorMsg } from '../../services/event-bus.service'
 import { CaloriesEdit } from './CaloriesEdit'
 
 import { EditIcon } from '../EditIcon/EditIcon'
+import { CustomIcon } from '../../CustomMui/CustomIcon/CustomIcon'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 // import { GoalBanner } from '../GoalBanner/GoalBanner'
 import { User } from '../../types/user/User'
@@ -90,12 +91,19 @@ export function CaloriesProgress({
         }`}
         // onClick={onChangeDisplay}
       >
-        <Typography
-          variant='h6'
-          className='bold-header'
-        >
-          {t('macros.calories')}
-        </Typography>
+        <div className='title-row'>
+          <CustomIcon
+            name='calories'
+            size='m'
+            padded={false}
+          />
+          <Typography
+            variant='h6'
+            className='bold-header'
+          >
+            {t('macros.calories')}
+          </Typography>
+        </div>
         {isEditButton && <EditIcon onClick={edit} />}
         <div className='goal-container'>
           {/* <GoalBanner

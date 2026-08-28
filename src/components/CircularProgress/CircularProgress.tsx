@@ -56,7 +56,7 @@ export function CircularProgress({
         styles={buildStyles({
           pathColor: progressColor,
           textColor: textColor,
-          trailColor: '#e6e6e6',
+          trailColor: 'var(--ring-trail)',
           textSize: '1.8rem',
 
           // textStyle: {

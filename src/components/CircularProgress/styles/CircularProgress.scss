@@ -1,26 +1,34 @@
 .circular-progress {
-    position: relative;
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
+  --ring-trail: #e6e6e6;
 
-    font-weight: 700;
+  position: relative;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI',
+    sans-serif;
 
-    .goal-banner {
-        position: absolute;
-        top: calc(50% + 2.5rem);
-        left: 50%;
-        transform: translateX(-50%);
-        // right: 0;
-        padding:  0.5rem;
+  font-weight: 700;
 
-    }
-    .after-text {
-        position: absolute;
-        top: calc(50% + 1.5rem);
-        left: 50%;
-        transform: translateX(-50%);
-        // right: 0;
-        padding:  0.5rem;
-        font-size: 0.9rem;
-        opacity: 0.5;
-    }
+  .goal-banner {
+    position: absolute;
+    top: calc(50% + 2.5rem);
+    left: 50%;
+    transform: translateX(-50%);
+    // right: 0;
+    padding: 0.5rem;
+  }
+  .after-text {
+    position: absolute;
+    top: calc(50% + 1.5rem);
+    left: 50%;
+    transform: translateX(-50%);
+    // right: 0;
+    padding: 0.5rem;
+    font-size: 0.9rem;
+    opacity: 0.5;
+  }
+}
+
+body.dark-mode {
+  .circular-progress {
+    --ring-trail: color-mix(in srgb, #{$white} 80%, transparent);
+  }
 }

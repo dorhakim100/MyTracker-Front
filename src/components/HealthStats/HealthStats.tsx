@@ -1,12 +1,15 @@
-import DirectionsRunIcon from '@mui/icons-material/DirectionsRun'
 import { useTranslation } from 'react-i18next'
 import { GoalBanner } from '../GoalBanner/GoalBanner'
 import { getFixedNumber } from '../../services/util.service'
-import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment'
-import SpeedIcon from '@mui/icons-material/Speed'
-import TrendingUpIcon from '@mui/icons-material/TrendingUp'
+import {
+  BurnedCaloriesGlyph,
+  DistanceGlyph,
+  FloorsGlyph,
+  StepsGlyph,
+} from '../../CustomMui/CustomIcon/glyphs'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
+
 export interface HealthStatsProps {
   steps: number
   burnedCalories: number
@@ -46,28 +49,28 @@ export function HealthStats({
       <GoalBanner
         current={steps}
         isGoal={false}
-        icon={<DirectionsRunIcon />}
+        icon={<StepsGlyph size='m' />}
         afterValue={t('steps.steps')}
         loading={healthLoading}
       />
       <GoalBanner
         current={burnedCalories}
         isGoal={false}
-        icon={<LocalFireDepartmentIcon />}
+        icon={<BurnedCaloriesGlyph size='m' />}
         afterValue={t('macros.kcal')}
         loading={healthLoading}
       />
       <GoalBanner
         current={distance}
         isGoal={false}
-        icon={<SpeedIcon />}
+        icon={<DistanceGlyph size='m' />}
         afterValue={t('distance.km')}
         loading={healthLoading}
       />
       <GoalBanner
         current={flightsClimbed}
         isGoal={false}
-        icon={<TrendingUpIcon />}
+        icon={<FloorsGlyph size='m' />}
         afterValue={t('floors.floors')}
         loading={healthLoading}
       />

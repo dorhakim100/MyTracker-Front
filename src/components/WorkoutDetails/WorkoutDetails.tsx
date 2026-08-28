@@ -14,6 +14,7 @@ import { Exercise } from '../../types/exercise/Exercise'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { ExerciseDetails } from '../ExerciseDetails/ExerciseDetails'
 import { getWorkoutMuscles } from '../../services/exersice-search/exersice-search'
+import { MarqueeText } from '../MarqueeText/MarqueeText'
 interface WorkoutDetailsProps {
   workout: Workout | null
 }
@@ -75,10 +76,16 @@ export function WorkoutDetails({ workout }: WorkoutDetailsProps) {
 
         <CustomList
           items={workout.exercises}
-          renderPrimaryText={(exercise) => capitalizeFirstLetter(exercise.name)}
-          renderSecondaryText={(exercise) =>
-            capitalizeFirstLetter(exercise.muscleGroups.join(', '))
-          }
+          renderPrimaryText={(exercise) => (
+            <MarqueeText variant='body1'>
+              {capitalizeFirstLetter(exercise.name)}
+            </MarqueeText>
+          )}
+          renderSecondaryText={(exercise) => (
+            <MarqueeText variant='body2'>
+              {capitalizeFirstLetter(exercise.muscleGroups.join(', '))}
+            </MarqueeText>
+          )}
           className={`exercises-list  ${prefs.isDarkMode ? 'dark-mode' : ''} ${isDashboard ? 'dashboard' : ''}`}
           renderLeft={(exercise) => (
             <img

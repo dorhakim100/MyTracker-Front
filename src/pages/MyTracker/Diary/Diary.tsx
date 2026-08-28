@@ -14,7 +14,7 @@ import { dayService } from '../../../services/day/day.service'
 import { showErrorMsg } from '../../../services/event-bus.service'
 import { SlideAnimation } from '../../../components/SlideAnimation/SlideAnimation'
 import { setSelectedDiaryDay } from '../../../store/actions/user.actions'
-import DonutLargeIcon from '@mui/icons-material/DonutLarge'
+import { CustomIcon } from '../../../CustomMui/CustomIcon/CustomIcon'
 import { getMeals } from '../../../assets/config/meals'
 
 import { getDateFromISO } from '../../../services/util.service'
@@ -171,7 +171,13 @@ export function Diary() {
                 }
               />
             }
-            icon={<DonutLargeIcon />}
+            icon={
+              <CustomIcon
+                name='macros'
+                size='m'
+                variant='subtle'
+              />
+            }
           />
         </div>
 

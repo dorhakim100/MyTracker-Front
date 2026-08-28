@@ -1,0 +1,119 @@
+.custom-icon-container,
+.custom-icon-bare {
+  color: $primary-color;
+  flex-shrink: 0;
+
+  .MuiSvgIcon-root,
+  svg {
+    color: inherit;
+    display: block;
+
+    [fill='none'] {
+      fill: none;
+    }
+  }
+
+  &.primary {
+    color: $primary-color;
+  }
+  &.blue {
+    color: $picker-color-blue;
+  }
+  &.yellow {
+    color: $picker-color-yellow;
+  }
+  &.red {
+    color: $picker-color-red;
+  }
+  &.orange {
+    color: $picker-color-orange;
+  }
+  &.green {
+    color: $picker-color-green;
+  }
+  &.deepPurple {
+    color: $picker-color-deep-purple;
+  }
+  &.purple {
+    color: $picker-color-purple;
+  }
+  &.pink {
+    color: $picker-color-pink;
+  }
+}
+
+.custom-icon-bare {
+  display: inline-flex;
+  line-height: 0;
+}
+
+.custom-icon-container {
+  display: inline-grid;
+  place-items: center;
+  border-radius: 50%;
+  background: color-mix(
+    in srgb,
+    currentColor var(--custom-icon-tint, 14%),
+    transparent
+  );
+
+  &.size-s {
+    width: 1.75rem;
+    height: 1.75rem;
+
+    .MuiSvgIcon-root,
+    svg {
+      font-size: 1.1rem;
+      width: 1.1rem;
+      height: 1.1rem;
+    }
+  }
+
+  &.size-m {
+    width: 2.5rem;
+    height: 2.5rem;
+
+    .MuiSvgIcon-root,
+    svg {
+      font-size: 1.5rem;
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+  }
+
+  &.size-l {
+    width: 2.9rem;
+    height: 2.9rem;
+
+    .MuiSvgIcon-root,
+    svg {
+      font-size: 1.75rem;
+      width: 1.75rem;
+      height: 1.75rem;
+    }
+  }
+
+  &.size-xl {
+    width: 3.25rem;
+    height: 3.25rem;
+
+    .MuiSvgIcon-root,
+    svg {
+      font-size: 2rem;
+      width: 2rem;
+      height: 2rem;
+    }
+  }
+
+  &.variant-subtle {
+    --custom-icon-tint: 8%;
+  }
+
+  &.variant-medium {
+    --custom-icon-tint: 14%;
+  }
+
+  &.variant-strong {
+    --custom-icon-tint: 32%;
+  }
+}

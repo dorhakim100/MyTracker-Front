@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
-import DirectionsRunIcon from '@mui/icons-material/DirectionsRun'
 import { startGoogleHealthConnect } from '../../../services/auth/google-auth.service'
+import MonitorHeartRoundedIcon from '@mui/icons-material/MonitorHeartRounded'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../store/store'
 import { showErrorMsg, showSuccessMsg } from '../../../services/event-bus.service'
@@ -39,7 +39,7 @@ export function Prompt() {
 
   return (
     <div className='health-connect-prompt-container'>
-      <DirectionsRunIcon className='health-connect-prompt-icon' />
+      <MonitorHeartRoundedIcon className='health-connect-prompt-icon' />
       <Typography
         variant='h6'
         className='bold-header'

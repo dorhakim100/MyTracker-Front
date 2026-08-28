@@ -53,8 +53,7 @@ import {
 import CustomSkeleton from '../../../CustomMui/CustomSkeleton/CustomSkeleton'
 import { MyTraineeCard } from '../../../components/MyTraineeCard/MyTraineeCard'
 import { CustomAccordion } from '../../../CustomMui/CustomAccordion/CustomAccordion'
-import PersonAddIcon from '@mui/icons-material/PersonAdd'
-import { WorkoutIcon } from '../../../components/WorkoutIcon/WorkoutIcon'
+import { CustomIcon } from '../../../CustomMui/CustomIcon/CustomIcon'
 import workoutAnimation from '../../../../public/gain-weight.json'
 import Lottie from 'lottie-react'
 import { TrainerRequest } from '../../../types/trainerRequest/TrainerRequest'
@@ -721,7 +720,13 @@ export function Workouts() {
             <CustomAccordion
               title={t('workout.myTrainees')}
               cmp={<MyTraineeCard />}
-              icon={<PersonAddIcon />}
+              icon={
+                <CustomIcon
+                  name='trainees'
+                  size='m'
+                  variant='subtle'
+                />
+              }
               className={`my-trainees-accordion`}
             />
           )}
@@ -776,7 +781,11 @@ export function Workouts() {
                 }`}
                 role='status'
               >
-                <WorkoutIcon />
+                <CustomIcon
+                  name='workout'
+                  size='xl'
+                  variant='medium'
+                />
                 <Typography
                   variant='h6'
                   className='bold-header'

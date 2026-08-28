@@ -33,7 +33,7 @@ import {
   setTodaySessionDay,
 } from '../../../store/actions/workout.action'
 import { useWindowDimentions } from '../../../hooks/useWindowDimentions'
-import { WorkoutIcon } from '../../../components/WorkoutIcon/WorkoutIcon'
+import { CustomIcon } from '../../../CustomMui/CustomIcon/CustomIcon'
 import { getPercentage } from '../../../services/util.service'
 import { MealCard } from '../../../components/MealCard/MealCard'
 import { getMeals } from '../../../assets/config/meals'
@@ -170,12 +170,6 @@ export function Dashboard() {
         current={calories}
         goal={userToCheck.currGoal?.dailyCalories}
       />,
-      <MacrosProgress
-        key='macros-progress'
-        protein={macros.protein}
-        carbs={macros.carbs}
-        fats={macros.fats}
-      />,
       <MacrosDistribution
         key='macros-distribution'
         protein={macros.protein.gram}
@@ -186,6 +180,12 @@ export function Dashboard() {
         currentFats={macros.fats.current}
         currentCalories={calories}
         goalCalories={userToCheck.currGoal?.dailyCalories}
+      />,
+      <MacrosProgress
+        key='macros-progress'
+        protein={macros.protein}
+        carbs={macros.carbs}
+        fats={macros.fats}
       />,
     ]
   }, [userToCheck?._id, calories, macros, currMealPeriod, menu])
@@ -365,7 +365,11 @@ export function Dashboard() {
           } ${isDashboard ? 'dashboard' : ''}`}
           role='status'
         >
-          <WorkoutIcon />
+          <CustomIcon
+            name='workout'
+            size='xl'
+            variant='medium'
+          />
           <Typography
             variant='h6'
             className='bold-header'
@@ -415,7 +419,11 @@ export function Dashboard() {
       return (
         <div className='dashboard-session-container'>
           <div className='header-container'>
-            <WorkoutIcon />
+            <CustomIcon
+              name='workout'
+              size='l'
+              variant='medium'
+            />
             <Typography
               variant='h5'
               className='bold-header'
