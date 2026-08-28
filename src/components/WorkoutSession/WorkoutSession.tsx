@@ -36,7 +36,7 @@ import {
   getWorkoutMuscles,
   exerciseSearch,
 } from '../../services/exersice-search/exersice-search'
-import CircleIcon from '@mui/icons-material/Circle'
+// import CircleIcon from '@mui/icons-material/Circle'
 import AddIcon from '@mui/icons-material/Add'
 import CheckIcon from '@mui/icons-material/Check'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
