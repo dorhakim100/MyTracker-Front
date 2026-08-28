@@ -1,7 +1,7 @@
 import { LinearProgress, Typography } from '@mui/material'
 import FlagIcon from '@mui/icons-material/Flag'
 import { formatNumberWithCommas } from '../../services/util.service'
-import CustomSkeleton from '../../CustomMui/CustomSkeleton/CustomSkeleton'
+// import CustomSkeleton from '../../CustomMui/CustomSkeleton/CustomSkeleton'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 
@@ -31,20 +31,20 @@ export function GoalBanner({
     formattedGoal = formatNumberWithCommas(+goal)
   }
 
-  if (loading && current === 0) {
-    return (
-      <div className='goal-banner banner'>
-        <div className='value-container'>
-          <CustomSkeleton
-            width={80}
-            height={21}
-            isDarkMode={prefs.isDarkMode}
-          />
-        </div>
-        {icon || <FlagIcon />}
-      </div>
-    )
-  }
+  // if (loading && current === 0) {
+  //   return (
+  //     <div className='goal-banner banner'>
+  //       <div className='value-container'>
+  //         <CustomSkeleton
+  //           width={80}
+  //           height={21}
+  //           isDarkMode={prefs.isDarkMode}
+  //         />
+  //       </div>
+  //       {icon || <FlagIcon />}
+  //     </div>
+  //   )
+  // }
   return (
     <div className='goal-banner banner'>
       <div className='value-container'>
