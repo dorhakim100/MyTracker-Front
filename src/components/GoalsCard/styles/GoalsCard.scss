@@ -9,6 +9,7 @@
   .goal-left {
     position: relative;
     svg {
+      z-index: 2;
       position: absolute;
 
       left: 0;

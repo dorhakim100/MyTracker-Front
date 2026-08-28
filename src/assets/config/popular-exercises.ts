@@ -2,7 +2,7 @@ export const POPULAR_EXERCISES = [
   {
     exerciseId: 'SpYC0Kp',
     name: 'dumbbell bench press',
-    gifUrl: 'https://static.exercisedb.dev/media/SpYC0Kp.gif',
+    gifUrl: 'https://assets.exercisedb.dev/media/whJcEpf.gif',
     targetMuscles: ['pectorals'],
     bodyParts: ['chest'],
     equipments: ['dumbbell'],
@@ -19,7 +19,7 @@ export const POPULAR_EXERCISES = [
   {
     exerciseId: 'trqKQv2',
     name: 'smith bench press',
-    gifUrl: 'https://static.exercisedb.dev/media/trqKQv2.gif',
+    gifUrl: 'https://assets.exercisedb.dev/media/h80j4VE.gif',
     targetMuscles: ['pectorals'],
     bodyParts: ['chest'],
     equipments: ['smith machine'],
@@ -37,7 +37,7 @@ export const POPULAR_EXERCISES = [
   {
     exerciseId: 'znQUdHY',
     name: 'dumbbell seated shoulder press',
-    gifUrl: 'https://static.exercisedb.dev/media/znQUdHY.gif',
+    gifUrl: 'https://assets.exercisedb.dev/media/BHFYLWn.gif',
     targetMuscles: ['delts'],
     bodyParts: ['shoulders'],
     equipments: ['dumbbell'],
@@ -53,7 +53,7 @@ export const POPULAR_EXERCISES = [
   {
     exerciseId: 'EIeI8Vf',
     name: 'barbell bench press',
-    gifUrl: 'https://static.exercisedb.dev/media/EIeI8Vf.gif',
+    gifUrl: 'https://assets.exercisedb.dev/media/qU7GQpl.gif',
     targetMuscles: ['pectorals'],
     bodyParts: ['chest'],
     equipments: ['barbell'],
@@ -72,7 +72,7 @@ export const POPULAR_EXERCISES = [
   {
     exerciseId: 'yz9nUhF',
     name: 'dumbbell fly',
-    gifUrl: 'https://static.exercisedb.dev/media/yz9nUhF.gif',
+    gifUrl: 'https://assets.exercisedb.dev/media/CnTNMWE.gif',
     targetMuscles: ['pectorals'],
     bodyParts: ['chest'],
     equipments: ['dumbbell'],
@@ -88,7 +88,7 @@ export const POPULAR_EXERCISES = [
   {
     exerciseId: 'xLYSdtg',
     name: 'cable middle fly',
-    gifUrl: 'https://static.exercisedb.dev/media/xLYSdtg.gif',
+    gifUrl: 'https://assets.exercisedb.dev/media/FaqwSK6.gif',
     targetMuscles: ['pectorals'],
     bodyParts: ['chest'],
     equipments: ['cable'],
@@ -106,7 +106,7 @@ export const POPULAR_EXERCISES = [
   {
     exerciseId: 'EAs3xL9',
     name: 'dumbbell reverse fly',
-    gifUrl: 'https://static.exercisedb.dev/media/EAs3xL9.gif',
+    gifUrl: 'https://assets.exercisedb.dev/media/NlZ7oa9.gif',
     targetMuscles: ['delts'],
     bodyParts: ['shoulders'],
     equipments: ['dumbbell'],
@@ -124,7 +124,7 @@ export const POPULAR_EXERCISES = [
   {
     exerciseId: 'eZyBC3j',
     name: 'barbell bent over row',
-    gifUrl: 'https://static.exercisedb.dev/media/eZyBC3j.gif',
+    gifUrl: 'https://assets.exercisedb.dev/media/VK9KXN4.gif',
     targetMuscles: ['upper back'],
     bodyParts: ['back'],
     equipments: ['barbell'],
@@ -142,7 +142,7 @@ export const POPULAR_EXERCISES = [
   {
     exerciseId: 'NbVPDMW',
     name: 'dumbbell biceps curl',
-    gifUrl: 'https://static.exercisedb.dev/media/NbVPDMW.gif',
+    gifUrl: 'https://assets.exercisedb.dev/media/gyy8qYl.gif',
     targetMuscles: ['biceps'],
     bodyParts: ['upper arms'],
     equipments: ['dumbbell'],
@@ -160,7 +160,7 @@ export const POPULAR_EXERCISES = [
   {
     exerciseId: 'ila4NZS',
     name: 'barbell deadlift',
-    gifUrl: 'https://static.exercisedb.dev/media/ila4NZS.gif',
+    gifUrl: 'https://assets.exercisedb.dev/media/bQhS1y5.gif',
     targetMuscles: ['glutes'],
     bodyParts: ['upper legs'],
     equipments: ['barbell'],
@@ -177,7 +177,7 @@ export const POPULAR_EXERCISES = [
   {
     exerciseId: 'wQ2c4XD',
     name: 'barbell romanian deadlift',
-    gifUrl: 'https://static.exercisedb.dev/media/wQ2c4XD.gif',
+    gifUrl: 'https://assets.exercisedb.dev/media/DHSg8y4.gif',
     targetMuscles: ['glutes'],
     bodyParts: ['upper legs'],
     equipments: ['barbell'],
@@ -196,7 +196,7 @@ export const POPULAR_EXERCISES = [
   {
     exerciseId: 'KgI0tqW',
     name: 'barbell sumo deadlift',
-    gifUrl: 'https://static.exercisedb.dev/media/KgI0tqW.gif',
+    gifUrl: 'https://assets.exercisedb.dev/media/3cNUiO0.gif',
     targetMuscles: ['glutes'],
     bodyParts: ['upper legs'],
     equipments: ['barbell'],
@@ -214,7 +214,7 @@ export const POPULAR_EXERCISES = [
   {
     exerciseId: 'rR0LJzx',
     name: 'dumbbell romanian deadlift',
-    gifUrl: 'https://static.exercisedb.dev/media/rR0LJzx.gif',
+    gifUrl: 'https://assets.exercisedb.dev/media/amCa8jC.gif',
     targetMuscles: ['glutes'],
     bodyParts: ['upper legs'],
     equipments: ['dumbbell'],
@@ -230,7 +230,7 @@ export const POPULAR_EXERCISES = [
   {
     exerciseId: 'slDvUAU',
     name: 'dumbbell hammer curl',
-    gifUrl: 'https://static.exercisedb.dev/media/slDvUAU.gif',
+    gifUrl: 'https://assets.exercisedb.dev/media/8Xmxuy8.gif',
     targetMuscles: ['biceps'],
     bodyParts: ['upper arms'],
     equipments: ['dumbbell'],
@@ -249,7 +249,7 @@ export const POPULAR_EXERCISES = [
   {
     exerciseId: 'F1KxjBa',
     name: 'dumbbell peacher hammer curl',
-    gifUrl: 'https://static.exercisedb.dev/media/F1KxjBa.gif',
+    gifUrl: 'https://assets.exercisedb.dev/media/pshTUdC.gif',
     targetMuscles: ['biceps'],
     bodyParts: ['upper arms'],
     equipments: ['dumbbell'],
@@ -269,7 +269,7 @@ export const POPULAR_EXERCISES = [
   {
     exerciseId: '3TZduzM',
     name: 'barbell incline bench press',
-    gifUrl: 'https://static.exercisedb.dev/media/3TZduzM.gif',
+    gifUrl: 'https://assets.exercisedb.dev/media/Mmiz2qI.gif',
     targetMuscles: ['pectorals'],
     bodyParts: ['chest'],
     equipments: ['barbell'],
@@ -286,7 +286,7 @@ export const POPULAR_EXERCISES = [
   {
     exerciseId: '5v7KYld',
     name: 'smith incline bench press',
-    gifUrl: 'https://static.exercisedb.dev/media/5v7KYld.gif',
+    gifUrl: 'https://assets.exercisedb.dev/media/lNZk6DR.gif',
     targetMuscles: ['pectorals'],
     bodyParts: ['chest'],
     equipments: ['smith machine'],
@@ -304,7 +304,7 @@ export const POPULAR_EXERCISES = [
   {
     exerciseId: 'ns0SIbU',
     name: 'dumbbell incline bench press',
-    gifUrl: 'https://static.exercisedb.dev/media/ns0SIbU.gif',
+    gifUrl: 'https://assets.exercisedb.dev/media/OQ1sazB.gif',
     targetMuscles: ['pectorals'],
     bodyParts: ['chest'],
     equipments: ['dumbbell'],
@@ -322,7 +322,7 @@ export const POPULAR_EXERCISES = [
   {
     exerciseId: 'RVwzP10',
     name: 'cable pulldown',
-    gifUrl: 'https://static.exercisedb.dev/media/RVwzP10.gif',
+    gifUrl: 'https://assets.exercisedb.dev/media/U7iWH5Y.gif',
     targetMuscles: ['lats'],
     bodyParts: ['back'],
     equipments: ['cable'],
@@ -341,7 +341,7 @@ export const POPULAR_EXERCISES = [
   {
     exerciseId: 'DsgkuIt',
     name: 'dumbbell lateral raise',
-    gifUrl: 'https://static.exercisedb.dev/media/DsgkuIt.gif',
+    gifUrl: 'https://assets.exercisedb.dev/media/dqr8AcJ.gif',
     targetMuscles: ['delts'],
     bodyParts: ['shoulders'],
     equipments: ['dumbbell'],
@@ -358,7 +358,7 @@ export const POPULAR_EXERCISES = [
   {
     exerciseId: 'my33uHU',
     name: 'lever leg extension',
-    gifUrl: 'https://static.exercisedb.dev/media/my33uHU.gif',
+    gifUrl: 'https://assets.exercisedb.dev/media/QAV2j3D.gif',
     targetMuscles: ['quads'],
     bodyParts: ['upper legs'],
     equipments: ['leverage machine'],
@@ -376,7 +376,7 @@ export const POPULAR_EXERCISES = [
   {
     exerciseId: '7zdxRTl',
     name: 'smith leg press',
-    gifUrl: 'https://static.exercisedb.dev/media/7zdxRTl.gif',
+    gifUrl: 'https://assets.exercisedb.dev/media/5jRGE2T.gif',
     targetMuscles: ['glutes'],
     bodyParts: ['upper legs'],
     equipments: ['smith machine'],
@@ -394,7 +394,7 @@ export const POPULAR_EXERCISES = [
   {
     exerciseId: '10Z2DXU',
     name: 'sled 45в° leg press',
-    gifUrl: 'https://static.exercisedb.dev/media/10Z2DXU.gif',
+    gifUrl: 'https://assets.exercisedb.dev/media/s41flaL.gif',
     targetMuscles: ['glutes'],
     bodyParts: ['upper legs'],
     equipments: ['sled machine'],
@@ -413,7 +413,7 @@ export const POPULAR_EXERCISES = [
   {
     exerciseId: '17lJ1kr',
     name: 'lever lying leg curl',
-    gifUrl: 'https://static.exercisedb.dev/media/17lJ1kr.gif',
+    gifUrl: 'https://assets.exercisedb.dev/media/8XpTCDL.gif',
     targetMuscles: ['hamstrings'],
     bodyParts: ['upper legs'],
     equipments: ['leverage machine'],
@@ -431,7 +431,7 @@ export const POPULAR_EXERCISES = [
   {
     exerciseId: 'Zg3XY7P',
     name: 'lever seated leg curl',
-    gifUrl: 'https://static.exercisedb.dev/media/Zg3XY7P.gif',
+    gifUrl: 'https://assets.exercisedb.dev/media/Z6hO3Uj.gif',
     targetMuscles: ['hamstrings'],
     bodyParts: ['upper legs'],
     equipments: ['leverage machine'],
@@ -450,7 +450,7 @@ export const POPULAR_EXERCISES = [
   {
     exerciseId: 'hvV79Si',
     name: 'cable low seated row',
-    gifUrl: 'https://static.exercisedb.dev/media/hvV79Si.gif',
+    gifUrl: 'https://assets.exercisedb.dev/media/YNvYoch.gif',
     targetMuscles: ['upper back'],
     bodyParts: ['back'],
     equipments: ['cable'],
@@ -468,7 +468,7 @@ export const POPULAR_EXERCISES = [
   {
     exerciseId: 'jFtipLl',
     name: 'smith squat',
-    gifUrl: 'https://static.exercisedb.dev/media/jFtipLl.gif',
+    gifUrl: 'https://assets.exercisedb.dev/media/VHtB5nn.gif',
     targetMuscles: ['glutes'],
     bodyParts: ['upper legs'],
     equipments: ['smith machine'],
@@ -489,7 +489,7 @@ export const POPULAR_EXERCISES = [
   {
     exerciseId: 'kTbSH9h',
     name: 'barbell seated overhead press',
-    gifUrl: 'https://static.exercisedb.dev/media/kTbSH9h.gif',
+    gifUrl: 'https://assets.exercisedb.dev/media/CkmaUpi.gif',
     targetMuscles: ['delts'],
     bodyParts: ['shoulders'],
     equipments: ['barbell'],
@@ -507,7 +507,7 @@ export const POPULAR_EXERCISES = [
   {
     exerciseId: 'gAwDzB3',
     name: 'cable triceps pushdown (v-bar)',
-    gifUrl: 'https://static.exercisedb.dev/media/gAwDzB3.gif',
+    gifUrl: 'https://assets.exercisedb.dev/media/hEVUD94.gif',
     targetMuscles: ['triceps'],
     bodyParts: ['upper arms'],
     equipments: ['cable'],
@@ -527,7 +527,7 @@ export const POPULAR_EXERCISES = [
   {
     exerciseId: '6TG6x2w',
     name: 'ez barbell curl',
-    gifUrl: 'https://static.exercisedb.dev/media/6TG6x2w.gif',
+    gifUrl: 'https://assets.exercisedb.dev/media/5KMQw7b.gif',
     targetMuscles: ['biceps'],
     bodyParts: ['upper arms'],
     equipments: ['ez barbell'],
@@ -544,7 +544,7 @@ export const POPULAR_EXERCISES = [
   {
     exerciseId: 'h8LFzo9',
     name: 'barbell lying triceps extension skull crusher',
-    gifUrl: 'https://static.exercisedb.dev/media/h8LFzo9.gif',
+    gifUrl: 'https://assets.exercisedb.dev/media/9DQq3ne.gif',
     targetMuscles: ['triceps'],
     bodyParts: ['upper arms'],
     equipments: ['barbell'],
@@ -561,7 +561,7 @@ export const POPULAR_EXERCISES = [
   {
     exerciseId: 'W9pFVv1',
     name: 'barbell bench squat',
-    gifUrl: 'https://static.exercisedb.dev/media/W9pFVv1.gif',
+    gifUrl: 'https://assets.exercisedb.dev/media/HTSlQLi.gif',
     targetMuscles: ['quads'],
     bodyParts: ['upper legs'],
     equipments: ['barbell'],
@@ -581,7 +581,7 @@ export const POPULAR_EXERCISES = [
   {
     exerciseId: 'qXTaZnJ',
     name: 'barbell full squat',
-    gifUrl: 'https://static.exercisedb.dev/media/qXTaZnJ.gif',
+    gifUrl: 'https://assets.exercisedb.dev/media/7eOhEbW.gif',
     targetMuscles: ['glutes'],
     bodyParts: ['upper legs'],
     equipments: ['barbell'],
@@ -600,7 +600,7 @@ export const POPULAR_EXERCISES = [
   {
     exerciseId: 's8nrDXF',
     name: 'weighted crunch',
-    gifUrl: 'https://static.exercisedb.dev/media/s8nrDXF.gif',
+    gifUrl: 'https://assets.exercisedb.dev/media/jvMOY0m.gif',
     targetMuscles: ['abs'],
     bodyParts: ['waist'],
     equipments: ['weighted'],
@@ -616,7 +616,7 @@ export const POPULAR_EXERCISES = [
   {
     exerciseId: 'nCU1Ekp',
     name: 'reverse crunch',
-    gifUrl: 'https://static.exercisedb.dev/media/nCU1Ekp.gif',
+    gifUrl: 'https://assets.exercisedb.dev/media/Xqr8wut.gif',
     targetMuscles: ['abs'],
     bodyParts: ['waist'],
     equipments: ['body weight'],
@@ -632,7 +632,7 @@ export const POPULAR_EXERCISES = [
   {
     exerciseId: 'mWppALS',
     name: 'groin crunch',
-    gifUrl: 'https://static.exercisedb.dev/media/mWppALS.gif',
+    gifUrl: 'https://assets.exercisedb.dev/media/EmD8isA.gif',
     targetMuscles: ['abs'],
     bodyParts: ['waist'],
     equipments: ['body weight'],
@@ -648,7 +648,7 @@ export const POPULAR_EXERCISES = [
   {
     exerciseId: 'TFqbd8t',
     name: 'crunch floor',
-    gifUrl: 'https://static.exercisedb.dev/media/TFqbd8t.gif',
+    gifUrl: 'https://assets.exercisedb.dev/media/SMfGWpR.gif',
     targetMuscles: ['abs'],
     bodyParts: ['waist'],
     equipments: ['body weight'],
@@ -664,7 +664,7 @@ export const POPULAR_EXERCISES = [
   {
     exerciseId: 'XIHEoCG',
     name: 'standing calves',
-    gifUrl: 'https://static.exercisedb.dev/media/XIHEoCG.gif',
+    gifUrl: 'https://assets.exercisedb.dev/media/KLVYi6y.gif',
     targetMuscles: ['calves'],
     bodyParts: ['lower legs'],
     equipments: ['body weight'],
@@ -679,7 +679,7 @@ export const POPULAR_EXERCISES = [
   {
     exerciseId: 'qOKcgVP',
     name: 'standing calves calf stretch',
-    gifUrl: 'https://static.exercisedb.dev/media/qOKcgVP.gif',
+    gifUrl: 'https://assets.exercisedb.dev/media/4ZrWBUD.gif',
     targetMuscles: ['calves'],
     bodyParts: ['lower legs'],
     equipments: ['body weight'],

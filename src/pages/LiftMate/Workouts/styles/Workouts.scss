@@ -126,6 +126,13 @@
     }
   }
 
+  .exercises-search-section {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    align-items: center;
+    gap: 0.5rem;
+  }
+
   .past-controller {
     display: grid;
     grid-template-columns: repeat(2, 1fr);

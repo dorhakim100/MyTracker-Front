@@ -33,11 +33,12 @@ import {
 } from '../../../services/event-bus.service'
 import { WorkoutDetails } from '../../../components/WorkoutDetails/WorkoutDetails'
 import { Avatar, CircularProgress, Divider, Typography } from '@mui/material'
-import { Add, Delete, Edit } from '@mui/icons-material'
+import { Add, Delete, Edit, Search } from '@mui/icons-material'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import { workoutService } from '../../../services/workout/workout.service'
 import { DAY_IN_MS } from '../../../assets/config/times'
 import { WorkoutsList } from './WorkoutsList'
+import { ExercisesExplorer } from './ExercisesExplorer/ExercisesExplorer'
 import { CustomOptionsMenu } from '../../../CustomMui/CustomOptionsMenu/CustomOptionsMenu'
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
 import { DropdownOption } from '../../../types/DropdownOption'
@@ -80,8 +81,13 @@ import {
 const EDIT = 'edit'
 const DETAILS = 'details'
 const ROUTINES = 'routines'
+const EXERCISES = 'exercises'
 
-type dialogType = typeof EDIT | typeof DETAILS | typeof ROUTINES
+type dialogType =
+  | typeof EDIT
+  | typeof DETAILS
+  | typeof ROUTINES
+  | typeof EXERCISES
 
 interface dialogOptions {
   open: boolean
@@ -500,6 +506,8 @@ export function Workouts() {
             {renderWorkoutLists(false)}
           </div>
         )
+      case EXERCISES:
+        return <ExercisesExplorer />
       default:
         return <></>
     }
@@ -515,6 +523,8 @@ export function Workouts() {
         return t('workout.workoutDetails')
       case ROUTINES:
         return t('workout.routines')
+      case EXERCISES:
+        return t('workout.exercises')
 
       default:
         return t('workout.workouts')
@@ -604,6 +614,25 @@ export function Workouts() {
           )}
 
         <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
+
+        {!isDashboard && (
+          <>
+            <div className='exercises-search-section'>
+              <span className='bold-header'>{t('workout.exercises')}</span>
+              <CustomButton
+                text={t('common.search')}
+                onClick={() =>
+                  setDialogOptions({ open: true, type: EXERCISES })
+                }
+                icon={<Search />}
+                fullWidth={true}
+              />
+            </div>
+            <Divider
+              className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+            />
+          </>
+        )}
 
         {renderPastRoutinesController()}
 
