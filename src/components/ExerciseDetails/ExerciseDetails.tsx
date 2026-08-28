@@ -11,6 +11,7 @@ import { translateService } from '../../services/translate/translate.service'
 import { ExpectedActual } from '../../types/expectedActual/ExpectedActual'
 import { exerciseImage as exerciseImageObject } from '../../assets/config/exercise-image'
 import { CustomAccordion } from '../../CustomMui/CustomAccordion/CustomAccordion'
+import { CustomAnimatedText } from '../../CustomMui/CustomAnimatedText/CustomAnimatedText'
 import { CustomIcon } from '../../CustomMui/CustomIcon/CustomIcon'
 import { Set } from '../../types/exercise/Exercise'
 import {
@@ -214,12 +215,6 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
     getWorkoutInstructions()
   }, [exercise, t])
 
-  const renderExerciseInstructions = (instruction: string) => {
-    const cleaned = instruction.replace(/^Step:\d+\s*/, '')
-
-    return <p key={instruction}>{cleaned}</p>
-  }
-
   const getNotesClass = (notes: string) => {
     return translateService.isLtrString(notes)
       ? 'english-notes'
@@ -289,7 +284,13 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
 
       <CustomAccordion
         title={t('exercise.instructions')}
-        cmp={exerciseInstructions?.map(renderExerciseInstructions)}
+        cmp={
+          <CustomAnimatedText typeSpeed={20}>
+            {exerciseInstructions
+              ?.map((instruction) => instruction.replace(/^Step:\d+\s*/, ''))
+              .join('\n\n')}
+          </CustomAnimatedText>
+        }
         icon={
           <CustomIcon
             name='instructions'
@@ -325,9 +326,9 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
           />
         </div>
         <div
-          className={`line-chart-paper ${
-            prefs.isDarkMode ? 'dark-mode' : ''
-          } ${prefs.favoriteColor || ''}`}
+          className={`line-chart-paper ${prefs.isDarkMode ? 'dark-mode' : ''} ${
+            prefs.favoriteColor || ''
+          }`}
         >
           <LineChart
             isDisplayPoints={true}
@@ -361,7 +362,9 @@ export function ExerciseDetails({ exercise }: ExerciseDetailsProps) {
               const secondaryUnit =
                 viewBy === 'weight' ? t('exercise.reps') : t('weight.kg')
               return {
-                title: `${formatReadoutNumber(value)} ${mainUnit} · ${formatReadoutNumber(
+                title: `${formatReadoutNumber(
+                  value
+                )} ${mainUnit} · ${formatReadoutNumber(
                   secondary
                 )} ${secondaryUnit}`,
                 subtitle,

@@ -1,9 +1,9 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Typography } from '@mui/material'
-import { useTypewriter, Cursor } from 'react-simple-typewriter'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
+import { CustomAnimatedText } from '../../CustomMui/CustomAnimatedText/CustomAnimatedText'
 import type { BodyFatResult } from '../../types/bodyFat/BodyFat'
 
 export interface BodyFatDetailsProps {
@@ -26,14 +26,6 @@ export function BodyFatDetails({
     if (result.kind === 'success') return result.note
     return result.message
   }, [result])
-
-  const [typedText] = useTypewriter({
-    words: [animatedText],
-    loop: 1,
-    typeSpeed: 35,
-    deleteSpeed: 0,
-    delaySpeed: 300,
-  })
 
   const isRtl = prefs.lang === 'he'
 
@@ -77,8 +69,7 @@ const maxBodyFat = result.kind === 'success' ? result.maxPercent : 0
 
         <div className='details-note typewriter-container subtle-bg'>
           <Typography variant='body1' component='div' className='note-text'>
-            <span>{typedText}</span>
-            <Cursor cursorStyle='|' />
+            <CustomAnimatedText>{animatedText}</CustomAnimatedText>
           </Typography>
         </div>
       </div>
