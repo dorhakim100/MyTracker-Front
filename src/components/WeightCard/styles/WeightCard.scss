@@ -1,29 +1,85 @@
 .card.weight-card {
+  --weight-card-accent: var(--primary-color);
   height: fit-content;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 1fr;
   align-items: center;
   justify-items: center;
-  // gap: 0.2rem;
-
-  .date-text {
-    grid-column: 1 / 2;
-    grid-row: 1;
-    font-size: 1rem;
+  position: relative;
+  &.blue {
+    --weight-card-accent: var(--picker-color-blue);
+  }
+  &.yellow {
+    --weight-card-accent: var(--picker-color-yellow);
+  }
+  &.red {
+    --weight-card-accent: var(--picker-color-red);
+  }
+  &.orange {
+    --weight-card-accent: var(--picker-color-orange);
+  }
+  &.green {
+    --weight-card-accent: var(--picker-color-green);
+  }
+  &.deepPurple {
+    --weight-card-accent: var(--picker-color-deep-purple);
+  }
+  &.purple {
+    --weight-card-accent: var(--picker-color-purple);
+  }
+  &.pink {
+    --weight-card-accent: var(--picker-color-pink);
   }
 
   .date-picker-container {
-    grid-column: 2/3;
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: stretch;
+    height: 2.5rem;
+    position: absolute;
+    color: var(--weight-card-accent);
+    top: -0rem;
+    right: 1.2rem;
+
+    .custom-date-picker-button.MuiIconButton-root {
+      width: 2.5rem;
+      height: 2.5rem;
+      color: inherit !important;
+      background-color: color-mix(
+        in srgb,
+        currentColor 22%,
+        transparent
+      ) !important;
+      box-shadow: inset 0 0 0 1.5px
+        color-mix(in srgb, currentColor 40%, transparent);
+      transition: background-color 180ms ease, box-shadow 180ms ease;
+
+      svg {
+        color: inherit !important;
+      }
+
+      &:hover {
+        background-color: color-mix(
+          in srgb,
+          currentColor 32%,
+          transparent
+        ) !important;
+        box-shadow: inset 0 0 0 1.5px
+          color-mix(in srgb, currentColor 55%, transparent);
+      }
+    }
   }
 
   .weight-container {
     text-align: center;
-    grid-column: 1 / -1;
+    grid-column: 1;
     grid-row: 2;
+    display: grid;
+    gap: 0.2rem;
 
     .weight-text {
       margin-top: 0.5rem;
-      font-size: 1.8rem;
+      font-size: 2rem;
       font-weight: 600;
       display: flex;
       align-items: center;
@@ -36,19 +92,48 @@
         align-self: end;
       }
     }
-  }
 
-  .update-weight-button-container {
-    grid-column: 1 / -1;
-    // grid-row: 2;
+    .date-text {
+      margin-top: 0.15rem;
+      font-size: 1rem;
+    }
   }
 
   .animation-container {
-    grid-column: 1 / -1;
+    grid-column: 1;
     grid-row: 3;
     width: 180px;
     height: 180px;
     justify-self: center;
+  }
+
+  .update-weight-button-container {
+    grid-column: 1;
+    grid-row: 4;
+  }
+
+  html.dark-mode & {
+    .date-picker-container .custom-date-picker-button.MuiIconButton-root {
+      background-color: color-mix(
+        in srgb,
+        currentColor 28%,
+        transparent
+      ) !important;
+
+      &:hover {
+        background-color: color-mix(
+          in srgb,
+          currentColor 38%,
+          transparent
+        ) !important;
+      }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .date-picker-container .custom-date-picker-button.MuiIconButton-root {
+      transition: none;
+    }
   }
 }
 

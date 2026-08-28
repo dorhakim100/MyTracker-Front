@@ -18,6 +18,7 @@ import { SlideDialog } from '../../components/SlideDialog/SlideDialog'
 import { ItemDetails } from '../../components/ItemDetails/ItemDetails'
 import { MacrosDonut } from '../../components/MacrosDonut/MacrosDonut'
 import { itemNameService } from '../../services/item/item-name.service'
+import { MarqueeText } from '../MarqueeText/MarqueeText'
 
 export function FavoriteItemsCard() {
   const { t, i18n } = useTranslation()
@@ -74,10 +75,13 @@ export function FavoriteItemsCard() {
     <>
       <CustomList
         items={favoriteItems || []}
+        className='favorite-items-list'
         // dragOffsetY={-64}
-        renderPrimaryText={(item) =>
-          itemNameService.getItemDisplayName(item.name, i18n.language)
-        }
+        renderPrimaryText={(item) => (
+          <MarqueeText variant='body1'>
+            {itemNameService.getItemDisplayName(item.name, i18n.language)}
+          </MarqueeText>
+        )}
         renderLeft={(item) => (
           <div className="left-content macros-image-container">
             <MacrosDonut

@@ -40,18 +40,6 @@ export function UserDetails() {
 
   const acrodions = [
     {
-      title: t('user.accordionMeals'),
-      cmp: <MealsCard />,
-      icon: (
-        <CustomIcon
-          name='meals'
-          size='m'
-          variant='subtle'
-        />
-      ),
-      key: 'meals',
-    },
-    {
       title: t('user.accordionGoals'),
       cmp: <GoalsCard />,
       icon: (
@@ -62,6 +50,18 @@ export function UserDetails() {
         />
       ),
       key: 'goals',
+    },
+    {
+      title: t('user.accordionMeals'),
+      cmp: <MealsCard />,
+      icon: (
+        <CustomIcon
+          name='meals'
+          size='m'
+          variant='subtle'
+        />
+      ),
+      key: 'meals',
     },
     {
       title: t('user.accordionFavoriteItems'),

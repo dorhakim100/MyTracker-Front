@@ -161,14 +161,16 @@ export function WeightCard() {
             className={`${prefs.favoriteColor}`}
           />
         </div>
-        <Typography
-          variant='body2'
-          className='date-text'
-        >
-          {t('date.date')}: {heDate}
-        </Typography>
 
-        <div className='weight-container'>{renderWeight()}</div>
+        <div className='weight-container'>
+          {renderWeight()}
+          <Typography
+            variant='body2'
+            className='date-text'
+          >
+            {t('date.date')}: {heDate}
+          </Typography>
+        </div>
         <div className='animation-container'>
           <Lottie
             animationData={scaleAnimation}
