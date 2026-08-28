@@ -27,8 +27,8 @@ export async function loadItems(): Promise<Item[]> {
   }
 }
 
-export function setItem(item: Item) {
-  store.dispatch(getCmdSetItem(item))
+export function setItem(item: Item | null) {
+  store.dispatch(getCmdSetItem(item ?? itemService.getEmptyItem()))
 }
 
 export async function loadItem(itemId: string): Promise<Item> {

@@ -236,13 +236,13 @@ export function ItemDetails({
       numberOfServings: editMealItem?.numberOfServings || 1,
       meal: editMealItem?.meal || selectedMeal || getCurrMeal(),
       name: isCustomLog
-      ? ''
-      : itemNameService.getItemDisplayName(
-          editMealItem?.name || searchedItem.name,
-          i18n.language
-        ),
+        ? ''
+        : itemNameService.getItemDisplayName(
+            editMealItem?.name || searchedItem.name,
+            i18n.language
+          ),
     })
-  }, [stringifiedItem])
+  }, [stringifiedItem, isCustomLog])
   const closeClock = () => {
     setClockOpen(false)
   }
@@ -400,7 +400,7 @@ export function ItemDetails({
 
       if (!selectedDay) return showErrorMsg(t('messages.error.addLog'))
 
-      if (!item.searchId && _hasItems(item)) {
+      if (!isCustomLog && !item.searchId && _hasItems(item)) {
         const mealNumberOfServings = editItem.numberOfServings
 
         const logsToAdd = item.items
@@ -634,7 +634,7 @@ export function ItemDetails({
           source: isCustomLog ? searchTypes.custom : null,
         }
 
-        if ((item as Item).type === 'meal') {
+        if (!isCustomLog && (item as Item).type === 'meal') {
           ;(itemMealToEdit as MealItem).mealId = item._id
           ;(itemMealToEdit as MealItem).source = 'meal'
         }

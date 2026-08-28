@@ -10,7 +10,7 @@ import { dayService } from '../../../services/day/day.service'
 import { RootState } from '../../../store/store'
 import { useSelector } from 'react-redux'
 import { searchService } from '../../../services/search/search-service'
-import { loadItems, setEditMealItem } from '../../../store/actions/item.actions'
+import { loadItems, setEditMealItem, setItem } from '../../../store/actions/item.actions'
 import { CustomList } from '../../../CustomMui/CustomList/CustomList'
 import { LoggedToday } from '../../../types/loggedToday/LoggedToday'
 import { showErrorMsg } from '../../../services/event-bus.service'
@@ -88,6 +88,7 @@ export function Progress() {
   const closeEdit = () => {
     setIsEditOpen(false)
     setEditMealItem(null)
+    setItem(null)
   }
 
   const onItemClick = (item: Log) => {

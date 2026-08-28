@@ -142,11 +142,15 @@ export function BarcodeScanner({
   }, [isCustomLog, stopScanner])
 
   const onCustomLog = () => {
+    setEditMealItem(null)
+    setItem(null)
     setIsScannerLocked(true)
     setIsCustomLog(true)
   }
 
   const onCloseScanner = async () => {
+    setEditMealItem(null)
+    setItem(null)
     await stopScanner()
     onClose()
   }

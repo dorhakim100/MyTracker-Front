@@ -242,6 +242,7 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
 
   const onCloseItemDetails = () => {
     setEditMealItem(null)
+    setItem(null)
     setIsItemSelected(false)
     setSelectedMeal(null)
     setIsCustomLog(false)
@@ -249,6 +250,7 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
 
   const onCustomLog = () => {
     setEditMealItem(null)
+    setItem(null)
     setIsCustomLog(true)
     setIsItemSelected(true)
   }

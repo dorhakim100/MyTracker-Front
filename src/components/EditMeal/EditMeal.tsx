@@ -274,6 +274,7 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
 
   function onCloseItemDetails() {
     setEditMealItem(null)
+    setItem(null)
     setIsOpenModal(false)
   }
 

@@ -42,6 +42,7 @@ export function FavoriteItemsCard() {
 
   const onCloseItemDetails = () => {
     setEditMealItem(null)
+    setItem(null)
     setIsItemSelected(false)
   }
 

@@ -377,6 +377,7 @@ export function LoggedList({
 
   const closeEdit = () => {
     setEditMealItem(null)
+    setItem(null)
     setIsEditOpen(false)
   }
 
