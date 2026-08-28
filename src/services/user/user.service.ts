@@ -319,6 +319,7 @@ async function saveLoggedinUser(user: User) {
       isTrainer: user.isTrainer,
       trainees: user.trainees ?? [],
       isFixedMenu: user.isFixedMenu,
+      activeWorkoutsCount: user.activeWorkoutsCount,
       // weights: user.weights ?? [],
     }
     sessionStorage.setItem(STORAGE_KEY_LOGGEDIN_USER, JSON.stringify(user))

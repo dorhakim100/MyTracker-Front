@@ -27,6 +27,7 @@ export interface User {
   trainees?: User[]
 
   isFixedMenu?: boolean
+  activeWorkoutsCount?: number
 }
 
 export interface UserDetails {

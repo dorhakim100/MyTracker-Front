@@ -1,9 +1,10 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import {
   handleSessionDayChange,
   loadWorkouts,
+  loadPastWorkouts,
   removeWorkout,
   toggleActivateWorkout,
   duplicateWorkout,
@@ -35,8 +36,7 @@ import { Avatar, CircularProgress, Divider, Typography } from '@mui/material'
 import { Add, Delete, Edit } from '@mui/icons-material'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import { workoutService } from '../../../services/workout/workout.service'
-import { DAY_IN_MS, MONTH_IN_MS } from '../../../assets/config/times'
-import { DateRangeController } from '../../../components/DateRangeController/DateRangeController'
+import { DAY_IN_MS } from '../../../assets/config/times'
 import { WorkoutsList } from './WorkoutsList'
 import { CustomOptionsMenu } from '../../../CustomMui/CustomOptionsMenu/CustomOptionsMenu'
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
@@ -51,6 +51,8 @@ import {
   setSlideDirection,
 } from '../../../store/actions/system.actions'
 import CustomSkeleton from '../../../CustomMui/CustomSkeleton/CustomSkeleton'
+import { CustomSelect } from '../../../CustomMui/CustomSelect/CustomSelect'
+import { SkeletonList } from '../../../components/SkeletonList/SkeletonList'
 import { MyTraineeCard } from '../../../components/MyTraineeCard/MyTraineeCard'
 import { ChatUnreadBadge } from '../../../CustomMui/ChatUnreadBadge/ChatUnreadBadge'
 import { useUnreadSummary } from '../../../hooks/useUnreadSummary'
@@ -68,6 +70,12 @@ import {
 import { indexedDbService } from '../../../services/indexeddb.service'
 import { ACTIVE_WORKOUTS_ORDER_STORE_NAME } from '../../../constants/store.constants'
 import { PullToRefreshWrapper } from '../../../components/PullToRefreshWrapper/PullToRefreshWrapper'
+import {
+  DEFAULT_PAST_ROUTINES_RANGE,
+  PAST_ROUTINES_RANGES,
+  PAST_ROUTINES_RANGE_VALUES,
+  PastRoutinesRange,
+} from '../../../types/workoutFilter/WorkoutFilter'
 
 const EDIT = 'edit'
 const DETAILS = 'details'
@@ -128,17 +136,16 @@ export function Workouts() {
   const [emptyWorkoutLoading, setEmptyWorkoutLoading] = useState(false)
   const [direction, setDirection] = useState(1)
   const [isPageLoading, setIsPageLoading] = useState(false)
-  const [selectedPastDate, setSelectedPastDate] = useState({
-    from: getDateFromISO(
-      new Date(new Date().getTime() - MONTH_IN_MS).toISOString()
-    ),
-    to: getDateFromISO(new Date().toISOString()),
-  })
+  const [selectedPastRange, setSelectedPastRange] = useState<PastRoutinesRange>(
+    DEFAULT_PAST_ROUTINES_RANGE
+  )
 
   const [requests, setRequests] = useState<TrainerRequest[]>([])
   const { total: traineesUnreadTotal } = useUnreadSummary('trainer')
 
   const [areWorkoutsLoading, setAreWorkoutsLoading] = useState(false)
+  const [arePastWorkoutsLoading, setArePastWorkoutsLoading] = useState(false)
+  const hasLoadedWorkoutsRef = useRef(false)
   const isToday = useMemo(() => {
     const isToday =
       getDateFromISO(sessionFilter?.date) ===
@@ -207,35 +214,45 @@ export function Workouts() {
   ]
 
   useEffect(() => {
+    hasLoadedWorkoutsRef.current = false
+  }, [user?._id, traineeUser?._id])
+
+  useEffect(() => {
     if (!user) return
+    const forUserId = traineeUser?._id || user._id
+    if (!forUserId) return
+
+    const isPastOnly = hasLoadedWorkoutsRef.current
     const handleLoadWorkouts = async () => {
-      setAreWorkoutsLoading(true)
+      if (isPastOnly) {
+        setArePastWorkoutsLoading(true)
+      } else {
+        setAreWorkoutsLoading(true)
+      }
       try {
-        await loadWorkouts({
-          forUserId: traineeUser?._id || user?._id,
-          from: selectedPastDate?.from,
-          to: selectedPastDate?.to,
-        })
+        const filter = workoutService.getPastRoutinesFilter(
+          forUserId,
+          selectedPastRange
+        )
+        if (isPastOnly) {
+          await loadPastWorkouts(filter)
+        } else {
+          await loadWorkouts(filter)
+        }
       } catch {
         showErrorMsg(t('messages.error.getWorkouts'))
       } finally {
+        hasLoadedWorkoutsRef.current = true
         setAreWorkoutsLoading(false)
+        setArePastWorkoutsLoading(false)
       }
     }
     handleLoadWorkouts()
-  }, [user, traineeUser, selectedPastDate])
+  }, [user?._id, traineeUser?._id, selectedPastRange])
 
   useEffect(() => {
     updateSessionDay()
   }, [user, traineeUser, sessionFilter])
-
-  useEffect(() => {
-    if (traineeUser) {
-      loadWorkouts({ forUserId: traineeUser._id })
-    } else if (user) {
-      loadWorkouts({ forUserId: user._id })
-    }
-  }, [user, traineeUser, sessionDay?.date])
 
   useEffect(() => {
     orderActiveWorkouts()
@@ -504,78 +521,99 @@ export function Workouts() {
     }
   }
 
-  const renderWorkoutLists = (isRenderStartButtons: boolean = true) => {
-    if (areWorkoutsLoading) {
-      return (
-        <div className='workouts-lists-container skeleton'>
-          <CustomSkeleton
-            height='200px'
-            width='100%'
-            isDarkMode={prefs.isDarkMode}
-          />
-          <CustomSkeleton
-            height='200px'
-            width='100%'
-            isDarkMode={prefs.isDarkMode}
-          />
-        </div>
-      )
-    }
-    if (activeWorkouts.length === 0 && inactiveWorkouts.length === 0) {
-      return (
-        <div className='no-workouts-container'>
-          <Typography variant='body1'>
-            {t('workout.noWorkoutsFound')}
-          </Typography>
-          <Divider
-            className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-          />
+  const renderPastRoutinesController = () => (
+    <div className='past-controller'>
+      <span className='bold-header'>{t('workout.pastRoutines')}</span>
+      <CustomSelect
+        label={t('workout.pastRoutinesRange')}
+        values={[...PAST_ROUTINES_RANGE_VALUES]}
+        value={selectedPastRange}
+        onChange={(value: string) =>
+          setSelectedPastRange(value as PastRoutinesRange)
+        }
+        valueLabels={{
+          [PAST_ROUTINES_RANGES.LAST_6]: t('workout.pastRangeLast6'),
+          [PAST_ROUTINES_RANGES.LAST_3_MONTHS]: t(
+            'workout.pastRangeLast3Months'
+          ),
+          [PAST_ROUTINES_RANGES.LAST_6_MONTHS]: t(
+            'workout.pastRangeLast6Months'
+          ),
+          [PAST_ROUTINES_RANGES.LAST_YEAR]: t('workout.pastRangeLastYear'),
+          [PAST_ROUTINES_RANGES.ALL]: t('workout.pastRangeAll'),
+        }}
+        className={`${prefs.favoriteColor}`}
+      />
+    </div>
+  )
 
-          <div className='past-controller'>
-            <span className='bold-header'>{t('workout.pastRoutines')}</span>
-            <DateRangeController
-              selectedPastDate={selectedPastDate}
-              onDateChange={setSelectedPastDate}
-            />
-          </div>
-        </div>
-      )
-    }
+  const renderWorkoutLists = (isRenderStartButtons: boolean = true) => {
+    const owner = traineeUser || user
+    const activeSkeletonCount = owner?.activeWorkoutsCount ?? 2
+    const showActiveHeader = areWorkoutsLoading || activeWorkouts.length > 0
+    const showPastListSkeleton = areWorkoutsLoading || arePastWorkoutsLoading
 
     return (
       <div className='workouts-lists-container'>
-        {activeWorkouts.length > 0 && (
+        {showActiveHeader && (
           <span className='bold-header'>{t('workout.activeRoutines')}</span>
         )}
 
-        <div
-          className={`workouts-list-container ${
-            isDashboard ? 'dashboard' : ''
-          } ${prefs.isDarkMode ? 'dark-mode' : ''} active`}
-        >
-          <WorkoutsList
-            workouts={reorderedWorkouts}
-            className={`active-list`}
-            onStartWorkout={onStartWorkout}
-            selectedWorkoutId={selectedWorkoutId}
-            isRenderStartButtons={isRenderStartButtons}
-            onReorderWorkouts={onReorderWorkouts}
-            onDuplicateWorkout={onDuplicateWorkout}
-          />
-        </div>
+        {areWorkoutsLoading ? (
+          <div
+            className={`workouts-list-container ${
+              isDashboard ? 'dashboard' : ''
+            } ${prefs.isDarkMode ? 'dark-mode' : ''} active skeleton`}
+          >
+            {Array.from({ length: activeSkeletonCount }).map((_, index) => (
+              <CustomSkeleton
+                key={`active-workout-skeleton-${index}`}
+                height='140px'
+                width='100%'
+                variant='rounded'
+                isDarkMode={prefs.isDarkMode}
+              />
+            ))}
+          </div>
+        ) : (
+          activeWorkouts.length > 0 && (
+            <div
+              className={`workouts-list-container ${
+                isDashboard ? 'dashboard' : ''
+              } ${prefs.isDarkMode ? 'dark-mode' : ''} active`}
+            >
+              <WorkoutsList
+                workouts={reorderedWorkouts}
+                className={`active-list`}
+                onStartWorkout={onStartWorkout}
+                selectedWorkoutId={selectedWorkoutId}
+                isRenderStartButtons={isRenderStartButtons}
+                onReorderWorkouts={onReorderWorkouts}
+                onDuplicateWorkout={onDuplicateWorkout}
+              />
+            </div>
+          )
+        )}
+
+        {!areWorkoutsLoading &&
+          activeWorkouts.length === 0 &&
+          inactiveWorkouts.length === 0 && (
+            <Typography variant='body1'>
+              {t('workout.noWorkoutsFound')}
+            </Typography>
+          )}
+
         <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
 
-        <div className='past-controller'>
-          <span className='bold-header'>{t('workout.pastRoutines')}</span>
-          <DateRangeController
-            selectedPastDate={selectedPastDate}
-            onDateChange={setSelectedPastDate}
-          />
-        </div>
+        {renderPastRoutinesController()}
 
         <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
 
-        {inactiveWorkouts.length > 0 ? (
+        {showPastListSkeleton ? (
+          <div className='past-routines-skeleton'>
+            <SkeletonList SKELETON_NUMBER={6} />
+          </div>
+        ) : inactiveWorkouts.length > 0 ? (
           <CustomList
             items={inactiveWorkouts}
             className={`workouts-list inactive-list ${
@@ -665,7 +703,11 @@ export function Workouts() {
 
   async function handleRefreshWorkouts() {
     try {
-      await loadWorkouts({ forUserId: traineeUser?._id || user?._id || '' })
+      const forUserId = traineeUser?._id || user?._id || ''
+      if (!forUserId) return
+      await loadWorkouts(
+        workoutService.getPastRoutinesFilter(forUserId, selectedPastRange)
+      )
     } catch {
       showErrorMsg(t('messages.error.loadWorkouts'))
     }

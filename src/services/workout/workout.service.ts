@@ -1,7 +1,13 @@
 import { Workout } from '../../types/workout/Workout'
 import { httpService } from '../http.service'
-import { WorkoutFilter } from '../../types/workoutFilter/WorkoutFilter'
+import {
+  DEFAULT_PAST_ROUTINES_RANGE,
+  PAST_ROUTINES_RANGES,
+  PastRoutinesRange,
+  WorkoutFilter,
+} from '../../types/workoutFilter/WorkoutFilter'
 import { ExerciseFilter } from '../../types/exerciseFilter/ExerciseFilter'
+import { getDateFromISO } from '../util.service'
 
 const KEY = 'workout'
 
@@ -13,15 +19,51 @@ export const workoutService = {
   getEmptyWorkout,
   getEmptyExerciseDetail,
   getEmptyExerciseFilter,
+  getPastRoutinesFilter,
 }
 
 async function query(filterBy: WorkoutFilter = { forUserId: '' }) {
   try {
-    const workouts = await httpService.get(KEY, filterBy)
+    const params: WorkoutFilter = { forUserId: filterBy.forUserId }
+    if (filterBy.from) params.from = filterBy.from
+    if (filterBy.to) params.to = filterBy.to
+    if (filterBy.limit) params.limit = filterBy.limit
+    if (filterBy.all) params.all = true
+    if (filterBy.isActive !== undefined) params.isActive = filterBy.isActive
+
+    const workouts = await httpService.get(KEY, params)
 
     return workouts
   } catch (err) {
     throw err
+  }
+}
+
+function getPastRoutinesFilter(
+  forUserId: string,
+  range: PastRoutinesRange = DEFAULT_PAST_ROUTINES_RANGE
+): WorkoutFilter {
+  if (range === PAST_ROUTINES_RANGES.LAST_6) {
+    return { forUserId, limit: 6 }
+  }
+
+  if (range === PAST_ROUTINES_RANGES.ALL) {
+    return { forUserId, all: true }
+  }
+
+  const fromDate = new Date()
+  if (range === PAST_ROUTINES_RANGES.LAST_3_MONTHS) {
+    fromDate.setMonth(fromDate.getMonth() - 3)
+  } else if (range === PAST_ROUTINES_RANGES.LAST_6_MONTHS) {
+    fromDate.setMonth(fromDate.getMonth() - 6)
+  } else {
+    fromDate.setFullYear(fromDate.getFullYear() - 1)
+  }
+
+  return {
+    forUserId,
+    from: getDateFromISO(fromDate.toISOString()),
+    to: getDateFromISO(new Date().toISOString()),
   }
 }
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

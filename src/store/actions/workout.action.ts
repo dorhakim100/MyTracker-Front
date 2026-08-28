@@ -28,12 +28,53 @@ import { Timer } from '../../types/timer/Timer'
 import { DEFAULT_RESTING_TIME } from '../../assets/config/times'
 import { instructionsService } from '../../services/instructions/instructions.service'
 import { Instructions } from '../../types/instructions/Instructions'
+import {
+  optimisticUpdateUser,
+  setTraineeUser,
+} from './user.actions'
+
+function syncActiveWorkoutsCountFromStore(forUserId?: string) {
+  if (!forUserId) return
+
+  const { user, traineeUser } = store.getState().userModule
+  const count = store
+    .getState()
+    .workoutModule.workouts.filter((workout) => workout.isActive).length
+
+  if (user?._id === forUserId) {
+    optimisticUpdateUser({ ...user, activeWorkoutsCount: count })
+  }
+
+  if (traineeUser?._id === forUserId) {
+    setTraineeUser({ ...traineeUser, activeWorkoutsCount: count })
+  }
+}
 
 export async function loadWorkouts(filter: WorkoutFilter) {
   try {
     const workouts = await workoutService.query(filter)
     store.dispatch({ type: SET_WORKOUTS, workouts })
     return workouts
+  } catch (err) {
+    throw err
+  }
+}
+
+export async function loadPastWorkouts(filter: WorkoutFilter) {
+  try {
+    const pastWorkouts = await workoutService.query(filter)
+    const currentActive = store
+      .getState()
+      .workoutModule.workouts.filter((workout) => workout.isActive)
+    const incomingInactive = pastWorkouts.filter(
+      (workout: Workout) => !workout.isActive
+    )
+
+    store.dispatch({
+      type: SET_WORKOUTS,
+      workouts: [...currentActive, ...incomingInactive],
+    })
+    return incomingInactive
   } catch (err) {
     throw err
   }
@@ -52,6 +93,7 @@ export async function saveWorkout(workout: Workout, timesPerWeek?: number) {
         doneTimes: 0,
       },
     })
+    syncActiveWorkoutsCountFromStore(savedWorkout.forUserId)
     return savedWorkout
   } catch (err) {
     throw err
@@ -138,6 +180,8 @@ export async function duplicateWorkout(
       workout: workoutToSet,
     })
 
+    syncActiveWorkoutsCountFromStore(workoutToSet.forUserId)
+
     return workoutToSet
   } catch (err) {
     if (savedWorkout?._id) {
@@ -153,8 +197,12 @@ export async function duplicateWorkout(
 
 export async function removeWorkout(workoutId: string) {
   try {
+    const workoutToRemove = store
+      .getState()
+      .workoutModule.workouts.find((workout) => workout._id === workoutId)
     await workoutService.remove(workoutId)
     store.dispatch({ type: REMOVE_WORKOUT, workoutId })
+    syncActiveWorkoutsCountFromStore(workoutToRemove?.forUserId)
   } catch (err) {
     throw err
   }
@@ -165,6 +213,7 @@ export async function toggleActivateWorkout(workout: Workout) {
     workout.isActive = !workout.isActive
     const savedWorkout = await workoutService.save(workout)
     store.dispatch({ type: UPDATE_WORKOUT, workout: savedWorkout })
+    syncActiveWorkoutsCountFromStore(savedWorkout.forUserId)
   } catch (err) {
     throw err
   }
