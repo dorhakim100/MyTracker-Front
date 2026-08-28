@@ -317,7 +317,10 @@ export default function LineChart({
   ])
 
   const labelCount = data.labels?.length ?? 0
-  const showDots = shouldShowPointDots(labelCount)
+  const valueCount = (data.datasets[0]?.data ?? []).filter(
+    (v) => v != null
+  ).length
+  const showDots = shouldShowPointDots(valueCount)
   const safeIndex =
     selectedIndex != null && selectedIndex >= 0 && selectedIndex < labelCount
       ? selectedIndex
