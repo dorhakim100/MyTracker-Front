@@ -1,34 +1,18 @@
 .timer-container {
+  @include favorite-accent;
   position: fixed;
-  // bottom: 50px;
-  bottom: 210px;
-  // left: 0.5rem;
-  // right: 0.5rem;
+  bottom: 100px;
+  inset-inline: 0;
   z-index: 1000;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  padding: 0rem 0.5rem;
-  padding-bottom:1rem;
+  padding: 0 0.5rem 0.75rem;
 
-
-  // mask-image: linear-gradient(
-  //   to bottom,
-  //   transparent 20%,
-  //   black 30%
-  // );
-
-  // border-top-right-radius: 17px;
-  // border-top-left-radius: 17px;
-  &.dark-mode {
-    // background-color: $darker-gray;
+  > div {
+    width: 100%;
   }
-  
-  .timer{
-    
-    // margin: 1.5rem 0.5rem;
-    // margin-top: 3rem;
-    
-    
+
+  .timer {
+    --progress-accent: var(--accent);
+    --ring-trail: #fff;
     height: 100px !important;
     border-radius: 10px;
     display: grid;
@@ -37,14 +21,20 @@
     align-items: center;
     gap: 0rem 0.8rem;
     text-align: start !important;
-    background-color: $light-gray;
-    
+    overflow: hidden;
+    color: #fff !important;
+    background-color: color-mix(
+      in srgb,
+      var(--accent) 40%,
+      var(--canvas-color)
+    ) !important;
+    @include tinted-ring(var(--chrome-ring));
+
+    .MuiTypography-root,
+    h6 {
+      color: inherit !important;
+    }
   }
-  
-
-  
-
-
 
   h6 {
     justify-self: start;
@@ -57,13 +47,13 @@
     object-fit: cover;
     margin-left: 8px;
 
-    grid-row: 1/3;
+    grid-row: 1;
     align-self: center;
   }
 
   .text-container {
     grid-column: 2 / -1;
-    grid-row: 1/3;
+    grid-row: 1;
     align-self: center;
     display: grid;
 
@@ -71,46 +61,44 @@
     gap: 0.5rem;
     align-items: center;
     padding-inline-end: 0.8rem;
-
-
   }
-  
-  .times-container {
 
-    // grid-column: 2 / -1;
+  .times-container {
     align-self: end;
     justify-self: center;
-
-    padding-inline-start: 3.5rem;
-
-
+    padding-inline-start: 3.2rem;
     height: fit-content;
-    display: flex;
+    display: grid;
+    grid-template-columns: 95px 1fr 35px;
     align-items: end;
 
-    // display: grid;
-    // grid-template-columns: minmax(130px, 1fr) auto minmax(110px, 1fr);
-    // grid-template-columns: minmax(130px, 1fr) 1fr minmax(110px, 1fr);
+    min-width: 150px;
+
     gap: 0.5rem;
     margin: 0;
-    opacity: 0.8;
-
 
     justify-items: start;
 
+    p:first-child {
+      min-width: 95px;
+    }
+
     .divider {
-      // justify-self: center;
       height: 25px;
       align-self: end;
       margin-bottom: 0.35rem;
-      transform:rotate(20deg);
+      transform: rotate(20deg);
+      background-color: currentColor;
+      opacity: 0.55;
     }
 
     .time-left {
       font-size: 3rem;
-      // justify-self: end;
       align-self: end;
       justify-self: center;
+    }
+    .time-past {
+      min-width: 35px;
     }
   }
   .sets-text {
@@ -122,75 +110,30 @@
 
   .linear-progress-container {
     grid-column: 1 / -1;
-    padding: 0px 1px;
+    grid-row: 2;
+    padding: 0;
     align-items: end;
+    grid-template-columns: 1fr;
     grid-template-rows: auto;
     height: fit-content;
     align-self: end;
+    gap: 0;
+
+    .header-container,
+    .goal-banner {
+      display: none;
+    }
 
     .MuiLinearProgress-root {
-      // border-bottom-left-radius: 10px;
-      // border-bottom-right-radius: 10px;
-      border-top-right-radius: 0px;
-      border-top-left-radius: 0px;
-
+      border-radius: 0;
       grid-row: 1 / -1;
       grid-column: 1 / -1 !important;
-    }
-  }
+      height: 6px;
+      background-color: var(--ring-trail) !important;
 
-    &.dark-mode {
-      .timer{
-      background-color: $darker-gray-light;
-      }
-    
-
-    &.blue {
-      .timer{
-        background-color: $darker-gray-blue-light;
-      }
-    }
-
-    &.yellow {
-      .timer{
-        background-color: $darker-gray-yellow-light;
-      }
-    }
-
-    &.red {
-      .timer{
-        background-color: $darker-gray-red-light;
-      }
-    }
-
-    &.orange {
-      .timer{
-        background-color: $darker-gray-orange-light;
-      }
-    }
-
-    &.green {
-      .timer{
-        background-color: $darker-gray-green-light;
-      }
-    }
-
-    &.deepPurple {
-      .timer{
-        background-color: $darker-gray-deep-purple-light;
-      }
-    }
-
-    &.purple {
-      .timer{
-        background-color: $darker-gray-purple-light;
-      }
-    }
-
-    &.pink {
-      .timer{
-        background-color: $darker-gray-pink-light;
+      .MuiLinearProgress-bar {
+        background-color: var(--progress-accent) !important;
       }
     }
   }
-  }
+}

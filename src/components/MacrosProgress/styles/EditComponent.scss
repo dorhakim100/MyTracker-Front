@@ -43,28 +43,51 @@
     }
 
     .banner {
-      //   width: 160px;
       display: flex;
       justify-content: center;
       align-items: center;
+      padding: 0;
+      background: transparent;
 
-      .title {
-        // color: $white;
+      .label {
         font-size: 1.2em;
         font-weight: 600;
-        color: $black;
+        padding: 8px 12px;
+        border-radius: 8px;
+        color: var(--macro-color);
+        background: color-mix(
+          in srgb,
+          currentColor var(--macro-label-tint, 14%),
+          transparent
+        );
+
+        html.dark-mode &,
+        body.dark-mode & {
+          --macro-label-tint: 22%;
+        }
+      }
+
+      &.protein .label {
+        color: #f4cbd5;
+        background: #ef476e7a;
       }
 
       &.carbs {
-        background-color: $macro-carbs;
-      }
+        --macro-color: #{$macro-carbs};
 
-      &.protein {
-        background-color: $macro-protein;
+        html.dark-mode &,
+        body.dark-mode & {
+          --macro-color: #{$macro-carbs-dark};
+        }
       }
 
       &.fats {
-        background-color: $macro-fats;
+        --macro-color: #{$macro-fats};
+
+        html.dark-mode &,
+        body.dark-mode & {
+          --macro-color: #{$macro-fats-dark};
+        }
       }
     }
   }

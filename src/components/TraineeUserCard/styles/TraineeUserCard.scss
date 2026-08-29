@@ -9,7 +9,15 @@
   //   left: 200px;
 
   // bottom: 100px;
-  top: 0;
+  top: env(safe-area-inset-top, 0px);
+
+  body.native & {
+    top: max(52px, env(safe-area-inset-top, 0px));
+  }
+
+  @media (display-mode: standalone) {
+    top: max(52px, env(safe-area-inset-top, 0px));
+  }
 
   width: fit-content;
   display: flex;

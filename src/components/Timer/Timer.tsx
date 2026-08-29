@@ -18,18 +18,6 @@ import { useTranslation } from 'react-i18next'
 import { CachedImage } from '../CachedImage/CachedImage'
 import { exerciseImage } from '../../assets/config/exercise-image'
 
-const colorMap: Record<string, string> = {
-  primary: 'var(--primary-color)',
-  blue: 'var(--picker-color-blue)',
-  yellow: 'var(--picker-color-yellow)',
-  red: 'var(--picker-color-red)',
-  orange: 'var(--picker-color-orange)',
-  green: 'var(--picker-color-green)',
-  deepPurple: 'var(--picker-color-deep-purple)',
-  purple: 'var(--picker-color-purple)',
-  pink: 'var(--picker-color-pink)',
-}
-
 interface ExerciseDialogOptions {
   open: boolean
   exercise: Exercise | null
@@ -157,67 +145,64 @@ export function Timer() {
 
   return (
     <>
-      <SlideAnimation
-        motionKey={doneSets || 0}
-        direction={1}
-        duration={0.25}
+      <div
         className={`timer-container ${prefs.isDarkMode ? 'dark-mode' : ''} ${
           prefs.favoriteColor
         }`}
         onClick={openExerciseDialog}
       >
-        {/* <div className={`timer-container ${prefs.isDarkMode ? 'dark-mode' : ''} ${
-        prefs.favoriteColor
-        }`}> */}
-        <div className='timer'>
-          <CachedImage
-            url={currentExercise?.image || exerciseImage.ERROR_IMAGE}
-            fallback={exerciseImage.ERROR_IMAGE}
-            alt='timer'
-            className='timer-image'
-          />
-          <div className='text-container'>
-            <div className='times-container'>
+        <SlideAnimation
+          motionKey={doneSets || 0}
+          direction={1}
+          duration={0.25}
+        >
+          <div className='timer'>
+            <CachedImage
+              url={currentExercise?.image || exerciseImage.ERROR_IMAGE}
+              fallback={exerciseImage.ERROR_IMAGE}
+              alt='timer'
+              className='timer-image'
+            />
+            <div className='text-container'>
+              <div className='times-container'>
+                <Typography
+                  variant='body1'
+                  className='bold-header opacity-1 time-left'
+                >
+                  {currentExercise?.restingTime &&
+                  secondsPassedState * SECOND_IN_MS <
+                    currentExercise?.restingTime
+                    ? formatTime(
+                        currentExercise?.restingTime -
+                          secondsPassedState * SECOND_IN_MS +
+                          1000,
+                        false
+                      )
+                    : '0:00'}
+                </Typography>
+                <Divider
+                  orientation='vertical'
+                  flexItem
+                  className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+                />
+                <Typography
+                  variant='body1'
+                  className='bold-header opacity-1 time-past'
+                >
+                  {formatTime(secondsPassedState * SECOND_IN_MS, false)}
+                </Typography>
+              </div>
               <Typography
-                variant='body1'
-                className='bold-header opacity-1 time-left'
+                variant='h6'
+                className='bold-header sets-text'
               >
-                {currentExercise?.restingTime &&
-                secondsPassedState * SECOND_IN_MS < currentExercise?.restingTime
-                  ? formatTime(
-                      currentExercise?.restingTime -
-                        secondsPassedState * SECOND_IN_MS +
-                        1000,
-                      false
-                    )
-                  : '0:00'}
-              </Typography>
-              <Divider
-                orientation='vertical'
-                flexItem
-                className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-              />
-              <Typography
-                variant='body1'
-                className='bold-header opacity-1'
-              >
-                {formatTime(secondsPassedState * SECOND_IN_MS, false)}
+                {t('timer.sets')}: {doneSets} / {totalSets}
               </Typography>
             </div>
-            <Typography
-              variant='h6'
-              className='bold-header sets-text'
-            >
-              {t('timer.sets')}: {doneSets} / {totalSets}
-            </Typography>
+            <CustomLinearProgress value={percentage} />
           </div>
-          <CustomLinearProgress
-            value={percentage}
-            color={colorMap[prefs.favoriteColor]}
-          />
-        </div>
-        {/* </div> */}
-      </SlideAnimation>
+        </SlideAnimation>
+      </div>
       <SlideDialog
         open={exerciseDialogOptions.open}
         onClose={() =>

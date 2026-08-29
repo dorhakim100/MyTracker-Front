@@ -40,42 +40,7 @@
 }
 
 .user-details {
-  border-inline-start: 8px solid transparent !important;
-
-  &.selected,
-  &.primary {
-    border-inline-start: 8px solid $primary-color !important;
-  }
-
-  &.blue {
-    border-inline-start: 8px solid $picker-color-blue !important;
-  }
-
-  &.red {
-    border-inline-start: 8px solid $picker-color-red !important;
-  }
-
-  &.yellow {
-    border-inline-start: 8px solid $picker-color-yellow !important;
-  }
-
-  &.green {
-    border-inline-start: 8px solid $picker-color-green !important;
-  }
-
-  &.orange {
-    border-inline-start: 8px solid $picker-color-orange !important;
-  }
-
-  &.deepPurple {
-    border-inline-start: 8px solid $picker-color-deep-purple !important;
-  }
-
-  &.purple {
-    border-inline-start: 8px solid $picker-color-purple !important;
-  }
-
-  &.pink {
-    border-inline-start: 8px solid $picker-color-pink !important;
-  }
+  @include favorite-accent;
+  border-inline-start: 8px solid
+    color-mix(in srgb, var(--accent) var(--chrome-ring), transparent) !important;
 }

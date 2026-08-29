@@ -378,7 +378,8 @@ export function WorkoutSession({
     []
   )
 
-  const toggleExpandAll = () => {
+  const toggleExpandAll = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation()
     if (!sessionDay?.workout?.exercises) return
     const hasOpenExercises = openExercises.size > 0
 
@@ -948,7 +949,8 @@ export function WorkoutSession({
       )
   }
 
-  const onWorkoutDone = async () => {
+  const onWorkoutDone = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation()
     try {
       const newInstructions = {
         ...sessionDay.instructions,
@@ -973,11 +975,9 @@ export function WorkoutSession({
           className={`workout-header-container subtle-bg ${
             prefs.isDarkMode ? 'dark-mode' : ''
           } ${isAllExercisesDone ? 'finished' : ''}`}
+          onClick={onOpenWorkoutDetails}
         >
-          <div
-            className='workout-name-container'
-            onClick={onOpenWorkoutDetails}
-          >
+          <div className='workout-name-container'>
             {/* <CircleIcon color={isAllExercisesDone ? 'success' : 'error'} /> */}
             <Typography
               variant='h5'
@@ -1010,7 +1010,8 @@ export function WorkoutSession({
             />
             <CustomButton
               icon={<DeleteIcon />}
-              onClick={() => {
+              onClick={(e) => {
+                e.stopPropagation()
                 setAlertDialogOptions({
                   open: true,
                   title: t('workout.deleteWorkout'),

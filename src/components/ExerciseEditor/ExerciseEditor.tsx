@@ -43,6 +43,7 @@ import { useWindowDimentions } from '../../hooks/useWindowDimentions'
 import { useDebouncedCallback } from '../../hooks/useDebouncedCallback'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { capacitorService } from '../../services/capacitor.service'
+import { exerciseEditorNs } from './locals'
 
 export interface ExerciseEditorProps {
   exercise: ExerciseInstructions
@@ -91,6 +92,7 @@ export function ExerciseEditor({
   isOpen = true,
 }: ExerciseEditorProps) {
   const { t } = useTranslation()
+  const { t: tEditor } = useTranslation(exerciseEditorNs)
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
@@ -645,6 +647,13 @@ export function ExerciseEditor({
         </div>
       </div>
       <SlideDialog
+        title={
+          pickerOptions.type
+            ? tEditor('editType', {
+                type: t(`exercise.${pickerOptions.type}`),
+              })
+            : t('common.edit')
+        }
         open={pickerOptions.isOpen}
         onClose={() => {
           onClosePicker()

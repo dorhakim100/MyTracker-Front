@@ -120,9 +120,7 @@ export function ClockPicker({
   useEffect(() => {
     if (columns) return
     const next = getConvenienceValues(value, isRounded, isAfterValue)
-    setPickerValue((prev) =>
-      arePickerValuesEqual(prev, next) ? prev : next
-    )
+    setPickerValue((prev) => (arePickerValuesEqual(prev, next) ? prev : next))
   }, [value, isRounded, isAfterValue, columns])
 
   useEffect(() => {
@@ -210,8 +208,7 @@ export function ClockPicker({
 
   const showAbsoluteButtons =
     isButtonsVisible && buttonsValues.length > 0 && !incrementButtons?.length
-  const showIncrementButtons =
-    isButtonsVisible && !!incrementButtons?.length
+  const showIncrementButtons = isButtonsVisible && !!incrementButtons?.length
   const showLabels = resolvedColumns.some((column) => column.label)
 
   return (

@@ -144,7 +144,7 @@ export function EditMacros({
     return (macroValue: number) => (
       <div className='macro-container'>
         <div className={`banner ${name}`}>
-          <span className='title'>{t(macroNameKeys[name])}</span>
+          <span className='label'>{t(macroNameKeys[name])}</span>
         </div>
         <Typography
           variant='h6'
