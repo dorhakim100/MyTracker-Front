@@ -34,11 +34,11 @@ export function LineChartReadout({
         isIcon={true}
         icon={<CloseIcon />}
         onClick={onDismiss}
-        backgroundColor='transparent'
         ariaLabel={t('common.close')}
         tooltipTitle={t('common.close')}
         shouldVibrate={false}
         className='readout-dismiss'
+        variant='flat'
       />
     </div>
   )

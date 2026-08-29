@@ -122,11 +122,13 @@ export function WorkoutDetails({ workout }: WorkoutDetailsProps) {
                   workout._id,
                   exercise.exerciseId
                 )}
+                className={prefs.favoriteColor}
               >
                 <CustomButton
                   isIcon={true}
                   icon={<ChatBubbleOutlineIcon />}
                   tooltipTitle={tChat('openChat')}
+                  variant='flat'
                 />
               </ChatUnreadBadge>
             ) : null

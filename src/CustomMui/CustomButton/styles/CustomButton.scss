@@ -5,46 +5,127 @@
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
   user-select: none;
+  @include favorite-accent;
+  color: var(--accent);
 
-
-}
-
-.custom-button {
-  &.MuiButton-root,
-  &.MuiIconButton-root {
-    transition: transform 120ms ease, filter 120ms ease, box-shadow 180ms ease;
-    will-change: transform;
+  &.variant-subtle {
+    --chrome-tint: var(--chrome-tint-subtle);
   }
 
-  &.MuiButton-root {
-    // min-height: 44px; // comfortable touch target
-    // border-radius: 10px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.2rem;
+  &.variant-medium {
+    --chrome-tint: var(--chrome-tint-medium);
   }
 
-  &.MuiIconButton-root {
-    // width: 44px;
-    // height: 44px;
+  &.variant-strong {
+    --chrome-tint: var(--chrome-tint-strong);
   }
 
-  &.dashboard {
-    &:hover {
-      filter: brightness(0.85);
-    }
-  }
-}
-
-.custom-button-wrapper.dark-mode {
-  .custom-button.MuiButton-root {
-    // box-shadow: 0 1px 2px rgba(0, 0, 0, 0.6), 0 2px 8px rgba(0, 0, 0, 0.5);
+  &.variant-flat {
+    --chrome-tint: 0%;
+    color: var(--ink-on-canvas);
   }
 
   &.disabled {
     opacity: 0.5;
     cursor: not-allowed;
+  }
+}
+
+.custom-button {
+  &.MuiButton-root,
+  &.MuiIconButton-root {
+    @include favorite-accent;
+    transition: transform 120ms ease, filter 120ms ease,
+      background-color 180ms ease, box-shadow 180ms ease;
+    will-change: transform;
+  }
+
+  &.MuiButton-root:not(.disable-button):not(.delete-account-button):not(
+      .google-sign-in-button
+    ) {
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.2rem;
+    color: $white !important;
+    @include tinted-fill(var(--chrome-tint-primary));
+    @include tinted-ring(var(--chrome-ring));
+
+    svg {
+      color: inherit;
+    }
+
+    &:hover {
+      filter: brightness(0.96);
+      @include tinted-fill(var(--chrome-tint-solid));
+    }
+
+    &.dashboard:hover {
+      filter: brightness(0.92);
+    }
+  }
+
+  &.MuiIconButton-root:not(.variant-flat) {
+    color: var(--accent) !important;
+    border-radius: 50%;
+    border: none !important;
+    @include tinted-fill(var(--chrome-tint, var(--chrome-tint-medium)));
+
+    svg {
+      color: inherit;
+    }
+
+    &:hover {
+      @include tinted-fill(var(--chrome-tint-strong));
+    }
+  }
+
+  &.MuiIconButton-root.variant-flat {
+    color: $dark-gray !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 50%;
+
+    svg {
+      color: inherit !important;
+      fill: currentColor !important;
+    }
+
+    &:hover {
+      background-color: transparent !important;
+    }
+
+    html.dark-mode &,
+    body.dark-mode & {
+      color: $white !important;
+    }
+  }
+
+  &.MuiButton-root.delete-account-button,
+  &.MuiButton-root.disable-button {
+    --accent: #{$error-color};
+    --accent-ink: #{$error-color};
+    // color: var(--accent) !important;
+    @include tinted-fill(var(--chrome-tint-primary));
+    @include tinted-ring(var(--chrome-ring));
+
+    svg {
+      color: inherit;
+    }
+
+    body.dark-mode &,
+    &.dark-mode {
+      --accent: #{$error-color-dark-mode};
+      --accent-ink: #{$error-color-dark-mode};
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .custom-button.MuiButton-root,
+  .custom-button.MuiIconButton-root {
+    transition: none;
   }
 }

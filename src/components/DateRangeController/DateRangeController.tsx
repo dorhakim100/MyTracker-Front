@@ -34,7 +34,7 @@ export function DateRangeController({
         onChange={(date) =>
           onDateChange({ ...selectedPastDate, from: date || '' })
         }
-        className={`${prefs.favoriteColor}`}
+        variant='flat'
       />
       <Divider
         className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
@@ -49,7 +49,7 @@ export function DateRangeController({
         onChange={(date) =>
           onDateChange({ ...selectedPastDate, to: date || '' })
         }
-        className={`${prefs.favoriteColor}`}
+        variant='flat'
       />
     </div>
   )

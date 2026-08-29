@@ -1,19 +1,17 @@
 import { styled } from '@mui/material/styles'
 
 import Switch, { SwitchProps } from '@mui/material/Switch'
-import { getColor } from '../../services/util.service'
 
 export const CustomIOSSwitch = styled(
-  (props: SwitchProps & { color: string }) => (
+  ({ color: _favoriteColor, ...props }: SwitchProps & { color?: string }) => (
     <Switch
       focusVisibleClassName='.Mui-focusVisible'
       disableRipple
       {...props}
+      color='default'
     />
   )
-)(({ theme, color }) => {
-  const favoriteColor = color ? getColor(color) : undefined
-
+)(({ theme }) => {
   return {
     width: 42,
     height: 26,
@@ -25,20 +23,23 @@ export const CustomIOSSwitch = styled(
       '&.Mui-checked': {
         transform: 'translateX(16px)',
         color: '#fff',
+        '& .MuiSwitch-thumb': {
+          backgroundColor: '#fff',
+        },
         '& + .MuiSwitch-track': {
-          backgroundColor: favoriteColor || '#65C466',
+          backgroundColor:
+            'color-mix(in srgb, var(--accent) var(--chrome-tint-strong), transparent)',
           opacity: 1,
           border: 0,
-          ...theme.applyStyles('dark', {
-            backgroundColor: '#2ECA45',
-          }),
+          boxShadow:
+            'inset 0 0 0 1.5px color-mix(in srgb, var(--accent) var(--chrome-ring), transparent)',
         },
         '&.Mui-disabled + .MuiSwitch-track': {
           opacity: 0.5,
         },
       },
       '&.Mui-focusVisible .MuiSwitch-thumb': {
-        color: '#33cf4d',
+        color: 'var(--accent)',
         border: '6px solid #fff',
       },
       '&.Mui-disabled .MuiSwitch-thumb': {
@@ -58,6 +59,7 @@ export const CustomIOSSwitch = styled(
       boxSizing: 'border-box',
       width: 22,
       height: 22,
+      backgroundColor: '#fff',
     },
     '& .MuiSwitch-track': {
       borderRadius: 26 / 2,

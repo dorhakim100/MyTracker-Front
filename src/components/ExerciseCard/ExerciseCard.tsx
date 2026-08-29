@@ -486,6 +486,7 @@ export function ExerciseCard({
                   className={`more-options ${prefs.favoriteColor} ${
                     prefs.isDarkMode ? 'dark-mode' : ''
                   }`}
+                  variant='flat'
                 />
               }
             />
@@ -500,6 +501,7 @@ export function ExerciseCard({
                   instructions.workoutId,
                   exercise.exerciseId
                 )}
+                className={prefs.favoriteColor}
               >
                 <CustomButton
                   isIcon={true}
@@ -509,6 +511,7 @@ export function ExerciseCard({
                     setIsChatOpen(true)
                   }}
                   tooltipTitle={tChat('openChat')}
+                  variant='flat'
                 />
               </ChatUnreadBadge>
             )}
@@ -524,6 +527,7 @@ export function ExerciseCard({
                 tooltipTitle={
                   isOpen ? t('exercise.collapse') : t('exercise.expand')
                 }
+                variant='flat'
               />
             )}
           </div>

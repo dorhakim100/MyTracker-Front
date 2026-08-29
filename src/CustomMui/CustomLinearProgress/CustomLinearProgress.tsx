@@ -12,7 +12,7 @@ interface CustomLinearProgressProps {
 
 export function CustomLinearProgress({
   value,
-  color = 'black',
+  color,
   currentValue,
   goalValue,
   header,
@@ -32,15 +32,8 @@ export function CustomLinearProgress({
         variant='determinate'
         className='custom-linear-progress'
         value={value > 100 ? 100 : value}
-        sx={{
-          height: 8,
-          borderRadius: 4,
-
-          backgroundColor: 'lightgray',
-
-          '& .MuiLinearProgress-bar': {
-            backgroundColor: color,
-          },
+        style={{
+          ['--progress-accent' as string]: color || 'var(--accent)',
         }}
       />
       {currentValue && goalValue && (

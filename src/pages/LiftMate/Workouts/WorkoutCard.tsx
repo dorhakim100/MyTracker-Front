@@ -258,6 +258,7 @@ export function WorkoutCard({
             <ChatUnreadBadge
               count={getWorkoutCount(workout._id)}
               variant='inline'
+              className={prefs.favoriteColor}
             />
           </span>
           <span className='workout-times'>{renderTimes()}</span>
@@ -267,6 +268,7 @@ export function WorkoutCard({
               <CustomButton
                 isIcon={true}
                 icon={<MoreHorizIcon />}
+                variant='flat'
               />
             }
           />

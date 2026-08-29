@@ -996,6 +996,7 @@ export function WorkoutSession({
                   ? t('workout.collapseAll')
                   : t('workout.expandAll')
               }
+              variant='flat'
             />
             <CustomButton
               // text="Finish Workout"
@@ -1005,6 +1006,7 @@ export function WorkoutSession({
               size='small'
               onClick={onWorkoutDone}
               tooltipTitle={t('workout.finishWorkout')}
+              variant='flat'
             />
             <CustomButton
               icon={<DeleteIcon />}
@@ -1018,6 +1020,7 @@ export function WorkoutSession({
               }}
               isIcon={true}
               tooltipTitle={t('workout.deleteWorkout')}
+              variant='flat'
             />
           </div>
           <div className='muscles-container'>
@@ -1027,7 +1030,7 @@ export function WorkoutSession({
             />
           </div>
         </div>
-        <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
+        {/* <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} /> */}
         {/* <CustomButton text="Add Exercise" icon={<AddIcon />} /> */}
         <div className='exercises-container'>
           {sessionDay.instructions.exercises.map((exercise) => {

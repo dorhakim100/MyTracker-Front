@@ -417,8 +417,8 @@ export function WeightChart({
                 isIcon={true}
                 icon={<Settings />}
                 onClick={onOpenSettings}
-                backgroundColor='transparent'
                 tooltipTitle={t('weight.settings')}
+                variant='flat'
               />
             </div>
           </div>

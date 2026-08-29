@@ -113,6 +113,7 @@ function Row(props: {
               }}
               isIcon={true}
               tooltipTitle={t('exercise.viewNotes')}
+              variant='flat'
             />
             <CustomButton
               icon={open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
@@ -120,6 +121,7 @@ function Row(props: {
               tooltipTitle={
                 open ? t('exercise.collapse') : t('exercise.expand')
               }
+              variant='flat'
             />
           </div>
         </TableCell>

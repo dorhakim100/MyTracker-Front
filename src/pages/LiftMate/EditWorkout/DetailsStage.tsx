@@ -122,7 +122,7 @@ export function DetailsStage({
     )
     if (!exerciseInstructionToUpdate) return
 
-    let newExerciseInstruction = { ...exerciseInstructionToUpdate }
+    const newExerciseInstruction = { ...exerciseInstructionToUpdate }
 
     if (value === 'rpe') {
       newExerciseInstruction.sets = newExerciseInstruction.sets.map((set) => {
@@ -218,7 +218,7 @@ export function DetailsStage({
       <div className='times-per-week-container'>
         <span className='bold-header'>Times per week</span>
         <CustomSelect
-          tooltipTitle="Edit Times per week"
+          tooltipTitle='Edit Times per week'
           label='Times'
           values={getArrayOfNumbers(1, 7).map(
             (timesNumber) => timesNumber + ''
@@ -251,7 +251,7 @@ export function DetailsStage({
                       exercise: exerciseDetails,
                     })
                   }}
-                  tooltipTitle="View exercise details"
+                  tooltipTitle='View exercise details'
                 />
                 <h4>{capitalizeFirstLetter(exerciseDetails.name)}</h4>
 
@@ -261,8 +261,9 @@ export function DetailsStage({
                   onChange={(value) => {
                     onSwitchRpeRir(exercise.exerciseId, value as 'rpe' | 'rir')
                   }}
-                  className={`rpe-rir-toggle ${prefs.isDarkMode ? 'dark-mode' : ''
-                    }`}
+                  className={`rpe-rir-toggle ${
+                    prefs.isDarkMode ? 'dark-mode' : ''
+                  }`}
                 />
               </div>
 
@@ -279,6 +280,7 @@ export function DetailsStage({
                     workout._id,
                     exercise.exerciseId
                   )}
+                  className={prefs.favoriteColor}
                 >
                   <CustomButton
                     isIcon={true}

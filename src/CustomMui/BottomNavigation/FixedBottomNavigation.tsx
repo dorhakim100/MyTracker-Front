@@ -129,10 +129,8 @@ export function FixedBottomNavigation(props: {
   }, [activeRoute, filteredRoutes])
 
   async function onScanClick() {
-
-    if(isNative) {
+    if (isNative) {
       capacitorService.vibrate('Light')
-
     }
     setModalType(modalTypes.scan)
     setSearchModalOpen(true)
@@ -140,7 +138,7 @@ export function FixedBottomNavigation(props: {
   }
 
   async function onSearchClick(ev: React.MouseEvent<HTMLButtonElement>) {
-    if(isNative) {
+    if (isNative) {
       capacitorService.vibrate('Light')
     }
     ev.stopPropagation()
@@ -161,7 +159,10 @@ export function FixedBottomNavigation(props: {
       return <Icon />
     }
     return (
-      <ChatUnreadBadge count={workoutsUnreadCount}>
+      <ChatUnreadBadge
+        count={workoutsUnreadCount}
+        className={prefs.favoriteColor}
+      >
         <Icon />
       </ChatUnreadBadge>
     )
@@ -170,7 +171,6 @@ export function FixedBottomNavigation(props: {
   const renderSpeedDial = () => {
     return (
       <div
-  
         className={`speed-dial-container ${isAddModal ? 'show' : ''} ${
           prefs.isDarkMode ? 'dark-mode' : ''
         } ${prefs.favoriteColor}`}
@@ -187,16 +187,16 @@ export function FixedBottomNavigation(props: {
           ariaLabel='SpeedDial basic example'
           aria-label={props.centerAction?.ariaLabel || 'center-action'}
           icon={<AddIcon />}
-          onClick={ (ev) => {
+          onClick={(ev) => {
             if (!user) return showErrorMsg(t('messages.error.register'))
-              ev.stopPropagation()
+            ev.stopPropagation()
             setIsAddModal(!isAddModal)
-            
+
             setSelectedDiaryDay({
               ...user.loggedToday,
               weight: selectedDay?.weight,
             })
-            if(isNative) {
+            if (isNative) {
               capacitorService.vibrate('Light')
             }
           }}

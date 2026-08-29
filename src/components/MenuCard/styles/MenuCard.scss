@@ -79,35 +79,19 @@
   .save-cancel-container {
     margin-top: 1rem;
 
-    .delete-account-button {
-      background-color: $primary-color-dark !important;
-      &.blue {
-        background-color: $primary-color-dark !important;
-      }
-      &.yellow {
-        background-color: $primary-color-dark !important;
-      }
-      &.red {
-        background-color: $primary-color-dark !important;
-      }
-      &.orange {
-        background-color: $primary-color-dark !important;
-      }
-      &.green {
-        background-color: $primary-color-dark !important;
-      }
-      &.deepPurple {
-        background-color: $primary-color-dark !important;
-      }
-      &.purple {
-        background-color: $primary-color-dark !important;
-      }
-      &.pink {
-        background-color: $primary-color-dark !important;
-      }
-    }
     .save-button {
-      background-color: $error-color !important;
+      --accent: #{$error-color};
+      --accent-ink: #{$error-color};
+      color: var(--accent) !important;
+      @include tinted-fill(var(--chrome-tint-primary));
+      @include tinted-ring(var(--chrome-ring));
+
+      body.dark-mode &,
+      html.dark-mode &,
+      &.dark-mode {
+        --accent: #{$error-color-dark-mode};
+        --accent-ink: #{$error-color-dark-mode};
+      }
     }
   }
 }

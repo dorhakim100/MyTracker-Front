@@ -93,6 +93,15 @@
 
   --ink-on-canvas: #05090a;
   --ink-on-surface: #1c292a;
+
+  --accent: var(--primary-color);
+  --accent-ink: var(--primary-color-dark);
+  --chrome-tint-subtle: 8%;
+  --chrome-tint-medium: 14%;
+  --chrome-tint-strong: 32%;
+  --chrome-tint-primary: 52%;
+  --chrome-tint-solid: 90%;
+  --chrome-ring: 40%;
 }
 
 // Colors

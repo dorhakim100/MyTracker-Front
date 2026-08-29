@@ -94,7 +94,11 @@
         left: 0;
         width: 100%;
         height: 1px;
-        background: $light-gray;
+        background: color-mix(
+          in srgb,
+          var(--accent) var(--chrome-ring),
+          transparent
+        );
         transform: scaleY(0.5);
 
         &.top {
@@ -107,8 +111,13 @@
       }
     }
 
-    html.dark-mode & .clock-picker-highlight-line {
-      background: rgba($white, 0.28);
+    html.dark-mode & .clock-picker-highlight-line,
+    body.dark-mode & .clock-picker-highlight-line {
+      background: color-mix(
+        in srgb,
+        var(--accent) var(--chrome-ring),
+        transparent
+      );
     }
 
     &.clock-picker-multi {

@@ -1,11 +1,74 @@
-.custom-date-picker-button {
-  //   background-color: $primary-color !important;
+.custom-date-picker-button.MuiIconButton-root:not(.variant-flat) {
+  color: var(--accent) !important;
+  border: none !important;
+  @include tinted-fill(var(--chrome-tint, var(--chrome-tint-medium)));
+  @include tinted-ring(var(--chrome-ring));
+  transition: background-color 180ms ease, box-shadow 180ms ease;
+
+  svg {
+    color: inherit !important;
+  }
+
+  &:hover {
+    @include tinted-fill(var(--chrome-tint-strong));
+    @include tinted-ring(55%);
+  }
+}
+
+.custom-date-picker-button.MuiIconButton-root.variant-flat {
+  color: $dark-gray !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+
+  svg {
+    color: inherit !important;
+    fill: currentColor !important;
+    width: 1.5em;
+    height: 1.5em;
+  }
+
+  &:hover {
+    background-color: transparent !important;
+    box-shadow: none !important;
+  }
+
+  html.dark-mode &,
+  body.dark-mode & {
+    color: $white !important;
+  }
 }
 
 .custom-date-picker-popover {
   .native-date-input {
     font-size: 1rem;
     padding: 8px 12px;
+  }
+}
+
+.MuiPickersDay-root {
+  background-color: transparent !important;
+  color: inherit;
+
+  &.Mui-selected {
+    color: var(--accent-ink) !important;
+    @include tinted-fill(var(--chrome-tint-strong));
+  }
+
+  &.MuiPickersDay-today:not(.Mui-selected) {
+    border: 1.5px solid
+      color-mix(in srgb, var(--accent) var(--chrome-ring), transparent) !important;
+    background-color: transparent !important;
+  }
+}
+
+.MuiPickersLayout-actionBar {
+  .MuiButton-root {
+    @include favorite-accent;
+    color: var(--accent) !important;
+    @include tinted-fill(var(--chrome-tint-primary));
+    @include tinted-ring(var(--chrome-ring));
+    font-weight: 600;
   }
 }
 
@@ -16,11 +79,21 @@
 
     .MuiPickersToolbar-title,
     .MuiDayCalendar-weekDayLabel {
-      color: $primary-color;
+      color: var(--accent-ink);
     }
   }
 
-  .MuiPickersDay-today {
-    border-color: $white !important;
+  .MuiPickersDay-today:not(.Mui-selected) {
+    border-color: color-mix(
+      in srgb,
+      var(--accent) var(--chrome-ring),
+      transparent
+    ) !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .custom-date-picker-button.MuiIconButton-root {
+    transition: none;
   }
 }

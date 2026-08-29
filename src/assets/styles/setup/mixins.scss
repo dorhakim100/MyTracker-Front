@@ -39,3 +39,86 @@
 ) {
   font-size: fluid-type($min, $max, $min-scr, $max-scr);
 }
+
+/// Favorite-color tokens matching CustomIcon: fill uses --accent, labels use --accent-ink (flat).
+@mixin favorite-accent {
+  &.primary {
+    --accent: #{$primary-color};
+    --accent-ink: #{$primary-color-dark};
+  }
+
+  &.blue {
+    --accent: #{$picker-color-blue};
+    --accent-ink: #{$picker-color-blue};
+  }
+
+  &.yellow {
+    --accent: #{$picker-color-yellow};
+    --accent-ink: #{$picker-color-yellow-darker};
+  }
+
+  &.red {
+    --accent: #{$picker-color-red};
+    --accent-ink: #{$picker-color-red};
+  }
+
+  &.orange {
+    --accent: #{$picker-color-orange};
+    --accent-ink: #{$picker-color-orange-dark};
+  }
+
+  &.green {
+    --accent: #{$picker-color-green};
+    --accent-ink: #{$picker-color-green-dark};
+  }
+
+  &.deepPurple {
+    --accent: #{$picker-color-deep-purple};
+    --accent-ink: #{$picker-color-deep-purple};
+  }
+
+  &.purple {
+    --accent: #{$picker-color-purple};
+    --accent-ink: #{$picker-color-purple};
+  }
+
+  &.pink {
+    --accent: #{$picker-color-pink};
+    --accent-ink: #{$picker-color-pink-dark};
+  }
+}
+
+@mixin tinted-fill($tint: 14%) {
+  background-color: color-mix(
+    in srgb,
+    var(--accent, currentColor) $tint,
+    transparent
+  ) !important;
+}
+
+@mixin tinted-ring($strength: 40%) {
+  box-shadow: inset 0 0 0 1.5px
+    color-mix(in srgb, var(--accent, currentColor) $strength, transparent) !important;
+}
+
+/// Nearly-opaque accent fill (FAB, badges). Glyph is white except pale favorites.
+@mixin solid-accent-fill {
+  @include tinted-fill(var(--chrome-tint-solid));
+  color: #fff !important;
+
+  svg {
+    color: inherit !important;
+    fill: currentColor;
+  }
+
+  body.yellow &,
+  body.green &,
+  body.orange &,
+  body.pink &,
+  &.yellow,
+  &.green,
+  &.orange,
+  &.pink {
+    color: #1c1917 !important;
+  }
+}

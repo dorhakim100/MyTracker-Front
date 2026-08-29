@@ -65,6 +65,8 @@ body {
   overscroll-behavior-y: none;
 
   --canvas-color: var(--light-paper);
+  --accent: var(--primary-color);
+  --accent-ink: var(--primary-color-dark);
 
   background-color: var(--canvas-color) !important;
   color: var(--ink-on-canvas) !important;
@@ -73,32 +75,50 @@ body {
   &:not(.dark-mode) {
     &.blue {
       --canvas-color: var(--light-paper-blue);
+      --accent: var(--picker-color-blue);
+      --accent-ink: var(--picker-color-blue);
     }
     &.yellow {
       --canvas-color: var(--light-paper-yellow);
+      --accent: var(--picker-color-yellow);
+      --accent-ink: var(--picker-color-yellow-darker);
     }
     &.red {
       --canvas-color: var(--light-paper-red);
+      --accent: var(--picker-color-red);
+      --accent-ink: var(--picker-color-red);
     }
     &.orange {
       --canvas-color: var(--light-paper-orange);
+      --accent: var(--picker-color-orange);
+      --accent-ink: var(--picker-color-orange-dark);
     }
     &.green {
       --canvas-color: var(--light-paper-green);
+      --accent: var(--picker-color-green);
+      --accent-ink: var(--picker-color-green-dark);
     }
     &.deepPurple {
       --canvas-color: var(--light-paper-deep-purple);
+      --accent: var(--picker-color-deep-purple);
+      --accent-ink: var(--picker-color-deep-purple);
     }
     &.purple {
       --canvas-color: var(--light-paper-purple);
+      --accent: var(--picker-color-purple);
+      --accent-ink: var(--picker-color-purple);
     }
     &.pink {
       --canvas-color: var(--light-paper-pink);
+      --accent: var(--picker-color-pink);
+      --accent-ink: var(--picker-color-pink-dark);
     }
 
-    .MuiIconButton-root:not(.primary):not(.blue):not(.red):not(.yellow):not(
-        .green
-      ):not(.orange):not(.deepPurple):not(.purple):not(.pink) {
+    .MuiIconButton-root:not(.custom-button):not(.primary):not(.blue):not(
+        .red
+      ):not(.yellow):not(.green):not(.orange):not(.deepPurple):not(.purple):not(
+        .pink
+      ) {
       color: $dark-gray;
     }
   }
@@ -107,6 +127,13 @@ body {
     --canvas-color: #{$dark-gray};
     --ink-on-canvas: #{$neutral-gray};
     --ink-on-surface: #c8d2d2;
+    --accent-ink: var(--accent);
+    --chrome-tint-subtle: 12%;
+    --chrome-tint-medium: 22%;
+    --chrome-tint-strong: 32%;
+    --chrome-tint-primary: 62%;
+    --chrome-tint-solid: 92%;
+    --chrome-ring: 48%;
     background-color: var(--canvas-color) !important;
     color: var(--ink-on-canvas) !important;
     .swiper-pagination-bullet {
@@ -114,7 +141,8 @@ body {
     }
 
     .MuiInputBase-root {
-      outline: 1px solid $dark-mode-border !important;
+      outline: 1px solid
+        color-mix(in srgb, var(--accent) var(--chrome-ring), transparent) !important;
     }
 
     .slide-dialog-content {
@@ -122,149 +150,60 @@ body {
     }
     &.blue {
       --canvas-color: #{$dark-gray-blue};
+      --accent: var(--picker-color-blue);
     }
     &.yellow {
       --canvas-color: #{$dark-gray-yellow};
+      --accent: var(--picker-color-yellow);
     }
     &.red {
       --canvas-color: #{$dark-gray-red};
+      --accent: var(--picker-color-red);
     }
     &.orange {
       --canvas-color: #{$dark-gray-orange};
+      --accent: var(--picker-color-orange);
     }
     &.green {
       --canvas-color: #{$dark-gray-green};
+      --accent: var(--picker-color-green);
     }
     &.deepPurple {
       --canvas-color: #{$dark-gray-deep-purple};
+      --accent: var(--picker-color-deep-purple);
     }
     &.purple {
       --canvas-color: #{$dark-gray-purple};
+      --accent: var(--picker-color-purple);
     }
     &.pink {
       --canvas-color: #{$dark-gray-pink};
+      --accent: var(--picker-color-pink);
+    }
+
+    .primary,
+    .blue,
+    .yellow,
+    .red,
+    .orange,
+    .green,
+    .deepPurple,
+    .purple,
+    .pink {
+      --accent-ink: var(--accent);
     }
   }
 
   // font-family: regularAssistant;
   // transition: color 0.3s, background-color 0.3s;
 
-  &.primary {
-    .MuiPickersDay-root.Mui-selected,
-    .css-r75yrr-MuiButtonBase-root-MuiButton-root,
-    .swiper-pagination-bullet-active {
-      background-color: $primary-color !important;
-      color: $white;
-    }
-
-    .MuiDayCalendar-weekDayLabel,
-    .MuiPickersToolbar-title {
-      color: $primary-color !important;
-    }
+  .swiper-pagination-bullet-active {
+    background-color: var(--accent) !important;
   }
-  &.blue {
-    .MuiPickersDay-root.Mui-selected,
-    .css-r75yrr-MuiButtonBase-root-MuiButton-root,
-    .swiper-pagination-bullet-active {
-      background-color: $picker-color-blue !important;
-      color: $white;
-    }
 
-    .MuiDayCalendar-weekDayLabel,
-    .MuiPickersToolbar-title {
-      color: $picker-color-blue !important;
-    }
-  }
-  &.red {
-    .MuiPickersDay-root.Mui-selected,
-    .css-r75yrr-MuiButtonBase-root-MuiButton-root,
-    .swiper-pagination-bullet-active {
-      background-color: $picker-color-red !important;
-      color: $white;
-    }
-
-    .MuiDayCalendar-weekDayLabel,
-    .MuiPickersToolbar-title {
-      color: $picker-color-red !important;
-    }
-  }
-  &.yellow {
-    .MuiPickersDay-root.Mui-selected,
-    .css-r75yrr-MuiButtonBase-root-MuiButton-root,
-    .swiper-pagination-bullet-active {
-      background-color: $picker-color-yellow !important;
-      color: $white;
-    }
-
-    .MuiDayCalendar-weekDayLabel,
-    .MuiPickersToolbar-title {
-      color: $picker-color-yellow !important;
-    }
-  }
-  &.green {
-    .MuiPickersDay-root.Mui-selected,
-    .css-r75yrr-MuiButtonBase-root-MuiButton-root,
-    .swiper-pagination-bullet-active {
-      background-color: $picker-color-green !important;
-      color: $white;
-    }
-
-    .MuiDayCalendar-weekDayLabel,
-    .MuiPickersToolbar-title {
-      color: $picker-color-green !important;
-    }
-  }
-  &.orange {
-    .MuiPickersDay-root.Mui-selected,
-    .css-r75yrr-MuiButtonBase-root-MuiButton-root,
-    .swiper-pagination-bullet-active {
-      background-color: $picker-color-orange !important;
-      color: $white;
-    }
-
-    .MuiDayCalendar-weekDayLabel,
-    .MuiPickersToolbar-title {
-      color: $picker-color-orange !important;
-    }
-  }
-  &.deepPurple {
-    .MuiPickersDay-root.Mui-selected,
-    .css-r75yrr-MuiButtonBase-root-MuiButton-root,
-    .swiper-pagination-bullet-active {
-      background-color: $picker-color-deep-purple !important;
-      color: $white;
-    }
-
-    .MuiDayCalendar-weekDayLabel,
-    .MuiPickersToolbar-title {
-      color: $picker-color-deep-purple !important;
-    }
-  }
-  &.purple {
-    .MuiPickersDay-root.Mui-selected,
-    .css-r75yrr-MuiButtonBase-root-MuiButton-root,
-    .swiper-pagination-bullet-active {
-      background-color: $picker-color-purple !important;
-      color: $white;
-    }
-
-    .MuiDayCalendar-weekDayLabel,
-    .MuiPickersToolbar-title {
-      color: $picker-color-purple !important;
-    }
-  }
-  &.pink {
-    .MuiPickersDay-root.Mui-selected,
-    .css-r75yrr-MuiButtonBase-root-MuiButton-root,
-    .swiper-pagination-bullet-active {
-      background-color: $picker-color-pink !important;
-      color: $white;
-    }
-
-    .MuiDayCalendar-weekDayLabel,
-    .MuiPickersToolbar-title {
-      color: $picker-color-pink !important;
-    }
+  .MuiDayCalendar-weekDayLabel,
+  .MuiPickersToolbar-title {
+    color: var(--accent-ink) !important;
   }
 }
 
@@ -436,13 +375,11 @@ p {
 }
 
 .dark-mode {
-  button:not(.MuiIconButton-root) {
-    // Button styles applied via color classes and MUI theme
-    // background-color: $dark-gray;
+  button:not(.MuiIconButton-root):not(.custom-button) {
     color: inherit;
   }
 
-  button:not(.favorite-button) {
+  button:not(.favorite-button):not(.custom-button):not(.MuiPickersDay-root) {
     color: $white;
 
     &.Mui-disabled {

@@ -89,7 +89,7 @@ button {
 }
 
 .subtle-bg {
-  background: rgba(0, 0, 0, 0.04);
+  background: #ffffffcd;
 
   &.dark-mode {
     background: rgba(255, 255, 255, 0.06);
@@ -123,10 +123,6 @@ html.dark-mode .subtle-bg {
 
 .dark-mode .banner {
   --macro-bg: rgba(255, 255, 255, 0.08);
-
-  .label {
-    color: #000;
-  }
 }
 .MuiListItemText-root,
 .MuiListItemButton-root {
@@ -152,7 +148,8 @@ html.dark-mode .subtle-bg {
       opacity: 0.8;
     }
 
-    outline: 1px solid $white;
+    outline: 1px solid
+      color-mix(in srgb, var(--accent) var(--chrome-ring), transparent);
     border-radius: 3px;
     &:has(.Mui-focused) {
       outline: none !important;
@@ -693,7 +690,12 @@ body.dark-mode {
 }
 
 .MuiToolbar-root {
-  background-color: $primary-color;
+  background-color: color-mix(
+    in srgb,
+    var(--accent) var(--chrome-tint-strong),
+    transparent
+  );
+  color: var(--accent-ink);
 }
 
 input,
@@ -866,7 +868,8 @@ select {
   }
 }
 
-// Button setup
+// Button setup — CustomIcon language: tinted fill, flat accent text.
+// Icon buttons stay out of this block (CustomButton / date picker style them).
 
 .MuiButtonBase-root:not(.MuiIconButton-root):not(
     .MuiBottomNavigationAction-root
@@ -878,156 +881,39 @@ select {
     .MuiBottomNavigationAction-root
   ):not(.disable-button):not(.save-button.alternative):not(
     .google-sign-in-button
-  ),
+  ):not(.custom-date-picker-button):not(.custom-button) {
+  @include favorite-accent;
+  color: var(--accent);
+  @include tinted-fill(var(--chrome-tint-primary));
+  @include tinted-ring(var(--chrome-ring));
+
+  svg {
+    color: inherit;
+  }
+
+  &.disabled,
+  &.Mui-disabled {
+    opacity: 0.45;
+  }
+}
+
 .MuiToolbar-gutters,
-.MuiToolbar-root,
+.MuiToolbar-root {
+  @include favorite-accent;
+  color: var(--accent-ink);
+  @include tinted-fill(var(--chrome-tint-strong));
+  @include tinted-ring(var(--chrome-ring));
+
+  svg {
+    color: inherit;
+  }
+}
+
 .MuiFab-root,
-.MuiPickersDay-root.Mui-selected,
-.custom-date-picker-button {
-  background-color: $primary-color;
-  color: $white;
-
-  &.primary {
-    background-color: $primary-color !important;
-    color: $white;
-    &.disabled,
-    &.Mui-disabled {
-      background-color: $primary-color-light !important;
-    }
-
-    &.dark-mode {
-      background-color: $primary-color-dark !important;
-      &.disabled {
-        background-color: $primary-color-darker !important;
-      }
-    }
-  }
-
-  &.blue {
-    background-color: $picker-color-blue !important;
-    color: $white;
-
-    &.disabled,
-    &.Mui-disabled {
-      background-color: $picker-color-blue-light !important;
-    }
-    &.dark-mode {
-      background-color: $picker-color-blue-dark !important;
-      &.disabled {
-        background-color: $picker-color-blue-darker !important;
-      }
-    }
-  }
-
-  &.red {
-    background-color: $picker-color-red !important;
-    color: $white;
-    &.disabled,
-    &.Mui-disabled {
-      background-color: $picker-color-red-light !important;
-    }
-    &.dark-mode {
-      background-color: $picker-color-red-dark !important;
-      &.disabled {
-        background-color: $picker-color-red-darker !important;
-      }
-    }
-  }
-
-  &.yellow {
-    background-color: $picker-color-yellow !important;
-    color: $black;
-    &.disabled,
-    &.Mui-disabled {
-      background-color: $picker-color-yellow-light !important;
-    }
-    &.dark-mode {
-      background-color: $picker-color-yellow-dark !important;
-      &.disabled {
-        background-color: $picker-color-yellow-darker !important;
-      }
-    }
-    svg {
-      color: $dark-gray;
-    }
-  }
-
-  &.green {
-    background-color: $picker-color-green !important;
-    color: $dark-gray;
-
-    &.disabled,
-    &.Mui-disabled {
-      background-color: $picker-color-green-light !important;
-    }
-    &.dark-mode {
-      background-color: $picker-color-green-dark !important;
-      &.disabled {
-        background-color: $picker-color-green-darker !important;
-      }
-    }
-  }
-  &.orange {
-    background-color: $picker-color-orange !important;
-    color: $white;
-
-    &.disabled,
-    &.Mui-disabled {
-      background-color: $picker-color-orange-light !important;
-    }
-    &.dark-mode {
-      background-color: $picker-color-orange-dark !important;
-      &.disabled {
-        background-color: $picker-color-orange-darker !important;
-      }
-    }
-  }
-
-  &.deepPurple {
-    background-color: $picker-color-deep-purple !important;
-    color: $white;
-
-    &.disabled,
-    &.Mui-disabled {
-      background-color: $picker-color-deep-purple-light !important;
-    }
-    &.dark-mode {
-      background-color: $picker-color-deep-purple-dark !important;
-      &.disabled {
-        background-color: $picker-color-deep-purple-darker !important;
-      }
-    }
-  }
-  &.purple {
-    background-color: $picker-color-purple !important;
-    color: $white;
-    &.disabled,
-    &.Mui-disabled {
-      background-color: $picker-color-purple-light !important;
-    }
-
-    &.dark-mode {
-      background-color: $picker-color-purple-dark !important;
-      &.disabled {
-        background-color: $picker-color-purple-darker !important;
-      }
-    }
-  }
-  &.pink {
-    background-color: $picker-color-pink !important;
-    color: $white;
-
-    &.disabled,
-    &.Mui-disabled {
-      background-color: $picker-color-pink-light !important;
-    }
-    &.dark-mode {
-      background-color: $picker-color-pink-dark !important;
-      &.disabled {
-        background-color: $picker-color-pink-darker !important;
-      }
-    }
-  }
+.MuiFab-circular {
+  @include favorite-accent;
+  @include solid-accent-fill;
+  @include tinted-ring(var(--chrome-ring));
 }
 
 // Bottom Navigation setup
@@ -1120,97 +1006,11 @@ select {
 // Speed Dial setup
 
 .MuiSpeedDial-root {
-  &.dark-mode {
-    // Dark mode styles applied via color classes below
-    color: inherit;
-  }
-  &.primary {
-    .MuiFab-circular {
-      background-color: $primary-color !important;
-    }
-  }
+  @include favorite-accent;
 
-  &.blue {
-    .MuiFab-circular {
-      background-color: $picker-color-blue !important;
-    }
-  }
-  &.red {
-    .MuiFab-circular {
-      background-color: $picker-color-red !important;
-    }
-  }
-  &.yellow {
-    .MuiFab-circular {
-      background-color: $picker-color-yellow !important;
-      color: $dark-gray !important;
-    }
-  }
-  &.green {
-    .MuiFab-circular {
-      background-color: $picker-color-green !important;
-      color: $dark-gray !important;
-    }
-  }
-  &.orange {
-    .MuiFab-circular {
-      background-color: $picker-color-orange !important;
-    }
-  }
-  &.deepPurple {
-    .MuiFab-circular {
-      background-color: $picker-color-deep-purple !important;
-    }
-  }
-  &.purple {
-    .MuiFab-circular {
-      background-color: $picker-color-purple !important;
-    }
-  }
-  &.pink {
-    .MuiFab-circular {
-      background-color: $picker-color-pink !important;
-    }
-  }
-  &.blue {
-    .MuiFab-circular {
-      background-color: $picker-color-blue !important;
-    }
-  }
-  &.red {
-    .MuiFab-circular {
-      background-color: $picker-color-red !important;
-    }
-  }
-  &.yellow {
-    .MuiFab-circular {
-      background-color: $picker-color-yellow !important;
-    }
-  }
-  &.green {
-    .MuiFab-circular {
-      background-color: $picker-color-green !important;
-    }
-  }
-  &.orange {
-    .MuiFab-circular {
-      background-color: $picker-color-orange !important;
-    }
-  }
-  &.deepPurple {
-    .MuiFab-circular {
-      background-color: $picker-color-deep-purple !important;
-    }
-  }
-  &.purple {
-    .MuiFab-circular {
-      background-color: $picker-color-purple !important;
-    }
-  }
-  &.pink {
-    .MuiFab-circular {
-      background-color: $picker-color-pink !important;
-    }
+  .MuiFab-circular {
+    @include solid-accent-fill;
+    @include tinted-ring(var(--chrome-ring));
   }
 }
 
@@ -1218,85 +1018,18 @@ select {
 
 .MuiToggleButtonGroup-root.dark-mode {
   .MuiToggleButton-root {
-    background-color: $darker-gray !important;
-  }
-  .MuiToggleButton-root.Mui-selected {
-    background-color: $primary-color-darker !important;
-    color: $primary-color !important;
-    border: 1px solid $dark-mode-border !important;
-  }
-  &.blue {
-    .MuiToggleButton-root {
-      background-color: $darker-gray-blue !important;
-    }
-    .MuiToggleButton-root.Mui-selected {
-      background-color: $dark-gray-blue !important;
-      color: $picker-color-blue !important;
-    }
+    background-color: transparent !important;
+    border: 1px solid
+      color-mix(in srgb, var(--accent) var(--chrome-ring), transparent) !important;
   }
 
-  &.red {
-    .MuiToggleButton-root {
-      background-color: $darker-gray-red !important;
-    }
-    .MuiToggleButton-root.Mui-selected {
-      background-color: $dark-gray-red !important;
-      color: $picker-color-red !important;
-    }
-  }
-  &.yellow {
-    .MuiToggleButton-root {
-      background-color: $darker-gray-yellow !important;
-    }
-    .MuiToggleButton-root.Mui-selected {
-      background-color: $dark-gray-yellow !important;
-      color: $picker-color-yellow !important;
-    }
-  }
-  &.green {
-    .MuiToggleButton-root {
-      background-color: $darker-gray-green !important;
-    }
-    .MuiToggleButton-root.Mui-selected {
-      background-color: $dark-gray-green !important;
-      color: $picker-color-green !important;
-    }
-  }
-  &.orange {
-    .MuiToggleButton-root {
-      background-color: $darker-gray-orange !important;
-    }
-    .MuiToggleButton-root.Mui-selected {
-      background-color: $dark-gray-orange !important;
-      color: $picker-color-orange !important;
-    }
-  }
-  &.deepPurple {
-    .MuiToggleButton-root {
-      background-color: $darker-gray-deep-purple !important;
-    }
-    .MuiToggleButton-root.Mui-selected {
-      background-color: $dark-gray-deep-purple !important;
-      color: $picker-color-deep-purple !important;
-    }
-  }
-  &.purple {
-    .MuiToggleButton-root {
-      background-color: $darker-gray-purple !important;
-    }
-    .MuiToggleButton-root.Mui-selected {
-      background-color: $dark-gray-purple !important;
-      color: $picker-color-purple !important;
-    }
-  }
-  &.pink {
-    .MuiToggleButton-root {
-      background-color: $darker-gray-pink !important;
-    }
-    .MuiToggleButton-root.Mui-selected {
-      background-color: $dark-gray-pink !important;
-      color: $picker-color-pink !important;
-    }
+  .MuiToggleButton-root.Mui-selected {
+    color: var(--accent-ink) !important;
+    background-color: color-mix(
+      in srgb,
+      var(--accent) var(--chrome-tint-medium),
+      transparent
+    ) !important;
   }
 }
 
@@ -1305,7 +1038,8 @@ select {
 }
 
 .white-outline {
-  outline: 1px solid $white;
+  outline: 1px solid
+    color-mix(in srgb, var(--accent) var(--chrome-ring), transparent);
 }
 
 // Picker Container setup
@@ -1332,80 +1066,38 @@ select {
 }
 
 // Delete Account Button setup
-.delete-account-button {
-  background-color: $medium-red !important;
-  color: $white !important;
+.delete-account-button,
+.disable-button {
+  --accent: #{$error-color};
+  --accent-ink: #{$error-color};
+  // color: var(--accent) !important;
+  // color: $white !important;
+  @include tinted-fill(var(--chrome-tint-primary));
+  @include tinted-ring(var(--chrome-ring));
 
-  &.red {
-    background-color: $dark-red !important;
+  svg {
+    color: inherit;
+  }
+
+  body.dark-mode &,
+  html.dark-mode &,
+  &.dark-mode {
+    --accent: #{$error-color-dark-mode};
+    --accent-ink: #{$error-color-dark-mode};
   }
 }
 
 // Linear Progress setup
-.MuiLinearProgress-root:not(.custom-linear-progress) {
-  &.primary {
-    background-color: $primary-color-light !important;
+.MuiLinearProgress-root {
+  @include favorite-accent;
+  background-color: color-mix(
+    in srgb,
+    var(--progress-accent, var(--accent)) var(--chrome-tint-medium),
+    transparent
+  ) !important;
 
-    .MuiLinearProgress-bar {
-      background-color: $primary-color-dark !important;
-    }
-  }
-
-  &.blue {
-    background-color: $picker-color-blue-light !important;
-
-    .MuiLinearProgress-bar {
-      background-color: $picker-color-blue-dark !important;
-    }
-  }
-  &.red {
-    background-color: $picker-color-red-light !important;
-
-    .MuiLinearProgress-bar {
-      background-color: $picker-color-red-dark !important;
-    }
-  }
-  &.yellow {
-    background-color: $picker-color-yellow-light !important;
-
-    .MuiLinearProgress-bar {
-      background-color: $picker-color-yellow-dark !important;
-    }
-  }
-  &.green {
-    background-color: $picker-color-green-light !important;
-
-    .MuiLinearProgress-bar {
-      background-color: $picker-color-green-dark !important;
-    }
-  }
-  &.orange {
-    background-color: $picker-color-orange-light !important;
-
-    .MuiLinearProgress-bar {
-      background-color: $picker-color-orange-dark !important;
-    }
-  }
-  &.deepPurple {
-    background-color: $picker-color-deep-purple-light !important;
-
-    .MuiLinearProgress-bar {
-      background-color: $picker-color-deep-purple-dark !important;
-    }
-  }
-  &.purple {
-    background-color: $picker-color-purple-light !important;
-
-    .MuiLinearProgress-bar {
-      background-color: $picker-color-purple-dark !important;
-    }
-  }
-  &.pink {
-    background-color: $picker-color-pink-light !important;
-
-    .MuiLinearProgress-bar {
-      background-color: $picker-color-pink-dark !important;
-    }
+  .MuiLinearProgress-bar {
+    background-color: var(--progress-accent, var(--accent)) !important;
   }
 }
 
@@ -1482,65 +1174,10 @@ body.dark-mode {
 }
 
 .MuiBadge-root {
-  &.primary {
-    .MuiBadge-badge {
-      background-color: $primary-color;
-      color: $white;
-    }
-  }
+  @include favorite-accent;
 
-  &.blue {
-    .MuiBadge-badge {
-      background-color: $picker-color-blue;
-      color: $white;
-    }
-  }
-
-  &.red {
-    .MuiBadge-badge {
-      background-color: $picker-color-red;
-      color: $white;
-    }
-  }
-
-  &.yellow {
-    .MuiBadge-badge {
-      background-color: $picker-color-yellow;
-    }
-  }
-
-  &.green {
-    .MuiBadge-badge {
-      background-color: $picker-color-green;
-    }
-  }
-
-  &.orange {
-    .MuiBadge-badge {
-      background-color: $picker-color-orange;
-      color: $white;
-    }
-  }
-
-  &.deepPurple {
-    .MuiBadge-badge {
-      background-color: $picker-color-deep-purple;
-      color: $white;
-    }
-  }
-
-  &.purple {
-    .MuiBadge-badge {
-      background-color: $picker-color-purple;
-      color: $white;
-    }
-  }
-
-  &.pink {
-    .MuiBadge-badge {
-      background-color: $picker-color-pink;
-      color: $white;
-    }
+  .MuiBadge-badge {
+    @include solid-accent-fill;
   }
 }
 
@@ -1612,9 +1249,4 @@ body.dark-mode {
 
 .pointer {
   cursor: pointer;
-}
-
-.disable-button {
-  background-color: $error-color !important;
-  color: $white !important;
 }

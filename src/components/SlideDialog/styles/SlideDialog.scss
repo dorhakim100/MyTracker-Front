@@ -105,18 +105,43 @@
     .MuiToolbar-root {
       padding: 1em;
       gap: 0;
+      border: none !important;
+      border-bottom: none !important;
       border-top-right-radius: 10px;
       border-top-left-radius: 10px;
+      background-color: color-mix(
+        in srgb,
+        var(--accent) var(--chrome-tint-strong),
+        transparent
+      ) !important;
+      box-shadow: none !important;
+      color: $white !important;
 
       .marquee-text-container {
         padding-inline-end: 8px;
       }
 
+      .marquee-text-container,
+      .marquee-text-container *,
+      .marquee-text,
+      .marquee-text-measure {
+        color: $white !important;
+      }
+
       .slide-dialog-close,
       .slide-dialog-close svg {
         color: $white !important;
-        fill: $white !important;
+        fill: currentColor !important;
+        background-color: transparent !important;
+        box-shadow: none !important;
       }
+    }
+
+    .MuiAppBar-root {
+      background-color: transparent !important;
+      background-image: none !important;
+      box-shadow: none !important;
+      border-bottom: none !important;
     }
   }
 
@@ -126,41 +151,26 @@
       color: var(--ink-on-canvas) !important;
     }
 
-    // Toolbar with darker picker colors in dark mode
     .MuiToolbar-root {
-      &.blue {
-        background-color: $picker-color-blue-dark !important;
-      }
-      &.yellow {
-        background-color: $picker-color-yellow-dark !important;
-      }
-      &.red {
-        background-color: $picker-color-red-dark !important;
-      }
-      &.orange {
-        background-color: $picker-color-orange-dark !important;
-      }
-      &.green {
-        background-color: $picker-color-green-dark !important;
-      }
-      &.deepPurple {
-        background-color: $picker-color-deep-purple-dark !important;
-      }
-      &.purple {
-        background-color: $picker-color-purple-dark !important;
-      }
-      &.pink {
-        background-color: $picker-color-pink-dark !important;
-      }
-      // Default for primary
-      &:not(.blue):not(.yellow):not(.red):not(.orange):not(.green):not(
-          .deepPurple
-        ):not(.purple):not(.pink) {
-        background-color: $primary-color-dark !important;
+      background-color: color-mix(
+        in srgb,
+        var(--accent) var(--chrome-tint-strong),
+        transparent
+      ) !important;
+      box-shadow: none !important;
+      border-bottom: none !important;
+      color: $white !important;
+
+      .marquee-text-container,
+      .marquee-text-container *,
+      .marquee-text,
+      .marquee-text-measure {
+        color: $white !important;
       }
     }
   }
 }
+
 .slide-dialog-content {
   background: var(--canvas-color) !important;
   color: var(--ink-on-canvas);

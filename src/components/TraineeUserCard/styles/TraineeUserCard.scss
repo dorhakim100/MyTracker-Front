@@ -24,15 +24,18 @@
   transition: transform 0.3s ease-in-out;
 
   // border-top: 1px solid $dark-gray;
-  border-bottom: 1px solid $dark-gray;
-  border-right: 1px solid $dark-gray;
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--accent) var(--chrome-ring), transparent);
+  border-right: 1px solid
+    color-mix(in srgb, var(--accent) var(--chrome-ring), transparent);
   &.rtl {
     border-top-right-radius: 0;
     border-bottom-right-radius: 1rem;
     border-top-left-radius: 1rem;
     border-bottom-left-radius: 0;
     border-right: none;
-    border-left: 1px solid $dark-gray;
+    border-left: 1px solid
+      color-mix(in srgb, var(--accent) var(--chrome-ring), transparent);
   }
 
   &.hidden {
@@ -46,7 +49,11 @@
   &.dark-mode {
     background-color: $darker-gray;
     color: $white;
-    border-color: $white;
+    border-color: color-mix(
+      in srgb,
+      var(--accent) var(--chrome-ring),
+      transparent
+    );
 
     &.blue {
       background-color: $darker-gray-blue;

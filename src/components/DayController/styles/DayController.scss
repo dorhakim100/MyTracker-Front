@@ -19,45 +19,14 @@
     }
 
     .custom-date-picker-button {
-      background-color: transparent !important;
-      color: $dark-gray;
-    }
-
-    .dark-mode {
-      .custom-date-picker-button {
-        color: $white;
-      }
+      width: 2.5rem;
+      height: 2.5rem;
     }
 
     &.today {
       font-weight: 600;
-      border-bottom: 2px solid transparent;
-
-      &.primary {
-        border-bottom: 2px solid $primary-color;
-      }
-      &.blue {
-        border-bottom: 2px solid $picker-color-blue;
-      }
-      &.red {
-        border-bottom: 2px solid $picker-color-red;
-      }
-      &.green {
-        border-bottom: 2px solid $picker-color-green;
-      }
-      &.orange {
-        border-bottom: 2px solid $picker-color-orange;
-      }
-      &.deepPurple {
-        border-bottom: 2px solid $picker-color-deep-purple;
-      }
-      &.purple {
-        border-bottom: 2px solid $picker-color-purple;
-      }
-      &.pink {
-        border-bottom: 2px solid $picker-color-pink;
-      }
+      border-bottom: 2px solid
+        color-mix(in srgb, var(--accent) var(--chrome-ring), transparent);
     }
   }
 }
-

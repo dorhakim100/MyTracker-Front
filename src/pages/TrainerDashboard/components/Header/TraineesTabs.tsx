@@ -79,7 +79,9 @@ export function TraineesTabs({ trainees }: TraineesTabsProps) {
 
   return (
     <div
-      className={`trainees-tabs-container ${prefs.isDarkMode ? 'dark-mode' : ''} ${prefs.favoriteColor}`}
+      className={`trainees-tabs-container ${
+        prefs.isDarkMode ? 'dark-mode' : ''
+      } ${prefs.favoriteColor}`}
     >
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable
@@ -128,9 +130,14 @@ export function TraineesTabs({ trainees }: TraineesTabsProps) {
                             trainee._id
                           )
                         }}
-                        className={`trainee-tab ${snapshot.isDragging ? 'dragging' : ''} ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+                        className={`trainee-tab ${
+                          snapshot.isDragging ? 'dragging' : ''
+                        } ${prefs.isDarkMode ? 'dark-mode' : ''}`}
                       >
-                        <ChatUnreadBadge count={getTraineeCount(trainee._id)}>
+                        <ChatUnreadBadge
+                          count={getTraineeCount(trainee._id)}
+                          className={prefs.favoriteColor}
+                        >
                           <span>
                             {trainee.details.fullname}{' '}
                             {trainee._id === user?._id ? ' (Me)' : ''}

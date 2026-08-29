@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { he } from 'date-fns/locale'
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'
-import { CustomButton } from '../CustomButton/CustomButton'
+import { CustomButton, type CustomButtonVariant } from '../CustomButton/CustomButton'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker'
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
@@ -14,6 +14,7 @@ interface CustomDatePickerProps {
   onChange: (isoDate: string) => void
   ariaLabel?: string
   className?: string
+  variant?: CustomButtonVariant
 }
 
 export function CustomDatePicker({
@@ -21,6 +22,7 @@ export function CustomDatePicker({
   onChange,
   ariaLabel,
   className,
+  variant = 'medium',
 }: CustomDatePickerProps) {
   const { t } = useTranslation()
   const lang = useSelector((state: RootState) => state.systemModule.prefs.lang)
@@ -58,7 +60,11 @@ export function CustomDatePicker({
         icon={<CalendarMonthIcon />}
         ariaLabel={ariaLabel || 'open date picker'}
         onClick={onOpen}
-        className={`custom-date-picker-button ${className || ''}`}
+        variant={variant}
+        size={variant === 'flat' ? 'small' : 'medium'}
+        className={`custom-date-picker-button${
+          variant === 'flat' ? '' : className ? ` ${className}` : ''
+        }`}
         tooltipTitle={t('common.selectDate')}
       />
 

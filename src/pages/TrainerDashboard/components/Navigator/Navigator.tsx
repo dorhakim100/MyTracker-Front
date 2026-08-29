@@ -102,7 +102,10 @@ export default function Navigator(props: DrawerProps) {
             const Icon = route.icon
             const icon =
               route.path === '/trainer/workouts' ? (
-                <ChatUnreadBadge count={workoutsUnreadCount}>
+                <ChatUnreadBadge
+                  count={workoutsUnreadCount}
+                  className={prefs.favoriteColor}
+                >
                   <Icon />
                 </ChatUnreadBadge>
               ) : (

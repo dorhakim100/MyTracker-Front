@@ -665,6 +665,7 @@ export function Workouts() {
                   <CustomButton
                     isIcon={true}
                     icon={<MoreHorizIcon />}
+                    variant='flat'
                   />
                 }
                 onClick={() => {
@@ -801,6 +802,7 @@ export function Workouts() {
                 <ChatUnreadBadge
                   count={traineesUnreadTotal}
                   variant='inline'
+                  className={prefs.favoriteColor}
                 />
               }
               cmp={<MyTraineeCard />}

@@ -48,7 +48,10 @@ export function CircularProgress({
     : colorMap[prefs.favoriteColor]
 
   return (
-    <div className='circular-progress'>
+    <div
+      className='circular-progress'
+      style={{ ['--progress-accent' as string]: progressColor }}
+    >
       <CircularProgressbar
         value={value}
         // text={`${text}`}

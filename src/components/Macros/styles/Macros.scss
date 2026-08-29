@@ -9,43 +9,57 @@
   width: 12px;
   height: 12px;
   border-radius: 50%;
+  color: var(--macro-color);
+  background-color: currentColor;
 }
 
 .macros .banner .label {
   font-weight: 600;
+  color: var(--macro-color);
+  background: color-mix(
+    in srgb,
+    currentColor var(--macro-label-tint, 14%),
+    transparent
+  );
+
+  html.dark-mode &,
+  body.dark-mode & {
+    --macro-label-tint: 22%;
+  }
 }
 
 .macros .banner .value {
   opacity: 0.85;
 }
 
-// Color the label based on the banner type
-.macros .banner.protein .label,
-.macros .banner.protein .swatch {
-  background-color: $macro-protein;
+.macros .banner.protein {
+  .swatch {
+    color: #f4cbd5;
+    background-color: #ef476e93;
+  }
+
+  .label {
+    color: #f4cbd5;
+    background: #ef476e7a;
+  }
 }
 
-.macros .banner.carbs .label,
-.macros .banner.carbs .swatch {
-  background-color: $macro-carbs;
+.macros .banner.carbs {
+  --macro-color: #{$macro-carbs};
 }
 
-.macros .banner.fats .label,
-.macros .banner.fats .swatch {
-  background-color: $macro-fats;
+.macros .banner.fats {
+  --macro-color: #{$macro-fats};
 }
 
-.dark-mode .macros .banner.protein .label,
-.dark-mode .macros .banner.protein .swatch {
-  background-color: $macro-protein-dark;
+html.dark-mode .macros .banner.carbs,
+body.dark-mode .macros .banner.carbs,
+.dark-mode .macros .banner.carbs {
+  --macro-color: #{$macro-carbs-dark};
 }
 
-.dark-mode .macros .banner.carbs .label,
-.dark-mode .macros .banner.carbs .swatch {
-  background-color: $macro-carbs-dark;
-}
-
-.dark-mode .macros .banner.fats .label,
-.dark-mode .macros .banner.fats .swatch {
-  background-color: $macro-fats-dark;
+html.dark-mode .macros .banner.fats,
+body.dark-mode .macros .banner.fats,
+.dark-mode .macros .banner.fats {
+  --macro-color: #{$macro-fats-dark};
 }

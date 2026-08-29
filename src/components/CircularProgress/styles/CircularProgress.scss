@@ -1,5 +1,9 @@
 .circular-progress {
-  --ring-trail: #e6e6e6;
+  --ring-trail: color-mix(
+    in srgb,
+    var(--progress-accent, var(--accent)) var(--chrome-tint-medium),
+    transparent
+  );
 
   position: relative;
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI',
@@ -24,11 +28,5 @@
     padding: 0.5rem;
     font-size: 0.9rem;
     opacity: 0.5;
-  }
-}
-
-body.dark-mode {
-  .circular-progress {
-    --ring-trail: color-mix(in srgb, #{$white} 80%, transparent);
   }
 }

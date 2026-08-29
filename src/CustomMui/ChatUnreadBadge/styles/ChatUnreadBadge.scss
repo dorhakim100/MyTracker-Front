@@ -1,4 +1,5 @@
 .chat-unread-badge {
+  @include favorite-accent;
   position: relative;
 
   .MuiBadge-badge {
@@ -12,7 +13,7 @@
     letter-spacing: 0;
     border-radius: 50% !important;
     pointer-events: none;
-    color: $white;
+    @include solid-accent-fill;
   }
 
   .exercise-card-actions & .MuiBadge-badge:not(.MuiBadge-invisible) {
@@ -26,34 +27,42 @@
       width: 0.55rem !important;
       min-width: 0.55rem !important;
       height: 0.55rem !important;
-      background-color: transparent;
+      background-color: transparent !important;
+      color: transparent !important;
+      // border: 2px solid
+      //   color-mix(in srgb, var(--accent) var(--chrome-ring), transparent);
       border: 2px solid $primary-color;
-      opacity: 0.7;
-    }
+      opacity: 1;
 
-    &.blue .MuiBadge-badge {
-      border-color: $picker-color-blue;
-    }
-    &.red .MuiBadge-badge {
-      border-color: $picker-color-red;
-    }
-    &.yellow .MuiBadge-badge {
-      border-color: $picker-color-yellow;
-    }
-    &.green .MuiBadge-badge {
-      border-color: $picker-color-green;
-    }
-    &.orange .MuiBadge-badge {
-      border-color: $picker-color-orange;
-    }
-    &.deepPurple .MuiBadge-badge {
-      border-color: $picker-color-deep-purple;
-    }
-    &.purple .MuiBadge-badge {
-      border-color: $picker-color-purple;
-    }
-    &.pink .MuiBadge-badge {
-      border-color: $picker-color-pink;
+      &.blue {
+        border-color: $picker-color-blue;
+      }
+
+      &.green {
+        border-color: $picker-color-green;
+      }
+
+      &.yellow {
+        border-color: $picker-color-yellow;
+      }
+
+      &.orange {
+        border-color: $picker-color-orange;
+      }
+
+      &.red {
+        border-color: $picker-color-red;
+      }
+      &.purple {
+        border-color: $picker-color-purple;
+      }
+      &.pink {
+        border-color: $picker-color-pink;
+      }
+
+      &.deepPurple {
+        border-color: $picker-color-deep-purple;
+      }
     }
   }
 
@@ -75,34 +84,6 @@
     font-size: 0.7rem;
     font-weight: 700;
     line-height: 1;
-    color: $white;
-    background-color: $primary-color;
-
-    &.blue {
-      background-color: $picker-color-blue;
-    }
-    &.red {
-      background-color: $picker-color-red;
-    }
-    &.yellow {
-      background-color: $picker-color-yellow;
-      color: $dark-gray;
-    }
-    &.green {
-      background-color: $picker-color-green;
-      color: $dark-gray;
-    }
-    &.orange {
-      background-color: $picker-color-orange;
-    }
-    &.deepPurple {
-      background-color: $picker-color-deep-purple;
-    }
-    &.purple {
-      background-color: $picker-color-purple;
-    }
-    &.pink {
-      background-color: $picker-color-pink;
-    }
+    @include solid-accent-fill;
   }
 }

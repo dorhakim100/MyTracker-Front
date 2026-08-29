@@ -36,6 +36,13 @@ const proteinColor = 'var(--macro-protein)'
 const carbsColor = 'var(--macro-carbs)'
 const fatsColor = 'var(--macro-fats)'
 
+// Match `.donut` `--size` / `--thickness`. Visible ring is half of thickness.
+const DONUT_SIZE = 160
+const DONUT_THICKNESS = 18
+const RING_WIDTH = DONUT_THICKNESS / 2
+const RING_RADIUS = DONUT_SIZE / 2 - RING_WIDTH / 2
+const DONUT_CENTER = DONUT_SIZE / 2
+
 function clampProgress(current: number, goal: number) {
   if (!goal || goal <= 0) return 0
   return Math.min(1, Math.max(0, current / goal))
@@ -119,14 +126,24 @@ export function MacrosDonut({
       Math.abs(cSeg.blinkEnd - cSeg.blinkStart) > 0.05 ||
       Math.abs(fSeg.blinkEnd - fSeg.blinkStart) > 0.05)
 
+  const fillArcs = [
+    { key: 'protein', color: 'var(--pColor)', start: 0, end: pSeg.fillEnd },
+    { key: 'carbs', color: 'var(--cColor)', start: pPct, end: cSeg.fillEnd },
+    {
+      key: 'fats',
+      color: 'var(--fColor)',
+      start: pPct + cPct,
+      end: fSeg.fillEnd,
+    },
+  ]
+
   type CSSVars = CSSProperties & Record<string, string | number>
   const donutStyle: CSSVars = {
+    '--size': `${DONUT_SIZE}px`,
+    '--thickness': `${DONUT_THICKNESS}px`,
     '--p': `${pPct}%`,
     '--c': `${cPct}%`,
     '--f': `${fPct}%`,
-    '--pFill': `${pSeg.fillEnd}%`,
-    '--cFillEnd': `${cSeg.fillEnd}%`,
-    '--fFillEnd': `${fSeg.fillEnd}%`,
     '--pBlinkStart': `${pSeg.blinkStart}%`,
     '--pBlinkEnd': `${pSeg.blinkEnd}%`,
     '--cBlinkStart': `${cSeg.blinkStart}%`,
@@ -162,10 +179,32 @@ export function MacrosDonut({
             className='donut-pale'
             aria-hidden
           />
-          <div
+          <svg
             className='donut-fill'
+            viewBox={`0 0 ${DONUT_SIZE} ${DONUT_SIZE}`}
             aria-hidden
-          />
+          >
+            {fillArcs.map((arc) => {
+              const length = Math.max(0, arc.end - arc.start)
+              if (length < 0.08) return null
+              return (
+                <circle
+                  key={arc.key}
+                  cx={DONUT_CENTER}
+                  cy={DONUT_CENTER}
+                  r={RING_RADIUS}
+                  fill='none'
+                  stroke={arc.color}
+                  strokeWidth={RING_WIDTH}
+                  strokeLinecap={length >= 99.9 ? 'butt' : 'round'}
+                  pathLength={100}
+                  strokeDasharray={`${length} ${100 - length}`}
+                  strokeDashoffset={-arc.start}
+                  transform={`rotate(-90 ${DONUT_CENTER} ${DONUT_CENTER})`}
+                />
+              )
+            })}
+          </svg>
           {showBlink && (
             <div
               className='donut-blink'

@@ -36,21 +36,21 @@ interface MyTraineeCardProps {
 export function MyTraineeCard({ displayTrainees = true }: MyTraineeCardProps) {
   const { t } = useTranslation()
   const user = useSelector((state: RootState) => state.userModule.user)
-  
+
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
-  
+
   const traineeUser = useSelector(
     (state: RootState) => state.userModule.traineeUser
   )
-  
+
   const [searchedTrainees, setSearchedTrainees] = useState<User[]>([])
   const [trainees, setTrainees] = useState<User[]>(user?.trainees ?? [])
-  
+
   const [requests, setRequests] = useState<TrainerRequest[]>([])
   const { getTraineeCount } = useUnreadSummary('trainer')
-  
+
   const [search, setSearch] = useState<string>('')
-  
+
   useEffect(() => {
     if (!search || search === '') {
       setSearchedTrainees([])
@@ -58,14 +58,14 @@ export function MyTraineeCard({ displayTrainees = true }: MyTraineeCardProps) {
     }
     onSearchTrainee()
   }, [search])
-  
+
   useEffect(() => {
     getRequests()
   }, [user])
-  
-    if (!user) {
-      return null
-    }
+
+  if (!user) {
+    return null
+  }
 
   async function onSearchTrainee() {
     try {
@@ -207,18 +207,21 @@ export function MyTraineeCard({ displayTrainees = true }: MyTraineeCardProps) {
             className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
           />
 
-      <CustomList
-        items={trainees ?? []}
-        renderPrimaryText={(trainee) => trainee.details.fullname}
-        renderSecondaryText={(trainee) => trainee.email}
-        renderLeft={(trainee) => (
-          <ChatUnreadBadge count={getTraineeCount(trainee._id)}>
-            <img
-              src={trainee.details.imgUrl}
-              alt={trainee.details.fullname}
-            />
-          </ChatUnreadBadge>
-        )}
+          <CustomList
+            items={trainees ?? []}
+            renderPrimaryText={(trainee) => trainee.details.fullname}
+            renderSecondaryText={(trainee) => trainee.email}
+            renderLeft={(trainee) => (
+              <ChatUnreadBadge
+                count={getTraineeCount(trainee._id)}
+                className={prefs.favoriteColor}
+              >
+                <img
+                  src={trainee.details.imgUrl}
+                  alt={trainee.details.fullname}
+                />
+              </ChatUnreadBadge>
+            )}
             renderRight={(trainee) => renderRequestStatus(trainee)}
             getKey={(trainee) => `${trainee._id}-assigned-trainee-card`}
             noResultsMessage={t('trainer.noAssignedTrainees')}

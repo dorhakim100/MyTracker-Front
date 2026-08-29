@@ -24,6 +24,8 @@
 
   .MuiLinearProgress-root {
     grid-column: 1 / -1;
+    height: 8px;
+    border-radius: 4px;
   }
 
   .value-container {

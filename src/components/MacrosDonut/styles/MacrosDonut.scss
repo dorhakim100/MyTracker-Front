@@ -22,8 +22,12 @@
     .donut-blink {
       position: absolute;
       inset: 0;
-      border-radius: 50%;
       pointer-events: none;
+    }
+
+    .donut-pale,
+    .donut-blink {
+      border-radius: 50%;
     }
 
     .donut-pale {
@@ -36,14 +40,10 @@
     }
 
     .donut-fill {
-      background: conic-gradient(
-        var(--pColor) 0 var(--pFill),
-        transparent var(--pFill) var(--p),
-        var(--cColor) var(--p) var(--cFillEnd),
-        transparent var(--cFillEnd) calc(var(--p) + var(--c)),
-        var(--fColor) calc(var(--p) + var(--c)) var(--fFillEnd),
-        transparent var(--fFillEnd) 100%
-      );
+      display: block;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
     }
 
     .donut-blink {

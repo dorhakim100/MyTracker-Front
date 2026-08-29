@@ -1,57 +1,18 @@
 .MuiToggleButtonGroup-root {
-  .MuiToggleButtonGroup-grouped.Mui-selected {
-    color: $primary-color !important;
-    // background-color: $primary-color !important;
-  }
-  &.dark-mode {
-    .MuiToggleButtonGroup-grouped.Mui-selected {
-      background-color: $dark-gray !important;
-    }
+  @include favorite-accent;
 
-    &.blue {
-      .MuiToggleButtonGroup-grouped.Mui-selected {
-        background-color: $dark-gray-blue !important;
-      }
-    }
-    &.red {
-      .MuiToggleButtonGroup-grouped.Mui-selected {
-        background-color: $dark-gray-red !important;
-      }
-    }
-    &.yellow {
-      .MuiToggleButtonGroup-grouped.Mui-selected {
-        background-color: $dark-gray-yellow !important;
-      }
-    }
-    &.green {
-      .MuiToggleButtonGroup-grouped.Mui-selected {
-        background-color: $dark-gray-green !important;
-      }
-    }
-    &.deepPurple {
-      .MuiToggleButtonGroup-grouped.Mui-selected {
-        background-color: $dark-gray-deep-purple !important;
-      }
-    }
-    &.purple {
-      .MuiToggleButtonGroup-grouped.Mui-selected {
-        background-color: $dark-gray-purple !important;
-      }
-    }
-    &.pink {
-      .MuiToggleButtonGroup-grouped.Mui-selected {
-        background-color: $dark-gray-pink !important;
-      }
-    }
-    &.orange {
-      .MuiToggleButtonGroup-grouped.Mui-selected {
-        background-color: $dark-gray-orange !important;
-      }
-    }
+  .MuiToggleButtonGroup-grouped.Mui-selected {
+    color: var(--accent-ink) !important;
+    background-color: color-mix(
+      in srgb,
+      var(--accent) var(--chrome-tint-medium),
+      transparent
+    ) !important;
   }
 }
 
 .custom-toggle {
+  @include favorite-accent;
   max-width: 100%;
   overflow-x: auto;
 
@@ -66,7 +27,8 @@
     left: 0.5rem;
     position: absolute;
     z-index: 5;
-    color: $white;
+    color: var(--accent-ink);
+
     span {
       padding: 0;
       border-radius: 50%;
@@ -80,7 +42,8 @@
 
   &.dark-mode {
     button:not(.Mui-selected) {
-      border: 1px solid $dark-mode-border;
+      border: 1px solid
+        color-mix(in srgb, var(--accent) var(--chrome-ring), transparent);
     }
   }
 
@@ -90,57 +53,7 @@
     font-size: 0.8rem;
   }
 
-  &.primary {
-    .MuiToggleButtonGroup-grouped.Mui-selected {
-      color: $primary-color !important;
-    }
-  }
-
-  &.blue {
-    .MuiToggleButtonGroup-grouped.Mui-selected {
-      color: $picker-color-blue !important;
-    }
-  }
-
-  &.red {
-    .MuiToggleButtonGroup-grouped.Mui-selected {
-      color: $picker-color-red !important;
-    }
-  }
-
-  &.yellow {
-    .MuiToggleButtonGroup-grouped.Mui-selected {
-      color: $picker-color-yellow !important;
-    }
-  }
-
-  &.green {
-    .MuiToggleButtonGroup-grouped.Mui-selected {
-      color: $picker-color-green !important;
-    }
-  }
-
-  &.orange {
-    .MuiToggleButtonGroup-grouped.Mui-selected {
-      color: $picker-color-orange !important;
-    }
-  }
-
-  &.deepPurple {
-    .MuiToggleButtonGroup-grouped.Mui-selected {
-      color: $picker-color-deep-purple !important;
-    }
-  }
-
-  &.purple {
-    .MuiToggleButtonGroup-grouped.Mui-selected {
-      color: $picker-color-purple !important;
-    }
-  }
-
-  &.pink {
-    .MuiToggleButtonGroup-grouped.Mui-selected {
-      color: $picker-color-pink !important;
-    }
+  .MuiToggleButtonGroup-grouped.Mui-selected {
+    color: var(--accent-ink) !important;
   }
 }

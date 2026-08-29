@@ -7,6 +7,8 @@ import { ClickAnimation } from '../../components/ClickAnimation/ClickAnimation'
 
 import { capacitorService } from '../../services/capacitor.service'
 
+export type CustomButtonVariant = 'subtle' | 'medium' | 'strong' | 'flat'
+
 interface CustomButtonProps {
   text?: string
   className?: string
@@ -22,6 +24,7 @@ interface CustomButtonProps {
   isIconReverse?: boolean
   tooltipTitle?: string
   shouldVibrate?: boolean
+  variant?: CustomButtonVariant
 }
 
 export function CustomButton({
@@ -39,7 +42,9 @@ export function CustomButton({
   isIconReverse = false,
   tooltipTitle,
   shouldVibrate = true,
+  variant,
 }: CustomButtonProps) {
+  const resolvedVariant = variant ?? (isIcon ? 'medium' : 'strong')
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
@@ -54,7 +59,7 @@ export function CustomButton({
   return (
     <ClickAnimation
       disabled={isDashboard ? true : disabled}
-      className={`custom-button-wrapper ${
+      className={`custom-button-wrapper variant-${resolvedVariant} ${
         prefs.isDarkMode ? 'dark-mode' : ''
       } ${disabled ? 'disabled' : ''} ${prefs.favoriteColor || ''}`}
     >
@@ -81,7 +86,10 @@ export function CustomButton({
                 }
               }}
               disabled={disabled}
-              className={`custom-button ${className || ''} `}
+              size={size}
+              className={`custom-button variant-${resolvedVariant} ${
+                className || ''
+              } ${resolvedVariant === 'flat' ? '' : prefs.favoriteColor || ''}`}
               sx={{
                 backgroundColor: resolvedBg,
                 color: resolvedBg ? '#fff' : undefined,
@@ -116,9 +124,9 @@ export function CustomButton({
             }
           }}
           disabled={disabled}
-          className={`custom-button ${className || ''} ${
-            prefs.favoriteColor || ''
-          } ${disabled ? 'disabled' : ''} ${
+          className={`custom-button variant-${resolvedVariant} ${
+            className || ''
+          } ${prefs.favoriteColor || ''} ${disabled ? 'disabled' : ''} ${
             prefs.isDarkMode ? 'dark-mode' : ''
           } ${isDashboard ? 'dashboard' : ''}`}
         >
