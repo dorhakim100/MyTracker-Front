@@ -10,6 +10,7 @@ export interface Exercise {
   secondaryMuscles?: string[]
   details?: ExerciseDetail
   gifUrl?: string
+  isNew?: boolean
 }
 
 export interface ExerciseDetail {

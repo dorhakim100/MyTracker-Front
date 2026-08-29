@@ -5,9 +5,11 @@
 .trainee-user-card-container {
   position: fixed;
 
-  //   top: calc($header-height + 1.5rem);
+  // top: calc($header-height + 1.5rem);
   //   left: 200px;
-  bottom: 100px;
+
+  // bottom: 100px;
+  top: 0;
 
   width: fit-content;
   display: flex;
@@ -16,12 +18,13 @@
   background-color: $white;
   z-index: 1000;
   padding: 0.5rem 0.5rem 0.5rem 1rem;
-  border-top-right-radius: 1rem;
-  // border-bottom-right-radius: 1rem;
+  // border-top-right-radius: 1rem;
+  border-bottom-right-radius: 1rem;
 
   transition: transform 0.3s ease-in-out;
 
-  border-top: 1px solid $dark-gray;
+  // border-top: 1px solid $dark-gray;
+  border-bottom: 1px solid $dark-gray;
   border-right: 1px solid $dark-gray;
   &.rtl {
     border-top-right-radius: 0;
@@ -80,6 +83,7 @@
       width: 50px;
       height: 50px;
       object-fit: cover;
+      border-radius: 50%;
     }
   }
 }

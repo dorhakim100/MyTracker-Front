@@ -7,6 +7,12 @@ import { indexedDbService } from '../indexeddb.service'
 import { ExerciseFilter } from '../../types/exerciseFilter/ExerciseFilter'
 import { httpService } from '../http.service'
 import { getWorkoutBodyParts } from '../../assets/config/body-parts'
+import { store } from '../../store/store'
+
+function getSetsUserId() {
+  const { traineeUser, user } = store.getState().userModule
+  return traineeUser?._id || user?._id
+}
 
 export const exerciseSearch = async (filter: ExerciseFilter) => {
   const { searchValue, muscleGroupValue, equipmentValue } = filter
@@ -16,6 +22,7 @@ export const exerciseSearch = async (filter: ExerciseFilter) => {
       q: searchValue,
       muscleGroup: muscleGroupValue,
       equipment: equipmentValue,
+      userId: getSetsUserId(),
     })
 
     return backendRes
@@ -55,6 +62,7 @@ export async function getAlternateExercises(exercise: Exercise) {
   try {
     const backendRes = await httpService.get('exercise/alternate', {
       exerciseToChange: exercise,
+      userId: getSetsUserId(),
     })
     return backendRes
   } catch (err) {

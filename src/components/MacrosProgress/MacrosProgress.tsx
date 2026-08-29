@@ -113,7 +113,7 @@ export function MacrosProgress({
             padded={false}
           />
           <Typography
-            variant='h6'
+            variant='h5'
             className='bold-header'
           >
             {t('macros.macros')}

@@ -98,7 +98,7 @@ export function CaloriesProgress({
             padded={false}
           />
           <Typography
-            variant='h6'
+            variant='h5'
             className='bold-header'
           >
             {t('macros.calories')}

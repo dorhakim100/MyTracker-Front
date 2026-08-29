@@ -20,7 +20,8 @@
       max-width: 300px;
       max-height: 300px;
     }
-    .line-chart-container {
+    .line-chart-container,
+    .new-exercise-section {
       grid-column: 2/3;
       grid-row: 1/1;
       width: 100%;
@@ -29,7 +30,6 @@
 
     .divider,
     .sets-table,
-    .new,
     .past-sessions,
     .instructions-accordion,
     .exercise-body-parts-container {
@@ -38,8 +38,7 @@
     .past-sessions {
       grid-row: 2/3;
     }
-    .sets-table,
-    .new {
+    .sets-table {
       grid-row: 3/4;
     }
   }
@@ -150,14 +149,43 @@
     margin-top: 0rem;
   }
 
-  .MuiBadge-root {
-    // position: absolute;
-    &.new {
-      right: 2rem;
-      top: 2rem;
-      span {
-        font-weight: 700;
+  .new-exercise-section {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    align-self: stretch;
+    min-height: 8rem;
+
+    .new-exercise-copy {
+      display: grid;
+      gap: 0.2rem;
+      min-width: 0;
+    }
+
+    .hint {
+      color: $medium-gray;
+    }
+
+    html.dark-mode &,
+    &.dark-mode {
+      .hint {
+        color: $light-gray;
       }
     }
+
+    @media (prefers-reduced-motion: no-preference) {
+      animation: new-exercise-in 220ms ease-out;
+    }
+  }
+}
+
+@keyframes new-exercise-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

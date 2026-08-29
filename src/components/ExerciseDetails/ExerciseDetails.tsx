@@ -6,7 +6,7 @@ import { setService } from '../../services/set/set.service'
 import { Exercise } from '../../types/exercise/Exercise'
 import { MessageRole } from '../../types/message/Message'
 
-import { Badge, Divider, Typography } from '@mui/material'
+import { Divider, Typography } from '@mui/material'
 import { RootState } from '../../store/store'
 import { ExpectedActual } from '../../types/expectedActual/ExpectedActual'
 import { exerciseImage as exerciseImageObject } from '../../assets/config/exercise-image'
@@ -41,6 +41,7 @@ import {
   getSessionVolume,
   pickBestSet,
 } from '../../services/set/set.helpers'
+import { exerciseDetailsNs } from './locals'
 
 const VIEW_BY_VALUES: ExerciseViewBy[] = ['weight', 'reps', 'volume']
 
@@ -69,6 +70,7 @@ export function ExerciseDetails({
   chatRole,
 }: ExerciseDetailsProps) {
   const { t } = useTranslation()
+  const { t: tDetails } = useTranslation(exerciseDetailsNs)
   const watchedRole = useChatRole()
   const role = chatRole ?? watchedRole
 
@@ -109,7 +111,12 @@ export function ExerciseDetails({
     exerciseId: exercise?.exerciseId,
     userId: traineeUser?._id || user?._id,
     limit: 20,
+    enabled: exercise?.isNew !== true,
   })
+
+  const hasHistory = exercise?.isNew === false || setsQuery.items.length > 0
+  const showNewSection =
+    !hasHistory && (exercise?.isNew === true || setsQuery.isFetched)
 
   const groupedSetsForTable = useMemo(
     () => groupSetsByDate([...setsQuery.items]),
@@ -191,6 +198,7 @@ export function ExerciseDetails({
 
   useEffect(() => {
     const getExerciseSets = async () => {
+      if (exercise?.isNew === true) return
       if (!exercise?.exerciseId || (!traineeUser?._id && !user?._id)) return
       try {
         const sets = await setService.query(setsGraphFilter)
@@ -203,6 +211,7 @@ export function ExerciseDetails({
     getExerciseSets()
   }, [
     exercise?.exerciseId,
+    exercise?.isNew,
     traineeUser?._id,
     user?._id,
     setsGraphFilter,
@@ -310,116 +319,138 @@ export function ExerciseDetails({
         }
         className='instructions-accordion'
       />
-      <div className='line-chart-container'>
-        <div className='chart-header-container'>
-          <Typography
-            variant='h5'
-            className='bold-header'
-          >
-            {t('exercise.maxProgress')}
-          </Typography>
-          <CustomSelect
-            label={t('exercise.viewBy')}
-            values={VIEW_BY_VALUES}
-            value={viewBy}
-            valueLabels={{
-              weight: t('exercise.weight'),
-              reps: t('exercise.reps'),
-              volume: t('exercise.volume'),
-            }}
-            onChange={(val) => {
-              if (VIEW_BY_VALUES.includes(val as ExerciseViewBy)) {
-                setViewBy(val as ExerciseViewBy)
-              }
-            }}
-            className={`${prefs.favoriteColor}`}
-          />
-        </div>
+      {showNewSection && (
         <div
-          className={`line-chart-paper ${prefs.isDarkMode ? 'dark-mode' : ''} ${
-            prefs.favoriteColor || ''
-          }`}
+          className={`new-exercise-section line-chart-paper ${
+            prefs.isDarkMode ? 'dark-mode' : ''
+          } ${prefs.favoriteColor || ''}`}
         >
-          <LineChart
-            isDisplayPoints={true}
-            data={chart.data}
-            isDarkMode={prefs.isDarkMode}
-            interpolateGaps={true}
-            spanGaps={true}
-            isDisplaySecondLine={false}
-            showReadout={true}
-            formatReadout={(index, value) => {
-              const subtitle = chart.data.labels[index] ?? ''
-              if (value == null) return { title: '—', subtitle }
+          <CustomIcon
+            name='workout'
+            size='m'
+            variant='subtle'
+          />
+          <div className='new-exercise-copy'>
+            <Typography
+              variant='h5'
+              className='bold-header'
+            >
+              {tDetails('noSetsYet')}
+            </Typography>
+          </div>
+        </div>
+      )}
+      {hasHistory && (
+        <div className='line-chart-container'>
+          <div className='chart-header-container'>
+            <Typography
+              variant='h5'
+              className='bold-header'
+            >
+              {t('exercise.maxProgress')}
+            </Typography>
+            <CustomSelect
+              label={t('exercise.viewBy')}
+              values={VIEW_BY_VALUES}
+              value={viewBy}
+              valueLabels={{
+                weight: t('exercise.weight'),
+                reps: t('exercise.reps'),
+                volume: t('exercise.volume'),
+              }}
+              onChange={(val) => {
+                if (VIEW_BY_VALUES.includes(val as ExerciseViewBy)) {
+                  setViewBy(val as ExerciseViewBy)
+                }
+              }}
+              className={`${prefs.favoriteColor}`}
+            />
+          </div>
+          <div
+            className={`line-chart-paper ${
+              prefs.isDarkMode ? 'dark-mode' : ''
+            } ${prefs.favoriteColor || ''}`}
+          >
+            <LineChart
+              isDisplayPoints={true}
+              data={chart.data}
+              isDarkMode={prefs.isDarkMode}
+              interpolateGaps={true}
+              spanGaps={true}
+              isDisplaySecondLine={false}
+              showReadout={true}
+              formatReadout={(index, value) => {
+                const subtitle = chart.data.labels[index] ?? ''
+                if (value == null) return { title: '—', subtitle }
 
-              if (viewBy === 'volume') {
+                if (viewBy === 'volume') {
+                  return {
+                    title: `${formatReadoutNumber(value)} ${t('weight.kg')}`,
+                    subtitle,
+                  }
+                }
+
+                const mainUnit =
+                  viewBy === 'weight' ? t('weight.kg') : t('exercise.reps')
+                const secondary = chart.secondaryData[index]
+                if (secondary == null) {
+                  return {
+                    title: `${formatReadoutNumber(value)} ${mainUnit}`,
+                    subtitle,
+                  }
+                }
+
+                const secondaryUnit =
+                  viewBy === 'weight' ? t('exercise.reps') : t('weight.kg')
                 return {
-                  title: `${formatReadoutNumber(value)} ${t('weight.kg')}`,
+                  title: `${formatReadoutNumber(
+                    value
+                  )} ${mainUnit} · ${formatReadoutNumber(
+                    secondary
+                  )} ${secondaryUnit}`,
                   subtitle,
                 }
-              }
-
-              const mainUnit =
-                viewBy === 'weight' ? t('weight.kg') : t('exercise.reps')
-              const secondary = chart.secondaryData[index]
-              if (secondary == null) {
-                return {
-                  title: `${formatReadoutNumber(value)} ${mainUnit}`,
-                  subtitle,
-                }
-              }
-
-              const secondaryUnit =
-                viewBy === 'weight' ? t('exercise.reps') : t('weight.kg')
-              return {
-                title: `${formatReadoutNumber(
-                  value
-                )} ${mainUnit} · ${formatReadoutNumber(
-                  secondary
-                )} ${secondaryUnit}`,
-                subtitle,
-              }
-            }}
+              }}
+            />
+          </div>
+          <LineChartControls
+            value={range}
+            onChange={(val) => onRangeChange(val)}
           />
         </div>
-        <LineChartControls
-          value={range}
-          onChange={(val) => onRangeChange(val)}
-        />
-      </div>
-      <Typography
-        variant='h5'
-        className='bold-header past-sessions'
-      >
-        {t('exercise.pastSessions')}
-      </Typography>
-      {/* {exerciseSets.length === 0} */}
-      {setsQuery.items.length === 0 && (
-        <Badge
-          badgeContent={t('common.new')}
-          className={`${prefs.favoriteColor} new`}
-        ></Badge>
       )}
-      <SetsTable
-        groupedSets={
-          groupedSetsForTable as Record<
-            string,
-            (Set & { exerciseId: string })[]
-          >
-        }
-        mainValue={viewBy}
-        workoutId={workoutId}
-        workoutName={workoutName}
-        exerciseName={exercise?.name || ''}
-        chatRole={role}
-      />
-      <BottomReachIndicator
-        hasMore={Boolean(setsQuery.hasNextPage)}
-        isLoading={setsQuery.isFetchingNextPage}
-        onReachBottom={() => {
-          setsQuery.fetchNextPage()
-        }}
-      />
+      {hasHistory && (
+        <Typography
+          variant='h5'
+          className='bold-header past-sessions'
+        >
+          {t('exercise.pastSessions')}
+        </Typography>
+      )}
+      {hasHistory && (
+        <>
+          <SetsTable
+            groupedSets={
+              groupedSetsForTable as Record<
+                string,
+                (Set & { exerciseId: string })[]
+              >
+            }
+            mainValue={viewBy}
+            workoutId={workoutId}
+            workoutName={workoutName}
+            exerciseName={exercise?.name || ''}
+            chatRole={role}
+          />
+          <BottomReachIndicator
+            hasMore={Boolean(setsQuery.hasNextPage)}
+            isLoading={setsQuery.isFetchingNextPage}
+            onReachBottom={() => {
+              setsQuery.fetchNextPage()
+            }}
+          />
+        </>
+      )}
     </div>
     // </div>
   )
