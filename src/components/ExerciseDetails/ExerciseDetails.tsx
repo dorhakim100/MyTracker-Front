@@ -32,6 +32,9 @@ import { useSets } from '../../hooks/useSets'
 import { useChatRole } from '../../hooks/useChatRole'
 import { BottomReachIndicator } from '../BottomReachIndicator/BottomReachIndicator'
 import { showErrorMsg } from '../../services/event-bus.service'
+import { capitalizeFirstLetter } from '../../services/util.service'
+import { MarqueeText } from '../MarqueeText/MarqueeText'
+import { BodyPartBadges } from '../BodyPartBadge/BodyPartBadge'
 import {
   ExerciseViewBy,
   getPickMetric,
@@ -256,6 +259,12 @@ export function ExerciseDetails({
     })
   }
 
+  const muscleGroupsText = capitalizeFirstLetter(
+    exercise?.mainMuscles
+      ?.concat(exercise?.secondaryMuscles || [])
+      .join(', ') || ''
+  )
+
   return (
     <div
       className={`exercise-details-container ${
@@ -267,6 +276,20 @@ export function ExerciseDetails({
         alt={exercise?.name}
         onError={() => setExerciseImage(exerciseImageObject.ERROR_IMAGE)}
       />
+      <div className='exercise-body-parts-container'>
+        <BodyPartBadges
+          exercise={exercise}
+          size='l'
+        />
+        {muscleGroupsText ? (
+          <MarqueeText
+            variant='body2'
+            className='exercise-muscle-groups'
+          >
+            {muscleGroupsText}
+          </MarqueeText>
+        ) : null}
+      </div>
       <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
 
       <CustomAccordion

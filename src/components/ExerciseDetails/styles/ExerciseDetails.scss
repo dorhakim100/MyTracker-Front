@@ -31,7 +31,8 @@
     .sets-table,
     .new,
     .past-sessions,
-    .instructions-accordion {
+    .instructions-accordion,
+    .exercise-body-parts-container {
       grid-column: 1/-1;
     }
     .past-sessions {
@@ -53,6 +54,26 @@
     object-fit: cover;
     border-radius: 8px;
     justify-self: center;
+  }
+
+  .exercise-body-parts-container {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    min-width: 0;
+
+    .exercise-muscle-groups {
+      margin-inline-start: 0.5rem;
+      font-size: 1.1rem;
+      color: $medium-gray;
+    }
+  }
+
+  html.dark-mode &,
+  &.dark-mode {
+    .exercise-body-parts-container .exercise-muscle-groups {
+      color: $light-gray;
+    }
   }
   .chart-header-container {
     display: grid;

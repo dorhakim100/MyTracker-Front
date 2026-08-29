@@ -274,6 +274,7 @@ export function WorkoutCard({
         <BodyPartBadges
           bodyParts={getWorkoutMuscles(workout)}
           className='muscle-groups-list'
+          size='m'
         />
         <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
         <MarqueeText

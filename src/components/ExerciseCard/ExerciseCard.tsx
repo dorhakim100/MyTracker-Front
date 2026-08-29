@@ -41,6 +41,7 @@ import AccessAlarmIcon from '@mui/icons-material/AccessAlarm'
 import { AnimatedWrapper } from '../AnimatedWrapper/AnimatedWrapper'
 import { capacitorService } from '../../services/capacitor.service'
 import { MarqueeText } from '../MarqueeText/MarqueeText'
+import { BodyPartBadges } from '../BodyPartBadge/BodyPartBadge'
 
 interface SlideDialogOptions {
   title: string
@@ -558,6 +559,7 @@ export function ExerciseCard({
                   {capitalizeFirstLetter(exercise.name)}
                 </MarqueeText>
               </Typography>
+
               {exercise.muscleGroups && exercise.muscleGroups.length > 0 && (
                 <Typography
                   variant='body2'

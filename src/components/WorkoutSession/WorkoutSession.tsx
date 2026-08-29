@@ -1023,6 +1023,7 @@ export function WorkoutSession({
           <div className='muscles-container'>
             <BodyPartBadges
               bodyParts={getWorkoutMuscles(sessionDay.workout)}
+              size='m'
             />
           </div>
         </div>
