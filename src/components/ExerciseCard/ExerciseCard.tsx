@@ -144,10 +144,7 @@ export function ExerciseCard({
   const chatRole = useChatRole(isExpected)
   const { getExerciseCount, hasExerciseMessages } = useUnreadSummary(chatRole)
   const resolvedWorkoutName =
-    workoutName ||
-    sessionDay?.workout?.name ||
-    instructions.workout?.name ||
-    ''
+    workoutName || sessionDay?.workout?.name || instructions.workout?.name || ''
   const traineeName =
     chatRole === 'trainer' && traineeUser && traineeUser._id !== user?._id
       ? traineeUser.details.fullname
@@ -568,9 +565,11 @@ export function ExerciseCard({
                   className='exercise-card-muscle-groups'
                 >
                   <MarqueeText variant='body2'>
-                    {exercise.muscleGroups
-                      .map((muscleGroup) => capitalizeFirstLetter(muscleGroup))
-                      .join(', ')}
+                    {capitalizeFirstLetter(
+                      exercise?.mainMuscles
+                        ?.concat(exercise?.secondaryMuscles || [])
+                        .join(', ') || ''
+                    )}
                   </MarqueeText>
                 </Typography>
               )}

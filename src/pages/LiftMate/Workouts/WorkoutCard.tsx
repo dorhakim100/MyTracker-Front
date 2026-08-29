@@ -40,6 +40,7 @@ import { Badge } from '@mui/material'
 
 import DoneAllIcon from '@mui/icons-material/DoneAll'
 import { getWorkoutMuscles } from '../../../services/exersice-search/exersice-search'
+import { BodyPartBadges } from '../../../components/BodyPartBadge/BodyPartBadge'
 import EditIcon from '@mui/icons-material/Edit'
 import { capacitorService } from '../../../services/capacitor.service'
 import { MarqueeText } from '../../../components/MarqueeText/MarqueeText'
@@ -270,12 +271,10 @@ export function WorkoutCard({
             }
           />
         </div>
-        <MarqueeText
-          variant='body1'
-          className='muscle-groups-list hide-text-overflow'
-        >
-          {getWorkoutMuscles(workout).join(', ')}
-        </MarqueeText>
+        <BodyPartBadges
+          bodyParts={getWorkoutMuscles(workout)}
+          className='muscle-groups-list'
+        />
         <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
         <MarqueeText
           variant='body2'

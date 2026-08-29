@@ -15,6 +15,7 @@ import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { ExerciseDetails } from '../ExerciseDetails/ExerciseDetails'
 import { getWorkoutMuscles } from '../../services/exersice-search/exersice-search'
 import { MarqueeText } from '../MarqueeText/MarqueeText'
+import { BodyPartBadges } from '../BodyPartBadge/BodyPartBadge'
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import { ChatUnreadBadge } from '../../CustomMui/ChatUnreadBadge/ChatUnreadBadge'
@@ -69,8 +70,6 @@ export function WorkoutDetails({ workout }: WorkoutDetailsProps) {
       </div>
     )
   }
-  const workoutMuscles = getWorkoutMuscles(workout).join(', ')
-
   return (
     <>
       <div className='workout-details-container'>
@@ -81,14 +80,10 @@ export function WorkoutDetails({ workout }: WorkoutDetailsProps) {
           >
             {workout.name}
           </Typography>
-          {workoutMuscles && workoutMuscles.length > 0 && (
-            <Typography
-              variant='body1'
-              className='muscle-groups-container'
-            >
-              {workoutMuscles}
-            </Typography>
-          )}
+          <BodyPartBadges
+            bodyParts={getWorkoutMuscles(workout)}
+            className='muscle-groups-container'
+          />
         </div>
         <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
 
@@ -101,10 +96,16 @@ export function WorkoutDetails({ workout }: WorkoutDetailsProps) {
           )}
           renderSecondaryText={(exercise) => (
             <MarqueeText variant='body2'>
-              {capitalizeFirstLetter(exercise.muscleGroups.join(', '))}
+              {capitalizeFirstLetter(
+                exercise?.mainMuscles
+                  ?.concat(exercise?.secondaryMuscles || [])
+                  .join(', ') || ''
+              )}
             </MarqueeText>
           )}
-          className={`exercises-list  ${prefs.isDarkMode ? 'dark-mode' : ''} ${isDashboard ? 'dashboard' : ''}`}
+          className={`exercises-list  ${prefs.isDarkMode ? 'dark-mode' : ''} ${
+            isDashboard ? 'dashboard' : ''
+          }`}
           renderLeft={(exercise) => (
             <img
               src={exercise.image}

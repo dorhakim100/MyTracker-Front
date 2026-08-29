@@ -13,6 +13,7 @@ interface GoalBannerProps {
   isGoal?: boolean
   afterValue?: string
   loading?: boolean
+  size?: 's' | 'm' | 'l'
 }
 
 export function GoalBanner({
@@ -23,6 +24,7 @@ export function GoalBanner({
   isGoal = true,
   afterValue = '',
   loading = false,
+  size = 'm',
 }: GoalBannerProps) {
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
   const formattedCurrent = formatNumberWithCommas(+current)
@@ -46,7 +48,7 @@ export function GoalBanner({
   //   )
   // }
   return (
-    <div className='goal-banner banner'>
+    <div className={`goal-banner banner ${size}`}>
       <div className='value-container'>
         <Typography
           variant='body1'

@@ -6,6 +6,7 @@ import { Workout } from '../../types/workout/Workout'
 import { indexedDbService } from '../indexeddb.service'
 import { ExerciseFilter } from '../../types/exerciseFilter/ExerciseFilter'
 import { httpService } from '../http.service'
+import { getWorkoutBodyParts } from '../../assets/config/body-parts'
 
 export const exerciseSearch = async (filter: ExerciseFilter) => {
   const { searchValue, muscleGroupValue, equipmentValue } = filter
@@ -321,15 +322,7 @@ export function mapMuscleToMuscleGroup(muscle: string): string | undefined {
 }
 
 export function getWorkoutMuscles(workout: Workout) {
-  if(!workout || !workout.exercises || !workout.exercises.length) return []
-  const muscles = workout.exercises
-    .map((exercise) => exercise.mainMuscles)
-    .flat()
-    .filter((muscle): muscle is string => muscle !== undefined)
-  const uniqueMuscles = [...new Set(muscles)]
-  return [
-    ...new Set(uniqueMuscles.map((muscle) => mapMuscleToMuscleGroup(muscle))),
-  ]
+  return getWorkoutBodyParts(workout)
 }
 
 /**

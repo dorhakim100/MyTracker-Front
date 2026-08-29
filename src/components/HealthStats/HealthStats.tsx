@@ -52,6 +52,7 @@ export function HealthStats({
         icon={<StepsGlyph size='m' />}
         afterValue={t('steps.steps')}
         loading={healthLoading}
+        size='l'
       />
       <GoalBanner
         current={burnedCalories}
@@ -59,6 +60,7 @@ export function HealthStats({
         icon={<BurnedCaloriesGlyph size='m' />}
         afterValue={t('macros.kcal')}
         loading={healthLoading}
+        size='l'
       />
       <GoalBanner
         current={distance}
@@ -66,6 +68,7 @@ export function HealthStats({
         icon={<DistanceGlyph size='m' />}
         afterValue={t('distance.km')}
         loading={healthLoading}
+        size='l'
       />
       <GoalBanner
         current={flightsClimbed}
@@ -73,6 +76,7 @@ export function HealthStats({
         icon={<FloorsGlyph size='m' />}
         afterValue={t('floors.floors')}
         loading={healthLoading}
+        size='l'
       />
     </div>
   )

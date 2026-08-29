@@ -426,7 +426,7 @@ export function Dashboard() {
             />
             <Typography
               variant='h5'
-              className='bold-header'
+              className='bold-header dashboard-session-title'
             >
               {t('dashboard.workoutSession')}
             </Typography>

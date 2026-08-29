@@ -45,6 +45,7 @@ import { DEFAULT_RESTING_TIME } from '../../assets/config/times'
 import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import { WorkoutDetails } from '../WorkoutDetails/WorkoutDetails'
+import { BodyPartBadges } from '../BodyPartBadge/BodyPartBadge'
 import { invalidateSets } from '../../lib/react-query/queryKey'
 interface WorkoutSessionProps {
   sessionDay: SessionDay
@@ -1020,12 +1021,9 @@ export function WorkoutSession({
             />
           </div>
           <div className='muscles-container'>
-            <Typography
-              variant='body1'
-              className='bold-header'
-            >
-              {getWorkoutMuscles(sessionDay.workout).join(', ')}
-            </Typography>
+            <BodyPartBadges
+              bodyParts={getWorkoutMuscles(sessionDay.workout)}
+            />
           </div>
         </div>
         <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
