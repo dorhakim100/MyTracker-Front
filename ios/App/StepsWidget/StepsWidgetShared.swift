@@ -438,15 +438,92 @@ enum StepsWidgetFormatting {
     }
 }
 
+enum WidgetAppPalette {
+    static let inkOnSurfaceLight = Color(hex: "#1c292a")
+    static let inkOnSurfaceDark = Color(hex: "#c8d2d2")
+
+    static func accentHex(favoriteColor: String) -> String {
+        switch favoriteColor {
+        case "blue": return "#1976d2"
+        case "yellow": return "#ffd166"
+        case "red": return "#d32f2f"
+        case "orange": return "#ed6c02"
+        case "green": return "#06d6a0"
+        case "deepPurple": return "#6366f1"
+        case "purple": return "#9c27b0"
+        case "pink": return "#ff69b4"
+        default: return "#009688"
+        }
+    }
+
+    static func cardHex(favoriteColor: String, isDarkMode: Bool) -> String {
+        guard isDarkMode else { return "#ffffff" }
+        switch favoriteColor {
+        case "blue": return "#11161f"
+        case "yellow": return "#18180f"
+        case "red": return "#1a1011"
+        case "orange": return "#19140f"
+        case "green": return "#0f1815"
+        case "deepPurple": return "#13101a"
+        case "purple": return "#160f17"
+        case "pink": return "#190f15"
+        default: return "#112021"
+        }
+    }
+
+    static func chromeTint(isDarkMode: Bool) -> Double {
+        isDarkMode ? 0.22 : 0.14
+    }
+
+    static func bannerOverlay(isDarkMode: Bool) -> Double {
+        isDarkMode ? 0.08 : 0.05
+    }
+}
+
+struct WidgetMacroStyle {
+    let color: Color
+    let labelColor: Color
+    let labelFill: Color
+    let swatchColor: Color
+}
+
 enum WidgetMacroColors {
-    static func color(for macro: WidgetMacroType, isDarkMode: Bool) -> Color {
+    static func style(for macro: WidgetMacroType, isDarkMode: Bool) -> WidgetMacroStyle {
+        let tint = WidgetAppPalette.chromeTint(isDarkMode: isDarkMode)
+
         switch macro {
         case .protein:
-            return Color(hex: isDarkMode ? "#e24b6e" : "#ef476f")
+            let color = Color(hex: isDarkMode ? "#e24b6e" : "#ef476f")
+            if isDarkMode {
+                return WidgetMacroStyle(
+                    color: color,
+                    labelColor: color,
+                    labelFill: color.opacity(tint),
+                    swatchColor: color
+                )
+            }
+            return WidgetMacroStyle(
+                color: color,
+                labelColor: Color(hex: "#f4cbd5"),
+                labelFill: Color(hex: "#ef476e").opacity(0.48),
+                swatchColor: Color(hex: "#ef476e").opacity(0.58)
+            )
         case .carbs:
-            return Color(hex: isDarkMode ? "#21c993" : "#06d6a0")
+            let color = Color(hex: isDarkMode ? "#21c993" : "#06d6a0")
+            return WidgetMacroStyle(
+                color: color,
+                labelColor: color,
+                labelFill: color.opacity(tint),
+                swatchColor: color
+            )
         case .fats:
-            return Color(hex: isDarkMode ? "#ffcc66" : "#ffd166")
+            let color = Color(hex: isDarkMode ? "#ffcc66" : "#ffd166")
+            return WidgetMacroStyle(
+                color: color,
+                labelColor: color,
+                labelFill: color.opacity(tint),
+                swatchColor: color
+            )
         }
     }
 }
@@ -468,16 +545,42 @@ enum WidgetMacroType {
     }
 }
 
-extension Color {
+struct WidgetRGB {
+    let r: Double
+    let g: Double
+    let b: Double
+
     init(hex: String) {
         let sanitized = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
         var value: UInt64 = 0
         Scanner(string: sanitized).scanHexInt64(&value)
+        r = Double((value >> 16) & 0xFF) / 255
+        g = Double((value >> 8) & 0xFF) / 255
+        b = Double(value & 0xFF) / 255
+    }
 
-        let red = Double((value >> 16) & 0xFF) / 255
-        let green = Double((value >> 8) & 0xFF) / 255
-        let blue = Double(value & 0xFF) / 255
+    init(r: Double, g: Double, b: Double) {
+        self.r = r
+        self.g = g
+        self.b = b
+    }
 
-        self.init(red: red, green: green, blue: blue)
+    func mixed(with other: WidgetRGB, amount: Double) -> WidgetRGB {
+        WidgetRGB(
+            r: r * amount + other.r * (1 - amount),
+            g: g * amount + other.g * (1 - amount),
+            b: b * amount + other.b * (1 - amount)
+        )
+    }
+
+    var color: Color {
+        Color(red: r, green: g, blue: b)
+    }
+}
+
+extension Color {
+    init(hex: String) {
+        let rgb = WidgetRGB(hex: hex)
+        self.init(red: rgb.r, green: rgb.g, blue: rgb.b)
     }
 }

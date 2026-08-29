@@ -13,24 +13,61 @@ struct WidgetEntryTheme {
         hasSyncedData ? data.isDarkMode : (colorScheme == .dark)
     }
 
-    var accentColor: Color {
-        Color(hex: data.accentHex)
+    var favoriteColor: String {
+        data.favoriteColor.isEmpty ? "primary" : data.favoriteColor
     }
 
-    var textColor: Color {
-        isDarkMode ? accentColor : Color(red: 0.1, green: 0.1, blue: 0.1)
+    var accentHex: String {
+        WidgetAppPalette.accentHex(favoriteColor: favoriteColor)
+    }
+
+    var accentColor: Color {
+        Color(hex: accentHex)
+    }
+
+    var inkColor: Color {
+        isDarkMode ? WidgetAppPalette.inkOnSurfaceDark : WidgetAppPalette.inkOnSurfaceLight
+    }
+
+    var titleColor: Color {
+        inkColor.opacity(0.7)
     }
 
     var mutedTextColor: Color {
-        isDarkMode ? textColor.opacity(0.55) : Color(red: 0.45, green: 0.45, blue: 0.45)
+        inkColor.opacity(0.5)
     }
 
-    var trailColor: Color {
-        isDarkMode ? Color(red: 0.22, green: 0.24, blue: 0.27) : Color(red: 0.9, green: 0.9, blue: 0.9)
+    var ringTextColor: Color {
+        accentColor
     }
 
     var backgroundColor: Color {
-        isDarkMode ? Color(red: 0.08, green: 0.09, blue: 0.11) : Color.white
+        backgroundRGB.color
+    }
+
+    var trailColor: Color {
+        WidgetRGB(hex: accentHex)
+            .mixed(
+                with: backgroundRGB,
+                amount: WidgetAppPalette.chromeTint(isDarkMode: isDarkMode)
+            )
+            .color
+    }
+
+    var bannerFill: Color {
+        isDarkMode
+            ? Color.white.opacity(WidgetAppPalette.bannerOverlay(isDarkMode: true))
+            : Color.black.opacity(WidgetAppPalette.bannerOverlay(isDarkMode: false))
+    }
+
+    private var backgroundRGB: WidgetRGB {
+        if isDarkMode {
+            return WidgetRGB(hex: WidgetAppPalette.cardHex(
+                favoriteColor: favoriteColor,
+                isDarkMode: true
+            ))
+        }
+        return WidgetRGB(hex: accentHex).mixed(with: WidgetRGB(hex: "#ffffff"), amount: 0.07)
     }
 }
 
@@ -244,7 +281,8 @@ struct MetricSmallColumnView: View {
             MetricTitleLabel(
                 icon: icon,
                 label: label,
-                color: theme.textColor,
+                iconColor: theme.accentColor,
+                labelColor: theme.titleColor,
                 fontSize: WidgetRingMetrics.titleFontSize
             )
             .padding(.bottom, WidgetRingMetrics.titleBottomSpacing)
@@ -254,7 +292,7 @@ struct MetricSmallColumnView: View {
                 accentColor: theme.accentColor,
                 trailColor: theme.trailColor,
                 stepsText: value,
-                textColor: theme.textColor,
+                textColor: theme.ringTextColor,
                 subtitle: StepsWidgetFormatting.outOfText(lang: theme.data.lang, value: outOfValue),
                 subtitleColor: theme.mutedTextColor,
                 ringSize: WidgetRingMetrics.ringSize,
@@ -281,7 +319,7 @@ private struct WidgetStatBannerView: View {
             HStack(spacing: 2) {
                 Text(value)
                     .font(.system(size: 13, weight: .bold))
-                    .foregroundStyle(theme.textColor)
+                    .foregroundStyle(theme.inkColor)
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
 
@@ -294,13 +332,13 @@ private struct WidgetStatBannerView: View {
 
             Image(systemName: icon)
                 .font(.system(size: 12, weight: .semibold))
-                .foregroundStyle(theme.textColor.opacity(0.85))
+                .foregroundStyle(theme.inkColor.opacity(0.88))
         }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 5)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 6)
         .background(
             RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .fill(theme.isDarkMode ? Color.white.opacity(0.04) : Color.black.opacity(0.04))
+                .fill(theme.bannerFill)
         )
     }
 }
@@ -311,8 +349,8 @@ private struct WidgetMacroGoalView: View {
     let current: Int
     let goal: Int
 
-    private var macroColor: Color {
-        WidgetMacroColors.color(for: macro, isDarkMode: theme.isDarkMode)
+    private var style: WidgetMacroStyle {
+        WidgetMacroColors.style(for: macro, isDarkMode: theme.isDarkMode)
     }
 
     private var progress: Double {
@@ -324,12 +362,18 @@ private struct WidgetMacroGoalView: View {
         VStack(alignment: .leading, spacing: 3) {
             HStack(spacing: 5) {
                 Circle()
-                    .fill(macroColor)
+                    .fill(style.swatchColor)
                     .frame(width: 10, height: 10)
 
                 Text(macro.label(lang: theme.data.lang))
                     .font(.system(size: 11, weight: .semibold))
-                    .foregroundStyle(macroColor)
+                    .foregroundStyle(style.labelColor)
+                    .padding(.horizontal, 4)
+                    .padding(.vertical, 2)
+                    .background(
+                        RoundedRectangle(cornerRadius: 6, style: .continuous)
+                            .fill(style.labelFill)
+                    )
                     .lineLimit(1)
             }
 
@@ -338,7 +382,7 @@ private struct WidgetMacroGoalView: View {
                 current: StepsWidgetFormatting.formattedNumber(current),
                 goal: StepsWidgetFormatting.formattedNumber(goal),
                 suffix: StepsWidgetFormatting.gramSuffix(lang: theme.data.lang),
-                accentColor: macroColor,
+                accentColor: style.color,
                 progress: progress
             )
         }
@@ -353,15 +397,15 @@ private struct WidgetGoalBannerView: View {
     var accentColor: Color?
     var progress: Double = 1
 
-    private let horizontalInset: CGFloat = 8
-    private let barHeight: CGFloat = 2
+    private let horizontalInset: CGFloat = 12
+    private let barHeight: CGFloat = 3
 
     var body: some View {
         HStack(spacing: 6) {
             HStack(spacing: 2) {
                 Text(current)
                     .font(.system(size: 13, weight: .bold))
-                    .foregroundStyle(theme.textColor)
+                    .foregroundStyle(theme.inkColor)
 
                 Text(suffix)
                     .font(.system(size: 11, weight: .medium))
@@ -373,7 +417,7 @@ private struct WidgetGoalBannerView: View {
 
                 Text(goal)
                     .font(.system(size: 13, weight: .bold))
-                    .foregroundStyle(theme.textColor)
+                    .foregroundStyle(theme.inkColor)
 
                 Text(suffix)
                     .font(.system(size: 11, weight: .medium))
@@ -385,41 +429,43 @@ private struct WidgetGoalBannerView: View {
 
             Image(systemName: "flag.fill")
                 .font(.system(size: 11, weight: .semibold))
-                .foregroundStyle(theme.textColor.opacity(0.85))
+                .foregroundStyle(theme.inkColor.opacity(0.88))
         }
         .padding(.horizontal, horizontalInset)
         .padding(.vertical, 4)
         .background(
             RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .fill(theme.isDarkMode ? Color.white.opacity(0.04) : Color.black.opacity(0.04))
+                .fill(theme.bannerFill)
         )
         .overlay(alignment: .bottom) {
             Rectangle()
                 .fill(accentColor ?? theme.accentColor)
                 .frame(height: barHeight)
                 .scaleEffect(x: CGFloat(progress), y: 1, anchor: .leading)
-                .padding(.horizontal, horizontalInset)
-                .animation(.easeInOut(duration: 0.4), value: progress)
+                .animation(.easeInOut(duration: 0.35), value: progress)
         }
+        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
     }
 }
 
 private struct MetricTitleLabel: View {
     let icon: String
     let label: String
-    let color: Color
+    let iconColor: Color
+    let labelColor: Color
     var fontSize: CGFloat = 11
 
     var body: some View {
         HStack(spacing: 5) {
             Image(systemName: icon)
                 .font(.system(size: fontSize, weight: .semibold))
+                .foregroundStyle(iconColor)
 
             Text(label)
                 .font(.system(size: fontSize, weight: .semibold))
+                .foregroundStyle(labelColor)
                 .lineLimit(1)
         }
-        .foregroundStyle(color.opacity(0.9))
     }
 }
 
