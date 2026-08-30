@@ -4,20 +4,24 @@
     padding: 1em;
     padding-bottom: 3rem;
     display: grid;
+    // gap: 0.5rem;
 
     overflow-y: auto;
     align-content: start;
 
     position: relative;
-    padding-top: calc(178px + 2em);
+    // padding-top: calc(178px + 2em);
 
     .settings-controls-container {
-      position: fixed;
-      top: 135px;
+      // position: fixed;
+      // top: 135px;
+      top: 0px;
       left: 0;
       right: 0;
 
-      &.native{
+      margin-bottom: 0.5rem;
+
+      &.native {
         top: 183px;
       }
 
@@ -27,7 +31,7 @@
         right: 0;
       }
 
-      padding: 1em;
+      // padding: 1em;
       background-color: $white;
 
       &.dark-mode {
