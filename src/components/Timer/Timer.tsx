@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { Divider, Typography } from '@mui/material'
@@ -38,30 +38,60 @@ export function Timer() {
   )
 
   const [secondsPassedState, setSecondsPassedState] = useState<number>(0)
+  const [isExiting, setIsExiting] = useState(false)
+  const [showTimer, setShowTimer] = useState(false)
+  const lastExerciseRef = useRef(currentExercise)
   const [exerciseDialogOptions, setExerciseDialogOptions] =
     useState<ExerciseDialogOptions>({
       open: false,
       exercise: null,
     })
 
+  const displayExercise = currentExercise || lastExerciseRef.current
+
+  useEffect(() => {
+    if (currentExercise) {
+      lastExerciseRef.current = currentExercise
+    }
+  }, [currentExercise])
+
   const percentage = useMemo(() => {
-    if (!currentExercise || !currentExercise.restingTime) return 0
+    if (!displayExercise || !displayExercise.restingTime) return 0
     const percentage =
-      ((secondsPassedState * SECOND_IN_MS) / currentExercise.restingTime!) * 100
+      ((secondsPassedState * SECOND_IN_MS) / displayExercise.restingTime!) *
+      100
 
     if (percentage >= 100) {
     }
 
     return percentage
-  }, [currentExercise, secondsPassedState])
+  }, [displayExercise, secondsPassedState])
 
   const doneSets = useMemo(() => {
-    return currentExercise?.sets.filter((set) => set.isDone).length
-  }, [currentExercise])
+    return displayExercise?.sets.filter((set) => set.isDone).length
+  }, [displayExercise])
 
   const totalSets = useMemo(() => {
-    return currentExercise?.sets.length
-  }, [currentExercise])
+    return displayExercise?.sets.length
+  }, [displayExercise])
+
+  useEffect(() => {
+    if (timer) {
+      setShowTimer(true)
+      setIsExiting(false)
+      return
+    }
+
+    if (!showTimer) return
+
+    setIsExiting(true)
+    const timeout = setTimeout(() => {
+      setShowTimer(false)
+      setIsExiting(false)
+    }, 280)
+
+    return () => clearTimeout(timeout)
+  }, [timer, showTimer])
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -106,7 +136,7 @@ export function Timer() {
 
   function openExerciseDialog() {
     const exercise = sessionDay?.workout.exercises.find(
-      (e) => e.exerciseId === currentExercise?.exerciseId
+      (e) => e.exerciseId === displayExercise?.exerciseId
     )
     if (!exercise) return
     setExerciseDialogOptions({ open: true, exercise: exercise })
@@ -139,17 +169,17 @@ export function Timer() {
     })
   }
 
-  if (!timer) return null
+  if (!showTimer) return null
 
-  if (!currentExercise || !currentExercise.restingTime) return null
+  if (!displayExercise || !displayExercise.restingTime) return null
 
   return (
     <>
       <div
         className={`timer-container ${prefs.isDarkMode ? 'dark-mode' : ''} ${
           prefs.favoriteColor
-        }`}
-        onClick={openExerciseDialog}
+        } ${isExiting ? 'is-exiting' : ''}`}
+        onClick={isExiting ? undefined : openExerciseDialog}
       >
         <SlideAnimation
           motionKey={doneSets || 0}
@@ -158,7 +188,7 @@ export function Timer() {
         >
           <div className='timer'>
             <CachedImage
-              url={currentExercise?.image || exerciseImage.ERROR_IMAGE}
+              url={displayExercise?.image || exerciseImage.ERROR_IMAGE}
               fallback={exerciseImage.ERROR_IMAGE}
               alt='timer'
               className='timer-image'
@@ -169,11 +199,11 @@ export function Timer() {
                   variant='body1'
                   className='bold-header opacity-1 time-left'
                 >
-                  {currentExercise?.restingTime &&
+                  {displayExercise?.restingTime &&
                   secondsPassedState * SECOND_IN_MS <
-                    currentExercise?.restingTime
+                    displayExercise?.restingTime
                     ? formatTime(
-                        currentExercise?.restingTime -
+                        displayExercise?.restingTime -
                           secondsPassedState * SECOND_IN_MS +
                           1000,
                         false

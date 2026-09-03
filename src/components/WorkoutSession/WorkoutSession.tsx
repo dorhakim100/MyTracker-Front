@@ -47,6 +47,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import { WorkoutDetails } from '../WorkoutDetails/WorkoutDetails'
 import { BodyPartBadges } from '../BodyPartBadge/BodyPartBadge'
 import { invalidateSets } from '../../lib/react-query/queryKey'
+import { smoothScroll } from '../../services/util.service'
 interface WorkoutSessionProps {
   sessionDay: SessionDay
   updateSessionDay: () => void
@@ -85,10 +86,14 @@ export function WorkoutSession({
   const [exerciseResults, setExerciseResults] = useState<Exercise[]>([])
 
   const isAllExercisesDone = useMemo(() => {
+    if (sessionDay.instructions.isFinished) return true
     if (!sessionDay.instructions.exercises) return false
 
     return sessionDay.instructions.exercises.every((e) => isExerciseDone(e))
-  }, [sessionDay.instructions.exercises])
+  }, [
+    sessionDay.instructions.exercises,
+    sessionDay.instructions.isFinished,
+  ])
 
   const [alertDialogOptions, setAlertDialogOptions] = useState<{
     open: boolean
@@ -478,11 +483,12 @@ export function WorkoutSession({
       ...sessionDay,
       instructions: { ...savedInstructions, isFinished: true },
     })
-    removeCurrentExercise()
+    smoothScroll()
 
     if (timer) {
       await removeTimer(timer?._id)
     }
+    removeCurrentExercise()
   }
 
   const updateSet = async (
@@ -960,8 +966,11 @@ export function WorkoutSession({
         ...sessionDay,
         instructions: newInstructions,
       })
-      if (!timer) return
-      removeTimer(timer._id)
+      smoothScroll()
+      if (timer) {
+        await removeTimer(timer._id)
+      }
+      removeCurrentExercise()
       await saveNewInstructions(newInstructions)
     } catch {
       showErrorMsg(t('messages.error.updateSet'))

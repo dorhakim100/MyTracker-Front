@@ -32,6 +32,7 @@ import {
   optimisticUpdateUser,
   setTraineeUser,
 } from './user.actions'
+import { getDateFromISO } from '../../services/util.service'
 
 function syncActiveWorkoutsCountFromStore(forUserId?: string) {
   if (!forUserId) return
@@ -240,6 +241,18 @@ export function setSelectedSessionDay(sessionDay: SessionDay) {
     type: SET_SELECTED_SESSION_DAY,
     sessionDay,
   })
+
+  const today = getDateFromISO(new Date().toISOString())
+  const sessionDate = sessionDay?.date
+    ? getDateFromISO(sessionDay.date)
+    : null
+
+  if (sessionDate === today) {
+    store.dispatch({
+      type: SET_TODAY_SESSION_DAY,
+      todaySessionDay: sessionDay,
+    })
+  }
 }
 
 export async function playWorkout(sessionDay: SessionDay, userId: string) {
