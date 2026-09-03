@@ -327,6 +327,26 @@ export function EditWorkout({
         return {
           ...set,
           isDone: false,
+          reps: {
+            ...set.reps,
+            expected: set.reps.actual,
+          },
+          weight: {
+            ...set.weight,
+            expected: set.weight.actual,
+          },
+          ...(set.rpe && {
+            rpe: {
+              ...set.rpe,
+              expected: set.rpe.actual,
+            },
+          }),
+          ...(set.rir && {
+            rir: {
+              ...set.rir,
+              expected: set.rir.actual,
+            },
+          }),
         }
       })
       return {
