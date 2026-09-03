@@ -1,0 +1,67 @@
+.recent-search-chips {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  // Bottom padding doubles as the spacing to the groups below, so it shrinks
+  // away with the block when the list is cleared.
+  padding: 0 1rem 1.1rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .recent-search-chips-collapse {
+    transition: none !important;
+  }
+}
+
+.recent-search-chips-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+.recent-search-clear {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 0.75rem;
+  opacity: 0.75;
+  cursor: pointer;
+}
+
+.recent-search-chips-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.recent-search-chip {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 16%, var(--canvas-color));
+  color: var(--accent-ink);
+}
+
+.recent-search-chip-label {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 0.8rem;
+  padding: 0.3rem 0.2rem 0.3rem 0.75rem;
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 10rem;
+}
+
+body.dark-mode {
+  .recent-search-chip {
+    background: color-mix(in srgb, var(--accent) 24%, var(--canvas-color));
+    color: var(--ink-on-surface);
+  }
+}

@@ -126,6 +126,7 @@ async function search(filter: SearchFilter) {
         ),
         popularity: item.popularity ?? 8,
         isCurated: false,
+        categories: item.categories ?? [],
       })
     )
 
@@ -489,6 +490,7 @@ async function searchOpenFoodFacts(query: string) {
           type: 'product' as const,
           popularity: 8,
           isCurated: false,
+          categories: [],
         }
       }
     )
@@ -550,6 +552,7 @@ async function getProductById(id: string) {
       type: 'product' as const,
       popularity: 8,
       isCurated: false,
+      categories: [],
     }
 
     await itemService.save(modifiedItem as Item)
@@ -623,6 +626,7 @@ async function getProductsByIds(ids: string[]) {
         type: 'product' as const,
         popularity: 8,
         isCurated: false,
+        categories: [],
       }
     })
 
@@ -683,6 +687,7 @@ async function searchRawUSDA(query: string) {
         type: 'food' as const,
         popularity: 8,
         isCurated: false,
+        categories: [],
       }
     })
   } catch (error) {
@@ -729,6 +734,7 @@ async function getFoodById(id: string) {
       type: 'food' as const,
       popularity: 8,
       isCurated: false,
+      categories: [],
     }
 
     await itemService.save(modifiedItem as Item)
@@ -830,6 +836,7 @@ async function getFoodsByIds(ids: string[]) {
         type: 'food' as const,
         popularity: 8,
         isCurated: false,
+        categories: [],
       }
     })
   } catch (err) {

@@ -68,6 +68,9 @@
   min-height: 0;
   flex: 1;
   touch-action: pan-y !important;
+  // The library sets overflow-y inline, which leaves overflow-x scrollable.
+  // Sheets only ever scroll vertically, so never let content pan sideways.
+  overflow-x: hidden;
 }
 
 .MuiAppBar-positionFixed {

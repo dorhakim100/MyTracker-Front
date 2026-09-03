@@ -1,0 +1,27 @@
+{
+  "yours": "Yours",
+  "browse": "Browse",
+  "favorites": "Favorites",
+  "meals": "Meals",
+  "recent": "Recent searches",
+  "clearAll": "Clear all",
+  "removeRecent": "Remove search",
+  "back": "Back",
+  "noCategoryResults": "No items in this category",
+  "emptyFavorites": "No favorite items yet",
+  "emptyMeals": "No meals yet",
+  "categories": {
+    "proteins": "Proteins",
+    "carbs": "Carbs",
+    "vegetables": "Vegetables",
+    "fruits": "Fruits",
+    "dairy": "Dairy",
+    "nutsSeeds": "Nuts & seeds",
+    "fatsOils": "Fats & oils",
+    "prepared": "Prepared dishes",
+    "snacks": "Snacks",
+    "beverages": "Beverages",
+    "condiments": "Condiments",
+    "sweets": "Sweets"
+  }
+}

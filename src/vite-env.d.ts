@@ -6,6 +6,7 @@ interface ImportMetaEnv {
   readonly VITE_PIXABAY_API_KEY?: string
   readonly VITE_USDA_API_KEY?: string
   readonly VITE_BODY_FAT_MOCK_SCENARIO?: string
+  readonly VITE_PLAYGROUND_KEY?: string
 }
 
 interface ImportMeta {

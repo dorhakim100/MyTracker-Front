@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import List from '@mui/material/List'
 import ListItemButton from '@mui/material/ListItemButton'
 import ListItemText from '@mui/material/ListItemText'
+import DragIndicatorIcon from '@mui/icons-material/DragIndicator'
 
 import {
   SwipeableList,
@@ -272,7 +273,7 @@ CustomListProps<T>) {
               isDragging.current = true
             }}
           >
-            ⋮⋮
+            <DragIndicatorIcon fontSize='small' />
           </span>
         )}
       </ListItemButton>
@@ -334,6 +335,77 @@ CustomListProps<T>) {
                   // const draggableId = String(key)
                   const draggableId = key + ''
 
+                  const draggable = (
+                    <Draggable
+                      draggableId={draggableId}
+                      index={index}
+                      isDragDisabled={!isDragable}
+                    >
+                      {(dragProvided, snapshot) => {
+                        // Quick fix for dragging offset
+
+                        const baseStyle =
+                          dragProvided.draggableProps.style || {}
+                        const style: React.CSSProperties = { ...baseStyle }
+                        if (snapshot.isDragging && dragOffsetY) {
+                          const currentTransform = style.transform as
+                            | string
+                            | undefined
+                          const extra = ` translateY(${dragOffsetY}px)`
+                          style.transform = currentTransform
+                            ? `${currentTransform}${extra}`
+                            : `translateY(${dragOffsetY}px)`
+                        }
+
+                        return (
+                          <div
+                            ref={dragProvided.innerRef}
+                            {...dragProvided.draggableProps}
+                            style={style}
+                            className={`${
+                              snapshot.isDragging ? 'dragging' : ''
+                            } ${prefs.favoriteColor}`}
+                          >
+                            <SwipeableList
+                              type={Type.IOS}
+                              fullSwipe={true}
+                            >
+                              <SwipeableListItem
+                                leadingActions={
+                                  isSwipeable && leadingActions(item)
+                                }
+                                trailingActions={
+                                  isSwipeable && trailingActions(item)
+                                }
+                                scrollStartThreshold={20}
+                                threshold={0.25}
+                                blockSwipe={
+                                  typeof isSwipeable === 'function'
+                                    ? !isSwipeable(item)
+                                    : !isSwipeable
+                                }
+                              >
+                                {renderList(item, dragProvided)}
+                              </SwipeableListItem>
+                            </SwipeableList>
+                          </div>
+                        )
+                      }}
+                    </Draggable>
+                  )
+
+                  // A motion wrapper here becomes the containing block for the
+                  // dragging row, which is positioned against the viewport, and
+                  // its whileInView resets the row once it scrolls out of sight.
+                  // Draggable lists render the row on its own to avoid both.
+                  if (isDragable) {
+                    return (
+                      <React.Fragment key={draggableId}>
+                        {draggable}
+                      </React.Fragment>
+                    )
+                  }
+
                   return (
                     <AnimatedWrapper
                       key={draggableId}
@@ -349,62 +421,7 @@ CustomListProps<T>) {
                           }
                         : {})}
                     >
-                      <Draggable
-                        draggableId={draggableId}
-                        index={index}
-                        isDragDisabled={!isDragable}
-                      >
-                        {(dragProvided, snapshot) => {
-                          // Quick fix for dragging offset
-
-                          const baseStyle =
-                            dragProvided.draggableProps.style || {}
-                          const style: React.CSSProperties = { ...baseStyle }
-                          if (snapshot.isDragging && dragOffsetY) {
-                            const currentTransform = style.transform as
-                              | string
-                              | undefined
-                            const extra = ` translateY(${dragOffsetY}px)`
-                            style.transform = currentTransform
-                              ? `${currentTransform}${extra}`
-                              : `translateY(${dragOffsetY}px)`
-                          }
-
-                          return (
-                            <div
-                              ref={dragProvided.innerRef}
-                              {...dragProvided.draggableProps}
-                              style={style}
-                              className={`${
-                                snapshot.isDragging ? 'dragging' : ''
-                              } ${prefs.favoriteColor}`}
-                            >
-                              <SwipeableList
-                                type={Type.IOS}
-                                fullSwipe={true}
-                              >
-                                <SwipeableListItem
-                                  leadingActions={
-                                    isSwipeable && leadingActions(item)
-                                  }
-                                  trailingActions={
-                                    isSwipeable && trailingActions(item)
-                                  }
-                                  scrollStartThreshold={20}
-                                  threshold={0.25}
-                                  blockSwipe={
-                                    typeof isSwipeable === 'function'
-                                      ? !isSwipeable(item)
-                                      : !isSwipeable
-                                  }
-                                >
-                                  {renderList(item, dragProvided)}
-                                </SwipeableListItem>
-                              </SwipeableList>
-                            </div>
-                          )
-                        }}
-                      </Draggable>
+                      {draggable}
                     </AnimatedWrapper>
                   )
                 })}

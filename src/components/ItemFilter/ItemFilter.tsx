@@ -4,6 +4,7 @@ import IconButton from '@mui/material/IconButton'
 import SearchIcon from '@mui/icons-material/Search'
 import CloseIcon from '@mui/icons-material/Close'
 import AddIcon from '@mui/icons-material/Add'
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
@@ -18,6 +19,8 @@ interface ItemFilterProps {
   onFilterChange: (filter: Filter) => void
   onClearQuery: () => void
   onCustomLog: () => void
+  onBack?: () => void
+  backLabel?: string
 }
 
 export function ItemFilter({
@@ -25,6 +28,8 @@ export function ItemFilter({
   onFilterChange,
   onClearQuery,
   onCustomLog,
+  onBack,
+  backLabel,
 }: ItemFilterProps) {
   const { t } = useTranslation()
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
@@ -55,39 +60,50 @@ export function ItemFilter({
 
   return (
     <Box className={`search-container ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
-      <div className="input-container">
+      <div className='input-container'>
         <CustomInput
           value={filter.txt}
           onChange={(val) => onFilterChange({ ...filter, txt: val })}
           placeholder={t('meals.searchItems')}
           startIconFn={() => <SearchIcon />}
           endIconFn={() => (
-            <IconButton aria-label="close" onClick={onClearQuery}>
+            <IconButton aria-label='close' onClick={onClearQuery}>
               <CloseIcon />
             </IconButton>
           )}
-          autoFocus
           className={`${prefs.favoriteColor}`}
         />
       </div>
 
-      <CustomSelect
-        tooltipTitle={t('meals.editSortBy')}
-        value={filter.sortBy}
-        onChange={(val) => onFilterChange({ ...filter, sortBy: val })}
-        label={t('meals.sortBy')}
-        values={sortByOptions}
-        valueLabels={sortByValueLabels}
-        className={`${prefs.favoriteColor} ${prefs.isDarkMode ? 'dark-mode' : ''
+      <div className='search-toolbar'>
+        {onBack && (
+          <CustomButton
+            isIcon
+            icon={<ArrowBackIcon />}
+            onClick={onBack}
+            ariaLabel={backLabel || 'Back'}
+            variant='subtle'
+            className='item-filter-back'
+          />
+        )}
+        <CustomSelect
+          tooltipTitle={t('meals.editSortBy')}
+          value={filter.sortBy}
+          onChange={(val) => onFilterChange({ ...filter, sortBy: val })}
+          label={t('meals.sortBy')}
+          values={sortByOptions}
+          valueLabels={sortByValueLabels}
+          className={`${prefs.favoriteColor} ${
+            prefs.isDarkMode ? 'dark-mode' : ''
           } item-filter-select`}
-      />
-
-      <CustomButton
-        onClick={onCustomLog}
-        text={t('meals.custom')}
-        icon={<AddIcon />}
-        className="custom-add-button"
-      />
+        />
+        <CustomButton
+          onClick={onCustomLog}
+          text={t('meals.custom')}
+          icon={<AddIcon />}
+          className='custom-add-button'
+        />
+      </div>
     </Box>
   )
 }

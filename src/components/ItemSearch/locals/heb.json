@@ -1,0 +1,27 @@
+{
+  "yours": "שלך",
+  "browse": "עיון",
+  "favorites": "מועדפים",
+  "meals": "ארוחות",
+  "recent": "חיפושים אחרונים",
+  "clearAll": "נקה הכל",
+  "removeRecent": "הסר חיפוש",
+  "back": "חזרה",
+  "noCategoryResults": "אין פריטים בקבוצה הזו",
+  "emptyFavorites": "אין עדיין פריטים מועדפים",
+  "emptyMeals": "אין עדיין ארוחות",
+  "categories": {
+    "proteins": "חלבונים",
+    "carbs": "פחמימות",
+    "vegetables": "ירקות",
+    "fruits": "פירות",
+    "dairy": "חלב ומוצריו",
+    "nutsSeeds": "אגוזים וזרעים",
+    "fatsOils": "שמנים ושומנים",
+    "prepared": "מנות מוכנות",
+    "snacks": "חטיפים",
+    "beverages": "משקאות",
+    "condiments": "רטבים ותבלינים",
+    "sweets": "מתוקים"
+  }
+}

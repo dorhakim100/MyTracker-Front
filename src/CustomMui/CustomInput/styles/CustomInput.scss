@@ -6,10 +6,23 @@
       color-mix(in srgb, var(--accent) var(--chrome-ring), transparent) !important;
   }
 
+  .MuiOutlinedInput-root {
+    fieldset {
+      border-width: 1px !important;
+    }
+
+    legend {
+      width: 0 !important;
+      padding: 0 !important;
+    }
+  }
+
   .MuiOutlinedInput-root.Mui-focused {
     box-shadow: none !important;
+    outline: none;
 
     fieldset {
+      border-width: 1px !important;
       border-color: var(--accent) !important;
     }
   }

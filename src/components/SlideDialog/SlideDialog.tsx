@@ -12,6 +12,7 @@ import CircularProgress from '@mui/material/CircularProgress'
 import { stylesVariables } from '../../assets/config/styles.variables'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import { MarqueeText } from '../MarqueeText/MarqueeText'
+import { SlideDialogTitleContext } from './slide-dialog-title'
 
 interface SlideDialogProps {
   open: boolean
@@ -50,6 +51,8 @@ function isPickerColumn(start: EventTarget | null) {
 }
 
 function isEditableTarget(target: EventTarget | null) {
+  if (!(target instanceof Element)) return false
+  if (target.closest('.custom-input, .input-container')) return true
   if (!(target instanceof HTMLElement)) return false
   if (target instanceof HTMLTextAreaElement) return true
   if (target.isContentEditable) return true
@@ -297,6 +300,7 @@ function useOverscrollDismiss({
     }
 
     const onTouchStart = (event: TouchEvent) => {
+      if (isEditableTarget(event.target)) return
       const point = getTouchPoint(event)
       if (!beginGesture(point.x, point.y, event.target)) return
 
@@ -445,6 +449,7 @@ export function SlideDialog({
   const { zIndex, setHandleSave } = useSlideDialogLayer(open)
   const [isMounted, setIsMounted] = React.useState(open)
   const [hasOpened, setHasOpened] = React.useState(false)
+  const [contentTitle, setContentTitle] = React.useState<string | null>(null)
 
   if (open && !isMounted) {
     setIsMounted(true)
@@ -470,6 +475,11 @@ export function SlideDialog({
   return (
     <Sheet
       unstyled
+      // react-modal-sheet's keyboard avoidance smooth-scrolls the sheet on every
+      // input focus, and on Chrome it reports the keyboard as open at height 0.
+      // Off, it also stops forcing virtualKeyboard.overlaysContent, so each
+      // platform keeps its native keyboard handling.
+      avoidKeyboard={false}
       isOpen={open}
       onClose={onClose}
       onOpenEnd={() => setHasOpened(true)}
@@ -495,15 +505,17 @@ export function SlideDialog({
           : {}),
       }}
     >
-      <SlideDialogSheet
-        onClose={onClose}
-        component={component}
-        title={title}
-        fadeWithSheet={hasOpened}
-        enableSwipeToClose={enableSwipeToClose}
-        prefs={prefs}
-        isLoading={isLoading}
-      />
+      <SlideDialogTitleContext.Provider value={setContentTitle}>
+        <SlideDialogSheet
+          onClose={onClose}
+          component={component}
+          title={contentTitle ?? title}
+          fadeWithSheet={hasOpened}
+          enableSwipeToClose={enableSwipeToClose}
+          prefs={prefs}
+          isLoading={isLoading}
+        />
+      </SlideDialogTitleContext.Provider>
       <Sheet.Backdrop
         unstyled={false}
         className='slide-dialog-backdrop'

@@ -2,14 +2,43 @@
   display: grid;
   gap: 12px;
   align-items: start;
+  min-width: 0;
+  width: 100%;
+  overflow-anchor: none;
+
+  .custom-input,
+  .custom-input * {
+    overflow-anchor: none;
+    scroll-margin: 0;
+  }
 
   &.dark-mode {
-    background-color: $darker-gray !important;
+    background-color: var(--canvas-color) !important;
     color: $white !important;
   }
 
   .search-container {
     z-index: 100 !important;
+  }
+
+  // Holds the view that swaps between the category home, a category, and results.
+  // No gap here on purpose: the recent searches carry their own bottom spacing
+  // so it collapses with them and leaves nothing behind.
+  .item-search-view {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+
+    // Never fill forwards: an animation that stays in effect keeps this a
+    // stacking context, which traps the dragged row under the sticky filter.
+    // Both keyframes end on the resting state, so nothing is lost by it.
+    &.from-end {
+      animation: item-search-view-from-end 260ms ease-out backwards;
+    }
+
+    &.from-start {
+      animation: item-search-view-from-start 260ms ease-out backwards;
+    }
   }
 
   .search-header {
@@ -50,6 +79,34 @@
   display: grid;
   place-items: center;
   height: 60vh;
+}
+
+@keyframes item-search-view-from-end {
+  from {
+    opacity: 0;
+    transform: translateX(1.25rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes item-search-view-from-start {
+  from {
+    opacity: 0;
+    transform: translateX(-1.25rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .item-search .item-search-view {
+    animation: none;
+  }
 }
 
 // moved to CustomList styles

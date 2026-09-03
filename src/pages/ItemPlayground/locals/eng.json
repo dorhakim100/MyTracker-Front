@@ -1,0 +1,9 @@
+{
+  "title": "Item categories playground",
+  "search": "Search items",
+  "load": "Load",
+  "save": "Save categories",
+  "saved": "Saved",
+  "loadError": "Could not load playground items",
+  "saveError": "Could not save item"
+}

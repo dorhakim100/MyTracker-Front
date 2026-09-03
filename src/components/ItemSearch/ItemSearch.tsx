@@ -1,7 +1,14 @@
 import Box from '@mui/material/Box'
 import ListItemIcon from '@mui/material/ListItemIcon'
 
-import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
+import {
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+  useMemo,
+  useLayoutEffect,
+} from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 
@@ -22,6 +29,7 @@ import {
   setEditMealItem,
 } from '../../store/actions/item.actions'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
+import { useSlideDialogTitle } from '../SlideDialog/slide-dialog-title'
 import { ItemDetails } from '../ItemDetails/ItemDetails'
 import { FavoriteButton } from '../FavoriteButton/FavoriteButton'
 import {
@@ -30,7 +38,7 @@ import {
   updateUser,
 } from '../../store/actions/user.actions'
 import { SearchFilter } from '../../types/searchFilter/SearchFilter'
-import { Divider, Typography } from '@mui/material'
+import { Typography } from '@mui/material'
 import debounce from 'lodash/debounce'
 
 import { User } from '../../types/user/User'
@@ -46,6 +54,20 @@ import searchDark from '../../../public/searching-dark.json'
 import { imageService } from '../../services/image/image.service'
 import CustomSkeleton from '../../CustomMui/CustomSkeleton/CustomSkeleton'
 import { MarqueeText } from '../MarqueeText/MarqueeText'
+import { CategoryHome } from './CategoryHome/CategoryHome'
+import { CategoryBrowse } from './CategoryBrowse/CategoryBrowse'
+import { RecentSearchChips } from './RecentSearchChips/RecentSearchChips'
+import { EmptyState } from './EmptyState/EmptyState'
+import { useCategoryCounts } from '../../hooks/useItemsByCategory'
+import { recentSearchService } from '../../services/recent-search/recent-search.service'
+import { itemService as itemHttpService } from '../../services/item/item.service'
+import {
+  BrowseView,
+  isNutritionBrowseView,
+  matchItemCategoryLabel,
+} from '../../assets/config/item-categories'
+import { itemSearchCategoriesNs } from './locals'
+import { scrollSheetToTop } from './search-sheet-scroll'
 
 interface ItemSearchProps {
   onAddToMealClick?: (item: MealItem) => void
@@ -62,30 +84,32 @@ function getSearchItemKey(item: Item) {
   return item.searchId || item._id || ''
 }
 
-function mergeNewItemsToTop(prev: Item[], next: Item[]) {
-  const prevIds = new Set(prev.map(getSearchItemKey).filter(Boolean))
-  const nextIds = new Set(next.map(getSearchItemKey).filter(Boolean))
-  const incoming = next.filter((item) => !prevIds.has(getSearchItemKey(item)))
-  const kept = prev.filter((item) => nextIds.has(getSearchItemKey(item)))
-  return [...incoming, ...kept]
+function mergeUniqueItems(primary: Item[], extra: Item[]) {
+  const ids = new Set(primary.map(getSearchItemKey).filter(Boolean))
+  const incoming = extra.filter((item) => {
+    const key = getSearchItemKey(item)
+    return key && !ids.has(key)
+  })
+  return [...primary, ...incoming]
 }
 
-function scrollSearchToTop(node: HTMLElement | null) {
-  if (!node) return
-  const scroller =
-    node.closest('.slide-dialog-content, .react-modal-sheet-content-scroller') ||
-    node
-  const reduceMotion = window.matchMedia(
-    '(prefers-reduced-motion: reduce)'
-  ).matches
-  scroller.scrollTo({
-    top: 0,
-    behavior: reduceMotion ? 'auto' : 'smooth',
-  })
+function mergeSearchWithFavorites(favorites: Item[], searchHits: Item[]) {
+  const favoriteKeys = new Set(favorites.map(getSearchItemKey).filter(Boolean))
+  const searchByKey = new Map(
+    searchHits.map((item) => [getSearchItemKey(item), item])
+  )
+  const favoritesFirst = favorites.map(
+    (item) => searchByKey.get(getSearchItemKey(item)) || item
+  )
+  const rest = searchHits.filter(
+    (item) => !favoriteKeys.has(getSearchItemKey(item))
+  )
+  return [...favoritesFirst, ...rest]
 }
 
 export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
   const { t, i18n } = useTranslation()
+  const { t: tCategories } = useTranslation(itemSearchCategoriesNs)
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
 
   const user = useSelector((state: RootState) => state.userModule.user)
@@ -97,7 +121,14 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
   const [results, setResults] = useState<Item[]>([])
   const [resultsDragable, setResultsDragable] = useState(false)
   const resultsRef = useRef<HTMLDivElement>(null)
+  const searchRootRef = useRef<HTMLDivElement>(null)
+  const isFirstFilterLayout = useRef(true)
   const searchRequestIdRef = useRef(0)
+  const [browseView, setBrowseView] = useState<BrowseView | null>(null)
+  const [isForward, setIsForward] = useState<boolean | null>(null)
+  const [searchedTxt, setSearchedTxt] = useState('')
+  const [recentQueries, setRecentQueries] = useState<string[]>([])
+  const { data: categoryCounts } = useCategoryCounts(!browseView)
 
   const [filter, setFilter] = useState<Filter>({
     txt: '',
@@ -125,15 +156,33 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
     return [...sorted]
   }, [results, filter.sortBy])
 
+  // The results on screen belong to searchedTxt, so a different query means the
+  // search is still debouncing or in flight and we don't know the outcome yet.
+  const isSearchPending = !!filter.txt && filter.txt !== searchedTxt
+
+  // Browsing renames the sheet header; searching leaves the host's own title.
+  const getSheetTitle = () => {
+    if (!browseView) return null
+    if (isNutritionBrowseView(browseView))
+      return tCategories(`categories.${browseView}`)
+    return tCategories(browseView)
+  }
+
+  useSlideDialogTitle(getSheetTitle())
+
   const handleSearch = useCallback(async () => {
     const requestId = ++searchRequestIdRef.current
-    setIsLoading(true)
     try {
       if (!filter.source) {
         showErrorMsg(t('messages.error.search'))
         return
       }
       const regex = new RegExp(filter.txt, 'i')
+
+      if (isNutritionBrowseView(browseView)) {
+        setIsLoading(false)
+        return
+      }
 
       if (filter.source === searchTypes.meal) {
         const meals = user?.meals
@@ -149,19 +198,31 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
         return
       }
 
-      setResults(
-        favoriteItems.filter((item) =>
-          regex.test(itemNameService.getItemSearchText(item.name))
-        )
-      )
-
       if (!filter.txt) {
-        setResultsDragable(true)
+        if (!browseView || isNutritionBrowseView(browseView)) {
+          setIsLoading(false)
+          return
+        }
+        if (browseView === 'favorites') {
+          setResults(favoriteItems)
+          setResultsDragable(true)
+        }
+        if (browseView === 'meals') {
+          setResults(
+            user?.meals.map((meal) => itemService.convertMealToItem(meal)) || []
+          )
+          setResultsDragable(true)
+        }
         setIsLoading(false)
         return
       }
-      setResultsDragable(false)
+
       setIsLoading(true)
+      const matchingFavorites = favoriteItems.filter((item) =>
+        regex.test(itemNameService.getItemSearchText(item.name))
+      )
+      setResults(matchingFavorites)
+      setResultsDragable(false)
 
       const searchQuery: SearchFilter = {
         txt: filter.txt,
@@ -171,22 +232,34 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
       const res = await searchService.search(searchQuery)
       if (requestId !== searchRequestIdRef.current) return
 
-      setResults((prev) => {
-        const merged = mergeNewItemsToTop(prev, res)
-        const prevIds = new Set(prev.map(getSearchItemKey).filter(Boolean))
-        const hasNew = res.some((item) => !prevIds.has(getSearchItemKey(item)))
-        if (hasNew) {
-          requestAnimationFrame(() => scrollSearchToTop(resultsRef.current))
-        }
-        return merged
-      })
+      const matchedCategory = matchItemCategoryLabel(filter.txt)
+      let extra: Item[] = []
+      if (matchedCategory) {
+        const page = await itemHttpService.queryByCategory({
+          category: matchedCategory,
+          limit: 40,
+          skip: 0,
+        })
+        extra = page.items || []
+      }
+
+      const withFavorites = mergeSearchWithFavorites(matchingFavorites, res)
+      const merged = mergeUniqueItems(withFavorites, extra)
+      setResults(merged)
       setResultsDragable(false)
+      if (user?._id) {
+        const next = await recentSearchService.add(user._id, filter.txt)
+        setRecentQueries(next)
+      }
     } catch {
       showErrorMsg(t('messages.error.search'))
     } finally {
-      if (requestId === searchRequestIdRef.current) setIsLoading(false)
+      if (requestId === searchRequestIdRef.current) {
+        setIsLoading(false)
+        setSearchedTxt(filter.txt)
+      }
     }
-  }, [filter.txt, user, favoriteItems])
+  }, [filter.txt, filter.source, user, favoriteItems, browseView, t])
 
   const latestHandleSearchRef = useRef(handleSearch)
   useEffect(() => {
@@ -203,22 +276,71 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
 
   useEffect(() => {
     debouncedRunSearch()
-  }, [filter.txt, user, debouncedRunSearch])
+  }, [filter.txt, user, browseView, debouncedRunSearch])
+
+  useLayoutEffect(() => {
+    if (isFirstFilterLayout.current) {
+      isFirstFilterLayout.current = false
+      return
+    }
+    scrollSheetToTop(searchRootRef.current)
+  }, [filter.txt, filter.sortBy, browseView])
 
   useEffect(() => {
     return () => debouncedRunSearch.cancel()
   }, [debouncedRunSearch])
 
   useEffect(() => {
-    if (!filter.txt) {
+    if (!filter.txt && browseView === 'favorites') {
       setResults(favoriteItems)
     }
-  }, [filter.txt, favoriteItems])
+  }, [filter.txt, favoriteItems, browseView])
+
+  useEffect(() => {
+    if (!user?._id) {
+      setRecentQueries([])
+      return
+    }
+    recentSearchService.get(user._id).then(setRecentQueries)
+  }, [user?._id])
+
+  // What a view lists with no query. Anything else starts empty so the previous
+  // view's items can't show through while the next search runs.
+  const getViewItems = (view: BrowseView | null) => {
+    if (view === 'favorites') return favoriteItems
+    if (view === 'meals') {
+      return (
+        user?.meals.map((meal) => itemService.convertMealToItem(meal)) || []
+      )
+    }
+    return []
+  }
+
+  const showViewItems = (view: BrowseView | null) => {
+    setResults(getViewItems(view))
+    setResultsDragable(view === 'favorites' || view === 'meals')
+  }
 
   const onClearQuery = () => {
+    setIsForward(false)
     setFilter((prev) => ({ ...prev, txt: '' }))
-    setResults(favoriteItems)
-    setResultsDragable(true)
+    showViewItems(browseView)
+  }
+
+  // Typing the first character enters the results view, emptying it leaves.
+  const onFilterChange = (nextFilter: Filter) => {
+    const hadQuery = !!filter.txt
+    const hasQuery = !!nextFilter.txt
+    if (hadQuery !== hasQuery) setIsForward(hasQuery)
+    setFilter(nextFilter)
+  }
+
+  // Backing out of a category or out of the results both land on the category home.
+  const onBack = () => {
+    setIsForward(false)
+    setBrowseView(null)
+    setFilter((prev) => ({ ...prev, txt: '' }))
+    showViewItems(null)
   }
 
   const onItemClick = (item: Item) => {
@@ -278,12 +400,7 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
   const renderNoResults = () => {
     return (
       <Box className='results'>
-        <Typography
-          variant='h6'
-          className={`no-results ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-        >
-          {t('meals.noResults')}
-        </Typography>
+        <EmptyState text={t('meals.noResults')} />
       </Box>
     )
   }
@@ -312,13 +429,25 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
 
     const sortedMeals = searchService.getSortedResults(meals, filter.sortBy)
 
-    const isShowMeals = !filter.txt && meals.length > 0
+    const isShowMeals = !filter.txt && browseView === 'meals'
+    const isShowFavorites = !filter.txt && browseView === 'favorites'
 
-    if (!results.length && isLoading) {
+    if (!results.length && (isLoading || isSearchPending)) {
       return <SkeletonList />
     } else if (!results.length && filter.txt) {
-      // } else if (!results.length && !hasFavorite) {
       return renderNoResults()
+    } else if (!results.length && isShowFavorites) {
+      return (
+        <Box className='results'>
+          <EmptyState text={tCategories('emptyFavorites')} />
+        </Box>
+      )
+    } else if (!results.length && isShowMeals) {
+      return (
+        <Box className='results'>
+          <EmptyState text={tCategories('emptyMeals')} />
+        </Box>
+      )
     } else if (!results.length && !filter.txt && !isShowMeals) {
       return renderSearchFirst()
     }
@@ -410,108 +539,173 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
               onItemClick={onItemClick}
               onRightClick={onFavoriteClick}
             />
-            <Divider
-              className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-            />
-            {user?.favoriteItems?.length && user?.favoriteItems?.length > 0 ? (
+          </>
+        )}
+        {!isShowMeals && (
+          <>
+            {isShowFavorites && (
               <Typography
                 variant='h6'
                 className='bold-header search-header'
               >
-                {t('meals.favoriteItems')}
+                {tCategories('favorites')}
               </Typography>
-            ) : null}
+            )}
+            <CustomList<Item>
+              items={sortedResults}
+              getKey={(item) => item.searchId || item._id || ''}
+              itemClassName={`search-item-container ${
+                prefs.isDarkMode ? 'dark-mode' : ''
+              }`}
+              slideIncomingToTop={!!filter.txt}
+              renderLeft={(item) => (
+                <div className='left-content macros-image-container'>
+                  <MacrosDonut
+                    protein={item.macros?.protein}
+                    carbs={item.macros?.carbs}
+                    fats={item.macros?.fat}
+                  />
+                  <ListItemIcon className='item-image-container'>
+                    {(item.image && (
+                      <img
+                        src={item.image}
+                        alt={itemNameService.getItemDisplayName(
+                          item.name,
+                          i18n.language
+                        )}
+                        className='item-image'
+                        referrerPolicy='no-referrer'
+                        onError={async (e) => {
+                          renderErrorImage(item)
+                          await imageService.fetchOnError(e, item)
+                          loadItems()
+                        }}
+                      />
+                    )) || (
+                      <CustomSkeleton
+                        variant='circular'
+                        width={40}
+                        height={40}
+                        isDarkMode={prefs.isDarkMode}
+                      />
+                    )}
+                  </ListItemIcon>
+                </div>
+              )}
+              renderPrimaryText={(item) => (
+                // <div className='hide-text-overflow'>{item.name}</div>
+                <MarqueeText
+                  variant='body1'
+                  className='primary-text'
+                >
+                  {itemNameService.getItemDisplayName(item.name, i18n.language)}
+                </MarqueeText>
+              )}
+              renderSecondaryText={(item) => {
+                let caloriesToDisplay
+                const itemCalories = item.macros.calories
+
+                if (itemCalories) {
+                  caloriesToDisplay = +itemCalories
+                  caloriesToDisplay = caloriesToDisplay.toFixed(0)
+                }
+
+                return `${caloriesToDisplay || 0} kcal`
+              }}
+              renderRight={(item) =>
+                item.type !== 'meal' && (
+                  <FavoriteButton
+                    isFavorite={searchService.isFavorite(item, user) || false}
+                  />
+                )
+              }
+              onItemClick={onItemClick}
+              onRightClick={onFavoriteClick}
+              isDragable={resultsDragable}
+              onReorder={dragEnd}
+            />
           </>
         )}
-        <CustomList<Item>
-          items={sortedResults}
-          getKey={(item) => item.searchId || item._id || ''}
-          itemClassName={`search-item-container ${
-            prefs.isDarkMode ? 'dark-mode' : ''
-          }`}
-          slideIncomingToTop={!!filter.txt}
-          renderLeft={(item) => (
-            <div className='left-content macros-image-container'>
-              <MacrosDonut
-                protein={item.macros?.protein}
-                carbs={item.macros?.carbs}
-                fats={item.macros?.fat}
-              />
-              <ListItemIcon className='item-image-container'>
-                {(item.image && (
-                  <img
-                    src={item.image}
-                    alt={itemNameService.getItemDisplayName(
-                      item.name,
-                      i18n.language
-                    )}
-                    className='item-image'
-                    referrerPolicy='no-referrer'
-                    onError={async (e) => {
-                      renderErrorImage(item)
-                      await imageService.fetchOnError(e, item)
-                      loadItems()
-                    }}
-                  />
-                )) || (
-                  <CustomSkeleton
-                    variant='circular'
-                    width={40}
-                    height={40}
-                    isDarkMode={prefs.isDarkMode}
-                  />
-                )}
-              </ListItemIcon>
-            </div>
-          )}
-          renderPrimaryText={(item) => (
-            // <div className='hide-text-overflow'>{item.name}</div>
-            <MarqueeText
-              variant='body1'
-              className='primary-text'
-            >
-              {itemNameService.getItemDisplayName(item.name, i18n.language)}
-            </MarqueeText>
-          )}
-          renderSecondaryText={(item) => {
-            let caloriesToDisplay
-            const itemCalories = item.macros.calories
-
-            if (itemCalories) {
-              caloriesToDisplay = +itemCalories
-              caloriesToDisplay = caloriesToDisplay.toFixed(0)
-            }
-
-            return `${caloriesToDisplay || 0} kcal`
-          }}
-          renderRight={(item) =>
-            item.type !== 'meal' && (
-              <FavoriteButton
-                isFavorite={searchService.isFavorite(item, user) || false}
-              />
-            )
-          }
-          onItemClick={onItemClick}
-          onRightClick={onFavoriteClick}
-          isDragable={resultsDragable}
-          onReorder={dragEnd}
-        />
         {isLoading && <SkeletonList />}
       </Box>
     )
   }
 
+  const isCategoryHome = !filter.txt && !browseView
+  const isCategoryBrowse = isNutritionBrowseView(browseView)
+
+  // Going deeper comes in from the leading edge, going back mirrors it. Stays
+  // empty until the first navigation so it doesn't fight the sheet opening.
+  const isRtl = prefs.lang === 'he'
+  let slideClass = ''
+  if (isForward !== null) {
+    slideClass = isForward !== isRtl ? 'from-end' : 'from-start'
+  }
+
+  const viewKey = browseView || (filter.txt ? 'search' : 'home')
+
   return (
     <>
-      <Box className={`item-search ${prefs.isDarkMode ? 'dark-mode' : ''}`}>
+      <Box
+        ref={searchRootRef}
+        className={`item-search ${prefs.isDarkMode ? 'dark-mode' : ''} ${
+          prefs.favoriteColor
+        }`}
+      >
         <ItemFilter
           filter={filter}
-          onFilterChange={setFilter}
+          onFilterChange={onFilterChange}
           onClearQuery={onClearQuery}
           onCustomLog={onCustomLog}
+          onBack={browseView || filter.txt ? onBack : undefined}
+          backLabel={tCategories('back')}
         />
 
-        {renderList()}
+        <div
+          key={viewKey}
+          className={`item-search-view ${slideClass}`.trim()}
+        >
+          {isCategoryHome && (
+            <>
+              <RecentSearchChips
+                queries={recentQueries}
+                onSelect={(query) =>
+                  setFilter((prev) => ({ ...prev, txt: query }))
+                }
+                onRemove={async (query) => {
+                  if (!user?._id) return
+                  const next = await recentSearchService.remove(user._id, query)
+                  setRecentQueries(next)
+                }}
+                onClearAll={async () => {
+                  if (!user?._id) return
+                  const next = await recentSearchService.clear(user._id)
+                  setRecentQueries(next)
+                }}
+              />
+              <CategoryHome
+                categoryCounts={categoryCounts}
+                onSelect={(view) => {
+                  setIsForward(true)
+                  setBrowseView(view)
+                  showViewItems(view)
+                }}
+              />
+            </>
+          )}
+
+          {isCategoryBrowse && (
+            <CategoryBrowse
+              category={browseView}
+              sortBy={filter.sortBy}
+              txt={filter.txt}
+              onItemClick={onItemClick}
+              onFavoriteClick={onFavoriteClick}
+            />
+          )}
+
+          {!isCategoryHome && !isCategoryBrowse && renderList()}
+        </div>
       </Box>
 
       <SlideDialog

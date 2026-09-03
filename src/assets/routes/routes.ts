@@ -6,6 +6,7 @@ import { FoodTab } from '../../pages/MyTracker/FoodTab/FoodTab'
 import { UserDetails } from '../../pages/UserDetails/UserDetails'
 import { Workouts } from '../../pages/LiftMate/Workouts/Workouts.tsx'
 import { SignIn } from '../../CustomMui/SignIn/SignIn.tsx'
+import { ItemPlayground } from '../../pages/ItemPlayground/ItemPlayground'
 import { App } from '../../types/app/App'
 
 export interface Route {
@@ -21,6 +22,7 @@ import SignInIcon from '@mui/icons-material/Login'
 import UserIcon from '@mui/icons-material/Person'
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter'
 import FastfoodIcon from '@mui/icons-material/Fastfood'
+import ScienceIcon from '@mui/icons-material/Science'
 
 export const mainRoutes = ['/', '/diary', '/lift-mate/workouts', '/user']
 
@@ -58,6 +60,13 @@ export const routes: Route[] = [
     path: '/signin',
     element: SignIn,
     icon: SignInIcon,
+    app: 'all',
+  },
+  {
+    titleKey: 'nav.food',
+    path: '/item-playground',
+    element: ItemPlayground,
+    icon: ScienceIcon,
     app: 'all',
   },
 ]

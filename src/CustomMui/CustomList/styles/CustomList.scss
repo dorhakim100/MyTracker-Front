@@ -50,6 +50,13 @@
   }
 
   .dragging {
+    // Lift the row over sticky headers, and give it its own surface so the
+    // rows it travels past don't read through it.
+    z-index: 300;
+    background-color: var(--canvas-color);
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.22);
+
     &.primary {
       border-bottom: 2px solid $primary-color;
     }

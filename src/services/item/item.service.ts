@@ -30,6 +30,8 @@ export const itemService = {
   // Item image operations
   isImageNative,
   bumpPopularity,
+  queryByCategory,
+  getCategoryCounts,
 }
 
 // Main CRUD operations
@@ -180,6 +182,7 @@ function getEmptyItem() {
     name: { eng: '', he: '', default: '' },
     image: '',
     macros: { calories: 0, protein: 0, carbs: 0, fat: 0 },
+    categories: [],
   }
 }
 
@@ -188,5 +191,35 @@ function getDefaultFilter() {
     txt: '',
     sortDir: '',
     pageIdx: 0,
+  }
+}
+
+export interface CategoryQueryFilter {
+  category: string
+  txt?: string
+  sortBy?: string
+  skip?: number
+  limit?: number
+}
+
+export interface CategoryQueryPage {
+  items: Item[]
+  total: number
+  nextSkip?: number
+}
+
+async function queryByCategory(filter: CategoryQueryFilter): Promise<CategoryQueryPage> {
+  try {
+    return await httpService.get(`${KEY}/category`, filter)
+  } catch (err) {
+    throw err
+  }
+}
+
+async function getCategoryCounts(): Promise<Record<string, number>> {
+  try {
+    return await httpService.get(`${KEY}/categories/counts`, null)
+  } catch (err) {
+    throw err
   }
 }

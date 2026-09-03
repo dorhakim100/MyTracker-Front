@@ -4,33 +4,70 @@
     top: 0;
     background: $canvas-color;
     z-index: 1;
-    padding-top: 4px;
     padding: 1rem;
+    overflow-anchor: none;
 
     display: grid;
     align-items: start;
-    grid-template-rows: repeat(2, auto);
-    grid-template-columns: 1fr auto;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto;
     gap: 1rem;
 
+    .input-container {
+      min-width: 0;
+      width: 100%;
+      scroll-margin: 0;
+
+      .MuiInputBase-root,
+      .MuiInputBase-root.Mui-focused {
+        height: 56px;
+        min-height: 56px;
+        box-sizing: border-box;
+        outline-width: 1px !important;
+        outline-offset: 0 !important;
+        box-shadow: none !important;
+      }
+
+      .MuiOutlinedInput-notchedOutline {
+        border-width: 1px !important;
+      }
+
+      input {
+        font-size: 16px;
+        scroll-margin: 0;
+      }
+    }
+
+    .search-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      min-width: 0;
+      width: 100%;
+
+      > .custom-button-wrapper {
+        flex-shrink: 0;
+      }
+    }
+
     .item-filter-select {
+      flex: 1 1 auto;
+      min-width: 0 !important;
+      max-width: 100%;
+      margin: 0 !important;
+
       .MuiSelect-select {
         text-align: start !important;
       }
     }
-    .input-container {
-      grid-column: 1/-1;
-    }
 
-    .custom-button-wrapper {
-      grid-column: 2/3;
-      align-self: center;
+    .custom-add-button {
+      flex-shrink: 0;
     }
   }
 
   &.dark-mode {
     .search-container {
-      background: $darker-gray;
       border-bottom: 1px solid white;
 
       .MuiInputBase-root {
@@ -42,14 +79,40 @@
         color: $white;
       }
     }
+    background: $dark-gray !important;
 
     svg {
       color: $white;
     }
+
+    &.blue {
+      background-color: $dark-gray-blue !important;
+    }
+    &.green {
+      background-color: $dark-gray-green !important;
+    }
+    &.yellow {
+      background-color: $dark-gray-yellow !important;
+    }
+    &.red {
+      background-color: $dark-gray-red !important;
+    }
+    &.orange {
+      background-color: $dark-gray-orange !important;
+    }
+    &.purple {
+      background-color: $dark-gray-purple !important;
+    }
+    &.pink {
+      background-color: $dark-gray-pink !important;
+    }
+    &.deepPurple {
+      background-color: $dark-gray-deep-purple !important;
+    }
   }
 
   .search-container.dark-mode {
-    background: $darker-gray;
+    background: var(--canvas-color);
 
     .custom-select {
       .MuiFormLabel-root {
@@ -94,7 +157,7 @@
           background-color: $darker-gray-pink !important;
         }
       }
-      &.deep-purple {
+      &.deepPurple {
         .MuiFormLabel-root {
           background-color: $darker-gray-deep-purple !important;
         }

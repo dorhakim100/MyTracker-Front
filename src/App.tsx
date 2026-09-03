@@ -164,6 +164,12 @@ function App() {
   }, [i18n.language])
 
   useEffect(() => {
+    if (window.location.pathname === '/item-playground') {
+      setActiveRoute('/item-playground')
+    }
+  }, [])
+
+  useEffect(() => {
     const defaultPrefs = getDefaultsPrefs()
     if (prefs.isDarkMode) {
       document.body.classList.add('dark-mode')

@@ -1,0 +1,93 @@
+.item-card-container {
+  position: relative;
+  min-width: 0;
+  max-width: 100%;
+  width: 100%;
+}
+
+.item-card.card {
+  height: auto !important;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  padding: 0;
+  overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  animation: item-card-in 220ms ease-out both;
+
+  &.dark-mode {
+    color: $white;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.3);
+  }
+}
+
+// Lift the card off the sheet canvas. Mixing against --canvas-color keeps the
+// tint of the active favorite color in every mode.
+body.dark-mode .item-card.card {
+  background-color: color-mix(in srgb, $white 9%, var(--canvas-color)) !important;
+}
+
+.item-card-image-wrap {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  height: 5.5rem;
+  overflow: hidden;
+}
+
+// CachedImage root: it styles the inner img and the loading skeleton itself.
+.item-card-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+@keyframes item-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .item-card.card {
+    animation: none;
+  }
+}
+
+.item-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding: 0.5rem 0.6rem 0.6rem;
+  min-width: 0;
+}
+
+.item-card-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  line-height: 1.25;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.item-card-kcal {
+  font-size: 0.72rem;
+  opacity: 0.72;
+}
+
+.item-card-favorite {
+  position: absolute;
+  top: 0.15rem;
+  inset-inline-end: 0.15rem;
+  z-index: 1;
+}
