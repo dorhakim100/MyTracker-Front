@@ -29,7 +29,7 @@ interface CustomFloatingButtonProps {
 export function CustomFloatingButton({
   text,
   className,
-  isIcon = false,
+  // isIcon = false,
   icon,
   onClick,
   disabled = false,
@@ -64,7 +64,9 @@ export function CustomFloatingButton({
     >
       <Tooltip
         title={tooltipTitle || label}
-        disableHoverListener={tooltipTitle && isDashboard ? false : !tooltipTitle}
+        disableHoverListener={
+          tooltipTitle && isDashboard ? false : !tooltipTitle
+        }
         disableTouchListener={tooltipTitle && isDashboard ? false : true}
         disableFocusListener={tooltipTitle && isDashboard ? false : true}
       >

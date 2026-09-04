@@ -70,7 +70,7 @@ import {
 } from '../../services/item/item-details-prefs.service'
 import { itemDetailsNs } from './locals'
 import AutorenewIcon from '@mui/icons-material/Autorenew'
-import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye'
+// import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye'
 import { searchUrls } from '../../assets/config/search.urls'
 interface ItemDetailsProps {
   onAddToMealClick?: (item: MealItem) => void
@@ -107,7 +107,7 @@ const getNumberOfServingsInput = (t: (key: string) => string) => ({
   extra: '',
 })
 
-const MACROS_VIEW_VALUES: ItemMacrosView[] = ['per100g', 'dayProgress']
+// const MACROS_VIEW_VALUES: ItemMacrosView[] = ['per100g', 'dayProgress']
 
 function getItemCategories(
   item: Item | Meal | Log | null | undefined
