@@ -15,4 +15,6 @@ export interface Log {
   mealId?: string
   isFixedMenuLog?: boolean
   createdAt?: string
+  createdBy?: string
+  categories?: string[]
 }

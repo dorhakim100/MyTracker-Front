@@ -62,7 +62,10 @@ function ItemCardComponent({
             onFavoriteClick(item)
           }}
         >
-          <FavoriteButton isFavorite={isFavorite} />
+                <FavoriteButton
+                  isFavorite={isFavorite}
+                  isDarkMode={prefs.isDarkMode}
+                />
         </div>
       )}
     </div>

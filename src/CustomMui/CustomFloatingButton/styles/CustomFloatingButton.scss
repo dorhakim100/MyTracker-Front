@@ -1,0 +1,96 @@
+.custom-floating-button-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  user-select: none;
+  @include favorite-accent;
+  color: var(--accent);
+
+  &.variant-subtle {
+    --chrome-tint: var(--chrome-tint-subtle);
+  }
+
+  &.variant-medium {
+    --chrome-tint: var(--chrome-tint-medium);
+  }
+
+  &.variant-strong {
+    --chrome-tint: var(--chrome-tint-strong);
+  }
+
+  &.variant-flat {
+    --chrome-tint: 0%;
+    color: var(--ink-on-canvas);
+  }
+
+  &.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.custom-floating-button-span {
+  display: inline-flex;
+
+  &.full-width {
+    width: 100%;
+  }
+}
+
+.custom-floating-button.MuiFab-root {
+  @include favorite-accent;
+  @include solid-accent-fill;
+  @include tinted-ring(var(--chrome-ring));
+  font-weight: 600;
+  box-shadow: $card-lift-shadow !important;
+  transition: transform 120ms ease, filter 120ms ease, background-color 180ms ease,
+    box-shadow 180ms ease;
+
+  svg {
+    color: inherit !important;
+    fill: currentColor;
+  }
+
+  &.MuiFab-extended {
+    gap: 0.35rem;
+    padding-inline: 1.1rem;
+  }
+
+  &.icon-reverse.MuiFab-extended {
+    flex-direction: row-reverse;
+  }
+
+  &.variant-flat {
+    @include tinted-fill(0%);
+    color: var(--ink-on-canvas) !important;
+    box-shadow: none !important;
+
+    svg {
+      color: inherit !important;
+    }
+  }
+
+  &.variant-subtle {
+    @include tinted-fill(var(--chrome-tint-subtle));
+    color: var(--accent) !important;
+  }
+
+  &.variant-medium {
+    @include tinted-fill(var(--chrome-tint-medium));
+    color: var(--accent) !important;
+  }
+
+  html.dark-mode &,
+  body.dark-mode &,
+  &.dark-mode {
+    box-shadow: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .custom-floating-button.MuiFab-root {
+    transition: none;
+  }
+}

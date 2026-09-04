@@ -30,18 +30,15 @@ interface MacrosDonutProps {
   fillDenomFats?: number
   /** Signed calorie delta shown next to baseline in progress mode. */
   calorieDelta?: number
+  size?: number
 }
 
 const proteinColor = 'var(--macro-protein)'
 const carbsColor = 'var(--macro-carbs)'
 const fatsColor = 'var(--macro-fats)'
 
-// Match `.donut` `--size` / `--thickness`. Visible ring is half of thickness.
-const DONUT_SIZE = 160
-const DONUT_THICKNESS = 18
-const RING_WIDTH = DONUT_THICKNESS / 2
-const RING_RADIUS = DONUT_SIZE / 2 - RING_WIDTH / 2
-const DONUT_CENTER = DONUT_SIZE / 2
+const DEFAULT_DONUT_SIZE = 160
+const DEFAULT_DONUT_THICKNESS = 18
 
 function clampProgress(current: number, goal: number) {
   if (!goal || goal <= 0) return 0
@@ -84,7 +81,14 @@ export function MacrosDonut({
   fillDenomCarbs,
   fillDenomFats,
   calorieDelta,
+  size = DEFAULT_DONUT_SIZE,
 }: MacrosDonutProps) {
+  const donutSize = size
+  const donutThickness =
+    donutSize < 130 ? 12 : DEFAULT_DONUT_THICKNESS
+  const ringWidth = donutThickness / 2
+  const ringRadius = donutSize / 2 - ringWidth / 2
+  const donutCenter = donutSize / 2
   const { t } = useTranslation()
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -139,8 +143,8 @@ export function MacrosDonut({
 
   type CSSVars = CSSProperties & Record<string, string | number>
   const donutStyle: CSSVars = {
-    '--size': `${DONUT_SIZE}px`,
-    '--thickness': `${DONUT_THICKNESS}px`,
+    '--size': `${donutSize}px`,
+    '--thickness': `${donutThickness}px`,
     '--p': `${pPct}%`,
     '--c': `${cPct}%`,
     '--f': `${fPct}%`,
@@ -170,7 +174,7 @@ export function MacrosDonut({
     <div
       className={`donut${showProgress ? ' show-progress' : ''}${
         showBlink ? ' show-preview-blink' : ''
-      }`}
+      }${donutSize < 130 ? ' size-s' : ''}`}
       style={donutStyle}
     >
       {showProgress && (
@@ -181,7 +185,7 @@ export function MacrosDonut({
           />
           <svg
             className='donut-fill'
-            viewBox={`0 0 ${DONUT_SIZE} ${DONUT_SIZE}`}
+            viewBox={`0 0 ${donutSize} ${donutSize}`}
             aria-hidden
           >
             {fillArcs.map((arc) => {
@@ -190,17 +194,17 @@ export function MacrosDonut({
               return (
                 <circle
                   key={arc.key}
-                  cx={DONUT_CENTER}
-                  cy={DONUT_CENTER}
-                  r={RING_RADIUS}
+                  cx={donutCenter}
+                  cy={donutCenter}
+                  r={ringRadius}
                   fill='none'
                   stroke={arc.color}
-                  strokeWidth={RING_WIDTH}
+                  strokeWidth={ringWidth}
                   strokeLinecap={length >= 99.9 ? 'butt' : 'round'}
                   pathLength={100}
                   strokeDasharray={`${length} ${100 - length}`}
                   strokeDashoffset={-arc.start}
-                  transform={`rotate(-90 ${DONUT_CENTER} ${DONUT_CENTER})`}
+                  transform={`rotate(-90 ${donutCenter} ${donutCenter})`}
                 />
               )
             })}

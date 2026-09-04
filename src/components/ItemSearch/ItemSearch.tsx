@@ -715,6 +715,7 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
           <ItemDetails
             onAddToMealClick={onAddToMealClick}
             isCustomLog={isCustomLog}
+            shouldDefaultItemMacros={isCategoryBrowse}
           />
         }
         title={isCustomLog ? t('meals.customLog') : t('meals.item')}

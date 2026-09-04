@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 
@@ -15,6 +15,8 @@ import { searchService } from '../../services/search/search-service'
 import Typography from '@mui/material/Typography'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import AddIcon from '@mui/icons-material/Add'
+import CheckIcon from '@mui/icons-material/Check'
+import PhotoCameraIcon from '@mui/icons-material/PhotoCamera'
 import { logService } from '../../services/log/log.service'
 import { MealItem } from '../../types/mealItem/MealItem'
 import { Meal } from '../../types/meal/Meal'
@@ -26,6 +28,7 @@ import { Macros as MacrosType } from '../../types/macros/Macros'
 import { EditItem } from '../../types/editItem/editItem'
 import { searchTypes } from '../../assets/config/search-types'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
+import { CustomFloatingButton } from '../../CustomMui/CustomFloatingButton/CustomFloatingButton'
 import { EditMacros } from '../MacrosProgress/EditMacros'
 import { calculateProteinCalories } from '../../services/macros/macros.service'
 import { calculateCarbCalories } from '../../services/macros/macros.service'
@@ -41,23 +44,34 @@ import { dayService } from '../../services/day/day.service'
 
 import { LoggedToday } from '../../types/loggedToday/LoggedToday'
 import { imageService } from '../../services/image/image.service'
+import { uploadService } from '../../services/upload.service'
 import {
   loadItems,
   setSelectedMeal,
   setEditMealItem,
 } from '../../store/actions/item.actions'
-import { setPrefs } from '../../store/actions/system.actions'
 import { ClockPicker } from '../Pickers/ClockPicker'
 import { PickerSelect } from '../Pickers/PickerSelect'
 import CustomSkeleton from '../../CustomMui/CustomSkeleton/CustomSkeleton'
 import { Menu } from '../../types/menu/Menu'
-import { CustomIOSSwitch } from '../../CustomMui/CustomIOSSwitch/CustomIOSSwitch'
 import { getItemDetailsDayProgressPreview } from '../../services/macros/day-progress-preview.service'
 import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded'
 import { MarqueeText } from '../MarqueeText/MarqueeText'
 import { itemNameService } from '../../services/item/item-name.service'
 import { isBarcodeSearchId } from '../../services/item/item-id.service'
-
+import { ItemCategoryBadges } from '../ItemCategoryBadge/ItemCategoryBadge'
+import {
+  isItemCategoryId,
+  type ItemCategoryId,
+} from '../../assets/config/item-categories'
+import {
+  itemDetailsPrefsService,
+  type ItemMacrosView,
+} from '../../services/item/item-details-prefs.service'
+import { itemDetailsNs } from './locals'
+import AutorenewIcon from '@mui/icons-material/Autorenew'
+import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye'
+import { searchUrls } from '../../assets/config/search.urls'
 interface ItemDetailsProps {
   onAddToMealClick?: (item: MealItem) => void
   noEdit?: boolean
@@ -93,6 +107,16 @@ const getNumberOfServingsInput = (t: (key: string) => string) => ({
   extra: '',
 })
 
+const MACROS_VIEW_VALUES: ItemMacrosView[] = ['per100g', 'dayProgress']
+
+function getItemCategories(
+  item: Item | Meal | Log | null | undefined
+): ItemCategoryId[] {
+  if (!item) return []
+  const raw = (item as Item).categories || (item as Log).categories || []
+  return raw.filter(isItemCategoryId)
+}
+
 export function ItemDetails({
   onAddToMealClick,
   noEdit = false,
@@ -102,6 +126,7 @@ export function ItemDetails({
   shouldDefaultItemMacros = false,
 }: ItemDetailsProps) {
   const { t, i18n } = useTranslation()
+  const { t: tDetails } = useTranslation(itemDetailsNs)
   const searchedItem: Item = useSelector(
     (stateSelector: RootState) => stateSelector.itemModule.item
   )
@@ -134,6 +159,18 @@ export function ItemDetails({
     return JSON.stringify(item)
   }, [item])
 
+  const isMeal = _hasItems(item)
+
+  const isCustom =
+    isCustomLog ||
+    (item as Log).source === searchTypes.custom ||
+    (item as Item).type === searchTypes.custom
+
+  const canEditCustomChrome =
+    isCustom &&
+    !noEdit &&
+    (!(item as Log).createdBy || (item as Log).createdBy === user?._id)
+
   const [editItem, setEditItem] = useState<EditItem>({
     totalMacros: isCustomLog ? _getDefaultMacros() : item.macros,
     servingSize: editMealItem?.servingSize || 100,
@@ -150,7 +187,18 @@ export function ItemDetails({
   const [clockOpen, setClockOpen] = useState(false)
   const [macrosOpen, setMacrosOpen] = useState(false)
 
+  // const[nestedItemToEdit, setNestedItemToEdit] = useState<MealItem | null>(null)
+
   const [isImageModalOpen, setIsImageModalOpen] = useState(false)
+  const [macrosView, setMacrosView] = useState<ItemMacrosView>(
+    shouldDefaultItemMacros ? 'per100g' : 'dayProgress'
+  )
+  const [customImage, setCustomImage] = useState(item?.image)
+  const [customCategories, setCustomCategories] = useState<ItemCategoryId[]>(
+    () => getItemCategories(item)
+  )
+  const [isUploadingImage, setIsUploadingImage] = useState(false)
+  const imageInputRef = useRef<HTMLInputElement>(null)
 
   const mealValueLabels = useMemo(
     () => ({
@@ -192,13 +240,23 @@ export function ItemDetails({
     editMealItem?.macros,
   ])
 
-  const [shouldShowDayProgress, setShouldShowDayProgress] = useState(
-    !shouldDefaultItemMacros && prefs.showDayProgress
-  )
+  useEffect(() => {
+    let cancelled = false
 
-  const showDayProgress =
-    shouldShowDayProgress &&
-    !!(canShowDayProgress && prefs.showDayProgress && dayProgressPreview)
+    itemDetailsPrefsService.getMacrosView().then((savedView) => {
+      if (cancelled) return
+      if (shouldDefaultItemMacros) {
+        setMacrosView('per100g')
+        return
+      }
+      setMacrosView(savedView)
+    })
+
+    return () => {
+      cancelled = true
+    }
+  }, [shouldDefaultItemMacros, stringifiedItem])
+
   const editOptions: EditOption[] =
     !isCustomLog && (item as Log).source !== searchTypes.custom
       ? [
@@ -242,6 +300,8 @@ export function ItemDetails({
             i18n.language
           ),
     })
+    setCustomImage(item?.image)
+    setCustomCategories(getItemCategories(item))
   }, [stringifiedItem, isCustomLog])
   const closeClock = () => {
     setClockOpen(false)
@@ -386,8 +446,9 @@ export function ItemDetails({
   }
 
   function _hasItems(
-    x: Item | Meal | Log
+    x: Item | Meal | Log | null | undefined
   ): x is Meal | (Item & { items: MealItem[] }) {
+    if (!x) return false
     return (
       Array.isArray((x as Item & { items: MealItem[] }).items) &&
       (x as Item & { items: MealItem[] }).items.length > 0
@@ -435,10 +496,7 @@ export function ItemDetails({
               createdBy: user._id,
               name:
                 isCustomLog || item.source === searchTypes.custom || item.mealId
-                  ? itemNameService.getItemDisplayName(
-                      item.name,
-                      i18n.language
-                    )
+                  ? itemNameService.getItemDisplayName(item.name, i18n.language)
                   : '',
             }
           })
@@ -502,6 +560,8 @@ export function ItemDetails({
         source: isCustomLog ? searchTypes.custom : searchedItem.type,
         createdBy: user._id,
         name: isCustomLog ? editItem.name : '',
+        image: isCustom ? customImage : undefined,
+        categories: isCustom ? customCategories : undefined,
       }
 
       setSelectedMeal(null)
@@ -561,8 +621,14 @@ export function ItemDetails({
               ),
       }
 
-      delete newLog.image
       delete newLog.searchId
+
+      if (isCustom) {
+        newLog.image = customImage
+        newLog.categories = customCategories
+      } else {
+        delete newLog.image
+      }
 
       if (!isCustomLog && (item as Log).source !== searchTypes.custom)
         delete newLog.name
@@ -628,10 +694,11 @@ export function ItemDetails({
             : itemNameService.getItemDisplayName(item.name, i18n.language) ||
               editItem.name,
           macros: editItem.totalMacros,
-          image: item.image,
+          image: isCustom ? customImage : item.image,
           servingSize: editItem.servingSize,
           numberOfServings: editItem.numberOfServings,
           source: isCustomLog ? searchTypes.custom : null,
+          categories: isCustom ? customCategories : getItemCategories(item),
         }
 
         if (!isCustomLog && (item as Item).type === 'meal') {
@@ -662,6 +729,10 @@ export function ItemDetails({
           source: isCustomLog ? searchTypes.custom : null,
           isFixedMenuLog: true,
           name: editItem.name || t('menu.customItem'),
+          image: isCustom ? customImage : editMenu?.menuLogs[itemIndex]?.image,
+          categories: isCustom
+            ? customCategories
+            : editMenu?.menuLogs[itemIndex]?.categories,
         }
 
         editMenu?.menuLogs.splice(itemIndex, 1, newLog as Log)
@@ -703,24 +774,59 @@ export function ItemDetails({
     if (searchedItem) searchedItem.image = undefined
   }
 
-  const onToggleDayProgress = (stateToSet: boolean) => {
-    setPrefs({
-      ...prefs,
-      showDayProgress: stateToSet,
-    })
+  const displayImage = isCustom ? customImage : item?.image
+  const displayCategories = isCustom
+    ? customCategories
+    : getItemCategories(item)
+  const per100gMacros = useMemo(() => {
+    return isCustom
+      ? editItem.totalMacros
+      : item?.macros || editItem.totalMacros
+  }, [item?.macros, editItem.totalMacros, isCustom])
+
+  const onMacrosViewChange = (value: string) => {
+    const next = value === 'per100g' ? 'per100g' : 'dayProgress'
+    setMacrosView(next)
+    itemDetailsPrefsService.setMacrosView(next)
   }
 
-  function getMacrosDonutProps() {
-    const macros = editItem.totalMacros
-
-    if (!showDayProgress || !dayProgressPreview) {
-      return {
-        protein: macros?.protein,
-        carbs: macros?.carbs,
-        fats: macros?.fat,
-        calories: macros?.calories,
-      }
+  const onPickCustomImage = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    try {
+      if (!event.target.files?.length) return
+      setIsUploadingImage(true)
+      const res = await uploadService.uploadImg(event)
+      if (res?.secure_url) setCustomImage(res.secure_url)
+    } catch {
+      showErrorMsg(t('messages.error.uploadImg'))
+    } finally {
+      setIsUploadingImage(false)
+      if (imageInputRef.current) imageInputRef.current.value = ''
     }
+  }
+
+  function getPer100gDonutProps() {
+    return {
+      protein: per100gMacros?.protein,
+      carbs: per100gMacros?.carbs,
+      fats: per100gMacros?.fat,
+      calories: per100gMacros?.calories,
+    }
+  }
+
+  function getLogDonutProps() {
+    const macros = editItem.totalMacros
+    return {
+      protein: macros?.protein,
+      carbs: macros?.carbs,
+      fats: macros?.fat,
+      calories: macros?.calories,
+    }
+  }
+
+  function getDayProgressDonutProps() {
+    if (!dayProgressPreview) return getLogDonutProps()
 
     const { ring, baseline, goals, projected, fillDenom, calorieDelta } =
       dayProgressPreview
@@ -746,59 +852,175 @@ export function ItemDetails({
     }
   }
 
+  function getPrimaryDonutProps() {
+    if (!canShowDayProgress) return getLogDonutProps()
+    if (macrosView === 'per100g') return getPer100gDonutProps()
+    return getDayProgressDonutProps()
+  }
+
+  function getSecondaryDonutProps() {
+    if (!canShowDayProgress) return getPer100gDonutProps()
+    if (macrosView === 'per100g') return getDayProgressDonutProps()
+    return getPer100gDonutProps()
+  }
+
+  const primaryLabel = !canShowDayProgress
+    ? tDetails('thisLog')
+    : macrosView === 'per100g'
+    ? tDetails('per100g')
+    : tDetails('dayProgress')
+
+  const secondaryLabel = !canShowDayProgress
+    ? tDetails('per100g')
+    : macrosView === 'per100g'
+    ? tDetails('dayProgress')
+    : tDetails('per100g')
+
+  const logGrams = {
+    protein: editItem.totalMacros?.protein || 0,
+    carbs: editItem.totalMacros?.carbs || 0,
+    fats: editItem.totalMacros?.fat || 0,
+  }
+
+  const heroName = itemNameService.getItemDisplayName(item?.name, i18n.language)
+  const baselineKcal = Math.round(per100gMacros?.calories || 0)
+
+  const renderEditOptions = (compact: boolean) =>
+    !noEdit &&
+    editOptions.map((option) => {
+      if (onAddToMealClick && option.key === 'meal') return null
+
+      if (
+        (!item.searchId && _hasItems(item) && option.key === 'servingSize') ||
+        ((item as Item).type === 'meal' && option.key === 'servingSize') ||
+        ((item as MealItem).mealId && option.key === 'servingSize') ||
+        (!updateMenu &&
+          (item as Log).isFixedMenuLog &&
+          option.key === 'servingSize') ||
+        (!updateMenu &&
+          (item as Log).isFixedMenuLog &&
+          option.key === 'numberOfServings') ||
+        (!updateMenu && (item as Log).isFixedMenuLog && option.key === 'meal')
+      )
+        return null
+
+      return (
+        <div
+          className={`select-container ${
+            prefs.isDarkMode ? 'dark-mode' : ''
+          } ${option.label.toLowerCase().split(' ').join('-')} ${
+            !isMeal && !isCustom ? 'with-serving-size' : ''
+          }`}
+          key={option.label}
+        >
+          {!compact && <Typography variant='h6'>{option.label}</Typography>}
+          {option.type === 'select' && option.values && (
+            <CustomSelect
+              tooltipTitle={t('common.editOption', {
+                option: option.label,
+              })}
+              label={option.label}
+              values={option.values.map((value) => value.toString())}
+              valueLabels={option.key === 'meal' ? mealValueLabels : undefined}
+              extra={option.extra}
+              value={editItem[option.key as keyof EditItem]?.toString() || ''}
+              onChange={(value) => onEditItemChange(option.key, value)}
+              className={`${prefs.favoriteColor}`}
+            />
+          )}
+          {option.type === 'clock' && (
+            <>
+              <PickerSelect
+                className={`${prefs.favoriteColor} picker-select ${
+                  prefs.isDarkMode ? 'dark-mode' : ''
+                }`}
+                openClock={openClock}
+                option={option}
+                value={editItem.numberOfServings}
+              />
+              <SlideDialog
+                open={clockOpen}
+                onClose={closeClock}
+                component={
+                  <ClockPicker
+                    value={editItem.numberOfServings}
+                    onChange={onEditItemChange}
+                    onClose={closeClock}
+                  />
+                }
+                title={option.label}
+              />
+            </>
+          )}
+          {option.type === 'macros' && (
+            <>
+              <CustomButton
+                text={t('macros.editMacrosButton')}
+                onClick={openMacros}
+                icon={<EditIcon />}
+                className='edit-macros-button'
+              />
+              <SlideDialog
+                open={macrosOpen}
+                onClose={closeMacros}
+                component={
+                  <EditMacros
+                    isCustomLog={
+                      isCustomLog || (item as Log).source === searchTypes.custom
+                    }
+                    protein={editItem.totalMacros?.protein || 0}
+                    carbs={editItem.totalMacros?.carbs || 0}
+                    fats={editItem.totalMacros?.fat || 0}
+                    editCustomLog={onEditCustomLog}
+                    onCancel={closeMacros}
+                    onSave={closeMacros}
+                  />
+                }
+              />
+            </>
+          )}
+        </div>
+      )
+    })
+
   return (
     <>
       <div
         className={`item-details ${noEdit ? 'no-edit' : ''} ${
-          isCustomLog ? 'custom-log' : ''
+          isCustom ? 'custom-log' : ''
         }`}
       >
-        {(!isCustomLog && (item as Log).source !== searchTypes.custom && (
+        <div className='hero'>
           <div
-            className='header'
-            onClick={openImageModal}
+            className='hero-image box-shadow white-outline'
+            onClick={displayImage ? openImageModal : undefined}
           >
-            <div className='image box-shadow white-outline'>
-              {(item.image && (
-                <img
-                  src={item.image}
-                  alt={itemNameService.getItemDisplayName(
-                    item.name,
-                    i18n.language
-                  )}
-                  referrerPolicy='no-referrer'
-                  onError={async (e) => {
-                    renderErrorImage()
-                    await imageService.fetchOnError(e, item as Item)
-
-                    loadItems()
-                  }}
-                />
-              )) || (
-                <CustomSkeleton
-                  variant='rectangular'
-                  width={60}
-                  height={60}
-                  isDarkMode={prefs.isDarkMode}
-                />
-              )}
-            </div>
-            <MarqueeText
-              variant='body1'
-              className='title'
-            >
-              {itemNameService.getItemDisplayName(item.name, i18n.language) ||
-                ''}
-            </MarqueeText>
-            <div className='subtitle'>{`${(+item.macros?.calories).toFixed(
-              0
-            )} ${t('macros.kcal')} ${t('meals.for')} ${
-              !_hasItems(item) ? t('meals.per100g') : t('meals.perServing')
-            }`}</div>
-
-            {!noEdit && !_hasItems(item) && (
+            {(displayImage && (
+              <img
+                src={displayImage}
+                alt={heroName}
+                referrerPolicy='no-referrer'
+                onError={async (e) => {
+                  if (isCustom) {
+                    setCustomImage(undefined)
+                    return
+                  }
+                  renderErrorImage()
+                  await imageService.fetchOnError(e, item as Item)
+                  loadItems()
+                }}
+              />
+            )) || (
+              <CustomSkeleton
+                variant='rectangular'
+                width='100%'
+                height='100%'
+                isDarkMode={prefs.isDarkMode}
+              />
+            )}
+            {!noEdit && !isCustom && !_hasItems(item) && (
               <div
-                className='favorite-container'
+                className='favorite-on-media'
                 onClick={onFavoriteClick}
               >
                 <FavoriteButton
@@ -809,214 +1031,255 @@ export function ItemDetails({
                 />
               </div>
             )}
+            {canEditCustomChrome && (
+              <>
+                <button
+                  type='button'
+                  className='hero-edit-photo'
+                  onClick={(event) => {
+                    event.stopPropagation()
+                    imageInputRef.current?.click()
+                  }}
+                  aria-label={tDetails('uploadImage')}
+                  disabled={isUploadingImage}
+                >
+                  <PhotoCameraIcon fontSize='small' />
+                </button>
+                <input
+                  ref={imageInputRef}
+                  type='file'
+                  accept='image/*'
+                  hidden
+                  onChange={onPickCustomImage}
+                />
+              </>
+            )}
           </div>
-        )) || (
-          <CustomInput
-            value={editItem.name || ''}
-            onChange={(value) => onEditItemChange('name', value)}
-            placeholder={t('common.name')}
-            className={`${prefs.favoriteColor}`}
-          />
-        )}
-
+          <div className='macros-primary'>
+            <MacrosDonut
+              size={148}
+              {...getPrimaryDonutProps()}
+            />
+            <span className='macros-label'>{primaryLabel}</span>
+            <div className='switch-button-container'>
+              <CustomButton
+                onClick={() =>
+                  onMacrosViewChange(
+                    macrosView === 'per100g' ? 'dayProgress' : 'per100g'
+                  )
+                }
+                icon={<AutorenewIcon />}
+                isIcon={true}
+                size='small'
+                className={`switch-button ${prefs.favoriteColor} ${
+                  prefs.isDarkMode ? 'dark-mode' : ''
+                }`}
+              />
+            </div>
+          </div>
+          {/* <div className='hero-copy'>
+            {isCustom ? (
+              <CustomInput
+                value={editItem.name || ''}
+                onChange={(value) => onEditItemChange('name', value)}
+                placeholder={t('common.name')}
+                className={`${prefs.favoriteColor}`}
+              />
+            ) : (
+              <>
+                <MarqueeText
+                  variant='body1'
+                  className='title'
+                >
+                  {heroName || ''}
+                </MarqueeText>
+                <div className='subtitle'>
+                  {`${baselineKcal} ${t('macros.kcal')} ${t('meals.for')} ${
+                    !_hasItems(item)
+                      ? t('meals.per100g')
+                      : t('meals.perServing')
+                  }`}
+                </div>
+                <ItemCategoryBadges
+                  categories={displayCategories}
+                  size='s'
+                  editable={canEditCustomChrome}
+                  onChange={setCustomCategories}
+                />
+              </>
+            )}
+          </div> */}
+        </div>
         <div className='content'>
-          <div className='macros-container'>
-            <MacrosDonut {...getMacrosDonutProps()} />
+          {/* <div className='macros-toolbar'>
+            {canShowDayProgress && (
+              <CustomSelect
+                tooltipTitle={tDetails('viewBy')}
+                label={tDetails('viewBy')}
+                values={MACROS_VIEW_VALUES}
+                value={macrosView}
+                valueLabels={{
+                  per100g: tDetails('per100g'),
+                  dayProgress: tDetails('dayProgress'),
+                }}
+                onChange={onMacrosViewChange}
+                className={`${prefs.favoriteColor}`}
+              />
+            )}
+          </div> */}
+
+          <div className='hero-copy'>
+            {isCustom ? (
+              <CustomInput
+                value={editItem.name || ''}
+                onChange={(value) => onEditItemChange('name', value)}
+                placeholder={t('common.name')}
+                className={`${prefs.favoriteColor}`}
+              />
+            ) : (
+              <>
+                <MarqueeText
+                  variant='body1'
+                  className='title'
+                >
+                  {heroName || ''}
+                </MarqueeText>
+                <div className='subtitle'>
+                  {`${baselineKcal} ${t('macros.kcal')} ${t('meals.for')} ${
+                    !_hasItems(item)
+                      ? t('meals.per100g')
+                      : t('meals.perServing')
+                  }`}
+                </div>
+                <ItemCategoryBadges
+                  categories={displayCategories}
+                  size='m'
+                  editable={canEditCustomChrome}
+                  onChange={setCustomCategories}
+                />
+              </>
+            )}
+          </div>
+        </div>
+        {_hasItems(item) && (
+          <div className='nested-items'>
+            <Typography
+              variant='h6'
+              className='nested-items-title'
+            >
+              {tDetails('nestedItems')}
+            </Typography>
+            <ul className='nested-items-list'>
+              {item.items.map((nested, index) => (
+                <li
+                  key={
+                    nested.searchId || nested._id || `${nested.name}-${index}`
+                  }
+                >
+                  <img
+                    src={nested.image || searchUrls.DEFAULT_IMAGE}
+                    alt={itemNameService.getItemDisplayName(
+                      nested.name,
+                      i18n.language
+                    )}
+                    referrerPolicy='no-referrer'
+                    className='box-shadow white-outline nested-item-image'
+                  />
+                  <div className='text-container'>
+                    <span className='nested-item-name'>
+                      {itemNameService.getItemDisplayName(
+                        nested.name,
+                        i18n.language
+                      )}
+                    </span>
+                    <span className='nested-item-kcal'>
+                      {Math.round(nested.macros?.calories || 0)}{' '}
+                      {t('macros.kcal')}
+                    </span>
+                  </div>
+                  {/* <CustomButton
+                    icon={<RemoveRedEyeIcon />}
+                    isIcon={true}
+                    size='small'
+                    className={`${prefs.favoriteColor} ${
+                      prefs.isDarkMode ? 'dark-mode' : ''
+                    } nested-item-edit-button`}
+                    onClick={() => {
+                      console.log('edit nested item', nested)
+                    }}
+                  /> */}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        <div className='macros-container'>
+          <div className='macros-small'>
+            <MacrosDonut
+              size={108}
+              {...getSecondaryDonutProps()}
+            />
+            <span className='macros-label'>{secondaryLabel}</span>
+          </div>
+          <Macros
+            protein={logGrams.protein}
+            carbs={logGrams.carbs}
+            fats={logGrams.fats}
+          />
+        </div>{' '}
+        {!!dayProgressPreview?.beyondWarningKey && (
+          <div
+            className={`beyond-macros-warning visible ${
+              prefs.isDarkMode ? 'dark-mode' : ''
+            }`}
+          >
+            <WarningAmberRoundedIcon
+              className='beyond-macros-icon'
+              fontSize='small'
+            />
+            <span>{t(`macros.${dayProgressPreview.beyondWarningKey}`)}</span>
+          </div>
+        )}
+        {noEdit ? (
+          <div className='edit'>
             <Macros
-              protein={editItem.totalMacros?.protein}
-              carbs={editItem.totalMacros?.carbs}
-              fats={editItem.totalMacros?.fat}
+              protein={logGrams.protein}
+              carbs={logGrams.carbs}
+              fats={logGrams.fats}
             />
           </div>
-          {canShowDayProgress && (
-            <div
-              className={`day-progress-controls ${
-                prefs.isDarkMode ? 'dark-mode' : ''
-              }`}
-            >
-              <div
-                className='day-progress-switch'
-                onClick={() => {
-                  let stateToSet
-                  if (shouldShowDayProgress) {
-                    stateToSet = false
-                  } else {
-                    stateToSet = true
-                  }
-                  onToggleDayProgress(stateToSet)
-                  setShouldShowDayProgress(stateToSet)
-                }}
-              >
-                <Typography
-                  variant='body2'
-                  className='day-progress-label'
-                >
-                  {t('macros.dayProgress')}
-                </Typography>
-                <CustomIOSSwitch
-                  color={prefs.favoriteColor}
-                  checked={shouldShowDayProgress}
-                />
-              </div>
-              <div
-                className={`beyond-macros-warning ${
-                  dayProgressPreview?.beyondWarningKey ? 'visible' : ''
-                }`}
-                aria-hidden={!dayProgressPreview?.beyondWarningKey}
-              >
-                <WarningAmberRoundedIcon
-                  className='beyond-macros-icon'
-                  fontSize='small'
-                />
-                <span>
-                  {dayProgressPreview?.beyondWarningKey
-                    ? t(`macros.${dayProgressPreview.beyondWarningKey}`)
-                    : ''}
-                </span>
-              </div>
-            </div>
-          )}
-        </div>
-
-        <div className='edit'>
-          <div className='selects-container'>
-            {!noEdit &&
-              editOptions.map((option) => {
-                if (onAddToMealClick && option.key === 'meal') return null
-
-                if (
-                  (!item.searchId &&
-                    _hasItems(item) &&
-                    option.key === 'servingSize') ||
-                  ((item as Item).type === 'meal' &&
-                    option.key === 'servingSize') ||
-                  ((item as MealItem).mealId && option.key === 'servingSize') ||
-                  (!updateMenu &&
-                    (item as Log).isFixedMenuLog &&
-                    option.key === 'servingSize') ||
-                  (!updateMenu &&
-                    (item as Log).isFixedMenuLog &&
-                    option.key === 'numberOfServings') ||
-                  (!updateMenu &&
-                    (item as Log).isFixedMenuLog &&
-                    option.key === 'meal')
-                )
-                  return null
-
-                return (
-                  <div
-                    className={`select-container ${
-                      prefs.isDarkMode ? 'dark-mode' : ''
-                    }`}
-                    key={option.label}
-                  >
-                    <Typography variant='h6'>{option.label}</Typography>
-                    {option.type === 'select' && option.values && (
-                      <CustomSelect
-                        tooltipTitle={t('common.editOption', {
-                          option: option.label,
-                        })}
-                        label={option.label}
-                        values={option.values.map((value) => value.toString())}
-                        valueLabels={
-                          option.key === 'meal' ? mealValueLabels : undefined
-                        }
-                        extra={option.extra}
-                        value={
-                          editItem[option.key as keyof EditItem]?.toString() ||
-                          ''
-                        }
-                        onChange={(value) =>
-                          onEditItemChange(option.key, value)
-                        }
-                        className={`${prefs.favoriteColor}`}
-                      />
-                    )}
-                    {option.type === 'clock' && (
-                      <>
-                        <PickerSelect
-                          className={`${prefs.favoriteColor} picker-select ${
-                            prefs.isDarkMode ? 'dark-mode' : ''
-                          }`}
-                          openClock={openClock}
-                          option={option}
-                          value={editItem.numberOfServings}
-                        />
-                        <SlideDialog
-                          open={clockOpen}
-                          onClose={closeClock}
-                          component={
-                            <ClockPicker
-                              value={editItem.numberOfServings}
-                              onChange={onEditItemChange}
-                              onClose={closeClock}
-                            />
-                          }
-                          title={option.label}
-                        />
-                      </>
-                    )}
-                    {option.type === 'macros' && (
-                      <>
-                        <CustomButton
-                          text={t('macros.editMacrosButton')}
-                          onClick={openMacros}
-                          icon={<EditIcon />}
-                        />
-                        <SlideDialog
-                          open={macrosOpen}
-                          onClose={closeMacros}
-                          component={
-                            <EditMacros
-                              isCustomLog={
-                                isCustomLog ||
-                                (item as Log).source === searchTypes.custom
-                              }
-                              protein={editItem.totalMacros?.protein || 0}
-                              carbs={editItem.totalMacros?.carbs || 0}
-                              fats={editItem.totalMacros?.fat || 0}
-                              editCustomLog={onEditCustomLog}
-                              onCancel={closeMacros}
-                              onSave={closeMacros}
-                            />
-                          }
-                        />
-                      </>
-                    )}
-                  </div>
-                )
-              })}
+        ) : (
+          <div className='item-details-dock'>
+            {renderEditOptions(true)}
+            <CustomFloatingButton
+              text={
+                editMealItem ? tDetails('updateMeal') : tDetails('addToMeal')
+              }
+              icon={editMealItem ? <CheckIcon /> : <AddIcon />}
+              size='medium'
+              className={`item-details-fab ${prefs.favoriteColor}`}
+              onClick={getOnClick()}
+            />
           </div>
-        </div>
-        {!noEdit && (
-          <CustomButton
-            text={editMealItem ? t('meals.updateMeal') : t('meals.addToMeal')}
-            icon={!editMealItem && <AddIcon sx={{ mr: 1 }} />}
-            size='large'
-            fullWidth
-            className={`add-to-meal-button ${prefs.favoriteColor}`}
-            onClick={getOnClick()}
-          />
         )}
       </div>
-      {item.image && (
+      {displayImage && (
         <CustomAlertDialog
           open={isImageModalOpen}
           onClose={closeImageModal}
-          title={
-            itemNameService.getItemDisplayName(item.name, i18n.language) || ''
-          }
+          title={heroName || ''}
         >
           <div className='modal-image-container'>
             <img
-              src={item.image}
-              alt={itemNameService.getItemDisplayName(
-                item.name,
-                i18n.language
-              )}
+              src={displayImage}
+              alt={heroName}
               className={`box-shadow white-outline`}
               referrerPolicy='no-referrer'
               onError={async (e) => {
+                if (isCustom) {
+                  setCustomImage(undefined)
+                  return
+                }
                 await imageService.fetchOnError(e, item as Item)
                 loadItems()
               }}

@@ -1,0 +1,70 @@
+.item-category-badges-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  min-width: 0;
+
+  &.size-s {
+    gap: 0.35rem;
+  }
+
+  &.size-m {
+    gap: 0.4rem;
+  }
+
+  &.size-l {
+    gap: 0.5rem;
+  }
+}
+
+.item-category-badge-container {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  border: none;
+  font-family: inherit;
+  color: var(--item-category-color-light);
+  background: color-mix(
+    in srgb,
+    currentColor var(--item-category-tint, 14%),
+    transparent
+  );
+
+  &.size-s {
+    padding: 0.15rem 0.5rem;
+    border-radius: 0.4rem;
+    font-size: 0.75rem;
+  }
+
+  &.size-m {
+    padding: 0.25rem 0.65rem;
+    border-radius: 0.45rem;
+    font-size: 0.875rem;
+  }
+
+  &.size-l {
+    padding: 0.35rem 0.8rem;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+  }
+
+  &.unselected {
+    opacity: 0.45;
+  }
+
+  &.clickable {
+    cursor: pointer;
+  appearance: none;
+  }
+
+  html.dark-mode &,
+  body.dark-mode & {
+    color: var(--item-category-color-dark);
+    --item-category-tint: 22%;
+  }
+}

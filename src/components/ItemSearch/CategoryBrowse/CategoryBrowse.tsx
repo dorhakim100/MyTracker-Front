@@ -52,7 +52,7 @@ export function CategoryBrowse({
         <EmptyState text={t('noCategoryResults')} />
       ) : isLoading && !items.length ? (
         <div className='category-browse-grid'>
-          {Array.from({ length: 6 }).map((_, index) => (
+          {Array.from({ length: 10 }).map((_, index) => (
             <ItemCardSkeleton key={`category-browse-skeleton-${index}`} />
           ))}
         </div>
