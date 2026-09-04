@@ -1,11 +1,9 @@
 // Category art: Google Noto Animated Emoji (Apache 2.0).
 // https://googlefonts.github.io/noto-emoji-animation/
-import beveragesImg from '../item-categories/beverages.webp'
-import beveragesStill from '../item-categories/beverages.png'
 import carbsImg from '../item-categories/carbs.webp'
 import carbsStill from '../item-categories/carbs.png'
-import condimentsImg from '../item-categories/condiments.webp'
-import condimentsStill from '../item-categories/condiments.png'
+import drinksImg from '../item-categories/drinks.webp'
+import drinksStill from '../item-categories/drinks.png'
 import dairyImg from '../item-categories/dairy.webp'
 import dairyStill from '../item-categories/dairy.png'
 import fatsOilsImg from '../item-categories/fatsOils.webp'
@@ -22,6 +20,8 @@ import preparedImg from '../item-categories/prepared.webp'
 import preparedStill from '../item-categories/prepared.png'
 import proteinsImg from '../item-categories/proteins.webp'
 import proteinsStill from '../item-categories/proteins.png'
+import saucesImg from '../item-categories/sauces.webp'
+import saucesStill from '../item-categories/sauces.png'
 import snacksImg from '../item-categories/snacks.webp'
 import snacksStill from '../item-categories/snacks.png'
 import sweetsImg from '../item-categories/sweets.webp'
@@ -39,8 +39,8 @@ export const ITEM_CATEGORY_IDS = [
   'fatsOils',
   'prepared',
   'snacks',
-  'beverages',
-  'condiments',
+  'drinks',
+  'sauces',
   'sweets',
 ] as const
 
@@ -68,8 +68,8 @@ export const ITEM_CATEGORY_ART: Record<ItemCategoryId, ItemCategoryArt> = {
   fatsOils: { animated: fatsOilsImg, still: fatsOilsStill },
   prepared: { animated: preparedImg, still: preparedStill },
   snacks: { animated: snacksImg, still: snacksStill },
-  beverages: { animated: beveragesImg, still: beveragesStill },
-  condiments: { animated: condimentsImg, still: condimentsStill },
+  drinks: { animated: drinksImg, still: drinksStill },
+  sauces: { animated: saucesImg, still: saucesStill },
   sweets: { animated: sweetsImg, still: sweetsStill },
 }
 
@@ -113,11 +113,11 @@ export const ITEM_CATEGORY_COLORS: Record<
     light: 'var(--picker-color-pink)',
     dark: 'var(--picker-color-pink-light)',
   },
-  beverages: {
+  drinks: {
     light: 'var(--picker-color-blue-dark)',
     dark: 'var(--picker-color-blue-light)',
   },
-  condiments: {
+  sauces: {
     light: 'var(--picker-color-purple)',
     dark: 'var(--picker-color-purple-light)',
   },
@@ -176,15 +176,15 @@ export const ITEM_CATEGORY_LABELS: Record<
     he: 'חטיפים',
     aliases: ['snack', 'חטיף', 'חטיפים'],
   },
-  beverages: {
-    eng: 'Beverages',
+  drinks: {
+    eng: 'Drinks',
     he: 'משקאות',
-    aliases: ['drinks', 'drink', 'beverage', 'משקה', 'משקאות'],
+    aliases: ['beverages', 'beverage', 'drink', 'משקה', 'משקאות'],
   },
-  condiments: {
-    eng: 'Condiments',
-    he: 'רטבים ותבלינים',
-    aliases: ['condiment', 'רטבים'],
+  sauces: {
+    eng: 'Sauces',
+    he: 'רטבים',
+    aliases: ['condiments', 'condiment', 'sauce', 'רוטב', 'רטבים', 'תבלינים'],
   },
   sweets: {
     eng: 'Sweets',

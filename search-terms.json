@@ -231,7 +231,7 @@
     "energy bar",
     "granola bar"
   ],
-  "beverages": [
+  "drinks": [
     "water",
     "coffee",
     "tea",
@@ -243,7 +243,7 @@
     "protein shake",
     "sports drink"
   ],
-  "condiments": [
+  "sauces": [
     "ketchup",
     "mustard",
     "mayonnaise",

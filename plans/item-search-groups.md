@@ -6,7 +6,7 @@
 
 - **Routes**: no new URL. Search stays the existing full-screen picker (FAB, diary add, meal editor, menu editor).
 - **Key models**: `Item.groups` is `string[]` of nutrition enums. Multi-membership allowed. Default `[]`. Favorites and user meals are **not** group enums; they remain `user.favoriteItems` and `user.meals`.
-- **Browse enums**: finalized after a full Mongo scan, then shown as an editable list before backfill. Starting candidates: Proteins, Carbs, Vegetables, Fruits, Dairy, Nuts & seeds, Fats & oils, Prepared dishes, Snacks, Beverages, Condiments, Sweets. Yours tiles (Favorites, My Meals) are UI-only.
+- **Browse enums**: finalized after a full Mongo scan, then shown as an editable list before backfill. Starting candidates: Proteins, Carbs, Vegetables, Fruits, Dairy, Nuts & seeds, Fats & oils, Prepared dishes, Snacks, Drinks, Sauces, Sweets. Yours tiles (Favorites, My Meals) are UI-only.
 - **Backend**: MyTracker-Back item model + index on `groups`. Paginated query: group contains + optional txt + same sort keys as today’s search. New product creates persist `groups: []`. Playground/admin can edit `groups` for the tighten pass.
 - **Services / store**: item HTTP service for group query; existing search-service for global text search; no new Redux module. Group browse uses React Query infinite query (same skip/limit idea as sets). Recent searches: IndexedDB only, records keyed by user id (~8 unique strings).
 - **Libraries**: MUI + existing CustomMui, SlideDialog, CustomList, FavoriteButton, ItemDetails. `@tanstack/react-query` already in the app. Custom SVGs per nutrition group. No new UI kit or icon pack.

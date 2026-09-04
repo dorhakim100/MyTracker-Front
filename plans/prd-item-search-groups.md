@@ -47,7 +47,7 @@ Search (the existing full-screen picker) becomes a Wolt-like browse home when th
 
 - Visual reference is Wolt discover (top search, section headers, colored rounded tiles, 4-column grid). Taxonomy is nutrition groups, not Wolt commercial categories.
 - **Yours** is not stored on `Item.groups`. Favorites still come from `user.favoriteItems`; meals from `user.meals`.
-- Final Browse enum list is decided **after** scanning the Mongo item collection. Starting candidates (add/remove after scan): Proteins, Carbs, Vegetables, Fruits, Dairy, Nuts & seeds, Fats & oils, Prepared dishes, Snacks, Beverages, Condiments, Sweets. Present the list clearly for edit before backfill.
+- Final Browse enum list is decided **after** scanning the Mongo item collection. Starting candidates (add/remove after scan): Proteins, Carbs, Vegetables, Fruits, Dairy, Nuts & seeds, Fats & oils, Prepared dishes, Snacks, Drinks, Sauces, Sweets. Present the list clearly for edit before backfill.
 - `groups` is `string[]` of those enum values. Multi-membership is allowed. Browse a group = items whose array contains that enum.
 - Schema: add `groups` on Item (frontend type, backend type, mongoose model) with default `[]`. Index `groups` for the paginated query.
 - New products (Open Food Facts create path and backend `add`): persist `groups: []`. Do not infer groups at ingest.

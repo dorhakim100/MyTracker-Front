@@ -976,8 +976,8 @@ function getSortedResults(results: Item[], sortBy: string): Item[] {
 //   fatsOils: string[]
 //   meals: Record<string, string[]>
 //   snacks: string[]
-//   beverages: string[]
-//   condiments: string[]
+//   drinks: string[]
+//   sauces: string[]
 //   hebrew: string[]
 // }
 
@@ -998,8 +998,8 @@ function getSortedResults(results: Item[], sortBy: string): Item[] {
 //   terms.push(...data.fatsOils)
 //   Object.values(data.meals).forEach((arr) => terms.push(...arr))
 //   terms.push(...data.snacks)
-//   terms.push(...data.beverages)
-//   terms.push(...data.condiments)
+//   terms.push(...data.drinks)
+//   terms.push(...data.sauces)
 //   terms.push(...data.hebrew)
 
 //   // Remove duplicates and empty strings
