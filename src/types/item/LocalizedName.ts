@@ -1,6 +1,6 @@
 export interface LocalizedName {
-  eng: string
-  he: string
+  eng?: string
+  he?: string
   default: string
 }
 

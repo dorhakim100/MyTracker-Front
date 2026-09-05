@@ -79,7 +79,7 @@ import AutorenewIcon from '@mui/icons-material/Autorenew'
 import { searchUrls } from '../../assets/config/search.urls'
 import MealImage from '../../../public/meal-upload.png'
 import { itemService } from '../../services/item/item.service'
-import { ItemName } from '../../types/item/LocalizedName'
+import { ItemName, LocalizedName } from '../../types/item/LocalizedName'
 interface ItemDetailsProps {
   onAddToMealClick?: (item: MealItem, shouldCreateItem: boolean) => void
   noEdit?: boolean
@@ -201,12 +201,13 @@ export function ItemDetails({
   const [macrosView, setMacrosView] = useState<ItemMacrosView>(
     shouldDefaultItemMacros ? 'per100g' : 'dayProgress'
   )
+
   const [customImage, setCustomImage] = useState(item?.image)
   const [customCategories, setCustomCategories] = useState<ItemCategoryId[]>(
     () => getItemCategories(item)
   )
   const [shouldCreateItem, setShouldCreateItem] = useState(
-    canEditCustomChrome && !editMealItem
+    canEditCustomChrome && !editMealItem && !item?.createdBy
   )
   const [isUploadingImage, setIsUploadingImage] = useState(false)
   const imageInputRef = useRef<HTMLInputElement>(null)
@@ -584,7 +585,11 @@ export function ItemDetails({
         numberOfServings: editItem.numberOfServings,
         source: isCustomLog ? searchTypes.custom : searchedItem.type,
         createdBy: user._id,
-        name: isCustomLog ? editItem.name : '',
+        name: isCustomLog
+          ? editItem.name
+          : item.createdBy
+          ? (item?.name as LocalizedName)?.default
+          : '',
         image: isCustom ? customImage : undefined,
         categories: isCustom ? customCategories : undefined,
       }
@@ -929,13 +934,22 @@ export function ItemDetails({
         (!updateMenu && (item as Log).isFixedMenuLog && option.key === 'meal')
       )
         return null
+      console.log(editOptions)
+
+      if ((item as Log)?.time && option.key === 'custom-log-macros') return null
 
       return (
         <div
           className={`select-container ${
             prefs.isDarkMode ? 'dark-mode' : ''
           } ${option.label.toLowerCase().split(' ').join('-')} ${
-            !isMeal && !isCustom ? 'with-serving-size' : ''
+            (editOptions.length > 2 &&
+              !isMeal &&
+              (!isCustom || item?.createdBy) &&
+              !(item as Log)?.time) ||
+            item?.createdBy
+              ? 'with-serving-size'
+              : ''
           }`}
           key={option.label}
         >
@@ -1048,13 +1062,16 @@ export function ItemDetails({
                 <div
                   className='edit-custom-log-img-placeholder'
                   onClick={(event) => {
+                    if (item?.createdBy && item.image) return
                     event.stopPropagation()
                     imageInputRef.current?.click()
                   }}
                 >
-                  <Typography variant='body1'>
-                    {t('customLog.uploadImage')}
-                  </Typography>
+                  {!item?.createdBy && !item?.image && (
+                    <Typography variant='body1'>
+                      {t('customLog.uploadImage')}
+                    </Typography>
+                  )}
                   <img
                     src={MealImage}
                     alt='Meal image'
@@ -1075,12 +1092,13 @@ export function ItemDetails({
                 />
               </div>
             )}
-            {canEditCustomChrome && (
+            {canEditCustomChrome && !item?.createdBy && (
               <>
                 <button
                   type='button'
                   className='hero-edit-photo'
                   onClick={(event) => {
+                    if (item?.createdBy && item.image) return
                     event.stopPropagation()
                     imageInputRef.current?.click()
                   }}
@@ -1173,7 +1191,7 @@ export function ItemDetails({
           </div> */}
 
           <div className={`hero-copy ${canEditCustomChrome ? 'editing' : ''}`}>
-            {canEditCustomChrome ? (
+            {canEditCustomChrome && !item?.createdBy ? (
               <div className='title-editing-container'>
                 <CustomInput
                   value={editItem.name || ''}
@@ -1217,21 +1235,14 @@ export function ItemDetails({
                 </div>
               </>
             )}
-            {canEditCustomChrome && (
-              <div className='create-new-item-switch-container'>
-                {/* <Typography variant='body1'>
-                  {t('customLog.createNewItem')}
-                </Typography>
-                <CustomIOSSwitch checked /> */}
-              </div>
-            )}
+
             <ItemCategoryBadges
               categories={displayCategories}
               size='m'
-              editable={canEditCustomChrome}
+              editable={canEditCustomChrome && !item?.createdBy}
               onChange={setCustomCategories}
               className={`${prefs.favoriteColor} ${
-                canEditCustomChrome ? 'editing' : ''
+                canEditCustomChrome && !item?.createdBy ? 'editing' : ''
               }`}
             />
           </div>
