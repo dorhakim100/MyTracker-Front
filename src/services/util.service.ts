@@ -471,3 +471,36 @@ export function getCurrMealPeriod(date: Date = new Date()): string {
     return 'dinner'
   }
 }
+
+export function generateBooleanOptionsTranslated(
+  locale: string
+): { label: string; value: boolean }[] {
+  switch (locale) {
+    case 'en':
+      return [
+        { label: 'Yes', value: true },
+        { label: 'No', value: false },
+      ]
+    case 'he':
+      return [
+        { label: 'כן', value: true },
+        { label: 'לא', value: false },
+      ]
+    default:
+      return [
+        { label: 'Yes', value: true },
+        { label: 'No', value: false },
+      ]
+  }
+}
+
+export function getNextFromBoolean(locale: string, value: string): boolean {
+  switch (locale) {
+    case 'en':
+      return value === 'Yes' ? true : false
+    case 'he':
+      return value === 'כן' ? true : false
+    default:
+      return value === 'Yes' ? true : false
+  }
+}

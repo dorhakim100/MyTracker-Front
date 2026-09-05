@@ -43,10 +43,9 @@ export function ItemCategoryBadge({
     '--item-category-color-dark': colors.dark,
   }
 
-  const classNames =
-    `item-category-badge-container size-${size} ${
-      selected ? 'selected' : 'unselected'
-    } ${onClick ? 'clickable' : ''} ${className}`.trim()
+  const classNames = `item-category-badge-container size-${size} ${
+    selected ? 'selected' : 'unselected'
+  } ${onClick ? 'clickable' : ''} ${className}`.trim()
 
   const onBadgeClick = (event: MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation()
@@ -106,6 +105,7 @@ export function ItemCategoryBadges({
         <ItemCategoryBadge
           key={id}
           category={id}
+          className={`${className}`}
           size={size}
           selected={selected.includes(id)}
           onClick={editable ? () => toggle(id) : undefined}

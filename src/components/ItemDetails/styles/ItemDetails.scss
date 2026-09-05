@@ -16,6 +16,29 @@
     align-items: center;
     min-width: 0;
   }
+  .hero-image:has(.edit-custom-log-img-placeholder) {
+    display: grid;
+    align-items: center;
+  }
+  .edit-custom-log-img-placeholder {
+    display: grid;
+    place-items: center;
+
+    gap: 0.5rem;
+    align-items: center;
+    min-width: 0;
+
+    .edit-custom-log-img-placeholder-img {
+      grid-column: 1/-1;
+      grid-row: 1/2;
+
+      width: 100px !important;
+
+      height: 100px !important;
+
+      object-fit: cover;
+    }
+  }
 
   .hero-image {
     position: relative;
@@ -46,6 +69,23 @@
     align-content: center;
     min-width: 0;
     margin-bottom: 0.5rem;
+
+    &.editing {
+      .title-editing-container {
+        grid-column: 1/-1;
+        grid-row: 1/2;
+        display: grid;
+        grid-template-columns: 1fr auto;
+      }
+
+      .item-category-badges-container {
+        grid-column: 1/2;
+        grid-row: 2/3;
+      }
+
+      grid-template-columns: 1fr auto;
+      gap: 0.5rem;
+    }
   }
 
   .favorite-on-media,

@@ -35,6 +35,13 @@
     transparent
   );
 
+  &:focus {
+    outline: none;
+
+    &.primary {
+    }
+  }
+
   &.size-s {
     padding: 0.15rem 0.5rem;
     border-radius: 0.4rem;
@@ -57,9 +64,45 @@
     opacity: 0.45;
   }
 
+  &.selected.editing {
+    outline: 2px solid $primary-color;
+
+    &.blue {
+      outline-color: $picker-color-blue;
+    }
+
+    &.green {
+      outline-color: $picker-color-green;
+    }
+
+    &.orange {
+      outline-color: $picker-color-orange;
+    }
+
+    &.red {
+      outline-color: $picker-color-red;
+    }
+
+    &.yellow {
+      outline-color: $picker-color-yellow;
+    }
+
+    &.purple {
+      outline-color: $picker-color-purple;
+    }
+
+    &.pink {
+      outline-color: $picker-color-pink;
+    }
+
+    &.deepPurple {
+      outline-color: $picker-color-deep-purple;
+    }
+  }
+
   &.clickable {
     cursor: pointer;
-  appearance: none;
+    appearance: none;
   }
 
   html.dark-mode &,

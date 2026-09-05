@@ -118,6 +118,10 @@
     "stepsGoalSaved": "יעד הצעדים נשמר.",
     "stepsGoalSaveError": "לא ניתן לשמור את יעד הצעדים."
   },
+  "customLog": {
+    "createNewItem": "צור פריט חדש",
+    "uploadImage": "העלה תמונה"
+  },
   "meals": {
     "breakfast": "ארוחת בוקר",
     "lunch": "ארוחת צהריים",

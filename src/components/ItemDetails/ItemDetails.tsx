@@ -10,7 +10,12 @@ import { MacrosDonut } from '../MacrosDonut/MacrosDonut'
 import { FavoriteButton } from '../FavoriteButton/FavoriteButton'
 import { CustomSelect } from '../../CustomMui/CustomSelect/CustomSelect'
 import { CustomInput } from '../../CustomMui/CustomInput/CustomInput'
-import { getArrayOfNumbers, getCurrMeal } from '../../services/util.service'
+import {
+  generateBooleanOptionsTranslated,
+  getArrayOfNumbers,
+  getCurrMeal,
+  getNextFromBoolean,
+} from '../../services/util.service'
 import { searchService } from '../../services/search/search-service'
 import Typography from '@mui/material/Typography'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
@@ -72,8 +77,11 @@ import { itemDetailsNs } from './locals'
 import AutorenewIcon from '@mui/icons-material/Autorenew'
 // import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye'
 import { searchUrls } from '../../assets/config/search.urls'
+import MealImage from '../../../public/meal-upload.png'
+import { itemService } from '../../services/item/item.service'
+import { ItemName } from '../../types/item/LocalizedName'
 interface ItemDetailsProps {
-  onAddToMealClick?: (item: MealItem) => void
+  onAddToMealClick?: (item: MealItem, shouldCreateItem: boolean) => void
   noEdit?: boolean
   isCustomLog?: boolean
   updateMenu?: (newMenu: Menu) => void
@@ -196,6 +204,9 @@ export function ItemDetails({
   const [customImage, setCustomImage] = useState(item?.image)
   const [customCategories, setCustomCategories] = useState<ItemCategoryId[]>(
     () => getItemCategories(item)
+  )
+  const [shouldCreateItem, setShouldCreateItem] = useState(
+    canEditCustomChrome && !editMealItem
   )
   const [isUploadingImage, setIsUploadingImage] = useState(false)
   const imageInputRef = useRef<HTMLInputElement>(null)
@@ -461,6 +472,19 @@ export function ItemDetails({
 
       if (!selectedDay) return showErrorMsg(t('messages.error.addLog'))
 
+      if (shouldCreateItem) {
+        try {
+          await itemService.create({
+            name: { default: editItem.name || '' } as ItemName,
+            macros: editItem.totalMacros,
+            image: customImage,
+            categories: customCategories,
+            createdBy: user._id,
+            type: 'custom',
+          })
+        } catch {}
+      }
+
       if (!isCustomLog && !item.searchId && _hasItems(item)) {
         const mealNumberOfServings = editItem.numberOfServings
 
@@ -512,6 +536,7 @@ export function ItemDetails({
           (acc: number, log) => acc + log.macros.calories,
           0
         )
+
         const dayToSave = {
           ...selectedDay,
           logs: [...selectedDay.logs, ...savedLogs],
@@ -710,7 +735,7 @@ export function ItemDetails({
           itemMealToEdit.source = (item as Item).type
         }
 
-        onAddToMealClick(itemMealToEdit as MealItem)
+        onAddToMealClick(itemMealToEdit as MealItem, shouldCreateItem)
       }
     }
     if (updateMenu) {
@@ -757,6 +782,7 @@ export function ItemDetails({
     if (editMealItem) {
       return onEditMeal
     }
+
     return onAddToMeal
   }
 
@@ -1010,14 +1036,32 @@ export function ItemDetails({
                   loadItems()
                 }}
               />
-            )) || (
-              <CustomSkeleton
-                variant='rectangular'
-                width='100%'
-                height='100%'
-                isDarkMode={prefs.isDarkMode}
-              />
-            )}
+            )) ||
+              (!canEditCustomChrome ? (
+                <CustomSkeleton
+                  variant='rectangular'
+                  width='100%'
+                  height='100%'
+                  isDarkMode={prefs.isDarkMode}
+                />
+              ) : (
+                <div
+                  className='edit-custom-log-img-placeholder'
+                  onClick={(event) => {
+                    event.stopPropagation()
+                    imageInputRef.current?.click()
+                  }}
+                >
+                  <Typography variant='body1'>
+                    {t('customLog.uploadImage')}
+                  </Typography>
+                  <img
+                    src={MealImage}
+                    alt='Meal image'
+                    className='edit-custom-log-img-placeholder-img'
+                  />
+                </div>
+              ))}
             {!noEdit && !isCustom && !_hasItems(item) && (
               <div
                 className='favorite-on-media'
@@ -1128,14 +1172,34 @@ export function ItemDetails({
             )}
           </div> */}
 
-          <div className='hero-copy'>
-            {isCustom ? (
-              <CustomInput
-                value={editItem.name || ''}
-                onChange={(value) => onEditItemChange('name', value)}
-                placeholder={t('common.name')}
-                className={`${prefs.favoriteColor}`}
-              />
+          <div className={`hero-copy ${canEditCustomChrome ? 'editing' : ''}`}>
+            {canEditCustomChrome ? (
+              <div className='title-editing-container'>
+                <CustomInput
+                  value={editItem.name || ''}
+                  onChange={(value) => onEditItemChange('name', value)}
+                  placeholder={t('common.name')}
+                  className={`${prefs.favoriteColor}`}
+                />
+                {!editMealItem && (
+                  <CustomSelect
+                    label={t('customLog.createNewItem')}
+                    values={generateBooleanOptionsTranslated(i18n.language).map(
+                      (option) => option.label
+                    )}
+                    value={
+                      generateBooleanOptionsTranslated(i18n.language).find(
+                        (option) => option.value === shouldCreateItem
+                      )?.label || ''
+                    }
+                    onChange={(value) => {
+                      const next = getNextFromBoolean(i18n.language, value)
+                      setShouldCreateItem(next)
+                    }}
+                    className={`${prefs.favoriteColor}`}
+                  />
+                )}
+              </div>
             ) : (
               <>
                 <MarqueeText
@@ -1151,14 +1215,25 @@ export function ItemDetails({
                       : t('meals.perServing')
                   }`}
                 </div>
-                <ItemCategoryBadges
-                  categories={displayCategories}
-                  size='m'
-                  editable={canEditCustomChrome}
-                  onChange={setCustomCategories}
-                />
               </>
             )}
+            {canEditCustomChrome && (
+              <div className='create-new-item-switch-container'>
+                {/* <Typography variant='body1'>
+                  {t('customLog.createNewItem')}
+                </Typography>
+                <CustomIOSSwitch checked /> */}
+              </div>
+            )}
+            <ItemCategoryBadges
+              categories={displayCategories}
+              size='m'
+              editable={canEditCustomChrome}
+              onChange={setCustomCategories}
+              className={`${prefs.favoriteColor} ${
+                canEditCustomChrome ? 'editing' : ''
+              }`}
+            />
           </div>
         </div>
         {_hasItems(item) && (

@@ -22,7 +22,7 @@ import { Refresh } from '@mui/icons-material'
 
 interface BarcodeScannerProps {
   onClose: () => void
-  onAddToMealClick?: (item: MealItem) => void
+  onAddToMealClick?: (item: MealItem, shouldCreateItem: boolean) => void
 }
 
 export function BarcodeScanner({

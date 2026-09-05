@@ -11,6 +11,7 @@ export const itemService = {
   query,
   getById,
   save,
+  create,
   remove,
   getEmptyItem,
   getDefaultFilter,
@@ -77,6 +78,14 @@ async function save(item: Item) {
   }
 }
 
+async function create(item: Omit<Item, '_id'>) {
+  try {
+    const savedItem = await httpService.post(`${KEY}/create`, item)
+    return savedItem
+  } catch (err) {
+    throw err
+  }
+}
 // Search-related operations
 async function searchByTerm(searchTerm: string) {
   try {
@@ -208,7 +217,9 @@ export interface CategoryQueryPage {
   nextSkip?: number
 }
 
-async function queryByCategory(filter: CategoryQueryFilter): Promise<CategoryQueryPage> {
+async function queryByCategory(
+  filter: CategoryQueryFilter
+): Promise<CategoryQueryPage> {
   try {
     return await httpService.get(`${KEY}/category`, filter)
   } catch (err) {

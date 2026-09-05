@@ -70,7 +70,7 @@ import { itemSearchCategoriesNs } from './locals'
 import { scrollSheetToTop } from './search-sheet-scroll'
 
 interface ItemSearchProps {
-  onAddToMealClick?: (item: MealItem) => void
+  onAddToMealClick?: (item: MealItem, shouldCreateItem: boolean) => void
 }
 
 type UiSearchSource = 'search' | 'meal'

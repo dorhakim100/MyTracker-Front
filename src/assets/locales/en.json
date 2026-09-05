@@ -124,6 +124,10 @@
     "stepsGoalSaved": "Steps goal saved.",
     "stepsGoalSaveError": "Could not save steps goal."
   },
+  "customLog": {
+    "createNewItem": "Create new item",
+    "uploadImage": "Upload image"
+  },
   "meals": {
     "breakfast": "Breakfast",
     "lunch": "Lunch",

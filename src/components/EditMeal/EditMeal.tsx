@@ -278,7 +278,20 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
     setIsOpenModal(false)
   }
 
-  async function onAddToMealClick(item: MealItem) {
+  async function onAddToMealClick(item: MealItem, shouldCreateItem: boolean) {
+    if (shouldCreateItem) {
+      try {
+        await itemService.create({
+          name: itemNameService.toLocalizedName(item.name),
+          macros: item.macros,
+          image: item.image,
+          categories: item.categories,
+          type: 'custom',
+        })
+      } catch (err) {
+        console.log('err', err)
+      }
+    }
     try {
       const isImageNative = await itemService.isImageNative(item.searchId || '')
       if (!isImageNative && item.source !== searchTypes.meal) {
