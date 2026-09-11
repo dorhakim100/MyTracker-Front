@@ -16,7 +16,6 @@ import searchingAnimation from '../../../public/searching.json'
 import searchingAnimationDark from '../../../public/searching-dark.json'
 import scanAnimation from '../../../public/scanning.gif'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
-import AddIcon from '@mui/icons-material/Add'
 import { MealItem } from '../../types/mealItem/MealItem'
 import { Refresh } from '@mui/icons-material'
 
@@ -164,13 +163,6 @@ export function BarcodeScanner({
     if (!isCustomLog) return
     void stopScanner()
   }, [isCustomLog, stopScanner])
-
-  const onCustomLog = () => {
-    setEditMealItem(null)
-    setItem(null)
-    setIsScannerLocked(true)
-    setIsCustomLog(true)
-  }
 
   const onCloseScanner = async () => {
     setEditMealItem(null)

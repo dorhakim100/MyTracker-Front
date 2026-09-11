@@ -10,12 +10,7 @@ import { MacrosDonut } from '../MacrosDonut/MacrosDonut'
 import { FavoriteButton } from '../FavoriteButton/FavoriteButton'
 import { CustomSelect } from '../../CustomMui/CustomSelect/CustomSelect'
 import { CustomInput } from '../../CustomMui/CustomInput/CustomInput'
-import {
-  generateBooleanOptionsTranslated,
-  getArrayOfNumbers,
-  getCurrMeal,
-  getNextFromBoolean,
-} from '../../services/util.service'
+import { getArrayOfNumbers, getCurrMeal } from '../../services/util.service'
 import { searchService } from '../../services/search/search-service'
 import Typography from '@mui/material/Typography'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
