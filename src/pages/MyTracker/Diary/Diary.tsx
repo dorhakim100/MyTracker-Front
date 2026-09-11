@@ -62,8 +62,18 @@ export function Diary() {
   }, [selectedDayDiary])
 
   const totalCalories = useMemo(() => {
-    return totalBreakfastCalories + totalLunchCalories + totalDinnerCalories + totalSnacksCalories
-  }, [totalBreakfastCalories, totalLunchCalories, totalDinnerCalories, totalSnacksCalories])
+    return (
+      totalBreakfastCalories +
+      totalLunchCalories +
+      totalDinnerCalories +
+      totalSnacksCalories
+    )
+  }, [
+    totalBreakfastCalories,
+    totalLunchCalories,
+    totalDinnerCalories,
+    totalSnacksCalories,
+  ])
 
   useEffect(() => {
     let ignore = false
@@ -196,6 +206,7 @@ export function Diary() {
                 selectedDayDiary?.logs?.filter(
                   (log) => log.meal.toLocaleLowerCase() === currMeal
                 ) || []
+
               return (
                 <MealCard
                   key={meal.label}

@@ -1,0 +1,6 @@
+{
+  "clearMeal": "Clear meal",
+  "clearMealConfirm": "Clear all items from this meal?",
+  "mealCleared": "Meal cleared",
+  "mealClearFailed": "Could not clear meal"
+}

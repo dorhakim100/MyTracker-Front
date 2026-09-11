@@ -5,11 +5,7 @@ import LightModeIcon from '@mui/icons-material/LightMode'
 import BedtimeIcon from '@mui/icons-material/Bedtime'
 import IcecreamIcon from '@mui/icons-material/Icecream'
 
-export type MealPeriodKey =
-  | 'breakfast'
-  | 'lunch'
-  | 'dinner'
-  | 'snacks'
+export type MealPeriodKey = 'breakfast' | 'lunch' | 'dinner' | 'snacks'
 
 interface MealPeriodConfig {
   period: MealPeriodKey

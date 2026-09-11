@@ -1,6 +1,6 @@
 {
   "viewBy": "View",
-  "per100g": "Per 100g",
+  "per100g": "Per {{grams}}g",
   "dayProgress": "Day progress",
   "thisLog": "This log",
   "nestedItems": "In this meal",

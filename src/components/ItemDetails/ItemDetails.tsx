@@ -809,6 +809,10 @@ export function ItemDetails({
   const displayCategories = isCustom
     ? customCategories
     : getItemCategories(item)
+  const servingGrams =
+    (editItem.servingSize || 100) * (editItem.numberOfServings || 1)
+  const perGramsLabel = tDetails('per100g', { grams: servingGrams })
+
   const per100gMacros = useMemo(() => {
     return isCustom
       ? editItem.totalMacros
@@ -834,15 +838,6 @@ export function ItemDetails({
     } finally {
       setIsUploadingImage(false)
       if (imageInputRef.current) imageInputRef.current.value = ''
-    }
-  }
-
-  function getPer100gDonutProps() {
-    return {
-      protein: per100gMacros?.protein,
-      carbs: per100gMacros?.carbs,
-      fats: per100gMacros?.fat,
-      calories: per100gMacros?.calories,
     }
   }
 
@@ -885,27 +880,27 @@ export function ItemDetails({
 
   function getPrimaryDonutProps() {
     if (!canShowDayProgress) return getLogDonutProps()
-    if (macrosView === 'per100g') return getPer100gDonutProps()
+    if (macrosView === 'per100g') return getLogDonutProps()
     return getDayProgressDonutProps()
   }
 
   function getSecondaryDonutProps() {
-    if (!canShowDayProgress) return getPer100gDonutProps()
+    if (!canShowDayProgress) return getLogDonutProps()
     if (macrosView === 'per100g') return getDayProgressDonutProps()
-    return getPer100gDonutProps()
+    return getLogDonutProps()
   }
 
   const primaryLabel = !canShowDayProgress
     ? tDetails('thisLog')
     : macrosView === 'per100g'
-    ? tDetails('per100g')
+    ? perGramsLabel
     : tDetails('dayProgress')
 
   const secondaryLabel = !canShowDayProgress
-    ? tDetails('per100g')
+    ? perGramsLabel
     : macrosView === 'per100g'
     ? tDetails('dayProgress')
-    : tDetails('per100g')
+    : perGramsLabel
 
   const logGrams = {
     protein: editItem.totalMacros?.protein || 0,

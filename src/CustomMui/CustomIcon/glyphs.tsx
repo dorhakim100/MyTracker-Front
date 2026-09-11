@@ -10,6 +10,10 @@ import PersonAddRoundedIcon from '@mui/icons-material/PersonAddRounded'
 import AutoStoriesRoundedIcon from '@mui/icons-material/AutoStoriesRounded'
 import MonitorHeartRoundedIcon from '@mui/icons-material/MonitorHeartRounded'
 import LocalFireDepartmentRoundedIcon from '@mui/icons-material/LocalFireDepartmentRounded'
+import WbTwilightIcon from '@mui/icons-material/WbTwilight'
+import LightModeIcon from '@mui/icons-material/LightMode'
+import BedtimeIcon from '@mui/icons-material/Bedtime'
+import IcecreamIcon from '@mui/icons-material/Icecream'
 
 export type GlyphSize = 's' | 'm' | 'l' | 'xl'
 
@@ -38,6 +42,10 @@ function GlyphIcon({ size, sx, ...props }: GlyphProps) {
 }
 
 export type CustomIconName =
+  | 'breakfast'
+  | 'lunch'
+  | 'dinner'
+  | 'snacks'
   | 'workout'
   | 'meals'
   | 'goals'
@@ -247,23 +255,29 @@ export function BurnedCaloriesGlyph({ size, sx, ...props }: GlyphProps) {
   )
 }
 
-export const customIconGlyphs: Record<CustomIconName, ComponentType<GlyphProps>> =
-  {
-    workout: FitnessCenterRoundedIcon,
-    meals: RestaurantMenuRoundedIcon,
-    goals: GoalsGlyph,
-    favorites: FavoriteRoundedIcon,
-    bmr: CalculateRoundedIcon,
-    health: MonitorHeartRoundedIcon,
-    preferences: SettingsRoundedIcon,
-    trainees: PersonAddRoundedIcon,
-    instructions: AutoStoriesRoundedIcon,
-    macros: MacrosGlyph,
-    scale: ScaleGlyph,
-    steps: StepsGlyph,
-    burnedCalories: BurnedCaloriesGlyph,
-    distance: DistanceGlyph,
-    floors: FloorsGlyph,
-    calories: CaloriesGlyph,
-    distribution: DistributionGlyph,
-  }
+export const customIconGlyphs: Record<
+  CustomIconName,
+  ComponentType<GlyphProps>
+> = {
+  breakfast: WbTwilightIcon,
+  lunch: LightModeIcon,
+  dinner: BedtimeIcon,
+  snacks: IcecreamIcon,
+  workout: FitnessCenterRoundedIcon,
+  meals: RestaurantMenuRoundedIcon,
+  goals: GoalsGlyph,
+  favorites: FavoriteRoundedIcon,
+  bmr: CalculateRoundedIcon,
+  health: MonitorHeartRoundedIcon,
+  preferences: SettingsRoundedIcon,
+  trainees: PersonAddRoundedIcon,
+  instructions: AutoStoriesRoundedIcon,
+  macros: MacrosGlyph,
+  scale: ScaleGlyph,
+  steps: StepsGlyph,
+  burnedCalories: BurnedCaloriesGlyph,
+  distance: DistanceGlyph,
+  floors: FloorsGlyph,
+  calories: CaloriesGlyph,
+  distribution: DistributionGlyph,
+}

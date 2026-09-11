@@ -22,18 +22,35 @@
 
   .header {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr auto;
     // gap: 16px;
     text-align: start;
     align-items: center;
+    padding-bottom: 0.3rem;
 
     .label-container {
-      display: flex;
-      gap: 0.5rem;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      grid-template-rows: auto auto;
+      gap: 0px 0.5rem;
+      align-items: center;
+      justify-content: start;
+
+      .meal-icon {
+        // margin-bottom: 4px;
+        grid-row: 1 / -1;
+        align-self: start;
+      }
+
+      .period {
+        grid-column: 2 / -1;
+        grid-row: 2 / -1;
+        opacity: 0.6;
+      }
     }
 
-    .period {
-      text-align: end;
+    .header-actions {
+      align-self: start;
     }
   }
 
@@ -53,6 +70,30 @@
     .custom-list {
       overflow-y: auto;
       margin-bottom: 1rem;
+    }
+  }
+}
+
+.clear-meal-dialog {
+  .modal-clear-meal-container {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .save-cancel-container {
+    margin-top: 0.25rem;
+
+    .save-button {
+      --accent: #{$error-color};
+      --accent-ink: #{$error-color};
+      color: var(--accent) !important;
+      @include tinted-fill(var(--chrome-tint-primary));
+      @include tinted-ring(var(--chrome-ring));
+
+      html.dark-mode & {
+        --accent: #{$error-color-dark-mode};
+        --accent-ink: #{$error-color-dark-mode};
+      }
     }
   }
 }

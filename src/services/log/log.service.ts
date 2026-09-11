@@ -10,6 +10,7 @@ export const logService = {
   getById,
   save,
   remove,
+  clearMeal,
   getEmptyLog,
   getDefaultFilter,
   // getMaxPage,
@@ -47,6 +48,19 @@ async function remove(logId: string) {
     throw err
   }
 }
+
+async function clearMeal(filter: {
+  userId: string
+  meal: string
+  date: string
+}) {
+  try {
+    return await httpService.delete(`${KEY}/meal`, filter)
+  } catch (err) {
+    throw err
+  }
+}
+
 async function save(log: Log) {
   try {
     let savedLog

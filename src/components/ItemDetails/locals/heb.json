@@ -1,6 +1,6 @@
 {
   "viewBy": "תצוגה",
-  "per100g": "ל־100 גרם",
+  "per100g": "ל־{{grams}} גרם",
   "dayProgress": "התקדמות היום",
   "thisLog": "הרשומה הזו",
   "nestedItems": "במנה הזו",
