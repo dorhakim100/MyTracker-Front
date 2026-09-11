@@ -30,6 +30,7 @@ import QrCode2Icon from '@mui/icons-material/QrCode2'
 import { BarcodeScanner } from '../BarcodeScanner/BarcodeScanner'
 import { itemService } from '../../services/item/item.service'
 import { itemNameService } from '../../services/item/item-name.service'
+import { getItemUnit } from '../../services/item/item-unit.service'
 
 const stages = ['name', 'items']
 
@@ -203,7 +204,9 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
               renderSecondaryText={(item) => {
                 if (item.source === searchTypes.custom)
                   return `${item.macros?.calories} kcal`
-                return `${+item.servingSize * +item.numberOfServings}gr`
+                return `${
+                  +item.servingSize * +item.numberOfServings
+                }${getItemUnit(item)}`
               }}
               getKey={(item) =>
                 item._id ||
@@ -287,6 +290,8 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
           image: item.image,
           categories: item.categories,
           type: 'custom',
+          unit: getItemUnit(item),
+          searchId: item.searchId,
         })
       } catch (err) {
         console.log('err', err)

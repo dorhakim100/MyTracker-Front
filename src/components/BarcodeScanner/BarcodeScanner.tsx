@@ -23,11 +23,13 @@ import { Refresh } from '@mui/icons-material'
 interface BarcodeScannerProps {
   onClose: () => void
   onAddToMealClick?: (item: MealItem, shouldCreateItem: boolean) => void
+  onCaptureCode?: (code: string) => void
 }
 
 export function BarcodeScanner({
   onClose,
   onAddToMealClick,
+  onCaptureCode,
 }: BarcodeScannerProps) {
   const { t } = useTranslation()
   const prefs = useSelector(
@@ -46,7 +48,9 @@ export function BarcodeScanner({
   const [scanAttempt, setScanAttempt] = useState(0)
   const getScanErrorMessage = useCallback(
     (extra?: string) =>
-      extra ? `${t('messages.error.scan')} (${extra})` : t('messages.error.scan'),
+      extra
+        ? `${t('messages.error.scan')} (${extra})`
+        : t('messages.error.scan'),
     [t]
   )
 
@@ -70,24 +74,44 @@ export function BarcodeScanner({
         if (isItemDetected.current) return
         isItemDetected.current = true
         setIsScannerLocked(true)
-        const res = await searchService.getProductById(code)
-        if (!res) {
-          showErrorMsg(t('messages.error.noResults'))
-          setIsTryAgain(true)
+
+        if (onCaptureCode) {
+          onCaptureCode(String(code))
+          await stopScanner()
           return
         }
+
+        let res: Item | null = null
+        try {
+          res = (await searchService.getProductById(code)) as Item | null
+        } catch {
+          res = null
+        }
+
         setEditMealItem(null)
-        setItem(res as Item)
+        if (res) {
+          setItem(res)
+          setIsItemFound(true)
+          await stopScanner()
+          return
+        }
+
+        setItem({
+          name: { eng: '', he: '', default: '' },
+          macros: { calories: 0, protein: 0, carbs: 0, fat: 0 },
+          type: 'custom',
+          searchId: String(code),
+          unit: 'g',
+        } as Item)
+        setIsCustomLog(true)
         setIsItemFound(true)
         await stopScanner()
-
-        // onClose()
       } catch {
         showErrorMsg(t('messages.error.scan'))
         setIsTryAgain(true)
       }
     },
-    [stopScanner, t]
+    [onCaptureCode, stopScanner, t]
   )
 
   useEffect(() => {
@@ -103,9 +127,9 @@ export function BarcodeScanner({
             onDetected(code)
           },
           onError: (message) => {
-            if(message === 'scan canceled.') {
+            if (message === 'scan canceled.') {
               onClose()
-              return 
+              return
             }
             showErrorMsg(getScanErrorMessage(message))
             setIsScannerLocked(true)
@@ -158,31 +182,32 @@ export function BarcodeScanner({
   return (
     <>
       {!isScannerLocked && (
-        <div className="barcode-scanner-container">
-          <div className={`barcode-scanner ${isNativePlatform ? 'native' : ''}`}>
+        <div className='barcode-scanner-container'>
+          <div
+            className={`barcode-scanner ${isNativePlatform ? 'native' : ''}`}
+          >
             {isNativePlatform ? (
-              <div className="native-preview" />
+              <div className='native-preview' />
             ) : (
               <video
                 ref={videoRef}
                 autoPlay
                 playsInline
                 muted
-                className="preview"
+                className='preview'
               />
             )}
             <div
-              className={`animation-container ${isNativePlatform ? 'native' : ''}`}
+              className={`animation-container ${
+                isNativePlatform ? 'native' : ''
+              }`}
             >
-              <img src={scanAnimation} alt="scanner" />
+              <img
+                src={scanAnimation}
+                alt='scanner'
+              />
             </div>
           </div>
-          <CustomButton
-            text={t('meals.customLog')}
-            onClick={onCustomLog}
-            icon={<AddIcon />}
-            fullWidth
-          />
         </div>
       )}
       {isScannerLocked && !isItemFound && isTryAgain && !isCustomLog && (
@@ -191,11 +216,11 @@ export function BarcodeScanner({
           onClick={onTryAgain}
           icon={<Refresh />}
           fullWidth
-          className="try-again-button"
+          className='try-again-button'
         />
       )}
       {isScannerLocked && !isTryAgain && !isItemFound && !isCustomLog && (
-        <div className="searching-animation-container">
+        <div className='searching-animation-container'>
           <Lottie
             animationData={
               prefs.isDarkMode ? searchingAnimationDark : searchingAnimation
@@ -216,7 +241,7 @@ export function BarcodeScanner({
           />
         }
         title={isCustomLog ? t('meals.customLog') : t('meals.barcodeScanned')}
-        type="full"
+        type='full'
       />
     </>
   )

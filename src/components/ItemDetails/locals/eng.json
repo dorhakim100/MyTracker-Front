@@ -1,10 +1,19 @@
 {
   "viewBy": "View",
-  "per100g": "Per {{grams}}g",
+  "per100g": "Per {{amount}}{{unit}}",
   "dayProgress": "Day progress",
   "thisLog": "This log",
   "nestedItems": "In this meal",
   "uploadImage": "Change photo",
   "addToMeal": "Add to meal",
-  "updateMeal": "Update meal"
+  "updateMeal": "Update meal",
+  "saveItem": "Save item",
+  "addToCollection": "Add to collection",
+  "itemSaved": "Item saved",
+  "itemSaveFailed": "Could not save item",
+  "duplicateSearchId": "That barcode is already used",
+  "editMeal": "Edit meal",
+  "unit": "Unit",
+  "searchId": "Barcode",
+  "scanSearchId": "Scan barcode"
 }

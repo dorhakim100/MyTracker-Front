@@ -1,5 +1,4 @@
 import { httpService } from '../http.service'
-import { makeId } from '../util.service'
 
 import { Item } from '../../types/item/Item'
 import { ItemFilter } from '../../types/itemFilter/ItemFilter'
@@ -187,7 +186,6 @@ async function bumpPopularity(searchId: string) {
 
 function getEmptyItem() {
   return {
-    _id: makeId(),
     name: { eng: '', he: '', default: '' },
     image: '',
     macros: { calories: 0, protein: 0, carbs: 0, fat: 0 },

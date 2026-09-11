@@ -1,6 +1,7 @@
 import { Macros } from '../macros/Macros'
 import { MealItem } from '../mealItem/MealItem'
 import { ItemName } from './LocalizedName'
+import { ItemUnit } from './ItemUnit'
 
 export interface Item {
   _id?: string
@@ -15,4 +16,5 @@ export interface Item {
   searchTerms?: string[]
   categories?: string[]
   createdBy?: string
+  unit?: ItemUnit
 }

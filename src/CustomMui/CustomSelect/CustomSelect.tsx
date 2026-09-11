@@ -18,6 +18,7 @@ interface CustomSelectProps {
   imgs?: { value: string; src?: string; icon?: React.ReactNode }[]
   tooltipTitle?: string
   valueLabels?: Record<string, string>
+  width?: number
 }
 
 export function CustomSelect({
@@ -30,6 +31,7 @@ export function CustomSelect({
   imgs,
   tooltipTitle,
   valueLabels,
+  width,
 }: CustomSelectProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -81,7 +83,7 @@ export function CustomSelect({
       disableFocusListener={isDashboard && tooltipTitle ? false : true}
     >
       <FormControl
-        sx={{ m: 1, minWidth: 140 }}
+        sx={{ m: 1, minWidth: width ?? 140, width }}
         size='small'
         className={`custom-select ${className} ${
           prefs.isDarkMode ? 'dark-mode' : ''

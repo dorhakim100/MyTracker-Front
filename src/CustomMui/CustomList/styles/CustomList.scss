@@ -11,6 +11,10 @@
     gap: 1em;
     text-align: start;
 
+    .MuiListItemText-root {
+      min-width: 0;
+    }
+
     .left-content {
       position: relative;
 

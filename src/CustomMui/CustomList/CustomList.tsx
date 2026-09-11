@@ -25,10 +25,35 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { SkeletonList } from '../../components/SkeletonList/SkeletonList'
 import { AnimatedWrapper } from '../../components/AnimatedWrapper/AnimatedWrapper'
+import { MarqueeText } from '../../components/MarqueeText/MarqueeText'
 // import CircularProgress from '@mui/material/CircularProgress'
 import { useDragHaptics } from '../../hooks/useDragHaptics'
 
 const ITEM_HEIGHT = 65
+
+function getListText(content: React.ReactNode): string | null {
+  if (typeof content === 'string' || typeof content === 'number') {
+    return String(content)
+  }
+  if (Array.isArray(content)) {
+    const parts = content.map(getListText)
+    if (parts.includes(null)) return null
+    return parts.join('')
+  }
+  if (React.isValidElement(content)) {
+    return getListText(
+      (content.props as { children?: React.ReactNode }).children
+    )
+  }
+  return null
+}
+
+function asListMarquee(content: React.ReactNode) {
+  if (content == null || typeof content === 'boolean') return undefined
+  const text = getListText(content)
+  if (text !== null) return <MarqueeText>{text}</MarqueeText>
+  return content
+}
 
 export interface CustomListProps<T> {
   items: T[]
@@ -243,10 +268,12 @@ CustomListProps<T>) {
           <div className='left-content'>{renderLeft(item)}</div>
         ) : null}
         <ListItemText
-          primary={renderPrimaryText ? renderPrimaryText(item) : undefined}
-          secondary={
+          primary={asListMarquee(
+            renderPrimaryText ? renderPrimaryText(item) : undefined
+          )}
+          secondary={asListMarquee(
             renderSecondaryText ? renderSecondaryText(item) : undefined
-          }
+          )}
         />
         {renderRight ? (
           <div

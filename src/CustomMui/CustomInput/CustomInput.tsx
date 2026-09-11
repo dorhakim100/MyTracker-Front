@@ -1,6 +1,6 @@
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
-import type { ReactNode } from 'react'
+import type { HTMLInputTypeAttribute, ReactNode } from 'react'
 import { useRef } from 'react'
 import { IconButton, Tooltip } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
@@ -16,7 +16,8 @@ interface CustomInputProps {
   startIconFn?: () => ReactNode
   endIconFn?: () => ReactNode
   autoFocus?: boolean
-  size?: 'small' | 'medium'
+  size?: 's' | 'm'
+  type?: HTMLInputTypeAttribute
   className?: string
   isRemoveIcon?: boolean
   onBlur?: () => void
@@ -29,7 +30,8 @@ export function CustomInput({
   startIconFn,
   endIconFn,
   // autoFocus = false,
-  size = 'medium',
+  size = 'm',
+  type = 'text',
   className,
   isRemoveIcon,
   onBlur,
@@ -43,14 +45,15 @@ export function CustomInput({
     <TextField
       onBlur={onBlur}
       fullWidth
-      size={size}
+      size={size === 's' ? 'small' : 'medium'}
+      type={type}
       ref={inputRef}
       // autoFocus={autoFocus}
       autoFocus={false}
       placeholder={placeholder}
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className={`custom-input ${className} ${
+      className={`custom-input size-${size} ${className} ${
         prefs.isDarkMode ? 'dark-mode' : ''
       }`}
       InputProps={{

@@ -65,7 +65,7 @@ export function FavoriteItemsCard() {
 
   if (!favoriteItems.length) {
     return (
-      <div className="no-results-container">
+      <div className='no-results-container'>
         <span>{t('meals.noFavoriteItems')}</span>
       </div>
     )
@@ -83,17 +83,20 @@ export function FavoriteItemsCard() {
           </MarqueeText>
         )}
         renderLeft={(item) => (
-          <div className="left-content macros-image-container">
+          <div className='left-content macros-image-container'>
             <MacrosDonut
               protein={item.macros?.protein}
               carbs={item.macros?.carbs}
               fats={item.macros?.fat}
             />
-            <ListItemIcon className="item-image-container">
+            <ListItemIcon className='item-image-container'>
               <img
                 src={item.image}
-                alt={itemNameService.getItemDisplayName(item.name, i18n.language)}
-                className="item-image"
+                alt={itemNameService.getItemDisplayName(
+                  item.name,
+                  i18n.language
+                )}
+                className='item-image'
               />
             </ListItemIcon>
           </div>
@@ -117,7 +120,7 @@ export function FavoriteItemsCard() {
         onClose={onCloseItemDetails}
         component={<ItemDetails />}
         title={t('meals.item')}
-        type="full"
+        type='full'
       />
     </>
   )

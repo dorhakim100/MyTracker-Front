@@ -26,4 +26,16 @@
       border-color: var(--accent) !important;
     }
   }
+
+  &.size-s {
+    .MuiOutlinedInput-root {
+      height: 37.7px;
+
+      input {
+        height: 37.7px;
+        padding-block: 0;
+        box-sizing: border-box;
+      }
+    }
+  }
 }

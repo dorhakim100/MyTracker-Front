@@ -1,5 +1,4 @@
 // import { storageService } from '../async-storage.service'
-import { makeId } from '../util.service'
 import { indexedDbService } from '../indexeddb.service'
 
 import { ItemFilter } from '../../types/itemFilter/ItemFilter'
@@ -65,7 +64,6 @@ function isItem(value: Item | Partial<Item> | null | undefined): value is Item {
 
 function getEmptyItem(): Item {
   return {
-    _id: makeId(),
     name: { eng: '', he: '', default: '' },
     searchId: '',
     image: '',

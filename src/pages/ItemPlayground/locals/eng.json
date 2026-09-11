@@ -1,9 +1,14 @@
 {
   "title": "Item categories playground",
   "search": "Search items",
-  "load": "Load",
+  "category": "Category",
+  "all": "All items",
+  "uncategorized": "Uncategorized",
+  "load": "Reload all",
   "save": "Save categories",
   "saved": "Saved",
+  "loaded": "Loaded {{count}} items",
+  "showing": "Showing {{count}} of {{total}}",
   "loadError": "Could not load playground items",
   "saveError": "Could not save item"
 }

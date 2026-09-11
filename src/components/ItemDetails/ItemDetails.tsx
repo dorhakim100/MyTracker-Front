@@ -44,7 +44,13 @@ import {
   handleFavorite,
   optimisticUpdateUser,
   setSelectedDiaryDay,
+  updateUser,
 } from '../../store/actions/user.actions'
+import { EditMeal } from '../EditMeal/EditMeal'
+import { mealService } from '../../services/meal/meal.service'
+import { BarcodeScanner } from '../BarcodeScanner/BarcodeScanner'
+import QrCode2Icon from '@mui/icons-material/QrCode2'
+import { ItemUnit } from '../../types/item/ItemUnit'
 import { dayService } from '../../services/day/day.service'
 
 import { LoggedToday } from '../../types/loggedToday/LoggedToday'
@@ -52,6 +58,7 @@ import { imageService } from '../../services/image/image.service'
 import { uploadService } from '../../services/upload.service'
 import {
   loadItems,
+  setItem,
   setSelectedMeal,
   setEditMealItem,
 } from '../../store/actions/item.actions'
@@ -80,6 +87,9 @@ import { searchUrls } from '../../assets/config/search.urls'
 import MealImage from '../../../public/meal-upload.png'
 import { itemService } from '../../services/item/item.service'
 import { ItemName, LocalizedName } from '../../types/item/LocalizedName'
+import { getItemUnit, getMealUnit } from '../../services/item/item-unit.service'
+import CloseIcon from '@mui/icons-material/Close'
+import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd'
 interface ItemDetailsProps {
   onAddToMealClick?: (item: MealItem, shouldCreateItem: boolean) => void
   noEdit?: boolean
@@ -87,6 +97,7 @@ interface ItemDetailsProps {
   updateMenu?: (newMenu: Menu) => void
   editMenu?: Menu
   shouldDefaultItemMacros?: boolean
+  previewItem?: Item | Meal | Log | MealItem | null
 }
 
 interface EditOption {
@@ -132,6 +143,7 @@ export function ItemDetails({
   updateMenu,
   editMenu,
   shouldDefaultItemMacros = false,
+  previewItem = null,
 }: ItemDetailsProps) {
   const { t, i18n } = useTranslation()
   const { t: tDetails } = useTranslation(itemDetailsNs)
@@ -159,8 +171,8 @@ export function ItemDetails({
   )
 
   const item: Item | Meal | Log = useMemo(
-    () => (editMealItem ? editMealItem : searchedItem),
-    [editMealItem, searchedItem]
+    () => previewItem || (editMealItem ? editMealItem : searchedItem),
+    [previewItem, editMealItem, searchedItem]
   )
 
   const stringifiedItem = useMemo(() => {
@@ -168,6 +180,11 @@ export function ItemDetails({
   }, [item])
 
   const isMeal = _hasItems(item)
+
+  const displayUnit = isMeal
+    ? getMealUnit((item as Item).items)
+    : getItemUnit(item)
+  const unitExtra = displayUnit === 'ml' ? t('macros.ml') : t('macros.gram')
 
   const isCustom =
     isCustomLog ||
@@ -211,6 +228,17 @@ export function ItemDetails({
   )
   const [isUploadingImage, setIsUploadingImage] = useState(false)
   const imageInputRef = useRef<HTMLInputElement>(null)
+  const [customSearchId, setCustomSearchId] = useState(() =>
+    String((item as Item).searchId || '')
+  )
+  const [customUnit, setCustomUnit] = useState<ItemUnit>(() =>
+    getItemUnit(item)
+  )
+  const [nestedPreview, setNestedPreview] = useState<MealItem | null>(null)
+  const [originalItem, setOriginalItem] = useState<Item | null>(null)
+  const [isEditMealOpen, setIsEditMealOpen] = useState(false)
+  const [isScanSearchId, setIsScanSearchId] = useState(false)
+  const [isSavingItem, setIsSavingItem] = useState(false)
 
   const mealValueLabels = useMemo(
     () => ({
@@ -276,7 +304,10 @@ export function ItemDetails({
             label: t('meals.servingSize'),
             key: 'servingSize',
             values: [1, 25, 30, 50, 100, 150],
-            extra: t('macros.gram'),
+            extra:
+              (isCustom ? customUnit : displayUnit) === 'ml'
+                ? t('macros.ml')
+                : t('macros.gram'),
             type: 'select',
           },
           getNumberOfServingsInput(t),
@@ -314,7 +345,40 @@ export function ItemDetails({
     })
     setCustomImage(item?.image)
     setCustomCategories(getItemCategories(item))
+    setCustomSearchId(String((item as Item).searchId || ''))
+    setCustomUnit(getItemUnit(item))
   }, [stringifiedItem, isCustomLog])
+
+  useEffect(() => {
+    if (!previewItem) {
+      setOriginalItem(null)
+      return
+    }
+
+    const searchId = String((previewItem as Item).searchId || '')
+    if (!searchId) {
+      setOriginalItem(null)
+      return
+    }
+
+    setOriginalItem(null)
+    let cancelled = false
+
+    async function loadOriginalItem() {
+      try {
+        const fetched = await itemService.getBySearchId(searchId)
+        if (!cancelled) setOriginalItem(fetched || null)
+      } catch {
+        if (!cancelled) setOriginalItem(null)
+      }
+    }
+
+    loadOriginalItem()
+    return () => {
+      cancelled = true
+    }
+  }, [previewItem])
+
   const closeClock = () => {
     setClockOpen(false)
   }
@@ -475,18 +539,42 @@ export function ItemDetails({
 
       if (shouldCreateItem) {
         try {
+          const grams =
+            (editItem.servingSize || 100) * (editItem.numberOfServings || 1) ||
+            100
+          const searchId = customSearchId.trim()
+          if (searchId) {
+            try {
+              const existing = await itemService.getBySearchId(searchId)
+              if (existing && existing._id !== item._id) {
+                showErrorMsg(tDetails('duplicateSearchId'))
+                return
+              }
+            } catch {
+              // unused searchId is fine
+            }
+          }
           await itemService.create({
             name: { default: editItem.name || '' } as ItemName,
-            macros: editItem.totalMacros,
+            macros: {
+              calories: Math.round(
+                (editItem.totalMacros.calories / grams) * 100
+              ),
+              protein: Math.round((editItem.totalMacros.protein / grams) * 100),
+              carbs: Math.round((editItem.totalMacros.carbs / grams) * 100),
+              fat: Math.round((editItem.totalMacros.fat / grams) * 100),
+            },
             image: customImage,
             categories: customCategories,
             createdBy: user._id,
             type: 'custom',
+            unit: customUnit,
+            searchId: searchId || undefined,
           })
         } catch {}
       }
 
-      if (!isCustomLog && !item.searchId && _hasItems(item)) {
+      if (!isCustomLog && !(item as Item).searchId && _hasItems(item)) {
         const mealNumberOfServings = editItem.numberOfServings
 
         const logsToAdd = item.items
@@ -519,6 +607,7 @@ export function ItemDetails({
               source,
               mealId: item.mealId || undefined,
               createdBy: user._id,
+              unit: getItemUnit(item),
               name:
                 isCustomLog || item.source === searchTypes.custom || item.mealId
                   ? itemNameService.getItemDisplayName(item.name, i18n.language)
@@ -577,7 +666,9 @@ export function ItemDetails({
       delete itemToCache._id
 
       const newLog = {
-        itemId: isCustomLog ? '' : item.searchId,
+        itemId: isCustomLog
+          ? customSearchId.trim() || ''
+          : (item as Item).searchId,
         meal: editItem.meal,
         macros: editItem.totalMacros,
         time: Date.now(),
@@ -592,6 +683,7 @@ export function ItemDetails({
           : '',
         image: isCustom ? customImage : undefined,
         categories: isCustom ? customCategories : undefined,
+        unit: isCustom ? customUnit : getItemUnit(item),
       }
 
       setSelectedMeal(null)
@@ -714,11 +806,97 @@ export function ItemDetails({
     }
   }
 
+  const isOwnMeal = !!user?.meals?.some((meal) => meal._id === item._id)
+  const isDiaryLog = !!(item as Log).time
+  const canSaveCustomItem =
+    canEditCustomChrome && !isDiaryLog && !previewItem && !noEdit
+
+  async function onSaveCustomItem() {
+    if (!user) return
+    setIsSavingItem(true)
+    try {
+      const searchId = customSearchId.trim()
+      if (searchId) {
+        try {
+          const existing = await itemService.getBySearchId(searchId)
+          if (existing && existing._id && existing._id !== item._id) {
+            showErrorMsg(tDetails('duplicateSearchId'))
+            return
+          }
+        } catch {
+          // unused searchId is fine
+        }
+      }
+
+      const grams =
+        (editItem.servingSize || 100) * (editItem.numberOfServings || 1) || 100
+      const itemToSave: Item = {
+        ...(item as Item),
+        name: itemNameService.toLocalizedName(editItem.name || ''),
+        macros: {
+          calories: Math.round((editItem.totalMacros.calories / grams) * 100),
+          protein: Math.round((editItem.totalMacros.protein / grams) * 100),
+          carbs: Math.round((editItem.totalMacros.carbs / grams) * 100),
+          fat: Math.round((editItem.totalMacros.fat / grams) * 100),
+        },
+        image: customImage,
+        categories: customCategories,
+        type: 'custom',
+        createdBy: user._id,
+        unit: customUnit,
+        searchId: searchId || undefined,
+      }
+
+      const isExistingItem = !!(item as Item).createdBy && !!(item as Item)._id
+      let saved
+      if (isExistingItem) {
+        saved = await itemService.save(itemToSave)
+      } else {
+        const itemWithoutId = { ...itemToSave }
+        delete itemWithoutId._id
+        saved = await itemService.create(itemWithoutId)
+      }
+      showSuccessMsg(tDetails('itemSaved'))
+      loadItems()
+      if (saved) {
+        setCustomSearchId(String(saved.searchId || searchId || ''))
+        setItem(saved)
+        setShouldCreateItem(false)
+      }
+    } catch {
+      showErrorMsg(tDetails('itemSaveFailed'))
+    } finally {
+      setIsSavingItem(false)
+    }
+  }
+
+  async function onSaveEditedMeal(editMeal: Meal) {
+    if (!user) return
+    try {
+      const savedMeal = await mealService.save(editMeal)
+      const hasMeal = user.meals?.some((meal) => meal._id === savedMeal._id)
+      const meals = hasMeal
+        ? user.meals.map((meal) =>
+            meal._id === savedMeal._id ? savedMeal : meal
+          )
+        : [...(user.meals || []), savedMeal]
+      const newUser = { ...user, meals }
+      optimisticUpdateUser(newUser)
+      await updateUser(newUser)
+      setIsEditMealOpen(false)
+      showSuccessMsg(t('messages.success.saveMeal'))
+    } catch {
+      showErrorMsg(t('messages.error.saveMeal'))
+    }
+  }
+
   const getOnClick = () => {
     if (onAddToMealClick) {
       return () => {
         const itemMealToEdit = {
-          searchId: isCustomLog ? '' : item.searchId,
+          searchId: isCustomLog
+            ? customSearchId.trim()
+            : (item as Item).searchId,
           name: isCustomLog
             ? editItem.name
             : itemNameService.getItemDisplayName(item.name, i18n.language) ||
@@ -729,6 +907,7 @@ export function ItemDetails({
           numberOfServings: editItem.numberOfServings,
           source: isCustomLog ? searchTypes.custom : null,
           categories: isCustom ? customCategories : getItemCategories(item),
+          unit: isCustom ? customUnit : getItemUnit(item),
         }
 
         if (!isCustomLog && (item as Item).type === 'meal') {
@@ -811,7 +990,10 @@ export function ItemDetails({
     : getItemCategories(item)
   const servingGrams =
     (editItem.servingSize || 100) * (editItem.numberOfServings || 1)
-  const perGramsLabel = tDetails('per100g', { grams: servingGrams })
+  const perGramsLabel = tDetails('per100g', {
+    amount: servingGrams,
+    unit: unitExtra,
+  })
 
   const per100gMacros = useMemo(() => {
     return isCustom
@@ -908,31 +1090,54 @@ export function ItemDetails({
     fats: editItem.totalMacros?.fat || 0,
   }
 
+  const originalMacros = previewItem ? originalItem?.macros : null
+  const macrosContainerDonut = originalMacros
+    ? {
+        protein: originalMacros.protein,
+        carbs: originalMacros.carbs,
+        fats: originalMacros.fat,
+        calories: originalMacros.calories,
+      }
+    : getSecondaryDonutProps()
+  const macrosContainerGrams = originalMacros
+    ? {
+        protein: originalMacros.protein || 0,
+        carbs: originalMacros.carbs || 0,
+        fats: originalMacros.fat || 0,
+      }
+    : logGrams
+  const macrosContainerLabel = originalMacros
+    ? tDetails('per100g', {
+        amount: 100,
+        unit:
+          getItemUnit(originalItem) === 'ml'
+            ? t('macros.ml')
+            : t('macros.gram'),
+      })
+    : secondaryLabel
+
   const heroName = itemNameService.getItemDisplayName(item?.name, i18n.language)
   const baselineKcal = Math.round(per100gMacros?.calories || 0)
 
+  const isFixedMenuLocked = !updateMenu && !!(item as Log).isFixedMenuLog
+
+  function shouldShowEditOption(option: EditOption) {
+    if (onAddToMealClick && option.key === 'meal') return false
+    if (option.key === 'servingSize') {
+      if (isMeal) return false
+      if ((item as Item).type === 'meal') return false
+      if ((item as MealItem).mealId) return false
+      if (isFixedMenuLocked) return false
+    }
+    if (isFixedMenuLocked && option.key === 'numberOfServings') return false
+    if (isFixedMenuLocked && option.key === 'meal') return false
+    if ((item as Log)?.time && option.key === 'custom-log-macros') return false
+    return true
+  }
+
   const renderEditOptions = (compact: boolean) =>
     !noEdit &&
-    editOptions.map((option) => {
-      if (onAddToMealClick && option.key === 'meal') return null
-
-      if (
-        (!item.searchId && _hasItems(item) && option.key === 'servingSize') ||
-        ((item as Item).type === 'meal' && option.key === 'servingSize') ||
-        ((item as MealItem).mealId && option.key === 'servingSize') ||
-        (!updateMenu &&
-          (item as Log).isFixedMenuLog &&
-          option.key === 'servingSize') ||
-        (!updateMenu &&
-          (item as Log).isFixedMenuLog &&
-          option.key === 'numberOfServings') ||
-        (!updateMenu && (item as Log).isFixedMenuLog && option.key === 'meal')
-      )
-        return null
-      console.log(editOptions)
-
-      if ((item as Log)?.time && option.key === 'custom-log-macros') return null
-
+    editOptions.filter(shouldShowEditOption).map((option) => {
       return (
         <div
           className={`select-container ${
@@ -1057,7 +1262,6 @@ export function ItemDetails({
                 <div
                   className='edit-custom-log-img-placeholder'
                   onClick={(event) => {
-                    if (item?.createdBy && item.image) return
                     event.stopPropagation()
                     imageInputRef.current?.click()
                   }}
@@ -1087,13 +1291,12 @@ export function ItemDetails({
                 />
               </div>
             )}
-            {canEditCustomChrome && !item?.createdBy && (
+            {canEditCustomChrome && (
               <>
                 <button
                   type='button'
                   className='hero-edit-photo'
                   onClick={(event) => {
-                    if (item?.createdBy && item.image) return
                     event.stopPropagation()
                     imageInputRef.current?.click()
                   }}
@@ -1118,21 +1321,23 @@ export function ItemDetails({
               {...getPrimaryDonutProps()}
             />
             <span className='macros-label'>{primaryLabel}</span>
-            <div className='switch-button-container'>
-              <CustomButton
-                onClick={() =>
-                  onMacrosViewChange(
-                    macrosView === 'per100g' ? 'dayProgress' : 'per100g'
-                  )
-                }
-                icon={<AutorenewIcon />}
-                isIcon={true}
-                size='small'
-                className={`switch-button ${prefs.favoriteColor} ${
-                  prefs.isDarkMode ? 'dark-mode' : ''
-                }`}
-              />
-            </div>
+            {!previewItem && (
+              <div className='switch-button-container'>
+                <CustomButton
+                  onClick={() =>
+                    onMacrosViewChange(
+                      macrosView === 'per100g' ? 'dayProgress' : 'per100g'
+                    )
+                  }
+                  icon={<AutorenewIcon />}
+                  isIcon={true}
+                  size='small'
+                  className={`switch-button ${prefs.favoriteColor} ${
+                    prefs.isDarkMode ? 'dark-mode' : ''
+                  }`}
+                />
+              </div>
+            )}
           </div>
           {/* <div className='hero-copy'>
             {isCustom ? (
@@ -1186,32 +1391,19 @@ export function ItemDetails({
           </div> */}
 
           <div className={`hero-copy ${canEditCustomChrome ? 'editing' : ''}`}>
-            {canEditCustomChrome && !item?.createdBy ? (
+            {canEditCustomChrome ? (
               <div className='title-editing-container'>
                 <CustomInput
                   value={editItem.name || ''}
                   onChange={(value) => onEditItemChange('name', value)}
                   placeholder={t('common.name')}
                   className={`${prefs.favoriteColor}`}
+                  endIconFn={() =>
+                    editItem.name && (
+                      <CloseIcon onClick={() => onEditItemChange('name', '')} />
+                    )
+                  }
                 />
-                {!editMealItem && (
-                  <CustomSelect
-                    label={t('customLog.createNewItem')}
-                    values={generateBooleanOptionsTranslated(i18n.language).map(
-                      (option) => option.label
-                    )}
-                    value={
-                      generateBooleanOptionsTranslated(i18n.language).find(
-                        (option) => option.value === shouldCreateItem
-                      )?.label || ''
-                    }
-                    onChange={(value) => {
-                      const next = getNextFromBoolean(i18n.language, value)
-                      setShouldCreateItem(next)
-                    }}
-                    className={`${prefs.favoriteColor}`}
-                  />
-                )}
               </div>
             ) : (
               <>
@@ -1224,7 +1416,9 @@ export function ItemDetails({
                 <div className='subtitle'>
                   {`${baselineKcal} ${t('macros.kcal')} ${t('meals.for')} ${
                     !_hasItems(item)
-                      ? t('meals.per100g')
+                      ? displayUnit === 'ml'
+                        ? t('meals.per100ml')
+                        : t('meals.per100g')
                       : t('meals.perServing')
                   }`}
                 </div>
@@ -1234,12 +1428,57 @@ export function ItemDetails({
             <ItemCategoryBadges
               categories={displayCategories}
               size='m'
-              editable={canEditCustomChrome && !item?.createdBy}
+              editable={canEditCustomChrome}
               onChange={setCustomCategories}
               className={`${prefs.favoriteColor} ${
-                canEditCustomChrome && !item?.createdBy ? 'editing' : ''
+                canEditCustomChrome ? 'editing' : ''
               }`}
             />
+            {canEditCustomChrome && (
+              <div className='custom-item-fields'>
+                <div className='values-container'>
+                  <CustomSelect
+                    label={tDetails('unit')}
+                    values={['g', 'ml']}
+                    value={customUnit}
+                    width={80}
+                    onChange={(value) =>
+                      setCustomUnit(value === 'ml' ? 'ml' : 'g')
+                    }
+                    className={`${prefs.favoriteColor}`}
+                  />
+                  <div className='search-id-row'>
+                    <CustomInput
+                      value={customSearchId}
+                      onChange={setCustomSearchId}
+                      placeholder={tDetails('searchId')}
+                      className={`${prefs.favoriteColor}`}
+                      endIconFn={() =>
+                        customSearchId && (
+                          <CloseIcon onClick={() => setCustomSearchId('')} />
+                        )
+                      }
+                      size='s'
+                      type='number'
+                    />
+                  </div>
+                  <CustomButton
+                    isIcon
+                    icon={<QrCode2Icon />}
+                    onClick={() => setIsScanSearchId(true)}
+                    ariaLabel={tDetails('scanSearchId')}
+                  />
+                </div>
+              </div>
+            )}
+            {isOwnMeal && !noEdit && !previewItem && (
+              <CustomButton
+                text={tDetails('editMeal')}
+                icon={<EditIcon />}
+                onClick={() => setIsEditMealOpen(true)}
+                className={`${prefs.favoriteColor}`}
+              />
+            )}
           </div>
         </div>
         {_hasItems(item) && (
@@ -1256,6 +1495,11 @@ export function ItemDetails({
                   key={
                     nested.searchId || nested._id || `${nested.name}-${index}`
                   }
+                  className='nested-item-row'
+                  onClick={() => {
+                    if (previewItem) return
+                    setNestedPreview(nested)
+                  }}
                 >
                   <img
                     src={nested.image || searchUrls.DEFAULT_IMAGE}
@@ -1267,12 +1511,12 @@ export function ItemDetails({
                     className='box-shadow white-outline nested-item-image'
                   />
                   <div className='text-container'>
-                    <span className='nested-item-name'>
+                    <MarqueeText className='nested-item-name'>
                       {itemNameService.getItemDisplayName(
                         nested.name,
                         i18n.language
                       )}
-                    </span>
+                    </MarqueeText>
                     <span className='nested-item-kcal'>
                       {Math.round(nested.macros?.calories || 0)}{' '}
                       {t('macros.kcal')}
@@ -1298,14 +1542,14 @@ export function ItemDetails({
           <div className='macros-small'>
             <MacrosDonut
               size={108}
-              {...getSecondaryDonutProps()}
+              {...macrosContainerDonut}
             />
-            <span className='macros-label'>{secondaryLabel}</span>
+            <span className='macros-label'>{macrosContainerLabel}</span>
           </div>
           <Macros
-            protein={logGrams.protein}
-            carbs={logGrams.carbs}
-            fats={logGrams.fats}
+            protein={macrosContainerGrams.protein}
+            carbs={macrosContainerGrams.carbs}
+            fats={macrosContainerGrams.fats}
           />
         </div>{' '}
         {!!dayProgressPreview?.beyondWarningKey && (
@@ -1321,7 +1565,7 @@ export function ItemDetails({
             <span>{t(`macros.${dayProgressPreview.beyondWarningKey}`)}</span>
           </div>
         )}
-        {noEdit ? (
+        {noEdit && !previewItem ? (
           <div className='edit'>
             <Macros
               protein={logGrams.protein}
@@ -1330,20 +1574,33 @@ export function ItemDetails({
             />
           </div>
         ) : (
-          <div className='item-details-dock'>
-            {renderEditOptions(true)}
-            <CustomFloatingButton
-              text={
-                editMealItem ? tDetails('updateMeal') : tDetails('addToMeal')
-              }
-              icon={editMealItem ? <CheckIcon /> : <AddIcon />}
-              size='medium'
-              className={`item-details-fab ${prefs.favoriteColor}`}
-              onClick={getOnClick()}
-            />
-          </div>
+          !previewItem && (
+            <div className='item-details-dock'>
+              {renderEditOptions(true)}
+              <CustomFloatingButton
+                text={
+                  editMealItem ? tDetails('updateMeal') : tDetails('addToMeal')
+                }
+                icon={editMealItem ? <CheckIcon /> : <AddIcon />}
+                size='medium'
+                className={`item-details-fab ${prefs.favoriteColor}`}
+                onClick={getOnClick()}
+              />
+            </div>
+          )
+        )}
+        {canSaveCustomItem && (
+          <CustomButton
+            text={tDetails('addToCollection')}
+            onClick={onSaveCustomItem}
+            disabled={isSavingItem}
+            fullWidth
+            icon={<PlaylistAddIcon />}
+            className={`${prefs.favoriteColor}`}
+          />
         )}
       </div>
+
       {displayImage && (
         <CustomAlertDialog
           open={isImageModalOpen}
@@ -1374,6 +1631,59 @@ export function ItemDetails({
           />
         </CustomAlertDialog>
       )}
+      <SlideDialog
+        open={!!nestedPreview}
+        onClose={() => setNestedPreview(null)}
+        component={
+          nestedPreview ? (
+            <ItemDetails
+              noEdit
+              previewItem={nestedPreview}
+              shouldDefaultItemMacros
+            />
+          ) : (
+            <></>
+          )
+        }
+        title={
+          nestedPreview
+            ? itemNameService.getItemDisplayName(
+                nestedPreview.name,
+                i18n.language
+              )
+            : ''
+        }
+        type='half'
+      />
+      <SlideDialog
+        open={isEditMealOpen}
+        onClose={() => setIsEditMealOpen(false)}
+        component={
+          <EditMeal
+            selectedMeal={
+              user?.meals?.find((meal) => meal._id === item._id) || null
+            }
+            saveMeal={onSaveEditedMeal}
+          />
+        }
+        title={tDetails('editMeal')}
+        type='full'
+      />
+      <SlideDialog
+        open={isScanSearchId}
+        onClose={() => setIsScanSearchId(false)}
+        component={
+          <BarcodeScanner
+            onClose={() => setIsScanSearchId(false)}
+            onCaptureCode={(code) => {
+              setCustomSearchId(String(code))
+              setIsScanSearchId(false)
+            }}
+          />
+        }
+        title={tDetails('scanSearchId')}
+        type='half'
+      />
     </>
   )
 }

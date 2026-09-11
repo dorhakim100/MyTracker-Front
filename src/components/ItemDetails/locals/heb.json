@@ -1,10 +1,19 @@
 {
   "viewBy": "תצוגה",
-  "per100g": "ל־{{grams}} גרם",
+  "per100g": "ל־{{amount}} {{unit}}",
   "dayProgress": "התקדמות היום",
   "thisLog": "הרשומה הזו",
   "nestedItems": "במנה הזו",
   "uploadImage": "החלפת תמונה",
   "addToMeal": "הוספה לארוחה",
-  "updateMeal": "עדכון ארוחה"
+  "updateMeal": "עדכון ארוחה",
+  "saveItem": "שמירת פריט",
+  "addToCollection": "הוספה למאגר",
+  "itemSaved": "הפריט נשמר",
+  "itemSaveFailed": "לא ניתן לשמור את הפריט",
+  "duplicateSearchId": "הברקוד הזה כבר בשימוש",
+  "editMeal": "עריכת מנה",
+  "unit": "יחידה",
+  "searchId": "ברקוד",
+  "scanSearchId": "סריקת ברקוד"
 }

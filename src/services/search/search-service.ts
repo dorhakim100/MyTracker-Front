@@ -21,6 +21,7 @@ import { itemService } from '../item/item.service'
 import { mealService } from '../meal/meal.service'
 import { itemNameService } from '../item/item-name.service'
 import { isBarcodeSearchId } from '../item/item-id.service'
+import { withClassifiedUnit } from '../item/item-unit.service'
 
 const {
   OPEN_FOOD_FACTS_API_URL,
@@ -478,7 +479,7 @@ async function searchOpenFoodFacts(query: string) {
             (await imageService.getSingleImage(translatedTxt)) || DEFAULT_IMAGE
         }
 
-        return {
+        return withClassifiedUnit({
           searchId: product.code,
           name: itemNameService.fromExternalName(
             product.brands
@@ -491,7 +492,7 @@ async function searchOpenFoodFacts(query: string) {
           popularity: 8,
           isCurated: false,
           categories: [],
-        }
+        })
       }
     )
     return res.filter((item): item is Item => item !== null)
@@ -534,7 +535,7 @@ async function getProductById(id: string) {
     //     (await imageService.getSingleImage(translatedTxt)) || DEFAULT_IMAGE
     // }
 
-    const modifiedItem = {
+    const modifiedItem = withClassifiedUnit({
       searchId: product.code,
       name: itemNameService.fromExternalName(product.product_name),
       macros: (() => {
@@ -553,7 +554,7 @@ async function getProductById(id: string) {
       popularity: 8,
       isCurated: false,
       categories: [],
-    }
+    })
 
     await itemService.save(modifiedItem as Item)
 
@@ -614,7 +615,7 @@ async function getProductsByIds(ids: string[]) {
 
       const image = product.image_small_url
 
-      return {
+      return withClassifiedUnit({
         searchId: product.code,
         name: itemNameService.fromExternalName(
           product.brands
@@ -627,7 +628,7 @@ async function getProductsByIds(ids: string[]) {
         popularity: 8,
         isCurated: false,
         categories: [],
-      }
+      })
     })
 
     await Promise.all(
@@ -679,7 +680,7 @@ async function searchRawUSDA(query: string) {
       const image = images[currImageIdx].webformatURL || DEFAULT_IMAGE
       currImageIdx++
 
-      return {
+      return withClassifiedUnit({
         searchId: food.fdcId + '',
         name: itemNameService.fromExternalName(food.description),
         macros,
@@ -688,7 +689,7 @@ async function searchRawUSDA(query: string) {
         popularity: 8,
         isCurated: false,
         categories: [],
-      }
+      })
     })
   } catch (error) {
     throw error
@@ -726,7 +727,7 @@ async function getFoodById(id: string) {
     const image = images[currImageIdx].webformatURL || DEFAULT_IMAGE
     currImageIdx++
 
-    const modifiedItem = {
+    const modifiedItem = withClassifiedUnit({
       searchId: food.fdcId + '',
       name: itemNameService.fromExternalName(food.description),
       macros,
@@ -735,7 +736,7 @@ async function getFoodById(id: string) {
       popularity: 8,
       isCurated: false,
       categories: [],
-    }
+    })
 
     await itemService.save(modifiedItem as Item)
 
@@ -828,7 +829,7 @@ async function getFoodsByIds(ids: string[]) {
 
     return foods.map((food: FDCFood, idx: number) => {
       const macros = _getMacrosFromUSDA(food)
-      return {
+      return withClassifiedUnit({
         searchId: food.fdcId + '',
         name: itemNameService.fromExternalName(food.description),
         macros,
@@ -837,7 +838,7 @@ async function getFoodsByIds(ids: string[]) {
         popularity: 8,
         isCurated: false,
         categories: [],
-      }
+      })
     })
   } catch (err) {
     throw err
@@ -874,9 +875,7 @@ function computeRelevanceScore(
   translatedTxt: string = ''
 ) {
   const q = normalizeText(query)
-  const name = normalizeText(
-    itemNameService.getItemSearchText(item.name)
-  )
+  const name = normalizeText(itemNameService.getItemSearchText(item.name))
   const displayEng = normalizeText(
     itemNameService.getItemDisplayName(item.name, 'en')
   )

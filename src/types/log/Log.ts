@@ -1,4 +1,5 @@
 import { Macros } from '../macros/Macros'
+import { ItemUnit } from '../item/ItemUnit'
 
 export interface Log {
   _id?: string
@@ -17,4 +18,5 @@ export interface Log {
   createdAt?: string
   createdBy?: string
   categories?: string[]
+  unit?: ItemUnit
 }

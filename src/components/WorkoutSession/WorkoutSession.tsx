@@ -90,10 +90,7 @@ export function WorkoutSession({
     if (!sessionDay.instructions.exercises) return false
 
     return sessionDay.instructions.exercises.every((e) => isExerciseDone(e))
-  }, [
-    sessionDay.instructions.exercises,
-    sessionDay.instructions.isFinished,
-  ])
+  }, [sessionDay.instructions.exercises, sessionDay.instructions.isFinished])
 
   const [alertDialogOptions, setAlertDialogOptions] = useState<{
     open: boolean
@@ -483,11 +480,11 @@ export function WorkoutSession({
       ...sessionDay,
       instructions: { ...savedInstructions, isFinished: true },
     })
-    smoothScroll()
 
     if (timer) {
       await removeTimer(timer?._id)
     }
+    smoothScroll()
     removeCurrentExercise()
   }
 

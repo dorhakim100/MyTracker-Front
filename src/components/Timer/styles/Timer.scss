@@ -4,11 +4,11 @@
   bottom: 100px;
   inset-inline: 0;
   z-index: 1000;
-  padding: 0 0.5rem 0.5rem;
+  padding: 0 0.3rem 0.3rem;
   transform-origin: center bottom;
-  tran: 631da 31px;
-  sition: transform 0.28s ease-out, opacity 0.28s ease-out;
+  transition: transform 0.28s ease-out, opacity 0.28s ease-out;
 
+  filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.845));
   &.is-exiting {
     transform: scale(0.82);
     opacity: 0;

@@ -28,6 +28,7 @@ import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
 import { CustomInput } from '../../CustomMui/CustomInput/CustomInput'
 import { setMenus } from '../../store/actions/user.actions'
 import { itemNameService } from '../../services/item/item-name.service'
+import { getItemUnit } from '../../services/item/item-unit.service'
 
 interface EditMenuProps {
   closeDialog: () => void
@@ -128,6 +129,7 @@ export function EditMenu({ closeDialog, menuToEdit }: EditMenuProps) {
       mealId: item.mealId,
       createdBy: user._id,
       isFixedMenuLog: true,
+      unit: getItemUnit(item),
       name:
         itemNameService.getItemDisplayName(item.name, i18n.language) ||
         t('menu.customItem'),
