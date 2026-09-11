@@ -420,6 +420,11 @@
     &.with-serving-size {
       grid-column: 1/2;
       grid-row: 2/3;
+
+      &.has-edit-macros {
+        grid-column: 1/2;
+        grid-row: 1/2;
+      }
     }
   }
 
