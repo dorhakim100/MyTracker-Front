@@ -13,6 +13,7 @@ import { stylesVariables } from '../../assets/config/styles.variables'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import { MarqueeText } from '../MarqueeText/MarqueeText'
 import { SlideDialogTitleContext } from './slide-dialog-title'
+import { useKeyboardHeight } from '../../hooks/useKeyboardHeight'
 
 interface SlideDialogProps {
   open: boolean
@@ -425,6 +426,19 @@ function SlideDialogSheet({
   )
 }
 
+function getSheetLiftAmount(keyboardHeight: number) {
+  if (keyboardHeight <= 0) return 0
+
+  const activeElement = document.activeElement
+  if (!(activeElement instanceof HTMLElement)) return 0
+
+  const keyboardTop = window.innerHeight - keyboardHeight
+  const { bottom } = activeElement.getBoundingClientRect()
+  const overlap = bottom - keyboardTop
+
+  return overlap > 0 ? overlap : 0
+}
+
 export function SlideDialog({
   open,
   onClose,
@@ -450,6 +464,10 @@ export function SlideDialog({
   const [isMounted, setIsMounted] = React.useState(open)
   const [hasOpened, setHasOpened] = React.useState(false)
   const [contentTitle, setContentTitle] = React.useState<string | null>(null)
+  
+  const keyboardHeight = useKeyboardHeight()
+  const sheetLift = getSheetLiftAmount(keyboardHeight)
+  
 
   if (open && !isMounted) {
     setIsMounted(true)
@@ -471,6 +489,20 @@ export function SlideDialog({
   }, [handleSave, setHandleSave])
 
   if (!open && !isMounted) return null
+
+  const sheetLiftStyle =
+    sheetLift > 0
+      ? {
+          transform: `translateY(-${sheetLift}px)`,
+          marginBottom: `20px`,
+          transition: 'transform 180ms ease',
+          willChange: 'transform',
+        }
+        : {
+          transform: 'translateY(0px)',
+          transition: 'transform 180ms ease',
+          willChange: 'transform',
+        }
 
   return (
     <Sheet
@@ -498,6 +530,7 @@ export function SlideDialog({
       } ${isDashboard ? 'dashboard' : ''}`}
       style={{
         zIndex,
+        ...sheetLiftStyle,
         ...(isDashboard
           ? ({
               '--slide-dialog-dashboard-inset': `${stylesVariables.dashboardDialogLeft}px`,
