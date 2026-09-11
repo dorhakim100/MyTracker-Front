@@ -11,7 +11,8 @@
   // bottom: 100px;
   top: env(safe-area-inset-top, 0px);
 
-  body.native & {
+  &.native,
+  &.pwa & {
     top: max(52px, env(safe-area-inset-top, 0px));
   }
 

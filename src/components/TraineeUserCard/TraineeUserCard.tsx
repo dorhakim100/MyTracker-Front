@@ -13,9 +13,13 @@ import DisabledVisibleIcon from '@mui/icons-material/DisabledVisible'
 
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight'
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft'
+import { usePwaDetect } from '../../hooks/usePwaDetect'
 
 export function TraineeUserCard() {
   const { t } = useTranslation()
+
+  const { isPwaInstalled } = usePwaDetect()
+
   const traineeUser = useSelector(
     (state: RootState) => state.userModule.traineeUser
   )
@@ -28,13 +32,23 @@ export function TraineeUserCard() {
 
   const [isHidden, setIsHidden] = useState(true)
 
+  const getMode = () => {
+    if (prefs.isNative) {
+      return 'native'
+    }
+    if (isPwaInstalled) {
+      return 'pwa'
+    }
+    return 'web'
+  }
+
   return (
     <div
       className={`trainee-user-card-container ${
         prefs.isDarkMode ? 'dark-mode' : ''
       } ${isHidden ? 'hidden' : ''} ${prefs.favoriteColor} ${
         isRtl ? 'rtl' : ''
-      }`}
+      } ${getMode()}`}
     >
       <div className='trainee-details'>
         <img

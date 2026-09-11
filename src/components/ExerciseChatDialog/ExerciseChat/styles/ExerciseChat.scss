@@ -240,14 +240,24 @@ body.dark-mode .exercise-chat-container {
     color: $white;
   }
 
-  .MuiChatMessage-roleUser .MuiChatMessage-inlineMeta,
-  .MuiChatMessage-roleUser .MuiChatMessage-inlineMeta *,
-  .MuiChatMessage-roleUser .MuiChatMessage-meta,
-  .MuiChatMessage-roleUser .MuiChatMessage-meta * {
-    color: $neutral-gray !important;
-    -webkit-text-fill-color: $neutral-gray !important;
-    fill: $neutral-gray !important;
-    // opacity: 1 !important;
+  // Names + timestamps: MUI keeps light-mode palette in PWA/Capacitor —
+  // force contrast over emotion styles (stable classes, not hashed).
+  .MuiChatMessage-groupAuthorName,
+  .MuiChatMessage-groupAuthorName *,
+  .MuiChatMessage-authorLabel,
+  .MuiChatMessage-authorLabel *,
+  .MuiChatMessage-groupTimestamp,
+  .MuiChatMessage-groupTimestamp *,
+  .MuiChatMessage-inlineMeta,
+  .MuiChatMessage-inlineMeta *,
+  .MuiChatMessage-meta,
+  .css-eak0ip-MuiChatMessage-groupAuthorName,
+  .css-lzdtim-MuiChatMessage-groupAuthorName,
+  .MuiChatMessage-meta * {
+    color: $medium-gray !important;
+    -webkit-text-fill-color: $medium-gray !important;
+    fill: $medium-gray !important;
+    opacity: 1 !important;
   }
 
   .MuiChatMessage-roleAssistant .MuiChatMessage-bubble {
@@ -319,11 +329,14 @@ body.dark-mode .exercise-chat-container.green {
   .MuiChatMessage-roleUser .MuiChatMessage-inlineMeta,
   .MuiChatMessage-roleUser .MuiChatMessage-inlineMeta *,
   .MuiChatMessage-roleUser .MuiChatMessage-meta,
-  .MuiChatMessage-roleUser .MuiChatMessage-meta * {
-    color: $neutral-gray;
-    -webkit-text-fill-color: $neutral-gray;
-    fill: $neutral-gray;
-    // opacity: 1 !important;
+  .MuiChatMessage-roleUser .MuiChatMessage-meta,
+  .css-eak0ip-MuiChatMessage-groupAuthorName,
+  .css-lzdtim-MuiChatMessage-groupAuthorName,
+  * {
+    color: $dark-gray !important;
+    -webkit-text-fill-color: $dark-gray !important;
+    fill: $dark-gray !important;
+    opacity: 0.7 !important;
   }
 }
 
@@ -356,23 +369,5 @@ body.dark-mode .exercise-chat-edit-dialog {
       animation: none;
       transform: none;
     }
-  }
-}
-
-body.dark-mode {
-  // sent to me, time
-  .css-15tj2fj-MuiChatMessage-inlineMeta,
-  // sent to me, name
-  .css-lzdtim-MuiChatMessage-groupAuthorName {
-    color: $medium-gray !important;
-    -webkit-text-fill-color: $medium-gray !important;
-  }
-  // sent by me, time
-  .css-14b81mi-MuiChatMessage-inlineMeta,
-  // sent by me, name
-  .css-eak0ip-MuiChatMessage-groupAuthorName {
-    color: $medium-gray !important;
-
-    opacity: 0.75 !important;
   }
 }

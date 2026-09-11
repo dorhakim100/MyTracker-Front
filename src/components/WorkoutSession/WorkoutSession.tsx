@@ -484,7 +484,7 @@ export function WorkoutSession({
     if (timer) {
       await removeTimer(timer?._id)
     }
-    smoothScroll()
+
     removeCurrentExercise()
   }
 
@@ -805,13 +805,12 @@ export function WorkoutSession({
         })
       }
 
-      if (isAllExercisesDone) {
-        await handleAllExercisesCompleted(savedInstructions || newInstructions)
-        handleOpenChange(exercise.exerciseId, false)
-      }
-
       if (isExerciseDoneValue) {
         handleOpenChange(exercise.exerciseId, false)
+      }
+      if (isAllExercisesDone) {
+        smoothScroll()
+        await handleAllExercisesCompleted(savedInstructions || newInstructions)
       }
 
       invalidateSets(exercise.exerciseId, sessionDay.workout.forUserId, 20)
