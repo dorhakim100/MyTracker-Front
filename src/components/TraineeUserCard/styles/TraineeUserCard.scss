@@ -11,14 +11,17 @@
   // bottom: 100px;
   top: env(safe-area-inset-top, 0px);
 
-  &.native,
-  &.pwa & {
+  body.native & {
     top: max(52px, env(safe-area-inset-top, 0px));
   }
 
-  @media (display-mode: standalone) {
-    top: max(52px, env(safe-area-inset-top, 0px));
+  &.pwa {
+    top: 30px;
   }
+
+  // @media (display-mode: standalone) {
+  //   top: max(52px, env(safe-area-inset-top, 0px));
+  // }
 
   width: fit-content;
   display: flex;

@@ -809,8 +809,10 @@ export function WorkoutSession({
         handleOpenChange(exercise.exerciseId, false)
       }
       if (isAllExercisesDone) {
-        smoothScroll()
         await handleAllExercisesCompleted(savedInstructions || newInstructions)
+        setTimeout(() => {
+          smoothScroll()
+        }, 250)
       }
 
       invalidateSets(exercise.exerciseId, sessionDay.workout.forUserId, 20)

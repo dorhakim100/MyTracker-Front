@@ -2,11 +2,7 @@ import { useMemo, useRef, useState, type PointerEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { DialogActions } from '@mui/material'
 import { ChatRoot, useChatStore } from '@mui/x-chat-headless'
-import {
-  ChatComposer,
-  ChatConversation,
-  ChatMessageList,
-} from '@mui/x-chat'
+import { ChatComposer, ChatConversation, ChatMessageList } from '@mui/x-chat'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { useSelector } from 'react-redux'
@@ -42,6 +38,7 @@ export function ExerciseChat({
   workoutName,
 }: ExerciseChatProps) {
   const { t } = useTranslation(exerciseChatNs)
+
   const user = useSelector(
     (stateSelector: RootState) => stateSelector.userModule.user
   )
@@ -183,6 +180,10 @@ function ExerciseChatThread({
     null
   )
 
+  const prefs = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.prefs
+  )
+
   async function onSaveEdit() {
     if (!editingMessage) return
     const content = editValue.trim()
@@ -197,8 +198,7 @@ function ExerciseChatThread({
     store.updateMessage(editingMessage.id, {
       ...nextMessage,
       parts: [{ type: 'text', text: content }],
-      editedAt:
-        nextMessage.editedAt || new Date().toISOString(),
+      editedAt: nextMessage.editedAt || new Date().toISOString(),
     })
     setEditingMessage(null)
     setEditValue('')
@@ -215,7 +215,11 @@ function ExerciseChatThread({
 
   return (
     <>
-      <ChatConversation className='exercise-chat-thread'>
+      <ChatConversation
+        className={`exercise-chat-thread ${
+          prefs.isDarkMode ? 'dark-mode' : ''
+        }`}
+      >
         <ChatMessageList
           features={{
             dateDivider: true,
