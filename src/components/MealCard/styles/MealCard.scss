@@ -30,8 +30,8 @@
 
     .label-container {
       display: grid;
-      grid-template-columns: auto 1fr;
-      grid-template-rows: auto auto;
+      grid-template-columns: auto 1fr auto;
+      // grid-template-rows: auto auto;
       gap: 0px 0.5rem;
       align-items: center;
       justify-content: start;
@@ -39,18 +39,20 @@
       .meal-icon {
         // margin-bottom: 4px;
         grid-row: 1 / -1;
-        align-self: start;
+        // align-self: start;
       }
 
       .period {
-        grid-column: 2 / -1;
-        grid-row: 2 / -1;
+        // grid-column: 2 / -1;
+        // grid-row: 2 / -1;
         opacity: 0.6;
+        padding-inline: 0.5rem;
       }
     }
 
     .header-actions {
       align-self: start;
+      margin-top: 3px;
     }
   }
 

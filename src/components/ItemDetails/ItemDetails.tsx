@@ -186,11 +186,9 @@ export function ItemDetails({
     (item as Log).source === searchTypes.custom ||
     (item as Item).type === searchTypes.custom
 
-  const canEditCustomChrome =
-    isCustom &&
-    !noEdit 
-    // &&
-    // (!(item as Log).createdBy || (item as Log).createdBy === user?._id)
+  const canEditCustomChrome = isCustom && !noEdit
+  // &&
+  // (!(item as Log).createdBy || (item as Log).createdBy === user?._id)
 
   const [editItem, setEditItem] = useState<EditItem>({
     totalMacros: isCustomLog ? _getDefaultMacros() : item.macros,
@@ -293,13 +291,11 @@ export function ItemDetails({
     }
   }, [shouldDefaultItemMacros, stringifiedItem])
 
-  console.log('item', item)
-
   const editOptions: EditOption[] =
-    (item?.createdBy || isCustomLog )
-    //  || !isCustomLog 
-    //  || (item as Log).source !== searchTypes.custom
-      ? [
+    (item?.createdBy && !(item as Log)?.createdBy) || isCustomLog
+      ? //  || !isCustomLog
+        //  || (item as Log).source !== searchTypes.custom
+        [
           {
             label: t('macros.macros'),
             key: 'custom-log-macros',
@@ -311,7 +307,6 @@ export function ItemDetails({
           getNumberOfServingsInput(t),
           getMealInput(t),
         ]
-
       : [
           {
             label: t('meals.servingSize'),
@@ -326,7 +321,7 @@ export function ItemDetails({
           getNumberOfServingsInput(t),
           getMealInput(t),
         ]
-      
+
   useEffect(() => {
     loadItems()
   }, [])
@@ -991,8 +986,10 @@ export function ItemDetails({
     : getItemCategories(item)
   const servingGrams =
     (editItem.servingSize || 100) * (editItem.numberOfServings || 1)
-  const perGramsLabel = tDetails('per100g', {
-    amount: servingGrams,
+
+  const typeOfPer = isMeal ? 'meal' : 'per100g'
+  const perGramsLabel = tDetails(typeOfPer, {
+    amount: servingGrams.toFixed(0),
     unit: unitExtra,
   })
 
@@ -1123,14 +1120,13 @@ export function ItemDetails({
   const isFixedMenuLocked = !updateMenu && !!(item as Log).isFixedMenuLog
 
   function shouldShowEditOption(option: EditOption) {
-    console.log(option)
     if (onAddToMealClick && option.key === 'meal') return false
     if (option.key === 'servingSize') {
       if (isMeal) return false
       if ((item as Item).type === 'meal') return false
       if ((item as MealItem).mealId) return false
       if (isFixedMenuLocked) return false
-      if(canEditCustomChrome) return false
+      if (canEditCustomChrome) return false
     }
     if (isFixedMenuLocked && option.key === 'numberOfServings') return false
     if (isFixedMenuLocked && option.key === 'meal') return false
@@ -1151,7 +1147,9 @@ export function ItemDetails({
               (!isCustom || item?.createdBy) &&
               !(item as Log)?.time) ||
             item?.createdBy
-              ? `with-serving-size ${canEditCustomChrome ? 'has-edit-macros' : ''}`
+              ? `with-serving-size ${
+                  canEditCustomChrome ? 'has-edit-macros' : ''
+                }`
               : ''
           }`}
           key={option.label}

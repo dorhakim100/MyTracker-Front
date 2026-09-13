@@ -42,6 +42,7 @@ import {
   pickBestSet,
 } from '../../services/set/set.helpers'
 import { exerciseDetailsNs } from './locals'
+import { getExerciseBodyParts } from '../../assets/config/body-parts'
 
 const VIEW_BY_VALUES: ExerciseViewBy[] = ['weight', 'reps', 'volume']
 
@@ -268,9 +269,17 @@ export function ExerciseDetails({
     })
   }
 
+  const exerciseTags = getExerciseBodyParts({
+    mainMuscles: exercise?.mainMuscles,
+    secondaryMuscles: exercise?.secondaryMuscles,
+  })
+  const exerciseTag = exerciseTags[0]
+
   const muscleGroupsText = capitalizeFirstLetter(
     exercise?.mainMuscles
       ?.concat(exercise?.secondaryMuscles || [])
+      .filter((tag) => tag !== exerciseTag)
+      .filter(Boolean)
       .join(', ') || ''
   )
 
@@ -293,7 +302,7 @@ export function ExerciseDetails({
         {muscleGroupsText ? (
           <MarqueeText
             variant='body2'
-            className='exercise-muscle-groups'
+            className='exercise-muscle-groups bold-header'
           >
             {muscleGroupsText}
           </MarqueeText>
@@ -304,7 +313,7 @@ export function ExerciseDetails({
       <CustomAccordion
         title={t('exercise.instructions')}
         cmp={
-          <CustomAnimatedText typeSpeed={20}>
+          <CustomAnimatedText typeSpeed={8}>
             {exerciseInstructions
               ?.map((instruction) => instruction.replace(/^Step:\d+\s*/, ''))
               .join('\n\n')}

@@ -14,7 +14,7 @@ import { Set } from '../../types/exercise/Exercise'
 import { Badge, Typography } from '@mui/material'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
-import NoteAltIcon from '@mui/icons-material/NoteAlt'
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import { useState } from 'react'
 import { showErrorMsg } from '../../services/event-bus.service'
@@ -102,7 +102,7 @@ function Row(props: {
         >
           <div className='session-row-actions'>
             <CustomButton
-              icon={<NoteAltIcon />}
+              icon={<ChatBubbleOutlineIcon />}
               onClick={(ev) => {
                 ev.stopPropagation()
                 if (!canOpenChat) {
