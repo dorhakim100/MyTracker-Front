@@ -5,6 +5,7 @@ import Toolbar from '@mui/material/Toolbar'
 import CloseIcon from '@mui/icons-material/Close'
 import { animate } from 'motion/react'
 import { Sheet } from 'react-modal-sheet'
+import Drawer from '@mui/material/Drawer'
 
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
@@ -336,6 +337,126 @@ function useOverscrollDismiss({
   }, [enabled, scroller, y])
 }
 
+function SlideDialogHeaderBar({
+  onClose,
+  title,
+  prefs,
+  isLoading,
+  showDragHandle = true,
+}: {
+  onClose: () => void
+  title?: string
+  prefs: RootState['systemModule']['prefs']
+  isLoading: boolean
+  showDragHandle?: boolean
+}) {
+  const { t } = useTranslation()
+
+  return (
+    <AppBar sx={{ position: 'relative' }}>
+      <Toolbar className={`${prefs.favoriteColor}`}>
+        <CustomButton
+          isIcon={true}
+          icon={<CloseIcon />}
+          onClick={onClose}
+          tooltipTitle={t('common.close')}
+          className='slide-dialog-close'
+          variant='flat'
+        />
+        <MarqueeText
+          sx={{ marginInlineStart: 2, flex: 1 }}
+          variant='h6'
+          component='div'
+        >
+          {title ?? t('common.edit')}
+        </MarqueeText>
+        {showDragHandle && <div className='slide-drag-handle'></div>}
+        {isLoading && (
+          <CircularProgress
+            size={20}
+            color='inherit'
+          />
+        )}
+      </Toolbar>
+    </AppBar>
+  )
+}
+
+function DashboardDrawer({
+  open,
+  onClose,
+  onSave,
+  onExited,
+  component,
+  title,
+  prefs,
+  isLoading,
+  zIndex,
+}: {
+  open: boolean
+  onClose: () => void
+  onSave: () => void
+  onExited: () => void
+  component: React.ReactElement
+  title?: string
+  prefs: RootState['systemModule']['prefs']
+  isLoading: boolean
+  zIndex: number
+}) {
+  const isRtl = prefs.lang === 'he'
+  const transitionMs = SHEET_DURATION * 1000
+
+  return (
+    <Drawer
+      anchor={isRtl ? 'left' : 'right'}
+      open={open}
+      onClose={(_, reason) => {
+        if (reason === 'backdropClick') {
+          onSave()
+          return
+        }
+        onClose()
+      }}
+      elevation={0}
+      transitionDuration={transitionMs}
+      className='slide-dialog-drawer'
+      // Body is flex-centered; MUI scroll-lock padding would shift the whole dashboard.
+      disableScrollLock
+      disableAutoFocus
+      disableEnforceFocus
+      disableRestoreFocus
+      disableEscapeKeyDown
+      slotProps={{
+        paper: {
+          className: `slide-dialog slide-dialog-drawer-paper ${
+            prefs.favoriteColor || ''
+          }`,
+        },
+        backdrop: {
+          className: 'slide-dialog-drawer-backdrop',
+        },
+        transition: {
+          onExited,
+        },
+      }}
+      sx={{ zIndex }}
+    >
+      <div className='slide-dialog-header'>
+        <SlideDialogHeaderBar
+          onClose={onClose}
+          title={title}
+          prefs={prefs}
+          isLoading={isLoading}
+          showDragHandle={false}
+        />
+      </div>
+      <div className='slide-dialog-content'>
+        <div className='slide-dialog-body-inner'>{component}</div>
+      </div>
+    </Drawer>
+  )
+}
+
 function SlideDialogSheet({
   onClose,
   component,
@@ -353,7 +474,6 @@ function SlideDialogSheet({
   prefs: RootState['systemModule']['prefs']
   isLoading: boolean
 }) {
-  const { t } = useTranslation()
   const { yProgress } = Sheet.useContext()
   const scrollerNode = React.useRef<HTMLDivElement | null>(null)
   const [scroller, setScroller] = React.useState<HTMLDivElement | null>(null)
@@ -385,32 +505,12 @@ function SlideDialogSheet({
       style={{ opacity: fadeWithSheet ? yProgress : 1 }}
     >
       <Sheet.Header className='slide-dialog-header'>
-        <AppBar sx={{ position: 'relative' }}>
-          <Toolbar className={`${prefs.favoriteColor}`}>
-            <CustomButton
-              isIcon={true}
-              icon={<CloseIcon />}
-              onClick={onClose}
-              tooltipTitle={t('common.close')}
-              className='slide-dialog-close'
-              variant='flat'
-            />
-            <MarqueeText
-              sx={{ marginInlineStart: 2, flex: 1 }}
-              variant='h6'
-              component='div'
-            >
-              {title ?? t('common.edit')}
-            </MarqueeText>
-            <div className='slide-drag-handle'></div>
-            {isLoading && (
-              <CircularProgress
-                size={20}
-                color='inherit'
-              />
-            )}
-          </Toolbar>
-        </AppBar>
+        <SlideDialogHeaderBar
+          onClose={onClose}
+          title={title}
+          prefs={prefs}
+          isLoading={isLoading}
+        />
       </Sheet.Header>
       <Sheet.Content
         disableDrag
@@ -464,10 +564,9 @@ export function SlideDialog({
   const [isMounted, setIsMounted] = React.useState(open)
   const [hasOpened, setHasOpened] = React.useState(false)
   const [contentTitle, setContentTitle] = React.useState<string | null>(null)
-  
+
   const keyboardHeight = useKeyboardHeight()
   const sheetLift = getSheetLiftAmount(keyboardHeight)
-  
 
   if (open && !isMounted) {
     setIsMounted(true)
@@ -498,11 +597,34 @@ export function SlideDialog({
           transition: 'transform 180ms ease',
           willChange: 'transform',
         }
-        : {
+      : {
           transform: 'translateY(0px)',
           transition: 'transform 180ms ease',
           willChange: 'transform',
         }
+
+  if (isDashboard) {
+    return (
+      <SlideDialogTitleContext.Provider value={setContentTitle}>
+        <DashboardDrawer
+          open={open}
+          onClose={onClose}
+          onSave={() => {
+            void handleSave()
+          }}
+          onExited={() => {
+            setHasOpened(false)
+            setIsMounted(false)
+          }}
+          component={component}
+          title={contentTitle ?? title}
+          prefs={prefs}
+          isLoading={isLoading}
+          zIndex={zIndex}
+        />
+      </SlideDialogTitleContext.Provider>
+    )
+  }
 
   return (
     <Sheet

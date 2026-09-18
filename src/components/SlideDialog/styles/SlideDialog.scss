@@ -1,5 +1,8 @@
 .slide-dialog-backdrop {
   margin: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
 }
 
 .MuiDialog-root.full-dialog,
@@ -31,6 +34,82 @@
     right: auto !important;
     inset-inline-start: var(--slide-dialog-dashboard-inset, 280px) !important;
     width: calc(100% - var(--slide-dialog-dashboard-inset, 280px)) !important;
+  }
+}
+
+.slide-dialog-drawer {
+  // Overlay only — clicks on the navigator pass through the root.
+  pointer-events: none;
+
+  .MuiBackdrop-root,
+  .slide-dialog-drawer-backdrop {
+    pointer-events: auto;
+    // Leave the side nav undimmed; logical inset follows LTR/RTL.
+    // inset-inline-start: $left-menu-width;
+  }
+
+  .slide-dialog-drawer-paper {
+    pointer-events: auto;
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    box-shadow: $card-lift-shadow;
+    border-radius: 0;
+    border-start-start-radius: 10px;
+    border-end-start-radius: 10px;
+    overflow: hidden;
+    background: var(--canvas-color) !important;
+    color: var(--ink-on-canvas);
+
+    .slide-dialog-header,
+    .MuiAppBar-root,
+    .MuiToolbar-root {
+      border-top-right-radius: 0;
+      border-top-left-radius: 0;
+      border-start-start-radius: 10px;
+    }
+
+    .slide-dialog-content {
+      flex: 1;
+      min-height: 0;
+      overflow: auto;
+      background: var(--canvas-color) !important;
+      color: var(--ink-on-canvas);
+    }
+  }
+
+  @media (min-width: 600px) {
+    .slide-dialog-drawer-paper {
+      // width: calc(100% - #{$left-menu-width});
+      // max-width: calc(100% - #{$left-menu-width});
+
+      width: 100%;
+      max-width: 70vw;
+    }
+  }
+
+  @media (max-width: 599px) {
+    .MuiBackdrop-root,
+    .slide-dialog-drawer-backdrop {
+      inset-inline-start: 0;
+    }
+  }
+
+  html.dark-mode & {
+    .slide-dialog-drawer-paper,
+    .slide-dialog-content {
+      background: var(--canvas-color) !important;
+      color: var(--ink-on-canvas);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slide-dialog-drawer {
+    .MuiDrawer-paper,
+    .MuiBackdrop-root {
+      transition-duration: 0.01ms !important;
+    }
   }
 }
 

@@ -7,6 +7,11 @@
   gap: 0.5rem;
   align-items: center;
 
+  &.dashboard {
+    display: flex;
+    gap: 1.5rem;
+  }
+
   .steps-banner-title {
     margin: 0;
   }

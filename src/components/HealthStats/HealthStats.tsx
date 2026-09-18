@@ -34,6 +34,10 @@ export function HealthStats({
     (state: RootState) => state.healthModule.healthLoading
   )
 
+  const isDashboard = useSelector(
+    (state: RootState) => state.systemModule.isDashboard
+  )
+
   // steps = 21435.151
   // burnedCalories = 1252.123
   // distance = 12.52
@@ -45,7 +49,11 @@ export function HealthStats({
   distance = getFixedNumber(distance, 2)
 
   return (
-    <div className={`health-stats-container ${className ?? ''}`.trim()}>
+    <div
+      className={`health-stats-container ${isDashboard ? 'dashboard' : ''} ${
+        className ?? ''
+      }`.trim()}
+    >
       <GoalBanner
         current={steps}
         isGoal={false}
