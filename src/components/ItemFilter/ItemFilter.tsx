@@ -5,6 +5,7 @@ import SearchIcon from '@mui/icons-material/Search'
 import CloseIcon from '@mui/icons-material/Close'
 import AddIcon from '@mui/icons-material/Add'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import QrCode2Icon from '@mui/icons-material/QrCode2'
 
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
@@ -19,6 +20,7 @@ interface ItemFilterProps {
   onFilterChange: (filter: Filter) => void
   onClearQuery: () => void
   onCustomLog: () => void
+  onScan: () => void
   onBack?: () => void
   backLabel?: string
 }
@@ -28,6 +30,7 @@ export function ItemFilter({
   onFilterChange,
   onClearQuery,
   onCustomLog,
+  onScan,
   onBack,
   backLabel,
 }: ItemFilterProps) {
@@ -72,6 +75,12 @@ export function ItemFilter({
             </IconButton>
           )}
           className={`${prefs.favoriteColor}`}
+        />
+        <CustomButton
+          isIcon
+          icon={<QrCode2Icon />}
+          onClick={onScan}
+          ariaLabel={t('meals.scanItem')}
         />
       </div>
 

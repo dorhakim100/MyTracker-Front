@@ -31,6 +31,7 @@ import {
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { useSlideDialogTitle } from '../SlideDialog/slide-dialog-title'
 import { ItemDetails } from '../ItemDetails/ItemDetails'
+import { BarcodeScanner } from '../BarcodeScanner/BarcodeScanner'
 import { FavoriteButton } from '../FavoriteButton/FavoriteButton'
 import {
   handleFavorite,
@@ -138,6 +139,7 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
 
   const [isItemSelected, setIsItemSelected] = useState(false)
   const [isCustomLog, setIsCustomLog] = useState(false)
+  const [isScanOpen, setIsScanOpen] = useState(false)
 
   const isLoading = useSelector(
     (state: RootState) => state.systemModule.isLoading
@@ -375,6 +377,14 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
     setItem(null)
     setIsCustomLog(true)
     setIsItemSelected(true)
+  }
+
+  const onScan = () => {
+    setIsScanOpen(true)
+  }
+
+  const onCloseScan = () => {
+    setIsScanOpen(false)
   }
 
   const dragEnd = async (newItems: Item[], isMeals: boolean = false) => {
@@ -657,6 +667,7 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
           onFilterChange={onFilterChange}
           onClearQuery={onClearQuery}
           onCustomLog={onCustomLog}
+          onScan={onScan}
           onBack={browseView || filter.txt ? onBack : undefined}
           backLabel={tCategories('back')}
         />
@@ -720,6 +731,19 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
         }
         title={isCustomLog ? t('meals.customLog') : t('meals.item')}
         type='full'
+      />
+
+      <SlideDialog
+        open={isScanOpen}
+        onClose={onCloseScan}
+        component={
+          <BarcodeScanner
+            onClose={onCloseScan}
+            onAddToMealClick={onAddToMealClick}
+          />
+        }
+        title={t('meals.scanItem')}
+        type='half'
       />
     </>
   )
