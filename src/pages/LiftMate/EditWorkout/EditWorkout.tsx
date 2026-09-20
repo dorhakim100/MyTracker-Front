@@ -351,6 +351,7 @@ export function EditWorkout({
       })
       return {
         ...exercise,
+        withoutExpected: false,
         notes: {
           ...exercise.notes,
           actual: '',

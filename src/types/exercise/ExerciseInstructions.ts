@@ -13,4 +13,5 @@ export interface ExerciseInstructions {
   muscleGroups?: string[]
   equipments?: string[]
   instructions?: string[]
+  withoutExpected?: boolean
 }

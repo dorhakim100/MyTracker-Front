@@ -285,6 +285,7 @@ export function WorkoutSession({
               notes: { expected: '', actual: '' },
               restingTime: DEFAULT_RESTING_TIME,
               image: exercise.image,
+              withoutExpected: true,
             },
           ]
 
