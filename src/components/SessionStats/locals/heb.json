@@ -1,0 +1,18 @@
+{
+  "title": "סיכום אימון",
+  "openStats": "סטטיסטיקות אימון",
+  "duration": "משך",
+  "volumeVsPlan": "נפח",
+  "setsDone": "סטים",
+  "vsLast": "מול הפעם הקודמת",
+  "noPrevious": "פעם ראשונה",
+  "weightPr": "משקל",
+  "volumePr": "נפח",
+  "accuracy": "דיוק",
+  "placeholder": "סיים אימון כדי לראות את הסיכום.",
+  "expectedAccuracy": "{{accuracy}}% דיוק",
+  "prs": "PRs",
+  "averageAccuracy": "דיוק ממוצע",
+  "averageIntensity": "קושי (RPE) ממוצע",
+  "accuracyText": "דיוק הקושי בין צפי הקושי לבין הקושי האמיתי: {{accuracy}}%"
+}

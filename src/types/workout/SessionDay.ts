@@ -8,4 +8,5 @@ export interface SessionDay {
   workoutId: string
   workout: Workout
   instructions: Instructions
+  statsId?: string
 }

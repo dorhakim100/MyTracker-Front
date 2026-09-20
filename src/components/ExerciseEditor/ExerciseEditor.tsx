@@ -124,9 +124,10 @@ export function ExerciseEditor({
 
   const delay = isExpected ? 0 : 4000
 
-  const { debouncedFn: debouncedUpdateExercise, cancel: cancelUpdate } =
+  const { debouncedFn: debouncedUpdateExercise, cancel: cancelUpdate, flush } =
     useDebouncedCallback(stableUpdateExercise, delay)
   const onAddSet = async () => {
+    cancelUpdate()
     const existingSet =
       exercise.sets[exercise.sets.length - 1] ||
       instructionsService.getEmptySet()
@@ -156,6 +157,7 @@ export function ExerciseEditor({
   }
 
   const onDeleteSet = async (indexToRemove: number) => {
+    cancelUpdate()
     if (indexToRemove === 0 && exercise.sets.length === 1) {
       showErrorMsg(t('messages.error.deleteSet'))
       return
@@ -175,7 +177,7 @@ export function ExerciseEditor({
   }
 
   const onClosePicker = () => {
-    // flushUpdate()
+    flush()
     setPickerOptions({
       isOpen: false,
       type: null,

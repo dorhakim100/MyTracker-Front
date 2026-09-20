@@ -1,4 +1,30 @@
-.dialog-content {
-  display: grid;
-  gap: 1rem;
+.alert-dialog-paper {
+  .dialog-content {
+    display: grid;
+    gap: 1rem;
+    min-height: 0;
+    overflow: auto;
+  }
+
+  .dialog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .close-icon {
+      // position: absolute;
+      cursor: pointer;
+      color: var(--text-color);
+    }
+  }
+}
+
+.alert-dialog-paper.alert-type-medium {
+  width: min(92vw, 32rem);
+  max-height: 72vh;
+}
+
+.alert-dialog-paper.alert-type-large {
+  width: min(96vw, 42rem);
+  height: calc(92vh - 70px);
+  max-height: 92vh;
 }

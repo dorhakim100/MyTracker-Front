@@ -27,7 +27,15 @@ import { setIsLoading } from '../../store/actions/system.actions'
 import { setService } from '../../services/set/set.service'
 import { Instructions } from '../../types/instructions/Instructions'
 import DeleteIcon from '@mui/icons-material/Delete'
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
+import BarChartIcon from '@mui/icons-material/BarChart'
 import { CustomAlertDialog } from '../../CustomMui/CustomAlertDialog/CustomAlertDialog'
+import { CustomOptionsMenu } from '../../CustomMui/CustomOptionsMenu/CustomOptionsMenu'
+import { DropdownOption } from '../../types/DropdownOption'
+import { SessionStats } from '../SessionStats/SessionStats'
+import { sessionStatsNs } from '../SessionStats/locals'
+import { SessionStatsRecap } from '../../types/stats/Stats'
+import { statsService } from '../../services/stats/stats.service'
 import { ExerciseCard } from '../ExerciseCard/ExerciseCard'
 import {
   filterExercises,
@@ -59,6 +67,7 @@ export function WorkoutSession({
 }: WorkoutSessionProps) {
   // if (!sessionDay.instructions) return null
   const { t } = useTranslation()
+  const { t: tStats } = useTranslation(sessionStatsNs)
 
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
 
@@ -86,6 +95,8 @@ export function WorkoutSession({
   const [exerciseResults, setExerciseResults] = useState<Exercise[]>([])
 
   const isAllExercisesDone = useMemo(() => {
+    console.log('isAllExercisesDone', sessionDay.instructions.exercises[6])
+
     if (sessionDay.instructions.isFinished) return true
     if (!sessionDay.instructions.exercises) return false
 
@@ -95,7 +106,7 @@ export function WorkoutSession({
   const [alertDialogOptions, setAlertDialogOptions] = useState<{
     open: boolean
     title: string
-    component: React.ReactNode
+    component: 'delete' | 'stats' | null
     exerciseId: string
   }>({
     open: false,
@@ -103,6 +114,9 @@ export function WorkoutSession({
     component: null,
     exerciseId: '',
   })
+  const [sessionRecap, setSessionRecap] = useState<SessionStatsRecap | null>(
+    null
+  )
   const allExerciseIds = sessionDay.instructions.exercises.map(
     (ex) => ex.exerciseId
   )
@@ -472,6 +486,44 @@ export function WorkoutSession({
     return currentExerciseToSet
   }
 
+  const openSessionRecap = async () => {
+    if (!sessionDay._id) return
+    try {
+      const recap = await statsService.finish(sessionDay._id)
+      setSessionRecap(recap)
+      setAlertDialogOptions({
+        open: true,
+        title: tStats('title'),
+        component: 'stats',
+        exerciseId: '',
+      })
+    } catch {
+      setSessionRecap(null)
+      setAlertDialogOptions({
+        open: true,
+        title: tStats('title'),
+        component: 'stats',
+        exerciseId: '',
+      })
+    }
+  }
+
+  const openSavedRecap = async () => {
+    if (!sessionDay._id) return
+    try {
+      const recap = await statsService.getRecap(sessionDay._id)
+      setSessionRecap(recap)
+      setAlertDialogOptions({
+        open: true,
+        title: tStats('title'),
+        component: 'stats',
+        exerciseId: '',
+      })
+    } catch {
+      showErrorMsg(t('messages.error.updateSet'))
+    }
+  }
+
   // Handles when all exercises are completed
   const handleAllExercisesCompleted = async (
     savedInstructions: Instructions
@@ -798,6 +850,10 @@ export function WorkoutSession({
 
       const [savedInstructions] = await Promise.all(promises)
 
+      if (exercise.sets[setIndex].isDone) {
+        await statsService.openFrame(sessionDay._id)
+      }
+
       if (savedInstructions) {
         setSelectedSessionDay({
           ...sessionDay,
@@ -813,6 +869,8 @@ export function WorkoutSession({
         setTimeout(() => {
           smoothScroll()
         }, 250)
+        // setTimeout(async () => {}, 500)
+        await openSessionRecap()
       }
 
       invalidateSets(exercise.exerciseId, sessionDay.workout.forUserId, 20)
@@ -929,6 +987,9 @@ export function WorkoutSession({
     })
   }
   const getAlertDialogComponent = () => {
+    if (alertDialogOptions.component === 'stats') {
+      return <SessionStats recap={sessionRecap} />
+    }
     if (alertDialogOptions.component === 'delete')
       return (
         <div className='modal-delete-workout-container'>
@@ -953,8 +1014,8 @@ export function WorkoutSession({
       )
   }
 
-  const onWorkoutDone = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation()
+  const onWorkoutDone = async (e?: React.MouseEvent<HTMLButtonElement>) => {
+    e?.stopPropagation()
     try {
       const newInstructions = {
         ...sessionDay.instructions,
@@ -970,10 +1031,44 @@ export function WorkoutSession({
       }
       removeCurrentExercise()
       await saveNewInstructions(newInstructions)
+      await openSessionRecap()
     } catch {
       showErrorMsg(t('messages.error.updateSet'))
     }
   }
+
+  const sessionMenuOptions: DropdownOption[] = [
+    {
+      title: t('workout.finishWorkout'),
+      icon: <CheckIcon />,
+      onClick: () => {
+        onWorkoutDone()
+      },
+    },
+    ...(sessionDay.statsId
+      ? [
+          {
+            title: tStats('openStats'),
+            icon: <BarChartIcon />,
+            onClick: () => {
+              openSavedRecap()
+            },
+          },
+        ]
+      : []),
+    {
+      title: t('workout.deleteWorkout'),
+      icon: <DeleteIcon />,
+      onClick: () => {
+        setAlertDialogOptions({
+          open: true,
+          title: t('workout.deleteWorkout'),
+          component: 'delete',
+          exerciseId: '',
+        })
+      },
+    },
+  ]
 
   return (
     <>
@@ -993,7 +1088,10 @@ export function WorkoutSession({
               {getWorkoutName()}{' '}
             </Typography>
           </div>
-          <div className='actions-container'>
+          <div
+            className='actions-container'
+            onClick={(e) => e.stopPropagation()}
+          >
             <CustomButton
               icon={hasOpenExercises ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               onClick={toggleExpandAll}
@@ -1005,30 +1103,15 @@ export function WorkoutSession({
               }
               variant='flat'
             />
-            <CustomButton
-              // text="Finish Workout"
-              isIcon={true}
-              icon={<CheckIcon />}
-              disabled={!timer}
-              size='small'
-              onClick={onWorkoutDone}
-              tooltipTitle={t('workout.finishWorkout')}
-              variant='flat'
-            />
-            <CustomButton
-              icon={<DeleteIcon />}
-              onClick={(e) => {
-                e.stopPropagation()
-                setAlertDialogOptions({
-                  open: true,
-                  title: t('workout.deleteWorkout'),
-                  component: 'delete',
-                  exerciseId: '',
-                })
-              }}
-              isIcon={true}
-              tooltipTitle={t('workout.deleteWorkout')}
-              variant='flat'
+            <CustomOptionsMenu
+              options={sessionMenuOptions}
+              triggerElement={
+                <CustomButton
+                  isIcon={true}
+                  icon={<MoreHorizIcon />}
+                  variant='flat'
+                />
+              }
             />
           </div>
           <div className='muscles-container'>
@@ -1109,6 +1192,7 @@ export function WorkoutSession({
         open={alertDialogOptions.open}
         onClose={closeAlertDialog}
         title={alertDialogOptions.title}
+        type={alertDialogOptions.component === 'stats' ? 'large' : 'small'}
       >
         {getAlertDialogComponent()}
       </CustomAlertDialog>

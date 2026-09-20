@@ -112,7 +112,7 @@ export function ExerciseDetails({
     exerciseId: exercise?.exerciseId,
     userId: traineeUser?._id || user?._id,
     limit: 20,
-    enabled: exercise?.isNew !== true,
+    enabled: Boolean(exercise?.exerciseId),
   })
 
   const hasHistory = exercise?.isNew === false || setsQuery.items.length > 0
@@ -199,7 +199,6 @@ export function ExerciseDetails({
 
   useEffect(() => {
     const getExerciseSets = async () => {
-      if (exercise?.isNew === true) return
       if (!exercise?.exerciseId || (!traineeUser?._id && !user?._id)) return
       try {
         const sets = await setService.query(setsGraphFilter)

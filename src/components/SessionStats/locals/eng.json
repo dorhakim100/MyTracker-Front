@@ -1,0 +1,18 @@
+{
+  "title": "Session recap",
+  "openStats": "Session statistics",
+  "duration": "Duration",
+  "volumeVsPlan": "Volume",
+  "setsDone": "Sets",
+  "vsLast": "Vs last time",
+  "noPrevious": "First time",
+  "weightPr": "Weight",
+  "volumePr": "Volume",
+  "accuracy": "Accuracy",
+  "placeholder": "Finish a session to see your recap.",
+  "expectedAccuracy": "{{accuracy}}% accuracy",
+  "prs": "PRs",
+  "averageAccuracy": "Average accuracy",
+  "averageIntensity": "Average intensity (RPE) level",
+  "accuracyText": "Session expected VS actual intensity accuracy: {{accuracy}}%"
+}

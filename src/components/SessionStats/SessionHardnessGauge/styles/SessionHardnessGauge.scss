@@ -1,0 +1,34 @@
+.session-hardness-gauge-container {
+  display: grid;
+  justify-items: center;
+  min-width: 0;
+
+  &.size-big {
+    width: min(100%, 18rem);
+  }
+
+  &.size-small {
+    width: 5.5rem;
+  }
+
+  .gauge-component-class {
+    width: 100%;
+  }
+}
+
+body.dark-mode {
+  .value-text,
+  .tick-value {
+    text {
+      fill: $white !important;
+    }
+  }
+  .pointer {
+    path {
+      fill: $light-gray !important;
+    }
+    circle {
+      fill: $white !important;
+    }
+  }
+}
