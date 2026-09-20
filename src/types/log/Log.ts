@@ -19,4 +19,5 @@ export interface Log {
   createdBy?: string
   categories?: string[]
   unit?: ItemUnit
+  aiPlate?: boolean
 }

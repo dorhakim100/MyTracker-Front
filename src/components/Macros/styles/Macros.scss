@@ -5,7 +5,14 @@
   flex-wrap: wrap;
 }
 
-.macros .banner .swatch {
+.macros .banner .swatch-macro-container {
+  display: flex;
+  align-items: center;
+  justify-self: center;
+  gap: 0.5rem;
+}
+
+.macros .banner .swatch-macro-container .swatch {
   width: 12px;
   height: 12px;
   border-radius: 50%;
@@ -13,8 +20,11 @@
   background-color: currentColor;
 }
 
-.macros .banner .label {
+.macros .banner .swatch-macro-container .label {
   font-weight: 600;
+  justify-self: center;
+  align-self: center;
+  text-align: center;
   color: var(--macro-color);
   background: color-mix(
     in srgb,
@@ -33,22 +43,22 @@
 }
 
 .macros .banner.protein {
-  .swatch {
+  .swatch-macro-container .swatch {
     color: #f4cbd5;
     background-color: #ef476e93;
   }
 
-  .label {
+  .swatch-macro-container .label {
     color: #f4cbd5;
     background: #ef476e7a;
   }
 }
 
-.macros .banner.carbs {
+.macros .banner.carbs .swatch-macro-container {
   --macro-color: #{$macro-carbs};
 }
 
-.macros .banner.fats {
+.macros .banner.fats .swatch-macro-container {
   --macro-color: #{$macro-fats};
 }
 

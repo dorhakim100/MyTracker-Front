@@ -1,12 +1,45 @@
+.slide-dialog-content:has(.edit-meal-container) {
+  overflow: hidden !important;
+
+  .slide-dialog-body-inner {
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+  }
+}
+
 .edit-meal-container {
-  height: 100%;
+  height: 100% !important;
+  max-height: 100%;
+  min-height: 0;
+  overflow: hidden !important;
   display: grid;
-  grid-template-rows: auto auto 1fr auto;
-
+  grid-template-rows: 1fr;
   text-align: center;
-
   gap: 1rem;
   padding: 1rem;
+
+  .custom-stepper {
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+    display: grid;
+    grid-template-rows: auto auto minmax(0, 1fr) auto;
+  }
+
+  .custom-stepper .custom-stepper-stage {
+    min-height: 0 !important;
+    height: 100%;
+    max-height: none;
+    overflow: hidden;
+
+    & > * {
+      display: grid;
+      height: 100%;
+      min-height: 0;
+      overflow: hidden;
+    }
+  }
 
   .edit-meal-content {
     padding: 1rem;
@@ -20,7 +53,17 @@
   .stage-container {
     display: grid;
     gap: 1rem;
-    // height: 360px;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+
+    &.stage-name {
+      grid-template-rows: auto 1fr;
+    }
+
+    &.stage-items {
+      grid-template-rows: auto auto minmax(0, 1fr);
+    }
 
     .card {
       padding: 0.3rem 1rem !important;
@@ -44,7 +87,6 @@
           }
         }
       }
-      // margin-bottom: 1rem;
     }
 
     .buttons-container {
@@ -55,18 +97,42 @@
 
     .animation-container {
       justify-self: center;
-      width: 300px;
-      height: 300px;
+      width: min(300px, 100%);
+      height: 100%;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .edit-meal-list-scroll {
+      min-height: 0;
+      height: 100%;
+      max-height: 100%;
+      overflow-x: hidden;
+      overflow-y: auto !important;
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
+      touch-action: pan-y;
     }
 
     .edit-meal-list {
-      overflow-y: auto;
-      // height: 180px;
+      min-height: 0;
+      height: auto;
+      max-height: none;
+      overflow: visible;
+
+      .MuiList-root {
+        padding-top: 0;
+        padding-bottom: 0;
+      }
+
+      .swipeable-list {
+        height: auto;
+        touch-action: pan-y;
+      }
     }
 
     .edit-meal-macros-distribution {
       padding: 1rem;
-
       align-items: center;
       box-shadow: none;
       height: fit-content;

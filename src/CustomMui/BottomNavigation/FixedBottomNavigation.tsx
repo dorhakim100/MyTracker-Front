@@ -8,10 +8,10 @@ import { ItemSearch } from '../../components/ItemSearch/ItemSearch'
 import { SlideDialog } from '../../components/SlideDialog/SlideDialog'
 import SpeedDial from '@mui/material/SpeedDial'
 import SearchIcon from '@mui/icons-material/Search'
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome'
 
 import Paper from '@mui/material/Paper'
 import AddIcon from '@mui/icons-material/Add'
-import QrCode2Icon from '@mui/icons-material/QrCode2'
 
 import { mainRoutes, Route } from '../../assets/routes/routes'
 import { useSelector } from 'react-redux'
@@ -23,17 +23,22 @@ import {
 } from '../../store/actions/system.actions'
 import { setSelectedDiaryDay } from '../../store/actions/user.actions'
 import { showErrorMsg } from '../../services/event-bus.service'
-import { BarcodeScanner } from '../../components/BarcodeScanner/BarcodeScanner'
 import { smoothScroll } from '../../services/util.service'
 import { setActiveRoute } from '../../store/actions/system.actions'
 import { capacitorService } from '../../services/capacitor.service'
 import { ChatUnreadBadge } from '../ChatUnreadBadge/ChatUnreadBadge'
+import { AiLogCompose } from '../../components/AiLogCompose/AiLogCompose'
+import '../../components/AiLogCompose/locals'
+import { ItemDetails } from '../../components/ItemDetails/ItemDetails'
+import { setItem, setAiSuggestion, setAiDraftItem } from '../../store/actions/item.actions'
+import { estimateToItem } from '../../services/aiLog/aiLog.mapper'
+import type { AiLogEstimate } from '../../types/aiLog/AiLog'
 
-type ModalType = 'search' | 'scan'
+type ModalType = 'search' | 'ai'
 
 const modalTypes = {
   search: 'search' as ModalType,
-  scan: 'scan' as ModalType,
+  ai: 'ai' as ModalType,
 }
 
 export function FixedBottomNavigation(props: {
@@ -75,9 +80,13 @@ export function FixedBottomNavigation(props: {
   const workoutsUnreadCount = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.workoutsUnreadCount
   )
+  const aiSuggestion = useSelector(
+    (stateSelector: RootState) => stateSelector.itemModule.aiSuggestion
+  )
 
   const [searchModalOpen, setSearchModalOpen] = useState(false)
   const [modalType, setModalType] = useState<ModalType>(modalTypes.search)
+  const [isAiDetailsOpen, setIsAiDetailsOpen] = useState(false)
 
   const [currIndex, setCurrIndex] = useState(0)
 
@@ -98,9 +107,9 @@ export function FixedBottomNavigation(props: {
 
   const speedDialActions = [
     {
-      icon: <QrCode2Icon />,
-      name: t('nav.scan'),
-      onClick: onScanClick,
+      icon: <AutoAwesomeIcon />,
+      name: t('nav.aiLog'),
+      onClick: onAiClick,
     },
     {
       icon: <SearchIcon />,
@@ -128,11 +137,11 @@ export function FixedBottomNavigation(props: {
     }
   }, [activeRoute, filteredRoutes])
 
-  async function onScanClick() {
+  async function onAiClick() {
     if (isNative) {
       capacitorService.vibrate('Light')
     }
-    setModalType(modalTypes.scan)
+    setModalType(modalTypes.ai)
     setSearchModalOpen(true)
     setIsAddModal(false)
   }
@@ -151,6 +160,27 @@ export function FixedBottomNavigation(props: {
 
   function closeSearchModal() {
     setSearchModalOpen(false)
+  }
+
+  function onAiEstimated(estimate: AiLogEstimate) {
+    const item = estimateToItem(estimate)
+    setAiSuggestion(estimate)
+    setAiDraftItem(item)
+    setItem(item)
+    setIsAiDetailsOpen(true)
+    setSearchModalOpen(false)
+  }
+
+  function onOpenSearchFromAi() {
+    setModalType(modalTypes.search)
+    setSearchModalOpen(true)
+  }
+
+  function closeAiDetails() {
+    setIsAiDetailsOpen(false)
+    setAiSuggestion(null)
+    setAiDraftItem(null)
+    setItem(null)
   }
 
   function getNavIcon(route: Route) {
@@ -321,13 +351,28 @@ export function FixedBottomNavigation(props: {
           modalType === modalTypes.search ? (
             <ItemSearch />
           ) : (
-            <BarcodeScanner onClose={closeSearchModal} />
+            <AiLogCompose
+              onEstimated={onAiEstimated}
+              onOpenSearch={onOpenSearchFromAi}
+            />
           )
         }
         title={
-          modalType === modalTypes.search ? t('nav.searchFood') : t('nav.scan')
+          modalType === modalTypes.search ? t('nav.searchFood') : t('nav.aiLog')
         }
-        type={modalType === modalTypes.search ? 'full' : 'half'}
+        type='full'
+      />
+
+      <SlideDialog
+        open={isAiDetailsOpen}
+        onClose={closeAiDetails}
+        component={
+          <ItemDetails
+            aiSuggestion={aiSuggestion}
+          />
+        }
+        title={t('nav.aiLog')}
+        type='full'
       />
     </>
   )

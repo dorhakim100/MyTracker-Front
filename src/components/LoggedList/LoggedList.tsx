@@ -101,7 +101,7 @@ export function LoggedList({
     }
 
     setLogs(
-      logsToSet.map((log) => {
+      (logsToSet || []).map((log) => {
         const name =
           itemNameService.getItemDisplayName(log.name, i18n.language) ||
           (log.source === searchTypes.custom ? t('meals.customLog') : '') ||

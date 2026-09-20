@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import { CustomInput } from '../../CustomMui/CustomInput/CustomInput'
 import { Meal } from '../../types/meal/Meal'
+import { Item } from '../../types/item/Item'
 import { mealService } from '../../services/meal/meal.service'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import { RootState } from '../../store/store'
@@ -31,6 +32,7 @@ import { BarcodeScanner } from '../BarcodeScanner/BarcodeScanner'
 import { itemService } from '../../services/item/item.service'
 import { itemNameService } from '../../services/item/item-name.service'
 import { getItemUnit } from '../../services/item/item-unit.service'
+import { servingsFromGrams, toPer100gMacros } from '../../types/aiLog/AiLog'
 
 const stages = ['name', 'items']
 
@@ -48,12 +50,19 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
+  const itemFromStore = useSelector(
+    (stateSelector: RootState) => stateSelector.itemModule.item
+  )
+  const aiDraftItem = useSelector(
+    (stateSelector: RootState) => stateSelector.itemModule.aiDraftItem
+  )
   const [editMeal, setEditMeal] = useState<Meal>(
     selectedMeal ||
       ({ ...mealService.getEmptyMeal(), createdBy: user?._id } as Meal)
   )
   const [stage, setStage] = useState<string>(stages[0])
   const [direction, setDirection] = useState(1)
+  const mealSnapshotRef = useRef<Item | null>(aiDraftItem || itemFromStore)
 
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false)
   const [modalType, setModalType] = useState<'search' | 'edit' | 'scan'>(
@@ -91,6 +100,23 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
   useEffect(() => {
     calcNewMealMacros(editMeal.items)
   }, [editMeal.items, calcNewMealMacros])
+
+  useEffect(() => {
+    const base = mealSnapshotRef.current
+    if (!base) return
+    mealSnapshotRef.current = {
+      ...base,
+      name: itemNameService.toLocalizedName(editMeal.name),
+      items: editMeal.items,
+      macros: editMeal.macros,
+      image: editMeal.image || base.image,
+      type: 'meal',
+    }
+  }, [editMeal.name, editMeal.items, editMeal.macros, editMeal.image])
+
+  function restoreMealItem() {
+    if (mealSnapshotRef.current) setItem(mealSnapshotRef.current)
+  }
 
   const onStageChange = (targetStage: string, diff: number) => {
     if (_getDisabledNavButton(diff > 0 ? 'next' : 'previous')) return
@@ -137,7 +163,7 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
   const renderStageContent = () => {
     if (stage === 'name')
       return (
-        <div className='stage-container'>
+        <div className='stage-container stage-name'>
           <CustomInput
             value={editMeal.name}
             onChange={(value) => onEditMeal('name', value)}
@@ -154,8 +180,7 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
       )
     if (stage === 'items')
       return (
-        <>
-          <div className='stage-container'>
+        <div className='stage-container stage-items'>
             <MacrosDistribution
               protein={editMeal.macros.protein}
               carbs={editMeal.macros.carbs}
@@ -178,6 +203,7 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
                 icon={<QrCode2Icon />}
               />
             </div>
+            <div className='edit-meal-list-scroll'>
             <CustomList
               className={`edit-meal-list ${
                 prefs.isDarkMode ? 'dark-mode' : ''
@@ -232,16 +258,9 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
               // }
               // renderRight={(item) => <div>{item.name}</div>}
             />
+            </div>
           </div>
-          <SlideDialog
-            open={isOpenModal}
-            onClose={onCloseItemDetails}
-            component={getModelType()}
-            title={t('meals.item')}
-            type={modalType === 'scan' ? 'half' : 'full'}
-          />
-        </>
-      )
+        )
   }
 
   const onDeleteItem = (item: MealItem) => {
@@ -254,15 +273,22 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
   }
 
   function onSelectItem(item: MealItem) {
-    const originalMacros = _calcOriginalMacros(item)
+    const grams =
+      (item.servingSize || 100) * (item.numberOfServings || 1) || 100
     setEditMealItem(null)
     setIsOpenModal(true)
     setModalType('edit')
-    setItem({ ...item, macros: originalMacros })
+    setItem({
+      ...item,
+      macros: _calcOriginalMacros(item),
+      servingSize: 100,
+      numberOfServings: servingsFromGrams(grams),
+    } as Item)
   }
 
   function _calcOriginalMacros(item: MealItem) {
-    const grams = item.servingSize * item.numberOfServings
+    const grams =
+      (item.servingSize || 100) * (item.numberOfServings || 1) || 100
     const calories = (item.macros.calories * 100) / grams
     const protein = (item.macros.protein * 100) / grams
     const carbs = (item.macros.carbs * 100) / grams
@@ -277,7 +303,7 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
 
   function onCloseItemDetails() {
     setEditMealItem(null)
-    setItem(null)
+    restoreMealItem()
     setIsOpenModal(false)
   }
 
@@ -286,7 +312,10 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
       try {
         await itemService.create({
           name: itemNameService.toLocalizedName(item.name),
-          macros: item.macros,
+          macros: toPer100gMacros(
+            item.macros,
+            (item.servingSize || 100) * (item.numberOfServings || 1) || 100
+          ),
           image: item.image,
           categories: item.categories,
           type: 'custom',
@@ -353,6 +382,7 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
     }
 
     calcNewMealMacros(newItems)
+    restoreMealItem()
     setIsOpenModal(false)
   }
 
@@ -407,6 +437,13 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
         title={getStageTitle}
         getIsNextDisabled={getIsNextDisabled}
         stagesTitles={stagesTitles}
+      />
+      <SlideDialog
+        open={isOpenModal}
+        onClose={onCloseItemDetails}
+        component={getModelType()}
+        title={t('meals.item')}
+        type={modalType === 'scan' ? 'half' : 'full'}
       />
     </div>
   )

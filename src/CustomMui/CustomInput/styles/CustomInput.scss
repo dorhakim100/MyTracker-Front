@@ -27,7 +27,7 @@
     }
   }
 
-  &.size-s {
+  &.size-s:not(.multiline) {
     .MuiOutlinedInput-root {
       height: 37.7px;
 
@@ -36,6 +36,13 @@
         padding-block: 0;
         box-sizing: border-box;
       }
+    }
+  }
+
+  &.multiline {
+    .MuiOutlinedInput-root {
+      height: auto;
+      align-items: flex-start;
     }
   }
 }

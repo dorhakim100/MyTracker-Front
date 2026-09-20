@@ -21,6 +21,8 @@ interface CustomInputProps {
   className?: string
   isRemoveIcon?: boolean
   onBlur?: () => void
+  multiline?: boolean
+  minRows?: number
 }
 
 export function CustomInput({
@@ -35,6 +37,8 @@ export function CustomInput({
   className,
   isRemoveIcon,
   onBlur,
+  multiline = false,
+  minRows = 4,
 }: CustomInputProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const prefs = useSelector(
@@ -46,16 +50,19 @@ export function CustomInput({
       onBlur={onBlur}
       fullWidth
       size={size === 's' ? 'small' : 'medium'}
-      type={type}
+      type={multiline ? undefined : type}
       ref={inputRef}
       // autoFocus={autoFocus}
       autoFocus={false}
       placeholder={placeholder}
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className={`custom-input size-${size} ${className} ${
-        prefs.isDarkMode ? 'dark-mode' : ''
-      }`}
+      multiline={multiline}
+      minRows={multiline ? minRows : undefined}
+      inputProps={multiline ? { dir: 'auto' } : undefined}
+      className={`custom-input size-${size} ${
+        multiline ? 'multiline' : ''
+      } ${className} ${prefs.isDarkMode ? 'dark-mode' : ''}`}
       InputProps={{
         startAdornment: startIconFn ? (
           <InputAdornment position='start'>{startIconFn()}</InputAdornment>

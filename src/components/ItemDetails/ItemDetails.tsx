@@ -30,9 +30,11 @@ import { searchTypes } from '../../assets/config/search-types'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import { CustomFloatingButton } from '../../CustomMui/CustomFloatingButton/CustomFloatingButton'
 import { EditMacros } from '../MacrosProgress/EditMacros'
-import { calculateProteinCalories } from '../../services/macros/macros.service'
-import { calculateCarbCalories } from '../../services/macros/macros.service'
-import { calculateFatCalories } from '../../services/macros/macros.service'
+import {
+  calculateCarbCalories,
+  calculateFatCalories,
+  calculateProteinCalories,
+} from '../../services/macros/macros.service'
 import EditIcon from '@mui/icons-material/Edit'
 import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
 import {
@@ -47,6 +49,17 @@ import { BarcodeScanner } from '../BarcodeScanner/BarcodeScanner'
 import QrCode2Icon from '@mui/icons-material/QrCode2'
 import { ItemUnit } from '../../types/item/ItemUnit'
 import { dayService } from '../../services/day/day.service'
+import {
+  AiLogEstimate,
+  AiLogLine,
+  averageGrams,
+  servingsFromGrams,
+  toDisplayedMacros,
+  toPer100gMacros,
+} from '../../types/aiLog/AiLog'
+import { estimateForLine, matchAiLine } from '../../services/aiLog/aiLog.mapper'
+import { AiEstimateCaption } from './AiEstimateCaption/AiEstimateCaption'
+import './AiEstimateCaption/locals'
 
 import { LoggedToday } from '../../types/loggedToday/LoggedToday'
 import { imageService } from '../../services/image/image.service'
@@ -56,6 +69,7 @@ import {
   setItem,
   setSelectedMeal,
   setEditMealItem,
+  setAiDraftItem,
 } from '../../store/actions/item.actions'
 import { ClockPicker } from '../Pickers/ClockPicker'
 import { PickerSelect } from '../Pickers/PickerSelect'
@@ -93,6 +107,7 @@ interface ItemDetailsProps {
   editMenu?: Menu
   shouldDefaultItemMacros?: boolean
   previewItem?: Item | Meal | Log | MealItem | null
+  aiSuggestion?: AiLogEstimate | null
 }
 
 interface EditOption {
@@ -121,6 +136,112 @@ const getNumberOfServingsInput = (t: (key: string) => string) => ({
   extra: '',
 })
 
+function emptyMacros(): MacrosType {
+  return { calories: 0, protein: 0, carbs: 0, fat: 0 }
+}
+
+function getDefaultCustomMacros(): MacrosType {
+  const protein = 15
+  const carbs = 20
+  const fat = 5
+  return {
+    calories:
+      calculateProteinCalories(protein) +
+      calculateCarbCalories(carbs) +
+      calculateFatCalories(fat),
+    protein,
+    carbs,
+    fat,
+  }
+}
+
+function getPortionGrams(servingSize: number, numberOfServings: number) {
+  return (servingSize || 100) * (numberOfServings || 1) || 100
+}
+
+function hasMealItems(
+  item: Item | Meal | Log | MealItem | null | undefined
+): boolean {
+  if (!item) return false
+  const items = (item as Item).items
+  return Array.isArray(items) && items.length > 0
+}
+
+function hasMeaningfulMacros(macros?: MacrosType | null) {
+  if (!macros) return false
+  return !!(macros.calories || macros.protein || macros.carbs || macros.fat)
+}
+
+function getEditAmounts(
+  item: Item | Meal | Log | MealItem | null | undefined,
+  editMealItem: Log | MealItem | null | undefined,
+  aiLine: AiLogLine | null
+) {
+  if (aiLine) {
+    return {
+      servingSize: 100,
+      numberOfServings: servingsFromGrams(
+        averageGrams(aiLine.gramsMin, aiLine.gramsMax)
+      ),
+    }
+  }
+  const mealItem = item as MealItem | null | undefined
+  return {
+    servingSize:
+      mealItem?.servingSize ||
+      (editMealItem as MealItem | null)?.servingSize ||
+      100,
+    numberOfServings:
+      (editMealItem as MealItem | null)?.numberOfServings ||
+      mealItem?.numberOfServings ||
+      1,
+  }
+}
+
+function resolvePer100g({
+  item,
+  aiLine,
+  servingSize,
+  numberOfServings,
+  isNewCustomLog,
+  isPortionTotals,
+}: {
+  item: Item | Meal | Log | null | undefined
+  aiLine: AiLogLine | null
+  servingSize: number
+  numberOfServings: number
+  isNewCustomLog: boolean
+  isPortionTotals: boolean
+}): MacrosType {
+  if (aiLine?.per100g) {
+    return {
+      calories: aiLine.per100g.calories,
+      protein: aiLine.per100g.protein,
+      carbs: aiLine.per100g.carbs,
+      fat: aiLine.per100g.fat,
+    }
+  }
+
+  if (isNewCustomLog && !hasMeaningfulMacros(item?.macros)) {
+    return getDefaultCustomMacros()
+  }
+
+  if (!item?.macros) {
+    return isNewCustomLog ? getDefaultCustomMacros() : emptyMacros()
+  }
+
+  if (hasMealItems(item)) return item.macros
+
+  if (isPortionTotals) {
+    return toPer100gMacros(
+      item.macros,
+      getPortionGrams(servingSize, numberOfServings)
+    )
+  }
+
+  return item.macros
+}
+
 // const MACROS_VIEW_VALUES: ItemMacrosView[] = ['per100g', 'dayProgress']
 
 function getItemCategories(
@@ -139,12 +260,21 @@ export function ItemDetails({
   editMenu,
   shouldDefaultItemMacros = false,
   previewItem = null,
+  aiSuggestion: aiSuggestionProp,
 }: ItemDetailsProps) {
   const { t, i18n } = useTranslation()
   const { t: tDetails } = useTranslation(itemDetailsNs)
   const searchedItem: Item = useSelector(
     (stateSelector: RootState) => stateSelector.itemModule.item
   )
+  const storedAiSuggestion = useSelector(
+    (stateSelector: RootState) => stateSelector.itemModule.aiSuggestion
+  )
+  const aiSuggestion = onAddToMealClick
+    ? null
+    : aiSuggestionProp !== undefined
+    ? aiSuggestionProp
+    : storedAiSuggestion
 
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -190,17 +320,34 @@ export function ItemDetails({
   // &&
   // (!(item as Log).createdBy || (item as Log).createdBy === user?._id)
 
+  const initialAiLine = matchAiLine(item as MealItem, aiSuggestion)
+  const initialAmounts = getEditAmounts(item, editMealItem, initialAiLine)
+  const initialPer100g = resolvePer100g({
+    item,
+    aiLine: initialAiLine,
+    servingSize: initialAmounts.servingSize,
+    numberOfServings: initialAmounts.numberOfServings,
+    isNewCustomLog: isCustomLog && !initialAiLine,
+    isPortionTotals: !!(previewItem || (item as Log)?.time),
+  })
+
+  const [macrosPer100g, setMacrosPer100g] = useState<MacrosType>(initialPer100g)
   const [editItem, setEditItem] = useState<EditItem>({
-    totalMacros: isCustomLog ? _getDefaultMacros() : item.macros,
-    servingSize: editMealItem?.servingSize || 100,
-    numberOfServings: editMealItem?.numberOfServings || 1,
+    totalMacros: toDisplayedMacros(
+      initialPer100g,
+      initialAmounts.servingSize,
+      initialAmounts.numberOfServings
+    ),
+    servingSize: initialAmounts.servingSize,
+    numberOfServings: initialAmounts.numberOfServings,
     meal: editMealItem?.meal || selectedMeal || getCurrMeal(),
-    name: isCustomLog
-      ? ''
-      : itemNameService.getItemDisplayName(
-          editMealItem?.name || searchedItem.name,
-          i18n.language
-        ),
+    name:
+      isCustomLog && !aiSuggestion
+        ? ''
+        : itemNameService.getItemDisplayName(
+            editMealItem?.name || searchedItem?.name || item?.name,
+            i18n.language
+          ),
   })
 
   const [clockOpen, setClockOpen] = useState(false)
@@ -218,7 +365,7 @@ export function ItemDetails({
     () => getItemCategories(item)
   )
   const [shouldCreateItem, setShouldCreateItem] = useState(
-    canEditCustomChrome && !editMealItem && !item?.createdBy
+    canEditCustomChrome && !editMealItem && !item?.createdBy && !aiSuggestion
   )
   const [isUploadingImage, setIsUploadingImage] = useState(false)
   const imageInputRef = useRef<HTMLInputElement>(null)
@@ -228,8 +375,13 @@ export function ItemDetails({
   const [customUnit, setCustomUnit] = useState<ItemUnit>(() =>
     getItemUnit(item)
   )
-  const [nestedPreview, setNestedPreview] = useState<MealItem | null>(null)
-  const [originalItem, setOriginalItem] = useState<Item | null>(null)
+  const [nestedPreviewIndex, setNestedPreviewIndex] = useState<number | null>(
+    null
+  )
+  const nestedPreview =
+    nestedPreviewIndex == null
+      ? null
+      : (item as Item).items?.[nestedPreviewIndex] || null
   const [isEditMealOpen, setIsEditMealOpen] = useState(false)
   const [isScanSearchId, setIsScanSearchId] = useState(false)
   const [isSavingItem, setIsSavingItem] = useState(false)
@@ -291,8 +443,10 @@ export function ItemDetails({
     }
   }, [shouldDefaultItemMacros, stringifiedItem])
 
+  const isAiCustom = aiSuggestion?.mode === 'custom'
+
   const editOptions: EditOption[] =
-    (item?.createdBy && !(item as Log)?.createdBy) || isCustomLog
+    (item?.createdBy && !(item as Log)?.createdBy) || isCustomLog || isAiCustom
       ? //  || !isCustomLog
         //  || (item as Log).source !== searchTypes.custom
         [
@@ -308,15 +462,41 @@ export function ItemDetails({
           getMealInput(t),
         ]
       : [
+          ...(isCustom
+            ? [
+                {
+                  label: t('macros.macros'),
+                  key: 'custom-log-macros',
+                  type: 'macros',
+                  extra: '',
+                  values: [],
+                },
+              ]
+            : []),
           {
             label: t('meals.servingSize'),
             key: 'servingSize',
-            values: [1, 25, 30, 50, 100, 150],
             extra:
               (isCustom ? customUnit : displayUnit) === 'ml'
                 ? t('macros.ml')
                 : t('macros.gram'),
             type: 'select',
+            values: [
+              ...new Set(
+                [
+                  (item as MealItem).servingSize,
+                  1,
+                  25,
+                  30,
+                  50,
+                  100,
+                  150,
+                ].filter(
+                  (value): value is number =>
+                    typeof value === 'number' && value > 0
+                )
+              ),
+            ].sort((a, b) => a - b),
           },
           getNumberOfServingsInput(t),
           getMealInput(t),
@@ -327,53 +507,37 @@ export function ItemDetails({
   }, [])
 
   useEffect(() => {
+    const aiLine = matchAiLine(item as MealItem, aiSuggestion)
+    const { servingSize, numberOfServings } = getEditAmounts(
+      item,
+      editMealItem,
+      aiLine
+    )
+    const per100g = resolvePer100g({
+      item,
+      aiLine,
+      servingSize,
+      numberOfServings,
+      isNewCustomLog: isCustomLog && !aiLine,
+      isPortionTotals: !!(previewItem || (item as Log)?.time),
+    })
+
+    setMacrosPer100g(per100g)
     setEditItem({
-      totalMacros: isCustomLog ? _getDefaultMacros() : item.macros,
-      servingSize: editMealItem?.servingSize || 100,
-      numberOfServings: editMealItem?.numberOfServings || 1,
+      totalMacros: toDisplayedMacros(per100g, servingSize, numberOfServings),
+      servingSize,
+      numberOfServings,
       meal: editMealItem?.meal || selectedMeal || getCurrMeal(),
-      name: isCustomLog
-        ? ''
-        : itemNameService.getItemDisplayName(
-            editMealItem?.name || searchedItem.name,
-            i18n.language
-          ),
+      name:
+        isCustomLog && !aiSuggestion
+          ? ''
+          : itemNameService.getItemDisplayName(item?.name, i18n.language),
     })
     setCustomImage(item?.image)
     setCustomCategories(getItemCategories(item))
     setCustomSearchId(String((item as Item).searchId || ''))
     setCustomUnit(getItemUnit(item))
-  }, [stringifiedItem, isCustomLog])
-
-  useEffect(() => {
-    if (!previewItem) {
-      setOriginalItem(null)
-      return
-    }
-
-    const searchId = String((previewItem as Item).searchId || '')
-    if (!searchId) {
-      setOriginalItem(null)
-      return
-    }
-
-    setOriginalItem(null)
-    let cancelled = false
-
-    async function loadOriginalItem() {
-      try {
-        const fetched = await itemService.getBySearchId(searchId)
-        if (!cancelled) setOriginalItem(fetched || null)
-      } catch {
-        if (!cancelled) setOriginalItem(null)
-      }
-    }
-
-    loadOriginalItem()
-    return () => {
-      cancelled = true
-    }
-  }, [previewItem])
+  }, [stringifiedItem, isCustomLog, aiSuggestion, previewItem])
 
   const closeClock = () => {
     setClockOpen(false)
@@ -398,93 +562,29 @@ export function ItemDetails({
   }
 
   const onEditItemChange = (key: string, value: string | number) => {
-    let totalMacrosToSet = searchedItem.macros
+    if (key === 'meal' || key === 'name') {
+      setEditItem((prev) => ({
+        ...prev,
+        [key]: value as string,
+      }))
+      return
+    }
 
-    let caloriesBaseline = searchedItem.macros.calories
-    let proteinBaseline = searchedItem.macros.protein
-    let carbsBaseline = searchedItem.macros.carbs
-    let fatBaseline = searchedItem.macros.fat
+    setEditItem((prev) => {
+      const servingSize = key === 'servingSize' ? +value : prev.servingSize
+      const numberOfServings =
+        key === 'numberOfServings' ? +value : prev.numberOfServings
 
-    if (isCustomLog || searchedItem.type === searchTypes.custom) {
-      const normalizedMacros = {
-        calories:
-          (editItem.totalMacros.calories * editItem.servingSize) /
-          100 /
-          editItem.numberOfServings,
-        protein:
-          (editItem.totalMacros.protein * editItem.servingSize) /
-          100 /
-          editItem.numberOfServings,
-        carbs:
-          (editItem.totalMacros.carbs * editItem.servingSize) /
-          100 /
-          editItem.numberOfServings,
-        fat:
-          (editItem.totalMacros.fat * editItem.servingSize) /
-          100 /
-          editItem.numberOfServings,
+      return {
+        ...prev,
+        [key]: +value,
+        totalMacros: toDisplayedMacros(
+          macrosPer100g,
+          servingSize,
+          numberOfServings
+        ),
       }
-
-      caloriesBaseline = normalizedMacros.calories
-      proteinBaseline = normalizedMacros.protein
-      carbsBaseline = normalizedMacros.carbs
-      fatBaseline = normalizedMacros.fat
-    }
-
-    switch (key) {
-      case 'servingSize':
-        totalMacrosToSet = {
-          calories: Math.round(
-            (+value / 100) * caloriesBaseline * editItem.numberOfServings
-          ),
-          protein: Math.round(
-            (+value / 100) * proteinBaseline * editItem.numberOfServings
-          ),
-          carbs: Math.round(
-            (+value / 100) * carbsBaseline * editItem.numberOfServings
-          ),
-          fat: Math.round(
-            (+value / 100) * fatBaseline * editItem.numberOfServings
-          ),
-        }
-
-        break
-
-      case 'numberOfServings':
-        totalMacrosToSet = {
-          calories: Math.round(
-            (+value * caloriesBaseline * editItem.servingSize) / 100
-          ),
-          protein: Math.round(
-            (+value * proteinBaseline * editItem.servingSize) / 100
-          ),
-          carbs: Math.round(
-            (+value * carbsBaseline * editItem.servingSize) / 100
-          ),
-          fat: Math.round((+value * fatBaseline * editItem.servingSize) / 100),
-        }
-        break
-
-      case 'meal':
-        setEditItem((prev) => ({
-          ...prev,
-          [key]: value as string,
-        }))
-        return
-
-      case 'name':
-        setEditItem((prev) => ({
-          ...prev,
-          [key]: value as string,
-        }))
-        return
-    }
-
-    setEditItem((prev) => ({
-      ...prev,
-      [key]: +value,
-      totalMacros: totalMacrosToSet,
-    }))
+    })
   }
 
   const onFavoriteClick = async (e: React.MouseEvent<HTMLDivElement>) => {
@@ -498,22 +598,6 @@ export function ItemDetails({
       await handleFavorite(searchedItem, user)
     } catch {
       showErrorMsg(t('messages.error.favorite'))
-    }
-  }
-
-  function _getDefaultMacros() {
-    const protein = 15
-    const carbs = 20
-    const fats = 5
-    const calories =
-      calculateProteinCalories(protein) +
-      calculateCarbCalories(carbs) +
-      calculateFatCalories(fats)
-    return {
-      calories,
-      protein,
-      carbs,
-      fat: fats,
     }
   }
 
@@ -535,9 +619,6 @@ export function ItemDetails({
 
       if (shouldCreateItem) {
         try {
-          const grams =
-            (editItem.servingSize || 100) * (editItem.numberOfServings || 1) ||
-            100
           const searchId = customSearchId.trim()
           if (searchId) {
             try {
@@ -552,14 +633,7 @@ export function ItemDetails({
           }
           await itemService.create({
             name: { default: editItem.name || '' } as ItemName,
-            macros: {
-              calories: Math.round(
-                (editItem.totalMacros.calories / grams) * 100
-              ),
-              protein: Math.round((editItem.totalMacros.protein / grams) * 100),
-              carbs: Math.round((editItem.totalMacros.carbs / grams) * 100),
-              fat: Math.round((editItem.totalMacros.fat / grams) * 100),
-            },
+            macros: macrosPer100g,
             image: customImage,
             categories: customCategories,
             createdBy: user._id,
@@ -662,24 +736,28 @@ export function ItemDetails({
       delete itemToCache._id
 
       const newLog = {
-        itemId: isCustomLog
-          ? customSearchId.trim() || ''
-          : (item as Item).searchId,
+        itemId:
+          isCustomLog || aiSuggestion
+            ? customSearchId.trim() || ''
+            : (item as Item).searchId,
         meal: editItem.meal,
         macros: editItem.totalMacros,
         time: Date.now(),
         servingSize: editItem.servingSize,
         numberOfServings: editItem.numberOfServings,
-        source: isCustomLog ? searchTypes.custom : searchedItem.type,
+        source:
+          isCustomLog || aiSuggestion ? searchTypes.custom : searchedItem.type,
         createdBy: user._id,
-        name: isCustomLog
-          ? editItem.name
-          : item.createdBy
-          ? (item?.name as LocalizedName)?.default
-          : '',
+        name:
+          isCustomLog || aiSuggestion
+            ? editItem.name
+            : item.createdBy
+            ? (item?.name as LocalizedName)?.default
+            : '',
         image: isCustom ? customImage : undefined,
         categories: isCustom ? customCategories : undefined,
         unit: isCustom ? customUnit : getItemUnit(item),
+        aiPlate: !!(aiSuggestion && customImage),
       }
 
       setSelectedMeal(null)
@@ -824,17 +902,10 @@ export function ItemDetails({
         }
       }
 
-      const grams =
-        (editItem.servingSize || 100) * (editItem.numberOfServings || 1) || 100
       const itemToSave: Item = {
         ...(item as Item),
         name: itemNameService.toLocalizedName(editItem.name || ''),
-        macros: {
-          calories: Math.round((editItem.totalMacros.calories / grams) * 100),
-          protein: Math.round((editItem.totalMacros.protein / grams) * 100),
-          carbs: Math.round((editItem.totalMacros.carbs / grams) * 100),
-          fat: Math.round((editItem.totalMacros.fat / grams) * 100),
-        },
+        macros: macrosPer100g,
         image: customImage,
         categories: customCategories,
         type: 'custom',
@@ -867,6 +938,22 @@ export function ItemDetails({
   }
 
   async function onSaveEditedMeal(editMeal: Meal) {
+    if (aiSuggestion?.mode === 'meal') {
+      const draft = {
+        ...item,
+        name: editMeal.name
+          ? itemNameService.toLocalizedName(editMeal.name)
+          : item.name || { default: '' },
+        items: editMeal.items,
+        macros: editMeal.macros,
+        image: editMeal.image || item.image,
+        type: 'meal' as const,
+      }
+      setItem(draft)
+      setAiDraftItem(draft)
+      setIsEditMealOpen(false)
+      return
+    }
     if (!user) return
     try {
       const savedMeal = await mealService.save(editMeal)
@@ -967,9 +1054,14 @@ export function ItemDetails({
   }
 
   const onEditCustomLog = (macros: MacrosType) => {
+    setMacrosPer100g(macros)
     setEditItem((prev) => ({
       ...prev,
-      totalMacros: macros,
+      totalMacros: toDisplayedMacros(
+        macros,
+        prev.servingSize,
+        prev.numberOfServings
+      ),
     }))
   }
 
@@ -984,20 +1076,8 @@ export function ItemDetails({
   const displayCategories = isCustom
     ? customCategories
     : getItemCategories(item)
-  const servingGrams =
-    (editItem.servingSize || 100) * (editItem.numberOfServings || 1)
 
-  const typeOfPer = isMeal ? 'meal' : 'per100g'
-  const perGramsLabel = tDetails(typeOfPer, {
-    amount: servingGrams.toFixed(0),
-    unit: unitExtra,
-  })
-
-  const per100gMacros = useMemo(() => {
-    return isCustom
-      ? editItem.totalMacros
-      : item?.macros || editItem.totalMacros
-  }, [item?.macros, editItem.totalMacros, isCustom])
+  const per100gMacros = macrosPer100g
 
   const onMacrosViewChange = (value: string) => {
     const next = value === 'per100g' ? 'per100g' : 'dayProgress'
@@ -1070,6 +1150,15 @@ export function ItemDetails({
     return getLogDonutProps()
   }
 
+  const servingGrams = getPortionGrams(
+    editItem.servingSize,
+    editItem.numberOfServings
+  )
+  const perGramsLabel = tDetails(isMeal ? 'meal' : 'per100g', {
+    amount: servingGrams.toFixed(0),
+    unit: unitExtra,
+  })
+
   const primaryLabel = !canShowDayProgress
     ? tDetails('thisLog')
     : macrosView === 'per100g'
@@ -1088,31 +1177,9 @@ export function ItemDetails({
     fats: editItem.totalMacros?.fat || 0,
   }
 
-  const originalMacros = previewItem ? originalItem?.macros : null
-  const macrosContainerDonut = originalMacros
-    ? {
-        protein: originalMacros.protein,
-        carbs: originalMacros.carbs,
-        fats: originalMacros.fat,
-        calories: originalMacros.calories,
-      }
-    : getSecondaryDonutProps()
-  const macrosContainerGrams = originalMacros
-    ? {
-        protein: originalMacros.protein || 0,
-        carbs: originalMacros.carbs || 0,
-        fats: originalMacros.fat || 0,
-      }
-    : logGrams
-  const macrosContainerLabel = originalMacros
-    ? tDetails('per100g', {
-        amount: 100,
-        unit:
-          getItemUnit(originalItem) === 'ml'
-            ? t('macros.ml')
-            : t('macros.gram'),
-      })
-    : secondaryLabel
+  const macrosContainerDonut = getSecondaryDonutProps()
+  const macrosContainerGrams = logGrams
+  const macrosContainerLabel = secondaryLabel
 
   const heroName = itemNameService.getItemDisplayName(item?.name, i18n.language)
   const baselineKcal = Math.round(per100gMacros?.calories || 0)
@@ -1126,11 +1193,12 @@ export function ItemDetails({
       if ((item as Item).type === 'meal') return false
       if ((item as MealItem).mealId) return false
       if (isFixedMenuLocked) return false
-      if (canEditCustomChrome) return false
+      if (canEditCustomChrome && !aiSuggestion) return false
     }
     if (isFixedMenuLocked && option.key === 'numberOfServings') return false
     if (isFixedMenuLocked && option.key === 'meal') return false
-    if ((item as Log)?.time && option.key === 'custom-log-macros') return false
+    if ((item as Log)?.time && option.key === 'custom-log-macros' && !isCustom)
+      return false
     return true
   }
 
@@ -1205,17 +1273,20 @@ export function ItemDetails({
                 open={macrosOpen}
                 onClose={closeMacros}
                 component={
-                  <EditMacros
-                    isCustomLog={
-                      isCustomLog || (item as Log).source === searchTypes.custom
-                    }
-                    protein={editItem.totalMacros?.protein || 0}
-                    carbs={editItem.totalMacros?.carbs || 0}
-                    fats={editItem.totalMacros?.fat || 0}
-                    editCustomLog={onEditCustomLog}
-                    onCancel={closeMacros}
-                    onSave={closeMacros}
-                  />
+                  macrosOpen ? (
+                    <EditMacros
+                      isEditingPer100g={true}
+                      isCustomLog={isCustom || !!aiSuggestion}
+                      protein={macrosPer100g?.protein || 0}
+                      carbs={macrosPer100g?.carbs || 0}
+                      fats={macrosPer100g?.fat || 0}
+                      editCustomLog={onEditCustomLog}
+                      onCancel={closeMacros}
+                      onSave={closeMacros}
+                    />
+                  ) : (
+                    <></>
+                  )
                 }
               />
             </>
@@ -1472,16 +1543,19 @@ export function ItemDetails({
                 </div>
               </div>
             )}
-            {isOwnMeal && !noEdit && !previewItem && (
-              <CustomButton
-                text={tDetails('editMeal')}
-                icon={<EditIcon />}
-                onClick={() => setIsEditMealOpen(true)}
-                className={`${prefs.favoriteColor}`}
-              />
-            )}
+            {(isOwnMeal || aiSuggestion?.mode === 'meal') &&
+              !noEdit &&
+              !previewItem && (
+                <CustomButton
+                  text={tDetails('editMeal')}
+                  icon={<EditIcon />}
+                  onClick={() => setIsEditMealOpen(true)}
+                  className={`${prefs.favoriteColor}`}
+                />
+              )}
           </div>
         </div>
+        {aiSuggestion && <AiEstimateCaption estimate={aiSuggestion} />}
         {_hasItems(item) && (
           <div className='nested-items'>
             <Typography
@@ -1499,7 +1573,7 @@ export function ItemDetails({
                   className='nested-item-row'
                   onClick={() => {
                     if (previewItem) return
-                    setNestedPreview(nested)
+                    setNestedPreviewIndex(index)
                   }}
                 >
                   <img
@@ -1521,6 +1595,9 @@ export function ItemDetails({
                     <span className='nested-item-kcal'>
                       {Math.round(nested.macros?.calories || 0)}{' '}
                       {t('macros.kcal')}
+                      {aiSuggestion?.items[index]
+                        ? ` · ${aiSuggestion.items[index].gramsMin}–${aiSuggestion.items[index].gramsMax}g`
+                        : ''}
                     </span>
                   </div>
                   {/* <CustomButton
@@ -1634,13 +1711,18 @@ export function ItemDetails({
       )}
       <SlideDialog
         open={!!nestedPreview}
-        onClose={() => setNestedPreview(null)}
+        onClose={() => setNestedPreviewIndex(null)}
         component={
           nestedPreview ? (
             <ItemDetails
               noEdit
               previewItem={nestedPreview}
               shouldDefaultItemMacros
+              aiSuggestion={
+                nestedPreviewIndex != null
+                  ? estimateForLine(aiSuggestion, nestedPreviewIndex)
+                  : undefined
+              }
             />
           ) : (
             <></>
@@ -1662,7 +1744,19 @@ export function ItemDetails({
         component={
           <EditMeal
             selectedMeal={
-              user?.meals?.find((meal) => meal._id === item._id) || null
+              aiSuggestion?.mode === 'meal'
+                ? ({
+                    _id: item._id || '',
+                    name: itemNameService.getItemDisplayName(
+                      item.name,
+                      i18n.language
+                    ),
+                    items: (item as Item).items || [],
+                    macros: item.macros,
+                    createdBy: user?._id || '',
+                    image: item.image,
+                  } as Meal)
+                : user?.meals?.find((meal) => meal._id === item._id) || null
             }
             saveMeal={onSaveEditedMeal}
           />

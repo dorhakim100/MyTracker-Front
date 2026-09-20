@@ -4,27 +4,51 @@ interface MacrosProps {
   protein: number
   carbs: number
   fats: number
+  proteinMax?: number
+  carbsMax?: number
+  fatsMax?: number
+  className?: string
 }
 
-export function Macros({ protein, carbs, fats }: MacrosProps) {
+function macroValue(min: number, max?: number) {
+  const low = min.toFixed(0)
+  if (max == null) return `${low}g`
+  return `${low}g - ${max.toFixed(0)}g`
+}
+
+export function Macros({
+  protein,
+  carbs,
+  fats,
+  proteinMax,
+  carbsMax,
+  fatsMax,
+  className = '',
+}: MacrosProps) {
   const { t } = useTranslation()
 
   return (
-    <div className='macros'>
+    <div className={`macros ${className}`.trim()}>
       <div className='banner carbs'>
-        <span className='swatch' />
-        <span className='label'>{t('macros.carbs')}</span>
-        <span className='value'>{carbs.toFixed(0)}g</span>
+        <div className='swatch-macro-container'>
+          <span className='swatch' />
+          <span className='label'>{t('macros.carbs')}</span>
+        </div>
+        <span className='value'>{macroValue(carbs, carbsMax)}</span>
       </div>
       <div className='banner protein'>
-        <span className='swatch' />
-        <span className='label'>{t('macros.protein')}</span>
-        <span className='value'>{protein.toFixed(0)}g</span>
+        <div className='swatch-macro-container'>
+          <span className='swatch' />
+          <span className='label'>{t('macros.protein')}</span>
+        </div>
+        <span className='value'>{macroValue(protein, proteinMax)}</span>
       </div>
       <div className='banner fats'>
-        <span className='swatch' />
-        <span className='label'>{t('macros.fats')}</span>
-        <span className='value'>{fats.toFixed(0)}g</span>
+        <div className='swatch-macro-container'>
+          <span className='swatch' />
+          <span className='label'>{t('macros.fats')}</span>
+        </div>
+        <span className='value'>{macroValue(fats, fatsMax)}</span>
       </div>
     </div>
   )

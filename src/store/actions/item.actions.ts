@@ -9,10 +9,13 @@ import {
   SET_FAVORITE_ITEMS,
   ADD_FAVORITE_ITEM,
   REMOVE_FAVORITE_ITEM,
+  SET_AI_SUGGESTION,
+  SET_AI_DRAFT_ITEM,
 } from '../reducers/item.reducer'
 import type { AddTarget } from '../reducers/item.reducer'
 import { Item } from '../../types/item/Item'
 import { Log } from '../../types/log/Log'
+import { AiLogEstimate } from '../../types/aiLog/AiLog'
 
 export async function loadItems(): Promise<Item[]> {
   try {
@@ -55,6 +58,14 @@ export function setAddTarget(addTarget: AddTarget) {
 
 export function setFavoriteItems(favoriteItems: Item[]) {
   store.dispatch(getCmdSetFavoriteItems(favoriteItems))
+}
+
+export function setAiSuggestion(aiSuggestion: AiLogEstimate | null) {
+  store.dispatch({ type: SET_AI_SUGGESTION, aiSuggestion })
+}
+
+export function setAiDraftItem(aiDraftItem: Item | null) {
+  store.dispatch({ type: SET_AI_DRAFT_ITEM, aiDraftItem })
 }
 
 export function addFavoriteItem(favoriteItem: Item) {

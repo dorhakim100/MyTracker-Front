@@ -7,6 +7,7 @@
     "signIn": "Sign in",
     "search": "Search",
     "scan": "Scan",
+    "aiLog": "AI log",
     "searchFood": "Search Food",
     "trainees": "Trainees",
     "exercises": "Exercises",
@@ -29,6 +30,7 @@
     "gram": "g",
     "ml": "ml",
     "outOf": "Out of",
+    "per100g": "Edit Macros Per 100g",
     "dayProgress": "Day progress",
     "beyondMacros": "Beyond daily macros",
     "beyondCalories": "Beyond calories"

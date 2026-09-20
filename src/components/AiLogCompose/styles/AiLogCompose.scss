@@ -1,0 +1,97 @@
+.ai-log-compose {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem 1rem 2rem;
+
+  .photo-section {
+    display: grid;
+    justify-items: center;
+    gap: 0.5rem;
+  }
+
+  .image-preview {
+    width: 100%;
+    max-width: 180px;
+    aspect-ratio: 1;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--surface-color, transparent);
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      animation: ai-log-photo-in 220ms ease-out;
+    }
+
+    .placeholder {
+      font-size: 0.9rem;
+      opacity: 0.7;
+      padding: 1rem;
+      text-align: center;
+    }
+  }
+
+  .upload-button {
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    text-align: center;
+    background-color: var(--primary-color);
+    color: #fff;
+
+    html.dark-mode & {
+      background-color: var(--primary-color-dark);
+    }
+
+    &.disabled {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    input[type='file'] {
+      display: none;
+    }
+  }
+
+  .uploading-text {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .hint-container {
+    opacity: 0.8;
+    min-height: 100px;
+  }
+
+  .cant-figure,
+  .error-text {
+    text-align: center;
+  }
+
+  .send-button,
+  .search-button {
+    justify-self: center;
+  }
+}
+
+@keyframes ai-log-photo-in {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ai-log-compose .image-preview img {
+    animation: none;
+  }
+}

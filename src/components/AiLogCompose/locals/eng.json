@@ -1,0 +1,14 @@
+{
+  "title": "AI log",
+  "photoAlt": "Plate photo",
+  "noPhoto": "No photo",
+  "uploadPhoto": "Add photo",
+  "uploading": "Uploading",
+  "description": "What did you eat?",
+  "descriptionHint": "Describe the food you want to log, including the items, portion sizes, ingredients, and any other details that can help the AI estimate the calories as accurately as possible.",
+  "send": "Get estimate",
+  "estimating": "Estimating",
+  "cantFigure": "We couldn't figure that out.",
+  "openSearch": "Search food instead",
+  "errorGeneric": "Something went wrong. Try again."
+}

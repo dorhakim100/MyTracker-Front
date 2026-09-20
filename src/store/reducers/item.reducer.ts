@@ -3,6 +3,7 @@ import { itemService } from '../../services/item/item.cache.service'
 import { Item } from '../../types/item/Item'
 import { ItemFilter } from '../../types/itemFilter/ItemFilter'
 import { Log } from '../../types/log/Log'
+import { AiLogEstimate } from '../../types/aiLog/AiLog'
 
 export const SET_ITEMS = 'SET_ITEMS'
 export const SET_ITEM = 'SET_ITEM'
@@ -13,6 +14,8 @@ export const SET_ADD_TARGET = 'SET_ADD_TARGET'
 export const SET_FAVORITE_ITEMS = 'SET_FAVORITE_ITEMS'
 export const ADD_FAVORITE_ITEM = 'ADD_FAVORITE_ITEM'
 export const REMOVE_FAVORITE_ITEM = 'REMOVE_FAVORITE_ITEM'
+export const SET_AI_SUGGESTION = 'SET_AI_SUGGESTION'
+export const SET_AI_DRAFT_ITEM = 'SET_AI_DRAFT_ITEM'
 
 export type AddTarget = 'diary' | 'menu'
 
@@ -25,6 +28,8 @@ export interface ItemState {
   addTarget: AddTarget
   filter: ItemFilter
   lastRemovedItem?: Item
+  aiSuggestion: AiLogEstimate | null
+  aiDraftItem: Item | null
 }
 
 const initialState: ItemState = {
@@ -35,6 +40,8 @@ const initialState: ItemState = {
   addTarget: 'diary',
   editMealItem: null,
   filter: itemService.getDefaultFilter(),
+  aiSuggestion: null,
+  aiDraftItem: null,
 }
 
 export function itemReducer(state = initialState, action: any) {
@@ -60,6 +67,12 @@ export function itemReducer(state = initialState, action: any) {
       break
     case SET_ITEM_FILTER:
       newState = { ...state, filter: action.filter }
+      break
+    case SET_AI_SUGGESTION:
+      newState = { ...state, aiSuggestion: action.aiSuggestion }
+      break
+    case SET_AI_DRAFT_ITEM:
+      newState = { ...state, aiDraftItem: action.aiDraftItem }
       break
     case ADD_FAVORITE_ITEM:
       newState = {

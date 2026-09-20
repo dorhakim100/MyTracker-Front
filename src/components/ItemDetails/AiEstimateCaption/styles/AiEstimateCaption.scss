@@ -1,0 +1,53 @@
+.ai-estimate-caption {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+
+  .caption-title {
+    font-weight: 600;
+  }
+
+  .caption-line {
+    font-size: 0.85rem;
+    opacity: 0.85;
+  }
+
+  .macros.macros-range {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.5rem;
+    width: 100%;
+
+    .banner {
+      grid-auto-flow: row;
+      justify-content: center;
+      justify-items: center;
+      align-items: center;
+      text-align: center;
+      gap: 0.35rem;
+      min-width: 0;
+      padding: 0.45rem 0.55rem;
+
+      .swatch-macro-container {
+        justify-content: center;
+        justify-self: center;
+        width: 100%;
+      }
+
+      .label {
+        width: fit-content;
+      }
+
+      .value {
+        width: 100%;
+        font-weight: 600;
+        font-size: 0.82rem;
+        white-space: nowrap;
+        text-align: center;
+        justify-self: center;
+      }
+    }
+  }
+}

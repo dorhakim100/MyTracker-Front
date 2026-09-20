@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux'
 import Stepper from '@mui/material/Stepper'
 import Step from '@mui/material/Step'
 import StepLabel from '@mui/material/StepLabel'
-import Typography from '@mui/material/Typography'
 import Divider from '@mui/material/Divider'
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt'
 
@@ -11,6 +10,7 @@ import { RootState } from '../../store/store'
 import { capitalizeFirstLetter } from '../../services/util.service'
 import { CustomButton } from '../CustomButton/CustomButton'
 import { SlideAnimation } from '../../components/SlideAnimation/SlideAnimation'
+import { MarqueeText } from '../../components/MarqueeText/MarqueeText'
 import { useTranslation } from 'react-i18next'
 
 interface CustomStepperProps<TStage extends string = string> {
@@ -96,7 +96,9 @@ export function CustomStepper<TStage extends string = string>({
     >
       {resolvedTitle && (
         <>
-          <Typography variant='h5'>{resolvedTitle}</Typography>
+          <div className='custom-stepper-title'>
+            <MarqueeText variant='h5'>{resolvedTitle}</MarqueeText>
+          </div>
 
           <Divider
             className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}

@@ -15,12 +15,14 @@ interface AddItemButtonProps {
 export const AddItemButton = ({ mealPeriod }: AddItemButtonProps) => {
   const { t } = useTranslation()
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
+  const timer = useSelector((state: RootState) => state.workoutModule.timer)
 
   return (
     <CustomButton
       text={t('meals.addItem')}
       icon={<AddIcon />}
       size='small'
+      disabled={timer}
       onClick={(e) => {
         e.stopPropagation()
         e.preventDefault()

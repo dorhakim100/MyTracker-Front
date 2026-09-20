@@ -1,8 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import {
-  getArrayOfNumbers,
-  getFixedNumber,
-} from '../../services/util.service'
+import { getArrayOfNumbers, getFixedNumber } from '../../services/util.service'
 import { setUserToEdit } from '../../store/actions/user.actions'
 import { User } from '../../types/user/User'
 import {
@@ -28,6 +25,7 @@ interface EditMacrosProps {
   editCustomLog?: (macros: MacrosType) => void
   onCancel?: () => void
   onSave?: () => void
+  isEditingPer100g?: boolean
 }
 
 const CARBS_LIMIT = 800
@@ -44,6 +42,7 @@ export function EditMacros({
   editCustomLog,
   onCancel,
   onSave,
+  isEditingPer100g = false,
 }: EditMacrosProps) {
   const { t } = useTranslation()
   const userToEdit = useSelector(
@@ -55,25 +54,28 @@ export function EditMacros({
 
   const initialValues = {
     carbs: getFixedNumber(
-      (isCustomLog && carbs) ||
-        goalToEdit?.macros?.carbs ||
-        userToEdit?.currGoal?.macros.carbs ||
-        user?.currGoal?.macros.carbs ||
-        0
+      isCustomLog
+        ? carbs ?? 0
+        : goalToEdit?.macros?.carbs ||
+            userToEdit?.currGoal?.macros.carbs ||
+            user?.currGoal?.macros.carbs ||
+            0
     ),
     protein: getFixedNumber(
-      (isCustomLog && protein) ||
-        goalToEdit?.macros?.protein ||
-        userToEdit?.currGoal?.macros.protein ||
-        user?.currGoal?.macros.protein ||
-        0
+      isCustomLog
+        ? protein ?? 0
+        : goalToEdit?.macros?.protein ||
+            userToEdit?.currGoal?.macros.protein ||
+            user?.currGoal?.macros.protein ||
+            0
     ),
     fats: getFixedNumber(
-      (isCustomLog && fats) ||
-        goalToEdit?.macros?.fat ||
-        userToEdit?.currGoal?.macros.fat ||
-        user?.currGoal?.macros.fat ||
-        0
+      isCustomLog
+        ? fats ?? 0
+        : goalToEdit?.macros?.fat ||
+            userToEdit?.currGoal?.macros.fat ||
+            user?.currGoal?.macros.fat ||
+            0
     ),
   }
 
@@ -159,6 +161,14 @@ export function EditMacros({
 
   return (
     <Box className='edit-macros-container'>
+      {isEditingPer100g && (
+        <Typography
+          variant='h6'
+          className='per100g-label bold-header'
+        >
+          {t('macros.per100g')}
+        </Typography>
+      )}
       <ClockPicker
         columns={[
           {
