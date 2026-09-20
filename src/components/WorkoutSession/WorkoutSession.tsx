@@ -95,8 +95,6 @@ export function WorkoutSession({
   const [exerciseResults, setExerciseResults] = useState<Exercise[]>([])
 
   const isAllExercisesDone = useMemo(() => {
-    console.log('isAllExercisesDone', sessionDay.instructions.exercises[6])
-
     if (sessionDay.instructions.isFinished) return true
     if (!sessionDay.instructions.exercises) return false
 
@@ -1039,13 +1037,6 @@ export function WorkoutSession({
   }
 
   const sessionMenuOptions: DropdownOption[] = [
-    {
-      title: t('workout.finishWorkout'),
-      icon: <CheckIcon />,
-      onClick: () => {
-        onWorkoutDone()
-      },
-    },
     ...(sessionDay.statsId
       ? [
           {
@@ -1056,7 +1047,15 @@ export function WorkoutSession({
             },
           },
         ]
-      : []),
+      : [
+          {
+            title: t('workout.finishWorkout'),
+            icon: <CheckIcon />,
+            onClick: () => {
+              onWorkoutDone()
+            },
+          },
+        ]),
     {
       title: t('workout.deleteWorkout'),
       icon: <DeleteIcon />,
