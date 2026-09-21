@@ -124,11 +124,8 @@ export function ExerciseEditor({
 
   const delay = isExpected ? 0 : 4000
 
-  const {
-    debouncedFn: debouncedUpdateExercise,
-    cancel: cancelUpdate,
-    flush,
-  } = useDebouncedCallback(stableUpdateExercise, delay)
+  const { debouncedFn: debouncedUpdateExercise, cancel: cancelUpdate } =
+    useDebouncedCallback(stableUpdateExercise, delay)
   const onAddSet = async () => {
     cancelUpdate()
     const existingSet =
