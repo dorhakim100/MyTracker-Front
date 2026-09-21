@@ -12,5 +12,6 @@
   "editTitle": "עריכת הודעה",
   "openChat": "צ׳אט",
   "trainer": "מאמן",
-  "trainee": "מתאמן"
+  "trainee": "מתאמן",
+  "errorRemovingMessage": "שגיאה במחיקת הודעה"
 }

@@ -18,6 +18,8 @@ import { CustomAlertDialog } from '../../../CustomMui/CustomAlertDialog/CustomAl
 import { CustomButton } from '../../../CustomMui/CustomButton/CustomButton'
 import { exerciseChatNs } from '../locals'
 import type { ChatMessage } from '@mui/x-chat-headless'
+import { setIsLoading } from '../../../store/actions/system.actions'
+import { showErrorMsg } from '../../../services/event-bus.service'
 
 interface ExerciseChatProps {
   workoutId: string
@@ -207,10 +209,18 @@ function ExerciseChatThread({
 
   async function onConfirmDelete() {
     if (!deletingMessage) return
-    await messageService.remove(deletingMessage.id, role)
-    store.removeMessage(deletingMessage.id)
-    setDeletingMessage(null)
-    onCloseMessageActions()
+
+    try {
+      setIsLoading(true)
+      await messageService.remove(deletingMessage.id, role)
+      store.removeMessage(deletingMessage.id)
+      setDeletingMessage(null)
+      onCloseMessageActions()
+    } catch {
+      showErrorMsg(t('errorRemovingMessage'))
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (

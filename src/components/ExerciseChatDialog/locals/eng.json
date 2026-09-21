@@ -12,5 +12,6 @@
   "editTitle": "Edit message",
   "openChat": "Chat",
   "trainer": "Trainer",
-  "trainee": "Trainee"
+  "trainee": "Trainee",
+  "errorRemovingMessage": "Error removing message"
 }
