@@ -244,7 +244,7 @@ export function SessionStats({
                 >
                   {t('RPE')}:{' '}
                   {exercise.actualRpe != null
-                    ? Math.round(exercise.actualRpe)
+                    ? exercise.actualRpe.toFixed(1)
                     : ''}
                 </Typography>
               </div>
