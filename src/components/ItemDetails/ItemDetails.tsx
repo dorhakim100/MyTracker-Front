@@ -70,6 +70,7 @@ import {
   setSelectedMeal,
   setEditMealItem,
   setAiDraftItem,
+  setAiSuggestion,
 } from '../../store/actions/item.actions'
 import { ClockPicker } from '../Pickers/ClockPicker'
 import { PickerSelect } from '../Pickers/PickerSelect'
@@ -99,6 +100,7 @@ import { ItemName, LocalizedName } from '../../types/item/LocalizedName'
 import { getItemUnit, getMealUnit } from '../../services/item/item-unit.service'
 import CloseIcon from '@mui/icons-material/Close'
 import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd'
+import DeleteIcon from '@mui/icons-material/Delete'
 interface ItemDetailsProps {
   onAddToMealClick?: (item: MealItem, shouldCreateItem: boolean) => void
   noEdit?: boolean
@@ -937,6 +939,35 @@ export function ItemDetails({
     }
   }
 
+  function onRemoveNestedItem(index: number) {
+    if (aiSuggestion?.mode !== 'meal') return
+
+    const currentItems = (item as Item).items || []
+    const nextItems = currentItems.filter((_, i) => i !== index)
+    const nextMacros = nextItems.reduce(
+      (acc, nested) => ({
+        calories: acc.calories + (nested.macros?.calories || 0),
+        protein: acc.protein + (nested.macros?.protein || 0),
+        carbs: acc.carbs + (nested.macros?.carbs || 0),
+        fat: acc.fat + (nested.macros?.fat || 0),
+      }),
+      { calories: 0, protein: 0, carbs: 0, fat: 0 }
+    )
+    const draft: Item = {
+      ...(item as Item),
+      items: nextItems,
+      macros: nextMacros,
+      type: 'meal',
+    }
+
+    setItem(draft)
+    setAiDraftItem(draft)
+    setAiSuggestion({
+      ...aiSuggestion,
+      items: aiSuggestion.items.filter((_, i) => i !== index),
+    })
+  }
+
   async function onSaveEditedMeal(editMeal: Meal) {
     if (aiSuggestion?.mode === 'meal') {
       const draft = {
@@ -1543,17 +1574,17 @@ export function ItemDetails({
                 </div>
               </div>
             )}
-            {(isOwnMeal || aiSuggestion?.mode === 'meal') &&
-              !noEdit &&
-              !previewItem && (
-                <CustomButton
-                  text={tDetails('editMeal')}
-                  icon={<EditIcon />}
-                  onClick={() => setIsEditMealOpen(true)}
-                  className={`${prefs.favoriteColor}`}
-                />
-              )}
           </div>
+          {(isOwnMeal || aiSuggestion?.mode === 'meal') &&
+            !noEdit &&
+            !previewItem && (
+              <CustomButton
+                text={tDetails('editMeal')}
+                icon={<EditIcon />}
+                onClick={() => setIsEditMealOpen(true)}
+                className={`${prefs.favoriteColor} edit-meal-button`}
+              />
+            )}
         </div>
         {aiSuggestion && <AiEstimateCaption estimate={aiSuggestion} />}
         {_hasItems(item) && (
@@ -1600,6 +1631,20 @@ export function ItemDetails({
                         : ''}
                     </span>
                   </div>
+                  {aiSuggestion?.mode === 'meal' && !noEdit && !previewItem && (
+                    <CustomButton
+                      isIcon
+                      size='small'
+                      variant='flat'
+                      icon={<DeleteIcon fontSize='small' />}
+                      ariaLabel={tDetails('removeFromMeal')}
+                      className='nested-item-remove-button'
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        onRemoveNestedItem(index)
+                      }}
+                    />
+                  )}
                   {/* <CustomButton
                     icon={<RemoveRedEyeIcon />}
                     isIcon={true}

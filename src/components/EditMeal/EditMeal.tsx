@@ -181,33 +181,34 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
     if (stage === 'items')
       return (
         <div className='stage-container stage-items'>
-            <MacrosDistribution
-              protein={editMeal.macros.protein}
-              carbs={editMeal.macros.carbs}
-              fats={editMeal.macros.fat}
-              hideEditAndHeader={true}
-              isGoal={true}
-              className={`edit-meal-macros-distribution`}
+          <MacrosDistribution
+            protein={editMeal.macros.protein}
+            carbs={editMeal.macros.carbs}
+            fats={editMeal.macros.fat}
+            hideEditAndHeader={true}
+            isGoal={true}
+            className={`edit-meal-macros-distribution`}
+          />
+          <div className='buttons-container'>
+            <CustomButton
+              text={t('meals.searchItem')}
+              fullWidth
+              onClick={onAddItem}
+              icon={<SearchIcon />}
             />
-            <div className='buttons-container'>
-              <CustomButton
-                text={t('meals.searchItem')}
-                fullWidth
-                onClick={onAddItem}
-                icon={<SearchIcon />}
-              />
-              <CustomButton
-                text={t('meals.scanItem')}
-                fullWidth
-                onClick={onScanItem}
-                icon={<QrCode2Icon />}
-              />
-            </div>
-            <div className='edit-meal-list-scroll'>
+            <CustomButton
+              text={t('meals.scanItem')}
+              fullWidth
+              onClick={onScanItem}
+              icon={<QrCode2Icon />}
+            />
+          </div>
+          <div className='edit-meal-list-scroll'>
             <CustomList
               className={`edit-meal-list ${
                 prefs.isDarkMode ? 'dark-mode' : ''
               }`}
+              dragOffsetY={-158}
               items={editMeal.items}
               renderPrimaryText={(item) => {
                 if (item.source === searchTypes.custom && !item.name)
@@ -230,9 +231,9 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
               renderSecondaryText={(item) => {
                 if (item.source === searchTypes.custom)
                   return `${item.macros?.calories} kcal`
-                return `${
-                  +item.servingSize * +item.numberOfServings
-                }${getItemUnit(item)}`
+                return `${(+item.servingSize * +item.numberOfServings).toFixed(
+                  0
+                )}${getItemUnit(item)}`
               }}
               getKey={(item) =>
                 item._id ||
@@ -258,9 +259,9 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
               // }
               // renderRight={(item) => <div>{item.name}</div>}
             />
-            </div>
           </div>
-        )
+        </div>
+      )
   }
 
   const onDeleteItem = (item: MealItem) => {

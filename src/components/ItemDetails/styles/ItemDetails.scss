@@ -16,6 +16,7 @@
     align-items: center;
     min-width: 0;
   }
+
   .hero-image:has(.edit-custom-log-img-placeholder) {
     display: grid;
     align-items: center;
@@ -65,10 +66,9 @@
   .hero-copy {
     display: grid;
     grid-template-rows: repeat(2, auto);
-    gap: 0.8rem;
+    gap: 0.3rem;
     align-content: center;
     min-width: 0;
-    margin-bottom: 0.5rem;
 
     &.editing {
       .title-editing-container {
@@ -180,6 +180,17 @@
         gap: 0.3rem;
         align-content: center;
       }
+
+      .custom-button-wrapper {
+        justify-self: end;
+        opacity: 0.55;
+        transition: opacity 180ms ease;
+
+        &:hover,
+        &:focus-within {
+          opacity: 1;
+        }
+      }
     }
 
     .nested-item-image {
@@ -217,6 +228,7 @@
 
   .content {
     display: grid;
+    grid-template-columns: 1fr auto;
     gap: 0.55rem;
   }
 
@@ -448,6 +460,10 @@
 @media (prefers-reduced-motion: reduce) {
   .item-details {
     animation: none;
+
+    .nested-items li .custom-button-wrapper {
+      transition: none;
+    }
   }
 }
 
