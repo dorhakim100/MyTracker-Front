@@ -405,6 +405,14 @@ export function formatTime(time: number, isMinutes: boolean = true): string {
   }`
 }
 
+export function formatToHoursAndMinutes(time: number): string {
+  const HOUR_IN_MS = 1000 * 60 * 60
+
+  const hours = Math.floor(time / HOUR_IN_MS)
+  const minutes = Math.floor((time % HOUR_IN_MS) / MINUTE_IN_MS)
+  return `${hours}:${minutes.toString().padStart(2, '0')}`
+}
+
 export function getDateFromLineChartRangeKey(
   range: LineChartRangeKey,
   baseDate: Date = new Date()

@@ -95,11 +95,11 @@ export function WorkoutSession({
   const [exerciseResults, setExerciseResults] = useState<Exercise[]>([])
 
   const isAllExercisesDone = useMemo(() => {
-    if (sessionDay.instructions.isFinished) return true
+    // if (sessionDay.instructions.isFinished) return true
     if (!sessionDay.instructions.exercises) return false
 
     return sessionDay.instructions.exercises.every((e) => isExerciseDone(e))
-  }, [sessionDay.instructions.exercises, sessionDay.instructions.isFinished])
+  }, [sessionDay.instructions.exercises]) //, sessionDay.instructions.isFinished])
 
   const [alertDialogOptions, setAlertDialogOptions] = useState<{
     open: boolean
@@ -987,7 +987,14 @@ export function WorkoutSession({
   }
   const getAlertDialogComponent = () => {
     if (alertDialogOptions.component === 'stats') {
-      return <SessionStats recap={sessionRecap} />
+      return (
+        <SessionStats
+          recap={sessionRecap}
+          workoutId={sessionDay.instructions.workoutId}
+          workoutName={getWorkoutName() || sessionDay.workout.name}
+          exercises={sessionDay.workout.exercises}
+        />
+      )
     }
     if (alertDialogOptions.component === 'delete')
       return (
@@ -1037,7 +1044,7 @@ export function WorkoutSession({
   }
 
   const sessionMenuOptions: DropdownOption[] = [
-    ...(sessionDay.statsId
+    ...(sessionDay.instructions.isFinished || sessionDay.statsId
       ? [
           {
             title: tStats('openStats'),

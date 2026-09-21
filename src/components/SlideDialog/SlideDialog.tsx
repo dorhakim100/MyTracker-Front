@@ -15,6 +15,10 @@ import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import { MarqueeText } from '../MarqueeText/MarqueeText'
 import { SlideDialogTitleContext } from './slide-dialog-title'
 import { useKeyboardHeight } from '../../hooks/useKeyboardHeight'
+import {
+  popSlideDialogZIndex,
+  pushSlideDialogZIndex,
+} from './slide-dialog-layer'
 
 interface SlideDialogProps {
   open: boolean
@@ -24,6 +28,7 @@ interface SlideDialogProps {
   onSave?: () => void
   type?: 'half' | 'full'
   enableSwipeToClose?: boolean
+  isFromAlertDialog?: boolean
 }
 
 const SHEET_BASE_Z_INDEX = 1200
@@ -115,8 +120,9 @@ function swallowNextClick() {
   }, 400)
 }
 
-function useSlideDialogLayer(isOpen: boolean) {
-  const [zIndex, setZIndex] = React.useState(SHEET_BASE_Z_INDEX)
+function useSlideDialogLayer(isOpen: boolean, isFromAlertDialog: boolean) {
+  const extraZIndex = isFromAlertDialog ? 101 : 0
+  const [zIndex, setZIndex] = React.useState(SHEET_BASE_Z_INDEX + extraZIndex)
   const handleSaveRef = React.useRef<() => void>(() => {})
 
   const setHandleSave = React.useCallback((handler: () => void) => {
@@ -127,7 +133,9 @@ function useSlideDialogLayer(isOpen: boolean) {
     if (!isOpen) return
 
     openSheetCount += 1
-    setZIndex(SHEET_BASE_Z_INDEX + openSheetCount * 10)
+    const nextZIndex = SHEET_BASE_Z_INDEX + openSheetCount * 10 + extraZIndex
+    setZIndex(nextZIndex)
+    pushSlideDialogZIndex(nextZIndex)
 
     const onEscape = () => {
       handleSaveRef.current()
@@ -148,6 +156,7 @@ function useSlideDialogLayer(isOpen: boolean) {
 
     return () => {
       openSheetCount = Math.max(0, openSheetCount - 1)
+      popSlideDialogZIndex(nextZIndex)
       const handlerIndex = escapeHandlers.lastIndexOf(onEscape)
       if (handlerIndex >= 0) {
         escapeHandlers.splice(handlerIndex, 1)
@@ -547,6 +556,7 @@ export function SlideDialog({
   onSave,
   type = 'half',
   enableSwipeToClose = true,
+  isFromAlertDialog = false,
 }: SlideDialogProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -560,7 +570,7 @@ export function SlideDialog({
     (stateSelector: RootState) => stateSelector.systemModule.isDashboard
   )
 
-  const { zIndex, setHandleSave } = useSlideDialogLayer(open)
+  const { zIndex, setHandleSave } = useSlideDialogLayer(open, isFromAlertDialog)
   const [isMounted, setIsMounted] = React.useState(open)
   const [hasOpened, setHasOpened] = React.useState(false)
   const [contentTitle, setContentTitle] = React.useState<string | null>(null)

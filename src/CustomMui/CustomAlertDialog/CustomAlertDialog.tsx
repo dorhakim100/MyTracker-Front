@@ -1,9 +1,11 @@
+import { useLayoutEffect, useState } from 'react'
 import DialogTitle from '@mui/material/DialogTitle'
 import Dialog from '@mui/material/Dialog'
 import { LinearProgress } from '@mui/material'
 import { RootState } from '../../store/store'
 import { useSelector } from 'react-redux'
 import { Close } from '@mui/icons-material'
+import { getTopSlideDialogZIndex } from '../../components/SlideDialog/slide-dialog-layer'
 
 export type AlertDialogType = 'small' | 'medium' | 'large'
 
@@ -31,6 +33,17 @@ export function CustomAlertDialog(props: SimpleDialogProps) {
     onClose()
   }
 
+  const [layerZ, setLayerZ] = useState<number | undefined>()
+
+  useLayoutEffect(() => {
+    if (!open) {
+      setLayerZ(undefined)
+      return
+    }
+    const sheetZ = getTopSlideDialogZIndex()
+    setLayerZ(sheetZ ? sheetZ + 1 : undefined)
+  }, [open])
+
   return (
     <Dialog
       onClose={handleClose}
@@ -41,6 +54,7 @@ export function CustomAlertDialog(props: SimpleDialogProps) {
         className: `${className || ''} alert-dialog-paper alert-type-${type}`,
       }}
       sx={{
+        ...(layerZ ? { zIndex: layerZ } : {}),
         '& .MuiPaper-root': {
           padding: '1rem',
           display: 'grid',
@@ -62,7 +76,12 @@ export function CustomAlertDialog(props: SimpleDialogProps) {
         />
       </div>
       <div className='dialog-content'>{children}</div>
-      {isLoading && <LinearProgress className={`${prefs.favoriteColor}`} />}
+
+      <LinearProgress
+        className={`${prefs.favoriteColor} loading-progress ${
+          isLoading ? 'visible' : ''
+        }`}
+      />
     </Dialog>
   )
 }

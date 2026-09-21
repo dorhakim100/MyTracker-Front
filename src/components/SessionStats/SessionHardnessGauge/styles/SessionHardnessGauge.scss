@@ -8,7 +8,7 @@
   }
 
   &.size-small {
-    width: 5.5rem;
+    width: 3rem;
   }
 
   .gauge-component-class {
@@ -17,18 +17,20 @@
 }
 
 body.dark-mode {
-  .value-text,
-  .tick-value {
-    text {
-      fill: $white !important;
+  .session-hardness-gauge-container {
+    .value-text,
+    .tick-value {
+      text {
+        fill: $white !important;
+      }
     }
-  }
-  .pointer {
-    path {
-      fill: $light-gray !important;
-    }
-    circle {
-      fill: $white !important;
+    .pointer {
+      path {
+        fill: $light-gray !important;
+      }
+      circle {
+        fill: $white !important;
+      }
     }
   }
 }

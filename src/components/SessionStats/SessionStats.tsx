@@ -1,8 +1,12 @@
 import { Divider, Typography } from '@mui/material'
 import { useTranslation } from 'react-i18next'
-import { formatTime } from '../../services/util.service'
+import { formatToHoursAndMinutes } from '../../services/util.service'
 import { capitalizeFirstLetter } from '../../services/util.service'
-import { SessionStatsRecap } from '../../types/stats/Stats'
+import {
+  SessionStatsExercise,
+  SessionStatsRecap,
+} from '../../types/stats/Stats'
+import { Exercise } from '../../types/exercise/Exercise'
 import { CachedImage } from '../CachedImage/CachedImage'
 import { MarqueeText } from '../MarqueeText/MarqueeText'
 import { exerciseImage } from '../../assets/config/exercise-image'
@@ -20,9 +24,17 @@ import { CustomAnimatedText } from '../../CustomMui/CustomAnimatedText/CustomAni
 
 interface SessionStatsProps {
   recap: SessionStatsRecap | null
+  workoutId?: string
+  workoutName?: string
+  exercises?: Exercise[]
 }
 
-export function SessionStats({ recap }: SessionStatsProps) {
+export function SessionStats({
+  recap,
+  workoutId,
+  workoutName = '',
+  exercises = [],
+}: SessionStatsProps) {
   const { t } = useTranslation(sessionStatsNs)
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
 
@@ -35,12 +47,23 @@ export function SessionStats({ recap }: SessionStatsProps) {
     open: false,
   })
 
-  // const onExerciseClick = (exercise: ExerciseWithDetails) => {
-  //   setSelectedExercise(exercise)
-  //   setModalSettings({
-  //     open: true,
-  //   })
-  // }
+  const onExerciseClick = (statsExercise: SessionStatsExercise) => {
+    const fromWorkout = exercises.find(
+      (exercise) => exercise.exerciseId === statsExercise.exerciseId
+    )
+    setSelectedExercise(
+      fromWorkout ?? {
+        name: statsExercise.name,
+        image: statsExercise.image || '',
+        exerciseId: statsExercise.exerciseId,
+        muscleGroups: [],
+        equipments: [],
+      }
+    )
+    setModalSettings({
+      open: true,
+    })
+  }
 
   const onCloseModal = () => {
     setSelectedExercise(null)
@@ -82,7 +105,7 @@ export function SessionStats({ recap }: SessionStatsProps) {
               variant='h4'
               className='bold-header'
             >
-              {formatTime(recap.durationMs, false).trim()}
+              {formatToHoursAndMinutes(recap.durationMs)}
             </Typography>
           </div>
           <SessionHardnessGauge
@@ -171,7 +194,7 @@ export function SessionStats({ recap }: SessionStatsProps) {
             <div
               key={exercise.exerciseId}
               className='exercise-row'
-              // onClick={() => onExerciseClick(exercise)}
+              onClick={() => onExerciseClick(exercise)}
             >
               <CachedImage
                 url={exercise.image || exerciseImage.ERROR_IMAGE}
@@ -182,7 +205,7 @@ export function SessionStats({ recap }: SessionStatsProps) {
               <div className='texts-container'>
                 <MarqueeText
                   variant='body1'
-                  className='exercise-row-title'
+                  className='exercise-row-title bold-header'
                 >
                   {capitalizeFirstLetter(exercise.name)}
                 </MarqueeText>
@@ -209,11 +232,22 @@ export function SessionStats({ recap }: SessionStatsProps) {
                   </span>
                 )}
               </div>
-              <SessionHardnessGauge
-                size='small'
-                actualRpe={exercise.actualRpe}
-                accuracy={exercise.accuracy}
-              />
+              <div className='hardness-gauge-container'>
+                <SessionHardnessGauge
+                  size='small'
+                  actualRpe={exercise.actualRpe}
+                  accuracy={exercise.accuracy}
+                />
+                <Typography
+                  variant='caption'
+                  className='opacity-70'
+                >
+                  {t('RPE')}:{' '}
+                  {exercise.actualRpe != null
+                    ? Math.round(exercise.actualRpe)
+                    : ''}
+                </Typography>
+              </div>
             </div>
           ))}
         </div>
@@ -222,8 +256,16 @@ export function SessionStats({ recap }: SessionStatsProps) {
         <SlideDialog
           open={modalSettings.open}
           onClose={onCloseModal}
-          component={<ExerciseDetails exercise={selectedExercise} />}
+          component={
+            <ExerciseDetails
+              exercise={selectedExercise}
+              workoutId={workoutId}
+              workoutName={workoutName}
+            />
+          }
           title={capitalizeFirstLetter(selectedExercise.name)}
+          type='full'
+          isFromAlertDialog={true}
         />
       )}
     </>

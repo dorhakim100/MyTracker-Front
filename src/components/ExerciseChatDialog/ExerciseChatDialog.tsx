@@ -70,6 +70,7 @@ export function ExerciseChatDialog({
       title={titleParts.join(' · ') || t('title')}
       type='full'
       enableSwipeToClose={true}
+      isFromAlertDialog={true}
       component={
         open ? (
           <ExerciseChat
