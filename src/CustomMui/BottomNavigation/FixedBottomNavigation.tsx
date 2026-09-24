@@ -30,7 +30,11 @@ import { ChatUnreadBadge } from '../ChatUnreadBadge/ChatUnreadBadge'
 import { AiLogCompose } from '../../components/AiLogCompose/AiLogCompose'
 import '../../components/AiLogCompose/locals'
 import { ItemDetails } from '../../components/ItemDetails/ItemDetails'
-import { setItem, setAiSuggestion, setAiDraftItem } from '../../store/actions/item.actions'
+import {
+  setItem,
+  setAiSuggestion,
+  setAiDraftItem,
+} from '../../store/actions/item.actions'
 import { estimateToItem } from '../../services/aiLog/aiLog.mapper'
 import type { AiLogEstimate } from '../../types/aiLog/AiLog'
 
@@ -271,7 +275,7 @@ export function FixedBottomNavigation(props: {
             bottom: 0,
             insetInline: 0,
             zIndex: 1000,
-            height: 'calc(100px + env(safe-area-inset-bottom, 0px))',
+            height: 'calc(100px)',
 
             // paddingBottom: '1.5em',
           }}
@@ -366,11 +370,7 @@ export function FixedBottomNavigation(props: {
       <SlideDialog
         open={isAiDetailsOpen}
         onClose={closeAiDetails}
-        component={
-          <ItemDetails
-            aiSuggestion={aiSuggestion}
-          />
-        }
+        component={<ItemDetails aiSuggestion={aiSuggestion} />}
         title={t('nav.aiLog')}
         type='full'
       />
