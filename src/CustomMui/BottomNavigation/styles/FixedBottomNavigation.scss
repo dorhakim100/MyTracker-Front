@@ -1,6 +1,7 @@
 .fixed-bottom-navigation {
   .MuiPaper-root {
     padding: 1em !important;
+    padding-bottom: calc(1em + env(safe-area-inset-bottom, 0px)) !important;
     z-index: 1100;
     backdrop-filter: blur(17px);
     -webkit-backdrop-filter: blur(17px);

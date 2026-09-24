@@ -3,6 +3,7 @@
 }
 
 html {
+  height: -webkit-fill-available;
   line-height: 1.6;
   // Prevent iOS swipe-back gesture
   overscroll-behavior-x: none;
@@ -53,7 +54,9 @@ body {
   // min-height: 100vh;
   // min-width: 100vw;
   min-height: 100vh;
+  min-height: 100dvh;
   height: 100vh;
+  height: 100dvh;
   overflow: hidden !important;
   // Prevent iOS swipe-back gesture
   overscroll-behavior-x: none;
@@ -217,8 +220,10 @@ body {
 
 .main {
   min-height: 100vh;
+  min-height: 100dvh;
   // height: calc(100vh - 100px - $header-margin);
   height: calc(100vh - 100px);
+  height: calc(100dvh - 100px - env(safe-area-inset-bottom, 0px));
 
   // margin-top: $header-margin;
   // margin-bottom: 100px !important;

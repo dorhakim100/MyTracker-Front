@@ -271,7 +271,7 @@ export function FixedBottomNavigation(props: {
             bottom: 0,
             insetInline: 0,
             zIndex: 1000,
-            height: '100px',
+            height: 'calc(100px + env(safe-area-inset-bottom, 0px))',
 
             // paddingBottom: '1.5em',
           }}

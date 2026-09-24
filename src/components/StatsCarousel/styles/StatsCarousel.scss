@@ -8,7 +8,8 @@
   padding-bottom: 25px !important;
   &.vertical {
     padding-bottom: 0px !important;
-    height: 380px;
+    height: calc((330px + 35px + 5vh));
+    // height: fit-content;
     max-height: 500px; // Prevent it from getting too tall
     .card {
       height: 100%;
