@@ -41,6 +41,7 @@ import AccessAlarmIcon from '@mui/icons-material/AccessAlarm'
 import { AnimatedWrapper } from '../AnimatedWrapper/AnimatedWrapper'
 import { capacitorService } from '../../services/capacitor.service'
 import { MarqueeText } from '../MarqueeText/MarqueeText'
+import { SessionHardnessGauge } from '../SessionHardnessGauge/SessionHardnessGauge'
 
 interface SlideDialogOptions {
   title: string
@@ -161,6 +162,11 @@ export function ExerciseCard({
     if (!exerciseInstructions) return false
     return getIsExerciseDone(exerciseInstructions)
   }, [exerciseInstructions])
+
+  const plannedIntensity = useMemo(() => {
+    if (!isExpected || !exerciseInstructions?.sets.length) return null
+    return averagePlannedIntensity(exerciseInstructions.sets)
+  }, [isExpected, exerciseInstructions])
 
   const handleClick = async () => {
     capacitorService.vibrate('Light')
@@ -462,6 +468,48 @@ export function ExerciseCard({
 
   if (!exerciseInstructions || !exercise) return null
 
+  const exerciseInfo = (
+    <div className='exercise-card-info'>
+      <Typography
+        variant='h6'
+        component='div'
+        className='exercise-card-name'
+      >
+        <MarqueeText variant='h6'>
+          {capitalizeFirstLetter(exercise.name)}
+        </MarqueeText>
+      </Typography>
+
+      {exercise.muscleGroups && exercise.muscleGroups.length > 0 && (
+        <Typography
+          variant='body2'
+          component='div'
+          className='exercise-card-muscle-groups'
+        >
+          <MarqueeText variant='body2'>
+            {capitalizeFirstLetter(
+              exercise?.mainMuscles
+                ?.concat(exercise?.secondaryMuscles || [])
+                .join(', ') || ''
+            )}
+          </MarqueeText>
+        </Typography>
+      )}
+      {showEquipment &&
+        exercise.equipments &&
+        exercise.equipments.length > 0 && (
+          <Typography
+            variant='body2'
+            className='exercise-card-equipment'
+          >
+            {exercise.equipments
+              .map((eq) => capitalizeFirstLetter(eq))
+              .join(', ')}
+          </Typography>
+        )}
+    </div>
+  )
+
   return (
     <>
       <AnimatedWrapper disabled={isOpen}>
@@ -552,63 +600,45 @@ export function ExerciseCard({
               />
             )}
 
-            <div className='exercise-card-info'>
-              <Typography
-                variant='h6'
-                component='div'
-                className='exercise-card-name'
-              >
-                <MarqueeText variant='h6'>
-                  {capitalizeFirstLetter(exercise.name)}
-                </MarqueeText>
-              </Typography>
-
-              {exercise.muscleGroups && exercise.muscleGroups.length > 0 && (
-                <Typography
-                  variant='body2'
-                  component='div'
-                  className='exercise-card-muscle-groups'
-                >
-                  <MarqueeText variant='body2'>
-                    {capitalizeFirstLetter(
-                      exercise?.mainMuscles
-                        ?.concat(exercise?.secondaryMuscles || [])
-                        .join(', ') || ''
-                    )}
-                  </MarqueeText>
-                </Typography>
-              )}
-              {showEquipment &&
-                exercise.equipments &&
-                exercise.equipments.length > 0 && (
+            {isExpected ? (
+              <div className='exercise-card-heading'>
+                {exerciseInfo}
+                {isExpected && (
                   <>
-                    <Typography
-                      variant='body2'
-                      className='exercise-card-equipment'
-                    >
-                      {exercise.equipments
-                        .map((eq) => capitalizeFirstLetter(eq))
-                        .join(', ')}
-                    </Typography>
+                    <Divider
+                      className={`divider ${
+                        prefs.isDarkMode ? 'dark-mode' : ''
+                      }`}
+                    />
+                    <div className='resting-time-container'>
+                      <AccessAlarmIcon />
+                      <span>
+                        {t('exercise.restingTime')}{' '}
+                        {formatTime(
+                          exerciseInstructions.restingTime ||
+                            DEFAULT_RESTING_TIME
+                        )}
+                      </span>
+                    </div>
                   </>
                 )}
-              {isExpected && (
-                <>
-                  <Divider
-                    className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+                <div className='exercise-intensity'>
+                  <SessionHardnessGauge
+                    size='small'
+                    actualRpe={plannedIntensity}
+                    accuracy={null}
                   />
-                  <div className='resting-time-container'>
-                    <AccessAlarmIcon />
-                    <span>
-                      {t('exercise.restingTime')}{' '}
-                      {formatTime(
-                        exerciseInstructions.restingTime || DEFAULT_RESTING_TIME
-                      )}
-                    </span>
-                  </div>
-                </>
-              )}
-            </div>
+                  <Typography
+                    variant='caption'
+                    className='bold-header'
+                  >
+                    {plannedIntensity?.toFixed(1)}
+                  </Typography>
+                </div>
+              </div>
+            ) : (
+              exerciseInfo
+            )}
           </div>
 
           {exerciseInstructions && exerciseInstructions.sets && (
@@ -690,4 +720,29 @@ export function ExerciseCard({
       )}
     </>
   )
+}
+
+const RIR_TO_RPE: Record<number, number> = {
+  0: 9.4,
+  1: 8.25,
+  2: 7.75,
+  3: 7,
+  4: 6.5,
+  5: 5.5,
+}
+
+function plannedSetIntensity(set: Set): number | null {
+  if (set.rpe?.expected != null) return set.rpe.expected
+  const rir = set.rir?.expected
+  if (rir == null || rir < 0 || rir > 5) return null
+  return RIR_TO_RPE[rir] ?? null
+}
+
+function averagePlannedIntensity(sets: Set[]): number | null {
+  const values = sets
+    .map(plannedSetIntensity)
+    .filter((value): value is number => value != null)
+  if (!values.length) return null
+  const total = values.reduce((sum, value) => sum + value, 0)
+  return total / values.length
 }

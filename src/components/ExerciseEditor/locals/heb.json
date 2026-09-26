@@ -1,3 +1,7 @@
 {
-  "editType": "עריכת {{type}}"
+  "editType": "עריכת {{type}}",
+  "previousWeek": "שבוע קודם",
+  "expected": "צפי",
+  "actual": "בפועל",
+  "nextWeek": "שבוע הבא"
 }

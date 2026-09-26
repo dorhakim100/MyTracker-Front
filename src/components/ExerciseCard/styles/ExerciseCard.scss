@@ -21,6 +21,19 @@
         max-height: 300px;
         // align-self: start;
       }
+      .exercise-card-heading {
+        grid-column: 1 / -1;
+        grid-row: 2 / 3;
+        max-width: 100%;
+        align-self: start;
+
+        .exercise-card-info {
+          grid-column: auto;
+          grid-row: auto;
+          max-width: none;
+        }
+      }
+
       .exercise-card-info {
         align-self: start;
         grid-column: 1/-1;
@@ -112,6 +125,42 @@
     display: grid;
     gap: 0.5rem;
     min-width: 0; // Allows text truncation
+  }
+
+  .exercise-card-heading {
+    grid-column: 2/3;
+    grid-row: 1/2;
+    // display: flex;
+    // align-items: center;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: 1fr;
+    gap: 0.5rem 0.3rem;
+    min-width: 0;
+
+    .resting-time-container,
+    .divider {
+      grid-column: 1/-1;
+    }
+
+    .exercise-card-info {
+      grid-column: 1/2;
+      min-width: 0;
+      grid-column: auto;
+      grid-row: auto;
+    }
+  }
+
+  .exercise-intensity {
+    grid-column: 2/3;
+    grid-row: 1/2;
+    width: 3rem;
+    flex: 0 0 3rem;
+    align-self: start;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    align-items: center;
   }
 
   .exercise-card-name {

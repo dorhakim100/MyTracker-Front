@@ -1,3 +1,7 @@
 {
-  "editType": "Edit {{type}}"
+  "editType": "Edit {{type}}",
+  "previousWeek": "Previous week",
+  "expected": "Expected",
+  "actual": "Actual",
+  "nextWeek": "Next week"
 }
