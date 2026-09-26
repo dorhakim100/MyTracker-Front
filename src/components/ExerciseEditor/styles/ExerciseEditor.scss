@@ -23,9 +23,10 @@
   .set-container {
     position: relative;
     width: 100%;
-
+    width: calc(100vw - 4rem);
+    max-width: 100%;
     @media (max-width: 700px) {
-      width: calc(100vw - 3rem);
+      // width: calc(100vw - 3rem);
     }
 
     @media (min-width: 700px) {
@@ -38,32 +39,61 @@
         padding-inline: 1rem;
       }
     }
-    .set-editor-container {
-      width: 100%;
-      padding-right: 2rem !important;
 
-      display: grid;
-      grid-template-columns: 23px 1fr 1fr 1fr;
-      padding: 1.5rem 0 0 0;
+    .set-editor-container {
+      // width: 100%;
+      // padding-right: 2rem !important;
+
+      // display: grid;
+      // grid-template-columns: 25px 1fr 1fr 1fr 23px;
+      display: flex;
+      // grid-template-rows: 1fr;
+
+      // padding: 1.5rem 0 0 0;
       @media (min-width: 600px) {
-        grid-template-columns: auto 1fr 1fr 1fr;
-        padding: 2rem 0 0 0;
+        grid-template-columns: auto 1fr 1fr 1fr auto;
+        // padding: 2rem 0 0 0;
         justify-items: start;
         &.dashboard {
-          grid-template-columns: auto auto auto auto auto;
+          grid-template-columns: auto auto auto auto auto auto;
         }
       }
       justify-items: center;
+      align-items: center;
+      justify-content: space-between;
+
+      .set-number {
+        grid-column: 1/2;
+        grid-row: 1/2;
+        width: 20px;
+        height: 20px;
+        .MuiBadge-badge {
+          position: static;
+          transform: none;
+        }
+      }
+
+      .reps-container {
+        // max-width: 70px;
+      }
+      .weight-container {
+        // max-width: 70px;
+      }
+      .rpe-rir-container {
+        // max-width: 70px;
+      }
 
       .badges-container {
         display: grid;
-
+        grid-column: 5/-1;
+        grid-row: 1/2;
         input {
-          padding: 0 !important;
         }
         .MuiCheckbox-root {
-          height: 49px;
-          width: 49px;
+          padding: 0 !important;
+          // margin: 0 !important;
+          // height: 49px;
+          // width: 49px;
         }
         span {
         }
@@ -83,7 +113,8 @@
         display: block;
         align-self: center;
         &.float {
-          top: 1rem;
+          top: 0rem;
+          z-index: 2;
           left: 0.75rem;
           &.dashboard {
             margin-top: 0.5rem;
@@ -196,7 +227,7 @@
   .reps-container,
   .weight-container,
   .rpe-rir-container {
-    padding-block: 0.5rem;
+    padding-block: 0.2rem;
   }
   .weight-picker {
     &.rtl {

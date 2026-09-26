@@ -382,58 +382,10 @@ export function ExerciseEditor({
                     <Badge
                       badgeContent={index + 1}
                       color='primary'
-                      className={`${prefs.favoriteColor} float ${
+                      className={`${prefs.favoriteColor} set-number ${
                         isDashboard ? 'dashboard' : ''
                       }`}
                     />
-                    <div className='badges-container'>
-                      {(previousInstructions || !isExpected) && (
-                        <Tooltip
-                          title={
-                            set.isDone
-                              ? t('exercise.markAsNotDone')
-                              : t('exercise.markAsDone')
-                          }
-                          disableHoverListener={!isDashboard}
-                          disableTouchListener={!isDashboard}
-                          disableFocusListener={!isDashboard}
-                        >
-                          <span
-                            style={{ display: 'inline-flex' }}
-                            className='checkbox-container'
-                          >
-                            {currUpdatedExerciseSettings.exerciseId ===
-                              exercise.exerciseId &&
-                            currUpdatedExerciseSettings.setIndex === index ? (
-                              <CircularProgress
-                                size={21.59}
-                                className={prefs.favoriteColor}
-                                sx={{ marginTop: '20px' }}
-                              />
-                            ) : (
-                              <Checkbox
-                                disabled={isExpected}
-                                sx={{ marginTop: '5px' }}
-                                icon={
-                                  <RadioButtonUncheckedIcon
-                                    className='not-finished'
-                                    sx={{ color: 'white' }}
-                                  />
-                                }
-                                checkedIcon={
-                                  <CheckIcon
-                                    className='finished'
-                                    sx={{ color: 'white' }}
-                                  />
-                                }
-                                checked={set.isDone ? true : false}
-                                onChange={() => onMarkAsDone(index)}
-                              />
-                            )}
-                          </span>
-                        </Tooltip>
-                      )}
-                    </div>
                     {previousInstructions && (
                       <span
                         className={`previous-set-label ${
@@ -450,7 +402,7 @@ export function ExerciseEditor({
                             {previousInstructions?.exercises.find(
                               (e) => e.exerciseId === exercise.exerciseId
                             )?.sets[index]?.reps?.expected || 'N/A'}{' '}
-                            reps
+                            {t('exercise.reps')}
                           </span>
                           <Divider
                             orientation='horizontal'
@@ -484,7 +436,7 @@ export function ExerciseEditor({
                           type: 'number',
                         }}
                         value={set.reps.actual}
-                        minWidth={windowWidth > 1050 ? windowWidth / 12 : 80}
+                        minWidth={windowWidth > 1050 ? windowWidth / 10 : 70}
 
                         // isAutoWidth={true}
                       />
@@ -527,7 +479,7 @@ export function ExerciseEditor({
                           type: 'number',
                         }}
                         value={set.weight.actual}
-                        minWidth={windowWidth > 1050 ? windowWidth / 10 : 100}
+                        minWidth={windowWidth > 1050 ? windowWidth / 10 : 90}
                         afterString={t('weight.kg')}
                         // isAutoWidth={true}
                       />
@@ -583,9 +535,57 @@ export function ExerciseEditor({
                           type: 'number',
                         }}
                         value={set.rpe ? set.rpe.actual : set.rir?.actual ?? 2}
-                        minWidth={windowWidth > 1050 ? windowWidth / 14 : 70}
+                        minWidth={windowWidth > 1050 ? windowWidth / 10 : 70}
                         // isAutoWidth={true}
                       />
+                    </div>
+                    <div className='badges-container'>
+                      {(previousInstructions || !isExpected) && (
+                        <Tooltip
+                          title={
+                            set.isDone
+                              ? t('exercise.markAsNotDone')
+                              : t('exercise.markAsDone')
+                          }
+                          disableHoverListener={!isDashboard}
+                          disableTouchListener={!isDashboard}
+                          disableFocusListener={!isDashboard}
+                        >
+                          <span
+                            style={{ display: 'inline-flex' }}
+                            className='checkbox-container'
+                          >
+                            {currUpdatedExerciseSettings.exerciseId ===
+                              exercise.exerciseId &&
+                            currUpdatedExerciseSettings.setIndex === index ? (
+                              <CircularProgress
+                                size={21.59}
+                                className={prefs.favoriteColor}
+                                sx={{ marginTop: '20px' }}
+                              />
+                            ) : (
+                              <Checkbox
+                                disabled={isExpected}
+                                sx={{ marginTop: '5px' }}
+                                icon={
+                                  <RadioButtonUncheckedIcon
+                                    className='not-finished'
+                                    sx={{ color: 'white' }}
+                                  />
+                                }
+                                checkedIcon={
+                                  <CheckIcon
+                                    className='finished'
+                                    sx={{ color: 'white' }}
+                                  />
+                                }
+                                checked={set.isDone ? true : false}
+                                onChange={() => onMarkAsDone(index)}
+                              />
+                            )}
+                          </span>
+                        </Tooltip>
+                      )}
                     </div>
                     {isDashboard && isExpected && (
                       <CustomButton
