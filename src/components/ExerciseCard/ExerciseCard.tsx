@@ -741,8 +741,8 @@ const RIR_TO_RPE: Record<number, number> = {
 }
 
 function plannedSetIntensity(set: Set): number | null {
-  if (set.rpe?.expected != null) return set.rpe.expected
-  const rir = set.rir?.expected
+  if (set.rpe?.actual != null) return set.rpe.actual
+  const rir = set.rir?.actual
   if (rir == null || rir < 0 || rir > 5) return null
   return RIR_TO_RPE[rir] ?? null
 }
