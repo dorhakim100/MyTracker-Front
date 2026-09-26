@@ -41,7 +41,7 @@ import AccessAlarmIcon from '@mui/icons-material/AccessAlarm'
 import { AnimatedWrapper } from '../AnimatedWrapper/AnimatedWrapper'
 import { capacitorService } from '../../services/capacitor.service'
 import { MarqueeText } from '../MarqueeText/MarqueeText'
-import { SessionHardnessGauge } from '../SessionHardnessGauge/SessionHardnessGauge'
+import { HardnessGauge } from '../HardnessGauge/HardnessGauge'
 
 interface SlideDialogOptions {
   title: string
@@ -130,6 +130,7 @@ export function ExerciseCard({
 
   const [previousInstructions, setPreviousInstructions] =
     useState<Instructions | null>(null)
+  const [isInstructionsLoading, setIsInstructionsLoading] = useState(false)
   const updateExerciseInInstructions = (exercise: ExerciseInstructions) => {
     if (!setInstructions) return
     setInstructions({
@@ -335,8 +336,9 @@ export function ExerciseCard({
 
   useEffect(() => {
     if (!isExpected) return
+    setIsInstructionsLoading(true)
     getPreviousInstructions()
-  }, [instructions])
+  }, [instructions, isExpected])
 
   useEffect(() => {
     const getExerciseSets = async () => {
@@ -366,6 +368,7 @@ export function ExerciseCard({
 
   async function getPreviousInstructions() {
     if (!instructions || instructions.weekNumber === 1) return null
+
     try {
       const previousInstructions = await instructionsService.getByWorkoutId({
         workoutId: instructions.workoutId,
@@ -376,6 +379,8 @@ export function ExerciseCard({
       setPreviousInstructions(previousInstructions)
     } catch (err) {
       console.error(err)
+    } finally {
+      setIsInstructionsLoading(false)
     }
   }
 
@@ -623,7 +628,7 @@ export function ExerciseCard({
                   </>
                 )}
                 <div className='exercise-intensity'>
-                  <SessionHardnessGauge
+                  <HardnessGauge
                     size='small'
                     actualRpe={plannedIntensity}
                     accuracy={null}
@@ -643,6 +648,10 @@ export function ExerciseCard({
 
           {exerciseInstructions && exerciseInstructions.sets && (
             <ExerciseEditor
+              // isInstructionsLoadingProp={isInstructionsLoading}
+              isInstructionsLoadingProp={
+                instructions._id ? isInstructionsLoading : false
+              }
               exerciseSets={exerciseSets}
               previousInstructions={previousInstructions}
               exercise={exerciseInstructions}

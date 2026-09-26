@@ -10,7 +10,7 @@ import { Exercise } from '../../types/exercise/Exercise'
 import { CachedImage } from '../CachedImage/CachedImage'
 import { MarqueeText } from '../MarqueeText/MarqueeText'
 import { exerciseImage } from '../../assets/config/exercise-image'
-import { SessionHardnessGauge } from '../SessionHardnessGauge/SessionHardnessGauge'
+import { HardnessGauge } from '../HardnessGauge/HardnessGauge'
 import { sessionStatsNs } from './locals'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
@@ -108,7 +108,7 @@ export function SessionStats({
               {formatToHoursAndMinutes(recap.durationMs)}
             </Typography>
           </div>
-          <SessionHardnessGauge
+          <HardnessGauge
             size='big'
             actualRpe={recap.actualRpe}
             accuracy={recap.accuracy}
@@ -233,7 +233,7 @@ export function SessionStats({
                 )}
               </div>
               <div className='hardness-gauge-container'>
-                <SessionHardnessGauge
+                <HardnessGauge
                   size='small'
                   actualRpe={exercise.actualRpe}
                   accuracy={exercise.accuracy}

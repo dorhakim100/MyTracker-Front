@@ -9,6 +9,17 @@
   &.closed {
     max-height: 0;
   }
+
+  &:has(.loading-spinner) {
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+
+    .loading-spinner {
+      margin: 20px auto;
+    }
+  }
   .dashboard-exercise-editor-container-headers {
     display: grid;
     grid-template-columns: auto auto auto auto;
@@ -79,10 +90,17 @@
 
         .set-rail {
           display: grid;
+          grid-template-columns: 25px 25px auto;
           // justify-items: center;
           align-content: start;
           gap: 0.15rem;
           padding-top: 0.15rem;
+
+          .custom-button-wrapper {
+            grid-column: 4/-1;
+            grid-row: 1/2;
+            justify-self: end;
+          }
         }
 
         .set-number {
@@ -101,6 +119,8 @@
         .badges-container {
           margin: 0;
           justify-self: end;
+
+          grid-column: 2/3;
 
           .MuiCheckbox-root,
           .MuiCircularProgress-root {

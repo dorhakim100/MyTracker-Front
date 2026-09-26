@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import GaugeComponent from 'react-gauge-component'
 
-interface SessionHardnessGaugeProps {
+interface HardnessGaugeProps {
   size: 'big' | 'small'
   actualRpe: number | null
   accuracy: number | null
@@ -15,11 +15,11 @@ function cssVar(name: string, fallback: string) {
   return value || fallback
 }
 
-export function SessionHardnessGauge({
+export function HardnessGauge({
   size,
   actualRpe,
   accuracy,
-}: SessionHardnessGaugeProps) {
+}: HardnessGaugeProps) {
   const colors = useMemo(
     () => ({
       green: cssVar('--picker-color-green', '#06d6a0'),
@@ -37,7 +37,7 @@ export function SessionHardnessGauge({
     window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
   return (
-    <div className={`session-hardness-gauge-container size-${size}`}>
+    <div className={`hardness-gauge-container size-${size}`}>
       <GaugeComponent
         type='radial'
         minValue={5}

@@ -1,4 +1,4 @@
-.session-hardness-gauge-container {
+.hardness-gauge-container {
   display: grid;
   justify-items: center;
   min-width: 0;
@@ -17,7 +17,7 @@
 }
 
 body.dark-mode {
-  .session-hardness-gauge-container {
+  .hardness-gauge-container {
     .value-text,
     .tick-value {
       text {

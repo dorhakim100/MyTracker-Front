@@ -71,6 +71,7 @@ export interface ExerciseEditorProps {
     setIndex: number
   ) => Promise<void> | void
   isOpen?: boolean
+  isInstructionsLoadingProp?: boolean
 }
 
 interface EditSet extends Set {
@@ -106,6 +107,7 @@ export function ExerciseEditor({
   removeSet,
   markSetAsDone,
   isOpen = true,
+  isInstructionsLoadingProp = false,
 }: ExerciseEditorProps) {
   const { t } = useTranslation()
   const { t: tEditor } = useTranslation(exerciseEditorNs)
@@ -140,6 +142,11 @@ export function ExerciseEditor({
 
   const delay = isExpected ? 0 : 4000
 
+  const isInstructionsLoading = isExpected
+    ? isInstructionsLoadingProp && !previousInstructions
+    : false
+
+  // isInstructionsLoading = true
   const { debouncedFn: debouncedUpdateExercise, cancel: cancelUpdate } =
     useDebouncedCallback(stableUpdateExercise, delay)
   const onAddSet = async () => {
@@ -187,6 +194,7 @@ export function ExerciseEditor({
       } else if (removeSet) {
         await removeSet(updatedExercise, indexToRemove)
       }
+      showSuccessMsg(t('messages.success.deleteSet'))
     } catch {
       showErrorMsg(t('messages.error.deleteSet'))
     }
@@ -303,7 +311,9 @@ export function ExerciseEditor({
 
   const renderDoneControl = (set: Set, index: number) => (
     <Tooltip
-      title={set.isDone ? t('exercise.markAsNotDone') : t('exercise.markAsDone')}
+      title={
+        set.isDone ? t('exercise.markAsNotDone') : t('exercise.markAsDone')
+      }
       disableHoverListener={!isDashboard}
       disableTouchListener={!isDashboard}
       disableFocusListener={!isDashboard}
@@ -366,7 +376,16 @@ export function ExerciseEditor({
                 isDashboard ? 'dashboard' : ''
               }`}
             />
-            <div className='badges-container'>{renderDoneControl(set, index)}</div>
+            <div className='badges-container'>
+              {renderDoneControl(set, index)}
+            </div>
+            <CustomButton
+              className='delete-set-button red'
+              text={t('exercise.deleteSet')}
+              onClick={() => onDeleteSet(index)}
+              icon={<DeleteIcon />}
+              isIcon={true}
+            />
           </div>
           <div className='previous-week-table-wrap'>
             <Typography
@@ -586,158 +605,188 @@ export function ExerciseEditor({
             </Typography>
           </div>
         )}
-        {exercise.sets && exercise.sets.length > 0 && (
-          <SwipeableWrapper
-            disableSwipe={isDashboard || currUpdatedExerciseSettings.exerciseId}
-            items={exercise.sets.map((set, index) => ({
-              id: `${exercise.exerciseId}-set-${index}`,
-              content: (
-                <div
-                  className={`set-container ${isDashboard ? 'dashboard' : ''}`}
-                >
-                  {previousInstructions ? (
-                    renderPreviousWeek(set, index)
-                  ) : (
+        {(exercise.sets &&
+          exercise.sets.length > 0 &&
+          !isInstructionsLoading && (
+            <SwipeableWrapper
+              disableSwipe={
+                isExpected ||
+                isDashboard ||
+                currUpdatedExerciseSettings.exerciseId
+              }
+              items={exercise.sets.map((set, index) => ({
+                id: `${exercise.exerciseId}-set-${index}`,
+                content: (
                   <div
-                    className={`set-editor-container ${
+                    className={`set-container ${
                       isDashboard ? 'dashboard' : ''
                     }`}
                   >
-                    <Badge
-                      badgeContent={index + 1}
-                      color='primary'
-                      className={`${prefs.favoriteColor} set-number ${
-                        isDashboard ? 'dashboard' : ''
-                      }`}
-                    />
-                    <div className='reps-container'>
-                      <PickerSelect
-                        className={`${prefs.favoriteColor}`}
-                        openClock={() => {
-                          setPickerOptions({
-                            type: 'reps',
-                            isOpen: true,
-                          })
-                          setEditSet({ ...set, index })
-                          setCurrentPickerValue(set.reps.actual || 0)
-                        }}
-                        option={{
-                          label: t('exercise.reps'),
-                          key: 'reps',
-                          type: 'number',
-                        }}
-                        value={set.reps.actual}
-                        minWidth={windowWidth > 1050 ? windowWidth / 10 : 70}
-                      />
-                    </div>
-                    <div className='weight-container'>
-                      <PickerSelect
-                        className={`weight-picker ${prefs.favoriteColor} ${
-                          isRtl ? 'rtl' : ''
+                    {previousInstructions ? (
+                      renderPreviousWeek(set, index)
+                    ) : (
+                      <div
+                        className={`set-editor-container ${
+                          isDashboard ? 'dashboard' : ''
                         }`}
-                        openClock={() => {
-                          setPickerOptions({
-                            type: 'weight',
-                            isOpen: true,
-                          })
-                          setEditSet({ ...set, index })
-                          setCurrentPickerValue(set.weight.actual || 0)
-                        }}
-                        option={{
-                          label: t('exercise.weight'),
-                          key: 'weight',
-                          type: 'number',
-                        }}
-                        value={set.weight.actual}
-                        minWidth={windowWidth > 1050 ? windowWidth / 10 : 90}
-                        afterString={t('weight.kg')}
-                      />
-                    </div>
-                    <div className='rpe-rir-container'>
-                      <PickerSelect
-                        className={`${prefs.favoriteColor}`}
-                        openClock={() => {
-                          setPickerOptions({
-                            type: set.rpe ? 'rpe' : 'rir',
-                            isOpen: true,
-                          })
-                          setEditSet({ ...set, index })
-                          setCurrentPickerValue(
-                            set.rpe ? set.rpe.actual : set.rir?.actual ?? 2
-                          )
-                        }}
-                        option={{
-                          label: set.rpe ? 'RPE' : 'RIR',
-                          key: set.rpe ? 'rpe' : 'rir',
-                          type: 'number',
-                        }}
-                        value={set.rpe ? set.rpe.actual : set.rir?.actual ?? 2}
-                        minWidth={windowWidth > 1050 ? windowWidth / 10 : 70}
-                      />
-                    </div>
-                    <div className='badges-container'>
-                      {!isExpected && renderDoneControl(set, index)}
-                    </div>
-                    {isDashboard && isExpected && (
-                      <CustomButton
-                        className='delete-set-button red'
-                        text={t('exercise.deleteSet')}
-                        onClick={() => onDeleteSet(index)}
-                        icon={<DeleteIcon />}
-                      />
-                    )}
-                  </div>
-                  )}{' '}
-                  {/* <Divider
+                      >
+                        <Badge
+                          badgeContent={index + 1}
+                          color='primary'
+                          className={`${prefs.favoriteColor} set-number ${
+                            isDashboard ? 'dashboard' : ''
+                          }`}
+                        />
+                        <div className='reps-container'>
+                          <PickerSelect
+                            className={`${prefs.favoriteColor}`}
+                            openClock={() => {
+                              setPickerOptions({
+                                type: 'reps',
+                                isOpen: true,
+                              })
+                              setEditSet({ ...set, index })
+                              setCurrentPickerValue(set.reps.actual || 0)
+                            }}
+                            option={{
+                              label: t('exercise.reps'),
+                              key: 'reps',
+                              type: 'number',
+                            }}
+                            value={set.reps.actual}
+                            minWidth={
+                              windowWidth > 1050 ? windowWidth / 10 : 70
+                            }
+                          />
+                        </div>
+                        <div className='weight-container'>
+                          <PickerSelect
+                            className={`weight-picker ${prefs.favoriteColor} ${
+                              isRtl ? 'rtl' : ''
+                            }`}
+                            openClock={() => {
+                              setPickerOptions({
+                                type: 'weight',
+                                isOpen: true,
+                              })
+                              setEditSet({ ...set, index })
+                              setCurrentPickerValue(set.weight.actual || 0)
+                            }}
+                            option={{
+                              label: t('exercise.weight'),
+                              key: 'weight',
+                              type: 'number',
+                            }}
+                            value={set.weight.actual}
+                            minWidth={
+                              windowWidth > 1050 ? windowWidth / 10 : 90
+                            }
+                            afterString={t('weight.kg')}
+                          />
+                        </div>
+                        <div className='rpe-rir-container'>
+                          <PickerSelect
+                            className={`${prefs.favoriteColor}`}
+                            openClock={() => {
+                              setPickerOptions({
+                                type: set.rpe ? 'rpe' : 'rir',
+                                isOpen: true,
+                              })
+                              setEditSet({ ...set, index })
+                              setCurrentPickerValue(
+                                set.rpe ? set.rpe.actual : set.rir?.actual ?? 2
+                              )
+                            }}
+                            option={{
+                              label: set.rpe ? 'RPE' : 'RIR',
+                              key: set.rpe ? 'rpe' : 'rir',
+                              type: 'number',
+                            }}
+                            value={
+                              set.rpe ? set.rpe.actual : set.rir?.actual ?? 2
+                            }
+                            minWidth={
+                              windowWidth > 1050 ? windowWidth / 10 : 70
+                            }
+                          />
+                        </div>
+                        <div className='badges-container'>
+                          {!isExpected && renderDoneControl(set, index)}
+                        </div>
+                        {(isDashboard && isExpected) ||
+                        (!previousInstructions && isExpected) ? (
+                          <CustomButton
+                            className='delete-set-button red'
+                            text={t('exercise.deleteSet')}
+                            onClick={() => onDeleteSet(index)}
+                            icon={<DeleteIcon />}
+                            isIcon={!isDashboard}
+                          />
+                        ) : undefined}
+                      </div>
+                    )}{' '}
+                    {/* <Divider
                     className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
                   /> */}
-                </div>
-              ),
-              renderRightSwipeActions: isExpected
-                ? () => (
-                    <DeleteAction
-                      item={set}
-                      onDeleteItem={() => onDeleteSet(index)}
-                      destructive={
-                        index === 0 && exercise.sets.length === 1 ? false : true
-                      }
-                    />
-                  )
-                : undefined,
-              renderLeftSwipeActions: !isExpected
-                ? () => (
-                    <CustomSwipeAction
-                      item={set}
-                      onAction={() => onMarkAsDone(index)}
-                      destructive={false}
-                      icon={
-                        set.isDone ? (
-                          <RemoveCircleOutlineIcon />
-                        ) : (
-                          <CheckCircleOutlineIcon />
-                        )
-                      }
-                      text={
-                        set.isDone ? t('exercise.notDone') : t('exercise.done')
-                      }
-                      className={set.isDone ? 'red' : 'green'}
-                    />
-                  )
-                : undefined,
-            }))}
-            listKey={`${exercise.exerciseId}-list-${exercise.sets.length}`}
-            threshold={0.15}
+                  </div>
+                ),
+                renderRightSwipeActions: isExpected
+                  ? () => (
+                      <DeleteAction
+                        item={set}
+                        onDeleteItem={() => onDeleteSet(index)}
+                        destructive={
+                          index === 0 && exercise.sets.length === 1
+                            ? false
+                            : true
+                        }
+                      />
+                    )
+                  : undefined,
+                renderLeftSwipeActions: !isExpected
+                  ? () => (
+                      <CustomSwipeAction
+                        item={set}
+                        onAction={() => onMarkAsDone(index)}
+                        destructive={false}
+                        icon={
+                          set.isDone ? (
+                            <RemoveCircleOutlineIcon />
+                          ) : (
+                            <CheckCircleOutlineIcon />
+                          )
+                        }
+                        text={
+                          set.isDone
+                            ? t('exercise.notDone')
+                            : t('exercise.done')
+                        }
+                        className={set.isDone ? 'red' : 'green'}
+                      />
+                    )
+                  : undefined,
+              }))}
+              listKey={`${exercise.exerciseId}-list-${exercise.sets.length}`}
+              threshold={0.15}
+            />
+          )) || (
+          <CircularProgress
+            size={25}
+            className={`${prefs.favoriteColor} loading-spinner`}
+            sx={{ marginTop: '20px' }}
           />
         )}
 
-        <div className='controls-container'>
-          <CustomButton
-            icon={<AddIcon />}
-            text={t('exercise.addSet')}
-            onClick={onAddSet}
-            fullWidth
-          />
-        </div>
+        {!isInstructionsLoading && (
+          <div className='controls-container'>
+            <CustomButton
+              icon={<AddIcon />}
+              text={t('exercise.addSet')}
+              onClick={onAddSet}
+              fullWidth
+            />
+          </div>
+        )}
       </div>
       <SlideDialog
         title={
