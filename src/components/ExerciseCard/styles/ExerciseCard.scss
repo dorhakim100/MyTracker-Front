@@ -67,9 +67,10 @@
 
   .exercise-card-content {
     display: grid;
-    grid-template-columns: auto 1fr 20px;
+    grid-template-columns: auto 1fr;
     gap: 1rem;
     align-items: start;
+    width: calc(100% - 32.5px);
     // min-height: 100px;
     .more-options-container {
       grid-column: 3/4;
