@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Card, Typography } from '@mui/material'
 import { Macros } from '../Macros/Macros'
 import { useSelector } from 'react-redux'
-import { RootState } from '../../store/store'
+import { RootState, store } from '../../store/store'
 import { EditIcon } from '../EditIcon/EditIcon'
 import { CustomIcon } from '../../CustomMui/CustomIcon/CustomIcon'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
@@ -58,10 +58,6 @@ export function MacrosDistribution({
     (stateSelector: RootState) => stateSelector.userModule.user
   )
 
-  const userToEdit = useSelector(
-    (stateSelector: RootState) => stateSelector.userModule.userToEdit
-  )
-
   const [open, setOpen] = useState(false)
   const onClose = () => {
     setOpen(false)
@@ -72,6 +68,7 @@ export function MacrosDistribution({
   }
 
   const onSave = async () => {
+    const userToEdit = store.getState().userModule.userToEdit
     try {
       if (!userToEdit || !user) return
       setIsLoading(true)

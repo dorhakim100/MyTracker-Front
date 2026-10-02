@@ -4,7 +4,7 @@ import { Card, Typography } from '@mui/material'
 import { CircularProgress } from '../CircularProgress/CircularProgress'
 
 import { useSelector } from 'react-redux'
-import { RootState } from '../../store/store'
+import { RootState, store } from '../../store/store'
 import { useMemo, useState } from 'react'
 import {
   optimisticUpdateUser,
@@ -44,10 +44,6 @@ export function CaloriesProgress({
     (stateSelector: RootState) => stateSelector.userModule.user
   )
 
-  const userToEdit = useSelector(
-    (stateSelector: RootState) => stateSelector.userModule.userToEdit
-  )
-
   const [openModal, setOpenModal] = useState(false)
 
   const currentValue = useMemo(() => {
@@ -63,6 +59,7 @@ export function CaloriesProgress({
   }
 
   const onSave = async () => {
+    const userToEdit = store.getState().userModule.userToEdit
     try {
       if (!userToEdit || !user) return
       setIsLoading(true)

@@ -4,7 +4,7 @@ import { Card, Typography } from '@mui/material'
 
 import { CircularProgress } from '../CircularProgress/CircularProgress'
 import { useSelector } from 'react-redux'
-import { RootState } from '../../store/store'
+import { RootState, store } from '../../store/store'
 import { EditIcon } from '../EditIcon/EditIcon'
 import { CustomIcon } from '../../CustomMui/CustomIcon/CustomIcon'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
@@ -47,10 +47,6 @@ export function MacrosProgress({
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
 
-  const userToEdit = useSelector(
-    (stateSelector: RootState) => stateSelector.userModule.userToEdit
-  )
-
   const [openModal, setOpenModal] = useState(false)
 
   const { t } = useTranslation()
@@ -84,6 +80,7 @@ export function MacrosProgress({
   }
 
   const onSave = async () => {
+    const userToEdit = store.getState().userModule.userToEdit
     try {
       if (!userToEdit) return
       setIsLoading(true)
