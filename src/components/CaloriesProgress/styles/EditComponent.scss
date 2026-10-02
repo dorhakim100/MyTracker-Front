@@ -8,13 +8,18 @@
     position: absolute;
     color: $primary-color;
     font-weight: 700;
+    top: 1rem;
+    left: 0;
+    right: 0;
+    text-align: center;
     // top: 50%;
     // bottom: 0;
     // z-index: 2;
   }
 
   .picker-container {
-    margin-top: 4em;
+    margin-top: calc(50px);
+    width: 100%;
   }
 
   .buttons-container {

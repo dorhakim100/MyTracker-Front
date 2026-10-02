@@ -7,15 +7,18 @@
 
 .workout-header-container {
   display: grid;
+  gap: 1rem 0;
   grid-template-columns: 1fr auto;
-  grid-template-rows: repeat(2, 1fr);
+  // grid-template-rows: repeat(2, 1fr);
   align-items: center;
   justify-content: space-between;
   margin-top: 1rem;
-  padding: 0.4rem 0.75rem 0.4rem 0.8rem;
+  // padding: 0.4rem 0.75rem 0.4rem 0.8rem;
+  padding: 0.5rem;
+  padding-bottom: 1rem;
   border-radius: 4px;
 
-  min-height: 130px;
+  // min-height: 130px;
 
   &.finished {
     padding-inline-start: 0.5rem;
@@ -55,7 +58,7 @@
     display: grid !important;
     grid-template-columns: 1fr 0.5px 1fr !important;
     align-items: center;
-    .divider{
+    .divider {
       height: 100%;
     }
     // justify-content: center;

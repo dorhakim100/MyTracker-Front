@@ -53,17 +53,21 @@ export function SwipeableWrapper({
         key={listKey}
       >
         {items.map((item) => {
-          const leadingActions = disableSwipe ? null : item.renderLeftSwipeActions ? (
-            <LeadingActions>{item.renderLeftSwipeActions()}</LeadingActions>
-          ) : renderLeftSwipeActions ? (
-            <LeadingActions>{renderLeftSwipeActions()}</LeadingActions>
-          ) : null
+          const leadingActions =
+            disableSwipe ? null : item.renderLeftSwipeActions ? (
+              <LeadingActions>{item.renderLeftSwipeActions()}</LeadingActions>
+            ) : renderLeftSwipeActions ? (
+              <LeadingActions>{renderLeftSwipeActions()}</LeadingActions>
+            ) : null
 
-          const trailingActions = disableSwipe ? null : item.renderRightSwipeActions ? (
-            <TrailingActions>{item.renderRightSwipeActions()}</TrailingActions>
-          ) : renderRightSwipeActions ? (
-            <TrailingActions>{renderRightSwipeActions()}</TrailingActions>
-          ) : null
+          const trailingActions =
+            disableSwipe ? null : item.renderRightSwipeActions ? (
+              <TrailingActions>
+                {item.renderRightSwipeActions()}
+              </TrailingActions>
+            ) : renderRightSwipeActions ? (
+              <TrailingActions>{renderRightSwipeActions()}</TrailingActions>
+            ) : null
 
           return (
             <SwipeableListItem
@@ -96,7 +100,11 @@ export function SwipeableWrapper({
   ) : null
 
   return (
-    <SwipeableList type={Type.IOS} fullSwipe={true} className={className}>
+    <SwipeableList
+      type={Type.IOS}
+      fullSwipe={true}
+      className={className}
+    >
       <SwipeableListItem
         leadingActions={leadingActions}
         trailingActions={trailingActions}

@@ -56,9 +56,10 @@
   }
 
   .exercise-body-parts-container {
-    display: flex;
+    display: grid;
+    grid-template-columns: auto 1fr;
     align-items: center;
-    gap: 1.5rem;
+    // gap: 0.5rem;
     min-width: 0;
 
     .exercise-muscle-groups {

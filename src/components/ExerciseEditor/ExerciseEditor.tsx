@@ -730,7 +730,7 @@ export function ExerciseEditor({
                   /> */}
                   </div>
                 ),
-                renderRightSwipeActions: isExpected
+                renderLeftSwipeActions: isExpected
                   ? () => (
                       <DeleteAction
                         item={set}
@@ -743,7 +743,7 @@ export function ExerciseEditor({
                       />
                     )
                   : undefined,
-                renderLeftSwipeActions: !isExpected
+                renderRightSwipeActions: !isExpected
                   ? () => (
                       <CustomSwipeAction
                         item={set}

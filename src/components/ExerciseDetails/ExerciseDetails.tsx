@@ -272,12 +272,17 @@ export function ExerciseDetails({
     mainMuscles: exercise?.mainMuscles,
     secondaryMuscles: exercise?.secondaryMuscles,
   })
-  const exerciseTag = exerciseTags[0]
+  const exerciseTag = capitalizeFirstLetter(exerciseTags[0])
+  console.log('exerciseTag', exerciseTag)
 
   const muscleGroupsText = capitalizeFirstLetter(
     exercise?.mainMuscles
       ?.concat(exercise?.secondaryMuscles || [])
-      .filter((tag) => tag !== exerciseTag)
+      .filter(
+        (tag) =>
+          tag.replace(/ /g, '').toLowerCase() !==
+          exerciseTag.replace(/ /g, '').toLowerCase()
+      )
       .filter(Boolean)
       .join(', ') || ''
   )
