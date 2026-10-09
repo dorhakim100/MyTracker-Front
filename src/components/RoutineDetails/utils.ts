@@ -59,7 +59,7 @@ export function finishedSessions(
       if (session.instructions?.weekNumber !== weekNumber) return false
       return Boolean(session.statsId || session.instructions?.isFinished)
     })
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
 }
 
 export function formatSessionDate(date: string, lang: string) {
