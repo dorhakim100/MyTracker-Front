@@ -13,13 +13,13 @@ Ask the questions one at a time.
 
 If a question can be answered by exploring the codebase, explore the codebase instead.
 
-## Hackathon focus
+## Scope focus
 
-Prioritize decisions that affect the demo:
+Prioritize decisions that affect the user:
 
-- Who is the user and what is the one wow moment?
-- What is in / out of scope for a 3-day build?
-- What already exists (APIs, Figma, Jira tickets, PlainID patterns) we should reuse?
-- What is the thinnest vertical slice that judges can click end-to-end?
+- Who is the user and what is the primary outcome?
+- What is in / out of scope?
+- What already exists (APIs, Figma, Jira tickets, existing patterns) we should reuse?
+- What is the thinnest vertical slice that works end-to-end?
 
 When GitLab / Figma / Jira MCPs are available, pull context from them before asking questions those systems can answer.

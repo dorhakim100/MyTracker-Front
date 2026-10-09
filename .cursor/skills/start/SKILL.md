@@ -1,7 +1,7 @@
 ---
 name: start
 description: >-
-  Kick off hackathon planning by running grill-me, then write-a-prd, then
+  Kick off feature planning by running grill-me, then write-a-prd, then
   prd-to-plan in order. Use when the user says start, kickoff, kick off,
   begin planning, or wants the full planning pipeline.
 disable-model-invocation: true

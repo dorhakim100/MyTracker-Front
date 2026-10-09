@@ -35,7 +35,7 @@ Break the PRD into **tracer bullet** phases. Each phase is a thin vertical slice
 
 <vertical-slice-rules>
 - Each slice delivers a narrow but COMPLETE path through every layer (schema, API, UI, tests)
-- A completed slice is demoable or verifiable on its own
+- A completed slice works or is verifiable on its own
 - Prefer many thin slices over few thick ones
 - Do NOT include specific file names, function names, or implementation details that are likely to change as later phases are built
 - DO include durable decisions: route paths, schema shapes, data model names

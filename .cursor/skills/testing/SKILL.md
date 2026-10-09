@@ -1,14 +1,14 @@
 ---
 name: testing
 description: >-
-  Required before implementing any code in this repo. Default to skipping tests
-  during hackathon development. When the user explicitly asks for tests, use
-  Vitest and Storybook focused on user behavior flows — not unit tests of
+  Required before implementing any code in this repo. Default to skipping tests.
+  When the user explicitly asks for tests, use Vitest and Storybook focused on
+  user behavior flows — not unit tests of
   internals. Use when user mentions test, vitest, storybook, coverage, or asks
   to verify a flow.
 ---
 
-# Testing (Hackathon Default)
+# Testing
 
 ## Default rule
 
@@ -35,14 +35,14 @@ Stack:
 Focus on **user-visible behavior**:
 
 - Happy path of a critical flow (e.g. submit form → see result)
-- Important error / empty states the demo might hit
+- Important error / empty states users might hit
 - Accessibility of primary controls when relevant (role/name)
 
 ### What not to test
 
 - Implementation details (internal state, private helpers, Redux action type strings)
 - Snapshot spam
-- One assertion per tiny pure util unless it is demo-critical
+- One assertion per tiny pure util unless it is part of a critical user flow
 - Full coverage of every branch
 
 ### Patterns

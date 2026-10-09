@@ -21,7 +21,7 @@
 
 ### What to build
 
-The details sheet becomes a scrolling food page in the exercise-details family: large square photo, favorite overlay with a contrast scrim, category badges, name, kcal per 100g (or per serving for meals). Item cards get the same favorite-on-photo scrim. A themed floating button replaces the footer add/update so logging stays one tap while scrolling. Serving controls and today’s macros/add handlers stay as they are so the sheet is still demoable end-to-end.
+The details sheet becomes a scrolling food page in the exercise-details family: large square photo, favorite overlay with a contrast scrim, category badges, name, kcal per 100g (or per serving for meals). Item cards get the same favorite-on-photo scrim. A themed floating button replaces the footer add/update so logging stays one tap while scrolling. Serving controls and today’s macros/add handlers stay as they are so the sheet still works end-to-end.
 
 ### Acceptance criteria
 

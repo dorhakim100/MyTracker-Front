@@ -42,9 +42,9 @@ Break the PRD into **tracer bullet** phases. Each phase is a thin vertical slice
 
 <vertical-slice-rules>
 - Each slice delivers a narrow but COMPLETE path through every layer (types, service, store if needed, UI)
-- A completed slice is demoable or verifiable on its own
+- A completed slice works or is verifiable on its own
 - Prefer many thin slices over few thick ones
-- Order slices so the first 1–2 phases produce a clickable demo path
+- Order slices so the first 1–2 phases produce a clickable end-to-end path
 - Do NOT include specific file names, function names, or implementation details that are likely to change as later phases are built
 - DO include durable decisions: route paths, schema shapes, data model names
 - Do NOT add test work unless the PRD / user explicitly requested tests

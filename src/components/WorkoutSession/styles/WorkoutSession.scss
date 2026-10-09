@@ -20,6 +20,8 @@
 
   // min-height: 130px;
 
+  padding-inline-start: 0.8rem;
+
   &.finished {
     padding-inline-start: 0.5rem;
     border-inline-start: 0.3rem solid var(--success-color);

@@ -41,4 +41,4 @@ Work PC has GitLab, Figma, and Jira MCPs. Prefer them for tickets, designs, and 
 
 ## Speed
 
-Demoable vertical slices > perfect architecture. Reuse existing modules first. No drive-by refactors.
+Working vertical slices > perfect architecture. Reuse existing modules first. No drive-by refactors.

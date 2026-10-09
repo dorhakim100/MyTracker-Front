@@ -132,7 +132,7 @@ Macros are per 100g cooked/ready. Range is grams min/max; the initial amount is 
 
 ## Testing Decisions
 
-No automated tests for this hackathon unless explicitly requested. Do not add Vitest/Storybook as part of this work.
+No automated tests unless explicitly requested. Do not add Vitest/Storybook as part of this work.
 
 ## Out of Scope
 

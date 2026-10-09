@@ -14,7 +14,7 @@ Think like a senior product designer embedded on a frontend team — not a Dribb
 
 ## Mindset
 
-- Clarity over decoration. Judges and users should understand the screen in under 3 seconds.
+- Clarity over decoration. Users should understand the screen in under 3 seconds.
 - One primary action per view. Secondary actions quieter.
 - Hierarchy: brand/product context → page purpose → content → actions.
 - Consistency with existing CustomMui + SCSS tokens beats one-off cleverness.

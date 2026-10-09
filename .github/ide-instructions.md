@@ -48,7 +48,7 @@ Ask questions in the plan and wait for answers before proceeding.
 
 ## Speed
 
-Demoable vertical slices > perfect architecture. Reuse existing modules first. No drive-by refactors.
+Working vertical slices > perfect architecture. Reuse existing modules first. No drive-by refactors.
 
 ## MCPs
 

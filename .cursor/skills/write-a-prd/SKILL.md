@@ -23,7 +23,7 @@ Check with the user that these modules match their expectations.
 
 5. Once you have a complete understanding of the problem and solution, use the template below to write the PRD. Save it as `./plans/prd-<feature-slug>.md`. If the user asks to also open a Jira / GitLab issue, do that via MCP after the file is written.
 
-Default testing stance for this hackathon: **no tests unless the user explicitly asks**. Reflect that under Testing Decisions.
+Default testing stance: **no tests unless the user explicitly asks**. Reflect that under Testing Decisions.
 
 <prd-template>
 
@@ -45,7 +45,7 @@ A LONG, numbered list of user stories. Each user story should be in the format o
 1. As a mobile bank customer, I want to see balance on my accounts, so that I can make better informed decisions about my spending
 </user-story-example>
 
-This list of user stories should be extremely extensive and cover all aspects of the feature. Mark must-have vs nice-to-have for the hackathon demo.
+This list of user stories should be extremely extensive and cover all aspects of the feature. Mark must-have vs nice-to-have.
 
 ## Implementation Decisions
 
@@ -63,7 +63,7 @@ Do NOT include specific file paths or code snippets. They may end up being outda
 
 ## Testing Decisions
 
-Default: no automated tests for this hackathon unless the user explicitly requests them.
+Default: no automated tests unless the user explicitly requests them.
 
 If tests are requested, list:
 
@@ -73,7 +73,7 @@ If tests are requested, list:
 
 ## Out of Scope
 
-A description of the things that are out of scope for this PRD / demo day.
+A description of the things that are out of scope for this PRD.
 
 ## Further Notes
 

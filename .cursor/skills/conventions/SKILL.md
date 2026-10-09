@@ -231,13 +231,13 @@ Rules:
 - Reducers export action type constants + reducer function
 - Register new reducers in `store/store.ts` via `combineReducers`
 
-## Reuse-first (hackathon speed)
+## Reuse-first
 
 1. Search existing components, CustomMui, services, hooks, types
 2. Check MUI / small proven libs per `reuse-libraries` before greenfield UI or deps
 3. Extend what exists if it fits in < ~15 min of adaptation
 4. Only create new modules when nothing close exists
-5. Do not build abstractions "for later" — vertical slice for the demo first
+5. Do not build abstractions "for later" — finish the current vertical slice first
 6. Skip over-engineering: no alternate full UI libraries, no drive-by refactors
 
 ## MCPs

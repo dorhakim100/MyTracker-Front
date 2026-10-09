@@ -9,7 +9,7 @@
 - **Services / store**: no API or Redux. Pure helpers next to the set domain. Chart still uses existing range query + `prepareSeries`.
 - **Libraries**: existing CustomSelect + LineChart. No new packages.
 
-The user asked to implement immediately after PRD approval; phases below are one demoable slice.
+The user asked to implement immediately after PRD approval; phases below are one end-to-end slice.
 
 ---
 
