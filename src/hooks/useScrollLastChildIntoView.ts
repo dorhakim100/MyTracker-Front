@@ -1,6 +1,9 @@
 import { useEffect, useRef } from 'react'
 
-function nearestHorizontalScroller(element: HTMLElement, boundary: HTMLElement) {
+function nearestHorizontalScroller(
+  element: HTMLElement,
+  boundary: HTMLElement
+) {
   let node = element.parentElement
   while (node) {
     const overflowX = getComputedStyle(node).overflowX
@@ -32,8 +35,8 @@ export function useScrollLastChildIntoView(className: string, when: unknown) {
       const matches = root.getElementsByClassName(className)
       const last = matches.item(matches.length - 1)
       if (!last) return
-      const scroller = nearestHorizontalScroller(last, root)
-      revealChild(scroller, last)
+      const scroller = nearestHorizontalScroller(last as HTMLElement, root)
+      revealChild(scroller, last as HTMLElement)
     })
 
     return () => cancelAnimationFrame(frame)
