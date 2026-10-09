@@ -18,9 +18,9 @@ function revealChild(scroller: HTMLElement, child: HTMLElement) {
   const scrollerRect = scroller.getBoundingClientRect()
   const childRect = child.getBoundingClientRect()
   if (childRect.right > scrollerRect.right + 1) {
-    scroller.scrollLeft += childRect.right - scrollerRect.right + 5
+    scroller.scrollLeft += childRect.right - scrollerRect.right + 15
   } else if (childRect.left < scrollerRect.left - 1) {
-    scroller.scrollLeft -= scrollerRect.left - childRect.left + 5
+    scroller.scrollLeft -= scrollerRect.left - childRect.left + 15
   }
 }
 
