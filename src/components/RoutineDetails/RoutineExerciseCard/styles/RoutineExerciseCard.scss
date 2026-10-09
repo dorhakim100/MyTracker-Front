@@ -20,8 +20,9 @@
 
   .exercise-header {
     display: grid;
-    grid-template-columns: 80px minmax(0, 1fr);
+    grid-template-columns: 80px minmax(0, 1fr) auto;
     gap: 0.75rem;
+    align-items: start;
 
     img {
       width: 80px;
@@ -41,6 +42,16 @@
 
   .exercise-name {
     font-weight: 600;
+  }
+
+  .exercise-chat {
+    align-self: start;
+
+    .MuiBadge-badge:not(.MuiBadge-invisible) {
+      top: 4px;
+      right: 4px;
+      transform: none !important;
+    }
   }
 
   .sets-table {

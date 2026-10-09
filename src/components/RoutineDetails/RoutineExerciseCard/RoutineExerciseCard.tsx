@@ -7,8 +7,12 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import { Exercise, Set } from '../../../types/exercise/Exercise'
 import { capitalizeFirstLetter } from '../../../services/util.service'
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline'
 import { MarqueeText } from '../../MarqueeText/MarqueeText'
 import { BodyPartBadges } from '../../BodyPartBadge/BodyPartBadge'
+import { CustomButton } from '../../../CustomMui/CustomButton/CustomButton'
+import { ChatUnreadBadge } from '../../../CustomMui/ChatUnreadBadge/ChatUnreadBadge'
+import { exerciseChatNs } from '../../ExerciseChatDialog/locals'
 import { routineExerciseCardNs } from './locals'
 // import { Divider } from '@mui/material'
 // import { useSelector } from 'react-redux'
@@ -18,6 +22,9 @@ interface RoutineExerciseCardProps {
   exercise: Exercise
   sets: Set[]
   onOpen: () => void
+  unreadCount?: number
+  hasMessages?: boolean
+  onOpenChat?: () => void
 }
 
 function formatNumber(value: number | undefined, suffix?: string) {
@@ -37,13 +44,18 @@ export function RoutineExerciseCard({
   exercise,
   sets,
   onOpen,
+  unreadCount = 0,
+  hasMessages = false,
+  onOpenChat,
 }: RoutineExerciseCardProps) {
   // const prefs = useSelector((state: RootState) => state.systemModule.prefs)
   const { t } = useTranslation(routineExerciseCardNs)
+  const { t: tChat } = useTranslation(exerciseChatNs)
   const usesRpe = Boolean(sets[0]?.rpe)
   const kg = t('kg')
 
   const onKeyDown = (event: KeyboardEvent) => {
+    if (event.target !== event.currentTarget) return
     if (event.key !== 'Enter' && event.key !== ' ') return
     event.preventDefault()
     onOpen()
@@ -77,6 +89,25 @@ export function RoutineExerciseCard({
             size='s'
           />
         </div>
+        {onOpenChat && (
+          <div className='exercise-chat'>
+            <ChatUnreadBadge
+              count={unreadCount}
+              hasMessages={hasMessages}
+            >
+              <CustomButton
+                isIcon={true}
+                icon={<ChatBubbleOutlineIcon />}
+                tooltipTitle={tChat('openChat')}
+                variant='flat'
+                onClick={(event) => {
+                  event.stopPropagation()
+                  onOpenChat()
+                }}
+              />
+            </ChatUnreadBadge>
+          </div>
+        )}
       </div>
       {sets.length > 0 && (
         <div className='sets-table'>

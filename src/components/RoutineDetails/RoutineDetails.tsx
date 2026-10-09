@@ -30,7 +30,9 @@ import { SessionStats } from '../SessionStats/SessionStats'
 import { sessionStatsNs } from '../SessionStats/locals'
 import { EditWorkout } from '../../pages/LiftMate/EditWorkout/EditWorkout'
 import { useChatRole } from '../../hooks/useChatRole'
+import { useUnreadSummary } from '../../hooks/useUnreadSummary'
 import { useScrollLastChildIntoView } from '../../hooks/useScrollLastChildIntoView'
+import { ExerciseChatDialog } from '../ExerciseChatDialog/ExerciseChatDialog'
 import { RoutineExerciseCard } from './RoutineExerciseCard/RoutineExerciseCard'
 import { routineDetailsNs } from './locals'
 import {
@@ -62,6 +64,11 @@ export function RoutineDetails({ workout }: RoutineDetailsProps) {
   )
   const forUserId = traineeUser?._id || user?._id || ''
   const chatRole = useChatRole()
+  const { getExerciseCount, hasExerciseMessages } = useUnreadSummary(chatRole)
+  const traineeName =
+    chatRole === 'trainer' && traineeUser && traineeUser._id !== user?._id
+      ? traineeUser.details.fullname
+      : undefined
 
   const [weeksStatus, setWeeksStatus] = useState<WeekNumberStatus[]>([])
   const [weekNumber, setWeekNumber] = useState<number | null>(null)
@@ -73,6 +80,7 @@ export function RoutineDetails({ workout }: RoutineDetailsProps) {
     null
   )
   const [isExerciseOpen, setIsExerciseOpen] = useState(false)
+  const [chatExercise, setChatExercise] = useState<Exercise | null>(null)
   const [isEditOpen, setIsEditOpen] = useState(false)
   const [recap, setRecap] = useState<SessionStatsRecap | null>(null)
   const [isStatsOpen, setIsStatsOpen] = useState(false)
@@ -353,10 +361,23 @@ export function RoutineDetails({ workout }: RoutineDetailsProps) {
                 key={`${instruction.exerciseId}-${index}`}
                 exercise={exercise}
                 sets={instruction.sets || []}
+                unreadCount={
+                  workout._id
+                    ? getExerciseCount(workout._id, exercise.exerciseId)
+                    : 0
+                }
+                hasMessages={
+                  workout._id
+                    ? hasExerciseMessages(workout._id, exercise.exerciseId)
+                    : false
+                }
                 onOpen={() => {
                   setSelectedExercise(exercise)
                   setIsExerciseOpen(true)
                 }}
+                onOpenChat={
+                  workout._id ? () => setChatExercise(exercise) : undefined
+                }
               />
             )
           })}
@@ -376,6 +397,18 @@ export function RoutineDetails({ workout }: RoutineDetailsProps) {
           />
         }
       />
+      {workout._id && (
+        <ExerciseChatDialog
+          open={Boolean(chatExercise)}
+          onClose={() => setChatExercise(null)}
+          workoutId={workout._id}
+          exerciseId={chatExercise?.exerciseId || ''}
+          role={chatRole}
+          exerciseName={chatExercise?.name || ''}
+          workoutName={workout.name}
+          traineeName={traineeName}
+        />
+      )}
       <SlideDialog
         open={isEditOpen}
         onClose={onCloseEdit}
