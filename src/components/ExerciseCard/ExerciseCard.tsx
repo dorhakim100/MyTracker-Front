@@ -164,6 +164,16 @@ export function ExerciseCard({
     return getIsExerciseDone(exerciseInstructions)
   }, [exerciseInstructions])
 
+  const percentageDone = useMemo(() => {
+    if (isDone) return 100
+    if (!exerciseInstructions) return 0
+    const doneSets =
+      exerciseInstructions?.sets.filter((set) => set.isDone).length || 0
+    const totalSets = exerciseInstructions?.sets.length || 0
+    if (!totalSets) return 0
+    return (doneSets / totalSets) * 100
+  }, [isDone, exerciseInstructions])
+
   const plannedIntensity = useMemo(() => {
     if (!isExpected || !exerciseInstructions?.sets.length) return null
     return averagePlannedIntensity(exerciseInstructions.sets)
@@ -521,11 +531,14 @@ export function ExerciseCard({
         <Card
           className={`exercise-card-container ${className} ${
             prefs.isDarkMode ? 'dark-mode' : ''
-          } ${prefs.favoriteColor} ${isDone ? 'done' : ''} ${
-            isOpen ? 'open' : 'closed'
-          } ${isDashboard ? 'dashboard' : ''} ${
-            windowWidth < 900 ? 'mobile' : 'desktop'
-          }`}
+          } ${prefs.favoriteColor} ${isOpen ? 'open' : 'closed'} ${
+            isDashboard ? 'dashboard' : ''
+          } ${windowWidth < 900 ? 'mobile' : 'desktop'}`}
+          style={
+            {
+              '--done-ratio': percentageDone / 100,
+            } as React.CSSProperties
+          }
           onClick={handleClick}
         >
           <div className='exercise-card-actions'>
