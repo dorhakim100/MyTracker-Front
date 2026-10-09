@@ -59,6 +59,18 @@
   --picker-color-pink-dark: #c2185b;
   --picker-color-pink-darker: #8e0e44;
 
+  --picker-wash-primary: #0096881f;
+  --picker-wash-blue: #1976d21f;
+  --picker-wash-yellow: #ffd1661f;
+  --picker-wash-red: #d32f2f1f;
+  --picker-wash-orange: #ed6c021f;
+  --picker-wash-green: #06d6a01f;
+  --picker-wash-deep-purple: #6366f11f;
+  --picker-wash-purple: #9c27b01f;
+  --picker-wash-pink: #ff69b41f;
+
+  --picker-wash: var(--picker-wash-primary);
+
   --success-color: #2e7d32;
   --error-color: #d32f2f;
 
@@ -71,11 +83,19 @@
   --light-paper-blue: #eff5fc;
   --light-paper-blue: color-mix(in srgb, var(--picker-color-blue) 7%, white);
   --light-paper-yellow: #fffdf4;
-  --light-paper-yellow: color-mix(in srgb, var(--picker-color-yellow) 7%, white);
+  --light-paper-yellow: color-mix(
+    in srgb,
+    var(--picker-color-yellow) 7%,
+    white
+  );
   --light-paper-red: #fbf0f0;
   --light-paper-red: color-mix(in srgb, var(--picker-color-red) 7%, white);
   --light-paper-orange: #fef5ed;
-  --light-paper-orange: color-mix(in srgb, var(--picker-color-orange) 7%, white);
+  --light-paper-orange: color-mix(
+    in srgb,
+    var(--picker-color-orange) 7%,
+    white
+  );
   --light-paper-green: #edfcf8;
   --light-paper-green: color-mix(in srgb, var(--picker-color-green) 7%, white);
   --light-paper-deep-purple: #f4f4fe;
@@ -85,7 +105,11 @@
     white
   );
   --light-paper-purple: #f8f0f9;
-  --light-paper-purple: color-mix(in srgb, var(--picker-color-purple) 7%, white);
+  --light-paper-purple: color-mix(
+    in srgb,
+    var(--picker-color-purple) 7%,
+    white
+  );
   --light-paper-pink: #fff4fa;
   --light-paper-pink: color-mix(in srgb, var(--picker-color-pink) 7%, white);
 
@@ -149,6 +173,17 @@ $picker-color-purple: var(--picker-color-purple);
 $picker-color-purple-light: var(--picker-color-purple-light);
 $picker-color-purple-dark: var(--picker-color-purple-dark);
 $picker-color-purple-darker: var(--picker-color-purple-darker);
+
+$picker-wash-primary: var(--picker-wash-primary);
+$picker-wash-blue: var(--picker-wash-blue);
+$picker-wash-yellow: var(--picker-wash-yellow);
+$picker-wash-red: var(--picker-wash-red);
+$picker-wash-orange: var(--picker-wash-orange);
+$picker-wash-green: var(--picker-wash-green);
+$picker-wash-deep-purple: var(--picker-wash-deep-purple);
+$picker-wash-purple: var(--picker-wash-purple);
+$picker-wash-pink: var(--picker-wash-pink);
+$picker-wash: var(--picker-wash);
 
 $picker-color-pink: var(--picker-color-pink);
 $picker-color-pink-light: var(--picker-color-pink-light);

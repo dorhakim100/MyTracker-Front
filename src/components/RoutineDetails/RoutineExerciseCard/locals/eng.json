@@ -1,0 +1,10 @@
+{
+  "set": "Set",
+  "weight": "Weight",
+  "reps": "Reps",
+  "rpe": "RPE",
+  "rir": "RIR",
+  "expected": "Expected",
+  "actual": "Actual",
+  "kg": "kg"
+}

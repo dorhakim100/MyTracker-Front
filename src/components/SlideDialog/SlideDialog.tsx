@@ -14,6 +14,7 @@ import { stylesVariables } from '../../assets/config/styles.variables'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import { MarqueeText } from '../MarqueeText/MarqueeText'
 import { SlideDialogTitleContext } from './slide-dialog-title'
+import { SlideDialogHeaderActionContext } from './slide-dialog-header-action'
 import { useKeyboardHeight } from '../../hooks/useKeyboardHeight'
 import {
   popSlideDialogZIndex,
@@ -29,6 +30,7 @@ interface SlideDialogProps {
   type?: 'half' | 'full'
   enableSwipeToClose?: boolean
   isFromAlertDialog?: boolean
+  headerAction?: React.ReactNode
 }
 
 const SHEET_BASE_Z_INDEX = 1200
@@ -352,12 +354,14 @@ function SlideDialogHeaderBar({
   prefs,
   isLoading,
   showDragHandle = true,
+  headerAction,
 }: {
   onClose: () => void
   title?: string
   prefs: RootState['systemModule']['prefs']
   isLoading: boolean
   showDragHandle?: boolean
+  headerAction?: React.ReactNode
 }) {
   const { t } = useTranslation()
 
@@ -386,6 +390,7 @@ function SlideDialogHeaderBar({
             color='inherit'
           />
         )}
+        {headerAction}
       </Toolbar>
     </AppBar>
   )
@@ -401,6 +406,7 @@ function DashboardDrawer({
   prefs,
   isLoading,
   zIndex,
+  headerAction,
 }: {
   open: boolean
   onClose: () => void
@@ -411,6 +417,7 @@ function DashboardDrawer({
   prefs: RootState['systemModule']['prefs']
   isLoading: boolean
   zIndex: number
+  headerAction?: React.ReactNode
 }) {
   const isRtl = prefs.lang === 'he'
   const transitionMs = SHEET_DURATION * 1000
@@ -457,6 +464,7 @@ function DashboardDrawer({
           prefs={prefs}
           isLoading={isLoading}
           showDragHandle={false}
+          headerAction={headerAction}
         />
       </div>
       <div className='slide-dialog-content'>
@@ -474,6 +482,7 @@ function SlideDialogSheet({
   enableSwipeToClose,
   prefs,
   isLoading,
+  headerAction,
 }: {
   onClose: () => void
   component: React.ReactElement
@@ -482,6 +491,7 @@ function SlideDialogSheet({
   enableSwipeToClose: boolean
   prefs: RootState['systemModule']['prefs']
   isLoading: boolean
+  headerAction?: React.ReactNode
 }) {
   const { yProgress } = Sheet.useContext()
   const scrollerNode = React.useRef<HTMLDivElement | null>(null)
@@ -519,6 +529,7 @@ function SlideDialogSheet({
           title={title}
           prefs={prefs}
           isLoading={isLoading}
+          headerAction={headerAction}
         />
       </Sheet.Header>
       <Sheet.Content
@@ -557,6 +568,7 @@ export function SlideDialog({
   type = 'half',
   enableSwipeToClose = true,
   isFromAlertDialog = false,
+  headerAction,
 }: SlideDialogProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -574,6 +586,9 @@ export function SlideDialog({
   const [isMounted, setIsMounted] = React.useState(open)
   const [hasOpened, setHasOpened] = React.useState(false)
   const [contentTitle, setContentTitle] = React.useState<string | null>(null)
+  const [contentAction, setContentAction] =
+    React.useState<React.ReactNode>(null)
+  const resolvedHeaderAction = contentAction ?? headerAction
 
   const keyboardHeight = useKeyboardHeight()
   const sheetLift = getSheetLiftAmount(keyboardHeight)
@@ -616,22 +631,25 @@ export function SlideDialog({
   if (isDashboard) {
     return (
       <SlideDialogTitleContext.Provider value={setContentTitle}>
-        <DashboardDrawer
-          open={open}
-          onClose={onClose}
-          onSave={() => {
-            void handleSave()
-          }}
-          onExited={() => {
-            setHasOpened(false)
-            setIsMounted(false)
-          }}
-          component={component}
-          title={contentTitle ?? title}
-          prefs={prefs}
-          isLoading={isLoading}
-          zIndex={zIndex}
-        />
+        <SlideDialogHeaderActionContext.Provider value={setContentAction}>
+          <DashboardDrawer
+            open={open}
+            onClose={onClose}
+            onSave={() => {
+              void handleSave()
+            }}
+            onExited={() => {
+              setHasOpened(false)
+              setIsMounted(false)
+            }}
+            component={component}
+            title={contentTitle ?? title}
+            prefs={prefs}
+            isLoading={isLoading}
+            zIndex={zIndex}
+            headerAction={resolvedHeaderAction}
+          />
+        </SlideDialogHeaderActionContext.Provider>
       </SlideDialogTitleContext.Provider>
     )
   }
@@ -671,15 +689,18 @@ export function SlideDialog({
       }}
     >
       <SlideDialogTitleContext.Provider value={setContentTitle}>
-        <SlideDialogSheet
-          onClose={onClose}
-          component={component}
-          title={contentTitle ?? title}
-          fadeWithSheet={hasOpened}
-          enableSwipeToClose={enableSwipeToClose}
-          prefs={prefs}
-          isLoading={isLoading}
-        />
+        <SlideDialogHeaderActionContext.Provider value={setContentAction}>
+          <SlideDialogSheet
+            onClose={onClose}
+            component={component}
+            title={contentTitle ?? title}
+            fadeWithSheet={hasOpened}
+            enableSwipeToClose={enableSwipeToClose}
+            prefs={prefs}
+            isLoading={isLoading}
+            headerAction={resolvedHeaderAction}
+          />
+        </SlideDialogHeaderActionContext.Provider>
       </SlideDialogTitleContext.Provider>
       <Sheet.Backdrop
         unstyled={false}

@@ -1,0 +1,103 @@
+.routine-exercise-card-container {
+  display: grid;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  box-shadow: $card-lift-shadow;
+  text-align: start;
+  color: var(--ink-on-canvas);
+  background: color-mix(in srgb, var(--ink-on-canvas) 6%, var(--canvas-color));
+  border: 1px solid color-mix(in srgb, var(--ink-on-canvas) 14%, transparent);
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  transition: transform 180ms ease;
+
+  &:active {
+    // transform: scale(0.985);
+  }
+
+  .exercise-header {
+    display: grid;
+    grid-template-columns: 80px minmax(0, 1fr);
+    gap: 0.75rem;
+
+    img {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 0.35rem;
+    }
+  }
+
+  .exercise-copy {
+    min-width: 0;
+    align-self: start;
+    display: grid;
+    align-items: start;
+    gap: 0.4rem;
+  }
+
+  .exercise-name {
+    font-weight: 600;
+  }
+
+  .sets-table {
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  .MuiTable-root {
+    width: max-content;
+    min-width: 100%;
+  }
+
+  .MuiTableCell-root {
+    color: var(--ink-on-canvas) !important;
+    background: transparent !important;
+    border-color: color-mix(in srgb, var(--ink-on-canvas) 16%, transparent);
+    vertical-align: middle;
+  }
+
+  .actual-row .MuiTableCell-root {
+    background: var(--picker-wash) !important;
+  }
+
+  .set-divider .MuiTableCell-root {
+    padding: 0;
+    border-bottom: 0;
+  }
+
+  .set-divider .MuiDivider-root {
+    border-color: color-mix(in srgb, var(--ink-on-canvas) 28%, transparent);
+  }
+
+  .set-number {
+    font-weight: 700;
+  }
+
+  .row-label {
+    font-weight: 600;
+    opacity: 0.7;
+    white-space: nowrap;
+  }
+
+  .actual-row,
+  .row-label {
+    &.done {
+      border-inline-start: 3px solid $success-color !important;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .routine-exercise-card-container {
+    transition: none;
+
+    &:active {
+      transform: none;
+    }
+  }
+}

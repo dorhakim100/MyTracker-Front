@@ -272,7 +272,7 @@ export function ExerciseDetails({
     mainMuscles: exercise?.mainMuscles,
     secondaryMuscles: exercise?.secondaryMuscles,
   })
-  const exerciseTag = capitalizeFirstLetter(exerciseTags[0])
+  const exerciseTag = capitalizeFirstLetter(exerciseTags[0] || '')
   console.log('exerciseTag', exerciseTag)
 
   const muscleGroupsText = capitalizeFirstLetter(

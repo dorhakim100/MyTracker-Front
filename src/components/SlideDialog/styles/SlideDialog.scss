@@ -211,7 +211,9 @@
       }
 
       .slide-dialog-close,
-      .slide-dialog-close svg {
+      .slide-dialog-close svg,
+      .slide-dialog-header-action,
+      .slide-dialog-header-action svg {
         color: $white !important;
         fill: currentColor !important;
         background-color: transparent !important;

@@ -213,6 +213,7 @@
     "noWorkoutSessionThisDayHint": "Start a routine above to log this day.",
     "noPastRoutinesFound": "No past routines found",
     "viewDetails": "View Details",
+    "routineDetails": "Routine Details",
     "deactivate": "Deactivate",
     "duplicateWorkout": "Duplicate Workout",
     "copyName": "{{name}} (Copy)",

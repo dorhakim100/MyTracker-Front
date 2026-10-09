@@ -20,6 +20,8 @@ import { CustomOptionsMenu } from '../../../CustomMui/CustomOptionsMenu/CustomOp
 import { DropdownOption } from '../../../types/DropdownOption'
 import { PlayArrow } from '@mui/icons-material'
 import InfoOutlineIcon from '@mui/icons-material/InfoOutline'
+import ViewWeekIcon from '@mui/icons-material/ViewWeek'
+import FitnessCenterIcon from '@mui/icons-material/FitnessCenter'
 import Edit from '@mui/icons-material/Edit'
 import Delete from '@mui/icons-material/Delete'
 import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox'
@@ -35,6 +37,7 @@ import {
 import { CustomAlertDialog } from '../../../CustomMui/CustomAlertDialog/CustomAlertDialog'
 import { SlideDialog } from '../../../components/SlideDialog/SlideDialog'
 import { WorkoutDetails } from '../../../components/WorkoutDetails/WorkoutDetails'
+import { RoutineDetails } from '../../../components/RoutineDetails/RoutineDetails'
 import { EditWorkout } from '../EditWorkout/EditWorkout'
 import { Badge } from '@mui/material'
 
@@ -86,8 +89,13 @@ export function WorkoutCard({
 
   const [slideOptions, setSlideOptions] = useState<{
     open: boolean
-    type: 'details' | 'edit' | null
+    type: 'routine' | 'details' | 'edit' | null
   }>({ open: false, type: null })
+
+  const onOpenRoutine = useCallback(async () => {
+    capacitorService.vibrate('Light')
+    setSlideOptions({ open: true, type: 'routine' })
+  }, [])
 
   const onViewDetails = useCallback(async () => {
     capacitorService.vibrate('Light')
@@ -119,9 +127,14 @@ export function WorkoutCard({
   const options: DropdownOption[] = useMemo(
     () => [
       {
-        title: t('workout.viewDetails'),
-        icon: <InfoOutlineIcon />,
+        title: t('workout.workoutDetails'),
+        icon: <FitnessCenterIcon />,
         onClick: onViewDetails,
+      },
+      {
+        title: t('workout.routineDetails'),
+        icon: <ViewWeekIcon />,
+        onClick: onOpenRoutine,
       },
       {
         title: t('workout.editRoutine'),
@@ -155,6 +168,7 @@ export function WorkoutCard({
       },
     ],
     [
+      onOpenRoutine,
       onViewDetails,
       onEdit,
       onDuplicate,
@@ -166,6 +180,9 @@ export function WorkoutCard({
   )
 
   const getSlideTitle = () => {
+    if (slideOptions.type === 'routine') {
+      return workout.name
+    }
     if (slideOptions.type === 'details') {
       return t('workout.workoutDetails')
     }
@@ -176,6 +193,9 @@ export function WorkoutCard({
   }
 
   const getSlideComponent = () => {
+    if (slideOptions.type === 'routine') {
+      return <RoutineDetails workout={workout} />
+    }
     if (slideOptions.type === 'details') {
       return <WorkoutDetails workout={workout} />
     }
@@ -245,7 +265,7 @@ export function WorkoutCard({
         className={`workout-card-container pointer ${className} ${
           prefs.isDarkMode ? 'dark-mode' : ''
         }`}
-        onClick={onViewDetails}
+        onClick={onOpenRoutine}
       >
         <div className='header-container'>
           <MarqueeText

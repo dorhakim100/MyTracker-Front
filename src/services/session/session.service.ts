@@ -7,6 +7,7 @@ const KEY = 'session'
 
 export const sessionService = {
   query,
+  listByWorkoutWeek,
   getById,
   save,
   remove,
@@ -17,9 +18,12 @@ export const sessionService = {
 }
 
 async function query(
-  filterBy = {
-    userId: '',
-  }
+  filterBy: {
+    userId?: string
+    date?: string
+    workoutId?: string
+    weekNumber?: number
+  } = {}
 ) {
   try {
     const session = await httpService.get(KEY, filterBy)
@@ -36,6 +40,21 @@ async function query(
     throw err
   }
 }
+async function listByWorkoutWeek(
+  userId: string,
+  workoutId: string,
+  weekNumber: number
+) {
+  try {
+    return await httpService.get(`${KEY}/workout/${workoutId}`, {
+      userId,
+      weekNumber,
+    })
+  } catch (err) {
+    throw err
+  }
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function getById(goalId: string, filter: any) {
   try {

@@ -172,14 +172,10 @@
           }
 
           .next-week-row {
-            background: color-mix(in srgb, var(--accent) 8%, transparent);
+            background: var(--picker-wash);
 
             .MuiInputLabel-root {
-              background: color-mix(
-                in srgb,
-                var(--accent) 8%,
-                transparent
-              ) !important;
+              background: var(--picker-wash) !important;
             }
             td {
               padding-block: 1rem;

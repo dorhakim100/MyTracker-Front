@@ -64,6 +64,7 @@ body {
   --canvas-color: var(--light-paper);
   --accent: var(--primary-color);
   --accent-ink: var(--primary-color-dark);
+  --picker-wash: var(--picker-wash-primary);
 
   background-color: var(--canvas-color) !important;
   color: var(--ink-on-canvas) !important;
@@ -74,41 +75,49 @@ body {
       --canvas-color: var(--light-paper-blue);
       --accent: var(--picker-color-blue);
       --accent-ink: var(--picker-color-blue);
+      --picker-wash: var(--picker-wash-blue);
     }
     &.yellow {
       --canvas-color: var(--light-paper-yellow);
       --accent: var(--picker-color-yellow);
       --accent-ink: var(--picker-color-yellow-darker);
+      --picker-wash: var(--picker-wash-yellow);
     }
     &.red {
       --canvas-color: var(--light-paper-red);
       --accent: var(--picker-color-red);
       --accent-ink: var(--picker-color-red);
+      --picker-wash: var(--picker-wash-red);
     }
     &.orange {
       --canvas-color: var(--light-paper-orange);
       --accent: var(--picker-color-orange);
       --accent-ink: var(--picker-color-orange-dark);
+      --picker-wash: var(--picker-wash-orange);
     }
     &.green {
       --canvas-color: var(--light-paper-green);
       --accent: var(--picker-color-green);
       --accent-ink: var(--picker-color-green-dark);
+      --picker-wash: var(--picker-wash-green);
     }
     &.deepPurple {
       --canvas-color: var(--light-paper-deep-purple);
       --accent: var(--picker-color-deep-purple);
       --accent-ink: var(--picker-color-deep-purple);
+      --picker-wash: var(--picker-wash-deep-purple);
     }
     &.purple {
       --canvas-color: var(--light-paper-purple);
       --accent: var(--picker-color-purple);
       --accent-ink: var(--picker-color-purple);
+      --picker-wash: var(--picker-wash-purple);
     }
     &.pink {
       --canvas-color: var(--light-paper-pink);
       --accent: var(--picker-color-pink);
       --accent-ink: var(--picker-color-pink-dark);
+      --picker-wash: var(--picker-wash-pink);
     }
 
     .MuiIconButton-root:not(.custom-button):not(.primary):not(.blue):not(
@@ -161,34 +170,42 @@ body {
     &.blue {
       --canvas-color: #{$dark-gray-blue};
       --accent: var(--picker-color-blue);
+      --picker-wash: var(--picker-wash-blue);
     }
     &.yellow {
       --canvas-color: #{$dark-gray-yellow};
       --accent: var(--picker-color-yellow);
+      --picker-wash: var(--picker-wash-yellow);
     }
     &.red {
       --canvas-color: #{$dark-gray-red};
       --accent: var(--picker-color-red);
+      --picker-wash: var(--picker-wash-red);
     }
     &.orange {
       --canvas-color: #{$dark-gray-orange};
       --accent: var(--picker-color-orange);
+      --picker-wash: var(--picker-wash-orange);
     }
     &.green {
       --canvas-color: #{$dark-gray-green};
       --accent: var(--picker-color-green);
+      --picker-wash: var(--picker-wash-green);
     }
     &.deepPurple {
       --canvas-color: #{$dark-gray-deep-purple};
       --accent: var(--picker-color-deep-purple);
+      --picker-wash: var(--picker-wash-deep-purple);
     }
     &.purple {
       --canvas-color: #{$dark-gray-purple};
       --accent: var(--picker-color-purple);
+      --picker-wash: var(--picker-wash-purple);
     }
     &.pink {
       --canvas-color: #{$dark-gray-pink};
       --accent: var(--picker-color-pink);
+      --picker-wash: var(--picker-wash-pink);
     }
 
     .primary,

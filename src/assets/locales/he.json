@@ -219,6 +219,7 @@
     "mostPopularExercises": "תרגילים פופולריים",
     "exercisesFound": "{{count}} תרגילים נמצאו",
     "viewDetails": "צפה בפרטים",
+    "routineDetails": "פרטי השגרה",
     "deactivate": "השבת",
     "duplicateWorkout": "שכפל אימון",
     "copyName": "{{name}} (עותק)",
