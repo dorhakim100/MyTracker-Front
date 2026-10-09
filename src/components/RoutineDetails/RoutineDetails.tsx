@@ -11,7 +11,6 @@ import BarChartIcon from '@mui/icons-material/BarChart'
 import { RootState } from '../../store/store'
 import { Workout } from '../../types/workout/Workout'
 import { Exercise } from '../../types/exercise/Exercise'
-import { ExerciseInstructions } from '../../types/exercise/ExerciseInstructions'
 import { Instructions } from '../../types/instructions/Instructions'
 import { WeekNumberStatus } from '../../types/weekNumberStatus/WeekNumberStatus'
 import { SessionDay } from '../../types/workout/SessionDay'
@@ -31,79 +30,21 @@ import { SessionStats } from '../SessionStats/SessionStats'
 import { sessionStatsNs } from '../SessionStats/locals'
 import { EditWorkout } from '../../pages/LiftMate/EditWorkout/EditWorkout'
 import { useChatRole } from '../../hooks/useChatRole'
+import { useScrollLastChildIntoView } from '../../hooks/useScrollLastChildIntoView'
 import { RoutineExerciseCard } from './RoutineExerciseCard/RoutineExerciseCard'
 import { routineDetailsNs } from './locals'
+import {
+  finishedSessions,
+  formatSessionDate,
+  statusCopy,
+  toExercise,
+  weekState,
+  weekTimes,
+} from './utils'
 import { Divider } from '@mui/material'
 
 interface RoutineDetailsProps {
   workout: Workout
-}
-
-function weekTimes(instructions: Instructions | null) {
-  return {
-    doneTimes: instructions?.doneTimes ?? 0,
-    timesPerWeek: instructions?.timesPerWeek || 1,
-  }
-}
-
-function weekState(doneTimes: number, timesPerWeek: number) {
-  if (doneTimes <= 0) return 'planned' as const
-  if (doneTimes >= timesPerWeek) return 'finished' as const
-  return 'progress' as const
-}
-
-function statusCopy(status: ReturnType<typeof weekState>) {
-  if (status === 'planned') return 'plannedNotDone'
-  if (status === 'finished') return 'weekFinished'
-  return 'inProgress'
-}
-
-function toExercise(
-  instruction: ExerciseInstructions,
-  workout: Workout
-): Exercise {
-  const fromWorkout = workout.exercises.find(
-    (exercise) => exercise.exerciseId === instruction.exerciseId
-  )
-  if (fromWorkout) return fromWorkout
-  return {
-    name: instruction.name || instruction.exerciseId,
-    image: instruction.image || '',
-    exerciseId: instruction.exerciseId,
-    muscleGroups: instruction.muscleGroups || [],
-    equipments: instruction.equipments || [],
-  }
-}
-
-function toSessionList(value: unknown): SessionDay[] {
-  if (Array.isArray(value)) return value as SessionDay[]
-  if (value && typeof value === 'object' && 'date' in value) {
-    return [value as SessionDay]
-  }
-  return []
-}
-
-function finishedSessions(
-  value: unknown,
-  workoutId: string,
-  weekNumber: number
-) {
-  return toSessionList(value)
-    .filter((session) => {
-      if (session.workoutId && session.workoutId !== workoutId) return false
-      if (session.instructions?.weekNumber !== weekNumber) return false
-      return Boolean(session.statsId || session.instructions?.isFinished)
-    })
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-}
-
-function formatSessionDate(date: string, lang: string) {
-  const parsed = new Date(date)
-  if (Number.isNaN(parsed.getTime())) return date
-  return parsed.toLocaleDateString(lang === 'he' ? 'he' : 'en', {
-    day: 'numeric',
-    month: 'short',
-  })
 }
 
 export function RoutineDetails({ workout }: RoutineDetailsProps) {
@@ -142,7 +83,10 @@ export function RoutineDetails({ workout }: RoutineDetailsProps) {
   const editOpenRef = useRef(false)
   const weekNumberRef = useRef<number | null>(null)
   const requestRef = useRef(0)
-  const weekToggleRef = useRef<HTMLDivElement>(null)
+  const weekToggleRef = useScrollLastChildIntoView(
+    'MuiToggleButtonGroup-grouped',
+    weeksStatus
+  )
   weekNumberRef.current = weekNumber
 
   const loadInstructions = useCallback(
@@ -274,28 +218,6 @@ export function RoutineDetails({ workout }: RoutineDetailsProps) {
   )
 
   useSlideDialogHeaderAction(editAction)
-
-  useEffect(() => {
-    const root = weekToggleRef.current
-    if (!root || weeksStatus.length === 0) return
-    const frame = requestAnimationFrame(() => {
-      const scroller = root.querySelector(
-        '.custom-toggle'
-      ) as HTMLElement | null
-      const last = scroller?.querySelector(
-        '.MuiToggleButtonGroup-grouped:last-of-type'
-      ) as HTMLElement | null
-      if (!scroller || !last) return
-      const scrollerRect = scroller.getBoundingClientRect()
-      const lastRect = last.getBoundingClientRect()
-      if (lastRect.right > scrollerRect.right + 1) {
-        scroller.scrollLeft += lastRect.right - scrollerRect.right + 5
-      } else if (lastRect.left < scrollerRect.left - 1) {
-        scroller.scrollLeft -= scrollerRect.left - lastRect.left + 5
-      }
-    })
-    return () => cancelAnimationFrame(frame)
-  }, [weeksStatus])
 
   const { doneTimes, timesPerWeek } = weekTimes(instructions)
   const status = weekState(doneTimes, timesPerWeek)
