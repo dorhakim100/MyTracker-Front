@@ -15,7 +15,7 @@ import {
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 
-import { RootState } from '../../store/store'
+import { RootState, store } from '../../store/store'
 import { Set } from '../../types/exercise/Exercise'
 import { ExerciseInstructions } from '../../types/exercise/ExerciseInstructions'
 import { instructionsService } from '../../services/instructions/instructions.service'
@@ -262,40 +262,39 @@ export function ExerciseEditor({
   }, [editSet])
 
   useEffect(() => {
-    if (!exerciseSets || !sessionDay || !sessionDay.instructions) return
+    if (!exerciseSets?.length || !exercise.exerciseId) return
 
-    const newSets = exercise.sets.map((setToUpdate, index) => {
-      const setToSet = exerciseSets.find(
+    const currentSession = store.getState().workoutModule.sessionDay
+    if (!currentSession?.instructions) return
+
+    const currentExercise = currentSession.instructions.exercises.find(
+      (ex) => ex.exerciseId === exercise.exerciseId
+    )
+    if (!currentExercise) return
+
+    let didChange = false
+    const newSets = currentExercise.sets.map((setToUpdate, index) => {
+      const match = exerciseSets.find(
         (set) =>
           set.exerciseId === exercise.exerciseId && set.setNumber === index + 1
       )
+      if (!match || match.isDone == null) return setToUpdate
 
-      let cleanedSet = {
-        ...setToUpdate,
-        isDone: setToSet?.isDone || false,
-      }
+      const isDone = Boolean(match.isDone)
+      if (Boolean(setToUpdate.isDone) === isDone) return setToUpdate
 
-      // Remove the unused RPE/RIR field - only keep the one that's actually used
-      if (cleanedSet.rir) {
-        const { ...setWithoutRpe } = cleanedSet
-        cleanedSet = setWithoutRpe
-      } else if (cleanedSet.rpe) {
-        const { ...setWithoutRir } = cleanedSet
-        cleanedSet = setWithoutRir
-      }
-
-      return cleanedSet
+      didChange = true
+      return { ...setToUpdate, isDone }
     })
 
+    if (!didChange) return
+
     setSelectedSessionDay({
-      ...sessionDay,
+      ...currentSession,
       instructions: {
-        ...sessionDay.instructions,
-        exercises: sessionDay.instructions.exercises.map(
-          (ex: ExerciseInstructions) =>
-            ex.exerciseId === exercise.exerciseId
-              ? { ...ex, sets: newSets }
-              : ex
+        ...currentSession.instructions,
+        exercises: currentSession.instructions.exercises.map((ex) =>
+          ex.exerciseId === exercise.exerciseId ? { ...ex, sets: newSets } : ex
         ),
       },
     })

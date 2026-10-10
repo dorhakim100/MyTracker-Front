@@ -133,7 +133,7 @@ export function SessionStats({
         </div>
 
         <div className='summary-row'>
-          <div className='summary-item'>
+          <div className='summary-item volume'>
             <Typography
               variant='body2'
               className='opacity-70'

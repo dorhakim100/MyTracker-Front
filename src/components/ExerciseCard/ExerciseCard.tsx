@@ -176,9 +176,13 @@ export function ExerciseCard({
   }, [isDone, exerciseInstructions])
 
   const plannedIntensity = useMemo(() => {
-    if (!isExpected || !exerciseInstructions?.sets.length) return null
-    return averagePlannedIntensity(exerciseInstructions.sets)
-  }, [isExpected, exerciseInstructions])
+    if (!isExpected || !previousInstructions) return null
+    const previousExercise = previousInstructions.exercises.find(
+      (item) => item.exerciseId === exercise.exerciseId
+    )
+    if (!previousExercise?.sets.length) return null
+    return averagePlannedIntensity(previousExercise.sets)
+  }, [isExpected, previousInstructions, exercise.exerciseId])
 
   const handleClick = async () => {
     capacitorService.vibrate('Light')
