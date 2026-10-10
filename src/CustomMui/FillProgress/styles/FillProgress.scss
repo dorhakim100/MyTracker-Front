@@ -1,0 +1,72 @@
+.fill-progress-container {
+  position: relative;
+  display: grid;
+  min-width: 0;
+
+  &.size-s {
+    --fill-size: 0.15rem;
+  }
+
+  &.size-m {
+    --fill-size: 0.3rem;
+  }
+
+  &.size-l {
+    --fill-size: 0.45rem;
+  }
+
+  .fill-progress-clip {
+    position: absolute;
+    z-index: 1;
+    inset: 0;
+    overflow: hidden;
+    border-radius: inherit;
+    pointer-events: none;
+  }
+
+  .fill-progress-bar {
+    position: absolute;
+    background-color: var(--fill-color);
+    transition:
+      width 0.25s ease-out,
+      height 0.25s ease-out;
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
+
+  &.inline-start .fill-progress-bar,
+  &.inline-end .fill-progress-bar {
+    top: 0;
+    width: var(--fill-size);
+    height: calc(var(--fill-ratio, 0) * 100%);
+  }
+
+  &.inline-start .fill-progress-bar {
+    inset-inline-start: 0;
+  }
+
+  &.inline-end .fill-progress-bar {
+    inset-inline-end: 0;
+  }
+
+  &.top .fill-progress-bar,
+  &.bottom .fill-progress-bar {
+    inset-inline-start: 0;
+    height: var(--fill-size);
+    width: calc(var(--fill-ratio, 0) * 100%);
+  }
+
+  &.top .fill-progress-bar {
+    top: 0;
+  }
+
+  &.bottom .fill-progress-bar {
+    bottom: 0;
+  }
+}
+
+html.dark-mode .fill-progress-container .fill-progress-bar {
+  background-color: var(--fill-color-dark, var(--fill-color));
+}

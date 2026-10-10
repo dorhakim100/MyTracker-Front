@@ -1,3 +1,7 @@
+.exercise-card-fill {
+  border-radius: 0.5rem;
+}
+
 .exercise-card-container {
   display: grid;
   position: relative;
@@ -66,29 +70,6 @@
   overflow: hidden;
   &.dark-mode {
     color: $white;
-  }
-
-  &::before {
-    content: '';
-    position: absolute;
-    z-index: 1;
-    inset-inline-start: 0;
-    top: 0;
-    width: 0.3rem;
-    height: 100%;
-    background-color: $success-color;
-    transform: scaleY(var(--done-ratio, 0));
-    transform-origin: top;
-    pointer-events: none;
-    transition: transform 0.25s ease-out;
-
-    @media (prefers-reduced-motion: reduce) {
-      transition: none;
-    }
-  }
-
-  html.dark-mode &::before {
-    background-color: $success-color-dark-mode;
   }
 
   &.closed {

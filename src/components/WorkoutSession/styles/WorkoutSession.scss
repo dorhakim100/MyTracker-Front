@@ -5,6 +5,10 @@
   gap: 1rem;
 }
 
+.workout-fill-progress {
+  border-radius: 4px;
+}
+
 .workout-header-container {
   display: grid;
   gap: 1rem 0;
@@ -12,20 +16,14 @@
   // grid-template-rows: repeat(2, 1fr);
   align-items: center;
   justify-content: space-between;
-  margin-top: 1rem;
+  // margin-top: 1rem;
   // padding: 0.4rem 0.75rem 0.4rem 0.8rem;
   padding: 0.5rem;
   padding-bottom: 1rem;
-  border-radius: 4px;
 
   // min-height: 130px;
 
   padding-inline-start: 0.8rem;
-
-  &.finished {
-    padding-inline-start: 0.5rem;
-    border-inline-start: 0.3rem solid var(--success-color);
-  }
 
   .workout-name-container {
     display: flex;

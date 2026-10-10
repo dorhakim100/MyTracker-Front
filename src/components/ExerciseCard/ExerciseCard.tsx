@@ -42,6 +42,7 @@ import { AnimatedWrapper } from '../AnimatedWrapper/AnimatedWrapper'
 import { capacitorService } from '../../services/capacitor.service'
 import { MarqueeText } from '../MarqueeText/MarqueeText'
 import { HardnessGauge } from '../HardnessGauge/HardnessGauge'
+import { FillProgress } from '../../CustomMui/FillProgress/FillProgress'
 
 interface SlideDialogOptions {
   title: string
@@ -528,19 +529,18 @@ export function ExerciseCard({
   return (
     <>
       <AnimatedWrapper disabled={isOpen}>
-        <Card
-          className={`exercise-card-container ${className} ${
-            prefs.isDarkMode ? 'dark-mode' : ''
-          } ${prefs.favoriteColor} ${isOpen ? 'open' : 'closed'} ${
-            isDashboard ? 'dashboard' : ''
-          } ${windowWidth < 900 ? 'mobile' : 'desktop'}`}
-          style={
-            {
-              '--done-ratio': percentageDone / 100,
-            } as React.CSSProperties
-          }
-          onClick={handleClick}
+        <FillProgress
+          value={percentageDone}
+          className='exercise-card-fill'
         >
+          <Card
+            className={`exercise-card-container ${className} ${
+              prefs.isDarkMode ? 'dark-mode' : ''
+            } ${prefs.favoriteColor} ${isOpen ? 'open' : 'closed'} ${
+              isDashboard ? 'dashboard' : ''
+            } ${windowWidth < 900 ? 'mobile' : 'desktop'}`}
+            onClick={handleClick}
+          >
           <div className='exercise-card-actions'>
             <CustomOptionsMenu
               className='more-options-container'
@@ -712,7 +712,8 @@ export function ExerciseCard({
               isExpected={isExpected}
             />
           )}
-        </Card>
+          </Card>
+        </FillProgress>
       </AnimatedWrapper>
       <SlideDialog
         open={slideDialogOptions.open}
