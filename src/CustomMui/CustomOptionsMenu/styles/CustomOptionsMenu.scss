@@ -1,3 +1,16 @@
+.options-menu-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .options-menu-trigger-content {
+    display: inline-flex;
+
+    .options-menu-trigger-loading {
+      padding: 9px;
+    }
+  }
+}
 .options-menu {
   .option-menu-item {
     display: flex;
@@ -79,8 +92,7 @@ body.dark-mode .options-menu-paper {
 
 .options-menu-paper {
   &.variant-flat {
-    outline: 1px solid
-      color-mix(in srgb, var(--ink-on-canvas) 16%, transparent) !important;
+    outline: 1px solid color-mix(in srgb, var(--ink-on-canvas) 16%, transparent) !important;
 
     .option-menu-item:hover {
       background-color: color-mix(
@@ -108,8 +120,7 @@ body.dark-mode .options-menu-paper {
 
   &.dark-mode {
     color: var(--ink-on-canvas) !important;
-    outline: 1px solid
-      color-mix(in srgb, var(--ink-on-canvas) 22%, transparent) !important;
+    outline: 1px solid color-mix(in srgb, var(--ink-on-canvas) 22%, transparent) !important;
 
     .option-menu-item,
     li {

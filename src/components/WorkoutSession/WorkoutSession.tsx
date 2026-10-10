@@ -158,6 +158,8 @@ export function WorkoutSession({
     type: null,
   })
 
+  const [isLoadingRecap, setIsLoadingRecap] = useState(false)
+
   const filteredExerciseResults = useMemo(() => {
     return filterExercises(exerciseFilter, exerciseResults)
   }, [
@@ -532,6 +534,7 @@ export function WorkoutSession({
   const openSavedRecap = async () => {
     if (!sessionDay._id) return
     try {
+      setIsLoadingRecap(true)
       const recap = await statsService.getRecap(sessionDay._id)
       setSessionRecap(recap)
       setAlertDialogOptions({
@@ -542,6 +545,8 @@ export function WorkoutSession({
       })
     } catch {
       showErrorMsg(t('messages.error.updateSet'))
+    } finally {
+      setIsLoadingRecap(false)
     }
   }
 
@@ -1140,6 +1145,7 @@ export function WorkoutSession({
               />
               <CustomOptionsMenu
                 options={sessionMenuOptions}
+                isLoading={isLoadingRecap}
                 triggerElement={
                   <CustomButton
                     isIcon={true}

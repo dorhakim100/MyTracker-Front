@@ -2,7 +2,7 @@ import * as React from 'react'
 import { useTranslation } from 'react-i18next'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
-import { Tooltip } from '@mui/material'
+import { CircularProgress, Tooltip } from '@mui/material'
 import { DropdownOption } from '../../types/DropdownOption'
 import {
   CustomButton,
@@ -20,6 +20,7 @@ interface CustomOptionsMenuProps {
   className?: string
   onClick?: (item: any) => void
   variant?: CustomButtonVariant
+  isLoading?: boolean
 }
 
 const StyledMenu = styled((props: MenuProps) => (
@@ -71,6 +72,7 @@ export function CustomOptionsMenu({
   className,
   onClick,
   variant = 'flat',
+  isLoading = false,
 }: CustomOptionsMenuProps) {
   const { t } = useTranslation()
   const prefs = useSelector(
@@ -98,10 +100,11 @@ export function CustomOptionsMenu({
   }
 
   const trigger =
-    React.isValidElement(triggerElement) &&
-    triggerElement.type === CustomButton
+    React.isValidElement(triggerElement) && triggerElement.type === CustomButton
       ? React.cloneElement(
-          triggerElement as React.ReactElement<{ variant?: CustomButtonVariant }>,
+          triggerElement as React.ReactElement<{
+            variant?: CustomButtonVariant
+          }>,
           {
             variant:
               (triggerElement.props as { variant?: CustomButtonVariant })
@@ -112,7 +115,7 @@ export function CustomOptionsMenu({
 
   return (
     <div
-      className={`${className || ''} variant-${variant}`}
+      className={`${className || ''} options-menu-trigger variant-${variant}`}
       onClick={handleClick}
     >
       <Tooltip
@@ -121,12 +124,27 @@ export function CustomOptionsMenu({
         disableTouchListener={!isDashboard}
         disableFocusListener={!isDashboard}
       >
-        <div onClick={handleClick}>{trigger}</div>
+        <div
+          onClick={handleClick}
+          className='options-menu-trigger-content'
+        >
+          {isLoading ? (
+            <CircularProgress
+              size={37.71}
+              className={`options-menu-trigger-loading ${
+                prefs.isDarkMode ? 'dark-mode' : ''
+              }`}
+              color='inherit'
+            />
+          ) : (
+            trigger
+          )}
+        </div>
       </Tooltip>
       <StyledMenu
-        className={`${
-          prefs.isDarkMode ? 'dark-mode' : ''
-        } ${className || ''} options-menu variant-${variant}`}
+        className={`${prefs.isDarkMode ? 'dark-mode' : ''} ${
+          className || ''
+        } options-menu variant-${variant}`}
         id='basic-menu'
         anchorEl={anchorEl}
         open={open}
