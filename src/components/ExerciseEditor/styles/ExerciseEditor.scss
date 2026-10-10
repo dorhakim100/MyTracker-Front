@@ -217,15 +217,18 @@
         display: grid;
         grid-column: 5/-1;
         grid-row: 1/2;
-        input {
-        }
+
         .MuiCheckbox-root {
           padding: 0 !important;
           // margin: 0 !important;
           // height: 49px;
           // width: 49px;
         }
-        span {
+
+        .checkbox-container {
+          .MuiCircularProgress-root {
+            margin: auto;
+          }
         }
       }
       .finished,

@@ -324,7 +324,7 @@ export function ExerciseEditor({
         {currUpdatedExerciseSettings.exerciseId === exercise.exerciseId &&
         currUpdatedExerciseSettings.setIndex === index ? (
           <CircularProgress
-            size={21.59}
+            size={21.61}
             className={prefs.favoriteColor}
             sx={{ marginTop: '20px' }}
           />
