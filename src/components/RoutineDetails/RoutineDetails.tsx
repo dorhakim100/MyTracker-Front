@@ -300,7 +300,7 @@ export function RoutineDetails({ workout }: RoutineDetailsProps) {
       {isWeekLoading && (
         <div className='routine-loading'>
           <CircularProgress
-            size={28}
+            size={50}
             className={`${prefs.favoriteColor}`}
           />
         </div>
