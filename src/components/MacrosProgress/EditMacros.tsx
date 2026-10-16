@@ -14,6 +14,7 @@ import { Goal } from '../../types/goal/Goal'
 import { Macros as MacrosType } from '../../types/macros/Macros'
 import { ClockPicker } from '../Pickers/ClockPicker'
 import type { ClockPickerValues } from '../Pickers/ClockPicker'
+import { RollingNumber } from '../RollingNumber/RollingNumber'
 
 interface EditMacrosProps {
   goalToEdit?: Goal | Partial<Goal>
@@ -152,7 +153,7 @@ export function EditMacros({
           variant='h6'
           className='value'
         >
-          {macroValue.toFixed(0)}
+          <RollingNumber value={+macroValue.toFixed(0)} />
           {t('macros.gram')}
         </Typography>
       </div>

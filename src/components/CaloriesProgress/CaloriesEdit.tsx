@@ -13,6 +13,7 @@ import { Box, Typography } from '@mui/material'
 import { Goal } from '../../types/goal/Goal'
 import { ClockPicker } from '../Pickers/ClockPicker'
 import type { ClockPickerValues } from '../Pickers/ClockPicker'
+import { RollingNumber } from '../RollingNumber/RollingNumber'
 
 interface CaloriesEditProps {
   goalToEdit?: Goal | Partial<Goal>
@@ -117,7 +118,10 @@ export function CaloriesEdit({
               variant='h3'
               className={`calories-amount ${prefs.favoriteColor || ''}`}
             >
-              {roundCaloriesToNearest50(values.calories)} {t('macros.kcal')}
+              <RollingNumber
+                value={roundCaloriesToNearest50(values.calories)}
+              />{' '}
+              {t('macros.kcal')}
             </Typography>
           )}
           incrementButtons={[-400, 400]}

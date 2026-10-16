@@ -20,6 +20,7 @@ import { Box, Typography } from '@mui/material'
 import { roundToNearest50 } from '../../services/macros/macros.service'
 import { Goal } from '../../types/goal/Goal'
 import { SaveCancel } from '../SaveCancel/SaveCancel'
+import { RollingNumber } from '../RollingNumber/RollingNumber'
 
 interface MacrosDistributionEditProps {
   goalToEdit?: Goal | Partial<Goal>
@@ -76,8 +77,7 @@ function sharesFromGrams(
   const proteinCalories = calculateProteinCalories(proteinGrams)
   const carbsCalories = calculateCarbCalories(carbsGrams)
   const fatCalories = calculateFatCalories(fatGrams)
-  const basis =
-    dailyCalories || proteinCalories + carbsCalories + fatCalories
+  const basis = dailyCalories || proteinCalories + carbsCalories + fatCalories
 
   if (!basis) return { protein: 30, carbs: 40, fat: 30 }
 
@@ -210,8 +210,11 @@ export function MacrosDistributionEdit({
     distributionFromSource(goalToEdit, user)
   )
 
-  const { protein: proteinPercentage, carbs: carbsPercentage, fat: fatPercentage } =
-    distribution.percent
+  const {
+    protein: proteinPercentage,
+    carbs: carbsPercentage,
+    fat: fatPercentage,
+  } = distribution.percent
 
   const dailyCalories =
     goalToEdit?.dailyCalories || user?.currGoal?.dailyCalories || 0
@@ -334,19 +337,22 @@ export function MacrosDistributionEdit({
   return (
     <Box>
       <div
-        className={`edit-macros-container distribution ${prefs.favoriteColor || ''}`}
+        className={`edit-macros-container distribution ${
+          prefs.favoriteColor || ''
+        }`}
       >
-        <Typography variant="h5">{t('macros.distribution')}</Typography>
+        <Typography variant='h5'>{t('macros.distribution')}</Typography>
         {macros.map((macro) => (
           <div
-            className="macro-container"
+            className='macro-container'
             key={`percentage-edit-${macro.nameKey}`}
           >
-            <div className="macro-title">
-              <Typography variant="h6">{t(macro.nameKey)}</Typography>
-              <Typography variant="body1">{macro.value}%</Typography>
-              <Typography variant="body1">
-                ~{roundToNearest50(macro.calories)} {t('macros.kcal')}
+            <div className='macro-title'>
+              <Typography variant='h6'>{t(macro.nameKey)}</Typography>
+              <Typography variant='body1'>{macro.value}%</Typography>
+              <Typography variant='body1'>
+                ~<RollingNumber value={roundToNearest50(macro.calories)} />{' '}
+                {t('macros.kcal')}
               </Typography>
             </div>
             <Slider
@@ -359,7 +365,10 @@ export function MacrosDistributionEdit({
             />
           </div>
         ))}
-        <SaveCancel onCancel={onCancel} onSave={onSave} />
+        <SaveCancel
+          onCancel={onCancel}
+          onSave={onSave}
+        />
       </div>
     </Box>
   )
