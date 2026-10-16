@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
+// import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 
 import { RootState } from '../../store/store'
@@ -11,12 +11,12 @@ import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 
 import DisabledVisibleIcon from '@mui/icons-material/DisabledVisible'
 
-import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight'
-import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft'
+// import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight'
+// import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft'
 import { usePwaDetect } from '../../hooks/usePwaDetect'
 
 export function TraineeUserCard() {
-  const { t } = useTranslation()
+  // const { t } = useTranslation()
 
   const { isPwaInstalled } = usePwaDetect()
 
