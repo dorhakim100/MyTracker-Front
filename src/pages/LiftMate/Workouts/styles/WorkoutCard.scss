@@ -76,3 +76,27 @@
     gap: 0.5rem;
   }
 }
+
+.workout-card-fill {
+  border-radius: 0.5rem;
+}
+
+.week-complete-pop {
+  animation: week-complete-pop 220ms ease-out;
+}
+
+@keyframes week-complete-pop {
+  from {
+    transform: scale(0.86);
+  }
+
+  to {
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .week-complete-pop {
+    animation: none;
+  }
+}

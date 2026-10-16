@@ -3,14 +3,18 @@ import { CircularProgressbar, buildStyles } from 'react-circular-progressbar'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { formatNumberWithCommas } from '../../services/util.service'
+import { RollingNumber } from '../RollingNumber/RollingNumber'
+import { useCrossedGoal } from '../../hooks/useCrossedGoal'
 // import { GoalBanner } from '../GoalBanner/GoalBanner'
 import { useTranslation } from 'react-i18next'
+import { useEffect, useMemo, useState } from 'react'
 
 interface CircularProgressProps {
   value: number
   text: string
   color?: string
   afterText?: string
+  isTextValue?: boolean
 }
 
 const colorMap: Record<string, string> = {
@@ -30,12 +34,22 @@ export function CircularProgress({
   text,
   color,
   afterText,
+  isTextValue = true,
 }: CircularProgressProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
   const { t } = useTranslation()
   const progressColor = color || colorMap[prefs.favoriteColor]
+
+  const [afterMountValue, setAfterMountValue] = useState(0)
+  const [textValue, setTextValue] = useState(isTextValue ? 0 : text)
+  useEffect(() => {
+    setAfterMountValue(value)
+    if (isTextValue) {
+      setTextValue(text)
+    }
+  }, [value])
 
   // if color is provided, use it
   // only if dark mode
@@ -46,16 +60,16 @@ export function CircularProgress({
       ? color || colorMap[prefs.favoriteColor]
       : 'black'
     : colorMap[prefs.favoriteColor]
+  const goalCrossed = useCrossedGoal(value)
 
   return (
     <div
-      className='circular-progress'
+      className={`circular-progress${goalCrossed ? ' goal-crossed' : ''}`}
       style={{ ['--progress-accent' as string]: progressColor }}
     >
       <CircularProgressbar
-        value={value}
-        // text={`${text}`}
-        text={`${formatNumberWithCommas(+text)}`}
+        value={afterMountValue}
+        text=''
         styles={buildStyles({
           pathColor: progressColor,
           textColor: textColor,
@@ -67,6 +81,12 @@ export function CircularProgress({
           // },
         })}
       />
+      <span
+        className='circular-progress-value'
+        style={{ color: textColor }}
+      >
+        <RollingNumber value={Number(textValue) || 0} />
+      </span>
       {afterText && (
         // <GoalBanner
         // current={separateThousands(+afterText)}

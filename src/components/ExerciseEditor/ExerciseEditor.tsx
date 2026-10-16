@@ -122,6 +122,7 @@ export function ExerciseEditor({
 
   const [editSet, setEditSet] = useState<EditSet | null>(null)
   const [currentPickerValue, setCurrentPickerValue] = useState<number>(0)
+  const [justDoneIndex, setJustDoneIndex] = useState<number | null>(null)
 
   const sessionDay = useSelector(
     (stateSelector: RootState) => stateSelector.workoutModule.sessionDay
@@ -340,7 +341,9 @@ export function ExerciseEditor({
             }
             checkedIcon={
               <CheckIcon
-                className='finished'
+                className={`finished${
+                  justDoneIndex === index ? ' just-done' : ''
+                }`}
                 sx={{ color: 'white' }}
               />
             }
@@ -521,10 +524,12 @@ export function ExerciseEditor({
   }
 
   const onMarkAsDone = async (index: number) => {
-    capacitorService.vibrate('Light')
+    const stateToSet = !exercise.sets[index].isDone
+    capacitorService.vibrate(stateToSet ? 'Medium' : 'Light')
+    if (stateToSet) setJustDoneIndex(index)
+    else setJustDoneIndex(null)
     cancelUpdate()
     const newSets = [...exercise.sets]
-    const stateToSet = !newSets[index].isDone
 
     const setToSave = {
       ...newSets[index],

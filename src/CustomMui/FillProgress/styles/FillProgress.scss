@@ -24,49 +24,106 @@
     pointer-events: none;
   }
 
-  .fill-progress-bar {
+  .fill-progress-bar,
+  .fill-progress-track {
     position: absolute;
+  }
+
+  .fill-progress-bar {
+    z-index: 1;
     background-color: var(--fill-color);
-    transition:
-      width 0.25s ease-out,
-      height 0.25s ease-out;
+    transition: width 0.25s ease-out, height 0.25s ease-out;
 
     @media (prefers-reduced-motion: reduce) {
       transition: none;
     }
   }
 
+  // Pale wash of the fill color, same idea as the circular-progress trail.
+  // Stronger than the ring because this track is only a few pixels thick.
+  .fill-progress-track {
+    background-color: color-mix(
+      in srgb,
+      var(--fill-color) var(--chrome-tint-strong),
+      transparent
+    );
+  }
+
+  &.neutral-track .fill-progress-track {
+    background-color: color-mix(
+      in srgb,
+      var(--ink-on-surface) var(--chrome-tint-medium),
+      transparent
+    );
+  }
+
   &.inline-start .fill-progress-bar,
-  &.inline-end .fill-progress-bar {
+  &.inline-end .fill-progress-bar,
+  &.inline-start .fill-progress-track,
+  &.inline-end .fill-progress-track {
     top: 0;
     width: var(--fill-size);
+  }
+
+  &.inline-start .fill-progress-bar,
+  &.inline-end .fill-progress-bar {
     height: calc(var(--fill-ratio, 0) * 100%);
   }
 
-  &.inline-start .fill-progress-bar {
+  &.inline-start .fill-progress-track,
+  &.inline-end .fill-progress-track {
+    bottom: 0;
+  }
+
+  &.inline-start .fill-progress-bar,
+  &.inline-start .fill-progress-track {
     inset-inline-start: 0;
   }
 
-  &.inline-end .fill-progress-bar {
+  &.inline-end .fill-progress-bar,
+  &.inline-end .fill-progress-track {
     inset-inline-end: 0;
   }
 
   &.top .fill-progress-bar,
-  &.bottom .fill-progress-bar {
+  &.bottom .fill-progress-bar,
+  &.top .fill-progress-track,
+  &.bottom .fill-progress-track {
     inset-inline-start: 0;
     height: var(--fill-size);
+  }
+
+  &.top .fill-progress-bar,
+  &.bottom .fill-progress-bar {
     width: calc(var(--fill-ratio, 0) * 100%);
   }
 
-  &.top .fill-progress-bar {
+  &.top .fill-progress-track,
+  &.bottom .fill-progress-track {
+    inset-inline-end: 0;
+  }
+
+  &.top .fill-progress-bar,
+  &.top .fill-progress-track {
     top: 0;
   }
 
-  &.bottom .fill-progress-bar {
+  &.bottom .fill-progress-bar,
+  &.bottom .fill-progress-track {
     bottom: 0;
   }
 }
 
-html.dark-mode .fill-progress-container .fill-progress-bar {
+body.dark-mode .fill-progress-container .fill-progress-bar {
   background-color: var(--fill-color-dark, var(--fill-color));
+}
+
+body.dark-mode
+  .fill-progress-container:not(.neutral-track)
+  .fill-progress-track {
+  background-color: color-mix(
+    in srgb,
+    var(--fill-color-dark, var(--fill-color)) var(--chrome-tint-strong),
+    transparent
+  );
 }

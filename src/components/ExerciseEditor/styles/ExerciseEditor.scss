@@ -241,6 +241,10 @@
       }
       .finished {
         background-color: $success-color;
+
+        &.just-done {
+          animation: set-done-pop 180ms ease-out;
+        }
       }
       .MuiBadge-root {
         display: block;
@@ -372,5 +376,21 @@
     grid-auto-flow: column;
     gap: 1rem;
     align-items: center;
+  }
+}
+
+@keyframes set-done-pop {
+  from {
+    transform: scale(0.55);
+  }
+
+  to {
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .finished.just-done {
+    animation: none;
   }
 }

@@ -34,6 +34,7 @@
     "@mui/system": "^7.3.11",
     "@mui/x-chat": "^9.0.0-alpha.17",
     "@mui/x-date-pickers": "^8.11.3",
+    "@number-flow/react": "^0.6.2",
     "@tanstack/react-query": "^5.94.5",
     "@types/react-router-dom": "^5.3.3",
     "@zxing/browser": "^0.1.5",

@@ -1,6 +1,5 @@
 import { Divider, Typography } from '@mui/material'
 import { useTranslation } from 'react-i18next'
-import { formatToHoursAndMinutes } from '../../services/util.service'
 import { capitalizeFirstLetter } from '../../services/util.service'
 import {
   SessionStatsExercise,
@@ -21,6 +20,7 @@ import {
   ExerciseWithDetails,
 } from '../ExerciseDetails/ExerciseDetails'
 import { CustomAnimatedText } from '../../CustomMui/CustomAnimatedText/CustomAnimatedText'
+import { RollingNumber } from '../RollingNumber/RollingNumber'
 
 interface SessionStatsProps {
   recap: SessionStatsRecap | null
@@ -80,15 +80,15 @@ export function SessionStats({
     )
   }
 
-  const volumeLabel =
-    recap.volumePlanned > 0
-      ? `${Math.round(recap.volumeActual)} / ${Math.round(recap.volumePlanned)}`
-      : `${Math.round(recap.volumeActual)}`
-
-  const vsLastLabel =
-    recap.vsLastPercent == null
-      ? t('noPrevious')
-      : `${Math.round(recap.vsLastPercent)}%`
+  const volumeActual = Math.round(recap.volumeActual)
+  const volumePlanned = Math.round(recap.volumePlanned)
+  const vsLast =
+    recap.vsLastPercent == null ? null : Math.round(recap.vsLastPercent)
+  const durationHours = Math.floor(recap.durationMs / (1000 * 60 * 60))
+  const durationMinutes = Math.floor(
+    (recap.durationMs % (1000 * 60 * 60)) / (1000 * 60)
+  )
+  let prStep = 0
 
   return (
     <>
@@ -103,9 +103,18 @@ export function SessionStats({
             </Typography>
             <Typography
               variant='h4'
-              className='bold-header'
+              className='bold-header duration-value'
             >
-              {formatToHoursAndMinutes(recap.durationMs)}
+              <RollingNumber
+                value={durationHours}
+                fromZero
+              />
+              <span className='duration-colon'>:</span>
+              <RollingNumber
+                value={durationMinutes}
+                fromZero
+                format={{ minimumIntegerDigits: 2 }}
+              />
             </Typography>
           </div>
           <HardnessGauge
@@ -144,7 +153,19 @@ export function SessionStats({
               variant='body1'
               className='summary-value'
             >
-              {volumeLabel}
+              <RollingNumber
+                value={volumeActual}
+                fromZero
+              />
+              {volumePlanned > 0 && (
+                <>
+                  {' / '}
+                  <RollingNumber
+                    value={volumePlanned}
+                    fromZero
+                  />
+                </>
+              )}
             </Typography>
           </div>
           <div className='summary-item'>
@@ -158,7 +179,15 @@ export function SessionStats({
               variant='body1'
               className='summary-value'
             >
-              {vsLastLabel}
+              {vsLast == null ? (
+                t('noPrevious')
+              ) : (
+                <RollingNumber
+                  value={vsLast}
+                  fromZero
+                  suffix='%'
+                />
+              )}
             </Typography>
           </div>
           <div className='summary-item'>
@@ -172,7 +201,15 @@ export function SessionStats({
               variant='body1'
               className='summary-value'
             >
-              {recap.setsDone} / {recap.setsPlanned}
+              <RollingNumber
+                value={recap.setsDone}
+                fromZero
+              />
+              {' / '}
+              <RollingNumber
+                value={recap.setsPlanned}
+                fromZero
+              />
             </Typography>
           </div>
         </div>
@@ -212,16 +249,21 @@ export function SessionStats({
                 {exercise.prs.length > 0 && (
                   <div className='pr-badges'>
                     {t('prs')}:
-                    {exercise.prs.map((pr) => (
-                      <span
-                        key={pr.type}
-                        className={`pr-badge ${pr.type} ${
-                          prefs.isDarkMode ? 'dark' : ''
-                        }`}
-                      >
-                        {pr.type === 'weight' ? t('weightPr') : t('volumePr')}
-                      </span>
-                    ))}
+                    {exercise.prs.map((pr) => {
+                      const delay = prStep * 80
+                      prStep += 1
+                      return (
+                        <span
+                          key={pr.type}
+                          className={`pr-badge ${pr.type} ${
+                            prefs.isDarkMode ? 'dark' : ''
+                          }`}
+                          style={{ animationDelay: `${delay}ms` }}
+                        >
+                          {pr.type === 'weight' ? t('weightPr') : t('volumePr')}
+                        </span>
+                      )
+                    })}
                   </div>
                 )}
                 {exercise.accuracy != null && (

@@ -1,9 +1,11 @@
 import { LinearProgress, Typography } from '@mui/material'
 import FlagIcon from '@mui/icons-material/Flag'
 import { formatNumberWithCommas } from '../../services/util.service'
+import { RollingNumber } from '../RollingNumber/RollingNumber'
 // import CustomSkeleton from '../../CustomMui/CustomSkeleton/CustomSkeleton'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
+import { useEffect, useState } from 'react'
 
 interface GoalBannerProps {
   current: number | string
@@ -14,6 +16,7 @@ interface GoalBannerProps {
   afterValue?: string
   loading?: boolean
   size?: 's' | 'm' | 'l'
+  animateCurrent?: boolean
 }
 
 export function GoalBanner({
@@ -25,6 +28,7 @@ export function GoalBanner({
   afterValue = '',
   loading = false,
   size = 'm',
+  animateCurrent = false,
 }: GoalBannerProps) {
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
   const formattedCurrent = formatNumberWithCommas(+current)
@@ -32,6 +36,13 @@ export function GoalBanner({
   if (goal) {
     formattedGoal = formatNumberWithCommas(+goal)
   }
+
+  const [afterMountCurrent, setAfterMountCurrent] = useState(
+    animateCurrent ? 0 : current
+  )
+  useEffect(() => {
+    setAfterMountCurrent(current)
+  }, [current])
 
   // if (loading && current === 0) {
   //   return (
@@ -54,7 +65,12 @@ export function GoalBanner({
           variant='body1'
           className='bold-header'
         >
-          {formattedCurrent + extraValue}
+          {animateCurrent ? (
+            <RollingNumber value={+afterMountCurrent || 0} />
+          ) : (
+            afterMountCurrent
+          )}
+          {extraValue}
           <span className='after-value'>{afterValue}</span>
         </Typography>
         {isGoal && (

@@ -8,6 +8,7 @@ import {
 import { RootState } from '../../store/store'
 import { useSelector } from 'react-redux'
 import { formatNumberWithCommas } from '../../services/util.service'
+import { RollingNumber } from '../RollingNumber/RollingNumber'
 
 interface MacrosDonutProps {
   protein: number
@@ -168,7 +169,6 @@ export function MacrosDonut({
   const centerGoal = goalCalories ?? total
   const roundedDelta = calorieDelta !== undefined ? Math.round(calorieDelta) : 0
   const showDelta = showProgress && roundedDelta !== 0
-  const deltaLabel = roundedDelta > 0 ? `+${roundedDelta}` : `${roundedDelta}`
 
   return (
     <div
@@ -227,7 +227,7 @@ export function MacrosDonut({
             <>
               <div className='value-row'>
                 <div className='value'>
-                  {formatNumberWithCommas(+centerCurrent.toFixed(0))}
+                  <RollingNumber value={Math.round(centerCurrent)} />
                 </div>
                 {showDelta && (
                   <div
@@ -235,7 +235,10 @@ export function MacrosDonut({
                       roundedDelta > 0 ? 'positive' : 'negative'
                     } ${prefs.isDarkMode ? 'dark-mode' : ''}`}
                   >
-                    {deltaLabel}
+                    <RollingNumber
+                      value={roundedDelta}
+                      prefix={roundedDelta > 0 ? '+' : ''}
+                    />
                   </div>
                 )}
               </div>

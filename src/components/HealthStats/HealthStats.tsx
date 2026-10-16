@@ -1,6 +1,9 @@
 import { useTranslation } from 'react-i18next'
 import { GoalBanner } from '../GoalBanner/GoalBanner'
 import { getFixedNumber } from '../../services/util.service'
+import { FillProgress } from '../../CustomMui/FillProgress/FillProgress'
+import { useCrossedGoal } from '../../hooks/useCrossedGoal'
+import { DEFAULT_DAILY_STEPS_GOAL } from '../../constants/steps-goal.constants'
 import {
   BurnedCaloriesGlyph,
   DistanceGlyph,
@@ -9,6 +12,7 @@ import {
 } from '../../CustomMui/CustomIcon/glyphs'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
+import { useEffect, useState } from 'react'
 
 export interface HealthStatsProps {
   steps: number
@@ -24,6 +28,7 @@ export interface HealthStatsProps {
 export function HealthStats({
   steps,
   burnedCalories,
+  stepsGoal,
   distance,
   flightsClimbed,
   className,
@@ -34,6 +39,20 @@ export function HealthStats({
     (state: RootState) => state.healthModule.healthLoading
   )
 
+  const prefs = useSelector((state: RootState) => state.systemModule.prefs)
+
+  const user = useSelector((state: RootState) => state.userModule.user)
+  const dailyStepsGoal = useSelector(
+    (state: RootState) => state.userModule.user?.details?.dailyStepsGoal
+  )
+  steps = getFixedNumber(steps)
+
+  burnedCalories = getFixedNumber(burnedCalories)
+  flightsClimbed = getFixedNumber(flightsClimbed)
+  distance = getFixedNumber(distance, 2)
+
+  const [caloriesGoal, setCaloriesGoal] = useState(burnedCalories)
+
   const isDashboard = useSelector(
     (state: RootState) => state.systemModule.isDashboard
   )
@@ -42,11 +61,30 @@ export function HealthStats({
   // burnedCalories = 1252.123
   // distance = 12.52
   // heartRate = 60
-  steps = getFixedNumber(steps)
 
-  burnedCalories = getFixedNumber(burnedCalories)
-  flightsClimbed = getFixedNumber(flightsClimbed)
-  distance = getFixedNumber(distance, 2)
+  useEffect(() => {
+    if (!user || !user?.currGoal) return
+
+    const targetGoal = user?.currGoal.target
+
+    let diff = 0
+
+    switch (targetGoal) {
+      case 'lose':
+        diff = 500
+        break
+      case 'gain':
+        diff = -500
+
+        break
+    }
+
+    setCaloriesGoal(user?.currGoal?.dailyCalories + diff)
+  }, [user?.currGoal])
+
+  const stepsGoalValue = stepsGoal ?? dailyStepsGoal ?? DEFAULT_DAILY_STEPS_GOAL
+  const stepsPercent = stepsGoalValue > 0 ? (steps / stepsGoalValue) * 100 : 0
+  const stepsGoalHit = useCrossedGoal(stepsPercent)
 
   return (
     <div
@@ -54,22 +92,42 @@ export function HealthStats({
         className ?? ''
       }`.trim()}
     >
-      <GoalBanner
-        current={steps}
-        isGoal={false}
-        icon={<StepsGlyph size='m' />}
-        afterValue={t('steps.steps')}
-        loading={healthLoading}
-        size='l'
-      />
-      <GoalBanner
-        current={burnedCalories}
-        isGoal={false}
-        icon={<BurnedCaloriesGlyph size='m' />}
-        afterValue={t('macros.kcal')}
-        loading={healthLoading}
-        size='l'
-      />
+      <FillProgress
+        value={stepsPercent}
+        className={`steps-fill${stepsGoalHit ? ' goal-hit' : ''}`}
+        position='bottom'
+        display={!healthLoading}
+        color={prefs.favoriteColor}
+      >
+        <div className='steps-stat'>
+          <GoalBanner
+            current={steps}
+            isGoal={false}
+            icon={<StepsGlyph size='m' />}
+            afterValue={t('steps.steps')}
+            loading={healthLoading}
+            size='l'
+            animateCurrent
+          />
+        </div>
+      </FillProgress>
+      <FillProgress
+        value={caloriesGoal}
+        className={`calories-fill`}
+        position='bottom'
+        display={!healthLoading}
+        color={prefs.favoriteColor}
+      >
+        <GoalBanner
+          current={burnedCalories}
+          isGoal={false}
+          icon={<BurnedCaloriesGlyph size='m' />}
+          afterValue={t('macros.kcal')}
+          loading={healthLoading}
+          size='l'
+          animateCurrent
+        />
+      </FillProgress>
       <GoalBanner
         current={distance}
         isGoal={false}
@@ -77,6 +135,7 @@ export function HealthStats({
         afterValue={t('distance.km')}
         loading={healthLoading}
         size='l'
+        animateCurrent
       />
       <GoalBanner
         current={flightsClimbed}
@@ -85,6 +144,7 @@ export function HealthStats({
         afterValue={t('floors.floors')}
         loading={healthLoading}
         size='l'
+        animateCurrent
       />
     </div>
   )

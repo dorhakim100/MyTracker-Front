@@ -1,9 +1,10 @@
-import { CSSProperties, ReactElement } from 'react'
+import { CSSProperties, ReactElement, useEffect, useState } from 'react'
 
 const fillColors = {
   success: {
     light: 'var(--success-color)',
-    dark: 'var(--success-color-dark-mode)',
+    dark: 'var(--success-color)',
+    // dark: 'var(--success-color-dark-mode)',
   },
   danger: {
     light: 'var(--error-color)',
@@ -33,6 +34,8 @@ interface FillProgressProps {
   size?: 's' | 'm' | 'l'
   color?: FillProgressColor
   className?: string
+  display?: boolean
+  display100?: boolean
 }
 
 function toFillRatio(value: number) {
@@ -44,9 +47,9 @@ function toFillRatio(value: number) {
 function resolveFillColor(color: string) {
   if (color.startsWith('#')) return { light: color, dark: color }
 
-  const named = (fillColors as Record<string, { light: string; dark?: string }>)[
-    color
-  ]
+  const named = (
+    fillColors as Record<string, { light: string; dark?: string }>
+  )[color]
   if (!named) {
     return {
       light: fillColors.success.light,
@@ -57,6 +60,13 @@ function resolveFillColor(color: string) {
   return { light: named.light, dark: named.dark ?? named.light }
 }
 
+/** Success and danger keep a gray track. Picker and other colors get a pale tint. */
+function usesNeutralTrack(color: string) {
+  if (color === 'success' || color === 'danger') return true
+  if (color.startsWith('#')) return false
+  return !(color in fillColors)
+}
+
 export function FillProgress({
   children,
   value,
@@ -64,17 +74,30 @@ export function FillProgress({
   size = 'm',
   color = 'success',
   className = '',
+  display = true,
+  display100 = display,
 }: FillProgressProps) {
   const fillColor = resolveFillColor(color)
+  const neutralTrack = usesNeutralTrack(color)
+
+  const [afterMountValue, setAfterMountValue] = useState(display ? value : 0)
+
+  useEffect(() => {
+    if (display) {
+      setAfterMountValue(value)
+    } else {
+      setAfterMountValue(0)
+    }
+  }, [value, display])
 
   return (
     <div
       className={`fill-progress-container ${position} size-${size}${
-        className ? ` ${className}` : ''
-      }`}
+        neutralTrack ? ' neutral-track' : ''
+      }${className ? ` ${className}` : ''}`}
       style={
         {
-          '--fill-ratio': toFillRatio(value),
+          '--fill-ratio': toFillRatio(afterMountValue),
           '--fill-color': fillColor.light,
           '--fill-color-dark': fillColor.dark,
         } as CSSProperties
@@ -85,6 +108,7 @@ export function FillProgress({
         className='fill-progress-clip'
         aria-hidden='true'
       >
+        {display100 && <span className='fill-progress-track' />}
         <span className='fill-progress-bar' />
       </span>
     </div>

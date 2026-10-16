@@ -1,4 +1,4 @@
-import { useMemo, useCallback, useState } from 'react'
+import { useMemo, useCallback, useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   Card,
@@ -49,6 +49,7 @@ import { MarqueeText } from '../../../components/MarqueeText/MarqueeText'
 import { ChatUnreadBadge } from '../../../CustomMui/ChatUnreadBadge/ChatUnreadBadge'
 import { useUnreadSummary } from '../../../hooks/useUnreadSummary'
 import { useChatRole } from '../../../hooks/useChatRole'
+import { FillProgress } from '../../../CustomMui/FillProgress/FillProgress'
 interface WorkoutCardProps {
   workout: Workout
   className?: string
@@ -235,6 +236,20 @@ export function WorkoutCard({
       )
   }
 
+  const timesPerWeek = workout.timesPerWeek || 1
+  const doneTimes = workout.doneTimes ?? 0
+  const weekFill = !workout.isNewInstructions
+    ? 100
+    : (doneTimes / timesPerWeek) * 100
+  const weekComplete = !workout.isNewInstructions
+  const wasWeekComplete = useRef(weekComplete)
+  const [weekPop, setWeekPop] = useState(false)
+
+  useEffect(() => {
+    if (!wasWeekComplete.current && weekComplete) setWeekPop(true)
+    wasWeekComplete.current = weekComplete
+  }, [weekComplete])
+
   const renderTimes = () => {
     if (workout.isNewInstructions && workout.doneTimes === 0) {
       return (
@@ -249,7 +264,10 @@ export function WorkoutCard({
       )
     }
 
-    if (!workout.isNewInstructions) return <DoneAllIcon />
+    if (!workout.isNewInstructions)
+      return (
+        <DoneAllIcon className={weekPop ? 'week-complete-pop' : ''} />
+      )
 
     return (
       <span>
@@ -260,6 +278,10 @@ export function WorkoutCard({
 
   return (
     <>
+      <FillProgress
+        value={weekFill}
+        className='workout-card-fill'
+      >
       <Card
         className={`workout-card-container pointer ${className} ${
           prefs.isDarkMode ? 'dark-mode' : ''
@@ -330,6 +352,7 @@ export function WorkoutCard({
           </div>
         )}
       </Card>
+      </FillProgress>
       <CustomAlertDialog
         open={isDeleteOpen}
         onClose={() => setIsDeleteOpen(false)}

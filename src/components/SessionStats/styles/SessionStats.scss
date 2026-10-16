@@ -37,6 +37,16 @@
     text-align: center;
   }
 
+  .duration-value {
+    display: inline-flex;
+    align-items: baseline;
+    justify-content: center;
+
+    .duration-colon {
+      font-size: inherit;
+    }
+  }
+
   .summary-row {
     display: grid;
     grid-template-columns: repeat(3, 1fr);

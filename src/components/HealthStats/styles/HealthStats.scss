@@ -16,6 +16,19 @@
     margin: 0;
   }
 
+  .steps-fill,
+  .calories-fill {
+    border-radius: 0.5rem;
+
+    &.goal-hit .fill-progress-bar {
+      animation: steps-goal-flash 280ms ease-out;
+    }
+  }
+
+  .steps-stat {
+    min-width: 0;
+  }
+
   .goal-banner {
     width: 100%;
     background-color: $white;
@@ -27,6 +40,22 @@
     .MuiSvgIcon-root {
       opacity: 0.88;
     }
+  }
+}
+
+@keyframes steps-goal-flash {
+  from {
+    filter: brightness(1.45);
+  }
+
+  to {
+    filter: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .steps-fill.goal-hit .fill-progress-bar {
+    animation: none;
   }
 }
 

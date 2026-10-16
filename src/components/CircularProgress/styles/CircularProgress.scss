@@ -11,6 +11,24 @@
 
   font-weight: 700;
 
+  .circular-progress-value {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-size: 3.5rem;
+    font-weight: 700;
+    pointer-events: none;
+  }
+  &:has(.after-text) {
+    .rolling-number {
+      margin-bottom: 0.5rem;
+    }
+  }
+  &.goal-crossed {
+    animation: ring-goal-pulse 280ms ease-out;
+  }
+
   .goal-banner {
     position: absolute;
     top: calc(50% + 2.5rem);
@@ -28,5 +46,25 @@
     padding: 0.5rem;
     font-size: 0.9rem;
     opacity: 0.5;
+  }
+}
+
+@keyframes ring-goal-pulse {
+  0% {
+    transform: scale(1);
+  }
+
+  40% {
+    transform: scale(1.04);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .circular-progress.goal-crossed {
+    animation: none;
   }
 }
