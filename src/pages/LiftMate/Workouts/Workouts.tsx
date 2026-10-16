@@ -77,6 +77,7 @@ import {
   PastRoutinesRange,
 } from '../../../types/workoutFilter/WorkoutFilter'
 import { RoutineDetails } from '../../../components/RoutineDetails/RoutineDetails'
+import { WorkoutDetails } from '../../../components/WorkoutDetails/WorkoutDetails'
 
 const EDIT = 'edit'
 const DETAILS = 'details'
@@ -499,7 +500,8 @@ export function Workouts() {
           />
         )
       case DETAILS:
-        return <RoutineDetails workout={selectedWorkout} />
+        if (selectedWorkout) return <RoutineDetails workout={selectedWorkout} />
+        else return <WorkoutDetails workout={selectedWorkout} />
       case ROUTINES:
         return (
           <div className='dialog-routines-container'>
