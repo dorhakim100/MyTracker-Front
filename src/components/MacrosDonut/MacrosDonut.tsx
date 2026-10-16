@@ -85,8 +85,7 @@ export function MacrosDonut({
   size = DEFAULT_DONUT_SIZE,
 }: MacrosDonutProps) {
   const donutSize = size
-  const donutThickness =
-    donutSize < 130 ? 12 : DEFAULT_DONUT_THICKNESS
+  const donutThickness = donutSize < 130 ? 12 : DEFAULT_DONUT_THICKNESS
   const ringWidth = donutThickness / 2
   const ringRadius = donutSize / 2 - ringWidth / 2
   const donutCenter = donutSize / 2
@@ -250,7 +249,8 @@ export function MacrosDonut({
           ) : (
             <>
               <div className='value'>
-                {formatNumberWithCommas(+total.toFixed(0))}
+                {/* {formatNumberWithCommas(+total.toFixed(0))} */}
+                <RollingNumber value={Math.round(total)} />
               </div>
               <div className='label'>{t('macros.kcal')}</div>
             </>
