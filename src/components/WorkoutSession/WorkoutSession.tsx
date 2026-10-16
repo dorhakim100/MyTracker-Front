@@ -57,6 +57,7 @@ import { BodyPartBadges } from '../BodyPartBadge/BodyPartBadge'
 import { invalidateSets } from '../../lib/react-query/queryKey'
 import { smoothScroll } from '../../services/util.service'
 import { FillProgress } from '../../CustomMui/FillProgress/FillProgress'
+import { RoutineDetails } from '../RoutineDetails/RoutineDetails'
 interface WorkoutSessionProps {
   sessionDay: SessionDay
   updateSessionDay: () => void
@@ -987,7 +988,7 @@ export function WorkoutSession({
           />
         )
       case 'details':
-        return <WorkoutDetails workout={sessionDay.workout} />
+        return <RoutineDetails workout={sessionDay.workout} />
 
       default:
         return null
@@ -1008,7 +1009,7 @@ export function WorkoutSession({
     setSlideDialogOptions({
       open: true,
       title: t('workout.workoutDetails'),
-      component: <WorkoutDetails workout={sessionDay.workout} />,
+      component: <RoutineDetails workout={sessionDay.workout} />,
       type: 'details',
     })
   }

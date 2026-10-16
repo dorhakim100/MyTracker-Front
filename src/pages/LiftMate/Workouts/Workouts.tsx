@@ -31,7 +31,6 @@ import {
   showErrorMsg,
   showSuccessMsg,
 } from '../../../services/event-bus.service'
-import { WorkoutDetails } from '../../../components/WorkoutDetails/WorkoutDetails'
 import { Avatar, CircularProgress, Divider, Typography } from '@mui/material'
 import { Add, Delete, Edit, Search } from '@mui/icons-material'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
@@ -77,6 +76,7 @@ import {
   PAST_ROUTINES_RANGE_VALUES,
   PastRoutinesRange,
 } from '../../../types/workoutFilter/WorkoutFilter'
+import { RoutineDetails } from '../../../components/RoutineDetails/RoutineDetails'
 
 const EDIT = 'edit'
 const DETAILS = 'details'
@@ -499,7 +499,7 @@ export function Workouts() {
           />
         )
       case DETAILS:
-        return <WorkoutDetails workout={selectedWorkout} />
+        return <RoutineDetails workout={selectedWorkout} />
       case ROUTINES:
         return (
           <div className='dialog-routines-container'>
