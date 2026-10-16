@@ -31,7 +31,6 @@ export function GoalBanner({
   animateCurrent = false,
 }: GoalBannerProps) {
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
-  const formattedCurrent = formatNumberWithCommas(+current)
   let formattedGoal = goal
   if (goal) {
     formattedGoal = formatNumberWithCommas(+goal)

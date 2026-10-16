@@ -4,7 +4,7 @@ import { setUserToEdit } from '../../store/actions/user.actions'
 import { User } from '../../types/user/User'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   calculateProteinCalories,
   calculateCarbCalories,
@@ -28,6 +28,165 @@ interface MacrosDistributionEditProps {
   onSave?: () => void
 }
 
+type MacroKey = 'protein' | 'carbs' | 'fat'
+
+interface MacroShares {
+  protein: number
+  carbs: number
+  fat: number
+}
+
+interface DistributionState {
+  percent: MacroShares
+  calories: MacroShares
+}
+
+const SLIDER_MIN = 10
+const SLIDER_MAX = 80
+const MACRO_KEYS: MacroKey[] = ['protein', 'carbs', 'fat']
+
+function roundSharesToHundred(raw: MacroShares): MacroShares {
+  const total = raw.protein + raw.carbs + raw.fat
+  const scaled = MACRO_KEYS.map((key) => (total ? (raw[key] / total) * 100 : 0))
+  const rounded = scaled.map((value) => Math.floor(value))
+  let remainder = 100 - rounded.reduce((sum, value) => sum + value, 0)
+  const byFraction = scaled
+    .map((value, index) => ({ index, fraction: value - rounded[index] }))
+    .sort((a, b) => b.fraction - a.fraction)
+
+  for (const item of byFraction) {
+    if (remainder <= 0) break
+    rounded[item.index] += 1
+    remainder -= 1
+  }
+
+  return {
+    protein: rounded[0],
+    carbs: rounded[1],
+    fat: rounded[2],
+  }
+}
+
+function sharesFromGrams(
+  proteinGrams: number,
+  carbsGrams: number,
+  fatGrams: number,
+  dailyCalories: number
+): MacroShares {
+  const proteinCalories = calculateProteinCalories(proteinGrams)
+  const carbsCalories = calculateCarbCalories(carbsGrams)
+  const fatCalories = calculateFatCalories(fatGrams)
+  const basis =
+    dailyCalories || proteinCalories + carbsCalories + fatCalories
+
+  if (!basis) return { protein: 30, carbs: 40, fat: 30 }
+
+  return roundSharesToHundred({
+    protein: (proteinCalories / basis) * 100,
+    carbs: (carbsCalories / basis) * 100,
+    fat: (fatCalories / basis) * 100,
+  })
+}
+
+// Keep the macro the user moved. Split what's left by the previous ratio.
+function redistribute(
+  current: MacroShares,
+  macro: MacroKey,
+  value: number
+): MacroShares {
+  const nextValue = Math.min(
+    SLIDER_MAX,
+    Math.max(SLIDER_MIN, Math.round(value))
+  )
+  const others = MACRO_KEYS.filter((key) => key !== macro)
+  const remaining = 100 - nextValue
+  const othersTotal = others.reduce((sum, key) => sum + current[key], 0)
+
+  let first =
+    othersTotal > 0
+      ? Math.round((current[others[0]] / othersTotal) * remaining)
+      : Math.round(remaining / others.length)
+  let second = remaining - first
+
+  if (first < SLIDER_MIN) {
+    first = SLIDER_MIN
+    second = remaining - first
+  } else if (second < SLIDER_MIN) {
+    second = SLIDER_MIN
+    first = remaining - second
+  }
+
+  if (first > SLIDER_MAX) {
+    first = SLIDER_MAX
+    second = remaining - first
+  } else if (second > SLIDER_MAX) {
+    second = SLIDER_MAX
+    first = remaining - second
+  }
+
+  return {
+    ...current,
+    [macro]: nextValue,
+    [others[0]]: first,
+    [others[1]]: second,
+  }
+}
+
+function shiftCalories(
+  current: MacroShares,
+  macro: MacroKey,
+  deltaPercent: number,
+  dailyCalories: number
+): MacroShares {
+  if (!deltaPercent || !dailyCalories) return current
+
+  const deltaCalories = (deltaPercent / 100) * dailyCalories
+  const next: MacroShares = {
+    ...current,
+    [macro]: Math.max(0, current[macro] + deltaCalories),
+  }
+  const others = MACRO_KEYS.filter((key) => key !== macro)
+  const othersTotal = others.reduce((sum, key) => sum + current[key], 0)
+  const toSpread = -deltaCalories
+
+  if (othersTotal <= 0) {
+    const share = toSpread / others.length
+    others.forEach((key) => {
+      next[key] = Math.max(0, current[key] + share)
+    })
+    return next
+  }
+
+  others.forEach((key) => {
+    next[key] = Math.max(
+      0,
+      current[key] + toSpread * (current[key] / othersTotal)
+    )
+  })
+  return next
+}
+
+function distributionFromSource(
+  goalToEdit: Goal | Partial<Goal> | undefined,
+  user: User | null
+): DistributionState {
+  const protein =
+    goalToEdit?.macros?.protein || user?.currGoal?.macros.protein || 0
+  const carbs = goalToEdit?.macros?.carbs || user?.currGoal?.macros.carbs || 0
+  const fat = goalToEdit?.macros?.fat || user?.currGoal?.macros.fat || 0
+  const dailyCalories =
+    goalToEdit?.dailyCalories || user?.currGoal?.dailyCalories || 0
+
+  return {
+    percent: sharesFromGrams(protein, carbs, fat, dailyCalories),
+    calories: {
+      protein: calculateProteinCalories(protein),
+      carbs: calculateCarbCalories(carbs),
+      fat: calculateFatCalories(fat),
+    },
+  }
+}
+
 export function MacrosDistributionEdit({
   goalToEdit,
   goalRef,
@@ -43,52 +202,48 @@ export function MacrosDistributionEdit({
     (stateSelector: RootState) => stateSelector.userModule.userToEdit
   )
 
-  const [proteinPercentage, setProteinPercentage] = useState(30)
-  const [carbsPercentage, setCarbsPercentage] = useState(40)
-  const [fatPercentage, setFatPercentage] = useState(40)
+  const prefs = useSelector(
+    (stateSelector: RootState) => stateSelector.systemModule.prefs
+  )
+
+  const [distribution, setDistribution] = useState<DistributionState>(() =>
+    distributionFromSource(goalToEdit, user)
+  )
+
+  const { protein: proteinPercentage, carbs: carbsPercentage, fat: fatPercentage } =
+    distribution.percent
+
+  const dailyCalories =
+    goalToEdit?.dailyCalories || user?.currGoal?.dailyCalories || 0
+  const dailyCaloriesRef = useRef(dailyCalories)
+  dailyCaloriesRef.current = dailyCalories
 
   useEffect(() => {
-    if (!user) return
-    const currCalories =
-      goalToEdit?.dailyCalories || user?.currGoal?.dailyCalories
-
-    const proteinUserPercentage = Math.round(
-      (calculateProteinCalories(
-        goalToEdit?.macros?.protein || user?.currGoal?.macros.protein || 0
-      ) /
-        (currCalories || 0)) *
-        100
-    )
-
-    const carbsUserPercentage = Math.round(
-      (calculateCarbCalories(
-        goalToEdit?.macros?.carbs || user?.currGoal?.macros.carbs || 0
-      ) /
-        (currCalories || 0)) *
-        100
-    )
-
-    const fatUserPercentage = Math.round(
-      (calculateFatCalories(
-        goalToEdit?.macros?.fat || user?.currGoal?.macros.fat || 0
-      ) /
-        (currCalories || 0)) *
-        100
-    )
-
-    setProteinPercentage(proteinUserPercentage || 30)
-    setCarbsPercentage(carbsUserPercentage || 40)
-    setFatPercentage(fatUserPercentage || 30)
+    if (!user && !goalToEdit) return
+    setDistribution(distributionFromSource(goalToEdit, user))
   }, [user, goalToEdit])
+
+  const handleChange = (macro: MacroKey, value: number) => {
+    setDistribution((current) => {
+      const delta = Math.round(value) - current.percent[macro]
+      return {
+        percent: redistribute(current.percent, macro, value),
+        calories: shiftCalories(
+          current.calories,
+          macro,
+          delta,
+          dailyCaloriesRef.current
+        ),
+      }
+    })
+  }
 
   const macros = useMemo(() => {
     if (!goalToEdit && !user) return []
-    const dailyCalories =
-      goalToEdit?.dailyCalories || user?.currGoal.dailyCalories
     if (!dailyCalories) return []
-    const proteinCalories = (proteinPercentage / 100) * dailyCalories
-    const carbsCalories = (carbsPercentage / 100) * dailyCalories
-    const fatCalories = (fatPercentage / 100) * dailyCalories
+    const proteinCalories = distribution.calories.protein
+    const carbsCalories = distribution.calories.carbs
+    const fatCalories = distribution.calories.fat
 
     return [
       {
@@ -116,45 +271,18 @@ export function MacrosDistributionEdit({
         color: fatsColor,
       },
     ]
-  }, [proteinPercentage, carbsPercentage, fatPercentage, user])
-
-  const handleChange = (macro: 'protein' | 'carbs' | 'fat', value: number) => {
-    // Clamp between 0–100
-    let p = proteinPercentage,
-      c = carbsPercentage,
-      f = fatPercentage
-
-    switch (macro) {
-      case 'protein':
-        p = value
-        break
-      case 'carbs':
-        c = value
-        break
-      case 'fat':
-        f = value
-        break
-      default:
-        break
-    }
-
-    // Normalize so total = 100
-    const total = p + c + f
-
-    if (total !== 100) {
-      const factor = 100 / total
-      p = Math.round(p * factor)
-      c = Math.round(c * factor)
-      f = Math.round(f * factor)
-    }
-
-    setProteinPercentage(p)
-    setCarbsPercentage(c)
-    setFatPercentage(f)
-  }
+  }, [
+    proteinPercentage,
+    carbsPercentage,
+    fatPercentage,
+    distribution.calories,
+    dailyCalories,
+    user,
+    goalToEdit,
+  ])
 
   useEffect(() => {
-    if (!goalToEdit && !userToEdit) return
+    if ((!goalToEdit && !userToEdit) || !macros.length) return
     // not best practice, but macros is
     // a special case
     const caloriesToSet =
@@ -205,7 +333,9 @@ export function MacrosDistributionEdit({
 
   return (
     <Box>
-      <div className="edit-macros-container distribution">
+      <div
+        className={`edit-macros-container distribution ${prefs.favoriteColor || ''}`}
+      >
         <Typography variant="h5">{t('macros.distribution')}</Typography>
         {macros.map((macro) => (
           <div
@@ -222,21 +352,9 @@ export function MacrosDistributionEdit({
             <Slider
               value={macro.value}
               onChange={(v) => macro.onChange(v as number)}
-              max={80}
-              min={10}
+              max={SLIDER_MAX}
+              min={SLIDER_MIN}
               step={2}
-              handleStyle={{
-                // borderColor: '#000',
-                // backgroundColor: '#fff',
-                width: '20px',
-                height: '20px',
-                padding: '0px',
-                // marginBottom: '0px',
-                marginTop: '-8px',
-                // marginLeft: '0px',
-                // marginRight: '0px',
-              }}
-              // railStyle={{ backgroundColor: '#eee' }}
               trackStyle={{ backgroundColor: macro.color }}
             />
           </div>

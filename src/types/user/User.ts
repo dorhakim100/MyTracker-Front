@@ -25,6 +25,7 @@ export interface User {
 
   isTrainer?: boolean
   trainees?: User[]
+  trainersIds?: string[]
 
   isFixedMenu?: boolean
   activeWorkoutsCount?: number

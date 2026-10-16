@@ -49,6 +49,9 @@ export function TraineeUserCard() {
       } ${isHidden ? 'hidden' : ''} ${prefs.favoriteColor} ${
         isRtl ? 'rtl' : ''
       } ${getMode()}`}
+      onClick={() => {
+        setIsHidden(!isHidden)
+      }}
     >
       <div className='trainee-details'>
         <img
@@ -68,7 +71,7 @@ export function TraineeUserCard() {
         }}
       />
 
-      <CustomButton
+      {/* <CustomButton
         isIcon={true}
         icon={
           isHidden ? (
@@ -85,7 +88,8 @@ export function TraineeUserCard() {
         onClick={() => {
           setIsHidden(!isHidden)
         }}
-      />
+      /> */}
+      <span className={`handle ${prefs.isDarkMode ? 'dark-mode' : ''}`}></span>
     </div>
   )
 }

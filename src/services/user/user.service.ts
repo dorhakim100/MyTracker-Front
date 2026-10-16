@@ -318,6 +318,7 @@ async function saveLoggedinUser(user: User) {
       lastWeight: user.lastWeight,
       isTrainer: user.isTrainer,
       trainees: user.trainees ?? [],
+      trainersIds: user.trainersIds ?? [],
       isFixedMenu: user.isFixedMenu,
       activeWorkoutsCount: user.activeWorkoutsCount,
       // weights: user.weights ?? [],

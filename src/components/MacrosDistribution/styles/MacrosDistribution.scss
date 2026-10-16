@@ -80,6 +80,8 @@
   padding: 2rem;
   // width: 300px;
 
+  @include favorite-accent;
+
   h5 {
     text-align: center;
   }
@@ -91,5 +93,28 @@
   }
   .save-cancel-container {
     justify-self: center;
+  }
+
+  .rc-slider-handle {
+    width: 20px;
+    height: 20px;
+    margin-top: -8px;
+    opacity: 1;
+    background-color: #fff;
+    border: 2px solid var(--accent);
+    box-shadow: none;
+
+    &:hover,
+    &:focus,
+    &:focus-visible,
+    &:active {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 28%, transparent);
+    }
+  }
+
+  .rc-slider-handle.rc-slider-handle-dragging {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent) 35%, transparent);
   }
 }

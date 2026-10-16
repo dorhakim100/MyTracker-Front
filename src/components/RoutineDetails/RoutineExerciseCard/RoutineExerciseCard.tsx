@@ -7,7 +7,8 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import { Exercise, Set } from '../../../types/exercise/Exercise'
 import { capitalizeFirstLetter } from '../../../services/util.service'
-import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline'
+import { ChatBubbleOutlineIcon } from '../../../CustomMui/ChatBubbleOutlineIcon/ChatBubbleOutlineIcon'
+import type { User } from '../../../types/user/User'
 import { MarqueeText } from '../../MarqueeText/MarqueeText'
 import { BodyPartBadges } from '../../BodyPartBadge/BodyPartBadge'
 import { CustomButton } from '../../../CustomMui/CustomButton/CustomButton'
@@ -25,6 +26,7 @@ interface RoutineExerciseCardProps {
   unreadCount?: number
   hasMessages?: boolean
   onOpenChat?: () => void
+  displayUser: User | null
 }
 
 function formatNumber(value: number | undefined, suffix?: string) {
@@ -47,6 +49,7 @@ export function RoutineExerciseCard({
   unreadCount = 0,
   hasMessages = false,
   onOpenChat,
+  displayUser,
 }: RoutineExerciseCardProps) {
   // const prefs = useSelector((state: RootState) => state.systemModule.prefs)
   const { t } = useTranslation(routineExerciseCardNs)
@@ -97,7 +100,7 @@ export function RoutineExerciseCard({
             >
               <CustomButton
                 isIcon={true}
-                icon={<ChatBubbleOutlineIcon />}
+                icon={<ChatBubbleOutlineIcon user={displayUser} />}
                 tooltipTitle={tChat('openChat')}
                 variant='flat'
                 onClick={(event) => {

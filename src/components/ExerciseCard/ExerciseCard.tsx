@@ -13,7 +13,7 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
 import { Instructions } from '../../types/instructions/Instructions'
 import { ChangeExercise } from '../ChangeExercise/ChangeExercise'
 
-import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline'
+import { ChatBubbleOutlineIcon } from '../../CustomMui/ChatBubbleOutlineIcon/ChatBubbleOutlineIcon'
 import DeleteIcon from '@mui/icons-material/Delete'
 import InfoOutlineIcon from '@mui/icons-material/InfoOutline'
 import { DropdownOption } from '../../types/DropdownOption'
@@ -118,6 +118,7 @@ export function ExerciseCard({
   const { traineeUser, user } = useSelector(
     (stateSelector: RootState) => stateSelector.userModule
   )
+  const displayUser = traineeUser || user
 
   const sessionDay = useSelector(
     (stateSelector: RootState) => stateSelector.workoutModule.sessionDay
@@ -238,14 +239,7 @@ export function ExerciseCard({
         onMarkAsDone(!isDone)
       },
     },
-    {
-      title: tChat('openChat'),
-      icon: <ChatBubbleOutlineIcon />,
-      onClick: async () => {
-        capacitorService.vibrate('Light')
-        setIsChatOpen(true)
-      },
-    },
+
     !isExpected && {
       title: t('exercise.changeExercise'),
       icon: <AltRouteIcon />,
@@ -545,177 +539,177 @@ export function ExerciseCard({
             } ${windowWidth < 900 ? 'mobile' : 'desktop'}`}
             onClick={handleClick}
           >
-          <div className='exercise-card-actions'>
-            <CustomOptionsMenu
-              className='more-options-container'
-              options={menuOptions}
-              triggerElement={
-                <CustomButton
-                  isIcon={true}
-                  icon={<MoreHorizIcon />}
-                  className={`more-options ${prefs.favoriteColor} ${
-                    prefs.isDarkMode ? 'dark-mode' : ''
-                  }`}
-                  variant='flat'
-                />
-              }
-            />
+            <div className='exercise-card-actions'>
+              <CustomOptionsMenu
+                className='more-options-container'
+                options={menuOptions}
+                triggerElement={
+                  <CustomButton
+                    isIcon={true}
+                    icon={<MoreHorizIcon />}
+                    className={`more-options ${prefs.favoriteColor} ${
+                      prefs.isDarkMode ? 'dark-mode' : ''
+                    }`}
+                    variant='flat'
+                  />
+                }
+              />
 
-            {instructions.workoutId && (
-              <ChatUnreadBadge
-                count={getExerciseCount(
-                  instructions.workoutId,
-                  exercise.exerciseId
-                )}
-                hasMessages={hasExerciseMessages(
-                  instructions.workoutId,
-                  exercise.exerciseId
-                )}
-                className={prefs.favoriteColor}
-              >
+              {instructions.workoutId && (
+                <ChatUnreadBadge
+                  count={getExerciseCount(
+                    instructions.workoutId,
+                    exercise.exerciseId
+                  )}
+                  hasMessages={hasExerciseMessages(
+                    instructions.workoutId,
+                    exercise.exerciseId
+                  )}
+                  className={prefs.favoriteColor}
+                >
+                  <CustomButton
+                    isIcon={true}
+                    icon={<ChatBubbleOutlineIcon user={displayUser} />}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setIsChatOpen(true)
+                    }}
+                    tooltipTitle={tChat('openChat')}
+                    variant='flat'
+                  />
+                </ChatUnreadBadge>
+              )}
+
+              {onOpenChange && (
                 <CustomButton
-                  isIcon={true}
-                  icon={<ChatBubbleOutlineIcon />}
+                  icon={isOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
                   onClick={(e) => {
                     e.stopPropagation()
-                    setIsChatOpen(true)
+                    onOpenChange?.()
                   }}
-                  tooltipTitle={tChat('openChat')}
+                  isIcon={true}
+                  tooltipTitle={
+                    isOpen ? t('exercise.collapse') : t('exercise.expand')
+                  }
                   variant='flat'
                 />
-              </ChatUnreadBadge>
-            )}
-
-            {onOpenChange && (
-              <CustomButton
-                icon={isOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-                onClick={(e) => {
-                  e.stopPropagation()
-                  onOpenChange?.()
-                }}
-                isIcon={true}
-                tooltipTitle={
-                  isOpen ? t('exercise.collapse') : t('exercise.expand')
+              )}
+            </div>
+            <div
+              className='exercise-card-content'
+              onClick={() => {
+                if (!isOpen && onOpenChange) {
+                  onOpenChange()
+                  return
                 }
-                variant='flat'
-              />
-            )}
-          </div>
-          <div
-            className='exercise-card-content'
-            onClick={() => {
-              if (!isOpen && onOpenChange) {
-                onOpenChange()
-                return
-              }
-              openDetailsDialog()
-            }}
-          >
-            {exercise.image && (
-              <img
-                src={exercise.image}
-                alt={exercise.name}
-                className='exercise-card-image'
-                onError={(e) => {
-                  e.currentTarget.style.display = 'none'
-                }}
-              />
-            )}
+                openDetailsDialog()
+              }}
+            >
+              {exercise.image && (
+                <img
+                  src={exercise.image}
+                  alt={exercise.name}
+                  className='exercise-card-image'
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none'
+                  }}
+                />
+              )}
 
-            {isExpected ? (
-              <div className='exercise-card-heading'>
-                {exerciseInfo}
-                {isExpected && (
-                  <>
-                    <Divider
-                      className={`divider ${
-                        prefs.isDarkMode ? 'dark-mode' : ''
-                      }`}
+              {isExpected ? (
+                <div className='exercise-card-heading'>
+                  {exerciseInfo}
+                  {isExpected && (
+                    <>
+                      <Divider
+                        className={`divider ${
+                          prefs.isDarkMode ? 'dark-mode' : ''
+                        }`}
+                      />
+                      <div className='resting-time-container'>
+                        <AccessAlarmIcon />
+                        <span>
+                          {t('exercise.restingTime')}{' '}
+                          {formatTime(
+                            exerciseInstructions.restingTime ||
+                              DEFAULT_RESTING_TIME
+                          )}
+                        </span>
+                      </div>
+                    </>
+                  )}
+                  <div className='exercise-intensity'>
+                    <HardnessGauge
+                      size='small'
+                      actualRpe={plannedIntensity}
+                      accuracy={null}
                     />
-                    <div className='resting-time-container'>
-                      <AccessAlarmIcon />
-                      <span>
-                        {t('exercise.restingTime')}{' '}
-                        {formatTime(
-                          exerciseInstructions.restingTime ||
-                            DEFAULT_RESTING_TIME
-                        )}
-                      </span>
-                    </div>
-                  </>
-                )}
-                <div className='exercise-intensity'>
-                  <HardnessGauge
-                    size='small'
-                    actualRpe={plannedIntensity}
-                    accuracy={null}
-                  />
-                  <Typography
-                    variant='caption'
-                    className='bold-header'
-                  >
-                    {plannedIntensity?.toFixed(1)}
-                  </Typography>
+                    <Typography
+                      variant='caption'
+                      className='bold-header'
+                    >
+                      {plannedIntensity?.toFixed(1)}
+                    </Typography>
+                  </div>
                 </div>
-              </div>
-            ) : (
-              exerciseInfo
-            )}
-          </div>
+              ) : (
+                exerciseInfo
+              )}
+            </div>
 
-          {exerciseInstructions && exerciseInstructions.sets && (
-            <ExerciseEditor
-              // isInstructionsLoadingProp={isInstructionsLoading}
-              isInstructionsLoadingProp={
-                instructions._id ? isInstructionsLoading : false
-              }
-              exerciseSets={exerciseSets}
-              previousInstructions={previousInstructions}
-              exercise={exerciseInstructions}
-              isOpen={isOpen}
-              updateExercise={
-                isExpected
-                  ? updateExerciseInInstructions
-                  : (exerciseToUpdate, setIndex) =>
-                      updateExercise?.(
-                        {
-                          ...exerciseToUpdate,
-                          image: exercise.image,
-                        },
-                        setIndex
-                      )
-              }
-              addSet={
-                isExpected
-                  ? undefined
-                  : (exerciseToUpdate, setIndex) =>
-                      addSet?.(
-                        { ...exerciseToUpdate, image: exercise.image },
-                        setIndex
-                      )
-              }
-              removeSet={
-                isExpected
-                  ? undefined
-                  : (exerciseToUpdate, setIndex) =>
-                      removeSet?.(
-                        { ...exerciseToUpdate, image: exercise.image },
-                        setIndex
-                      )
-              }
-              markSetAsDone={
-                isExpected
-                  ? undefined
-                  : (exerciseToUpdate, setIndex, isAll?: boolean) =>
-                      markSetAsDone?.(
-                        { ...exerciseToUpdate, image: exercise.image },
-                        setIndex,
-                        isAll
-                      )
-              }
-              isExpected={isExpected}
-            />
-          )}
+            {exerciseInstructions && exerciseInstructions.sets && (
+              <ExerciseEditor
+                // isInstructionsLoadingProp={isInstructionsLoading}
+                isInstructionsLoadingProp={
+                  instructions._id ? isInstructionsLoading : false
+                }
+                exerciseSets={exerciseSets}
+                previousInstructions={previousInstructions}
+                exercise={exerciseInstructions}
+                isOpen={isOpen}
+                updateExercise={
+                  isExpected
+                    ? updateExerciseInInstructions
+                    : (exerciseToUpdate, setIndex) =>
+                        updateExercise?.(
+                          {
+                            ...exerciseToUpdate,
+                            image: exercise.image,
+                          },
+                          setIndex
+                        )
+                }
+                addSet={
+                  isExpected
+                    ? undefined
+                    : (exerciseToUpdate, setIndex) =>
+                        addSet?.(
+                          { ...exerciseToUpdate, image: exercise.image },
+                          setIndex
+                        )
+                }
+                removeSet={
+                  isExpected
+                    ? undefined
+                    : (exerciseToUpdate, setIndex) =>
+                        removeSet?.(
+                          { ...exerciseToUpdate, image: exercise.image },
+                          setIndex
+                        )
+                }
+                markSetAsDone={
+                  isExpected
+                    ? undefined
+                    : (exerciseToUpdate, setIndex, isAll?: boolean) =>
+                        markSetAsDone?.(
+                          { ...exerciseToUpdate, image: exercise.image },
+                          setIndex,
+                          isAll
+                        )
+                }
+                isExpected={isExpected}
+              />
+            )}
           </Card>
         </FillProgress>
       </AnimatedWrapper>

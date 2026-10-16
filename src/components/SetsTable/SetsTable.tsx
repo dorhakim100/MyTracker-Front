@@ -14,7 +14,8 @@ import { Set } from '../../types/exercise/Exercise'
 import { Badge, Typography } from '@mui/material'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
-import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline'
+import { ChatBubbleOutlineIcon } from '../../CustomMui/ChatBubbleOutlineIcon/ChatBubbleOutlineIcon'
+import type { User } from '../../types/user/User'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import { useState } from 'react'
 import { showErrorMsg } from '../../services/event-bus.service'
@@ -36,8 +37,16 @@ function Row(props: {
   onOpenChat: (exerciseId: string) => void
   canOpenChat: boolean
   divider?: boolean
+  displayUser: User | null
 }) {
-  const { sets, mainValue, onOpenChat, canOpenChat, divider = true } = props
+  const {
+    sets,
+    mainValue,
+    onOpenChat,
+    canOpenChat,
+    divider = true,
+    displayUser,
+  } = props
   const { t } = useTranslation()
   const [open, setOpen] = React.useState(false)
   const prefs = useSelector(
@@ -102,7 +111,7 @@ function Row(props: {
         >
           <div className='session-row-actions'>
             <CustomButton
-              icon={<ChatBubbleOutlineIcon />}
+              icon={<ChatBubbleOutlineIcon user={displayUser} />}
               onClick={(ev) => {
                 ev.stopPropagation()
                 if (!canOpenChat) {
@@ -231,6 +240,7 @@ export default function SetsTable({
   workoutName = '',
   exerciseName = '',
   chatRole,
+  displayUser,
 }: {
   groupedSets: Record<string, (Set & { exerciseId: string })[]>
   mainValue?: ExerciseViewBy
@@ -238,6 +248,7 @@ export default function SetsTable({
   workoutName?: string
   exerciseName?: string
   chatRole?: MessageRole
+  displayUser: User | null
 }) {
   const { t } = useTranslation()
   const fallbackRole = useChatRole()
@@ -283,6 +294,7 @@ export default function SetsTable({
                       onOpenChat={setChatExerciseId}
                       canOpenChat={Boolean(workoutId)}
                       divider={index !== entries.length - 1}
+                      displayUser={displayUser}
                     />
                   </React.Fragment>
                 ))

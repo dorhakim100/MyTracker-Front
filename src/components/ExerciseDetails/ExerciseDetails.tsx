@@ -85,6 +85,7 @@ export function ExerciseDetails({
   const traineeUser = useSelector(
     (stateSelector: RootState) => stateSelector.userModule.traineeUser
   )
+  const displayUser = traineeUser || user
 
   const isDashboard = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.isDashboard
@@ -454,6 +455,7 @@ export function ExerciseDetails({
             workoutName={workoutName}
             exerciseName={exercise?.name || ''}
             chatRole={role}
+            displayUser={displayUser}
           />
           <BottomReachIndicator
             hasMore={Boolean(setsQuery.hasNextPage)}

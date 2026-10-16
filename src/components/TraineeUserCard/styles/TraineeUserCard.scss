@@ -50,12 +50,21 @@
       color-mix(in srgb, var(--accent) var(--chrome-ring), transparent);
   }
 
+  .handle {
+    width: 2px;
+    height: 40px;
+    background-color: $light-gray;
+    opacity: 0.5;
+
+    border-radius: 3px;
+  }
+
   &.hidden {
-    transform: translateX(calc(-100% + 60px));
+    transform: translateX(calc(-100% + 17px));
   }
 
   [dir='rtl'] &.hidden {
-    transform: translateX(calc(100% - 60px));
+    transform: translateX(calc(100% - 17px));
   }
 
   &.dark-mode {

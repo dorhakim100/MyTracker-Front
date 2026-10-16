@@ -7,7 +7,7 @@ import { RollingNumber } from '../RollingNumber/RollingNumber'
 import { useCrossedGoal } from '../../hooks/useCrossedGoal'
 // import { GoalBanner } from '../GoalBanner/GoalBanner'
 import { useTranslation } from 'react-i18next'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 interface CircularProgressProps {
   value: number

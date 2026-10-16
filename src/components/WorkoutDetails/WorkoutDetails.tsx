@@ -16,7 +16,7 @@ import { ExerciseDetails } from '../ExerciseDetails/ExerciseDetails'
 import { getWorkoutMuscles } from '../../services/exersice-search/exersice-search'
 import { MarqueeText } from '../MarqueeText/MarqueeText'
 import { BodyPartBadges } from '../BodyPartBadge/BodyPartBadge'
-import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline'
+import { ChatBubbleOutlineIcon } from '../../CustomMui/ChatBubbleOutlineIcon/ChatBubbleOutlineIcon'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import { ChatUnreadBadge } from '../../CustomMui/ChatUnreadBadge/ChatUnreadBadge'
 import { ExerciseChatDialog } from '../ExerciseChatDialog/ExerciseChatDialog'
@@ -45,6 +45,7 @@ export function WorkoutDetails({ workout }: WorkoutDetailsProps) {
   const { user, traineeUser } = useSelector(
     (stateSelector: RootState) => stateSelector.userModule
   )
+  const displayUser = traineeUser || user
   const chatRole = useChatRole()
   const { getExerciseCount, hasExerciseMessages } = useUnreadSummary(chatRole)
   const traineeName =
@@ -126,7 +127,7 @@ export function WorkoutDetails({ workout }: WorkoutDetailsProps) {
               >
                 <CustomButton
                   isIcon={true}
-                  icon={<ChatBubbleOutlineIcon />}
+                  icon={<ChatBubbleOutlineIcon user={displayUser} />}
                   tooltipTitle={tChat('openChat')}
                   variant='flat'
                 />

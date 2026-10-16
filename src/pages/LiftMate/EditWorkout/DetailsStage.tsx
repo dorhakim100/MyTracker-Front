@@ -25,7 +25,7 @@ import { ExerciseChatDialog } from '../../../components/ExerciseChatDialog/Exerc
 import { ChatUnreadBadge } from '../../../CustomMui/ChatUnreadBadge/ChatUnreadBadge'
 import { useUnreadSummary } from '../../../hooks/useUnreadSummary'
 import { useChatRole } from '../../../hooks/useChatRole'
-import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline'
+import { ChatBubbleOutlineIcon } from '../../../CustomMui/ChatBubbleOutlineIcon/ChatBubbleOutlineIcon'
 import { exerciseChatNs } from '../../../components/ExerciseChatDialog/locals'
 import { useTranslation } from 'react-i18next'
 
@@ -69,6 +69,13 @@ export function DetailsStage({
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
+  const user = useSelector(
+    (stateSelector: RootState) => stateSelector.userModule.user
+  )
+  const traineeUser = useSelector(
+    (stateSelector: RootState) => stateSelector.userModule.traineeUser
+  )
+  const displayUser = traineeUser || user
   const { t: tChat } = useTranslation(exerciseChatNs)
   const chatRole = useChatRole(true)
   const { getExerciseCount, hasExerciseMessages } = useUnreadSummary(chatRole)
@@ -284,7 +291,7 @@ export function DetailsStage({
                 >
                   <CustomButton
                     isIcon={true}
-                    icon={<ChatBubbleOutlineIcon />}
+                    icon={<ChatBubbleOutlineIcon user={displayUser} />}
                     onClick={() =>
                       setChatExercise({
                         exerciseId: exercise.exerciseId,

@@ -63,6 +63,7 @@ export function RoutineDetails({ workout }: RoutineDetailsProps) {
     (stateSelector: RootState) => stateSelector.userModule.traineeUser
   )
   const forUserId = traineeUser?._id || user?._id || ''
+  const displayUser = traineeUser || user
   const chatRole = useChatRole()
   const { getExerciseCount, hasExerciseMessages } = useUnreadSummary(chatRole)
   const traineeName =
@@ -378,6 +379,7 @@ export function RoutineDetails({ workout }: RoutineDetailsProps) {
                 onOpenChat={
                   workout._id ? () => setChatExercise(exercise) : undefined
                 }
+                displayUser={displayUser}
               />
             )
           })}
