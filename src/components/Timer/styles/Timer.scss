@@ -109,6 +109,12 @@
       opacity: 0.55;
     }
 
+    .time-left,
+    .time-past {
+      display: inline-flex;
+      align-items: baseline;
+    }
+
     .time-left {
       font-size: 3rem;
       align-self: end;
@@ -116,6 +122,11 @@
     }
     .time-past {
       min-width: 35px;
+    }
+
+    .time-colon {
+      font-size: inherit;
+      line-height: 1;
     }
   }
   .sets-text {

@@ -7,7 +7,8 @@ import { LocalNotifications } from '@capacitor/local-notifications'
 
 import { CustomLinearProgress } from '../../CustomMui/CustomLinearProgress/CustomLinearProgress'
 import { capitalizeFirstLetter, formatTime } from '../../services/util.service'
-import { SECOND_IN_MS } from '../../assets/config/times'
+import { MINUTE_IN_MS, SECOND_IN_MS } from '../../assets/config/times'
+import { RollingNumber } from '../RollingNumber/RollingNumber'
 import { showErrorMsg } from '../../services/event-bus.service'
 import { setTimer } from '../../store/actions/workout.action'
 import { SlideAnimation } from '../SlideAnimation/SlideAnimation'
@@ -58,8 +59,7 @@ export function Timer() {
   const percentage = useMemo(() => {
     if (!displayExercise || !displayExercise.restingTime) return 0
     const percentage =
-      ((secondsPassedState * SECOND_IN_MS) / displayExercise.restingTime!) *
-      100
+      ((secondsPassedState * SECOND_IN_MS) / displayExercise.restingTime!) * 100
 
     if (percentage >= 100) {
     }
@@ -173,6 +173,13 @@ export function Timer() {
 
   if (!displayExercise || !displayExercise.restingTime) return null
 
+  const elapsedMs = secondsPassedState * SECOND_IN_MS
+  const remainingMs =
+    elapsedMs < displayExercise.restingTime
+      ? displayExercise.restingTime - elapsedMs + SECOND_IN_MS
+      : 0
+  const timeLeft = clockParts(remainingMs)
+
   return (
     <>
       <div
@@ -199,16 +206,12 @@ export function Timer() {
                   variant='body1'
                   className='bold-header opacity-1 time-left'
                 >
-                  {displayExercise?.restingTime &&
-                  secondsPassedState * SECOND_IN_MS <
-                    displayExercise?.restingTime
-                    ? formatTime(
-                        displayExercise?.restingTime -
-                          secondsPassedState * SECOND_IN_MS +
-                          1000,
-                        false
-                      )
-                    : '0:00'}
+                  <RollingNumber value={timeLeft.minutes} />
+                  <span className='time-colon'>:</span>
+                  <RollingNumber
+                    value={timeLeft.seconds}
+                    format={{ minimumIntegerDigits: 2 }}
+                  />
                 </Typography>
                 <Divider
                   orientation='vertical'
@@ -226,7 +229,8 @@ export function Timer() {
                 variant='h6'
                 className='bold-header sets-text'
               >
-                {t('timer.sets')}: {doneSets} / {totalSets}
+                {t('timer.sets')}: <RollingNumber value={doneSets ?? 0} /> /{' '}
+                <RollingNumber value={totalSets ?? 0} />
               </Typography>
             </div>
             <CustomLinearProgress value={percentage} />
@@ -248,4 +252,11 @@ export function Timer() {
       />
     </>
   )
+}
+
+function clockParts(ms: number) {
+  const safe = Math.max(0, ms)
+  const minutes = Math.floor(safe / MINUTE_IN_MS)
+  const seconds = Math.floor((safe % MINUTE_IN_MS) / SECOND_IN_MS)
+  return { minutes, seconds }
 }
