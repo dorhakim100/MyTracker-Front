@@ -4,6 +4,7 @@ export const SET_STEPS = 'SET_STEPS'
 export const SET_BURNED_CALORIES = 'SET_BURNED_CALORIES'
 export const SET_DISTANCE = 'SET_DISTANCE'
 export const SET_FLIGHTS_CLIMBED = 'SET_FLIGHTS_CLIMBED'
+export const SET_HEALTH_SNAPSHOT = 'SET_HEALTH_SNAPSHOT'
 export const SET_HEALTH_LOADING = 'SET_HEALTH_LOADING'
 export interface HealthState {
   permited: boolean
@@ -49,6 +50,15 @@ export function healthReducer(state = initialState, action: any): HealthState {
       break
     case SET_FLIGHTS_CLIMBED:
       newState = { ...state, flightsClimbed: action.flightsClimbed }
+      break
+    case SET_HEALTH_SNAPSHOT:
+      newState = {
+        ...state,
+        steps: action.steps,
+        burnedCalories: action.burnedCalories,
+        distance: action.distance,
+        flightsClimbed: action.flightsClimbed,
+      }
       break
     case SET_HEALTH_LOADING:
       newState = { ...state, healthLoading: action.healthLoading }

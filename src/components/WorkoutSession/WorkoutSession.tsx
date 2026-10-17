@@ -1,4 +1,11 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import {
+  startTransition,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import { useTranslation } from 'react-i18next'
 import { DialogActions, Divider, Typography } from '@mui/material'
 import debounce from 'lodash/debounce'
@@ -204,8 +211,12 @@ export function WorkoutSession({
   }, [handleSearch])
 
   useEffect(() => {
+    if (!slideDialogOptions.open || slideDialogOptions.type !== 'edit') return
     debouncedRunSearch()
+    return () => debouncedRunSearch.cancel()
   }, [
+    slideDialogOptions.open,
+    slideDialogOptions.type,
     exerciseFilter.searchValue,
     exerciseFilter.muscleGroupValue,
     exerciseFilter.equipmentValue,
@@ -218,10 +229,13 @@ export function WorkoutSession({
 
   useEffect(() => {
     if (isDashboard) {
-      setOpenExercises(
-        new Set(sessionDay.workout.exercises.map((ex) => ex.exerciseId))
+      const ids = new Set(
+        sessionDay.workout.exercises.map((ex) => ex.exerciseId)
       )
-      return
+      const frame = requestAnimationFrame(() => {
+        startTransition(() => setOpenExercises(ids))
+      })
+      return () => cancelAnimationFrame(frame)
     }
     const isFinished = sessionDay.instructions.isFinished
 

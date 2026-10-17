@@ -48,6 +48,11 @@
   object-fit: cover;
 }
 
+.stats-carousel-slide-placeholder {
+  width: 100%;
+  min-height: calc($card-height * 1.32);
+}
+
 .card.skeleton {
   height: calc($card-height * 1.32) - 22px;
 

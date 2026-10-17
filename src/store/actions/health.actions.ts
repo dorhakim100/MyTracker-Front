@@ -14,6 +14,7 @@ import {
   SET_FLIGHTS_CLIMBED,
   SET_GOOGLE_HEALTH_CONNECTED,
   SET_HEALTH_LOADING,
+  SET_HEALTH_SNAPSHOT,
 } from '../reducers/health.reducer'
 
 export async function setPermitted(permitted: boolean) {
@@ -78,10 +79,13 @@ export async function setHealthData() {
 }
 
 export async function applyHealthSnapshot(payload: HealthSocketPayload) {
-  await setSteps(payload.steps)
-  await setBurnedCalories(payload.activeCaloriesKcal)
-  await setDistance(payload.distance)
-  await setFlightsClimbed(payload.flightsClimbed)
+  store.dispatch({
+    type: SET_HEALTH_SNAPSHOT,
+    steps: payload.steps,
+    burnedCalories: payload.activeCaloriesKcal,
+    distance: payload.distance,
+    flightsClimbed: payload.flightsClimbed,
+  })
   await syncStepsWidget(toStepsWidgetHealthOverrides(payload))
 }
 

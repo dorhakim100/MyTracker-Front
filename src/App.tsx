@@ -218,11 +218,7 @@ function App() {
     )
     if (themeColorMeta) {
       const canvas = getComputedStyle(document.body).backgroundColor
-      if (
-        canvas &&
-        canvas !== 'transparent' &&
-        canvas !== 'rgba(0, 0, 0, 0)'
-      ) {
+      if (canvas && canvas !== 'transparent' && canvas !== 'rgba(0, 0, 0, 0)') {
         themeColorMeta.content = canvas
       } else if (prefs.isDarkMode) {
         const darkColors: Record<string, string> = {

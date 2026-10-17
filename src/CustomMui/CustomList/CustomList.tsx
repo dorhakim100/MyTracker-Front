@@ -66,6 +66,7 @@ export interface CustomListProps<T> {
   onItemClick?: (item: T) => void
   className?: string
   itemClassName?: string
+  getItemClassName?: (item: T) => string
   isSwipeable?: boolean | ((item: T) => boolean)
   renderRightSwipeActions?: (item: T) => React.ReactNode
   renderLeftSwipeActions?: (item: T) => React.ReactNode
@@ -91,6 +92,7 @@ export function CustomList<T>({
   onItemClick,
   className,
   itemClassName,
+  getItemClassName,
   isSwipeable = false,
   renderRightSwipeActions,
   renderLeftSwipeActions,
@@ -261,7 +263,9 @@ CustomListProps<T>) {
   const renderList = (item: T, dragProvided: DraggableProvided) => {
     return (
       <ListItemButton
-        className={`custom-list-item ${itemClassName ? itemClassName : ''}`}
+        className={`custom-list-item ${itemClassName ? itemClassName : ''} ${
+          getItemClassName ? getItemClassName(item) : ''
+        }`}
         onClick={onItemClick ? () => onItemClick(item) : undefined}
       >
         {renderLeft ? (
