@@ -24,18 +24,20 @@
     // justify-content: space-between;
     // align-items: center;
 
-    margin: 1rem 0;
+    margin-top: 0.8rem;
 
     &.routines {
       // grid-template-columns: auto 1fr;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      margin-bottom: 0.8rem;
+      margin-top: 0.3rem;
     }
   }
 
   .divider {
-    margin: 0.5rem 0;
+    // margin: 0.5rem 0;
   }
 
   .buttons-container {
@@ -113,7 +115,7 @@
 }
 .workouts-lists-container {
   display: grid;
-  gap: 1rem;
+  gap: 0.5rem;
   // padding-top: 1rem;
   position: relative;
 
@@ -126,11 +128,12 @@
     }
   }
 
-  .exercises-search-section {
+  .action-buttons-section {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     align-items: center;
     gap: 0.5rem;
+    margin-bottom: 0.8rem;
   }
 
   .past-controller {

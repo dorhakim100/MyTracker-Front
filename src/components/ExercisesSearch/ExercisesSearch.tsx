@@ -13,6 +13,7 @@ import RemoveIcon from '@mui/icons-material/Remove'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { ExerciseDetails } from '../ExerciseDetails/ExerciseDetails'
 import { useState } from 'react'
+import { CircularProgress } from '@mui/material'
 import { exerciseImage } from '../../assets/config/exercise-image'
 
 interface ExercisesSearchProps {
@@ -27,6 +28,7 @@ interface ExercisesSearchProps {
   onReorderExercises?: (exercises: Exercise[]) => void
   // renderErrorImage: (exercise: Exercise) => void
   resultsMsg?: string
+  isInitialLoading?: boolean
 }
 
 export function ExercisesSearch({
@@ -39,6 +41,7 @@ export function ExercisesSearch({
   onAddExercise,
   // renderErrorImage,
   resultsMsg,
+  isInitialLoading = false,
 }: ExercisesSearchProps) {
   const { t } = useTranslation()
   const prefs = useSelector(
@@ -76,53 +79,70 @@ export function ExercisesSearch({
           resultsMsg={resultsMsg}
         />
 
-        <CustomList
-          items={results}
-          renderPrimaryText={(exercise) => capitalizeFirstLetter(exercise.name)}
-          renderSecondaryText={(exercise) => (
-            <span className={`${prefs.isDarkMode ? 'dark-mode' : ''}`}>
-              {capitalizeFirstLetter(exercise.muscleGroups.join(', '))}
-            </span>
-          )}
-          renderLeft={(exercise) => (
-            <img
-              src={exercise.image}
-              alt={exercise.name}
-              onError={(ev) => {
-                ev.currentTarget.src = exerciseImage.ERROR_IMAGE
-              }}
-              className={`exercise-image ${
-                isExerciseAdded(exercise) ? 'added' : ''
-              }`}
+        {isInitialLoading ? (
+          <div className='most-popular-exercises-loading'>
+            <CircularProgress
+              className={`${prefs.favoriteColor}`}
+              size={50}
             />
-          )}
-          itemClassName={`exercise-item exercise-item-grid ${
-            prefs.isDarkMode ? 'dark-mode' : ''
-          } ${prefs.favoriteColor} ${isDashboard ? 'dashboard' : ''}`}
-          getKey={(exercise) => exercise.exerciseId}
-          className={`exercise-list ${prefs.isDarkMode ? 'dark-mode' : ''} `}
-          renderRight={(exercise) => {
-            if (!onAddExercise || !workout) return null
+          </div>
+        ) : (
+          <CustomList
+            items={results}
+            renderPrimaryText={(exercise) =>
+              capitalizeFirstLetter(exercise.name)
+            }
+            renderSecondaryText={(exercise) => (
+              <span className={`${prefs.isDarkMode ? 'dark-mode' : ''}`}>
+                {capitalizeFirstLetter(exercise.muscleGroups.join(', '))}
+              </span>
+            )}
+            renderLeft={(exercise) => (
+              <img
+                src={exercise.image}
+                alt={exercise.name}
+                onError={(ev) => {
+                  ev.currentTarget.src = exerciseImage.ERROR_IMAGE
+                }}
+                className={`exercise-image ${
+                  isExerciseAdded(exercise) ? 'added' : ''
+                }`}
+              />
+            )}
+            itemClassName={`exercise-item exercise-item-grid ${
+              prefs.isDarkMode ? 'dark-mode' : ''
+            } ${prefs.favoriteColor} ${isDashboard ? 'dashboard' : ''}`}
+            getKey={(exercise) => exercise.exerciseId}
+            className={`exercise-list ${prefs.isDarkMode ? 'dark-mode' : ''} `}
+            renderRight={(exercise) => {
+              if (!onAddExercise || !workout) return null
 
-            return <CustomButton
-              icon={isExerciseAdded(exercise) ? <RemoveIcon /> : <AddIcon />}
-              onClick={(ev) => {
-                ev.stopPropagation()
-                onAddExercise?.(exercise)
-              }}
-              className={isExerciseAdded(exercise) ? 'red' : ''}
-            />}
-          }
-          noResultsMessage={t('exercise.noExercisesFound')}
-          onItemClick={(exercise) => onOpenModal(exercise)}
-        />
+              return (
+                <CustomButton
+                  icon={
+                    isExerciseAdded(exercise) ? <RemoveIcon /> : <AddIcon />
+                  }
+                  onClick={(ev) => {
+                    ev.stopPropagation()
+                    onAddExercise?.(exercise)
+                  }}
+                  className={isExerciseAdded(exercise) ? 'red' : ''}
+                />
+              )
+            }}
+            noResultsMessage={t('exercise.noExercisesFound')}
+            onItemClick={(exercise) => onOpenModal(exercise)}
+          />
+        )}
       </div>
       <SlideDialog
         open={openModal}
         onClose={onCloseModal}
         component={<ExerciseDetails exercise={exercise} />}
-        title={capitalizeFirstLetter(exercise?.name || t('exercise.exerciseDetails'))}
-        type="full"
+        title={capitalizeFirstLetter(
+          exercise?.name || t('exercise.exerciseDetails')
+        )}
+        type='full'
       />
     </>
   )

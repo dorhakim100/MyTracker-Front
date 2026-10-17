@@ -2,6 +2,14 @@
   width: 100%;
   position: relative;
 
+  .most-popular-exercises-loading {
+    margin-top: 2rem;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
   .exercise-list {
     position: relative;
     // top: calc(56px);
@@ -21,23 +29,20 @@
       grid-template-columns: 50px 1fr auto;
       gap: 1rem;
 
-
-         .exercise-image {
-      width: 50px;
-      height: 50px;
-      object-fit: cover;
-      border-radius: 50%;
-    }
-      &.dashboard{
-
-        span{
+      .exercise-image {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 50%;
+      }
+      &.dashboard {
+        span {
           font-size: 0.875rem;
         }
         grid-template-columns: 70px 1fr auto;
         .exercise-image {
           width: 70px;
           height: 70px;
-
         }
       }
       &:has(.added) {
@@ -69,8 +74,6 @@
         }
       }
     }
-
- 
   }
 
   .selected-exercise-list {

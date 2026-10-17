@@ -186,7 +186,7 @@
     "createWorkout": "צור אימון",
     "routines": "אימונים",
     "workouts": "אימונים",
-    "addNewRoutine": "הוספת אימון חדש",
+    "addNewRoutine": "אימון חדש",
     "myTrainees": "המתאמנים שלי",
     "startEmptyWorkout": "התחל אימון ריק",
     "noWorkoutsFound": "לא נמצאו אימונים",
@@ -227,7 +227,8 @@
     "workoutByDate": "אימון לפי תאריך",
     "noWorkoutSessionThisDay": "אין אימון מתוכנן ליום זה",
     "noWorkoutSessionThisDayHint": "התחל אימון מהרשימה למעלה כדי לתעד את היום.",
-    "exercises": "תרגילים"
+    "exercises": "תרגילים",
+    "statistics": "סטטיסטיקות"
   },
   "exercise": {
     "deleteSet": "מחיקת סט",

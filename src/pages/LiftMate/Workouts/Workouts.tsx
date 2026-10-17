@@ -78,7 +78,8 @@ import {
 } from '../../../types/workoutFilter/WorkoutFilter'
 import { RoutineDetails } from '../../../components/RoutineDetails/RoutineDetails'
 import { WorkoutDetails } from '../../../components/WorkoutDetails/WorkoutDetails'
-
+import ExploreIcon from '@mui/icons-material/Explore'
+import QueryStatsIcon from '@mui/icons-material/QueryStats'
 const EDIT = 'edit'
 const DETAILS = 'details'
 const ROUTINES = 'routines'
@@ -617,28 +618,9 @@ export function Workouts() {
 
         <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
 
-        {!isDashboard && (
-          <>
-            <div className='exercises-search-section'>
-              <span className='bold-header'>{t('workout.exercises')}</span>
-              <CustomButton
-                text={t('common.search')}
-                onClick={() =>
-                  setDialogOptions({ open: true, type: EXERCISES })
-                }
-                icon={<Search />}
-                fullWidth={true}
-              />
-            </div>
-            <Divider
-              className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-            />
-          </>
-        )}
-
         {renderPastRoutinesController()}
 
-        <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
+        {/* <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} /> */}
 
         {showPastListSkeleton ? (
           <div className='past-routines-skeleton'>
@@ -690,6 +672,33 @@ export function Workouts() {
           >
             {t('workout.noPastRoutinesFound')}
           </Typography>
+        )}
+
+        {!isDashboard && (
+          <>
+            {' '}
+            <Divider
+              className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+            />
+            <div className='action-buttons-section'>
+              <CustomButton
+                text={t('workout.statistics')}
+                onClick={() =>
+                  setDialogOptions({ open: true, type: EXERCISES })
+                }
+                icon={<QueryStatsIcon />}
+                fullWidth={true}
+              />
+              <CustomButton
+                text={t('workout.exercises')}
+                onClick={() =>
+                  setDialogOptions({ open: true, type: EXERCISES })
+                }
+                icon={<ExploreIcon />}
+                fullWidth={true}
+              />
+            </div>
+          </>
         )}
       </div>
     )

@@ -26,6 +26,7 @@ export function ExercisesExplorer() {
     workoutService.getEmptyExerciseFilter()
   )
   const [exerciseResults, setExerciseResults] = useState<Exercise[]>([])
+  const [isMostPopularLoading, setIsMostPopularLoading] = useState(true)
 
   const filteredExerciseResults = useMemo(() => {
     return filterExercises(exerciseFilter, exerciseResults)
@@ -44,6 +45,9 @@ export function ExercisesExplorer() {
       if (!exerciseFilter.searchValue) {
         const res = getMostPopularExercises()
         setExerciseResults(res)
+        setTimeout(() => {
+          setIsMostPopularLoading(false)
+        }, 600)
         return
       }
       setIsLoading(true)
@@ -54,6 +58,7 @@ export function ExercisesExplorer() {
       setExerciseResults([])
     } finally {
       setIsLoading(false)
+      // setIsMostPopularLoading(false)
     }
   }, [
     exerciseFilter.searchValue,
@@ -95,6 +100,7 @@ export function ExercisesExplorer() {
         placeholder={t('workout.searchForExercises')}
         className={`${prefs.favoriteColor}`}
         results={filteredExerciseResults}
+        isInitialLoading={isMostPopularLoading}
         resultsMsg={
           !exerciseFilter.searchValue
             ? t('workout.mostPopularExercises')

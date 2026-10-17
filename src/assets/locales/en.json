@@ -204,7 +204,7 @@
     "createWorkout": "Create Workout",
     "routines": "Routines",
     "workouts": "Workouts",
-    "addNewRoutine": "Add New Routine",
+    "addNewRoutine": "New Routine",
     "myTrainees": "My Trainees",
     "startEmptyWorkout": "Start Empty Workout",
     "noWorkoutsFound": "No workouts found",
@@ -245,7 +245,8 @@
     "searchForExercises": "Search for exercises",
     "exercises": "Exercises",
     "getStartedByAdding": "Get started by adding an exercise to your routine",
-    "untitledWorkout": "Untitled Workout"
+    "untitledWorkout": "Untitled Workout",
+    "statistics": "Statistics"
   },
   "timer": {
     "timeForNextSet": "Time for next set!",
