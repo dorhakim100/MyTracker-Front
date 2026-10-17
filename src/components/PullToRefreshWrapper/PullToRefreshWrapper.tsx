@@ -13,43 +13,53 @@ interface PullToRefreshProps {
   timeout?: number
 }
 
-export function PullToRefreshWrapper({ children, onRefresh, className }: PullToRefreshProps) {
+export function PullToRefreshWrapper({
+  children,
+  onRefresh,
+  className,
+}: PullToRefreshProps) {
+  const isDashboard = useSelector(
+    (state: RootState) => state.systemModule.isDashboard
+  )
 
-
-  const isDashboard = useSelector((state: RootState) => state.systemModule.isDashboard)
-
-  if(isDashboard)return <div className={`${className} ${isDashboard ? 'dashboard' : ''}`}>
-    {children}
-  </div>
+  if (isDashboard)
+    return (
+      <div className={`${className} ${isDashboard ? 'dashboard' : ''}`}>
+        {children}
+      </div>
+    )
 
   const handleRefresh = async () => {
-      try {
-        setIsLoading(true)
-        capacitorService.vibrate('Heavy')
+    try {
+      setIsLoading(true)
+      capacitorService.vibrate('Heavy')
 
-        await onRefresh?.()
-
-  
-
+      await onRefresh?.()
     } catch {
       throw new Error('Failed to refresh')
-
+    } finally {
+      setIsLoading(false)
     }
   }
 
-  return (<PullToRefresh onRefresh={handleRefresh} 
-  
-    pullingContent={<div />}
-    refreshingContent={<RefreshingContent  />}
-  
-  className={`${className}`}>
-    {children}
-  </PullToRefresh>
+  return (
+    <PullToRefresh
+      onRefresh={handleRefresh}
+      pullingContent={<div />}
+      refreshingContent={<RefreshingContent />}
+      className={`${className}`}
+    >
+      {children}
+    </PullToRefresh>
   )
 }
 
-function RefreshingContent(){
+function RefreshingContent() {
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
-  return <CircularProgress aria-label="Loading…" className={`pull-loader ${prefs.favoriteColor || ''}`} />
-
+  return (
+    <CircularProgress
+      aria-label='Loading…'
+      className={`pull-loader ${prefs.favoriteColor || ''}`}
+    />
+  )
 }
