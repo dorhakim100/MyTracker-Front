@@ -34,7 +34,7 @@ import {
   showSuccessMsg,
 } from '../../../services/event-bus.service'
 import { Avatar, CircularProgress, Divider, Typography } from '@mui/material'
-import { Add, Delete, Edit, Search } from '@mui/icons-material'
+import { Add, Delete, Edit } from '@mui/icons-material'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import { workoutService } from '../../../services/workout/workout.service'
 import { DAY_IN_MS } from '../../../assets/config/times'
