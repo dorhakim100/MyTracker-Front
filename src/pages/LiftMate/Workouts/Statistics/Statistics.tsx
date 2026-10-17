@@ -45,7 +45,7 @@ async function readWeekMode(userId: string): Promise<WeekMode> {
   try {
     const saved = await indexedDbService.get<{ _id: string; mode: WeekMode }>(
       STATISTICS_WEEK_MODE_STORE_NAME,
-      userId,
+      userId
     )
     if (saved?.mode === 'thisWeek' || saved?.mode === 'last7') return saved.mode
   } catch {
@@ -227,28 +227,37 @@ export function Statistics({ forUserId }: StatisticsProps) {
         </div>
       )}
 
-      <CustomList
-        className={`statistics-pages ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-        variant='card'
-        items={[{ id: 'muscle-distribution' }]}
-        getKey={(item) => item.id}
-        renderLeft={() => (
-          <img
-            className='page-row-image'
-            src='/muscles/all.webp'
-            alt=''
-          />
-        )}
-        renderPrimaryText={() => t('muscleDistribution')}
-        renderSecondaryText={() => t('muscleDistributionHint')}
-        renderRight={() => (
-          <ChevronRightIcon
-            className='page-chevron'
-            fontSize='small'
-          />
-        )}
-        onItemClick={() => setDistributionOpen(true)}
-      />
+      {loading ? (
+        <CustomSkeleton
+          height='76px'
+          width='100%'
+          variant='rounded'
+          isDarkMode={prefs.isDarkMode}
+        />
+      ) : (
+        <CustomList
+          className={`statistics-pages ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+          variant='card'
+          items={[{ id: 'muscle-distribution' }]}
+          getKey={(item) => item.id}
+          renderLeft={() => (
+            <img
+              className='page-row-image'
+              src='/muscles/all.webp'
+              alt=''
+            />
+          )}
+          renderPrimaryText={() => t('muscleDistribution')}
+          renderSecondaryText={() => t('muscleDistributionHint')}
+          renderRight={() => (
+            <ChevronRightIcon
+              className='page-chevron'
+              fontSize='small'
+            />
+          )}
+          onItemClick={() => setDistributionOpen(true)}
+        />
+      )}
 
       <SlideDialog
         open={distributionOpen}

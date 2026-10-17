@@ -122,14 +122,24 @@
 
   .custom-list-item {
     min-height: 76px;
-    border-radius: 14px;
+    border-radius: 8px;
     border: 1px solid color-mix(in srgb, var(--ink-on-canvas) 12%, transparent);
     background: color-mix(
       in srgb,
       var(--ink-on-canvas) 3%,
       var(--canvas-color)
     );
-    padding-block: 0.75rem;
+    padding: 0rem;
+
+    height: 100%;
+    .left-content {
+      height: 100%;
+      img {
+        border-top-left-radius: 0px;
+        border-bottom-left-radius: 0px;
+        height: 100%;
+      }
+    }
   }
 
   .right-content {

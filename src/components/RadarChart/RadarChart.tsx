@@ -8,7 +8,7 @@ import {
   RadarChart as RechartsRadar,
   ResponsiveContainer,
 } from 'recharts'
-import { BODY_PARTS, type BodyPartId } from '../../assets/config/body-parts'
+import { muscleColor } from '../../services/util.service'
 import { RootState } from '../../store/store'
 
 export interface RadarPoint {
@@ -25,28 +25,8 @@ interface RadarChartProps {
   reduceMotion?: boolean
 }
 
-const GROUP_BODY_PART: Record<string, BodyPartId> = {
-  chest: 'chest',
-  shoulders: 'shoulders',
-  back: 'lats',
-  biceps: 'biceps',
-  triceps: 'triceps',
-  abs: 'abs',
-  quads: 'legs',
-  hamstrings: 'legs',
-  glutes: 'legs',
-  calves: 'legs',
-}
-
 const START_ANGLE = 90
 const END_ANGLE = -270
-
-export function muscleColor(id: string, isDarkMode: boolean) {
-  const bodyPart = GROUP_BODY_PART[id]
-  if (!bodyPart) return 'var(--ink-on-canvas)'
-  const color = BODY_PARTS[bodyPart].color
-  return isDarkMode ? color.dark : color.light
-}
 
 function angleDiff(a: number, b: number) {
   const diff = Math.abs(a - b) % 360
@@ -155,12 +135,46 @@ export function RadarChart({
             stroke='var(--accent)'
             fill='var(--accent)'
             fillOpacity={0.28}
+            activeDot={false}
+            dot={(dotProps) => (
+              <SelectionDot
+                cx={dotProps.cx}
+                cy={dotProps.cy}
+                payload={dotProps.payload}
+                selectedId={selectedId}
+              />
+            )}
             isAnimationActive={!reduceMotion}
             animationDuration={280}
           />
         </RechartsRadar>
       </ResponsiveContainer>
     </div>
+  )
+}
+
+function SelectionDot({
+  cx,
+  cy,
+  payload,
+  selectedId,
+}: {
+  cx?: number
+  cy?: number
+  payload?: RadarPoint
+  selectedId: string | null
+}) {
+  if (cx == null || cy == null || payload?.id !== selectedId) return null
+
+  return (
+    <circle
+      cx={cx}
+      cy={cy}
+      r={5}
+      fill='var(--accent)'
+      stroke='var(--canvas-color)'
+      strokeWidth={2}
+    />
   )
 }
 

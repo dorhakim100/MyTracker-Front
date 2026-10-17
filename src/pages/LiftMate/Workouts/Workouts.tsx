@@ -25,6 +25,8 @@ import { Workout } from '../../../types/workout/Workout'
 import {
   capitalizeFirstLetter,
   getDateFromISO,
+  muscleChartId,
+  muscleColor,
 } from '../../../services/util.service'
 import { DeleteAction } from '../../../components/DeleteAction/DeleteAction'
 import {
@@ -88,6 +90,20 @@ const DETAILS = 'details'
 const ROUTINES = 'routines'
 const EXERCISES = 'exercises'
 const STATISTICS = 'statistics'
+
+function routineChartId(workout: Workout) {
+  const names = [
+    ...workout.muscleGroups,
+    ...workout.exercises.flatMap((exercise) => exercise.muscleGroups || []),
+  ]
+
+  for (const name of names) {
+    const id = muscleChartId(name)
+    if (id) return id
+  }
+
+  return null
+}
 
 type dialogType =
   | typeof EDIT
@@ -518,11 +534,7 @@ export function Workouts() {
       case EXERCISES:
         return <ExercisesExplorer />
       case STATISTICS:
-        return (
-          <Statistics
-            forUserId={traineeUser?._id || user?._id || ''}
-          />
-        )
+        return <Statistics forUserId={traineeUser?._id || user?._id || ''} />
       default:
         return <></>
     }
@@ -588,9 +600,7 @@ export function Workouts() {
           )}
           <CustomButton
             text={t('workout.statistics')}
-            onClick={() =>
-              setDialogOptions({ open: true, type: STATISTICS })
-            }
+            onClick={() => setDialogOptions({ open: true, type: STATISTICS })}
             icon={<QueryStatsIcon />}
             fullWidth={true}
             variant='thin'
@@ -657,11 +667,28 @@ export function Workouts() {
             className={`workouts-list inactive-list ${
               prefs.isDarkMode ? 'dark-mode' : ''
             }`}
-            renderLeft={(workout) => (
-              <Avatar className='workout-avatar'>
-                {workout.name.charAt(0)}
-              </Avatar>
-            )}
+            renderLeft={(workout) => {
+              const chartId = routineChartId(workout)
+              const fill = chartId
+                ? muscleColor(chartId, prefs.isDarkMode)
+                : undefined
+
+              return (
+                <Avatar
+                  className='workout-avatar'
+                  style={
+                    fill
+                      ? {
+                          backgroundColor: fill,
+                          color: 'var(--canvas-color)',
+                        }
+                      : undefined
+                  }
+                >
+                  {workout.name.charAt(0)}
+                </Avatar>
+              )
+            }}
             renderPrimaryText={(workout) => workout.name}
             renderSecondaryText={(workout) =>
               capitalizeFirstLetter(workout.muscleGroups.join(', '))

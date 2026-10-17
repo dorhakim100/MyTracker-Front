@@ -1,4 +1,5 @@
 import { apps } from '../assets/config/apps'
+import { BODY_PARTS } from '../assets/config/body-parts'
 import { Route } from '../assets/routes/routes'
 import { LineChartRangeKey } from '../components/LineChart/LineChartControls'
 import { App } from '../types/app/App'
@@ -511,4 +512,102 @@ export function getNextFromBoolean(locale: string, value: string): boolean {
     default:
       return value === 'Yes' ? true : false
   }
+}
+
+const CHART_COLORS: Record<string, { light: string; dark: string }> = {
+  chest: BODY_PARTS.chest.color,
+  shoulders: BODY_PARTS.shoulders.color,
+  rearDelts: BODY_PARTS.rearDelts.color,
+  back: BODY_PARTS.lats.color,
+  biceps: BODY_PARTS.biceps.color,
+  triceps: BODY_PARTS.triceps.color,
+  abs: BODY_PARTS.abs.color,
+  quads: BODY_PARTS.legs.color,
+  hamstrings: { light: '#3949ab', dark: '#9fa8da' },
+  glutes: { light: '#c51162', dark: '#ff80ab' },
+  calves: { light: '#827717', dark: '#dce775' },
+}
+
+const MUSCLE_TO_CHART: Record<string, string> = {
+  chest: 'chest',
+  pecs: 'chest',
+  pec: 'chest',
+  pectorals: 'chest',
+  pectoral: 'chest',
+  pectoralis: 'chest',
+  'upper chest': 'chest',
+  'lower chest': 'chest',
+  shoulders: 'shoulders',
+  shoulder: 'shoulders',
+  delts: 'shoulders',
+  delt: 'shoulders',
+  deltoids: 'shoulders',
+  deltoid: 'shoulders',
+  'anterior delts': 'shoulders',
+  'anterior delt': 'shoulders',
+  'front delts': 'shoulders',
+  'front delt': 'shoulders',
+  'lateral delts': 'shoulders',
+  'lateral delt': 'shoulders',
+  'side delts': 'shoulders',
+  'side delt': 'shoulders',
+  'rear delts': 'rearDelts',
+  'rear delt': 'rearDelts',
+  'rear deltoid': 'rearDelts',
+  'posterior delts': 'rearDelts',
+  'posterior delt': 'rearDelts',
+  'posterior deltoid': 'rearDelts',
+  reardelts: 'rearDelts',
+  back: 'back',
+  lats: 'back',
+  lat: 'back',
+  latissimus: 'back',
+  'latissimus dorsi': 'back',
+  'upper back': 'back',
+  'lower back': 'back',
+  traps: 'back',
+  trapezius: 'back',
+  rhomboids: 'back',
+  'erector spinae': 'back',
+  lumbar: 'back',
+  biceps: 'biceps',
+  bicep: 'biceps',
+  brachialis: 'biceps',
+  triceps: 'triceps',
+  tricep: 'triceps',
+  abs: 'abs',
+  abdominals: 'abs',
+  abdominal: 'abs',
+  core: 'abs',
+  obliques: 'abs',
+  oblique: 'abs',
+  serratus: 'abs',
+  'lower abs': 'abs',
+  quads: 'quads',
+  quad: 'quads',
+  quadriceps: 'quads',
+  hamstrings: 'hamstrings',
+  hamstring: 'hamstrings',
+  glutes: 'glutes',
+  glute: 'glutes',
+  gluteus: 'glutes',
+  butt: 'glutes',
+  calves: 'calves',
+  calf: 'calves',
+  gastrocnemius: 'calves',
+  soleus: 'calves',
+}
+
+export function muscleChartId(muscle: string) {
+  const trimmed = muscle.trim()
+  if (!trimmed) return null
+  if (CHART_COLORS[trimmed]) return trimmed
+  const key = trimmed.toLowerCase().replace(/-/g, ' ')
+  return MUSCLE_TO_CHART[key] ?? null
+}
+
+export function muscleColor(id: string, isDarkMode: boolean) {
+  const color = CHART_COLORS[id]
+  if (!color) return 'var(--ink-on-canvas)'
+  return isDarkMode ? color.dark : color.light
 }
