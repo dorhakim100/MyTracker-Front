@@ -43,7 +43,9 @@ function rangeLabel(
 
 function formatAmount(value: number) {
   const rounded = Math.round(value * 10) / 10
-  return Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(0)
+  return Number.isInteger(rounded)
+    ? String(rounded.toLocaleString('en-US'))
+    : String(Number(rounded.toFixed(0)).toLocaleString('en-US'))
 }
 
 function toExercise(row: DistributionExercise): Exercise {
@@ -76,8 +78,10 @@ export function MuscleDistribution({ forUserId }: MuscleDistributionProps) {
       setLoading(true)
       try {
         const next = await statsService.getDistribution(forUserId, timeframe)
+        console.log('next', next)
         if (!cancelled) setSummary(next)
-      } catch {
+      } catch (error) {
+        console.log('error', error)
         if (!cancelled) showErrorMsg(t('loadFailed'))
       } finally {
         if (!cancelled) setLoading(false)
@@ -177,7 +181,7 @@ export function MuscleDistribution({ forUserId }: MuscleDistributionProps) {
     {
       id: 'sets',
       label: t('sets'),
-      value: loading ? textSkeleton : String(slice?.sets ?? 0),
+      value: loading ? textSkeleton : formatAmount(slice?.sets ?? 0),
     },
   ]
 
