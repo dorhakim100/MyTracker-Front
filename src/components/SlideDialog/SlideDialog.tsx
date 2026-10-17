@@ -20,6 +20,7 @@ import {
   popSlideDialogZIndex,
   pushSlideDialogZIndex,
 } from './slide-dialog-layer'
+import { capitalizeFirstLetter } from '../../services/util.service'
 
 interface SlideDialogProps {
   open: boolean
@@ -643,7 +644,7 @@ export function SlideDialog({
               setIsMounted(false)
             }}
             component={component}
-            title={contentTitle ?? title}
+            title={capitalizeFirstLetter(contentTitle ?? title ?? '')}
             prefs={prefs}
             isLoading={isLoading}
             zIndex={zIndex}

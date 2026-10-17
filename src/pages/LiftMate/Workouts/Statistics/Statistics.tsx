@@ -36,9 +36,36 @@ interface StatisticsProps {
   forUserId: string
 }
 
+interface ExerciseWeekRecords {
+  exerciseId: string
+  name: string
+  image?: string
+  weight: number | null
+  volume: number | null
+}
+
 function formatAmount(value: number) {
   const rounded = Math.round(value * 10) / 10
   return Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(1)
+}
+
+function groupWeekRecords(records: WeekRecord[]): ExerciseWeekRecords[] {
+  const grouped: ExerciseWeekRecords[] = []
+  for (const record of records) {
+    let exercise = grouped.find((item) => item.exerciseId === record.exerciseId)
+    if (!exercise) {
+      exercise = {
+        exerciseId: record.exerciseId,
+        name: record.name,
+        image: record.image,
+        weight: null,
+        volume: null,
+      }
+      grouped.push(exercise)
+    }
+    exercise[record.type] = record.current
+  }
+  return grouped
 }
 
 async function readWeekMode(userId: string): Promise<WeekMode> {
@@ -73,7 +100,7 @@ export function Statistics({ forUserId }: StatisticsProps) {
   const [summary, setSummary] = useState<WeekSummary | null>(null)
   const [loading, setLoading] = useState(true)
   const [distributionOpen, setDistributionOpen] = useState(false)
-  const [record, setRecord] = useState<WeekRecord | null>(null)
+  const [record, setRecord] = useState<ExerciseWeekRecords | null>(null)
 
   console.log('summary', summary)
 
@@ -120,6 +147,11 @@ export function Statistics({ forUserId }: StatisticsProps) {
       ? Math.min(100, (summary.done / summary.target) * 100)
       : 0
   }, [summary])
+
+  const records = useMemo(
+    () => (summary ? groupWeekRecords(summary.records) : []),
+    [summary]
+  )
 
   const recordExercise: Exercise | null = record
     ? {
@@ -184,7 +216,7 @@ export function Statistics({ forUserId }: StatisticsProps) {
         />
       </div>
 
-      {summary && summary.records.length > 0 && (
+      {records.length > 0 && (
         <div className='week-records-container'>
           <Typography
             variant='h6'
@@ -195,9 +227,9 @@ export function Statistics({ forUserId }: StatisticsProps) {
 
           <div className='week-records'>
             <CustomList
-              items={summary.records}
+              items={records}
               className={`${prefs.isDarkMode ? 'dark-mode' : ''}`}
-              getKey={(item) => `${item.exerciseId}-${item.type}`}
+              getKey={(item) => item.exerciseId}
               renderLeft={(item) => (
                 <CachedImage
                   url={item.image || exerciseImage.ERROR_IMAGE}
@@ -209,10 +241,22 @@ export function Statistics({ forUserId }: StatisticsProps) {
               renderPrimaryText={(item) => capitalizeFirstLetter(item.name)}
               renderSecondaryText={(item) => (
                 <span className='record-secondary'>
-                  <PrBadge type={item.type} />
-                  {tDistribution('kg', {
-                    value: formatAmount(item.current),
-                  })}
+                  {item.weight != null && (
+                    <span className='record-metric'>
+                      <PrBadge type='weight' />
+                      {tDistribution('kg', {
+                        value: formatAmount(item.weight),
+                      })}
+                    </span>
+                  )}
+                  {item.volume != null && (
+                    <span className='record-metric'>
+                      <PrBadge type='volume' />
+                      {tDistribution('kg', {
+                        value: formatAmount(item.volume),
+                      })}
+                    </span>
+                  )}
                 </span>
               )}
               renderRight={() => (
