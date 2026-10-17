@@ -1,0 +1,58 @@
+.week-strip {
+  display: flex;
+  flex: 1;
+  justify-content: space-between;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+.week-day {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+  min-width: 0;
+  padding-bottom: 0.55rem;
+  color: var(--ink-on-canvas);
+  padding: 0.5rem;
+  min-height: 4.5rem;
+  border-radius: 0.3rem;
+  background-color: $light-gray;
+
+  &.dark-mode {
+    background-color: $very-dark-gray;
+  }
+
+  .letter {
+    font-size: 0.72rem;
+    opacity: 0.62;
+  }
+
+  .number {
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  .mark {
+    position: absolute;
+    bottom: 0.8rem;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  &.is-today {
+    color: var(--accent);
+
+    .letter {
+      opacity: 1;
+    }
+  }
+
+  &.is-future {
+    opacity: 0.38;
+  }
+}

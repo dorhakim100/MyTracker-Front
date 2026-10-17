@@ -81,16 +81,20 @@ import { WorkoutDetails } from '../../../components/WorkoutDetails/WorkoutDetail
 import ExploreIcon from '@mui/icons-material/Explore'
 import QueryStatsIcon from '@mui/icons-material/QueryStats'
 import ManageSearchIcon from '@mui/icons-material/ManageSearch'
+import { Statistics } from './Statistics/Statistics'
+import { statisticsNs } from './Statistics/locals'
 const EDIT = 'edit'
 const DETAILS = 'details'
 const ROUTINES = 'routines'
 const EXERCISES = 'exercises'
+const STATISTICS = 'statistics'
 
 type dialogType =
   | typeof EDIT
   | typeof DETAILS
   | typeof ROUTINES
   | typeof EXERCISES
+  | typeof STATISTICS
 
 interface dialogOptions {
   open: boolean
@@ -99,6 +103,7 @@ interface dialogOptions {
 
 export function Workouts() {
   const { t } = useTranslation()
+  const { t: tStatistics } = useTranslation(statisticsNs)
   const user = useSelector(
     (stateSelector: RootState) => stateSelector.userModule.user
   )
@@ -512,6 +517,12 @@ export function Workouts() {
         )
       case EXERCISES:
         return <ExercisesExplorer />
+      case STATISTICS:
+        return (
+          <Statistics
+            forUserId={traineeUser?._id || user?._id || ''}
+          />
+        )
       default:
         return <></>
     }
@@ -529,6 +540,8 @@ export function Workouts() {
         return t('workout.routines')
       case EXERCISES:
         return t('workout.exercises')
+      case STATISTICS:
+        return tStatistics('title')
 
       default:
         return t('workout.workouts')
@@ -575,7 +588,9 @@ export function Workouts() {
           )}
           <CustomButton
             text={t('workout.statistics')}
-            onClick={() => setDialogOptions({ open: true, type: EXERCISES })}
+            onClick={() =>
+              setDialogOptions({ open: true, type: STATISTICS })
+            }
             icon={<QueryStatsIcon />}
             fullWidth={true}
             variant='thin'

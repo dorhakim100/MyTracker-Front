@@ -148,32 +148,4 @@
     z-index: 1;
     font-size: 14px;
   }
-
-  .pr-badge {
-    font-size: 0.65rem;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.02em;
-    padding: 0.1rem 0.35rem;
-    border-radius: 4px;
-    background: $picker-color-yellow;
-
-    &.dark {
-      background: $picker-color-yellow-dark;
-    }
-
-    &.volume {
-      background: $picker-color-green;
-
-      &.dark {
-        background: $picker-color-green-dark;
-      }
-    }
-  }
-}
-
-html.dark-mode .session-stats-container {
-  .pr-badge {
-    color: #05090a;
-  }
 }

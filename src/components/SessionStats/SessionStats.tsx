@@ -21,6 +21,7 @@ import {
 } from '../ExerciseDetails/ExerciseDetails'
 import { CustomAnimatedText } from '../../CustomMui/CustomAnimatedText/CustomAnimatedText'
 import { RollingNumber } from '../RollingNumber/RollingNumber'
+import { PrBadge } from '../PrBadge/PrBadge'
 
 interface SessionStatsProps {
   recap: SessionStatsRecap | null
@@ -253,15 +254,11 @@ export function SessionStats({
                       const delay = prStep * 80
                       prStep += 1
                       return (
-                        <span
+                        <PrBadge
                           key={pr.type}
-                          className={`pr-badge ${pr.type} ${
-                            prefs.isDarkMode ? 'dark' : ''
-                          }`}
-                          style={{ animationDelay: `${delay}ms` }}
-                        >
-                          {pr.type === 'weight' ? t('weightPr') : t('volumePr')}
-                        </span>
+                          type={pr.type}
+                          animationDelayMs={delay}
+                        />
                       )
                     })}
                   </div>

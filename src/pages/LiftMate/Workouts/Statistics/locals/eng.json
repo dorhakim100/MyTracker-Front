@@ -1,0 +1,11 @@
+{
+  "title": "Statistics",
+  "period": "Period",
+  "thisWeek": "This week",
+  "last7": "Last 7 days",
+  "muscleDistribution": "Muscle distribution",
+  "muscleDistributionHint": "How your sets spread across muscle groups",
+  "loadFailed": "Could not load statistics",
+  "weekRecords": "Personal Records this week",
+  "doneRoutines": "Routines this week"
+}

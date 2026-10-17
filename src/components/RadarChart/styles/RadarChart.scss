@@ -1,0 +1,19 @@
+.radar-chart-container {
+  width: 100%;
+  height: 340px;
+  cursor: pointer;
+
+  * {
+    outline: none !important;
+  }
+
+  .radar-spoke {
+    cursor: pointer;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .radar-chart-container .recharts-wrapper {
+    transition: none;
+  }
+}

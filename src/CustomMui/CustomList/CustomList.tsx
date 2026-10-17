@@ -79,6 +79,7 @@ export interface CustomListProps<T> {
   isDefaultLoader?: boolean
   onLoadMore?: () => Promise<void>
   slideIncomingToTop?: boolean
+  variant?: 'card'
 }
 
 export function CustomList<T>({
@@ -103,6 +104,7 @@ export function CustomList<T>({
   dragOffsetY = 0,
   isDefaultLoader = false,
   slideIncomingToTop = false,
+  variant,
 }: // onDragStart,
 CustomListProps<T>) {
   const [reorderedItems, setReorderedItems] = useState<T[]>(items || [])
@@ -328,7 +330,11 @@ CustomListProps<T>) {
 
   if (isDefaultLoader && isLoading) {
     return (
-      <div className={`custom-list ${className ? className : ''}`}>
+      <div
+        className={`custom-list ${variant === 'card' ? 'card' : ''} ${
+          className ? className : ''
+        }`}
+      >
         <SkeletonList />
       </div>
     )
@@ -344,7 +350,9 @@ CustomListProps<T>) {
 
   return (
     <div
-      className={`custom-list ${className ? className : ''}`}
+      className={`custom-list ${variant === 'card' ? 'card' : ''} ${
+        className ? className : ''
+      }`}
       ref={listContainerRef}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}

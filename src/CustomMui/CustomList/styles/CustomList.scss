@@ -106,6 +106,39 @@
   }
 }
 
+.custom-list.card {
+  background-color: transparent;
+  padding: 0;
+  height: fit-content;
+  .MuiList-root {
+    padding: 0;
+  }
+
+  .MuiList-root > div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+
+  .custom-list-item {
+    min-height: 76px;
+    border-radius: 14px;
+    border: 1px solid color-mix(in srgb, var(--ink-on-canvas) 12%, transparent);
+    background: color-mix(
+      in srgb,
+      var(--ink-on-canvas) 3%,
+      var(--canvas-color)
+    );
+    padding-block: 0.75rem;
+  }
+
+  .right-content {
+    padding: 0;
+    display: flex;
+    align-items: center;
+  }
+}
+
 .item-image {
   width: 40px;
   height: 40px;

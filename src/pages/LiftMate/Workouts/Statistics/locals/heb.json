@@ -1,0 +1,11 @@
+{
+  "title": "סטטיסטיקה",
+  "period": "תקופה",
+  "thisWeek": "השבוע",
+  "last7": "7 ימים אחרונים",
+  "muscleDistribution": "התפלגות שרירים",
+  "muscleDistributionHint": "איך הסטים מתחלקים בין קבוצות השרירים",
+  "loadFailed": "לא הצלחנו לטעון את הסטטיסטיקה",
+  "weekRecords": "שיאים השבוע",
+  "doneRoutines": "אימונים השבוע"
+}

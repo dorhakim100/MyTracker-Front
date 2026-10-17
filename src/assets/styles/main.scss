@@ -118,6 +118,11 @@
 
 @import '../../pages/LiftMate/EditWorkout/styles/EditWorkout.scss';
 @import '../../pages/LiftMate/Workouts/styles/Workouts.scss';
+@import '../../pages/LiftMate/Workouts/Statistics/styles/Statistics.scss';
+@import '../../pages/LiftMate/Workouts/Statistics/WeekStrip/styles/WeekStrip.scss';
+@import '../../pages/LiftMate/Workouts/Statistics/MuscleDistribution/styles/MuscleDistribution.scss';
+@import '../../pages/LiftMate/Workouts/Statistics/MuscleDistribution/StatCards/styles/StatCards.scss';
+@import '../../components/RadarChart/styles/RadarChart.scss';
 @import '../../pages/LiftMate/Workouts/ExercisesExplorer/styles/ExercisesExplorer.scss';
 @import '../../pages/LiftMate/Workouts/styles/WorkoutCard.scss';
 @import '../../pages/LiftMate/Workouts/styles/WorkoutsList.scss';
@@ -154,6 +159,7 @@
 @import '../../CustomMui/CustomInput/styles/CustomInput.scss';
 @import '../../CustomMui/CustomList/styles/CustomList.scss';
 @import '../../components/BodyPartBadge/styles/BodyPartBadge.scss';
+@import '../../components/PrBadge/styles/PrBadge.scss';
 @import '../../CustomMui/CustomBasicList/styles/CustomBasicList.scss';
 @import '../../CustomMui/CustomSelect/styles/CustomSelect.scss';
 @import '../../CustomMui/CustomLinearProgress/styles/CustomLinearProgress.scss';
