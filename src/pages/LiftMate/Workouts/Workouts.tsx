@@ -80,6 +80,7 @@ import { RoutineDetails } from '../../../components/RoutineDetails/RoutineDetail
 import { WorkoutDetails } from '../../../components/WorkoutDetails/WorkoutDetails'
 import ExploreIcon from '@mui/icons-material/Explore'
 import QueryStatsIcon from '@mui/icons-material/QueryStats'
+import ManageSearchIcon from '@mui/icons-material/ManageSearch'
 const EDIT = 'edit'
 const DETAILS = 'details'
 const ROUTINES = 'routines'
@@ -568,9 +569,18 @@ export function Workouts() {
 
     return (
       <div className='workouts-lists-container'>
-        {showActiveHeader && (
-          <span className='bold-header'>{t('workout.activeRoutines')}</span>
-        )}
+        <div className='active-routines-container'>
+          {showActiveHeader && (
+            <span className='bold-header'>{t('workout.activeRoutines')}</span>
+          )}
+          <CustomButton
+            text={t('workout.statistics')}
+            onClick={() => setDialogOptions({ open: true, type: EXERCISES })}
+            icon={<QueryStatsIcon />}
+            fullWidth={true}
+            variant='thin'
+          />
+        </div>
 
         {areWorkoutsLoading ? (
           <div
@@ -682,19 +692,19 @@ export function Workouts() {
             />
             <div className='action-buttons-section'>
               <CustomButton
-                text={t('workout.statistics')}
-                onClick={() =>
-                  setDialogOptions({ open: true, type: EXERCISES })
-                }
-                icon={<QueryStatsIcon />}
-                fullWidth={true}
-              />
-              <CustomButton
                 text={t('workout.exercises')}
                 onClick={() =>
                   setDialogOptions({ open: true, type: EXERCISES })
                 }
                 icon={<ExploreIcon />}
+                fullWidth={true}
+              />
+              <CustomButton
+                text={t('workout.routines')}
+                onClick={() =>
+                  setDialogOptions({ open: true, type: EXERCISES })
+                }
+                icon={<ManageSearchIcon />}
                 fullWidth={true}
               />
             </div>

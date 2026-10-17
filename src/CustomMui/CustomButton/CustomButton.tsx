@@ -7,7 +7,12 @@ import { ClickAnimation } from '../../components/ClickAnimation/ClickAnimation'
 
 import { capacitorService } from '../../services/capacitor.service'
 
-export type CustomButtonVariant = 'subtle' | 'medium' | 'strong' | 'flat'
+export type CustomButtonVariant =
+  | 'subtle'
+  | 'medium'
+  | 'strong'
+  | 'flat'
+  | 'thin'
 
 interface CustomButtonProps {
   text?: string

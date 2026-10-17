@@ -57,6 +57,17 @@
     }
   }
 
+  &.MuiButton-root.variant-thin {
+    height: 2rem !important;
+    padding: 8px 10px !important;
+    gap: 0.35rem !important;
+
+    svg {
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+  }
+
   &.MuiIconButton-root:not(.variant-flat) {
     color: var(--accent) !important;
     border-radius: 50%;
