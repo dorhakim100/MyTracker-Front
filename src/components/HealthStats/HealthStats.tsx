@@ -67,6 +67,8 @@ export function HealthStats({
 
     const targetGoal = user?.currGoal.target
 
+    console.log('targetGoal', targetGoal)
+
     let diff = 0
 
     switch (targetGoal) {
@@ -112,7 +114,7 @@ export function HealthStats({
         </div>
       </FillProgress>
       <FillProgress
-        value={caloriesGoal}
+        value={(burnedCalories / caloriesGoal) * 100}
         className={`calories-fill`}
         position='bottom'
         display={!healthLoading}
