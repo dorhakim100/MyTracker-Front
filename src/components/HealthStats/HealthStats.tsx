@@ -67,8 +67,6 @@ export function HealthStats({
 
     const targetGoal = user?.currGoal.target
 
-    console.log('targetGoal', targetGoal)
-
     let diff = 0
 
     switch (targetGoal) {
