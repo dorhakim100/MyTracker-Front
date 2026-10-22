@@ -8,6 +8,8 @@ import { useCrossedGoal } from '../../hooks/useCrossedGoal'
 // import { GoalBanner } from '../GoalBanner/GoalBanner'
 import { useTranslation } from 'react-i18next'
 import { useEffect, useState } from 'react'
+import { CircularProgress as MuiCircularProgress } from '@mui/material'
+import CustomSkeleton from '../../CustomMui/CustomSkeleton/CustomSkeleton'
 
 interface CircularProgressProps {
   value: number
@@ -15,6 +17,7 @@ interface CircularProgressProps {
   color?: string
   afterText?: string
   isTextValue?: boolean
+  isLoading?: boolean
 }
 
 const colorMap: Record<string, string> = {
@@ -35,6 +38,7 @@ export function CircularProgress({
   color,
   afterText,
   isTextValue = true,
+  isLoading = false,
 }: CircularProgressProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -81,22 +85,41 @@ export function CircularProgress({
           // },
         })}
       />
-      <span
-        className='circular-progress-value'
-        style={{ color: textColor }}
-      >
-        <RollingNumber value={Number(textValue) || 0} />
-      </span>
-      {afterText && (
-        // <GoalBanner
-        // current={separateThousands(+afterText)}
+      {isLoading ? (
+        <div className='loading-container'>
+          <CustomSkeleton
+            width={40}
+            height={100}
+            variant='text'
+            isDarkMode={prefs.isDarkMode}
+          />
+          <CustomSkeleton
+            width={60}
+            height={30}
+            variant='text'
+            isDarkMode={prefs.isDarkMode}
+          />
+        </div>
+      ) : (
+        <>
+          <span
+            className='circular-progress-value'
+            style={{ color: textColor }}
+          >
+            <RollingNumber value={Number(textValue) || 0} />
+          </span>
+          {afterText && (
+            // <GoalBanner
+            // current={separateThousands(+afterText)}
 
-        // extraValue=''
-        // isGoal={false}
-        // />
-        <span className='after-text bold-header'>
-          {t('macros.outOf')} {formatNumberWithCommas(+afterText)}
-        </span>
+            // extraValue=''
+            // isGoal={false}
+            // />
+            <span className='after-text bold-header'>
+              {t('macros.outOf')} {formatNumberWithCommas(+afterText)}
+            </span>
+          )}
+        </>
       )}
     </div>
   )
