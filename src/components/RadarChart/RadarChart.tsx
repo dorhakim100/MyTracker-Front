@@ -37,7 +37,7 @@ function groupIndexAt(
   clientX: number,
   clientY: number,
   svg: SVGSVGElement,
-  count: number,
+  count: number
 ) {
   const rect = svg.getBoundingClientRect()
   const dx = clientX - (rect.left + rect.width / 2)
@@ -67,7 +67,7 @@ export function RadarChart({
   reduceMotion = false,
 }: RadarChartProps) {
   const isDarkMode = useSelector(
-    (state: RootState) => state.systemModule.prefs.isDarkMode,
+    (state: RootState) => state.systemModule.prefs.isDarkMode
   )
   const max = useMemo(() => {
     const values = points.flatMap((point) => [point.value, point.previous ?? 0])
@@ -76,8 +76,14 @@ export function RadarChart({
 
   const showPrevious = points.some((point) => point.previous != null)
 
+  function onChartMouseDown(event: MouseEvent<HTMLDivElement>) {
+    // Recharts focuses the surface and angle ticks on click and draws a box.
+    event.preventDefault()
+  }
+
   function onAreaClick(event: MouseEvent<HTMLDivElement>) {
     if (!points.length) return
+    event.preventDefault()
     const svg = event.currentTarget.querySelector('svg')
     if (!(svg instanceof SVGSVGElement)) return
     const index = groupIndexAt(event.clientX, event.clientY, svg, points.length)
@@ -88,6 +94,7 @@ export function RadarChart({
   return (
     <div
       className='radar-chart-container'
+      onMouseDown={onChartMouseDown}
       onClick={onAreaClick}
     >
       <ResponsiveContainer
@@ -95,6 +102,7 @@ export function RadarChart({
         height={340}
       >
         <RechartsRadar
+          accessibilityLayer={false}
           data={points}
           cx='50%'
           cy='50%'
@@ -126,6 +134,7 @@ export function RadarChart({
               stroke='color-mix(in srgb, var(--ink-on-canvas) 45%, transparent)'
               fill='color-mix(in srgb, var(--ink-on-canvas) 12%, transparent)'
               fillOpacity={1}
+              activeDot={false}
               isAnimationActive={!reduceMotion}
               animationDuration={280}
             />

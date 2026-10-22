@@ -8,7 +8,6 @@ import { useCrossedGoal } from '../../hooks/useCrossedGoal'
 // import { GoalBanner } from '../GoalBanner/GoalBanner'
 import { useTranslation } from 'react-i18next'
 import { useEffect, useState } from 'react'
-import { CircularProgress as MuiCircularProgress } from '@mui/material'
 import CustomSkeleton from '../../CustomMui/CustomSkeleton/CustomSkeleton'
 
 interface CircularProgressProps {
