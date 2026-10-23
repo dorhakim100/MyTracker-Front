@@ -4,8 +4,6 @@ import { CustomSelect } from '../../CustomMui/CustomSelect/CustomSelect'
 import { equipmentsValues } from '../../assets/config/equipments'
 import { RootState } from '../../store/store'
 import { ExerciseFilter } from '../../types/exerciseFilter/ExerciseFilter'
-import { Barbell } from '../Icons/Barbell'
-import { Dumbbell } from '../Icons/Dumbbell'
 import WidgetsIcon from '@mui/icons-material/Widgets'
 
 interface EquipmentSelectProps {
@@ -15,8 +13,8 @@ interface EquipmentSelectProps {
 
 const equipmentsImgs = [
   { value: 'All', icon: <WidgetsIcon /> },
-  { value: 'Barbell', icon: <Barbell /> },
-  { value: 'Dumbbell', icon: <Dumbbell /> },
+  { value: 'Barbell', src: '/equipments/barbell.webp' },
+  { value: 'Dumbbell', src: '/equipments/dumbbell.webp' },
   { value: 'Machine', src: '/equipments/machine.webp' },
   { value: 'Bodyweight', src: '/equipments/body-weight.webp' },
   { value: 'Cable', src: '/equipments/cable.webp' },
