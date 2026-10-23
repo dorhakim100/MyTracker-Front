@@ -240,10 +240,12 @@ export function Statistics({ forUserId }: StatisticsProps) {
           renderPrimaryText={() => t('muscleDistribution')}
           renderSecondaryText={() => t('muscleDistributionHint')}
           renderRight={() => (
-            <ChevronRightIcon
-              className='page-chevron'
-              fontSize='small'
-            />
+            <div className='chevron-container'>
+              <ChevronRightIcon
+                className='page-chevron'
+                fontSize='small'
+              />
+            </div>
           )}
           onItemClick={() => setDistributionOpen(true)}
         />

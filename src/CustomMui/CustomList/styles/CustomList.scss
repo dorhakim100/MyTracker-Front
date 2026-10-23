@@ -114,6 +114,10 @@
     padding: 0;
   }
 
+  .MuiListItemText-root {
+    align-self: stretch;
+  }
+
   .MuiList-root > div {
     display: flex;
     flex-direction: column;

@@ -48,10 +48,19 @@ function getListText(content: React.ReactNode): string | null {
   return null
 }
 
-function asListMarquee(content: React.ReactNode) {
+function asListMarquee(
+  content: React.ReactNode,
+  variant?: 'card',
+  type?: 'primary' | 'secondary'
+) {
   if (content == null || typeof content === 'boolean') return undefined
   const text = getListText(content)
-  if (text !== null) return <MarqueeText>{text}</MarqueeText>
+  if (text !== null && variant !== 'card')
+    return <MarqueeText>{text}</MarqueeText>
+
+  if (variant === 'card' && type === 'primary') {
+    return <span className='primary-text bold-header'>{text}</span>
+  }
   return content
 }
 
@@ -275,10 +284,14 @@ CustomListProps<T>) {
         ) : null}
         <ListItemText
           primary={asListMarquee(
-            renderPrimaryText ? renderPrimaryText(item) : undefined
+            renderPrimaryText ? renderPrimaryText(item) : undefined,
+            variant,
+            'primary'
           )}
           secondary={asListMarquee(
-            renderSecondaryText ? renderSecondaryText(item) : undefined
+            renderSecondaryText ? renderSecondaryText(item) : undefined,
+            variant,
+            'secondary'
           )}
         />
         {renderRight ? (
