@@ -65,6 +65,8 @@ export function EditWorkout({
   )
 
   const [weeksStatus, setWeeksStatus] = useState<WeekNumberStatus[]>([])
+  const [isLoading, setLoading] = useState(Boolean(selectedWorkout?._id))
+  const didResolveWeek = useRef(!selectedWorkout?._id)
   const [instructionsFilter, setInstructionsFilter] = useState({
     weekNumber: 1,
     forUserId: traineeUser?._id || user?._id || '',
@@ -120,15 +122,32 @@ export function EditWorkout({
       if (!workout._id || (!user?._id && !traineeUser?._id)) return
 
       setIsLoading(true)
-      const instructions =
+      const requestedWeek = instructionsFilter.weekNumber
+      if (!didResolveWeek.current || instructions.weekNumber !== requestedWeek) {
+        setLoading(true)
+      }
+      const loadedInstructions =
         await instructionsService.getByWorkoutId(instructionsFilter)
 
       const statuses = await instructionsService.getWeekNumberDone(workout._id)
 
       setWeeksStatus(statuses)
-      setInstructions(instructions)
+      setInstructions(loadedInstructions)
+
+      const latestWeekNumber = statuses[statuses.length - 1]?.weekNumber || 1
+      const waitingForWeek =
+        !didResolveWeek.current &&
+        statuses.length > 0 &&
+        requestedWeek !== latestWeekNumber
+
+      if (!waitingForWeek) {
+        didResolveWeek.current = true
+        setLoading(false)
+      }
     } catch {
       showErrorMsg(t('messages.error.getWorkoutInstructions'))
+      didResolveWeek.current = true
+      setLoading(false)
     } finally {
       setIsLoading(false)
     }
@@ -429,6 +448,7 @@ export function EditWorkout({
         onSwitchRpeRir={onSwitchRpeRir}
         onChangeExercise={onChangeExercise}
         onSaveWorkout={(isClose?: boolean) => onFinish(isClose)}
+        isLoading={isLoading}
       />
     </div>
   )

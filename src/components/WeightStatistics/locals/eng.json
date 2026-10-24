@@ -1,4 +1,7 @@
 {
   "empty": "No days logged yet",
-  "loadError": "Could not load your days."
+  "loadError": "Could not load your days.",
+  "show": "Show",
+  "logged": "Logged Only",
+  "allDays": "All days"
 }

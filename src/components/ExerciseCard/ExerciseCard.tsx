@@ -87,6 +87,7 @@ interface ExerciseCardProps {
     oldExercise: Exercise,
     newExercise: Exercise
   ) => Promise<void> | void
+  isLoading?: boolean
 }
 
 export function ExerciseCard({
@@ -109,12 +110,14 @@ export function ExerciseCard({
   isOpen = true,
   onOpenChange,
   onChangeExercise,
+  isLoading = false,
 }: ExerciseCardProps) {
   const { t } = useTranslation()
   const { t: tChat } = useTranslation(exerciseChatNs)
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
+
   const { traineeUser, user } = useSelector(
     (stateSelector: RootState) => stateSelector.userModule
   )
@@ -657,59 +660,65 @@ export function ExerciseCard({
               )}
             </div>
 
-            {exerciseInstructions && exerciseInstructions.sets && (
-              <ExerciseEditor
-                // isInstructionsLoadingProp={isInstructionsLoading}
-                isInstructionsLoadingProp={
-                  instructions._id ? isInstructionsLoading : false
-                }
-                exerciseSets={exerciseSets}
-                previousInstructions={previousInstructions}
-                exercise={exerciseInstructions}
-                isOpen={isOpen}
-                updateExercise={
-                  isExpected
-                    ? updateExerciseInInstructions
-                    : (exerciseToUpdate, setIndex) =>
-                        updateExercise?.(
-                          {
-                            ...exerciseToUpdate,
-                            image: exercise.image,
-                          },
-                          setIndex
-                        )
-                }
-                addSet={
-                  isExpected
-                    ? undefined
-                    : (exerciseToUpdate, setIndex) =>
-                        addSet?.(
-                          { ...exerciseToUpdate, image: exercise.image },
-                          setIndex
-                        )
-                }
-                removeSet={
-                  isExpected
-                    ? undefined
-                    : (exerciseToUpdate, setIndex) =>
-                        removeSet?.(
-                          { ...exerciseToUpdate, image: exercise.image },
-                          setIndex
-                        )
-                }
-                markSetAsDone={
-                  isExpected
-                    ? undefined
-                    : (exerciseToUpdate, setIndex, isAll?: boolean) =>
-                        markSetAsDone?.(
-                          { ...exerciseToUpdate, image: exercise.image },
-                          setIndex,
-                          isAll
-                        )
-                }
-                isExpected={isExpected}
-              />
-            )}
+            {exerciseInstructions &&
+              exerciseInstructions.sets &&
+              instructions._id && (
+                <ExerciseEditor
+                  // isInstructionsLoadingProp={isInstructionsLoading}
+                  isLoading={isLoading}
+                  isInstructionsLoadingProp={
+                    instructions._id ? isInstructionsLoading : false
+                  }
+                  isFirstWeek={
+                    instructions._id ? instructions.weekNumber === 1 : true
+                  }
+                  exerciseSets={exerciseSets}
+                  previousInstructions={previousInstructions}
+                  exercise={exerciseInstructions}
+                  isOpen={isOpen}
+                  updateExercise={
+                    isExpected
+                      ? updateExerciseInInstructions
+                      : (exerciseToUpdate, setIndex) =>
+                          updateExercise?.(
+                            {
+                              ...exerciseToUpdate,
+                              image: exercise.image,
+                            },
+                            setIndex
+                          )
+                  }
+                  addSet={
+                    isExpected
+                      ? undefined
+                      : (exerciseToUpdate, setIndex) =>
+                          addSet?.(
+                            { ...exerciseToUpdate, image: exercise.image },
+                            setIndex
+                          )
+                  }
+                  removeSet={
+                    isExpected
+                      ? undefined
+                      : (exerciseToUpdate, setIndex) =>
+                          removeSet?.(
+                            { ...exerciseToUpdate, image: exercise.image },
+                            setIndex
+                          )
+                  }
+                  markSetAsDone={
+                    isExpected
+                      ? undefined
+                      : (exerciseToUpdate, setIndex, isAll?: boolean) =>
+                          markSetAsDone?.(
+                            { ...exerciseToUpdate, image: exercise.image },
+                            setIndex,
+                            isAll
+                          )
+                  }
+                  isExpected={isExpected}
+                />
+              )}
           </Card>
         </FillProgress>
       </AnimatedWrapper>

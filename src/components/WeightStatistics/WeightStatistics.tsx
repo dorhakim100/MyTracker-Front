@@ -13,13 +13,15 @@ import { User } from '../../types/user/User'
 import { WeightChart } from '../WeightChart/WeightChart'
 import { BottomReachIndicator } from '../BottomReachIndicator/BottomReachIndicator'
 import CustomSkeleton from '../../CustomMui/CustomSkeleton/CustomSkeleton'
-import { useWeightDays } from '../../hooks/useWeightDays'
+import { useWeightDays, WeightDaysMode } from '../../hooks/useWeightDays'
+import { CustomSelect } from '../../CustomMui/CustomSelect/CustomSelect'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { WeightDetails } from './WeightDetails/WeightDetails'
 import { weightStatisticsNs } from './locals'
 import './locals'
 
 const DASH = '-'
+const DAY_MODES: WeightDaysMode[] = ['logged', 'all']
 
 function formatDay(createdAt: number) {
   return new Date(createdAt).toLocaleDateString('he')
@@ -31,6 +33,7 @@ export function WeightStatistics({ user }: { user: User }) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
+  const [mode, setMode] = useState<WeightDaysMode>('logged')
   const {
     days,
     isLoading,
@@ -38,7 +41,7 @@ export function WeightStatistics({ user }: { user: User }) {
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
-  } = useWeightDays(user._id)
+  } = useWeightDays(user._id, mode)
   const [openDate, setOpenDate] = useState<string | null>(null)
   const openDay = days.find((day) => day.date === openDate)
 
@@ -46,12 +49,28 @@ export function WeightStatistics({ user }: { user: User }) {
     <div className='weight-statistics-container'>
       <WeightChart sentUser={user} />
 
-      <Typography
-        variant='h5'
-        className='days-title bold-header'
-      >
-        {t('weight.weightHistory')}
-      </Typography>
+      <div className='days-header-row'>
+        <Typography
+          variant='h5'
+          className='days-title bold-header'
+        >
+          {t('weight.weightHistory')}
+        </Typography>
+        <CustomSelect
+          label={tStats('show')}
+          values={DAY_MODES}
+          value={mode}
+          valueLabels={{
+            logged: tStats('logged'),
+            all: tStats('allDays'),
+          }}
+          onChange={(value) => {
+            if (value === 'logged' || value === 'all') setMode(value)
+          }}
+          width={148}
+          className={prefs.favoriteColor}
+        />
+      </div>
 
       {isLoading ? (
         <div className='days-loading'>
@@ -102,7 +121,9 @@ export function WeightStatistics({ user }: { user: User }) {
                     variant='body2'
                     className='day-value'
                   >
-                    {formatDay(day.weight.createdAt)}
+                    {day.weight
+                      ? formatDay(day.weight.createdAt)
+                      : formatDay(dayStartMs(day.date))}
                   </Typography>
                 </TableCell>
                 <TableCell align='center'>
@@ -110,9 +131,9 @@ export function WeightStatistics({ user }: { user: User }) {
                     variant='body2'
                     className='day-value'
                   >
-                    {typeof day.weight.kg === 'number' ? (
+                    {typeof day.weight?.kg === 'number' ? (
                       <>
-                        {day.weight.kg}
+                        {day.weight?.kg}
                         <span className='day-unit'>{t('weight.kg')}</span>
                       </>
                     ) : (
@@ -125,9 +146,9 @@ export function WeightStatistics({ user }: { user: User }) {
                     variant='body2'
                     className='day-value'
                   >
-                    {typeof day.weight.bodyFat === 'number' ? (
+                    {typeof day.weight?.bodyFat === 'number' ? (
                       <>
-                        {day.weight.bodyFat}
+                        {day.weight?.bodyFat}
                         <span className='day-unit'>%</span>
                       </>
                     ) : (

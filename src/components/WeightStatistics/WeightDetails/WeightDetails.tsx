@@ -215,8 +215,8 @@ export function WeightDetails({
     const current = record?.[field.key]
     if (typeof current === 'number') return current
     if (field.key !== 'kg') return field.emptyStart
-    const fromDays = days.find((day) => typeof day.weight.kg === 'number')
-    if (typeof fromDays?.weight.kg === 'number') return fromDays.weight.kg
+    const fromDays = days.find((day) => typeof day.weight?.kg === 'number')
+    if (typeof fromDays?.weight?.kg === 'number') return fromDays.weight.kg
     if (typeof user.lastWeight?.kg === 'number') return user.lastWeight.kg
     return field.emptyStart
   }

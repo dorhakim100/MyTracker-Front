@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../../../store/store'
 import { CustomInput } from '../../../CustomMui/CustomInput/CustomInput'
 import { Workout } from '../../../types/workout/Workout'
-import { Divider, Typography } from '@mui/material'
+import { CircularProgress, Divider, Typography } from '@mui/material'
 import { CustomButton } from '../../../CustomMui/CustomButton/CustomButton'
 import { Dumbbell } from '../../../components/Icons/Dumbbell'
 import AddIcon from '@mui/icons-material/Add'
@@ -62,6 +62,7 @@ interface NameExercisesProps {
   onSaveWorkout: (isClose?: boolean) => void
   onSwitchRpeRir: (exerciseId: string, value: 'rpe' | 'rir') => void
   onChangeExercise: (oldExercise: Exercise, newExercise: Exercise) => void
+  isLoading?: boolean
 }
 
 export function NameExercises({
@@ -82,6 +83,7 @@ export function NameExercises({
   onSaveWorkout,
   onSwitchRpeRir,
   onChangeExercise,
+  isLoading = false,
 }: NameExercisesProps) {
   const { t } = useTranslation()
   const prefs = useSelector(
@@ -210,6 +212,15 @@ export function NameExercises({
   }
 
   const renderExercises = () => {
+    if (isLoading) {
+      return (
+        <CircularProgress
+          size={50}
+          className={`${prefs.favoriteColor} loading-spinner`}
+          sx={{ margin: '0 auto', marginTop: '20px' }}
+        />
+      )
+    }
     return workout.exercises.map((exercise) => {
       return (
         <ExerciseCard
@@ -229,6 +240,7 @@ export function NameExercises({
           )}
           isExpected={true}
           onChangeExercise={onChangeExercise}
+          isLoading={isLoading}
         />
       )
     })
@@ -315,7 +327,9 @@ export function NameExercises({
         ref={editWorkoutRef}
       >
         <div
-          className={`settings-controls-container ${prefs.isDarkMode ? 'dark-mode' : ''} ${isDashboard ? 'dashboard' : ''} ${isNative ? 'native' : ''}`}
+          className={`settings-controls-container ${
+            prefs.isDarkMode ? 'dark-mode' : ''
+          } ${isDashboard ? 'dashboard' : ''} ${isNative ? 'native' : ''}`}
         >
           <CustomInput
             value={workout.name}
@@ -349,27 +363,27 @@ export function NameExercises({
                   return getIsWeekNumberDisabled(+weekNumber)
                 },
               }))}
-                isBadge={true}
-                isReversedIcon={true}
-                className={`week-number-toggle ${
-                  prefs.isDarkMode ? 'dark-mode' : ''
-                }`}
-              />
+              isBadge={true}
+              isReversedIcon={true}
+              className={`week-number-toggle ${
+                prefs.isDarkMode ? 'dark-mode' : ''
+              }`}
+            />
           )}
-           
-            <div className='times-per-week-container'>
-              <span className='bold-header'>{t('workout.timesPerWeek')}</span>
-              <CustomSelect
-                label={t('workout.times')}
-                values={getArrayOfNumbers(1, 7).map(
-                  (timesNumber) => timesNumber + ''
-                )}
-                value={instructions.timesPerWeek + ''}
-                onChange={(times: string) => onEditTimes(times)}
-                className={`${prefs.favoriteColor}`}
-              />
-            </div>
-          
+
+          <div className='times-per-week-container'>
+            <span className='bold-header'>{t('workout.timesPerWeek')}</span>
+            <CustomSelect
+              label={t('workout.times')}
+              values={getArrayOfNumbers(1, 7).map(
+                (timesNumber) => timesNumber + ''
+              )}
+              value={instructions.timesPerWeek + ''}
+              onChange={(times: string) => onEditTimes(times)}
+              className={`${prefs.favoriteColor}`}
+            />
+          </div>
+
           <Divider
             className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
           />
@@ -377,9 +391,11 @@ export function NameExercises({
         {(workout.exercises.length === 0 && renderNoExercises()) || (
           <>
             {renderExercises()}
-            <Divider
-              className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-            />
+            {!isLoading && (
+              <Divider
+                className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+              />
+            )}
           </>
         )}
       </div>
