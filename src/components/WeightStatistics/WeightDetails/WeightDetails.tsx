@@ -211,6 +211,9 @@ export function WeightDetails({
     return '%'
   }
 
+  const fieldTitle = (field: (typeof FIELDS)[number]) =>
+    `${tDetails(field.label)} (${unitLabel(field.unit)})`
+
   const startValue = (field: (typeof FIELDS)[number]) => {
     const current = record?.[field.key]
     if (typeof current === 'number') return current
@@ -514,7 +517,7 @@ export function WeightDetails({
               variant='body1'
               className='field-label'
             >
-              {tDetails(field.label)}
+              {fieldTitle(field)}
             </Typography>
             <Typography
               variant='body1'
@@ -575,7 +578,7 @@ export function WeightDetails({
         open={Boolean(editingField)}
         onClose={() => setEditing(null)}
         type='half'
-        title={editingField ? tDetails(editingField.label) : ''}
+        title={editingField ? fieldTitle(editingField) : ''}
         component={
           editingField ? (
             <ClockPicker
