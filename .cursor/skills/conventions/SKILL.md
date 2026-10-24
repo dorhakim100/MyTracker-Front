@@ -78,6 +78,7 @@ src/
 - Every component folder has `styles/` with a SCSS file — even if empty for now
 - Import that SCSS from `src/assets/styles/main.scss`
 - Prefer existing components / CustomMui before creating new ones
+- `<button>` / `CustomButton` only for a real action. Cards, sections, and layout containers are `<div>` (or an existing MUI surface such as `Card`). Do not use `<button>` or `component="button"` to make a card or container clickable — keep that surface a `div` and put the action on a button inside it, even if the element has an onClick event to it.
 
 ### Suspense export (required for feature cmps + pages)
 
@@ -93,11 +94,11 @@ export const Home = withSuspense(HomeComponent)
 
 Parent (consumer) may pass suspense controls **alongside** the component's real props:
 
-| Prop | Type | Default | Meaning |
-|------|------|---------|---------|
-| `isSuspense` | `boolean` | `true` | Wrap in `<Suspense>`; `false` renders the cmp directly |
-| `fallback` | `ComponentType<{ size?: FallbackSize }>` | `Spinner` (MUI) | Fallback component while suspended |
-| `fallbackSize` | `'s' \| 'm' \| 'l' \| 'xl'` | `'m'` | Passed to the fallback as `size` |
+| Prop           | Type                                     | Default         | Meaning                                                |
+| -------------- | ---------------------------------------- | --------------- | ------------------------------------------------------ |
+| `isSuspense`   | `boolean`                                | `true`          | Wrap in `<Suspense>`; `false` renders the cmp directly |
+| `fallback`     | `ComponentType<{ size?: FallbackSize }>` | `Spinner` (MUI) | Fallback component while suspended                     |
+| `fallbackSize` | `'s' \| 'm' \| 'l' \| 'xl'`              | `'m'`           | Passed to the fallback as `size`                       |
 
 ```tsx
 <Home />
@@ -178,11 +179,11 @@ When a nested component or a custom hook gains a second consumer, **promote** it
 
 **Edit colors only in `src/theme/tokens.ts`.**
 
-| Consumer | How it gets colors |
-|----------|--------------------|
-| MUI | `appTheme.ts` imports `colorTokens` |
-| SCSS / CSS vars | `_tokens.generated.scss` via `npm run theme:vars` (also on `dev` / `build` / Vite plugin) |
-| Runtime dark mode | `ThemeModeSync` toggles `html.dark-mode` which remaps the same CSS vars |
+| Consumer          | How it gets colors                                                                        |
+| ----------------- | ----------------------------------------------------------------------------------------- |
+| MUI               | `appTheme.ts` imports `colorTokens`                                                       |
+| SCSS / CSS vars   | `_tokens.generated.scss` via `npm run theme:vars` (also on `dev` / `build` / Vite plugin) |
+| Runtime dark mode | `ThemeModeSync` toggles `html.dark-mode` which remaps the same CSS vars                   |
 
 Do **not** hardcode hex colors in `appTheme.ts`, `variables.scss`, or component SCSS. Use CSS vars (`var(--primary-color)`) or Sass aliases (`$primary-color`). After changing `tokens.ts`, regenerate (`theme:vars`) if Vite is not already running.
 

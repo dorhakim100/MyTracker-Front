@@ -40,6 +40,7 @@ Think like a senior product designer embedded on a frontend team — not a Dribb
 - States that feel designed: loading, empty, error, success, disabled, focus
 - Motion: follow `.cursor/skills/animation-guidance/SKILL.md` — subtle but noticeable; clarifies feedback, not decoration
 - Forms: labels, validation placement, keyboard flow, destructive actions confirmed
+- Buttons are actions only. A card, row, or container stays a `div` even when the surface is clickable
 
 ## Component checklist (before shipping UI)
 
