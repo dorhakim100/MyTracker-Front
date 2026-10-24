@@ -1,4 +1,7 @@
-import React, { useMemo, useState } from 'react'
+import React, {
+  // useMemo,
+  useState,
+} from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
@@ -6,7 +9,7 @@ import { logout } from '../../store/actions/user.actions'
 import { CustomAccordion } from '../../CustomMui/CustomAccordion/CustomAccordion'
 import { ProfileCard } from '../../components/ProfileCard/ProfileCard'
 import { WeightCard } from '../../components/WeightCard/WeightCard'
-import { BodyFatCard } from '../../components/BodyFatCard/BodyFatCard'
+// import { BodyFatCard } from '../../components/BodyFatCard/BodyFatCard'
 import { GoalsCard } from '../../components/GoalsCard/GoalsCard'
 import { BmrCard } from '../../components/BmrCard/BmrCard'
 import { MealsCard } from '../../components/MealsCard/MealsCard'
