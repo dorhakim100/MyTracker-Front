@@ -133,7 +133,7 @@ export function WeightCard() {
     return weight ? (
       <Typography
         variant='body1'
-        className='weight-text'
+        className='weight-text has-value'
       >
         {weight}
         <span className='weight-text-kg'>{t('weight.kg')}</span>
