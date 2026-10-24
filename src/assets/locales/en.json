@@ -342,7 +342,9 @@
     "noWeightLogged": "No weight logged",
     "noChange": "No change",
     "weight": "Weight",
-    "weeklyAverage": "Weekly Average"
+    "weeklyAverage": "Weekly Average",
+    "statistics": "Statistics",
+    "weightHistory": "Weight History"
   },
   "goal": {
     "addGoal": "Add Goal",

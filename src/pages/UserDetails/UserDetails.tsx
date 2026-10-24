@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
@@ -15,7 +15,9 @@ import { PreferencesCard } from '../../components/PreferencesCard/PreferencesCar
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import { CustomIcon } from '../../CustomMui/CustomIcon/CustomIcon'
 import { WeightChart } from '../../components/WeightChart/WeightChart'
-import { StatsCarousel } from '../../components/StatsCarousel/StatsCarousel'
+import { WeightStatistics } from '../../components/WeightStatistics/WeightStatistics'
+import { SlideDialog } from '../../components/SlideDialog/SlideDialog'
+// import { StatsCarousel } from '../../components/StatsCarousel/StatsCarousel'
 import { HealthProviderCard } from '../../components/HealthProviderCard/HealthProviderCard'
 
 export function UserDetails() {
@@ -37,6 +39,8 @@ export function UserDetails() {
   )
 
   const timer = useSelector((state: RootState) => state.workoutModule.timer)
+  const [statisticsOpen, setStatisticsOpen] = useState(false)
+  const viewedUser = traineeUser || user
 
   const acrodions = [
     {
@@ -118,14 +122,14 @@ export function UserDetails() {
     key: string
   }[]
 
-  const statsCarouselItems = useMemo(() => {
-    if (!user) return []
-    return [
-      <WeightCard />,
-      <WeightChart sentUser={traineeUser || user || undefined} />,
-      <BodyFatCard />,
-    ]
-  }, [user, traineeUser])
+  // const statsCarouselItems = useMemo(() => {
+  //   if (!user) return []
+  //   return [
+  //     <WeightCard />,
+  //     <WeightChart sentUser={traineeUser || user || undefined} />,
+  //     <BodyFatCard />,
+  //   ]
+  // }, [user, traineeUser])
 
   return (
     <div
@@ -137,18 +141,25 @@ export function UserDetails() {
 
       {isDashboard && (
         <div className='weight-chart-container'>
-          <WeightChart sentUser={traineeUser || user || undefined} />
+          <WeightChart
+            sentUser={viewedUser || undefined}
+            onOpenStatistics={
+              viewedUser ? () => setStatisticsOpen(true) : undefined
+            }
+          />
         </div>
       )}
       {isDashboard && <BmrCard sentUser={traineeUser || user || undefined} />}
 
       {!isDashboard && (
         <div className='content-container'>
-          <StatsCarousel
+          {/* <StatsCarousel
             items={statsCarouselItems}
             showSkeleton={!user}
             direction='vertical'
-          />
+          /> */}
+
+          <WeightCard />
 
           {acrodions.map((accordion) => (
             <CustomAccordion
@@ -166,6 +177,15 @@ export function UserDetails() {
             text={t('user.logout')}
           />
         </div>
+      )}
+      {isDashboard && viewedUser && (
+        <SlideDialog
+          open={statisticsOpen}
+          onClose={() => setStatisticsOpen(false)}
+          type='full'
+          title={t('weight.statistics')}
+          component={<WeightStatistics user={viewedUser} />}
+        />
       )}
     </div>
   )

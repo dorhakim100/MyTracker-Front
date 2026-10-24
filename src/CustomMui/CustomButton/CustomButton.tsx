@@ -30,6 +30,7 @@ interface CustomButtonProps {
   tooltipTitle?: string
   shouldVibrate?: boolean
   variant?: CustomButtonVariant
+  borderIcon?: boolean
 }
 
 export function CustomButton({
@@ -48,6 +49,7 @@ export function CustomButton({
   tooltipTitle,
   shouldVibrate = true,
   variant,
+  borderIcon = false,
 }: CustomButtonProps) {
   const resolvedVariant = variant ?? (isIcon ? 'medium' : 'strong')
   const prefs = useSelector(
@@ -65,8 +67,10 @@ export function CustomButton({
     <ClickAnimation
       disabled={isDashboard ? true : disabled}
       className={`custom-button-wrapper variant-${resolvedVariant} ${
-        prefs.isDarkMode ? 'dark-mode' : ''
-      } ${disabled ? 'disabled' : ''} ${prefs.favoriteColor || ''}`}
+        borderIcon ? 'border-icon' : ''
+      } ${prefs.isDarkMode ? 'dark-mode' : ''} ${disabled ? 'disabled' : ''} ${
+        prefs.favoriteColor || ''
+      }`}
     >
       {isIcon ? (
         <Tooltip
@@ -92,7 +96,7 @@ export function CustomButton({
               }}
               disabled={disabled}
               size={size}
-              className={`custom-button variant-${resolvedVariant} ${
+              className={`custom-button variant-${resolvedVariant} icon-button ${
                 className || ''
               } ${resolvedVariant === 'flat' ? '' : prefs.favoriteColor || ''}`}
               sx={{

@@ -1,0 +1,52 @@
+.weight-statistics-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 0.5rem;
+  padding-bottom: 1.5rem;
+  color: var(--ink-on-surface);
+
+  .weight-chart {
+    width: 100%;
+  }
+
+  .days-loading {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .days-table {
+    width: 100%;
+    background: transparent;
+
+    .MuiTableCell-root {
+      padding: 0.85rem 0.6rem;
+      color: var(--ink-on-surface);
+      border-bottom: 1px solid
+        color-mix(in srgb, var(--ink-on-surface) 16%, transparent);
+    }
+
+    .days-header .MuiTableCell-root {
+      font-weight: 600;
+      padding-bottom: 0.45rem;
+    }
+
+    .day-value {
+      font-weight: 600;
+    }
+
+    .day-unit {
+      margin-inline-start: 0.2rem;
+      font-weight: 400;
+      font-size: 0.8rem;
+    }
+  }
+
+  .days-empty {
+    text-align: center;
+    color: var(--ink-on-surface);
+    opacity: 0.72;
+    padding: 1.5rem 0.5rem;
+  }
+}

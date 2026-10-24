@@ -1,6 +1,14 @@
 .workouts-container {
   &:not(.dashboard) {
     padding-top: 1rem;
+    padding-inline: 1px;
+    .workouts-lists-container {
+      padding-inline: 1px;
+      .active-routines-container,
+      .action-buttons-section {
+        padding-inline: 3px;
+      }
+    }
   }
   &.dashboard {
     @media (min-width: 600px) {

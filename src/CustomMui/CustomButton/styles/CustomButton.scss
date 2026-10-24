@@ -25,6 +25,11 @@
     color: var(--ink-on-canvas);
   }
 
+  &.border-icon:has(.icon-button) {
+    border: 1px solid var(--accent);
+    border-radius: 50%;
+  }
+
   &.disabled {
     opacity: 0.5;
     cursor: not-allowed;

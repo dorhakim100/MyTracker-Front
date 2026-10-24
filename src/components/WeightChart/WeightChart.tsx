@@ -21,6 +21,7 @@ import {
 import { Card, LinearProgress, Typography } from '@mui/material'
 
 import ScaleIcon from '@mui/icons-material/Scale'
+import TimelineIcon from '@mui/icons-material/Timeline'
 import FlagIcon from '@mui/icons-material/Flag'
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
 import CircleIcon from '@mui/icons-material/Circle'
@@ -33,11 +34,13 @@ import { CustomIOSSwitch } from '../../CustomMui/CustomIOSSwitch/CustomIOSSwitch
 import { User } from '../../types/user/User'
 import { WeightChangeDisplay } from '../WeightChangeDisplay/WeightChangeDisplay'
 import CustomSkeleton from '../../CustomMui/CustomSkeleton/CustomSkeleton'
+import { RollingNumber } from '../RollingNumber/RollingNumber'
 
 interface WeightChartProps {
   className?: string
   setSelectedDate?: (date: Date) => void
   sentUser: User | undefined
+  onOpenStatistics?: () => void
 }
 
 interface Stats {
@@ -55,6 +58,7 @@ export function WeightChart({
   className = '',
   setSelectedDate,
   sentUser,
+  onOpenStatistics,
 }: WeightChartProps) {
   const { t } = useTranslation()
   const prefs = useSelector(
@@ -375,17 +379,45 @@ export function WeightChart({
           }`}
         >
           <div className='header'>
+            {onOpenStatistics && (
+              <div className='statistics-button-container'>
+                <CustomButton
+                  borderIcon
+                  isIcon
+                  icon={<TimelineIcon />}
+                  onClick={onOpenStatistics}
+                  ariaLabel={t('weight.statistics')}
+                  className={prefs.favoriteColor}
+                />
+              </div>
+            )}
             <div className='weight-container'>
               <h3 className='title'>
                 {stats.isGoal ? <FlagIcon /> : <ScaleIcon />}
-                {stats.selectedWeight}
-                {stats.selectedWeight && (
-                  <span className='kg'>{t('weight.kg')}</span>
+                {chartLoading ? (
+                  <CustomSkeleton
+                    variant='text'
+                    width={90}
+                    height={60}
+                    isDarkMode={prefs.isDarkMode}
+                    className='chart-legend-skeleton'
+                  />
+                ) : (
+                  <>
+                    <RollingNumber
+                      value={+stats.selectedWeight}
+                      className='weight-value'
+                    />
+                    {stats.selectedWeight && (
+                      <span className='kg'>{t('weight.kg')}</span>
+                    )}
+                  </>
                 )}
               </h3>
 
               {prefs.weightChartSettings.isDisplayWeeklyChange &&
-                !stats.isGoal && (
+                !stats.isGoal &&
+                !chartLoading && (
                   <WeightChangeDisplay
                     value={rangeChange}
                     range={range}

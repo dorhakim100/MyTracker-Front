@@ -12,6 +12,7 @@ import {
   setSelectedDiaryDay,
 } from '../../store/actions/user.actions'
 import { Weight } from '../../types/weight/Weight'
+import { WeightStatistics } from '../WeightStatistics/WeightStatistics'
 
 import scaleAnimation from '../../../public/scale.json'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
@@ -23,6 +24,7 @@ import { LoggedToday } from '../../types/loggedToday/LoggedToday'
 import { CustomDatePicker } from '../../CustomMui/CustomDatePicker/CustomDatePicker'
 import Lottie from 'lottie-react'
 import { healthService } from '../../services/health/health.service'
+import TimelineIcon from '@mui/icons-material/Timeline'
 
 const DEFAULT_WEIGHT = 60
 
@@ -40,6 +42,7 @@ export function WeightCard() {
   )
 
   const [open, setOpen] = useState(false)
+  const [statisticsOpen, setStatisticsOpen] = useState(false)
   const [weightToAdd, setWeightToAdd] = useState(DEFAULT_WEIGHT)
 
   const selectedDay = useSelector(
@@ -106,7 +109,7 @@ export function WeightCard() {
         weight: { ...savedWeight },
       } as LoggedToday)
 
-      if(isNative){
+      if (isNative) {
         await healthService.saveWeight(value)
       }
 
@@ -154,6 +157,16 @@ export function WeightCard() {
           prefs.favoriteColor
         }`}
       >
+        <div className='statistics-button-container'>
+          <CustomButton
+            borderIcon
+            onClick={() => setStatisticsOpen(true)}
+            className={`${prefs.favoriteColor} statistics-button`}
+            icon={<TimelineIcon />}
+            ariaLabel={t('weight.statistics')}
+            isIcon
+          />
+        </div>
         <div className='date-picker-container'>
           <CustomDatePicker
             value={selectedDay?.date}
@@ -197,6 +210,15 @@ export function WeightCard() {
         }
         title={t('weight.updateWeight')}
       />
+      {user && (
+        <SlideDialog
+          open={statisticsOpen}
+          onClose={() => setStatisticsOpen(false)}
+          type='full'
+          title={t('weight.statistics')}
+          component={<WeightStatistics user={user} />}
+        />
+      )}
     </>
   )
 }

@@ -317,7 +317,9 @@
     "noWeightLogged": "לא נרשם משקל",
     "noChange": "אין שינוי",
     "weight": "משקל",
-    "weeklyAverage": "ממוצע שבועי"
+    "weeklyAverage": "ממוצע שבועי",
+    "statistics": "סטטיסטיקות",
+    "weightHistory": "היסטוריית משקל"
   },
   "goal": {
     "addGoal": "הוספת יעד",

@@ -5,16 +5,30 @@
   align-items: center;
   justify-items: center;
   position: relative;
+  gap: 0.5rem;
+
+  .statistics-button-container {
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: start;
+    position: absolute;
+    inset-inline-end: 1.5rem;
+    top: -0rem;
+    button {
+      width: 34.03px;
+      height: 34.03px;
+    }
+  }
 
   .date-picker-container {
     grid-column: 1;
     grid-row: 1;
-    justify-self: stretch;
+    // justify-self: stretch;
     height: 2.5rem;
     position: absolute;
     color: var(--accent);
     top: -0rem;
-    right: 1.2rem;
+    inset-inline-start: 0;
 
     .custom-date-picker-button.MuiIconButton-root {
       width: 2.5rem;
