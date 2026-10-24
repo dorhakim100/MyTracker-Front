@@ -4,18 +4,23 @@ import { Typography } from '@mui/material'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { CustomAnimatedText } from '../../CustomMui/CustomAnimatedText/CustomAnimatedText'
+import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import type { BodyFatResult } from '../../types/bodyFat/BodyFat'
 
 export interface BodyFatDetailsProps {
   imageUrl: string
   weightKg: number
   result: BodyFatResult
+  applyLabel?: string
+  onApply?: () => void
 }
 
 export function BodyFatDetails({
   imageUrl,
   weightKg,
   result,
+  applyLabel,
+  onApply,
 }: BodyFatDetailsProps) {
   const { t } = useTranslation()
   const prefs = useSelector(
@@ -72,6 +77,14 @@ const maxBodyFat = result.kind === 'success' ? result.maxPercent : 0
             <CustomAnimatedText>{animatedText}</CustomAnimatedText>
           </Typography>
         </div>
+        {onApply && applyLabel && result.kind === 'success' && (
+          <CustomButton
+            text={applyLabel}
+            onClick={onApply}
+            fullWidth
+            className={prefs.favoriteColor}
+          />
+        )}
       </div>
     )
 

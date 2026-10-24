@@ -1,7 +1,18 @@
+export interface BodyFatMeasurements {
+  waist?: number
+  neck?: number
+  chest?: number
+  arms?: number
+  hips?: number
+  thigh?: number
+  calf?: number
+}
+
 export interface BodyFatEstimateRequest {
   imageUrl: string
   weightKg: number
   userId: string
+  measurements?: BodyFatMeasurements
 }
 
 export interface BodyFatEstimateSuccess {

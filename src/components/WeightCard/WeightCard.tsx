@@ -94,22 +94,21 @@ export function WeightCard() {
       }
 
       const savedWeight = await weightService.save(weightToSave)
-
-      const userToSave = { ...user, lastWeight: savedWeight }
-      optimisticUpdateUser(userToSave)
-
       const todayIso = getDateFromISO(new Date().toISOString())
+      const isToday = selectedDay?.date === todayIso
 
-      if (selectedDay?.date === todayIso) {
+      if (savedWeight && isToday) {
         optimisticUpdateUser({ ...user, lastWeight: savedWeight })
       }
 
-      setSelectedDiaryDay({
-        ...selectedDay,
-        weight: { ...savedWeight },
-      } as LoggedToday)
+      if (savedWeight) {
+        setSelectedDiaryDay({
+          ...selectedDay,
+          weight: { ...savedWeight },
+        } as LoggedToday)
+      }
 
-      if (isNative) {
+      if (isNative && isToday) {
         await healthService.saveWeight(value)
       }
 

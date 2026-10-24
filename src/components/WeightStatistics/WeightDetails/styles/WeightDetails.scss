@@ -1,0 +1,124 @@
+.weight-details-container {
+  display: flex;
+  flex-direction: column;
+  color: var(--ink-on-surface);
+  padding: 1rem 1rem 2rem;
+
+  .day-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  .day-header-side {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .day-header-label,
+  .day-header-value {
+    font-weight: 700;
+  }
+
+  .photo-input {
+    display: none;
+  }
+
+  .photo-block {
+    margin-bottom: 0.5rem;
+  }
+
+  .photo-empty,
+  .photo-saved {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    border-radius: 12px;
+    border: 1px dashed
+      color-mix(in srgb, var(--ink-on-surface) 28%, transparent);
+  }
+
+  .photo-preview {
+    width: 100%;
+    max-width: 180px;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    border-radius: 12px;
+  }
+
+  .photo-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .photo-hint {
+    opacity: 0.72;
+    text-align: center;
+  }
+
+  .field-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.85rem 0;
+    border: 0;
+    border-bottom: 1px solid
+      color-mix(in srgb, var(--ink-on-surface) 16%, transparent);
+    background: transparent;
+    color: inherit;
+    text-align: start;
+
+    &:active {
+      opacity: 0.72;
+    }
+
+    &.kg-field {
+      p {
+        font-weight: 700;
+      }
+
+      border-bottom: 1px solid var(--accent);
+    }
+  }
+
+  .field-label {
+    flex: 1;
+  }
+
+  .field-value {
+    font-weight: 600;
+  }
+
+  .field-unit {
+    margin-inline-start: 0.2rem;
+    font-weight: 400;
+    font-size: 0.8rem;
+  }
+
+  .field-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    flex-shrink: 0;
+    min-width: calc(60px + 0.5rem);
+  }
+}
+
+.weight-confirm {
+  display: grid;
+  gap: 1rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .weight-details-container .field-row:active {
+    opacity: 1;
+  }
+}

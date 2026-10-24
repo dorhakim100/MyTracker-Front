@@ -19,9 +19,13 @@ function utcDayKey(createdAt: number) {
   return new Date(createdAt).toISOString().slice(0, 10)
 }
 
+export function weightDaysQueryKey(userId?: string) {
+  return ['weight-days', userId] as const
+}
+
 export function useWeightDays(userId?: string) {
   const enabled = Boolean(userId)
-  const queryKey = ['weight-days', userId] as const
+  const queryKey = weightDaysQueryKey(userId)
 
   const query = useInfiniteQuery<
     WeightDaysPage,

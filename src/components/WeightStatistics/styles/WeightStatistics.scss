@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
-  padding: 0.5rem;
+  padding: 1rem;
   padding-bottom: 1.5rem;
   color: var(--ink-on-surface);
 
@@ -41,6 +41,19 @@
       font-weight: 400;
       font-size: 0.8rem;
     }
+
+    .day-row {
+      cursor: pointer;
+    }
+
+    .day-chevron {
+      opacity: 0.55;
+      color: var(--ink-on-surface);
+    }
+  }
+
+  [dir='rtl'] & .day-chevron {
+    transform: scaleX(-1);
   }
 
   .days-empty {

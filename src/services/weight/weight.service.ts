@@ -1,5 +1,5 @@
 import { httpService } from '../http.service'
-import type { Weight, WeightFilter } from '../../types/weight/Weight'
+import type { Weight, WeightFilter, WeightWrite } from '../../types/weight/Weight'
 
 const KEY = 'weight'
 
@@ -28,7 +28,7 @@ async function getById(weightId: string) {
   }
 }
 
-async function save(weight: Weight | Partial<Weight>) {
+async function save(weight: WeightWrite) {
   try {
     if (weight._id) {
       return await httpService.put(`${KEY}/${weight._id}`, weight)

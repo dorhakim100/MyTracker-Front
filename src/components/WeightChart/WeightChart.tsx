@@ -214,7 +214,7 @@ export function WeightChart({
     if (!prevAverage) {
       const calcPrevAverage = +(
         previous2WeeksWeights.reduce((acc, curr) => {
-          return acc + curr.kg
+          return acc + (curr.kg ?? 0)
         }, 0) / previous2WeeksWeights.length
       ).toFixed(1)
 
@@ -310,12 +310,16 @@ export function WeightChart({
         toDate: toDateMinusTwoWeeks,
       })
 
-      setWeights(weights)
-      setPreviousWeights(previousWeight)
-      setPrevious2WeeksWeights(previous2WeeksWeight)
+      const withKg = (list: Weight[]) =>
+        (list || []).filter((item) => typeof item?.kg === 'number')
+      const loggedWeights = withKg(weights)
+
+      setWeights(loggedWeights)
+      setPreviousWeights(withKg(previousWeight))
+      setPrevious2WeeksWeights(withKg(previous2WeeksWeight))
       setStats({
         selectedDate: new Date(),
-        selectedWeight: weights[weights.length - 1]?.kg || 0,
+        selectedWeight: loggedWeights[loggedWeights.length - 1]?.kg || 0,
         message: '',
         isGoal: false,
       })
