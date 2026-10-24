@@ -42,6 +42,7 @@ import {
   toExercise,
   weekState,
   weekTimes,
+  withInstructionExercises,
 } from './utils'
 import { Divider } from '@mui/material'
 
@@ -109,7 +110,6 @@ export function RoutineDetails({ workout }: RoutineDetailsProps) {
           forUserId,
           weekNumber: week,
         })
-        console.log('next', next)
         if (requestId !== requestRef.current) return
         setWeekNumber(week)
         setInstructions(next)
@@ -194,7 +194,6 @@ export function RoutineDetails({ workout }: RoutineDetailsProps) {
           workoutId,
           instructions.weekNumber
         )
-        console.log('res', res)
         if (cancelled) return
         setSessions(finishedSessions(res, workoutId, instructions.weekNumber))
       } catch {
@@ -229,6 +228,11 @@ export function RoutineDetails({ workout }: RoutineDetailsProps) {
   )
 
   useSlideDialogHeaderAction(editAction)
+
+  const displayWorkout = useMemo(
+    () => withInstructionExercises(workout),
+    [workout]
+  )
 
   const { doneTimes, timesPerWeek } = weekTimes(instructions)
   const status = weekState(doneTimes, timesPerWeek)
@@ -358,8 +362,7 @@ export function RoutineDetails({ workout }: RoutineDetailsProps) {
             </div>
           )}
           {instructions.exercises?.map((instruction, index) => {
-            const exercise = toExercise(instruction, workout)
-            console.log('exercise', exercise)
+            const exercise = toExercise(instruction, displayWorkout)
             return (
               <RoutineExerciseCard
                 key={`${instruction.exerciseId}-${index}`}
@@ -436,7 +439,7 @@ export function RoutineDetails({ workout }: RoutineDetailsProps) {
           recap={recap}
           workoutId={workout._id}
           workoutName={workout.name}
-          exercises={workout.exercises}
+          exercises={displayWorkout.exercises}
         />
       </CustomAlertDialog>
     </div>

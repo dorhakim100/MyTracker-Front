@@ -12,4 +12,6 @@ export interface Workout {
 
   doneTimes?: number
   timesPerWeek?: number
+  instructionExerciseIds?: string[]
+  instructionExercises?: Exercise[]
 }

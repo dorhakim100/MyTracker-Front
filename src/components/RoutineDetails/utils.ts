@@ -23,6 +23,20 @@ export function statusCopy(status: ReturnType<typeof weekState>) {
   return 'inProgress'
 }
 
+export function withInstructionExercises(workout: Workout): Workout {
+  const onShell = new Set(
+    workout.exercises.map((exercise) => exercise.exerciseId)
+  )
+  const missing = (workout.instructionExercises || []).filter(
+    (exercise) => exercise.exerciseId && !onShell.has(exercise.exerciseId)
+  )
+  if (missing.length === 0) return workout
+  return {
+    ...workout,
+    exercises: [...workout.exercises, ...missing],
+  }
+}
+
 export function toExercise(
   instruction: ExerciseInstructions,
   workout: Workout
