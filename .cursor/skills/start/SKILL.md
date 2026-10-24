@@ -1,17 +1,50 @@
 ---
 name: start
 description: >-
-  Kick off feature planning by running grill-me, then write-a-prd, then
-  prd-to-plan in order. Use when the user says start, kickoff, kick off,
-  begin planning, or wants the full planning pipeline.
+  Kick off work when the user says start, kickoff, kick off, or begin
+  planning. A small bug fix or small feature skips the PRD and plan and is
+  implemented directly. Larger work runs grill-me, then write-a-prd, then
+  prd-to-plan in order.
 disable-model-invocation: true
 ---
 
 # Start — Planning Pipeline
 
-Run the three planning skills **in order**. Do not skip ahead. Do not merge steps into one response dump.
+Decide the path **before** opening any planning skill. Do not start grill-me until the size check is done.
 
-## Pipeline
+## Size check
+
+**Small** when the task is a small bug fix or a small feature. All of these are true:
+
+- One existing screen, component, or function
+- The outcome is already clear
+- It follows a pattern already in the code
+- No new user flow, data model, or product decision
+
+Examples: a wrong value, a broken condition, a label, a one-place tweak that reuses what is already there.
+
+**Full pipeline** when any of these are true:
+
+- New screen, flow, or domain concept
+- A user-facing decision is still open
+- The change spans multiple areas
+- You are not sure it is small
+
+The user can override. "This is small" uses the small path. "Plan this" uses the full pipeline.
+
+## Small path
+
+Skip the PRD and the plan.
+
+- Do not read or run grill-me, write-a-prd, or prd-to-plan
+- Do not write a PRD or a file in `./plans/`
+- Say in one sentence why it is small and what will change
+- Implement it. Read the always-on skills first
+- Ask only when one missing fact would change the change
+
+## Full pipeline
+
+Run the three planning skills **in order**. Do not skip ahead. Do not merge steps into one response dump.
 
 ```
 Task Progress:
@@ -44,5 +77,6 @@ Use the PRD from step 2. Produce the phased plan in `./plans/`. Get user approva
 - Announce transitions briefly: "Moving to write-a-prd" / "Moving to prd-to-plan"
 - If the user already has a PRD or answers, adapt — still follow each skill's process, skip only redundant interview questions
 - After the plan exists, stop. Do not start implementation unless the user asks
+- The small path does not produce a plan. Implement it in the same turn
 - During planning, also follow `reuse-libraries` (MUI first, small libs OK, no alternate UI kit)
 - During this pipeline, also respect `conventions`, `senior-ux`, `animation-guidance`, and `testing` when they become relevant later — not during planning beyond library choices

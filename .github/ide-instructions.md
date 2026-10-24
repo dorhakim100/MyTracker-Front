@@ -20,7 +20,7 @@ Live skills are in `.cursor/skills/`. Do **not** follow superseded `.github/skil
 
 ### When they apply
 
-- User says **start** / kickoff / begin planning → `.cursor/skills/start/SKILL.md` (grill-me → write-a-prd → prd-to-plan). Do not implement until they ask.
+- User says **start** / kickoff / begin planning → `.cursor/skills/start/SKILL.md`. A small bug fix or small feature skips the PRD and plan and is implemented directly. Larger work runs grill-me → write-a-prd → prd-to-plan, then stops until they ask to implement.
 - Grill / PRD / plan only → the matching skill under `.cursor/skills/`
 - Optional older workflows (only if the user asks): `.github/skills/triage-issue`, `.github/skills/improve-codebase-architecture`
 

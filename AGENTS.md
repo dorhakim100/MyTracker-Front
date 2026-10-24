@@ -14,4 +14,4 @@ Source of truth: [ide-instructions.md](./.github/ide-instructions.md). Also foll
 - `.cursor/skills/animation-guidance/SKILL.md`
 - `.cursor/skills/testing/SKILL.md`
 
-Planning (**start** / kickoff): `.cursor/skills/start/SKILL.md` (grill-me → write-a-prd → prd-to-plan).
+Planning (**start** / kickoff): `.cursor/skills/start/SKILL.md`. A small bug fix or small feature skips the PRD and plan and is implemented directly. Larger work runs grill-me → write-a-prd → prd-to-plan.
