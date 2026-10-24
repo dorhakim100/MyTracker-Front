@@ -38,16 +38,33 @@ import { BodyPartBadges } from '../BodyPartBadge/BodyPartBadge'
 import {
   ExerciseViewBy,
   getPickMetric,
-  getSessionVolume,
+  isVolumeView,
   pickBestSet,
+  VolumePoint,
 } from '../../services/set/set.helpers'
 import { exerciseDetailsNs } from './locals'
 import { getExerciseBodyParts } from '../../assets/config/body-parts'
 
-const VIEW_BY_VALUES: ExerciseViewBy[] = ['weight', 'reps', 'volume']
+const VIEW_BY_VALUES: ExerciseViewBy[] = [
+  'weight',
+  'reps',
+  'daily_volume',
+  'weekly_volume',
+]
 
 function formatReadoutNumber(value: number) {
   return Number.isInteger(value) ? String(value) : value.toFixed(1)
+}
+
+function formatChartDay(date: Date) {
+  return `${date.getDate()}/${date.getMonth() + 1}`
+}
+
+function formatWeekLabel(createdAt: string) {
+  const start = new Date(createdAt)
+  const end = new Date(start)
+  end.setDate(end.getDate() + 6)
+  return `${formatChartDay(start)}-${formatChartDay(end)}`
 }
 
 export interface ExerciseWithDetails extends Exercise {
@@ -100,6 +117,7 @@ export function ExerciseDetails({
   )
 
   const [groupedSets, setGroupedSets] = useState<Record<string, Set[]>>({})
+  const [volumePoints, setVolumePoints] = useState<VolumePoint[]>([])
   const [range, setRange] = useState<LineChartRangeKey>('1M')
   const [viewBy, setViewBy] = useState<ExerciseViewBy>('weight')
   const [setsGraphFilter, setSetsGraphFilter] = useState<SetFilter>({
@@ -125,6 +143,12 @@ export function ExerciseDetails({
     [setsQuery.items]
   )
   const setsData = useMemo(() => {
+    if (isVolumeView(viewBy)) {
+      return volumePoints.filter(
+        (point) => Boolean(point.createdAt) && point.value != null
+      )
+    }
+
     const pickMetric = getPickMetric(viewBy)
     const secondaryMetric = pickMetric === 'weight' ? 'reps' : 'weight'
 
@@ -132,13 +156,6 @@ export function ExerciseDetails({
       .reverse()
       .map((daySets) => {
         const createdAt = daySets[0]?.createdAt as unknown as string
-        if (viewBy === 'volume') {
-          return {
-            createdAt,
-            value: getSessionVolume(daySets),
-          }
-        }
-
         const best = pickBestSet(daySets, pickMetric)
         return {
           createdAt,
@@ -149,12 +166,42 @@ export function ExerciseDetails({
       .filter(
         (
           item
-        ): item is { createdAt: string; value: number; secondary?: number } =>
-          Boolean(item.createdAt) && item.value != null
+        ): item is {
+          createdAt: string
+          value: number
+          secondary: number | undefined
+        } => Boolean(item.createdAt) && item.value != null
       )
-  }, [groupedSets, viewBy])
+  }, [groupedSets, viewBy, volumePoints])
 
   const chart = useMemo(() => {
+    const borderColor =
+      colors[prefs.favoriteColor as keyof typeof colors] || colors.primary
+    const label = isVolumeView(viewBy)
+      ? tDetails(viewBy === 'daily_volume' ? 'dailyVolume' : 'weeklyVolume')
+      : t(`exercise.${viewBy}`)
+
+    if (viewBy === 'weekly_volume') {
+      const sorted = [...setsData].sort(
+        (a, b) =>
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      )
+      return {
+        data: {
+          labels: sorted.map((point) => formatWeekLabel(point.createdAt)),
+          datasets: [
+            {
+              label,
+              data: sorted.map((point) => point.value),
+              borderColor,
+              tension: 0.3,
+            },
+          ],
+        },
+        secondaryData: sorted.map((point) => point.secondary ?? null),
+      }
+    }
+
     const dateToSend = setsData.map((set) => ({
       createdAt: set.createdAt,
       value: set.value,
@@ -170,46 +217,52 @@ export function ExerciseDetails({
       labels: series?.labels ?? [],
       datasets: [
         {
-          label: t(`exercise.${viewBy}`),
+          label,
           data: series?.data ?? [],
-          borderColor:
-            colors[prefs.favoriteColor as keyof typeof colors] ||
-            colors.primary,
+          borderColor,
           tension: 0.3,
         },
       ],
     }
 
-    let secondaryData: (number | null)[] = []
-    if (viewBy !== 'volume') {
-      const secondDateToSend = setsData.map((set) => ({
-        createdAt: set.createdAt,
-        value: set.secondary as number,
-      }))
-      const secondSeries = prepareSeries(
-        range,
-        secondDateToSend as (Set & { createdAt: string; value: number })[],
-        false,
-        range
-      )
-      secondaryData = secondSeries?.data ?? []
-    }
+    const secondDateToSend = setsData.map((set) => ({
+      createdAt: set.createdAt,
+      value: set.secondary as number,
+    }))
+    const secondSeries = prepareSeries(
+      range,
+      secondDateToSend as (Set & { createdAt: string; value: number })[],
+      false,
+      range
+    )
 
-    return { data, secondaryData }
-  }, [setsData, viewBy, range, prefs.favoriteColor, t])
+    return { data, secondaryData: secondSeries?.data ?? [] }
+  }, [setsData, viewBy, range, prefs.favoriteColor, t, tDetails])
 
   useEffect(() => {
+    let cancelled = false
+
     const getExerciseSets = async () => {
       if (!exercise?.exerciseId || (!traineeUser?._id && !user?._id)) return
       try {
-        const sets = await setService.query(setsGraphFilter)
-        const groupedSetsToSet = groupSetsByDate(sets as Set[])
-        setGroupedSets(groupedSetsToSet)
+        const result = await setService.query(setsGraphFilter)
+        if (cancelled) return
+
+        if (isVolumeView(setsGraphFilter.calculation)) {
+          setVolumePoints(result as VolumePoint[])
+          return
+        }
+
+        setGroupedSets(groupSetsByDate(result as Set[]))
       } catch {
-        showErrorMsg(t('messages.error.getSets'))
+        if (!cancelled) showErrorMsg(t('messages.error.getSets'))
       }
     }
     getExerciseSets()
+
+    return () => {
+      cancelled = true
+    }
   }, [
     exercise?.exerciseId,
     exercise?.isNew,
@@ -261,12 +314,13 @@ export function ExerciseDetails({
     setRange(val)
     const from = getDateFromLineChartRangeKey(val)
     const to = new Date()
-    setSetsGraphFilter({
+    setSetsGraphFilter((prev) => ({
       exerciseId: exercise?.exerciseId,
       userId: traineeUser?._id || user?._id,
       from: from,
       to: to,
-    })
+      ...(prev.calculation ? { calculation: prev.calculation } : {}),
+    }))
   }
 
   const exerciseTags = getExerciseBodyParts({
@@ -274,7 +328,6 @@ export function ExerciseDetails({
     secondaryMuscles: exercise?.secondaryMuscles,
   })
   const exerciseTag = capitalizeFirstLetter(exerciseTags[0] || '')
-  console.log('exerciseTag', exerciseTag)
 
   const muscleGroupsText = capitalizeFirstLetter(
     exercise?.mainMuscles
@@ -370,12 +423,19 @@ export function ExerciseDetails({
               valueLabels={{
                 weight: t('exercise.weight'),
                 reps: t('exercise.reps'),
-                volume: t('exercise.volume'),
+                daily_volume: tDetails('dailyVolume'),
+                weekly_volume: tDetails('weeklyVolume'),
               }}
               onChange={(val) => {
-                if (VIEW_BY_VALUES.includes(val as ExerciseViewBy)) {
-                  setViewBy(val as ExerciseViewBy)
-                }
+                if (!VIEW_BY_VALUES.includes(val as ExerciseViewBy)) return
+                const next = val as ExerciseViewBy
+                setViewBy(next)
+                setVolumePoints([])
+                setSetsGraphFilter((prev) => {
+                  if (isVolumeView(next)) return { ...prev, calculation: next }
+                  const { calculation, ...rest } = prev
+                  return calculation ? rest : prev
+                })
               }}
               className={`${prefs.favoriteColor}`}
             />
@@ -397,9 +457,22 @@ export function ExerciseDetails({
                 const subtitle = chart.data.labels[index] ?? ''
                 if (value == null) return { title: '—', subtitle }
 
-                if (viewBy === 'volume') {
+                if (isVolumeView(viewBy)) {
+                  const secondary = chart.secondaryData[index]
+                  const unit =
+                    viewBy === 'weekly_volume'
+                      ? tDetails('sets')
+                      : t('exercise.reps')
+                  if (secondary == null) {
+                    return {
+                      title: `${formatReadoutNumber(value)} ${t('weight.kg')}`,
+                      subtitle,
+                    }
+                  }
                   return {
-                    title: `${formatReadoutNumber(value)} ${t('weight.kg')}`,
+                    title: `${formatReadoutNumber(value)} ${t(
+                      'weight.kg'
+                    )} · ${formatReadoutNumber(secondary)} ${unit}`,
                     subtitle,
                   }
                 }

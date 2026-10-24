@@ -1,4 +1,7 @@
 {
   "noSetsYet": "עדיין אין סטים",
-  "noSetsYetHint": "יופיע כאן אחרי האימון הראשון."
+  "noSetsYetHint": "יופיע כאן אחרי האימון הראשון.",
+  "dailyVolume": "נפח יומי",
+  "weeklyVolume": "נפח שבועי",
+  "sets": "סטים"
 }

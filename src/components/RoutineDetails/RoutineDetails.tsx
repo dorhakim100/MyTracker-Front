@@ -109,6 +109,7 @@ export function RoutineDetails({ workout }: RoutineDetailsProps) {
           forUserId,
           weekNumber: week,
         })
+        console.log('next', next)
         if (requestId !== requestRef.current) return
         setWeekNumber(week)
         setInstructions(next)
@@ -193,6 +194,7 @@ export function RoutineDetails({ workout }: RoutineDetailsProps) {
           workoutId,
           instructions.weekNumber
         )
+        console.log('res', res)
         if (cancelled) return
         setSessions(finishedSessions(res, workoutId, instructions.weekNumber))
       } catch {
@@ -357,6 +359,7 @@ export function RoutineDetails({ workout }: RoutineDetailsProps) {
           )}
           {instructions.exercises?.map((instruction, index) => {
             const exercise = toExercise(instruction, workout)
+            console.log('exercise', exercise)
             return (
               <RoutineExerciseCard
                 key={`${instruction.exerciseId}-${index}`}
