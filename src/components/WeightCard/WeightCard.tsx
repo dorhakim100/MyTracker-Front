@@ -25,6 +25,7 @@ import { CustomDatePicker } from '../../CustomMui/CustomDatePicker/CustomDatePic
 import Lottie from 'lottie-react'
 import { healthService } from '../../services/health/health.service'
 import TimelineIcon from '@mui/icons-material/Timeline'
+import CustomSkeleton from '../../CustomMui/CustomSkeleton/CustomSkeleton'
 
 const DEFAULT_WEIGHT = 60
 
@@ -44,7 +45,7 @@ export function WeightCard() {
   const [open, setOpen] = useState(false)
   const [statisticsOpen, setStatisticsOpen] = useState(false)
   const [weightToAdd, setWeightToAdd] = useState(DEFAULT_WEIGHT)
-
+  const [isLoadingWeight, setIsLoadingWeight] = useState(false)
   const selectedDay = useSelector(
     (storeState: RootState) => storeState.userModule.selectedDay
   )
@@ -60,14 +61,19 @@ export function WeightCard() {
 
   useEffect(() => {
     const getDay = async () => {
-      const today = await dayService.query({
-        date: selectedDate,
-        userId: user?._id,
-      })
-      const loggedWeight =
-        today.weight?.kg || user?.lastWeight?.kg || DEFAULT_WEIGHT
-      setWeightToAdd(loggedWeight)
-      setSelectedDiaryDay(today)
+      try {
+        setIsLoadingWeight(true)
+        const today = await dayService.query({
+          date: selectedDate,
+          userId: user?._id,
+        })
+        const loggedWeight =
+          today.weight?.kg || user?.lastWeight?.kg || DEFAULT_WEIGHT
+        setWeightToAdd(loggedWeight)
+        setSelectedDiaryDay(today)
+      } finally {
+        setIsLoadingWeight(false)
+      }
     }
 
     getDay()
@@ -129,6 +135,17 @@ export function WeightCard() {
 
   const renderWeight = () => {
     const weight = selectedDay?.weight?.kg
+
+    if (isLoadingWeight) {
+      return (
+        <CustomSkeleton
+          variant='text'
+          width={'100%'}
+          height={50}
+          isDarkMode={prefs.isDarkMode}
+        />
+      )
+    }
 
     return weight ? (
       <Typography
