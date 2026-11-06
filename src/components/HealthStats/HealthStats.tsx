@@ -108,6 +108,7 @@ export function HealthStats({
             loading={healthLoading}
             size='l'
             animateCurrent
+            onClick={() => {}}
           />
         </div>
       </FillProgress>
@@ -126,6 +127,7 @@ export function HealthStats({
           loading={healthLoading}
           size='l'
           animateCurrent
+          onClick={() => {}}
         />
       </FillProgress>
       <GoalBanner
@@ -136,6 +138,7 @@ export function HealthStats({
         loading={healthLoading}
         size='l'
         animateCurrent
+        iconPlacement='left'
       />
       <GoalBanner
         current={flightsClimbed}
@@ -145,6 +148,7 @@ export function HealthStats({
         loading={healthLoading}
         size='l'
         animateCurrent
+        iconPlacement='left'
       />
     </div>
   )

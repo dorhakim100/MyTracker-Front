@@ -5,7 +5,23 @@ import { RollingNumber } from '../RollingNumber/RollingNumber'
 // import CustomSkeleton from '../../CustomMui/CustomSkeleton/CustomSkeleton'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
-import { useEffect, useState } from 'react'
+import {
+  useEffect,
+  useRef,
+  useState,
+  type ForwardRefExoticComponent,
+  type RefAttributes,
+} from 'react'
+import ChevronRightIcon from '@mui/icons-material/ChevronRight'
+import TouchRippleBase, {
+  type TouchRippleActions,
+  type TouchRippleProps,
+} from '@mui/material/ButtonBase/TouchRipple'
+
+// MUI's .d.ts types the inner render function. The runtime export is forwardRef.
+const TouchRipple = TouchRippleBase as unknown as ForwardRefExoticComponent<
+  TouchRippleProps & RefAttributes<TouchRippleActions>
+>
 
 interface GoalBannerProps {
   current: number | string
@@ -17,6 +33,8 @@ interface GoalBannerProps {
   loading?: boolean
   size?: 's' | 'm' | 'l'
   animateCurrent?: boolean
+  onClick?: () => void
+  iconPlacement?: 'left' | 'right'
 }
 
 export function GoalBanner({
@@ -29,12 +47,16 @@ export function GoalBanner({
   loading = false,
   size = 'm',
   animateCurrent = false,
+  onClick,
+  iconPlacement = 'right',
 }: GoalBannerProps) {
+  const rippleRef = useRef<TouchRippleActions>(null)
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
   let formattedGoal = goal
   if (goal) {
     formattedGoal = formatNumberWithCommas(+goal)
   }
+  const isClickable = !!onClick
 
   const [afterMountCurrent, setAfterMountCurrent] = useState(
     animateCurrent ? 0 : current
@@ -58,7 +80,15 @@ export function GoalBanner({
   //   )
   // }
   return (
-    <div className={`goal-banner banner ${size}`}>
+    <div
+      className={`goal-banner banner ${size} ${
+        isClickable ? 'clickable' : ''
+      } icon-${iconPlacement}`}
+      onPointerDown={(e) => rippleRef.current?.start(e)}
+      onPointerUp={() => rippleRef.current?.stop()}
+      onPointerLeave={() => rippleRef.current?.stop()}
+    >
+      {isClickable && <TouchRipple ref={rippleRef} />}
       <div className='value-container'>
         <Typography
           variant='body1'
@@ -85,7 +115,8 @@ export function GoalBanner({
           </>
         )}
       </div>
-      {icon || <FlagIcon />}
+      <div className='icon-container'>{icon || <FlagIcon />}</div>
+      {isClickable && <ChevronRightIcon className='chevron-right' />}
       <LinearProgress
         className={`linear-progress ${prefs.favoriteColor} ${
           loading ? 'show' : ''

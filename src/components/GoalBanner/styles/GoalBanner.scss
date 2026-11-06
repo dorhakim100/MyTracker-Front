@@ -2,6 +2,20 @@
   display: grid;
   grid-template-columns: 1fr auto;
   position: relative;
+
+  &.clickable,
+  &.icon-left {
+    grid-template-columns: auto 1fr;
+    gap: 0.8rem;
+
+    .value-container {
+      justify-content: start !important;
+    }
+
+    .icon-container {
+      grid-column: 1 / 2;
+    }
+  }
   .value-container {
     width: 100%;
     display: flex;
@@ -13,6 +27,11 @@
       font-size: 0.8rem;
       opacity: 0.5;
     }
+  }
+  .icon-container {
+    align-self: center;
+    display: flex;
+    align-items: center;
   }
   &.l {
     p {
