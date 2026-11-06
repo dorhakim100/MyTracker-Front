@@ -64,6 +64,7 @@ import { invalidateSets } from '../../lib/react-query/queryKey'
 import { smoothScroll } from '../../services/util.service'
 import { FillProgress } from '../../CustomMui/FillProgress/FillProgress'
 import { RoutineDetails } from '../RoutineDetails/RoutineDetails'
+import { PressRipple } from '../../CustomMui/PressRipple/PressRipple'
 interface WorkoutSessionProps {
   sessionDay: SessionDay
   updateSessionDay: () => void
@@ -1125,57 +1126,59 @@ export function WorkoutSession({
           value={percentageDone}
           className='workout-fill-progress'
         >
-          <div
-            className={`workout-header-container subtle-bg ${
-              prefs.isDarkMode ? 'dark-mode' : ''
-            } ${isAllExercisesDone ? 'finished' : ''}`}
-            onClick={onOpenWorkoutDetails}
-          >
-            <div className='workout-name-container'>
-              {/* <CircleIcon color={isAllExercisesDone ? 'success' : 'error'} /> */}
-              <Typography
-                variant='h5'
-                className='bold-header'
-              >
-                {getWorkoutName()}{' '}
-              </Typography>
-            </div>
+          <PressRipple>
             <div
-              className='actions-container'
-              onClick={(e) => e.stopPropagation()}
+              className={`workout-header-container subtle-bg ${
+                prefs.isDarkMode ? 'dark-mode' : ''
+              } ${isAllExercisesDone ? 'finished' : ''}`}
+              onClick={onOpenWorkoutDetails}
             >
-              <CustomButton
-                icon={
-                  hasOpenExercises ? <ExpandLessIcon /> : <ExpandMoreIcon />
-                }
-                onClick={toggleExpandAll}
-                isIcon={true}
-                tooltipTitle={
-                  hasOpenExercises
-                    ? t('workout.collapseAll')
-                    : t('workout.expandAll')
-                }
-                variant='flat'
-              />
-              <CustomOptionsMenu
-                options={sessionMenuOptions}
-                isLoading={isLoadingRecap}
-                triggerElement={
-                  <CustomButton
-                    isIcon={true}
-                    icon={<MoreHorizIcon />}
-                    variant='flat'
-                  />
-                }
-              />
+              <div className='workout-name-container'>
+                {/* <CircleIcon color={isAllExercisesDone ? 'success' : 'error'} /> */}
+                <Typography
+                  variant='h5'
+                  className='bold-header'
+                >
+                  {getWorkoutName()}{' '}
+                </Typography>
+              </div>
+              <div
+                className='actions-container'
+                onClick={(e) => e.stopPropagation()}
+              >
+                <CustomButton
+                  icon={
+                    hasOpenExercises ? <ExpandLessIcon /> : <ExpandMoreIcon />
+                  }
+                  onClick={toggleExpandAll}
+                  isIcon={true}
+                  tooltipTitle={
+                    hasOpenExercises
+                      ? t('workout.collapseAll')
+                      : t('workout.expandAll')
+                  }
+                  variant='flat'
+                />
+                <CustomOptionsMenu
+                  options={sessionMenuOptions}
+                  isLoading={isLoadingRecap}
+                  triggerElement={
+                    <CustomButton
+                      isIcon={true}
+                      icon={<MoreHorizIcon />}
+                      variant='flat'
+                    />
+                  }
+                />
+              </div>
+              <div className='muscles-container'>
+                <BodyPartBadges
+                  bodyParts={getWorkoutMuscles(sessionDay.workout)}
+                  size='m'
+                />
+              </div>
             </div>
-            <div className='muscles-container'>
-              <BodyPartBadges
-                bodyParts={getWorkoutMuscles(sessionDay.workout)}
-                size='m'
-              />
-            </div>
-          </div>
+          </PressRipple>
         </FillProgress>
         {/* <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} /> */}
         {/* <CustomButton text="Add Exercise" icon={<AddIcon />} /> */}

@@ -15,6 +15,7 @@ import { CustomButton } from '../../../CustomMui/CustomButton/CustomButton'
 import { ChatUnreadBadge } from '../../../CustomMui/ChatUnreadBadge/ChatUnreadBadge'
 import { exerciseChatNs } from '../../ExerciseChatDialog/locals'
 import { routineExerciseCardNs } from './locals'
+import { PressRipple } from '../../../CustomMui/PressRipple/PressRipple'
 // import { Divider } from '@mui/material'
 // import { useSelector } from 'react-redux'
 // import { RootState } from '../../../store/store'
@@ -66,8 +67,7 @@ export function RoutineExerciseCard({
 
   return (
     <article
-      className='routine-exercise-card-container pointer'
-      role='button'
+      className='routine-exercise-card-container'
       tabIndex={0}
       aria-label={exercise.name}
       onClick={onOpen}
@@ -137,9 +137,9 @@ export function RoutineExerciseCard({
                       {/* <TableCell
                         rowSpan={2}
                         className='set-number'
-                      >
+                        >
                         {setNumber}
-                      </TableCell> */}
+                        </TableCell> */}
                       <TableCell
                         className={`row-label ${set.isDone ? 'done' : ''}`}
                       >
@@ -165,11 +165,11 @@ export function RoutineExerciseCard({
                     </TableRow>
                     {/* {index < sets.length - 1 && (
                       <TableRow className='set-divider'>
-                        <TableCell colSpan={4}>
-                          <Divider />
-                        </TableCell>
+                      <TableCell colSpan={4}>
+                      <Divider />
+                      </TableCell>
                       </TableRow>
-                    )} */}
+                      )} */}
                   </Fragment>
                 )
               })}

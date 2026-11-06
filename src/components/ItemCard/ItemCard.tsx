@@ -10,6 +10,7 @@ import { searchUrls } from '../../assets/config/search.urls'
 import { RootState } from '../../store/store'
 import { itemCardNs } from './locals'
 import { MarqueeText } from '../MarqueeText/MarqueeText'
+import { PressRipple } from '../../CustomMui/PressRipple/PressRipple'
 
 interface ItemCardProps {
   item: Item
@@ -31,28 +32,30 @@ function ItemCardComponent({
 
   return (
     <div className='item-card-container'>
-      <Card
-        className={`card item-card ${prefs.isDarkMode ? 'dark-mode' : ''} ${
-          prefs.favoriteColor || ''
-        }`}
-        onClick={() => onClick(item)}
-      >
-        <div className='item-card-image-wrap'>
-          <CachedImage
-            url={item.image || searchUrls.DEFAULT_IMAGE}
-            fallback={searchUrls.DEFAULT_IMAGE}
-            alt={name}
-            className='item-card-image'
-            referrerPolicy='no-referrer'
-          />
-        </div>
-        <div className='item-card-body'>
-          <MarqueeText className='item-card-name'>{name}</MarqueeText>
-          <span className='item-card-kcal'>
-            {calories} {t('kcal')}
-          </span>
-        </div>
-      </Card>
+      <PressRipple>
+        <Card
+          className={`card item-card ${prefs.isDarkMode ? 'dark-mode' : ''} ${
+            prefs.favoriteColor || ''
+          }`}
+          onClick={() => onClick(item)}
+        >
+          <div className='item-card-image-wrap'>
+            <CachedImage
+              url={item.image || searchUrls.DEFAULT_IMAGE}
+              fallback={searchUrls.DEFAULT_IMAGE}
+              alt={name}
+              className='item-card-image'
+              referrerPolicy='no-referrer'
+            />
+          </div>
+          <div className='item-card-body'>
+            <MarqueeText className='item-card-name'>{name}</MarqueeText>
+            <span className='item-card-kcal'>
+              {calories} {t('kcal')}
+            </span>
+          </div>
+        </Card>
+      </PressRipple>
       {onFavoriteClick && item.type !== 'meal' && (
         <div
           className='item-card-favorite'

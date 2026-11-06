@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 
 import { CustomButton } from '../../../CustomMui/CustomButton/CustomButton'
 import { itemSearchCategoriesNs } from '../locals'
+import { PressRipple } from '../../../CustomMui/PressRipple/PressRipple'
 
 interface RecentSearchChipsProps {
   queries: string[]
@@ -37,36 +38,33 @@ export function RecentSearchChips({
       <div className='recent-search-chips'>
         <div className='recent-search-chips-header'>
           <span>{t('recent')}</span>
-          <button
-            type='button'
+          <span
             className='recent-search-clear'
             onClick={onClearAll}
           >
             {t('clearAll')}
-          </button>
+          </span>
         </div>
         <div className='recent-search-chips-list'>
           {lastQueries.current.map((query) => (
-            <span
-              key={query}
-              className='recent-search-chip'
-            >
-              <button
-                type='button'
-                className='recent-search-chip-label'
-                onClick={() => onSelect(query)}
-              >
-                {query}
-              </button>
-              <CustomButton
-                isIcon
-                icon={<CloseIcon fontSize='small' />}
-                onClick={() => onRemove(query)}
-                ariaLabel={t('removeRecent')}
-                variant='flat'
-                size='small'
-              />
-            </span>
+            <PressRipple key={query}>
+              <span className='recent-search-chip'>
+                <span
+                  className='recent-search-chip-label'
+                  onClick={() => onSelect(query)}
+                >
+                  {query}
+                </span>
+                <CustomButton
+                  isIcon
+                  icon={<CloseIcon fontSize='small' />}
+                  onClick={() => onRemove(query)}
+                  ariaLabel={t('removeRecent')}
+                  variant='flat'
+                  size='small'
+                />
+              </span>
+            </PressRipple>
           ))}
         </div>
       </div>

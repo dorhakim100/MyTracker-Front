@@ -40,6 +40,7 @@ import { BodyFatDetails } from '../../BodyFatDetails/BodyFatDetails'
 import { useWeightDays, weightDaysQueryKey } from '../../../hooks/useWeightDays'
 import { weightDetailsNs } from './locals'
 import './locals'
+import { PressRipple } from '../../../CustomMui/PressRipple/PressRipple'
 
 const DASH = '-'
 
@@ -504,73 +505,74 @@ export function WeightDetails({
         const value = record?.[field.key]
         const hasValue = typeof value === 'number'
         return (
-          <div
-            key={field.key}
-            className={`field-row ${
-              field.key !== 'kg' ? 'bold-header' : 'kg-field'
-            }`}
-            onClick={() => {
-              if (!isBusy) setEditing(field.key)
-            }}
-          >
-            <Typography
-              variant='body1'
-              className='field-label'
+          <PressRipple key={field.key}>
+            <div
+              className={`field-row ${
+                field.key !== 'kg' ? 'bold-header' : 'kg-field'
+              }`}
+              onClick={() => {
+                if (!isBusy) setEditing(field.key)
+              }}
             >
-              {fieldTitle(field)}
-            </Typography>
-            <Typography
-              variant='body1'
-              className='field-value'
-            >
-              {hasValue ? (
-                <>
-                  {value}
-                  <span className='field-unit'>{unitLabel(field.unit)}</span>
-                </>
-              ) : (
-                DASH
-              )}
-            </Typography>
-            <div className='field-actions'>
-              {field.key === 'bodyFat' && record?.imageUrl && (
-                <CustomButton
-                  isIcon
-                  size='small'
-                  icon={
-                    isEstimating ? (
-                      <CircularProgress
-                        size={18}
-                        color='inherit'
-                      />
-                    ) : (
-                      <AutoAwesomeIcon fontSize='small' />
-                    )
-                  }
-                  ariaLabel={tDetails('estimate')}
-                  onClick={(event) => {
-                    event.stopPropagation()
-                    void onEstimate()
-                  }}
-                  disabled={isBusy}
-                />
-              )}
-              {hasValue && (
-                <CustomButton
-                  isIcon
-                  size='small'
-                  className='red'
-                  icon={<DeleteIcon fontSize='small' />}
-                  ariaLabel={tDetails('clear')}
-                  onClick={(event) => {
-                    event.stopPropagation()
-                    setConfirm(field.key)
-                  }}
-                  disabled={isBusy}
-                />
-              )}
+              <Typography
+                variant='body1'
+                className='field-label'
+              >
+                {fieldTitle(field)}
+              </Typography>
+              <Typography
+                variant='body1'
+                className='field-value'
+              >
+                {hasValue ? (
+                  <>
+                    {value}
+                    <span className='field-unit'>{unitLabel(field.unit)}</span>
+                  </>
+                ) : (
+                  DASH
+                )}
+              </Typography>
+              <div className='field-actions'>
+                {field.key === 'bodyFat' && record?.imageUrl && (
+                  <CustomButton
+                    isIcon
+                    size='small'
+                    icon={
+                      isEstimating ? (
+                        <CircularProgress
+                          size={18}
+                          color='inherit'
+                        />
+                      ) : (
+                        <AutoAwesomeIcon fontSize='small' />
+                      )
+                    }
+                    ariaLabel={tDetails('estimate')}
+                    onClick={(event) => {
+                      event.stopPropagation()
+                      void onEstimate()
+                    }}
+                    disabled={isBusy}
+                  />
+                )}
+                {hasValue && (
+                  <CustomButton
+                    isIcon
+                    size='small'
+                    className='red'
+                    icon={<DeleteIcon fontSize='small' />}
+                    ariaLabel={tDetails('clear')}
+                    onClick={(event) => {
+                      event.stopPropagation()
+                      setConfirm(field.key)
+                    }}
+                    disabled={isBusy}
+                  />
+                )}
+              </div>
             </div>
-          </div>
+          </PressRipple>
         )
       })}
 

@@ -12,7 +12,6 @@
   max-width: 100%;
   padding: 0;
   overflow: hidden;
-  cursor: pointer;
   display: flex;
   flex-direction: column;
   animation: item-card-in 220ms ease-out both;
@@ -26,7 +25,11 @@
 // Lift the card off the sheet canvas. Mixing against --canvas-color keeps the
 // tint of the active favorite color in every mode.
 body.dark-mode .item-card.card {
-  background-color: color-mix(in srgb, $white 9%, var(--canvas-color)) !important;
+  background-color: color-mix(
+    in srgb,
+    $white 9%,
+    var(--canvas-color)
+  ) !important;
 }
 
 .item-card-image-wrap {

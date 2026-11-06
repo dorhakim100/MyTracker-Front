@@ -3,6 +3,7 @@ import { Card } from '@mui/material'
 
 import { RootState } from '../../../store/store'
 import { ItemCategoryArt } from '../../../assets/config/item-categories'
+import { PressRipple } from '../../../CustomMui/PressRipple/PressRipple'
 
 interface ItemCategoryTileProps {
   label: string
@@ -20,25 +21,27 @@ export function ItemCategoryTile({
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
 
   return (
-    <Card
-      className={`card item-category-tile ${wide ? 'wide' : ''} ${
-        prefs.isDarkMode ? 'dark-mode' : ''
-      } ${prefs.favoriteColor || ''}`}
-      onClick={onClick}
-    >
-      <img
-        src={art.still}
-        alt=''
-        className='item-category-tile-art'
-        draggable={false}
-      />
-      <span
-        className={`item-category-tile-label ${prefs.favoriteColor || ''} ${
+    <PressRipple>
+      <Card
+        className={`card item-category-tile ${wide ? 'wide' : ''} ${
           prefs.isDarkMode ? 'dark-mode' : ''
-        }`}
+        } ${prefs.favoriteColor || ''}`}
+        onClick={onClick}
       >
-        {label}
-      </span>
-    </Card>
+        <img
+          src={art.still}
+          alt=''
+          className='item-category-tile-art'
+          draggable={false}
+        />
+        <span
+          className={`item-category-tile-label ${prefs.favoriteColor || ''} ${
+            prefs.isDarkMode ? 'dark-mode' : ''
+          }`}
+        >
+          {label}
+        </span>
+      </Card>
+    </PressRipple>
   )
 }

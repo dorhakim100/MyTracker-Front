@@ -19,6 +19,7 @@ import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { WeightDetails } from './WeightDetails/WeightDetails'
 import { weightStatisticsNs } from './locals'
 import './locals'
+import { PressRipple } from '../../CustomMui/PressRipple/PressRipple'
 
 const DASH = '-'
 const DAY_MODES: WeightDaysMode[] = ['logged', 'all']
@@ -111,58 +112,61 @@ export function WeightStatistics({ user }: { user: User }) {
           </TableHead>
           <TableBody>
             {days.map((day) => (
-              <TableRow
-                key={day.date}
-                className='day-row'
-                onClick={() => setOpenDate(day.date)}
-              >
-                <TableCell align='left'>
-                  <Typography
-                    variant='body2'
-                    className='day-value'
-                  >
-                    {day.weight
-                      ? formatDay(day.weight.createdAt)
-                      : formatDay(dayStartMs(day.date))}
-                  </Typography>
-                </TableCell>
-                <TableCell align='center'>
-                  <Typography
-                    variant='body2'
-                    className='day-value'
-                  >
-                    {typeof day.weight?.kg === 'number' ? (
-                      <>
-                        {day.weight?.kg}
-                        <span className='day-unit'>{t('weight.kg')}</span>
-                      </>
-                    ) : (
-                      DASH
-                    )}
-                  </Typography>
-                </TableCell>
-                <TableCell align='center'>
-                  <Typography
-                    variant='body2'
-                    className='day-value'
-                  >
-                    {typeof day.weight?.bodyFat === 'number' ? (
-                      <>
-                        {day.weight?.bodyFat}
-                        <span className='day-unit'>%</span>
-                      </>
-                    ) : (
-                      DASH
-                    )}
-                  </Typography>
-                </TableCell>
-                <TableCell align='center'>
-                  <ChevronRightIcon
-                    className='day-chevron'
-                    fontSize='small'
-                  />
-                </TableCell>
-              </TableRow>
+              <PressRipple key={day.date}>
+                <TableRow
+                  hover
+                  className='day-row'
+                  onClick={() => setOpenDate(day.date)}
+                  style={{ cursor: 'none' }}
+                >
+                  <TableCell align='left'>
+                    <Typography
+                      variant='body2'
+                      className='day-value'
+                    >
+                      {day.weight
+                        ? formatDay(day.weight.createdAt)
+                        : formatDay(dayStartMs(day.date))}
+                    </Typography>
+                  </TableCell>
+                  <TableCell align='center'>
+                    <Typography
+                      variant='body2'
+                      className='day-value'
+                    >
+                      {typeof day.weight?.kg === 'number' ? (
+                        <>
+                          {day.weight?.kg}
+                          <span className='day-unit'>{t('weight.kg')}</span>
+                        </>
+                      ) : (
+                        DASH
+                      )}
+                    </Typography>
+                  </TableCell>
+                  <TableCell align='center'>
+                    <Typography
+                      variant='body2'
+                      className='day-value'
+                    >
+                      {typeof day.weight?.bodyFat === 'number' ? (
+                        <>
+                          {day.weight?.bodyFat}
+                          <span className='day-unit'>%</span>
+                        </>
+                      ) : (
+                        DASH
+                      )}
+                    </Typography>
+                  </TableCell>
+                  <TableCell align='center'>
+                    <ChevronRightIcon
+                      className='day-chevron'
+                      fontSize='small'
+                    />
+                  </TableCell>
+                </TableRow>
+              </PressRipple>
             ))}
           </TableBody>
         </Table>

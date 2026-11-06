@@ -1,0 +1,20 @@
+.press-ripple {
+  position: relative;
+}
+
+// The ripple span cannot be a direct child of tr — the table would treat it
+// as an extra column. It lives in the first cell and is stretched to the row.
+.press-ripple-cell {
+  position: relative;
+  z-index: 1;
+}
+
+.press-ripple-overlay {
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  bottom: 0;
+  inset-inline-start: 0;
+  overflow: hidden;
+  pointer-events: none;
+}

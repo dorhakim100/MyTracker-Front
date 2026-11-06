@@ -59,6 +59,7 @@ function Row(props: {
     <React.Fragment>
       <AnimatedWrapper
         as='tr'
+        style={{ cursor: 'none' }}
         // sx={{ '& > *': { borderBottom: 'unset' } }}
         onClick={async () => {
           const stateToSet = !open
@@ -135,6 +136,7 @@ function Row(props: {
           </div>
         </TableCell>
       </AnimatedWrapper>
+
       <AnimatedWrapper as='tr'>
         <TableCell
           style={{
