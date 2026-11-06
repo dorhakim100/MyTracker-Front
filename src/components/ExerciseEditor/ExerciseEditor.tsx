@@ -180,10 +180,13 @@ export function ExerciseEditor({
       exercise.sets[exercise.sets.length - 1] ||
       instructionsService.getEmptySet()
 
+    const { isDuringWorkout, ...setWithoutFlag } = existingSet
     const newSet = {
-      ...existingSet,
+      ...setWithoutFlag,
       setIndex: exercise.sets.length,
+      ...(isExpected ? {} : { isDuringWorkout: true }),
     }
+    void isDuringWorkout
 
     const newSets = [...exercise.sets, newSet]
     const updatedExercise = {
@@ -399,8 +402,8 @@ export function ExerciseEditor({
               badgeContent={index + 1}
               color='primary'
               className={`${prefs.favoriteColor} set-number ${
-                isDashboard ? 'dashboard' : ''
-              }`}
+                set.isDuringWorkout ? 'during-workout' : ''
+              } ${isDashboard ? 'dashboard' : ''}`}
             />
             <div className='badges-container'>
               {renderDoneControl(set, index)}
@@ -668,8 +671,8 @@ export function ExerciseEditor({
                             badgeContent={index + 1}
                             color='primary'
                             className={`${prefs.favoriteColor} set-number ${
-                              isDashboard ? 'dashboard' : ''
-                            }`}
+                              set.isDuringWorkout ? 'during-workout' : ''
+                            } ${isDashboard ? 'dashboard' : ''}`}
                           />
                           <div className='reps-container'>
                             <PickerSelect
@@ -766,19 +769,20 @@ export function ExerciseEditor({
                   /> */}
                     </div>
                   ),
-                  renderLeftSwipeActions: isExpected
-                    ? () => (
-                        <DeleteAction
-                          item={set}
-                          onDeleteItem={() => onDeleteSet(index)}
-                          destructive={
-                            index === 0 && exercise.sets.length === 1
-                              ? false
-                              : true
-                          }
-                        />
-                      )
-                    : undefined,
+                  renderLeftSwipeActions:
+                    isExpected || set.isDuringWorkout
+                      ? () => (
+                          <DeleteAction
+                            item={set}
+                            onDeleteItem={() => onDeleteSet(index)}
+                            destructive={
+                              index === 0 && exercise.sets.length === 1
+                                ? false
+                                : true
+                            }
+                          />
+                        )
+                      : undefined,
                   renderRightSwipeActions: !isExpected
                     ? () => (
                         <CustomSwipeAction

@@ -201,6 +201,17 @@
           position: static;
           transform: none;
         }
+
+        &.during-workout .MuiBadge-badge {
+          background-color: transparent !important;
+          color: color-mix(
+            in srgb,
+            var(--ink-on-canvas) 55%,
+            transparent
+          ) !important;
+          box-shadow: inset 0 0 0 1px
+            color-mix(in srgb, var(--ink-on-canvas) 45%, transparent) !important;
+        }
       }
 
       .reps-container {

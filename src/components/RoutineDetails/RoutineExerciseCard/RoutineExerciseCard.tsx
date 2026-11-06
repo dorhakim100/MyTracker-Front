@@ -129,7 +129,11 @@ export function RoutineExerciseCard({
                 // const setNumber = set.setNumber || index + 1
                 return (
                   <Fragment key={set._id || `${exercise.exerciseId}-${index}`}>
-                    <TableRow>
+                    <TableRow
+                      className={
+                        set.isDuringWorkout ? 'during-workout' : undefined
+                      }
+                    >
                       {/* <TableCell
                         rowSpan={2}
                         className='set-number'
@@ -148,7 +152,9 @@ export function RoutineExerciseCard({
                       <TableCell>{formatNumber(effort?.expected)}</TableCell>
                     </TableRow>
                     <TableRow
-                      className={`actual-row ${set.isDone ? 'done' : ''}`}
+                      className={`actual-row ${set.isDone ? 'done' : ''} ${
+                        set.isDuringWorkout ? 'during-workout' : ''
+                      }`}
                     >
                       <TableCell className='row-label'>{t('actual')}</TableCell>
                       <TableCell>

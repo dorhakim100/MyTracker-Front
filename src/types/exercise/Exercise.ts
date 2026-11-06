@@ -34,6 +34,7 @@ export interface Set {
   sessionId?: string
   isDone?: boolean
   exerciseId?: string
+  isDuringWorkout?: boolean
 
   // just for editing
 }

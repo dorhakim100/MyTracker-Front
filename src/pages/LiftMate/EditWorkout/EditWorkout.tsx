@@ -341,9 +341,10 @@ export function EditWorkout({
   }
 
   function modifyInstructionsForSave(instructions: Instructions) {
+    const keepDuringWorkout = (instructions.doneTimes ?? 0) > 0
     const modifiedExercises = instructions.exercises.map((exercise) => {
       const newSets = exercise.sets.map((set) => {
-        return {
+        const nextSet = {
           ...set,
           isDone: false,
           reps: {
@@ -367,6 +368,8 @@ export function EditWorkout({
             },
           }),
         }
+        if (!keepDuringWorkout) delete nextSet.isDuringWorkout
+        return nextSet
       })
       return {
         ...exercise,

@@ -95,6 +95,17 @@
     white-space: nowrap;
   }
 
+  tr:not(.during-workout):not(:first-of-type) {
+    opacity: 1;
+    border-bottom: 1px solid
+      color-mix(in srgb, var(--ink-on-canvas) 16%, transparent) !important;
+    color: $white !important;
+  }
+
+  tr.during-workout {
+    opacity: 0.6;
+  }
+
   .actual-row,
   .row-label {
     &.done {
