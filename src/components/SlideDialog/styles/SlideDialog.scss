@@ -7,9 +7,23 @@
 
 .MuiDialog-root.full-dialog,
 .react-modal-sheet-root.full-dialog {
+  top: 0 !important;
   bottom: 0 !important;
+  height: 100% !important;
+
+  .slide-dialog-backdrop {
+    top: 0 !important;
+    height: 100% !important;
+  }
+
+  // Sheet sits under the app header. Height stays inside the screen so the
+  // backdrop covers the full viewport and the bottom padding stays visible.
+  .react-modal-sheet-container,
   .slide-dialog {
-    top: $header-margin !important;
+    top: auto !important;
+    bottom: 0 !important;
+    height: calc(100% - #{$header-margin}) !important;
+    max-height: calc(100% - #{$header-margin}) !important;
   }
 }
 
@@ -117,7 +131,7 @@
 
 .react-modal-sheet-root:not(.dashboard) {
   .slide-dialog {
-    padding-bottom: 1.5em;
+    padding-bottom: calc(1.25em + env(safe-area-inset-bottom, 0px));
   }
 }
 
