@@ -1,0 +1,15 @@
+.ellipsis-text-container {
+  max-width: 100%;
+  p,
+  span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &.disabled {
+    overflow: visible;
+    text-overflow: unset;
+    white-space: normal;
+  }
+}

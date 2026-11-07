@@ -17,6 +17,7 @@ import TouchRippleBase, {
   type TouchRippleActions,
   type TouchRippleProps,
 } from '@mui/material/ButtonBase/TouchRipple'
+import { EllipsisText } from '../../CustomMui/EllipsisText/EllipsisText'
 
 // MUI's .d.ts types the inner render function. The runtime export is forwardRef.
 const TouchRipple = TouchRippleBase as unknown as ForwardRefExoticComponent<
@@ -89,19 +90,22 @@ export function GoalBanner({
       onPointerLeave={() => rippleRef.current?.stop()}
     >
       {isClickable && <TouchRipple ref={rippleRef} />}
+
       <div className='value-container'>
-        <Typography
-          variant='body1'
-          className='bold-header'
-        >
-          {animateCurrent ? (
-            <RollingNumber value={+afterMountCurrent || 0} />
-          ) : (
-            afterMountCurrent
-          )}
-          {extraValue}
-          <span className='after-value'>{afterValue}</span>
-        </Typography>
+        <EllipsisText>
+          <Typography
+            variant='body1'
+            className='bold-header'
+          >
+            {animateCurrent ? (
+              <RollingNumber value={+afterMountCurrent || 0} />
+            ) : (
+              afterMountCurrent
+            )}
+            {extraValue}
+            <span className='after-value'>{afterValue}</span>
+          </Typography>
+        </EllipsisText>
         {isGoal && (
           <>
             <span>/</span>
