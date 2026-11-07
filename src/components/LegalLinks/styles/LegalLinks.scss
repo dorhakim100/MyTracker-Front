@@ -1,0 +1,13 @@
+.legal-links-container {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  padding: 0.25rem 0;
+
+  a {
+    color: color-mix(in srgb, var(--ink-on-canvas) 72%, transparent);
+    font-size: 0.85rem;
+    text-decoration: underline;
+    text-underline-offset: 0.15rem;
+  }
+}

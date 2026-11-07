@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">MyTracker</string>
+    <string name="title_activity_main">MyTracker</string>
+    <string name="package_name">com.dorhakim.mytracker</string>
+    <string name="custom_url_scheme">com.dorhakim.mytracker</string>
+    <!-- Same public URL as VITE_PRIVACY_POLICY_URL. Health Connect opens this from system settings. -->
+    <string name="health_connect_privacy_policy_url">REPLACE_WITH_PRIVACY_POLICY_URL</string>
+</resources>

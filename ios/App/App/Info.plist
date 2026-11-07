@@ -57,10 +57,12 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>The app uses the camera to scan product barcodes.</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>NSHealthShareUsageDescription</key>
-	<string>This app reads your step count to track your activity.</string>
+	<string>MyTracker reads your steps, active calories, walking and running distance, and flights climbed to show today's activity.</string>
 	<key>NSHealthUpdateUsageDescription</key>
-	<string>This app may write health data to improve your tracking experience.</string>
+	<string>MyTracker saves your body weight to Apple Health when you log a weight.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

@@ -7,8 +7,10 @@
 
 .MuiDialog-root.full-dialog,
 .react-modal-sheet-root.full-dialog {
-  top: $header-margin !important;
   bottom: 0 !important;
+  .slide-dialog {
+    top: $header-margin !important;
+  }
 }
 
 .MuiDialog-container,

@@ -24,6 +24,7 @@ import { CustomAlertDialog } from '../../CustomMui/CustomAlertDialog/CustomAlert
 import { deleteAccount } from '../../store/actions/user.actions'
 import { logout } from '../../store/actions/user.actions'
 import { DeleteAccountCard } from '../DeleteAccountCard/DeleteAccountCard'
+import { LegalLinks } from '../LegalLinks/LegalLinks'
 
 interface EditUserProps {
   selectedUser?: User | null
@@ -316,6 +317,8 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
           <Divider
             className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
           />
+
+          <LegalLinks />
 
           <CustomButton
             fullWidth

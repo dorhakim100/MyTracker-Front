@@ -38,6 +38,7 @@ import {
 } from '../../store/actions/health.actions'
 import { setActiveRoute } from '../../store/actions/system.actions'
 import { GoogleIcon } from './components/CustomIcons'
+import { LegalLinks } from '../../components/LegalLinks/LegalLinks'
 
 import { usePwaDetect } from '../../hooks/usePwaDetect'
 import CircularProgress from '@mui/material/CircularProgress'
@@ -107,7 +108,7 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const credientials: any = {}
 
-  const [isRemember, setIsRemember] = React.useState(false)
+  const [isRemember, setIsRemember] = React.useState(true)
   const [isGoogleLoading, setIsGoogleLoading] = React.useState(false)
 
   const isLoading = useSelector(
@@ -409,6 +410,7 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
                   />
                 }
                 label={t('auth.rememberMe')}
+                checked={isRemember}
                 onChange={toggleRememberMe}
               />
               <ForgotPassword
@@ -488,6 +490,7 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
               </div>
             </Box>
           </Card>
+          <LegalLinks />
         </SignInContainer>
       </AppTheme>
     </div>

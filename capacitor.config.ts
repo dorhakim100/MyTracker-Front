@@ -1,12 +1,12 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.mytracker',
+  appId: 'com.dorhakim.mytracker',
   appName: 'MyTracker',
   webDir: 'dist',
   plugins: {
     LocalNotifications: {
-      smallIcon: "ic_stat_icon_config_sample",
+      smallIcon: "ic_stat_mytracker",
       iconColor: "#488AFF",
     },
   },
