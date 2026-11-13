@@ -22,6 +22,7 @@ import { WeightStatistics } from '../../components/WeightStatistics/WeightStatis
 import { SlideDialog } from '../../components/SlideDialog/SlideDialog'
 // import { StatsCarousel } from '../../components/StatsCarousel/StatsCarousel'
 import { HealthProviderCard } from '../../components/HealthProviderCard/HealthProviderCard'
+import { LegalLinks } from '../../components/LegalLinks/LegalLinks'
 
 export function UserDetails() {
   const { t } = useTranslation()
@@ -179,6 +180,7 @@ export function UserDetails() {
             className={`${prefs.favoriteColor}`}
             text={t('user.logout')}
           />
+          <LegalLinks />
         </div>
       )}
       {isDashboard && viewedUser && (
