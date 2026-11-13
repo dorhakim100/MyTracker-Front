@@ -14,7 +14,7 @@ import { UserMsg } from './components/UserMsg/UserMsg'
 import { FixedBottomNavigation } from './CustomMui/BottomNavigation/FixedBottomNavigation.tsx'
 import { SlideAnimation } from './components/SlideAnimation/SlideAnimation.tsx'
 
-import { RootState } from './store/store.ts'
+import { RootState, store } from './store/store.ts'
 
 import { setRemembered } from './store/actions/user.actions.ts'
 import { setFavoriteItems } from './store/actions/item.actions.ts'
@@ -24,6 +24,7 @@ import {
   setIsDashboard,
   setIsLocalNotificationsPermitted,
   setActiveRoute,
+  setPrefs,
 } from './store/actions/system.actions.ts'
 import { SignIn } from './CustomMui/SignIn/SignIn.tsx'
 import { searchService } from './services/search/search-service.ts'
@@ -191,6 +192,23 @@ function App() {
       document.body.classList.remove('dashboard')
     }
   }, [prefs, isDashboard])
+
+  useEffect(() => {
+    if (prefs.colorMode !== 'system') return
+
+    const media = window.matchMedia('(prefers-color-scheme: dark)')
+    const apply = () => {
+      const current = store.getState().systemModule.prefs
+      if (current.colorMode !== 'system') return
+      const nextDark = media.matches
+      if (current.isDarkMode === nextDark) return
+      setPrefs({ ...current, colorMode: 'system', isDarkMode: nextDark })
+    }
+
+    apply()
+    media.addEventListener('change', apply)
+    return () => media.removeEventListener('change', apply)
+  }, [prefs.colorMode])
 
   useEffect(() => {
     const native = Capacitor.isNativePlatform()

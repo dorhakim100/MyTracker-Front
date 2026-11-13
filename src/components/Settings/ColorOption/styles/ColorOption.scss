@@ -1,0 +1,40 @@
+.color-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.color-option-swatch {
+  width: 0.9rem;
+  height: 0.9rem;
+  border-radius: 50%;
+  flex-shrink: 0;
+
+  &.primary {
+    background: var(--primary-color);
+  }
+  &.blue {
+    background: var(--picker-color-blue);
+  }
+  &.yellow {
+    background: var(--picker-color-yellow);
+  }
+  &.red {
+    background: var(--picker-color-red);
+  }
+  &.orange {
+    background: var(--picker-color-orange);
+  }
+  &.green {
+    background: var(--picker-color-green);
+  }
+  &.deepPurple {
+    background: var(--picker-color-deep-purple);
+  }
+  &.purple {
+    background: var(--picker-color-purple);
+  }
+  &.pink {
+    background: var(--picker-color-pink);
+  }
+}

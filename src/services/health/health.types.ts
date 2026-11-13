@@ -13,7 +13,7 @@ export type HealthAvailabilityResult =
   | { status: 'unavailable'; reason: string; platform?: 'ios' | 'android' | 'web' }
 
 export type HealthReadAuthorizationResult =
-  | { status: 'unavailable'; reason: 'not_native' }
+  | { status: 'unavailable'; reason: 'not_native' | 'phone_health_off' }
   | { status: 'ok'; stepsAuthorized: boolean; caloriesAuthorized: boolean }
 
 export type TodayActivitySummary =

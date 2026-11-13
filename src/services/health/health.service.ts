@@ -30,6 +30,8 @@ export const healthService = {
   getTodayActivitySummary,
   saveWeight,
   isGoogleHealthPlatform,
+  isPhoneHealthAuthorized,
+  openPhoneHealthSettings,
 }
 
 function isGoogleHealthPlatform() {
@@ -79,6 +81,10 @@ async function requestReadAuthorization(
     return { status: 'unavailable', reason: 'not_native' }
   }
 
+  if (!isPhoneHealthInUse()) {
+    return { status: 'unavailable', reason: 'phone_health_off' }
+  }
+
   const status = await Health.requestAuthorization({
     read: READ_OPTIONS.read,
     write: WRITE_OPTIONS.write,
@@ -91,6 +97,10 @@ async function getTodayActivitySummary(
 ): Promise<TodayActivitySummary> {
   if (isGoogleHealthPlatform() && userId) {
     return getGoogleTodayActivitySummary(userId)
+  }
+
+  if (!isPhoneHealthInUse()) {
+    return { status: 'not_connected' }
   }
 
   return getNativeTodayActivitySummary()
@@ -186,6 +196,35 @@ async function saveWeight(weight: number) {
     dataType: 'weight',
     value: weight,
   })
+}
+
+function isPhoneHealthInUse() {
+  return store.getState().systemModule.prefs.usePhoneHealth !== false
+}
+
+async function isPhoneHealthAuthorized() {
+  if (!Capacitor.isNativePlatform() || !isPhoneHealthInUse()) return false
+
+  try {
+    const auth = await Health.checkAuthorization({
+      read: READ_OPTIONS.read,
+      write: WRITE_OPTIONS.write,
+    })
+    return auth.readAuthorized.includes('steps')
+  } catch {
+    return false
+  }
+}
+
+async function openPhoneHealthSettings() {
+  if (Capacitor.getPlatform() === 'android') {
+    await Health.openHealthConnectSettings()
+    return
+  }
+
+  if (Capacitor.getPlatform() === 'ios') {
+    window.location.assign('app-settings:')
+  }
 }
 
 function mapReadFlags(status: AuthorizationStatus) {

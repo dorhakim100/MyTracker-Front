@@ -19,6 +19,7 @@ interface CustomSelectProps {
   tooltipTitle?: string
   valueLabels?: Record<string, string>
   width?: number
+  renderOption?: (value: string) => React.ReactNode
 }
 
 export function CustomSelect({
@@ -32,6 +33,7 @@ export function CustomSelect({
   tooltipTitle,
   valueLabels,
   width,
+  renderOption,
 }: CustomSelectProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -99,6 +101,11 @@ export function CustomSelect({
           }`}
           label={label}
           onChange={handleChange}
+          renderValue={
+            renderOption
+              ? (selected) => renderOption(String(selected))
+              : undefined
+          }
           MenuProps={{
             PaperProps: {
               className: `${
@@ -110,13 +117,20 @@ export function CustomSelect({
           {/* <MenuItem value=''>
           <em>None</em>
           </MenuItem> */}
-          {values.map((value) => (
+          {values.map((option) => (
             <MenuItem
-              key={`${label}-${value}-select`}
-              value={value}
+              key={`${label}-${option}-select`}
+              value={option}
             >
-              {getImg(value)}
-              {valueLabels?.[value] ?? capitalizeFirstLetter(value)} {extra}
+              {renderOption ? (
+                renderOption(option)
+              ) : (
+                <>
+                  {getImg(option)}
+                  {valueLabels?.[option] ?? capitalizeFirstLetter(option)}{' '}
+                  {extra}
+                </>
+              )}
             </MenuItem>
           ))}
         </Select>

@@ -1,4 +1,12 @@
 .alert-dialog-paper {
+  background-color: var(--canvas-color) !important;
+  color: var(--ink-on-canvas);
+  border-color: color-mix(
+    in srgb,
+    var(--accent) var(--chrome-ring),
+    transparent
+  ) !important;
+
   .loading-progress {
     position: absolute;
     bottom: 0;
@@ -29,6 +37,42 @@
       color: var(--text-color);
     }
   }
+}
+
+body.dark-mode .alert-dialog-paper {
+  background-color: $darker-gray !important;
+}
+
+body.dark-mode.blue .alert-dialog-paper {
+  background-color: $darker-gray-blue !important;
+}
+
+body.dark-mode.yellow .alert-dialog-paper {
+  background-color: $darker-gray-yellow !important;
+}
+
+body.dark-mode.red .alert-dialog-paper {
+  background-color: $darker-gray-red !important;
+}
+
+body.dark-mode.orange .alert-dialog-paper {
+  background-color: $darker-gray-orange !important;
+}
+
+body.dark-mode.green .alert-dialog-paper {
+  background-color: $darker-gray-green !important;
+}
+
+body.dark-mode.deepPurple .alert-dialog-paper {
+  background-color: $darker-gray-deep-purple !important;
+}
+
+body.dark-mode.purple .alert-dialog-paper {
+  background-color: $darker-gray-purple !important;
+}
+
+body.dark-mode.pink .alert-dialog-paper {
+  background-color: $darker-gray-pink !important;
 }
 
 .alert-dialog-paper.alert-type-medium {

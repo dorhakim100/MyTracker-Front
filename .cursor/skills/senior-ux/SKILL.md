@@ -32,6 +32,7 @@ Think like a senior product designer embedded on a frontend team — not a Dribb
 
 ## Do instead
 
+- Compose a screen from components. A list of rows is a component that receives each row’s icon, title, and copy. Do not generate the page by mapping ids and branching every field
 - Commit to **one** visual direction and execute it with restraint
 - Use MUI + CustomMui as the system; customize via theme + SCSS, not random one-offs
 - Dark mode via CSS vars + `html.dark-mode &` in SCSS; never invent a parallel theme path

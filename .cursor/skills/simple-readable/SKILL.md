@@ -28,6 +28,22 @@ Every implementation should be as **minimal** as possible, and as **readable to 
 - Plain data + functions over unnecessary classes, factories, or indirection
 - Boring, standard library / already-in-repo approaches over new dependencies
 
+## Never write a view as a branch table
+
+Do not render a page, screen, or section by mapping an id and picking every field with a ternary. That is a component hiding inside the parent.
+
+```tsx
+{methods.map((method) => (
+  <div key={method}>
+    {method === 'google' ? <GoogleIcon /> : <PhoneIcon />}
+    <span>{method === 'google' ? t('googleTitle') : t('phoneTitle')}</span>
+    <p>{method === 'google' ? t('googleDescription') : t('phoneDescription')}</p>
+  </div>
+))}
+```
+
+Move that block into its own component. The row takes props (`icon`, `title`, `description`, handlers). The parent lists each row explicitly. An `id === '...'` check belongs in the handler that does the work, not on every line of the markup.
+
 ## Avoid unless explicitly requested
 
 - Premature generalization (“for later”)

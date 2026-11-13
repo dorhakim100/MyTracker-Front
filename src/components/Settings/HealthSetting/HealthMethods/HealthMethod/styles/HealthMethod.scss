@@ -1,0 +1,38 @@
+.health-method {
+  display: grid;
+  grid-template-columns: 1fr auto;
+
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+
+  svg {
+    width: 1.5rem;
+    height: 1.5rem;
+    flex-shrink: 0;
+  }
+}
+
+.health-method-heading {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.health-method-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.health-method-title {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 600;
+}
+
+.health-method-description {
+  opacity: 0.75;
+}

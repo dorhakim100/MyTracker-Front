@@ -1,5 +1,5 @@
 import { indexedDbService } from '../indexeddb.service'
-import type { AppFont, Lang, Prefs } from '../../types/system/Prefs'
+import type { AppFont, ColorMode, Lang, Prefs } from '../../types/system/Prefs'
 import { APP_FONTS } from '../../types/system/Prefs'
 
 const LS_KEY = 'my-tracker-prefs'
@@ -8,6 +8,24 @@ function toLang(value: unknown): Lang {
   if (value === 'en' || value === 'he') return value
 
   return 'en'
+}
+
+function toColorMode(value: unknown, isDarkMode: boolean): ColorMode {
+  if (value === 'light' || value === 'dark' || value === 'system') return value
+  return isDarkMode ? 'dark' : 'light'
+}
+
+function resolveIsDarkMode(colorMode: ColorMode, storedDark: boolean) {
+  if (
+    colorMode === 'system' &&
+    typeof window !== 'undefined' &&
+    typeof window.matchMedia === 'function'
+  ) {
+    return window.matchMedia('(prefers-color-scheme: dark)').matches
+  }
+  if (colorMode === 'light') return false
+  if (colorMode === 'dark') return true
+  return storedDark
 }
 
 function toAppFont(value: unknown): AppFont {
@@ -30,6 +48,8 @@ type StoredPrefs = {
   _id?: string
   app?: string
   isDarkMode?: boolean
+  colorMode?: unknown
+  usePhoneHealth?: boolean
   lang?: unknown
   isEnglish?: boolean
   favoriteColor?: string
@@ -57,10 +77,13 @@ export async function getPrefs(): Promise<Prefs> {
           ? toLang(entity.lang)
           : toLang(entity.isEnglish)
       const defaults = getDefaultsPrefs()
+      const colorMode = toColorMode(entity.colorMode, !!entity.isDarkMode)
       return {
         app: (entity.app as Prefs['app']) ?? defaults.app,
         lang,
-        isDarkMode: !!entity.isDarkMode,
+        colorMode,
+        isDarkMode: resolveIsDarkMode(colorMode, !!entity.isDarkMode),
+        usePhoneHealth: entity.usePhoneHealth !== false,
         favoriteColor: entity.favoriteColor ?? defaults.favoriteColor,
         font: toAppFont(entity.font ?? defaults.font),
         weightChartSettings:
@@ -83,10 +106,13 @@ export async function getPrefs(): Promise<Prefs> {
           ? toLang(parsed.lang)
           : toLang(parsed.isEnglish)
       const defaults = getDefaultsPrefs()
+      const colorMode = toColorMode(parsed.colorMode, !!parsed.isDarkMode)
       const migrated: Prefs = {
         app: (parsed.app as Prefs['app']) ?? defaults.app,
         lang,
-        isDarkMode: !!parsed.isDarkMode,
+        colorMode,
+        isDarkMode: resolveIsDarkMode(colorMode, !!parsed.isDarkMode),
+        usePhoneHealth: parsed.usePhoneHealth !== false,
         favoriteColor: parsed.favoriteColor ?? defaults.favoriteColor,
         font: toAppFont(parsed.font ?? defaults.font),
         weightChartSettings:
@@ -119,7 +145,9 @@ export async function setPrefs(prefs: Prefs): Promise<void> {
     _id: RECORD_ID,
     app: prefs.app,
     lang: prefs.lang,
+    colorMode: toColorMode(prefs.colorMode, !!prefs.isDarkMode),
     isDarkMode: !!prefs.isDarkMode,
+    usePhoneHealth: prefs.usePhoneHealth !== false,
     favoriteColor: prefs.favoriteColor,
     font: toAppFont(prefs.font),
     weightChartSettings: prefs.weightChartSettings,
@@ -133,6 +161,8 @@ export function getDefaultsPrefs(): Prefs {
   return {
     app: 'my-tracker',
     isDarkMode: true,
+    colorMode: 'dark',
+    usePhoneHealth: true,
     lang: 'en',
     favoriteColor: 'primary',
     font: 'font-rubik',

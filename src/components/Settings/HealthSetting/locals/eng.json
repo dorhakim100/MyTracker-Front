@@ -1,0 +1,14 @@
+{
+  "title": "Health",
+  "connect": "Connect",
+  "change": "Change",
+  "connected": "Connected",
+  "disconnect": "Disconnect",
+  "disconnectTitle": "Disconnect health?",
+  "disconnectBody": "This method will stop supplying health data.",
+  "disconnectError": "Could not disconnect. Please try again.",
+  "phoneTitle": "Phone",
+  "phoneDescription": "Steps and activity from this phone.",
+  "googleTitle": "Google",
+  "googleDescription": "Steps and activity from Google. Disconnect stops health and keeps your Google login."
+}

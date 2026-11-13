@@ -73,6 +73,25 @@
     }
   }
 
+  html:not(.dark-mode) body:not(.dark-mode) &.MuiButton-root.variant-strong:not(
+      .disable-button
+    ):not(.delete-account-button):not(.google-sign-in-button) {
+    background-color: color-mix(in srgb, var(--accent) 74%, white) !important;
+  }
+
+  html:not(.dark-mode) body:not(.dark-mode) &.MuiIconButton-root.variant-strong:not(
+      .variant-flat
+    ) {
+    background-color: color-mix(in srgb, var(--accent) 46%, white) !important;
+  }
+
+  html:not(.dark-mode) body:not(.dark-mode) &.variant-strong.yellow,
+  html:not(.dark-mode) body:not(.dark-mode) &.variant-strong.green,
+  html:not(.dark-mode) body:not(.dark-mode) &.variant-strong.orange,
+  html:not(.dark-mode) body:not(.dark-mode) &.variant-strong.pink {
+    color: #1c1917 !important;
+  }
+
   &.MuiIconButton-root:not(.variant-flat) {
     color: var(--accent) !important;
     border-radius: 50%;

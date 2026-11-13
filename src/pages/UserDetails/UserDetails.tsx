@@ -14,14 +14,13 @@ import { GoalsCard } from '../../components/GoalsCard/GoalsCard'
 import { BmrCard } from '../../components/BmrCard/BmrCard'
 import { MealsCard } from '../../components/MealsCard/MealsCard'
 import { FavoriteItemsCard } from '../../components/FavoriteItemsCard/FavoriteItemsCard'
-import { PreferencesCard } from '../../components/PreferencesCard/PreferencesCard'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import { CustomIcon } from '../../CustomMui/CustomIcon/CustomIcon'
 import { WeightChart } from '../../components/WeightChart/WeightChart'
 import { WeightStatistics } from '../../components/WeightStatistics/WeightStatistics'
 import { SlideDialog } from '../../components/SlideDialog/SlideDialog'
 // import { StatsCarousel } from '../../components/StatsCarousel/StatsCarousel'
-import { HealthProviderCard } from '../../components/HealthProviderCard/HealthProviderCard'
+import { StepsGoalCard } from '../../components/StepsGoalCard/StepsGoalCard'
 import { LegalLinks } from '../../components/LegalLinks/LegalLinks'
 
 export function UserDetails() {
@@ -97,7 +96,7 @@ export function UserDetails() {
     },
     {
       title: t('user.accordionHealth'),
-      cmp: <HealthProviderCard />,
+      cmp: <StepsGoalCard />,
       icon: (
         <CustomIcon
           name='health'
@@ -106,18 +105,6 @@ export function UserDetails() {
         />
       ),
       key: 'health',
-    },
-    {
-      title: t('user.accordionPreferences'),
-      cmp: <PreferencesCard />,
-      icon: (
-        <CustomIcon
-          name='preferences'
-          size='m'
-          variant='subtle'
-        />
-      ),
-      key: 'preferences',
     },
   ].filter(Boolean) as {
     title: string

@@ -79,6 +79,7 @@ src/
 - Import that SCSS from `src/assets/styles/main.scss`
 - Prefer existing components / CustomMui before creating new ones
 - `<button>` / `CustomButton` only for a real action. Cards, sections, and layout containers are `<div>` (or an existing MUI surface such as `Card`). Do not use `<button>` or `component="button"` to make a card or container clickable — keep that surface a `div` and put the action on a button inside it, even if the element has an onClick event to it.
+- A section, list, or row with its own markup is its own component in its own folder. Do not leave it inline as a `.map()` that switches icon, title, and copy on a string id. Pass those as props and list the rows. See `simple-readable`.
 
 ### Suspense export (required for feature cmps + pages)
 

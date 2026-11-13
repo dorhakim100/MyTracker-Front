@@ -57,3 +57,79 @@
     color: var(--accent-ink) !important;
   }
 }
+
+.custom-toggle {
+  &.segment {
+    width: 100%;
+    padding: 0.2rem;
+    border: 0;
+    border-radius: 5px;
+    background: color-mix(in srgb, var(--accent) 18%, white);
+    gap: 5px;
+
+    .MuiToggleButtonGroup-groupedHorizontal {
+      gap: 0;
+    }
+
+    .MuiToggleButtonGroup-grouped {
+      border: 0 !important;
+      margin: 0 !important;
+      border-radius: 5px !important;
+      flex: 1;
+      text-transform: none;
+      font-weight: 600;
+      color: color-mix(in srgb, black 62%, transparent);
+      transition: background-color 180ms ease, box-shadow 180ms ease,
+        color 180ms ease;
+      padding: 0.2rem;
+    }
+
+    .MuiToggleButtonGroup-grouped.Mui-selected {
+      background-color: $white !important;
+      color: color-mix(in srgb, black 88%, transparent) !important;
+      box-shadow: 0 1px 2px color-mix(in srgb, black 16%, transparent);
+    }
+
+    &.natural {
+      background: color-mix(in srgb, black 8%, $white);
+    }
+
+    html.dark-mode &,
+    body.dark-mode & {
+      background: color-mix(in srgb, var(--accent) 24%, black);
+
+      .MuiToggleButtonGroup-grouped {
+        color: color-mix(in srgb, $white 62%, transparent);
+      }
+
+      .MuiToggleButtonGroup-grouped.Mui-selected {
+        background-color: var(--accent) !important;
+        color: $white !important;
+      }
+
+      &.yellow,
+      &.green,
+      &.orange,
+      &.pink {
+        .MuiToggleButtonGroup-grouped.Mui-selected {
+          color: #1c1917 !important;
+        }
+      }
+
+      &.natural {
+        background: color-mix(in srgb, $white 12%, black);
+
+        .MuiToggleButtonGroup-grouped.Mui-selected {
+          background-color: color-mix(in srgb, $white 28%, black) !important;
+          color: $white !important;
+        }
+      }
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .custom-toggle.segment .MuiToggleButtonGroup-grouped {
+    transition: none;
+  }
+}

@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import { Typography } from '@mui/material'
 import { Card } from '@mui/material'
-import { EditIcon } from '../EditIcon/EditIcon'
+
 import { RootState } from '../../store/store'
 import { EditUser } from '../EditUser/EditUser'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
@@ -18,6 +18,11 @@ import { showSuccessMsg, showErrorMsg } from '../../services/event-bus.service'
 import { CustomAlertDialog } from '../../CustomMui/CustomAlertDialog/CustomAlertDialog'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import { useLocation, useNavigate } from 'react-router'
+import SettingsIcon from '@mui/icons-material/Settings'
+import EditIcon from '@mui/icons-material/Edit'
+import { Settings } from '../Settings/Settings'
+import { settingsNs } from '../Settings/locals'
+import '../Settings/locals'
 
 interface ProfileCardProps {
   userToDisplay?: User
@@ -25,6 +30,7 @@ interface ProfileCardProps {
 
 export function ProfileCard({ userToDisplay }: ProfileCardProps) {
   const { t } = useTranslation()
+  const { t: tSettings } = useTranslation(settingsNs)
   const prefs = useSelector(
     (storeState: RootState) => storeState.systemModule.prefs
   )
@@ -54,6 +60,7 @@ export function ProfileCard({ userToDisplay }: ProfileCardProps) {
   }, [userToDisplay, user])
 
   const [isEditUserOpen, setIsEditUserOpen] = useState<boolean>(false)
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
 
   const [openAlertDialog, setOpenAlertDialog] = useState<boolean>(false)
 
@@ -108,7 +115,21 @@ export function ProfileCard({ userToDisplay }: ProfileCardProps) {
           traineeUser?._id === userToDisplay?._id ? 'selected' : ''
         } ${prefs.favoriteColor}`}
       >
-        <EditIcon onClick={onOpenEditUser} />
+        <div className='actions-container'>
+          <CustomButton
+            icon={<SettingsIcon />}
+            isIcon={true}
+            onClick={() => setIsSettingsOpen(true)}
+            variant='flat'
+            ariaLabel={tSettings('title')}
+          />
+          <CustomButton
+            icon={<EditIcon />}
+            isIcon={true}
+            onClick={onOpenEditUser}
+            variant='flat'
+          />
+        </div>
         <div
           className='profile-container'
           onClick={onOpenAlertDialog}
@@ -148,6 +169,13 @@ export function ProfileCard({ userToDisplay }: ProfileCardProps) {
           </div>
         )}
       </Card>
+      <SlideDialog
+        open={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        type='full'
+        title={tSettings('title')}
+        component={<Settings person={userToEdit || undefined} />}
+      />
       <SlideDialog
         open={isEditUserOpen}
         onClose={onCloseEditUser}

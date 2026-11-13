@@ -29,6 +29,23 @@ export async function setGoogleHealthConnected(connected: boolean) {
   await setPermitted(connected)
 }
 
+export function setGoogleHealthFlag(connected: boolean) {
+  store.dispatch({
+    type: SET_GOOGLE_HEALTH_CONNECTED,
+    googleHealthConnected: connected,
+  })
+}
+
+export function clearHealthSnapshot() {
+  store.dispatch({
+    type: SET_HEALTH_SNAPSHOT,
+    steps: 0,
+    burnedCalories: 0,
+    distance: 0,
+    flightsClimbed: 0,
+  })
+}
+
 export async function loadGoogleHealthConnection(userId: string) {
   if (!healthService.isGoogleHealthPlatform()) return false
 

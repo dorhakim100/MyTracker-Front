@@ -139,6 +139,7 @@ export function HealthStats({
         size='l'
         animateCurrent
         iconPlacement='left'
+        isClickType={true}
       />
       <GoalBanner
         current={flightsClimbed}
@@ -149,6 +150,7 @@ export function HealthStats({
         size='l'
         animateCurrent
         iconPlacement='left'
+        isClickType={true}
       />
     </div>
   )

@@ -21,6 +21,7 @@ export type GoogleHealthTodaySummary =
 export const googleHealthService = {
   getStatus,
   getTodayActivitySummary,
+  disconnect,
 }
 
 async function getStatus(userId: string): Promise<GoogleHealthStatus> {
@@ -29,6 +30,10 @@ async function getStatus(userId: string): Promise<GoogleHealthStatus> {
   } catch (err) {
     throw err
   }
+}
+
+async function disconnect(userId: string) {
+  return httpService.post('health/google/disconnect', { userId })
 }
 
 async function getTodayActivitySummary(

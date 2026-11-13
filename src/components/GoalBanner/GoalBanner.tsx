@@ -36,6 +36,7 @@ interface GoalBannerProps {
   animateCurrent?: boolean
   onClick?: () => void
   iconPlacement?: 'left' | 'right'
+  isClickType?: boolean
 }
 
 export function GoalBanner({
@@ -50,6 +51,7 @@ export function GoalBanner({
   animateCurrent = false,
   onClick,
   iconPlacement = 'right',
+  isClickType = false,
 }: GoalBannerProps) {
   const rippleRef = useRef<TouchRippleActions>(null)
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
@@ -121,11 +123,21 @@ export function GoalBanner({
       </div>
       <div className='icon-container'>{icon || <FlagIcon />}</div>
       {isClickable && <ChevronRightIcon className='chevron-right' />}
+      {isClickType && <EmptyIcon />}
       <LinearProgress
         className={`linear-progress ${prefs.favoriteColor} ${
           loading ? 'show' : ''
         }`}
       />
     </div>
+  )
+}
+
+function EmptyIcon() {
+  return (
+    <div
+      className='empty-icon'
+      style={{ width: 24, height: 24 }}
+    />
   )
 }

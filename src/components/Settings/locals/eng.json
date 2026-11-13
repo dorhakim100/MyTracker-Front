@@ -1,0 +1,16 @@
+{
+  "title": "Settings",
+  "mode": "Mode",
+  "light": "Light",
+  "dark": "Dark",
+  "system": "System",
+  "language": "Language",
+  "english": "English",
+  "hebrew": "עברית",
+  "font": "Font",
+  "favoriteColor": "Favorite color",
+  "fixedMenu": "Fixed menu",
+  "fixedMenuInfoTitle": "Fixed menu",
+  "fixedMenuInfo": "When this is on, food follows a set menu instead of the daily diary.",
+  "health": "Health"
+}

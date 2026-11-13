@@ -1,0 +1,16 @@
+{
+  "title": "הגדרות",
+  "mode": "מצב",
+  "light": "בהיר",
+  "dark": "כהה",
+  "system": "מערכת",
+  "language": "שפה",
+  "english": "English",
+  "hebrew": "עברית",
+  "font": "גופן",
+  "favoriteColor": "צבע מועדף",
+  "fixedMenu": "תפריט קבוע",
+  "fixedMenuInfoTitle": "תפריט קבוע",
+  "fixedMenuInfo": "כשהאפשרות פעילה, האוכל עוקב אחרי תפריט קבוע במקום היומן היומי.",
+  "health": "בריאות"
+}

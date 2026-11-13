@@ -434,7 +434,7 @@ export function Dashboard() {
           <div className='header-container'>
             <CustomIcon
               name='workout'
-              size='l'
+              size='m'
               variant='medium'
             />
             <Typography

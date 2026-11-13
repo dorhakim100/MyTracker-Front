@@ -3,6 +3,8 @@ import type { App } from '../app/App'
 
 export type Lang = 'en' | 'he'
 
+export type ColorMode = 'light' | 'dark' | 'system'
+
 export type HealthProvider = 'native' | 'google'
 
 export type AppFont = 'font-rubik' | 'font-heebo' | 'font-assistant'
@@ -16,10 +18,12 @@ export const APP_FONTS: AppFont[] = [
 export interface Prefs {
   app: App
   lang: Lang
+  colorMode: ColorMode
   isDarkMode: boolean
   favoriteColor: string
   font: AppFont
   weightChartSettings: ChartSettings
   healthProvider: HealthProvider
   showDayProgress: boolean
+  usePhoneHealth: boolean
 }

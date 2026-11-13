@@ -219,11 +219,7 @@ body.native .react-modal-sheet-root.full-dialog {
       border-bottom: none !important;
       border-top-right-radius: 10px;
       border-top-left-radius: 10px;
-      background-color: color-mix(
-        in srgb,
-        var(--accent) var(--chrome-tint-strong),
-        transparent
-      ) !important;
+      background-color: color-mix(in srgb, var(--accent) 74%, white) !important;
       box-shadow: none !important;
       color: $white !important;
 
@@ -246,6 +242,24 @@ body.native .react-modal-sheet-root.full-dialog {
         fill: currentColor !important;
         background-color: transparent !important;
         box-shadow: none !important;
+      }
+    }
+
+    &:not(.dark-mode).yellow,
+    &:not(.dark-mode).green,
+    &:not(.dark-mode).orange,
+    &:not(.dark-mode).pink {
+      .MuiToolbar-root,
+      .MuiToolbar-root .marquee-text-container,
+      .MuiToolbar-root .marquee-text-container *,
+      .MuiToolbar-root .marquee-text,
+      .MuiToolbar-root .marquee-text-measure,
+      .slide-dialog-close,
+      .slide-dialog-close svg,
+      .slide-dialog-header-action,
+      .slide-dialog-header-action svg {
+        color: #1c1917 !important;
+        fill: currentColor !important;
       }
     }
 

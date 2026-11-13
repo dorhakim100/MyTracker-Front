@@ -22,6 +22,8 @@ interface CustomToggleProps {
   ariaLabel?: string
   isBadge?: boolean
   isReversedIcon?: boolean
+  variant?: 'default' | 'segment'
+  tone?: 'color' | 'natural'
 }
 
 export function CustomToggle({
@@ -33,10 +35,14 @@ export function CustomToggle({
   ariaLabel = 'toggle-group',
   isBadge = false,
   isReversedIcon = false,
+  variant = 'default',
+  tone = 'color',
 }: CustomToggleProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
+  const isSegment = variant === 'segment'
+  const isNatural = isSegment && tone === 'natural'
   return (
     <ToggleButtonGroup
       value={value}
@@ -45,7 +51,11 @@ export function CustomToggle({
         if (newValue !== null) onChange(newValue)
       }}
       aria-label={ariaLabel}
-      className={`custom-toggle no-scroll ${className} ${prefs.favoriteColor}`}
+      className={`custom-toggle no-scroll ${
+        isSegment ? 'segment' : ''
+      } ${isNatural ? 'natural' : ''} ${className || ''} ${
+        isNatural ? '' : prefs.favoriteColor
+      }`}
     >
       {options.map((opt) => (
         <ToggleButton

@@ -1,0 +1,14 @@
+{
+  "title": "בריאות",
+  "connect": "חיבור",
+  "change": "שינוי",
+  "connected": "מחובר",
+  "disconnect": "ניתוק",
+  "disconnectTitle": "לנתק את הבריאות?",
+  "disconnectBody": "השיטה הזו תפסיק לספק נתוני בריאות.",
+  "disconnectError": "לא ניתן לנתק. נסו שוב.",
+  "phoneTitle": "הטלפון",
+  "phoneDescription": "צעדים ופעילות מהטלפון הזה.",
+  "googleTitle": "Google",
+  "googleDescription": "צעדים ופעילות מגוגל. ניתוק עוצר את הבריאות ומשאיר את ההתחברות לגוגל."
+}
