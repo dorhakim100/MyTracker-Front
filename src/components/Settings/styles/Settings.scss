@@ -13,6 +13,10 @@
   min-height: 3.25rem;
   padding-block: 0.7rem;
 
+  &.health {
+    min-height: 3.75rem;
+  }
+
   .MuiFormControl-root.custom-select {
     margin: 0;
     min-width: 8.5rem;

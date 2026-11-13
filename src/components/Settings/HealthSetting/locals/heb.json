@@ -8,7 +8,7 @@
   "disconnectBody": "השיטה הזו תפסיק לספק נתוני בריאות.",
   "disconnectError": "לא ניתן לנתק. נסו שוב.",
   "phoneTitle": "הטלפון",
-  "phoneDescription": "צעדים ופעילות מהטלפון הזה.",
+  "phoneDescription": "הרשאות בריאות מהטלפון הזה.",
   "googleTitle": "Google",
-  "googleDescription": "צעדים ופעילות מגוגל. ניתוק עוצר את הבריאות ומשאיר את ההתחברות לגוגל."
+  "googleDescription": "צעדים ופעילות מגוגל. MyTracker ייקח נתוני Google על נתוני הטלפון כשהם זמינים."
 }

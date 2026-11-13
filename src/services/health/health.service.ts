@@ -1,4 +1,4 @@
-import { Capacitor } from '@capacitor/core'
+import { Capacitor, registerPlugin } from '@capacitor/core'
 import { Health } from '@capgo/capacitor-health'
 import type {
   AuthorizationStatus,
@@ -16,6 +16,10 @@ import { googleHealthService } from './google-health.service'
 import { getFixedNumber, metersToKilometers } from '../util.service'
 import { store } from '../../store/store'
 
+const PhoneHealthSettings = registerPlugin<{
+  open: () => Promise<{ opened: boolean }>
+}>('PhoneHealthSettings')
+
 const READ_OPTIONS: { read: HealthDataType[] } = {
   read: [...HEALTH_READ_DATA_TYPES],
 }
@@ -31,6 +35,8 @@ export const healthService = {
   saveWeight,
   isGoogleHealthPlatform,
   isPhoneHealthAuthorized,
+  getPhoneHealthPermission,
+  requestPhoneHealthPermission,
   openPhoneHealthSettings,
 }
 
@@ -95,15 +101,27 @@ async function requestReadAuthorization(
 async function getTodayActivitySummary(
   userId?: string
 ): Promise<TodayActivitySummary> {
-  if (isGoogleHealthPlatform() && userId) {
-    return getGoogleTodayActivitySummary(userId)
+  if (await readsGoogleHealth(userId)) {
+    return getGoogleTodayActivitySummary(userId as string)
   }
 
-  if (!isPhoneHealthInUse()) {
+  if (!userId || !isPhoneHealthInUse()) {
     return { status: 'not_connected' }
   }
 
   return getNativeTodayActivitySummary()
+}
+
+async function readsGoogleHealth(userId?: string) {
+  if (!userId) return false
+  if (!Capacitor.isNativePlatform() || isGoogleHealthPlatform()) return true
+
+  try {
+    const status = await googleHealthService.getStatus(userId)
+    return status.connected
+  } catch {
+    return store.getState().healthModule.googleHealthConnected
+  }
 }
 
 async function getGoogleTodayActivitySummary(
@@ -204,26 +222,64 @@ function isPhoneHealthInUse() {
 
 async function isPhoneHealthAuthorized() {
   if (!Capacitor.isNativePlatform() || !isPhoneHealthInUse()) return false
+  return getPhoneHealthPermission()
+}
+
+async function getPhoneHealthPermission() {
+  if (!Capacitor.isNativePlatform()) return false
 
   try {
     const auth = await Health.checkAuthorization({
       read: READ_OPTIONS.read,
       write: WRITE_OPTIONS.write,
     })
-    return auth.readAuthorized.includes('steps')
+    return isPhoneHealthGranted(auth)
   } catch {
     return false
   }
 }
 
+async function requestPhoneHealthPermission() {
+  if (!Capacitor.isNativePlatform()) return false
+
+  const status = await Health.requestAuthorization({
+    read: READ_OPTIONS.read,
+    write: WRITE_OPTIONS.write,
+  })
+  return isPhoneHealthGranted(status)
+}
+
+function isPhoneHealthGranted(auth: AuthorizationStatus) {
+  if (Capacitor.getPlatform() === 'ios') {
+    return auth.writeAuthorized.includes('weight')
+  }
+  return auth.readAuthorized.includes('steps')
+}
+
 async function openPhoneHealthSettings() {
-  if (Capacitor.getPlatform() === 'android') {
+  const platform = Capacitor.getPlatform()
+
+  if (platform === 'android') {
     await Health.openHealthConnectSettings()
     return
   }
 
-  if (Capacitor.getPlatform() === 'ios') {
-    window.location.assign('app-settings:')
+  if (platform === 'ios') {
+    const opened = await openIosHealthAccessSettings()
+    if (opened) return
+    window.open(
+      'settings-navigation://com.apple.Settings.Apps/com.apple.Health/SOURCES_ITEM',
+      '_blank'
+    )
+  }
+}
+
+async function openIosHealthAccessSettings() {
+  try {
+    const result = await PhoneHealthSettings.open()
+    return result.opened
+  } catch {
+    return false
   }
 }
 

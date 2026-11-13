@@ -1,17 +1,15 @@
 import { useEffect, useState } from 'react'
+import { App as CapApp } from '@capacitor/app'
 import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import Typography from '@mui/material/Typography'
-import {
-  HealthMethods,
-  type HealthMethodId,
-} from './HealthMethods/HealthMethods'
+import { HealthMethods } from './HealthMethods/HealthMethods'
 import { CustomAlertDialog } from '../../../CustomMui/CustomAlertDialog/CustomAlertDialog'
 import { CustomButton } from '../../../CustomMui/CustomButton/CustomButton'
 import { SlideDialog } from '../../SlideDialog/SlideDialog'
 import { healthSettingNs } from './locals'
 import './locals'
-import { RootState } from '../../../store/store'
+import { RootState, store } from '../../../store/store'
 import { setPrefs } from '../../../store/actions/system.actions'
 import {
   clearHealthSnapshot,
@@ -19,7 +17,6 @@ import {
   setGoogleHealthConnected,
   setGoogleHealthFlag,
   setHealthData,
-  setPermitted,
 } from '../../../store/actions/health.actions'
 import { googleHealthService } from '../../../services/health/google-health.service'
 import { healthService } from '../../../services/health/health.service'
@@ -28,6 +25,13 @@ import {
   showErrorMsg,
   showSuccessMsg,
 } from '../../../services/event-bus.service'
+
+function syncPhoneHealthPref(authorized: boolean) {
+  const current = store.getState().systemModule.prefs
+  if (current.usePhoneHealth === authorized) return
+
+  setPrefs({ ...current, usePhoneHealth: authorized })
+}
 
 export function HealthSetting() {
   const { t } = useTranslation(healthSettingNs)
@@ -40,13 +44,13 @@ export function HealthSetting() {
 
   const [open, setOpen] = useState(false)
   const [ready, setReady] = useState(false)
-  const [phoneConnected, setPhoneConnected] = useState(false)
+  const [phoneAuthorized, setPhoneAuthorized] = useState(false)
   const [googleConnected, setGoogleConnected] = useState(false)
-  const [pending, setPending] = useState<HealthMethodId | null>(null)
+  const [confirmGoogle, setConfirmGoogle] = useState(false)
   const [busy, setBusy] = useState(false)
 
   const activeIsGoogle = !isNative || prefs.healthProvider === 'google'
-  const activeConnected = activeIsGoogle ? googleConnected : phoneConnected
+  const activeConnected = activeIsGoogle ? googleConnected : phoneAuthorized
 
   useEffect(() => {
     let cancelled = false
@@ -66,8 +70,11 @@ export function HealthSetting() {
       }
 
       if (isNative) {
-        const authorized = await healthService.isPhoneHealthAuthorized()
-        if (!cancelled) setPhoneConnected(authorized)
+        const authorized = await healthService.getPhoneHealthPermission()
+        if (!cancelled) {
+          setPhoneAuthorized(authorized)
+          syncPhoneHealthPref(authorized)
+        }
       }
 
       if (!cancelled) setReady(true)
@@ -79,7 +86,60 @@ export function HealthSetting() {
     }
   }, [signedInUser?._id, isNative, prefs.usePhoneHealth, prefs.healthProvider])
 
-  async function onConnect(method: HealthMethodId) {
+  useEffect(() => {
+    if (!open || !isNative) return
+
+    async function refresh() {
+      const authorized = await healthService.getPhoneHealthPermission()
+      setPhoneAuthorized(authorized)
+      syncPhoneHealthPref(authorized)
+    }
+
+    function onVisible() {
+      if (document.visibilityState === 'visible') refresh()
+    }
+
+    const listener = CapApp.addListener('appStateChange', ({ isActive }) => {
+      if (isActive) refresh()
+    })
+    document.addEventListener('visibilitychange', onVisible)
+    return () => {
+      document.removeEventListener('visibilitychange', onVisible)
+      listener.then((handle) => handle.remove())
+    }
+  }, [open, isNative])
+
+  async function onTogglePhone(next: boolean) {
+    setBusy(true)
+    try {
+      if (next) {
+        const granted = await healthService.requestPhoneHealthPermission()
+        setPhoneAuthorized(granted)
+        syncPhoneHealthPref(granted)
+        if (!granted) {
+          await healthService.openPhoneHealthSettings()
+          return
+        }
+        const userId = signedInUser?._id
+        const provider = store.getState().systemModule.prefs.healthProvider
+        if (userId && provider !== 'google') {
+          await reloadHealthForCurrentProvider(userId)
+        }
+        return
+      }
+
+      await healthService.openPhoneHealthSettings()
+      const authorized = await healthService.getPhoneHealthPermission()
+      setPhoneAuthorized(authorized)
+      syncPhoneHealthPref(authorized)
+    } catch {
+      showErrorMsg(t('disconnectError'))
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function onConnectGoogle() {
     const userId = signedInUser?._id
     if (!userId) {
       showErrorMsg(tCommon('health.connectError'))
@@ -88,27 +148,23 @@ export function HealthSetting() {
 
     setBusy(true)
     try {
-      if (method === 'google') {
-        setPrefs({ ...prefs, healthProvider: 'google' })
-        const result = await startGoogleHealthConnect({
-          userId,
-          returnTo: '/',
-        })
-        if (result?.connected) {
-          const status = await googleHealthService.getStatus(userId)
-          setGoogleConnected(status.connected)
-          await setGoogleHealthConnected(status.connected)
-          if (status.connected) {
-            await setHealthData()
-            showSuccessMsg(tCommon('health.connectSuccess'))
-          }
+      setPrefs({
+        ...store.getState().systemModule.prefs,
+        healthProvider: 'google',
+      })
+      const result = await startGoogleHealthConnect({
+        userId,
+        returnTo: '/',
+      })
+      if (result?.connected) {
+        const status = await googleHealthService.getStatus(userId)
+        setGoogleConnected(status.connected)
+        await setGoogleHealthConnected(status.connected)
+        if (status.connected) {
+          await setHealthData()
+          showSuccessMsg(tCommon('health.connectSuccess'))
         }
-        return
       }
-
-      setPrefs({ ...prefs, healthProvider: 'native', usePhoneHealth: true })
-      await reloadHealthForCurrentProvider(userId)
-      setPhoneConnected(await healthService.isPhoneHealthAuthorized())
     } catch {
       showErrorMsg(tCommon('health.connectError'))
     } finally {
@@ -117,38 +173,22 @@ export function HealthSetting() {
   }
 
   async function onConfirmDisconnect() {
-    const method = pending
-    setPending(null)
-    if (!method) return
-
+    setConfirmGoogle(false)
     const userId = signedInUser?._id
-    if (method === 'google' && !userId) {
+    if (!userId) {
       showErrorMsg(t('disconnectError'))
       return
     }
 
     setBusy(true)
     try {
-      if (method === 'google' && userId) {
-        await googleHealthService.disconnect(userId)
-        setGoogleConnected(false)
-        if (activeIsGoogle) {
-          await setGoogleHealthConnected(false)
-          clearHealthSnapshot()
-        } else {
-          setGoogleHealthFlag(false)
-        }
-        return
-      }
-
-      setPrefs({ ...prefs, usePhoneHealth: false })
-      setPhoneConnected(false)
-      await setPermitted(false)
-      if (!activeIsGoogle) clearHealthSnapshot()
-      try {
-        await healthService.openPhoneHealthSettings()
-      } catch {
-        showErrorMsg(t('disconnectError'))
+      await googleHealthService.disconnect(userId)
+      setGoogleConnected(false)
+      if (activeIsGoogle) {
+        await setGoogleHealthConnected(false)
+        clearHealthSnapshot()
+      } else {
+        setGoogleHealthFlag(false)
       }
     } catch {
       showErrorMsg(t('disconnectError'))
@@ -159,7 +199,7 @@ export function HealthSetting() {
 
   return (
     <>
-      <div className='settings-row'>
+      <div className='settings-row health'>
         <div className='settings-row-label'>
           <span>{t('title')}</span>
           {ready && activeConnected ? (
@@ -183,18 +223,19 @@ export function HealthSetting() {
         component={
           <HealthMethods
             isNative={isNative}
-            phoneConnected={phoneConnected}
+            phoneAuthorized={phoneAuthorized}
             googleConnected={googleConnected}
             busy={busy}
-            onConnect={onConnect}
-            onDisconnect={setPending}
+            onTogglePhone={onTogglePhone}
+            onConnectGoogle={onConnectGoogle}
+            onDisconnectGoogle={() => setConfirmGoogle(true)}
           />
         }
       />
 
       <CustomAlertDialog
-        open={pending !== null}
-        onClose={() => setPending(null)}
+        open={confirmGoogle}
+        onClose={() => setConfirmGoogle(false)}
         title={t('disconnectTitle')}
       >
         <div className='health-disconnect-confirm'>
@@ -203,7 +244,7 @@ export function HealthSetting() {
             <CustomButton
               text={tCommon('common.cancel')}
               fullWidth
-              onClick={() => setPending(null)}
+              onClick={() => setConfirmGoogle(false)}
             />
             <CustomButton
               text={t('disconnect')}

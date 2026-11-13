@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { startGoogleHealthConnect } from '../../services/auth/google-auth.service'
 import MonitorHeartRoundedIcon from '@mui/icons-material/MonitorHeartRounded'
@@ -13,7 +14,23 @@ import {
   setHealthData,
 } from '../../store/actions/health.actions'
 
-export function HealthConnect() {
+interface HealthConnectProps {
+  title?: string
+  buttonText?: string
+  sectionIcon?: ReactNode
+  buttonIcon?: ReactNode
+  onClick?: () => void
+  disabled?: boolean
+}
+
+export function HealthConnect({
+  title,
+  buttonText,
+  sectionIcon,
+  buttonIcon,
+  onClick,
+  disabled,
+}: HealthConnectProps = {}) {
   const { t } = useTranslation()
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
   const user = useSelector((state: RootState) => state.userModule.user)
@@ -44,18 +61,21 @@ export function HealthConnect() {
       }`}
     >
       <div className='title-container'>
-        <MonitorHeartRoundedIcon className='health-connect-icon' />
+        {sectionIcon ?? (
+          <MonitorHeartRoundedIcon className='health-connect-icon' />
+        )}
         <Typography
           variant='body1'
           className='bold-header'
         >
-          {t('health.connectTitle')}
+          {title ?? t('health.connectTitle')}
         </Typography>
       </div>
       <CustomButton
-        onClick={onConnect}
-        text={t('common.connect')}
-        icon={<GoogleIcon />}
+        onClick={onClick ?? onConnect}
+        text={buttonText ?? t('common.connect')}
+        icon={buttonIcon ?? <GoogleIcon />}
+        disabled={disabled}
       />
     </div>
   )

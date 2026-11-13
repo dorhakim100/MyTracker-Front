@@ -1,0 +1,5 @@
+{
+  "title": "Mobile health permissions",
+  "button": "Allow",
+  "error": "Could not allow health permissions. Please try again."
+}

@@ -1,7 +1,16 @@
-import { lazy, memo, Suspense, useEffect, useMemo, useState } from 'react'
+import {
+  lazy,
+  memo,
+  Suspense,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
+import { App as CapApp } from '@capacitor/app'
 import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
-import { RootState } from '../../../store/store'
+import { RootState, store } from '../../../store/store'
 
 import { TimesContainer } from '../../../components/TimesContainer/TimesContainer'
 import { StatsCarousel } from '../../../components/StatsCarousel/StatsCarousel'
@@ -23,6 +32,7 @@ import ReplayIcon from '@mui/icons-material/Replay'
 import { CustomButton } from '../../../CustomMui/CustomButton/CustomButton'
 import {
   setActiveRoute,
+  setPrefs,
   setSlideDirection,
 } from '../../../store/actions/system.actions'
 import { showErrorMsg } from '../../../services/event-bus.service'
@@ -39,6 +49,7 @@ import { useCurrMealPeriod } from '../../../hooks/useCurrMealPeriod'
 import { HealthStats } from '../../../components/HealthStats/HealthStats'
 import { NativeOnly } from '../../../components/NativeOnly/NativeOnly'
 import { HealthConnect } from '../../../components/HealthConnect/HealthConnect'
+import { AllowPhoneHealth } from './AllowPhoneHealth/AllowPhoneHealth'
 import { healthService } from '../../../services/health/health.service'
 import { setHealthData } from '../../../store/actions/health.actions'
 import { PullToRefreshWrapper } from '../../../components/PullToRefreshWrapper/PullToRefreshWrapper'
@@ -208,7 +219,55 @@ const DashboardHealth = memo(() => {
   const googleHealthConnected = useSelector(
     (state: RootState) => state.healthModule.googleHealthConnected
   )
+  const isNative = useSelector(
+    (state: RootState) => state.systemModule.isNative
+  )
+  const [phoneGranted, setPhoneGranted] = useState<boolean | null>(null)
+  const phoneGrantedRef = useRef<boolean | null>(null)
   const usesGoogleHealth = healthService.isGoogleHealthPlatform()
+
+  useEffect(() => {
+    if (!isNative || googleHealthConnected) return
+
+    let cancelled = false
+
+    async function load() {
+      const granted = await healthService.getPhoneHealthPermission()
+      if (cancelled) return
+
+      const justGranted = granted && phoneGrantedRef.current !== true
+      phoneGrantedRef.current = granted
+      setPhoneGranted(granted)
+      if (!justGranted) return
+
+      const prefs = store.getState().systemModule.prefs
+      if (prefs.usePhoneHealth === false) {
+        setPrefs({ ...prefs, usePhoneHealth: true })
+      }
+      await setHealthData()
+    }
+
+    load()
+    const listener = CapApp.addListener('appStateChange', ({ isActive }) => {
+      if (isActive) load()
+    })
+
+    return () => {
+      cancelled = true
+      listener.then((handle) => handle.remove())
+    }
+  }, [isNative, googleHealthConnected])
+
+  if (isNative && !googleHealthConnected && !phoneGranted) {
+    return (
+      <AllowPhoneHealth
+        onAllowed={() => {
+          phoneGrantedRef.current = true
+          setPhoneGranted(true)
+        }}
+      />
+    )
+  }
 
   if (usesGoogleHealth) {
     if (!googleHealthConnected) {

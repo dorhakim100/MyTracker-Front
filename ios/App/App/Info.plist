@@ -53,6 +53,11 @@
 	</array>
 	<key>GIDClientID</key>
 	<string>673990139603-deord58vknevsn3bqhcj9m3l132i5hru.apps.googleusercontent.com</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>settings-navigation</string>
+		<string>App-prefs</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>

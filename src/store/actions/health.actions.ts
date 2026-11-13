@@ -47,10 +47,12 @@ export function clearHealthSnapshot() {
 }
 
 export async function loadGoogleHealthConnection(userId: string) {
-  if (!healthService.isGoogleHealthPlatform()) return false
-
   const status = await googleHealthService.getStatus(userId)
-  await setGoogleHealthConnected(status.connected)
+  if (healthService.isGoogleHealthPlatform()) {
+    await setGoogleHealthConnected(status.connected)
+  } else {
+    setGoogleHealthFlag(status.connected)
+  }
   return status.connected
 }
 
@@ -64,6 +66,12 @@ export async function reloadHealthForCurrentProvider(userId?: string) {
     } else {
       await setGoogleHealthConnected(false)
     }
+    return
+  }
+
+  const connected = await loadGoogleHealthConnection(userId)
+  if (connected) {
+    await setHealthData()
     return
   }
 
