@@ -50,7 +50,6 @@ import { ChatUnreadBadge } from '../../../CustomMui/ChatUnreadBadge/ChatUnreadBa
 import { useUnreadSummary } from '../../../hooks/useUnreadSummary'
 import { useChatRole } from '../../../hooks/useChatRole'
 import { FillProgress } from '../../../CustomMui/FillProgress/FillProgress'
-import { PressRipple } from '../../../CustomMui/PressRipple/PressRipple'
 interface WorkoutCardProps {
   workout: Workout
   className?: string
@@ -281,80 +280,78 @@ export function WorkoutCard({
         value={weekFill}
         className='workout-card-fill'
       >
-        <PressRipple>
-          <Card
-            className={`workout-card-container pointer ${className} ${
-              prefs.isDarkMode ? 'dark-mode' : ''
-            }`}
-            onClick={onOpenRoutine}
-          >
-            <div className='header-container'>
-              <MarqueeText
-                variant='h6'
-                className='workout-name'
-              >
-                {workout.name}
-              </MarqueeText>
-              <span className='workout-unread'>
-                <ChatUnreadBadge
-                  count={getWorkoutCount(workout._id)}
-                  variant='inline'
-                  className={prefs.favoriteColor}
+        <Card
+          className={`workout-card-container pointer ${className} ${
+            prefs.isDarkMode ? 'dark-mode' : ''
+          }`}
+          onClick={onOpenRoutine}
+        >
+          <div className='header-container'>
+            <MarqueeText
+              variant='h6'
+              className='workout-name'
+            >
+              {workout.name}
+            </MarqueeText>
+            <span className='workout-unread'>
+              <ChatUnreadBadge
+                count={getWorkoutCount(workout._id)}
+                variant='inline'
+                className={prefs.favoriteColor}
+              />
+            </span>
+            <span className='workout-times'>{renderTimes()}</span>
+            <CustomOptionsMenu
+              options={options}
+              triggerElement={
+                <CustomButton
+                  isIcon={true}
+                  icon={<MoreHorizIcon />}
+                  variant='flat'
                 />
-              </span>
-              <span className='workout-times'>{renderTimes()}</span>
-              <CustomOptionsMenu
-                options={options}
-                triggerElement={
-                  <CustomButton
-                    isIcon={true}
-                    icon={<MoreHorizIcon />}
-                    variant='flat'
-                  />
-                }
+              }
+            />
+          </div>
+          <BodyPartBadges
+            bodyParts={getWorkoutMuscles(workout)}
+            className='muscle-groups-list'
+            size='m'
+          />
+          <Divider
+            className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+          />
+          <MarqueeText
+            variant='body2'
+            className='exercises-list opacity-70'
+          >
+            {workout.exercises
+              .map((exercise) => capitalizeFirstLetter(exercise.name))
+              .join(', ')}
+          </MarqueeText>
+
+          {workout.isNewInstructions && isRenderStartButtons && (
+            <>
+              <Divider
+                className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+              />
+              {renderAvailableWorkoutButton()}
+            </>
+          )}
+          {isDashboard && (
+            <div className='dashboard-actions-container'>
+              <CustomButton
+                text={t('workout.editRoutine')}
+                fullWidth={true}
+                onClick={(ev) => {
+                  ev.stopPropagation()
+                  onEdit()
+                }}
+                className='start-workout-button'
+                icon={<EditIcon />}
               />
             </div>
-            <BodyPartBadges
-              bodyParts={getWorkoutMuscles(workout)}
-              className='muscle-groups-list'
-              size='m'
-            />
-            <Divider
-              className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-            />
-            <MarqueeText
-              variant='body2'
-              className='exercises-list opacity-70'
-            >
-              {workout.exercises
-                .map((exercise) => capitalizeFirstLetter(exercise.name))
-                .join(', ')}
-            </MarqueeText>
-
-            {workout.isNewInstructions && isRenderStartButtons && (
-              <>
-                <Divider
-                  className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
-                />
-                {renderAvailableWorkoutButton()}
-              </>
-            )}
-            {isDashboard && (
-              <div className='dashboard-actions-container'>
-                <CustomButton
-                  text={t('workout.editRoutine')}
-                  fullWidth={true}
-                  onClick={(ev) => {
-                    ev.stopPropagation()
-                    onEdit()
-                  }}
-                  className='start-workout-button'
-                  icon={<EditIcon />}
-                />
-              </div>
-            )}
-          </Card>
-        </PressRipple>
+          )}
+        </Card>
       </FillProgress>
       <CustomAlertDialog
         open={isDeleteOpen}
