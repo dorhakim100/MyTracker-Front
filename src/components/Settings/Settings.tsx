@@ -20,6 +20,11 @@ import {
   type ColorMode,
 } from '../../types/system/Prefs'
 import type { User } from '../../types/user/User'
+import FontDownloadIcon from '@mui/icons-material/FontDownload'
+import FormatColorFillIcon from '@mui/icons-material/FormatColorFill'
+import LanguageIcon from '@mui/icons-material/Language'
+import MonitorHeartIcon from '@mui/icons-material/MonitorHeart'
+import Brightness4Icon from '@mui/icons-material/Brightness4'
 
 const FONT_LABELS: Record<AppFont, string> = {
   'font-rubik': 'Rubik',
@@ -99,12 +104,18 @@ export function Settings({ person }: SettingsProps) {
 
   return (
     <div className='settings-container'>
-      <HealthSetting />
+      <div className='health-settings-container'>
+        <MonitorHeartIcon className='settings-row-icon' />
+        <HealthSetting />
+      </div>
       <Divider
         className={`divider ${prefs.isDarkMode ? 'dark-mode' : 'light-mode'}`}
       />
       <div className='settings-row settings-row-stack'>
-        <span className='settings-row-label'>{t('mode')}</span>
+        <div className='title-container'>
+          <Brightness4Icon className='settings-row-icon' />
+          <span className='settings-row-label'>{t('mode')}</span>
+        </div>
         <CustomToggle
           value={mode}
           variant='segment'
@@ -118,7 +129,10 @@ export function Settings({ person }: SettingsProps) {
         className={`divider ${prefs.isDarkMode ? 'dark-mode' : 'light-mode'}`}
       />{' '}
       <div className='settings-row'>
-        <span className='settings-row-label'>{t('language')}</span>
+        <div className='title-container'>
+          <LanguageIcon className='settings-row-icon' />
+          <span className='settings-row-label'>{t('language')}</span>
+        </div>
         <CustomSelect
           label={t('language')}
           values={['en', 'he']}
@@ -132,7 +146,10 @@ export function Settings({ person }: SettingsProps) {
         className={`divider ${prefs.isDarkMode ? 'dark-mode' : 'light-mode'}`}
       />{' '}
       <div className='settings-row'>
-        <span className='settings-row-label'>{t('font')}</span>
+        <div className='title-container'>
+          <FontDownloadIcon className='settings-row-icon' />
+          <span className='settings-row-label'>{t('font')}</span>
+        </div>
         <CustomSelect
           label={t('font')}
           values={[...APP_FONTS]}
@@ -146,7 +163,10 @@ export function Settings({ person }: SettingsProps) {
         className={`divider ${prefs.isDarkMode ? 'dark-mode' : 'light-mode'}`}
       />{' '}
       <div className='settings-row'>
-        <span className='settings-row-label'>{t('favoriteColor')}</span>
+        <div className='title-container'>
+          <FormatColorFillIcon className='settings-row-icon' />
+          <span className='settings-row-label'>{t('favoriteColor')}</span>
+        </div>
         <CustomSelect
           label={t('favoriteColor')}
           className={prefs.favoriteColor}
@@ -161,12 +181,12 @@ export function Settings({ person }: SettingsProps) {
       />
       <div className='settings-row'>
         <span className='settings-row-label'>
-          {t('fixedMenu')}
           <InfoHint
             title={t('fixedMenuInfoTitle')}
             description={t('fixedMenuInfo')}
             className={prefs.favoriteColor}
           />
+          {t('fixedMenu')}
         </span>
         <CustomIOSSwitch
           color={prefs.favoriteColor}
