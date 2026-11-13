@@ -1,5 +1,31 @@
+@keyframes press-ripple-in {
+  0% {
+    transform: scale(0);
+    opacity: 0.04;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 0.16;
+  }
+}
+
 .press-ripple {
   position: relative;
+}
+
+.press-ripple,
+.press-ripple-row {
+  .MuiTouchRipple-root {
+    color: var(--press-ripple-color, currentColor);
+  }
+
+  .MuiTouchRipple-ripple.MuiTouchRipple-rippleVisible {
+    opacity: 0.16;
+    animation-name: press-ripple-in;
+    animation-duration: 320ms;
+    animation-timing-function: ease-out;
+  }
 }
 
 // The ripple span cannot be a direct child of tr — the table would treat it

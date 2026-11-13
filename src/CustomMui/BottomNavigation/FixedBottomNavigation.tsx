@@ -37,6 +37,7 @@ import {
 } from '../../store/actions/item.actions'
 import { estimateToItem } from '../../services/aiLog/aiLog.mapper'
 import type { AiLogEstimate } from '../../types/aiLog/AiLog'
+import { PressRipple } from '../PressRipple/PressRipple'
 
 type ModalType = 'search' | 'ai'
 
@@ -269,83 +270,89 @@ export function FixedBottomNavigation(props: {
       >
         <CssBaseline />
 
-        <Paper
-          sx={{
-            position: 'fixed',
-            bottom: 0,
-            insetInline: 0,
-            zIndex: 1000,
-            height: 'calc(100px)',
+        <PressRipple>
+          <Paper
+            sx={{
+              position: 'fixed',
+              bottom: 0,
+              insetInline: 0,
+              zIndex: 1000,
+              height: 'calc(100px)',
 
-            // paddingBottom: '1.5em',
-          }}
-          elevation={0}
-          className={`navigation ${prefs.favoriteColor} ${
-            prefs.isDarkMode ? 'dark-mode' : ''
-          }`}
-        >
-          <Box sx={{ position: 'relative' }}>
-            {!user?.isFixedMenu && renderSpeedDial()}
+              // paddingBottom: '1.5em',
+            }}
+            elevation={0}
+            className={`navigation ${prefs.favoriteColor} ${
+              prefs.isDarkMode ? 'dark-mode' : ''
+            }`}
+          >
+            <Box sx={{ position: 'relative' }}>
+              {!user?.isFixedMenu && renderSpeedDial()}
+              <BottomNavigation
+                showLabels
+                value={value}
+                onChange={(_, newValue) => {
+                  setValue(newValue)
+                }}
+                className={`${prefs.favoriteColor} ${
+                  prefs.isDarkMode ? 'dark-mode' : ''
+                }`}
+              >
+                {leftRoutes.map((route, index) => {
+                  if (!route) return null
+                  return (
+                    <BottomNavigationAction
+                      key={route.path}
+                      disableRipple
+                      label={t(route.titleKey)}
+                      icon={getNavIcon(route)}
+                      onClick={() => {
+                        setSlideDirection(index < currIndex ? -1 : 1)
 
-            <BottomNavigation
-              showLabels
-              value={value}
-              onChange={(_, newValue) => {
-                setValue(newValue)
-              }}
-              className={`${prefs.favoriteColor} ${
-                prefs.isDarkMode ? 'dark-mode' : ''
-              }`}
-            >
-              {leftRoutes.map((route, index) => {
-                if (!route) return null
-                return (
-                  <BottomNavigationAction
-                    key={route.path}
-                    label={t(route.titleKey)}
-                    icon={getNavIcon(route)}
-                    onClick={() => {
-                      setSlideDirection(index < currIndex ? -1 : 1)
+                        if (route.path === activeRoute) {
+                          smoothScroll()
+                        } else {
+                          setActiveRoute(route.path)
+                        }
+                      }}
+                      className={`${prefs.favoriteColor}`}
+                    />
+                  )
+                })}
 
-                      if (route.path === activeRoute) {
-                        smoothScroll()
-                      } else {
-                        setActiveRoute(route.path)
-                      }
-                    }}
-                    className={`${prefs.favoriteColor}`}
-                  />
-                )
-              })}
+                {/* Spacer to balance layout under the centered FAB */}
+                <BottomNavigationAction
+                  disableRipple
+                  sx={{ visibility: 'hidden' }}
+                />
 
-              {/* Spacer to balance layout under the centered FAB */}
-              <BottomNavigationAction sx={{ visibility: 'hidden' }} />
+                {rightRoutes.map((route, index) => {
+                  if (!route) return null
+                  return (
+                    <BottomNavigationAction
+                      key={route.path}
+                      disableRipple
+                      label={t(route.titleKey)}
+                      icon={getNavIcon(route)}
+                      onClick={() => {
+                        setSlideDirection(
+                          index + leftRoutes.length > currIndex ? 1 : -1
+                        )
 
-              {rightRoutes.map((route, index) => {
-                if (!route) return null
-                return (
-                  <BottomNavigationAction
-                    key={route.path}
-                    label={t(route.titleKey)}
-                    icon={getNavIcon(route)}
-                    onClick={() => {
-                      setSlideDirection(
-                        index + leftRoutes.length > currIndex ? 1 : -1
-                      )
-
-                      if (route.path === activeRoute) {
-                        smoothScroll()
-                      } else {
-                        setActiveRoute(route.path)
-                      }
-                    }}
-                    className={`${prefs.favoriteColor}`}
-                  />
-                )
-              })}
-            </BottomNavigation>
-          </Box>
-        </Paper>
+                        if (route.path === activeRoute) {
+                          smoothScroll()
+                        } else {
+                          setActiveRoute(route.path)
+                        }
+                      }}
+                      className={`${prefs.favoriteColor}`}
+                    />
+                  )
+                })}
+              </BottomNavigation>
+            </Box>
+          </Paper>
+        </PressRipple>
       </Box>
 
       <SlideDialog
