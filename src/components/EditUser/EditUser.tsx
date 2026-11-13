@@ -24,7 +24,6 @@ import { CustomAlertDialog } from '../../CustomMui/CustomAlertDialog/CustomAlert
 import { deleteAccount } from '../../store/actions/user.actions'
 import { logout } from '../../store/actions/user.actions'
 import { DeleteAccountCard } from '../DeleteAccountCard/DeleteAccountCard'
-import { LegalLinks } from '../LegalLinks/LegalLinks'
 
 interface EditUserProps {
   selectedUser?: User | null
@@ -155,7 +154,8 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
   }
 
   async function handleSave() {
-    if (!selectedUser && !user) return showErrorMsg(t('messages.error.updateUser'))
+    if (!selectedUser && !user)
+      return showErrorMsg(t('messages.error.updateUser'))
 
     const base: User = selectedUser || (user as User)
 
@@ -317,8 +317,6 @@ export function EditUser({ selectedUser, onSave }: EditUserProps) {
           <Divider
             className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`}
           />
-
-          <LegalLinks />
 
           <CustomButton
             fullWidth
