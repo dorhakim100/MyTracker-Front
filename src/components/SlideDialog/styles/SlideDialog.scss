@@ -16,23 +16,35 @@
     height: 100% !important;
   }
 
-  // Sheet sits under the app header. Height stays inside the screen so the
-  // backdrop covers the full viewport and the bottom padding stays visible.
   .react-modal-sheet-container,
   .slide-dialog {
-    top: auto !important;
+    top: $header-margin !important;
     bottom: 0 !important;
-    height: calc(100% - #{$header-margin}) !important;
-    max-height: calc(100% - #{$header-margin}) !important;
+    height: auto !important;
+  }
+}
+
+// body.native .full-dialog already sets this top on the root, which shifts the
+// backdrop. Keep the root at the screen top and apply the offset once, on the sheet.
+body.native .MuiDialog-root.full-dialog,
+body.native .react-modal-sheet-root.full-dialog {
+  top: 0 !important;
+
+  .react-modal-sheet-container,
+  .slide-dialog {
+    top: calc(#{$header-margin} + 52px) !important;
   }
 }
 
 .MuiDialog-container,
 .MuiDialog-root,
 .react-modal-sheet-root {
-  background-color: transparent !important;
-  border-top-right-radius: 10px;
-  border-top-left-radius: 10px;
+  // background-color: transparent !important;
+  // border-top-right-radius: 10px;
+  // border-top-left-radius: 10px;
+  top: 0 !important;
+  bottom: 0 !important;
+  height: 100vh !important;
 }
 
 .react-modal-sheet-root.half-dialog {
