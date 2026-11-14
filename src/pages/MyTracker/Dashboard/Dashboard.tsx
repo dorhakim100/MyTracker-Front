@@ -53,7 +53,7 @@ import { AllowPhoneHealth } from './AllowPhoneHealth/AllowPhoneHealth'
 import { healthService } from '../../../services/health/health.service'
 import { setHealthData } from '../../../store/actions/health.actions'
 import { PullToRefreshWrapper } from '../../../components/PullToRefreshWrapper/PullToRefreshWrapper'
-
+import { useOnDayChange } from '../../../hooks/useOnDayChange.tsx'
 const WorkoutSession = lazy(() =>
   import('../../../components/WorkoutSession/WorkoutSession').then(
     (module) => ({
@@ -73,7 +73,7 @@ const DashboardNutrition = memo(function DashboardNutrition() {
   const { width } = useWindowDimentions()
   const currMealPeriod = useCurrMealPeriod()
   const showStatsCarousel = width < 1100
-
+  const { shouldTrigger } = useOnDayChange()
   const calories = userToCheck?.loggedToday?.calories ?? 0
 
   const macros = useMemo(() => {
@@ -109,7 +109,7 @@ const DashboardNutrition = memo(function DashboardNutrition() {
         current: fats,
       },
     }
-  }, [userToCheck])
+  }, [userToCheck, shouldTrigger])
 
   const statsCarouselItems = useMemo(() => {
     if (!userToCheck) return []
@@ -222,6 +222,7 @@ const DashboardHealth = memo(() => {
   const isNative = useSelector(
     (state: RootState) => state.systemModule.isNative
   )
+  const { shouldTrigger } = useOnDayChange()
   const [phoneGranted, setPhoneGranted] = useState<boolean | null>(null)
   const phoneGrantedRef = useRef<boolean | null>(null)
   const usesGoogleHealth = healthService.isGoogleHealthPlatform()
@@ -257,6 +258,12 @@ const DashboardHealth = memo(() => {
       listener.then((handle) => handle.remove())
     }
   }, [isNative, googleHealthConnected])
+
+  useEffect(() => {
+    if (shouldTrigger) {
+      setHealthData()
+    }
+  }, [shouldTrigger])
 
   if (isNative && !googleHealthConnected && !phoneGranted) {
     return (
@@ -333,7 +340,7 @@ export function Dashboard() {
   const isDashboard = useSelector(
     (state: RootState) => state.systemModule.isDashboard
   )
-
+  const { shouldTrigger } = useOnDayChange()
   const [userToCheck, setUserToCheck] = useState(traineeUser || user)
   const [isSessionLoading, setIsSessionLoading] = useState(
     Boolean(traineeUser || user)
@@ -344,12 +351,12 @@ export function Dashboard() {
   useEffect(() => {
     if (!userToCheck?._id) return
     updateSessionDay()
-  }, [userToCheck?._id])
+  }, [userToCheck?._id, shouldTrigger])
 
   useEffect(() => {
     if (!userToCheck?.loggedToday) return
     setSelectedDiaryDay(userToCheck.loggedToday)
-  }, [userToCheck?.loggedToday])
+  }, [userToCheck?.loggedToday, shouldTrigger])
 
   useEffect(() => {
     setUserToCheck(traineeUser || user)
@@ -358,7 +365,7 @@ export function Dashboard() {
   useEffect(() => {
     if (!userToCheck?._id) return
     checkDiaryDayChange()
-  }, [userToCheck?._id, userToCheck?.loggedToday?.date])
+  }, [userToCheck?._id, userToCheck?.loggedToday?.date, shouldTrigger])
 
   useEffect(() => {
     if (!userToCheck?.isFixedMenu || !userToCheck._id) return
@@ -374,7 +381,7 @@ export function Dashboard() {
     if (!todaySessionDay) return
 
     setSelectedSessionDay(todaySessionDay)
-  }, [userToCheck, todaySessionDay])
+  }, [userToCheck, todaySessionDay, shouldTrigger])
 
   useEffect(() => {
     const isIncompleteSession = Boolean(

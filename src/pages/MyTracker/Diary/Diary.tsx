@@ -19,6 +19,7 @@ import { getMeals } from '../../../assets/config/meals'
 
 import { getDateFromISO } from '../../../services/util.service'
 import { DAY_IN_MS } from '../../../assets/config/times'
+import { useOnDayChange } from '../../../hooks/useOnDayChange.tsx'
 
 export function Diary() {
   const { t } = useTranslation()
@@ -29,8 +30,8 @@ export function Diary() {
   )
   const timer = useSelector((state: RootState) => state.workoutModule.timer)
 
+  const { shouldTrigger } = useOnDayChange()
   const [selectedDay, setSelectedDay] = useState(new Date())
-
   const [diaryFilter, setDiaryFilter] = useState({
     userId: user?._id,
     date: selectedDay.toISOString(),
@@ -95,12 +96,21 @@ export function Diary() {
     return () => {
       ignore = true
     }
-  }, [selectedDay, user?._id])
+  }, [selectedDay, user?._id, diaryFilter])
 
   useEffect(() => {
     const loggedToday = user?.loggedToday
     setSelectedDiaryDay(loggedToday || null)
   }, [location.pathname])
+
+  useEffect(() => {
+    if (!shouldTrigger || !user?._id) return
+    setSelectedDay(new Date())
+    setDiaryFilter({
+      userId: user?._id,
+      date: new Date().toISOString(),
+    })
+  }, [shouldTrigger, user?._id])
 
   function getTotalCalories(meal: string) {
     return selectedDayDiary?.logs?.length
