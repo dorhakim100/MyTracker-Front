@@ -16,6 +16,7 @@
   },
   "macros": {
     "calories": "קלוריות",
+    "caloriesBurned": "קלוריות שנשרפו",
     "protein": "חלבון",
     "carbs": "פחמימות",
     "fats": "שומנים",

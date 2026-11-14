@@ -1,0 +1,67 @@
+.activity-bar-chart-container {
+  --activity-bar: color-mix(in srgb, var(--accent) 62%, transparent);
+  --activity-bar-active: var(--accent);
+  --activity-goal-line: color-mix(in srgb, var(--ink-on-canvas) 42%, transparent);
+  --activity-marker: color-mix(in srgb, var(--ink-on-canvas) 72%, transparent);
+  --activity-marker-fill: var(--canvas-color);
+  --activity-medal: white;
+  --activity-medal-edge: #5c6570;
+  width: 100%;
+  touch-action: pan-y;
+  -webkit-tap-highlight-color: transparent;
+
+  &,
+  * {
+    outline: none !important;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .recharts-yAxis text {
+    direction: ltr;
+    unicode-bidi: isolate;
+  }
+
+  .recharts-cartesian-axis-tick text {
+    fill: var(--ink-on-canvas);
+  }
+
+  .recharts-label {
+    fill: var(--ink-on-canvas);
+  }
+
+  &.is-scrubbing {
+    touch-action: none;
+  }
+
+  .activity-bar-goal-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    color: var(--accent);
+
+    svg,
+    img {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: contain;
+    }
+  }
+}
+
+html.dark-mode .activity-bar-chart-container {
+  --activity-bar: color-mix(in srgb, var(--accent) 46%, transparent);
+  --activity-bar-active: color-mix(in srgb, var(--accent) 72%, white);
+  --activity-goal-line: color-mix(in srgb, white 88%, transparent);
+  --activity-marker: white;
+  --activity-marker-fill: var(--canvas-color);
+  --activity-medal: white;
+  --activity-medal-edge: #5c6570;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .activity-bar-chart-container .recharts-bar-rectangle {
+    transition: none;
+  }
+}

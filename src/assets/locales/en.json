@@ -16,6 +16,7 @@
   },
   "macros": {
     "calories": "Calories",
+    "caloriesBurned": "Calories Burned",
     "protein": "Protein",
     "carbs": "Carbs",
     "fats": "Fats",

@@ -27,6 +27,7 @@ Follow the structure and patterns described below. Speed matters — reuse first
 
 ## Coding style
 
+- Never discard a promise with `void`. `await` it, return it, or attach `.catch`. Background work is an async function with its own try/catch, called directly
 - No semicolons in TS unless necessary
 - Single quotes in TS/JS; single quotes in JSX/TSX attributes (Prettier)
 - Event handlers named `onSomething`

@@ -13,6 +13,7 @@ import {
   type RefAttributes,
 } from 'react'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import TouchRippleBase, {
   type TouchRippleActions,
   type TouchRippleProps,
@@ -55,6 +56,7 @@ export function GoalBanner({
 }: GoalBannerProps) {
   const rippleRef = useRef<TouchRippleActions>(null)
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
+  const isRTL = prefs.lang === 'he'
   let formattedGoal = goal
   if (goal) {
     formattedGoal = formatNumberWithCommas(+goal)
@@ -90,6 +92,7 @@ export function GoalBanner({
       onPointerDown={(e) => rippleRef.current?.start(e)}
       onPointerUp={() => rippleRef.current?.stop()}
       onPointerLeave={() => rippleRef.current?.stop()}
+      onClick={onClick}
     >
       {isClickable && <TouchRipple ref={rippleRef} />}
 
@@ -122,7 +125,8 @@ export function GoalBanner({
         )}
       </div>
       <div className='icon-container'>{icon || <FlagIcon />}</div>
-      {isClickable && <ChevronRightIcon className='chevron-right' />}
+      {isClickable && !isRTL && <ChevronRightIcon className='chevron-right' />}
+      {isClickable && isRTL && <ChevronLeftIcon className='chevron-left' />}
       {isClickType && <EmptyIcon />}
       <LinearProgress
         className={`linear-progress ${prefs.favoriteColor} ${

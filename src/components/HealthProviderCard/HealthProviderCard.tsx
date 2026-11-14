@@ -10,6 +10,7 @@ import { showErrorMsg } from '../../services/event-bus.service'
 import { HealthConnect } from '../HealthConnect/HealthConnect'
 import { StepsGoalCard } from '../StepsGoalCard/StepsGoalCard'
 import './styles/HealthProviderCard.scss'
+import { activityService } from '../../services/health/activity.service'
 import { healthService } from '../../services/health/health.service'
 
 export function HealthProviderCard() {
@@ -30,6 +31,9 @@ export function HealthProviderCard() {
     const nextProvider: HealthProvider = useGoogleHealth ? 'native' : 'google'
     const newPrefs: Prefs = { ...prefs, healthProvider: nextProvider }
     setPrefs(newPrefs)
+    if (user?._id) {
+      activityService.backfill(user._id, nextProvider).catch(() => undefined)
+    }
 
     try {
       await reloadHealthForCurrentProvider(user?._id)

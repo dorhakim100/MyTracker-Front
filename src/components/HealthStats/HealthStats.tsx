@@ -12,7 +12,14 @@ import {
 } from '../../CustomMui/CustomIcon/glyphs'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
+import { HealthActivity } from '../HealthActivity/HealthActivity'
+import { SlideDialog } from '../SlideDialog/SlideDialog'
+import type { ActivityMetric } from '../../types/health/Activity'
+import {
+  CaloriesMedalIcon,
+  StepsMedalIcon,
+} from '../../CustomMui/CustomIcon/medal-icons'
 
 export interface HealthStatsProps {
   steps: number
@@ -52,6 +59,12 @@ export function HealthStats({
   distance = getFixedNumber(distance, 2)
 
   const [caloriesGoal, setCaloriesGoal] = useState(burnedCalories)
+
+  const [activityMetric, setActivityMetric] = useState<ActivityMetric | null>(
+    null
+  )
+
+  console.log(activityMetric)
 
   const isDashboard = useSelector(
     (state: RootState) => state.systemModule.isDashboard
@@ -108,7 +121,7 @@ export function HealthStats({
             loading={healthLoading}
             size='l'
             animateCurrent
-            onClick={() => {}}
+            onClick={() => setActivityMetric('steps')}
           />
         </div>
       </FillProgress>
@@ -127,7 +140,7 @@ export function HealthStats({
           loading={healthLoading}
           size='l'
           animateCurrent
-          onClick={() => {}}
+          onClick={() => setActivityMetric('calories')}
         />
       </FillProgress>
       <GoalBanner
@@ -152,6 +165,29 @@ export function HealthStats({
         iconPlacement='left'
         isClickType={true}
       />
+      {activityMetric && (
+        <SlideDialog
+          open
+          onClose={() => setActivityMetric(null)}
+          type='full'
+          title={
+            activityMetric === 'steps'
+              ? t('steps.steps')
+              : t('macros.caloriesBurned')
+          }
+          component={
+            <HealthActivity
+              metric={activityMetric}
+              goalIcon={activityGoalIcon(activityMetric)}
+            />
+          }
+        />
+      )}
     </div>
   )
+}
+
+function activityGoalIcon(metric: ActivityMetric): ReactNode {
+  const Icon = metric === 'steps' ? StepsMedalIcon : CaloriesMedalIcon
+  return <Icon sx={{ color: 'var(--accent)' }} />
 }

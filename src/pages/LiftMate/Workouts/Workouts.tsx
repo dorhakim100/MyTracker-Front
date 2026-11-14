@@ -833,7 +833,7 @@ export function Workouts() {
                 variant='h5'
                 className='bold-header'
               >
-                {t('workout.routines')}
+                {t('workout.workouts')}
               </Typography>
 
               <CustomButton

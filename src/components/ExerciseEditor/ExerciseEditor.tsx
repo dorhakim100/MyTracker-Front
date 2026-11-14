@@ -335,6 +335,7 @@ export function ExerciseEditor({
   const previousExercise = previousInstructions?.exercises.find(
     (item) => item.exerciseId === exercise.exerciseId
   )
+  const showPreviousWeek = Boolean(previousInstructions) && !isFirstWeek
 
   const renderDoneControl = (set: Set, index: number) => (
     <Tooltip
@@ -612,7 +613,7 @@ export function ExerciseEditor({
       >
         {showBody && (
           <>
-            {isDashboard && !previousInstructions && !isInstructionsLoading && (
+            {isDashboard && !showPreviousWeek && !isInstructionsLoading && (
               <div className='dashboard-exercise-editor-container-headers'>
                 <Typography
                   variant='h6'
@@ -643,7 +644,6 @@ export function ExerciseEditor({
             {exercise.sets &&
             exercise.sets.length > 0 &&
             !isInstructionsLoading ? (
-              // || isFirstWeek
               <SwipeableWrapper
                 disableSwipe={
                   isExpected ||
@@ -658,8 +658,7 @@ export function ExerciseEditor({
                         isDashboard ? 'dashboard' : ''
                       }`}
                     >
-                      {previousInstructions ? (
-                        //  && !isFirstWeek
+                      {showPreviousWeek ? (
                         renderPreviousWeek(set, index)
                       ) : (
                         <div
@@ -753,7 +752,7 @@ export function ExerciseEditor({
                             {!isExpected && renderDoneControl(set, index)}
                           </div>
                           {(isDashboard && isExpected) ||
-                          (!previousInstructions && isExpected) ? (
+                          (!showPreviousWeek && isExpected) ? (
                             <CustomButton
                               className='delete-set-button red'
                               text={t('exercise.deleteSet')}

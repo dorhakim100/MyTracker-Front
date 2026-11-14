@@ -44,6 +44,10 @@ Do not render a page, screen, or section by mapping an id and picking every fiel
 
 Move that block into its own component. The row takes props (`icon`, `title`, `description`, handlers). The parent lists each row explicitly. An `id === '...'` check belongs in the handler that does the work, not on every line of the markup.
 
+## Never discard a promise with `void`
+
+Do not write `void somePromise` or `void asyncCall()`. `await` the promise, return it, or attach `.catch`. Work that should keep going is an async function with its own try/catch, called directly.
+
 ## Avoid unless explicitly requested
 
 - Premature generalization (“for later”)

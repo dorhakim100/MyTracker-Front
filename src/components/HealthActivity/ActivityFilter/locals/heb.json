@@ -1,0 +1,10 @@
+{
+  "week": "שבוע",
+  "month": "חודש",
+  "quarter": "3 חודשים",
+  "year": "שנה",
+  "previous": "הקודם",
+  "next": "הבא",
+  "today": "היום",
+  "liveStreak": "רצף נוכחי, {{count}}"
+}

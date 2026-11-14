@@ -20,6 +20,7 @@ import {
 } from '../../../store/actions/health.actions'
 import { googleHealthService } from '../../../services/health/google-health.service'
 import { healthService } from '../../../services/health/health.service'
+import { activityService } from '../../../services/health/activity.service'
 import { startGoogleHealthConnect } from '../../../services/auth/google-auth.service'
 import {
   showErrorMsg,
@@ -124,6 +125,7 @@ export function HealthSetting() {
         const provider = store.getState().systemModule.prefs.healthProvider
         if (userId && provider !== 'google') {
           await reloadHealthForCurrentProvider(userId)
+          activityService.backfill(userId, 'native').catch(() => undefined)
         }
         return
       }
@@ -162,6 +164,7 @@ export function HealthSetting() {
         await setGoogleHealthConnected(status.connected)
         if (status.connected) {
           await setHealthData()
+          activityService.backfill(userId, 'google').catch(() => undefined)
           showSuccessMsg(tCommon('health.connectSuccess'))
         }
       }

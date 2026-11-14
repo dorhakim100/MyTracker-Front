@@ -1,0 +1,10 @@
+{
+  "week": "Week",
+  "month": "Month",
+  "quarter": "3 months",
+  "year": "Year",
+  "previous": "Previous",
+  "next": "Next",
+  "today": "Today",
+  "liveStreak": "Live streak, {{count}}"
+}

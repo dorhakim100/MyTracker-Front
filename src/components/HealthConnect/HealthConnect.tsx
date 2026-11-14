@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
+import { activityService } from '../../services/health/activity.service'
 import { startGoogleHealthConnect } from '../../services/auth/google-auth.service'
 import MonitorHeartRoundedIcon from '@mui/icons-material/MonitorHeartRounded'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
@@ -46,6 +47,7 @@ export function HealthConnect({
       if (result?.connected) {
         await loadGoogleHealthConnection(userId)
         await setHealthData()
+        activityService.backfill(userId, 'google').catch(() => undefined)
         await setGoogleHealthConnected(true)
         showSuccessMsg(t('health.connectSuccess'))
       }

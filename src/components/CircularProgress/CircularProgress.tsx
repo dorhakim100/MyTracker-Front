@@ -52,7 +52,7 @@ export function CircularProgress({
     if (isTextValue) {
       setTextValue(text)
     }
-  }, [value])
+  }, [value, text, isTextValue])
 
   // if color is provided, use it
   // only if dark mode

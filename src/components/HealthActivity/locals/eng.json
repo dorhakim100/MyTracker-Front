@@ -1,0 +1,13 @@
+{
+  "week": "Week",
+  "month": "Month",
+  "quarter": "3 months",
+  "year": "Year",
+  "summary": "You hit your goal on {{days}} days. Total {{total}}.",
+  "streak": "{{count}} day streak",
+  "streakHint": "Keep hitting your goal to continue your streak.",
+  "noStreak": "No streak yet",
+  "noStreakHint": "Hit your goal to start one.",
+  "close": "Close",
+  "loadFailed": "Couldn't load this activity."
+}

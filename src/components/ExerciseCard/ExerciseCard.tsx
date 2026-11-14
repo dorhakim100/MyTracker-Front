@@ -379,7 +379,11 @@ export function ExerciseCard({
   }
 
   async function getPreviousInstructions() {
-    if (!instructions || instructions.weekNumber === 1) return null
+    if (!instructions || !instructions._id || instructions.weekNumber === 1) {
+      setPreviousInstructions(null)
+      setIsInstructionsLoading(false)
+      return null
+    }
 
     try {
       const previousInstructions = await instructionsService.getByWorkoutId({
@@ -660,10 +664,8 @@ export function ExerciseCard({
               )}
             </div>
 
-            {exerciseInstructions &&
-              exerciseInstructions.sets &&
-              instructions._id && (
-                <ExerciseEditor
+            {exerciseInstructions && exerciseInstructions.sets && (
+              <ExerciseEditor
                   // isInstructionsLoadingProp={isInstructionsLoading}
                   isLoading={isLoading}
                   isInstructionsLoadingProp={

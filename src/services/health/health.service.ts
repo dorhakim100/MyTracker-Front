@@ -32,6 +32,7 @@ export const healthService = {
   getAvailability,
   requestReadAuthorization,
   getTodayActivitySummary,
+  readDailyTotals,
   saveWeight,
   isGoogleHealthPlatform,
   isPhoneHealthAuthorized,
@@ -202,6 +203,30 @@ async function getNativeTodayActivitySummary(): Promise<TodayActivitySummary> {
     distance,
     flightsClimbed,
     window: { startIso: window.startIso, endIso: window.endIso },
+  }
+}
+
+async function readDailyTotals(startIso: string, endIso: string) {
+  const [stepsResult, caloriesResult] = await Promise.all([
+    Health.queryAggregated({
+      dataType: 'steps',
+      startDate: startIso,
+      endDate: endIso,
+      bucket: 'day',
+      aggregation: 'sum',
+    }),
+    Health.queryAggregated({
+      dataType: 'calories',
+      startDate: startIso,
+      endDate: endIso,
+      bucket: 'day',
+      aggregation: 'sum',
+    }),
+  ])
+
+  return {
+    steps: stepsResult.samples,
+    calories: caloriesResult.samples,
   }
 }
 
