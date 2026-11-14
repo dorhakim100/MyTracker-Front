@@ -1,6 +1,9 @@
 import { Divider, Typography } from '@mui/material'
 import { useTranslation } from 'react-i18next'
-import { capitalizeFirstLetter } from '../../services/util.service'
+import {
+  capitalizeFirstLetter,
+  getTimeFromISO,
+} from '../../services/util.service'
 import {
   SessionStatsExercise,
   SessionStatsRecap,
@@ -13,7 +16,7 @@ import { HardnessGauge } from '../HardnessGauge/HardnessGauge'
 import { sessionStatsNs } from './locals'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import {
   ExerciseDetails,
@@ -28,6 +31,16 @@ interface SessionStatsProps {
   workoutId?: string
   workoutName?: string
   exercises?: Exercise[]
+}
+
+const detDurationHours = (durationMs: number) => {
+  return Math.floor(durationMs / (1000 * 60 * 60))
+}
+const detDurationMinutes = (durationMs: number) => {
+  return Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60))
+}
+const detDurationSeconds = (durationMs: number) => {
+  return Math.floor((durationMs % (1000 * 60)) / 1000)
 }
 
 export function SessionStats({
@@ -47,6 +60,22 @@ export function SessionStats({
   }>({
     open: false,
   })
+
+  const [now, setNow] = useState(new Date())
+
+  const activeDuration = useMemo(() => {
+    if (!recap?.startTime) return 0
+    const duration = now.getTime() - new Date(recap.startTime).getTime()
+    return duration
+  }, [recap?.startTime, now, recap?.isFinished])
+
+  useEffect(() => {
+    if (recap?.isFinished) return
+    const interval = setInterval(() => {
+      setNow(new Date())
+    }, 1000)
+    return () => clearInterval(interval)
+  }, [recap?.isFinished])
 
   const onExerciseClick = (statsExercise: SessionStatsExercise) => {
     const fromWorkout = exercises.find(
@@ -85,10 +114,11 @@ export function SessionStats({
   const volumePlanned = Math.round(recap.volumePlanned)
   const vsLast =
     recap.vsLastPercent == null ? null : Math.round(recap.vsLastPercent)
-  const durationHours = Math.floor(recap.durationMs / (1000 * 60 * 60))
-  const durationMinutes = Math.floor(
-    (recap.durationMs % (1000 * 60 * 60)) / (1000 * 60)
-  )
+  const durationHours = detDurationHours(recap.durationMs)
+  const durationMinutes = detDurationMinutes(recap.durationMs)
+  const activeDurationHours = detDurationHours(activeDuration)
+  const activeDurationMinutes = detDurationMinutes(activeDuration)
+  const activeDurationSeconds = detDurationSeconds(activeDuration)
   let prStep = 0
 
   return (
@@ -106,17 +136,44 @@ export function SessionStats({
               variant='h4'
               className='bold-header duration-value'
             >
+              {recap.isFinished ||
+              (!recap.isFinished && activeDurationHours > 0) ? (
+                <>
+                  <RollingNumber
+                    value={
+                      recap.isFinished ? durationHours : activeDurationHours
+                    }
+                    fromZero
+                  />
+                  <span className='duration-colon'>:</span>
+                </>
+              ) : null}
               <RollingNumber
-                value={durationHours}
-                fromZero
-              />
-              <span className='duration-colon'>:</span>
-              <RollingNumber
-                value={durationMinutes}
+                value={
+                  recap.isFinished ? durationMinutes : activeDurationMinutes
+                }
                 fromZero
                 format={{ minimumIntegerDigits: 2 }}
               />
+              {!recap.isFinished && (
+                <>
+                  <span className='duration-colon'>:</span>
+                  <RollingNumber
+                    value={activeDurationSeconds}
+                    fromZero
+                    format={{ minimumIntegerDigits: 2 }}
+                  />
+                </>
+              )}
             </Typography>
+            {recap.startTime && (
+              <Typography
+                variant='body2'
+                className='opacity-70'
+              >
+                {t('startTime')} {getTimeFromISO(recap.startTime)}
+              </Typography>
+            )}
           </div>
           <HardnessGauge
             size='big'

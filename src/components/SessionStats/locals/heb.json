@@ -2,6 +2,7 @@
   "title": "סיכום אימון",
   "openStats": "סטטיסטיקות אימון",
   "duration": "משך",
+  "startTime": "התחלה",
   "volumeVsPlan": "נפח",
   "setsDone": "סטים",
   "vsLast": "מול הפעם הקודמת",

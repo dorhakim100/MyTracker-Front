@@ -2,6 +2,7 @@
   "title": "Session recap",
   "openStats": "Session statistics",
   "duration": "Duration",
+  "startTime": "Start",
   "volumeVsPlan": "Volume",
   "setsDone": "Sets",
   "vsLast": "Vs last time",

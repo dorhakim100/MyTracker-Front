@@ -1085,7 +1085,9 @@ export function WorkoutSession({
   }
 
   const sessionMenuOptions: DropdownOption[] = [
-    ...(sessionDay.instructions.isFinished || sessionDay.statsId
+    ...(sessionDay.instructions.isFinished ||
+    sessionDay.statsId ||
+    sessionDay.instructions.exercises.find((e) => e.sets.some((s) => s.isDone))
       ? [
           {
             title: tStats('openStats'),
