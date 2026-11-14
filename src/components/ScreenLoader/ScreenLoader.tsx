@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import Lottie from 'lottie-react'
 import { useTranslation } from 'react-i18next'
 import { useTypewriter, Cursor } from 'react-simple-typewriter'
@@ -13,7 +13,6 @@ import { RootState } from '../../store/store'
 import { loadingPhraseKeys } from '../../assets/config/loading-phrases'
 import { shuffle } from '../../services/util.service'
 
-
 export function ScreenLoader() {
   const { t } = useTranslation()
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
@@ -21,7 +20,8 @@ export function ScreenLoader() {
     () => shuffle(loadingPhraseKeys.map((key) => t(key))),
     [t]
   )
-  const [dots, setDots] = useState('')
+  // const [dots, setDots] = useState('')
+  const [isIdle, setIsIdle] = useState(false)
   const [typedText] = useTypewriter({
     words,
     loop: 0, // infinite
@@ -30,32 +30,38 @@ export function ScreenLoader() {
     delaySpeed: 1500,
   })
 
-  useEffect(() => {
-    let dots = 0
-    const interval = setInterval(() => {
-      const dotsString = '.'.repeat(dots)
-      setDots(dotsString)
-      dots++
-      if (dots === 4) {
-        dots = 0
-      }
-    }, 700)
-    return () => clearInterval(interval)
-  }, [])
+  // useEffect(() => {
+  //   let dots = 0
+  //   const interval = setInterval(() => {
+  //     const dotsString = '.'.repeat(dots)
+  //     setDots(dotsString)
+  //     dots++
+  //     if (dots === 4) {
+  //       dots = 0
+  //     }
+  //   }, 700)
+  //   return () => clearInterval(interval)
+  // }, [])
 
   return (
     <div className='screen-loader'>
       <div className='loader-container'>
-        <Lottie animationData={loadingAnimation} loop={true} />
+        <Lottie
+          className={isIdle ? 'is-idle' : ''}
+          animationData={loadingAnimation}
+          loop={false}
+          onComplete={() => setIsIdle(true)}
+        />
         <div className={`dots-container ${prefs.lang === 'he' ? 'he' : ''}`}>
-          <Typography variant='h4'>{t('common.loading')}{dots}</Typography>
+          {/* <Typography variant='h4'>
+            {t('common.loading')}
+            {dots}
+          </Typography> */}
         </div>
-        <div
-          className='typewriter-container'
-        >
+        <div className='typewriter-container'>
           <Typography variant='h4'>
             <span>{typedText}</span>
-            <Cursor cursorStyle='_'  />
+            <Cursor cursorStyle='_' />
           </Typography>
         </div>
       </div>

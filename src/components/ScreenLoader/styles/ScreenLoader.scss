@@ -24,6 +24,10 @@
       }
     }
 
+    .is-idle {
+      animation: loader-breathe 1.2s ease-in-out infinite;
+    }
+
     .typewriter-container {
       width: 250px;
       display: grid;
@@ -44,5 +48,22 @@
     bottom: 0;
     left: 0;
     right: 0;
+  }
+}
+
+@keyframes loader-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.035);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .screen-loader .is-idle {
+    animation: none;
   }
 }

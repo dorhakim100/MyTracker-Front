@@ -528,7 +528,7 @@
   },
   "loading": {
     "somethingGoodIsCooking": "משהו טוב מתבשל...",
-    "progressIsBeingMade": "מתקדמים יפה...",
+    "progressIsBeingMade": "המטרות מתקדמות יפה...",
     "macrosAreBeingBalanced": "מכוונים את המאקרו...",
     "addingAPinchOfMagic": "מוסיפים קמצוץ קסם...",
     "mixingTheRightIngredients": "מערבבים את המרכיבים הנכונים...",
@@ -536,8 +536,8 @@
     "loadingWithExtraFlavor": "טוענים עם טעם נוסף...",
     "fetchingTheSecretRecipe": "מוצאים את המתכון הסודי...",
     "seasoningTheFinalTouch": "מתבלים את המגע האחרון...",
-    "warmingUp": "מתחממים...",
-    "gettingReady": "מתכוננים...",
+    "warmingUp": "מחממים משהו טוב...",
+    "gettingReady": "מתכוננים לאימון טוב...",
     "pushingTheLimits": "דוחפים את הגבולות..."
   }
 }
