@@ -1,0 +1,7 @@
+.directional-play {
+  flex-shrink: 0;
+
+  &.rtl {
+    transform: scaleX(-1);
+  }
+}

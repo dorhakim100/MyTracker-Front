@@ -68,10 +68,6 @@
     }
   }
 
-  [dir='rtl'] & .day-chevron {
-    transform: scaleX(-1);
-  }
-
   .days-empty {
     text-align: center;
     color: var(--ink-on-surface);

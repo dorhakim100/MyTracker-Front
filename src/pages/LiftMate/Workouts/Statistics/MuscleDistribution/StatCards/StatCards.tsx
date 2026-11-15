@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import ChevronRightIcon from '@mui/icons-material/ChevronRight'
+import { Chevron } from '../../../../../../CustomMui/Chevron/Chevron'
 import { PressRipple } from '../../../../../../CustomMui/PressRipple/PressRipple'
 
 export interface StatCardItem {
@@ -28,7 +28,7 @@ export function StatCards({ cards }: StatCardsProps) {
             <span className='stat-label'>{card.label}</span>
             <span className='stat-value'>{card.value}</span>
             {card.onOpen && (
-              <ChevronRightIcon
+              <Chevron
                 className='stat-chevron'
                 fontSize='small'
               />

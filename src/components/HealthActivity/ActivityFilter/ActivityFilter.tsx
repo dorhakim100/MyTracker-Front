@@ -1,11 +1,8 @@
 import { useTranslation } from 'react-i18next'
-import { useSelector } from 'react-redux'
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
-import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import TodayIcon from '@mui/icons-material/Today'
 import Lottie from 'lottie-react'
 import { CustomButton } from '../../../CustomMui/CustomButton/CustomButton'
-import { RootState } from '../../../store/store'
+import { Chevron } from '../../../CustomMui/Chevron/Chevron'
 import type { ActivityFrame } from '../../../types/health/Activity'
 import streakFlame from '../../../../public/streak-flame.json'
 import { activityFilterNs } from './locals'
@@ -41,11 +38,6 @@ export function ActivityFilter({
   liveStreak,
 }: ActivityFilterProps) {
   const { t } = useTranslation(activityFilterNs)
-  const isRtl = useSelector(
-    (state: RootState) => state.systemModule.prefs.lang === 'he'
-  )
-  const PreviousIcon = isRtl ? ChevronRightIcon : ChevronLeftIcon
-  const NextIcon = isRtl ? ChevronLeftIcon : ChevronRightIcon
   const reduceMotion =
     typeof window !== 'undefined' &&
     window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -88,7 +80,7 @@ export function ActivityFilter({
         <div className='activity-paging-actions'>
           <CustomButton
             isIcon
-            icon={<PreviousIcon />}
+            icon={<Chevron direction='back' />}
             variant='flat'
             disabled={!canGoPrevious || loading}
             ariaLabel={t('previous')}
@@ -104,7 +96,7 @@ export function ActivityFilter({
           />
           <CustomButton
             isIcon
-            icon={<NextIcon />}
+            icon={<Chevron />}
             variant='flat'
             disabled={!canGoNext || loading}
             ariaLabel={t('next')}

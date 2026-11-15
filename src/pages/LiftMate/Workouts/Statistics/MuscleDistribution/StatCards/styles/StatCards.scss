@@ -47,10 +47,6 @@
   }
 }
 
-[dir='rtl'] .stat-card .stat-chevron {
-  transform: translateY(-50%) scaleX(-1);
-}
-
 @media (prefers-reduced-motion: reduce) {
   .stat-card.is-openable {
     transition: none;

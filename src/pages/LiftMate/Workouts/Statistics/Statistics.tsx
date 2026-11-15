@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import { CircularProgress } from '../../../../components/CircularProgress/CircularProgress'
-import ChevronRightIcon from '@mui/icons-material/ChevronRight'
+import { Chevron } from '../../../../CustomMui/Chevron/Chevron'
 import { RootState } from '../../../../store/store'
 import { Exercise } from '../../../../types/exercise/Exercise'
 import {
@@ -241,7 +241,7 @@ export function Statistics({ forUserId }: StatisticsProps) {
           renderSecondaryText={() => t('muscleDistributionHint')}
           renderRight={() => (
             <div className='chevron-container'>
-              <ChevronRightIcon
+              <Chevron
                 className='page-chevron'
                 fontSize='small'
               />
@@ -294,7 +294,7 @@ export function Statistics({ forUserId }: StatisticsProps) {
                 </span>
               )}
               renderRight={() => (
-                <ChevronRightIcon
+                <Chevron
                   className='page-chevron'
                   fontSize='small'
                 />

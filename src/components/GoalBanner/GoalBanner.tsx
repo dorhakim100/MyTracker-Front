@@ -12,13 +12,12 @@ import {
   type ForwardRefExoticComponent,
   type RefAttributes,
 } from 'react'
-import ChevronRightIcon from '@mui/icons-material/ChevronRight'
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import TouchRippleBase, {
   type TouchRippleActions,
   type TouchRippleProps,
 } from '@mui/material/ButtonBase/TouchRipple'
 import { EllipsisText } from '../../CustomMui/EllipsisText/EllipsisText'
+import { Chevron } from '../../CustomMui/Chevron/Chevron'
 
 // MUI's .d.ts types the inner render function. The runtime export is forwardRef.
 const TouchRipple = TouchRippleBase as unknown as ForwardRefExoticComponent<
@@ -56,7 +55,6 @@ export function GoalBanner({
 }: GoalBannerProps) {
   const rippleRef = useRef<TouchRippleActions>(null)
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
-  const isRTL = prefs.lang === 'he'
   let formattedGoal = goal
   if (goal) {
     formattedGoal = formatNumberWithCommas(+goal)
@@ -125,8 +123,7 @@ export function GoalBanner({
         )}
       </div>
       <div className='icon-container'>{icon || <FlagIcon />}</div>
-      {isClickable && !isRTL && <ChevronRightIcon className='chevron-right' />}
-      {isClickable && isRTL && <ChevronLeftIcon className='chevron-left' />}
+      {isClickable && <Chevron />}
       {isClickType && <EmptyIcon />}
       <LinearProgress
         className={`linear-progress ${prefs.favoriteColor} ${

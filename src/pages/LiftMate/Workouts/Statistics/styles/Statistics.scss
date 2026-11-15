@@ -137,11 +137,6 @@
   opacity: 0.55;
 }
 
-[dir='rtl'] .statistics-pages .page-chevron,
-[dir='rtl'] .page-chevron {
-  transform: scaleX(-1);
-}
-
 @media (prefers-reduced-motion: reduce) {
   .record-row {
     transition: none;

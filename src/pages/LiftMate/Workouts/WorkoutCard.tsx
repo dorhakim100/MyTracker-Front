@@ -231,7 +231,6 @@ export function WorkoutCard({
               <PlayArrow />
             )
           }
-          isIconReverse={prefs.lang === 'he' ? true : false}
         />
       )
   }

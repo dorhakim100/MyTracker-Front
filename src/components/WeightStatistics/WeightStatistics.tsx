@@ -6,7 +6,7 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import { useState } from 'react'
 import { Typography } from '@mui/material'
-import ChevronRightIcon from '@mui/icons-material/ChevronRight'
+import { Chevron } from '../../CustomMui/Chevron/Chevron'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { User } from '../../types/user/User'
@@ -160,7 +160,7 @@ export function WeightStatistics({ user }: { user: User }) {
                     </Typography>
                   </TableCell>
                   <TableCell align='center'>
-                    <ChevronRightIcon
+                    <Chevron
                       className='day-chevron'
                       fontSize='small'
                     />
