@@ -171,6 +171,7 @@ const DashboardNutrition = memo(function DashboardNutrition() {
         percentageValue={calories / userToCheck.currGoal?.dailyCalories}
         current={calories}
         goal={userToCheck.currGoal?.dailyCalories}
+        enableHistory
       />,
       <MacrosDistribution
         key='macros-distribution'

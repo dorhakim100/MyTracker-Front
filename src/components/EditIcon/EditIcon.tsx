@@ -23,6 +23,7 @@ export function EditIcon({ onClick, ariaLabel }: EditIconProps) {
   )
 
   function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
+    event.preventDefault()
     event.stopPropagation()
     onClick?.()
     if(isNative) {

@@ -10,6 +10,8 @@ import { CustomSkeleton } from '../../CustomMui/CustomSkeleton/CustomSkeleton'
 import { ActivityBarChart } from '../BarChart/BarChart'
 import { ActivityFilter } from './ActivityFilter/ActivityFilter'
 import { activityService } from '../../services/health/activity.service'
+import { intakeService } from '../../services/day/intake.service'
+import { CaloriesMedalIcon } from '../../CustomMui/CustomIcon/medal-icons'
 import { capacitorService } from '../../services/capacitor.service'
 import { showErrorMsg } from '../../services/event-bus.service'
 import { formatNumberWithCommas } from '../../services/util.service'
@@ -29,11 +31,16 @@ import './locals'
 import { SlideAnimation } from '../SlideAnimation/SlideAnimation'
 
 interface HealthActivityProps {
-  metric: ActivityMetric
+  metric?: ActivityMetric
   goalIcon?: ReactNode
+  source?: 'activity' | 'intake'
 }
 
-export function HealthActivity({ metric, goalIcon }: HealthActivityProps) {
+export function HealthActivity({
+  metric = 'steps',
+  goalIcon,
+  source = 'activity',
+}: HealthActivityProps) {
   const { t, i18n } = useTranslation(healthActivityNs)
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
   const isRtl = prefs.lang === 'he'
@@ -49,12 +56,18 @@ export function HealthActivity({ metric, goalIcon }: HealthActivityProps) {
   const [direction, setDirection] = useState(1)
   const [motionKey, setMotionKey] = useState('activity')
   const hasPage = useRef(false)
-  const queryRef = useRef({ userId, vendor, metric, frame, end })
+  const queryRef = useRef({ userId, vendor, metric, frame, end, source })
   const requestRef = useRef(0)
-  queryRef.current = { userId, vendor, metric, frame, end }
+  queryRef.current = { userId, vendor, metric, frame, end, source }
+  const hitIcon =
+    source === 'intake' ? (
+      <CaloriesMedalIcon sx={{ color: 'var(--accent)' }} />
+    ) : (
+      goalIcon
+    )
 
   useEffect(() => {
-    if (!userId) return
+    if (source === 'intake' || !userId) return
     let cancelled = false
 
     const refreshRecent = async () => {
@@ -81,14 +94,14 @@ export function HealthActivity({ metric, goalIcon }: HealthActivityProps) {
     return () => {
       cancelled = true
     }
-  }, [userId, vendor])
+  }, [userId, vendor, source])
 
   useEffect(() => {
     const showPage = async () => {
       await loadPage(queryRef.current, true)
     }
     showPage().catch(() => undefined)
-  }, [userId, vendor, metric, frame, end])
+  }, [userId, vendor, metric, frame, end, source])
 
   function onFrame(next: ActivityFrame) {
     if (next === frame) return
@@ -127,6 +140,7 @@ export function HealthActivity({ metric, goalIcon }: HealthActivityProps) {
       metric: ActivityMetric
       frame: ActivityFrame
       end?: string
+      source: 'activity' | 'intake'
     },
     showLoading: boolean
   ) {
@@ -135,13 +149,16 @@ export function HealthActivity({ metric, goalIcon }: HealthActivityProps) {
     requestRef.current = requestId
     if (showLoading) setLoading(true)
     try {
-      const next = await activityService.getPage(
-        query.userId,
-        query.metric,
-        query.frame,
-        query.vendor,
-        query.end
-      )
+      const next =
+        query.source === 'intake'
+          ? await intakeService.getPage(query.userId, query.frame, query.end)
+          : await activityService.getPage(
+              query.userId,
+              query.metric,
+              query.frame,
+              query.vendor,
+              query.end
+            )
       if (requestId !== requestRef.current) return
       setPage(next)
       if (showLoading) setSelectedIndex(null)
@@ -159,8 +176,12 @@ export function HealthActivity({ metric, goalIcon }: HealthActivityProps) {
 
   const selected = selectedIndex == null ? null : page?.bars[selectedIndex]
   const displayValue = selected?.value ?? page?.average ?? 0
+  const anchorGoal = selected
+    ? selected.goal ?? page?.goal ?? 0
+    : page?.goal ?? 0
+  const anchorTarget = selected ? selected.target ?? null : page?.target ?? null
   const percent =
-    page && page.goal > 0 ? Math.min(100, (displayValue / page.goal) * 100) : 0
+    anchorGoal > 0 ? Math.min(100, (displayValue / anchorGoal) * 100) : 0
   const summary = selected
     ? rangeLabel(selected.start, selected.end, i18n.language)
     : t('summary', {
@@ -184,9 +205,12 @@ export function HealthActivity({ metric, goalIcon }: HealthActivityProps) {
         onNext={onNext}
         onToday={onToday}
         period={
-          page ? periodLabel(page.start, page.end, page.frame, i18n.language) : ''
+          page
+            ? periodLabel(page.start, page.end, page.frame, i18n.language)
+            : ''
         }
         liveStreak={page?.liveStreak}
+        target={anchorTarget}
       />
 
       <SlideAnimation
@@ -198,7 +222,7 @@ export function HealthActivity({ metric, goalIcon }: HealthActivityProps) {
           <CircularProgress
             value={percent}
             text={String(displayValue)}
-            afterText={page && page.goal > 0 ? String(page.goal) : undefined}
+            afterText={anchorGoal > 0 ? String(anchorGoal) : undefined}
             isLoading={loading && !page}
           />
           {loading && !page ? (
@@ -235,8 +259,11 @@ export function HealthActivity({ metric, goalIcon }: HealthActivityProps) {
               value: bar.value,
               goalHit: bar.goalHit,
               active: isCurrentBar(bar.start, bar.end),
+              rangeLow: bar.rangeLow,
+              rangeHigh: bar.rangeHigh,
+              target: bar.target,
             }))}
-            goal={page?.goal ?? 0}
+            goal={anchorGoal}
             axisHeight={page?.axisHeight ?? 1}
             frame={frame}
             rtl={isRtl}
@@ -244,7 +271,8 @@ export function HealthActivity({ metric, goalIcon }: HealthActivityProps) {
             onSelect={setSelectedIndex}
             goalMedallion
             goalLogo
-            goalIcon={goalIcon}
+            goalIcon={hitIcon}
+            yellowMedal={prefs.favoriteColor === 'yellow'}
           />
         )}
 
@@ -283,10 +311,12 @@ export function HealthActivity({ metric, goalIcon }: HealthActivityProps) {
                   className='activity-card'
                 >
                   <span>{rangeLabel(card.start, card.end, i18n.language)}</span>
-                  <span className='activity-card-value'>
-                    {card.goalHit && goalIcon}
-                    <bdi>{formatNumberWithCommas(card.value)}</bdi>
-                  </span>
+                  {card.logged !== false && (
+                    <span className='activity-card-value'>
+                      {card.goalHit && hitIcon}
+                      <bdi>{formatNumberWithCommas(card.value)}</bdi>
+                    </span>
+                  )}
                 </div>
               ))}
         </div>
@@ -384,9 +414,13 @@ function periodLabel(
     timeZone: 'Asia/Jerusalem',
   })
   if (start.slice(0, 7) === end.slice(0, 7)) {
-    return `${startDate.getUTCDate()}-${endDate.getUTCDate()} ${month.format(endDate)}`
+    return `${startDate.getUTCDate()}-${endDate.getUTCDate()} ${month.format(
+      endDate
+    )}`
   }
-  return `${startDate.getUTCDate()} ${month.format(startDate)} - ${endDate.getUTCDate()} ${month.format(endDate)}`
+  return `${startDate.getUTCDate()} ${month.format(
+    startDate
+  )} - ${endDate.getUTCDate()} ${month.format(endDate)}`
 }
 
 function rangeLabel(start: string, end: string, language: string) {

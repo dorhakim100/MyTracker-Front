@@ -120,12 +120,30 @@
 
   --accent: var(--primary-color);
   --accent-ink: var(--primary-color-dark);
+
+  --goal-lose: #0891b2;
+  --goal-maintain: #1d4ed8;
+  --goal-gain: #6d28d9;
+  --goal-band-mix: 16%;
+
+  --activity-medal-face: #f8e7b0;
+  --activity-medal-ribbon: #e0b44a;
+  --activity-medal-edge: #a67c2d;
+  --activity-medal-face-yellow: #fff8ee;
+  --activity-medal-edge-yellow: #7a5420;
   --chrome-tint-subtle: 8%;
   --chrome-tint-medium: 14%;
   --chrome-tint-strong: 32%;
   --chrome-tint-primary: 52%;
   --chrome-tint-solid: 90%;
   --chrome-ring: 40%;
+}
+
+html.dark-mode {
+  --goal-lose: #86d6ea;
+  --goal-maintain: #93c5fd;
+  --goal-gain: #c4b5fd;
+  --goal-band-mix: 28%;
 }
 
 // Colors

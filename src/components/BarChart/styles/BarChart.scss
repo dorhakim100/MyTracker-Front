@@ -1,11 +1,13 @@
 .activity-bar-chart-container {
   --activity-bar: color-mix(in srgb, var(--accent) 62%, transparent);
   --activity-bar-active: var(--accent);
-  --activity-goal-line: color-mix(in srgb, var(--ink-on-canvas) 42%, transparent);
+  --activity-goal-line: color-mix(
+    in srgb,
+    var(--ink-on-canvas) 42%,
+    transparent
+  );
   --activity-marker: color-mix(in srgb, var(--ink-on-canvas) 72%, transparent);
   --activity-marker-fill: var(--canvas-color);
-  --activity-medal: white;
-  --activity-medal-edge: #5c6570;
   width: 100%;
   touch-action: pan-y;
   -webkit-tap-highlight-color: transparent;
@@ -48,6 +50,65 @@
       object-fit: contain;
     }
   }
+
+  .activity-band {
+    stroke: none;
+  }
+
+  .activity-band-edge {
+    stroke-width: 2;
+    fill: none;
+
+    line {
+      stroke-dasharray: 6 5;
+    }
+  }
+
+  .activity-band-lose {
+    fill: color-mix(
+      in srgb,
+      var(--goal-lose) var(--goal-band-mix),
+      var(--canvas-color)
+    );
+  }
+
+  .activity-band-maintain {
+    fill: color-mix(
+      in srgb,
+      var(--goal-maintain) var(--goal-band-mix),
+      var(--canvas-color)
+    );
+  }
+
+  .activity-band-gain {
+    fill: color-mix(
+      in srgb,
+      var(--goal-gain) var(--goal-band-mix),
+      var(--canvas-color)
+    );
+  }
+
+  .activity-band-edge.activity-band-lose {
+    stroke: var(--goal-lose);
+  }
+
+  .activity-band-edge.activity-band-maintain {
+    stroke: var(--goal-maintain);
+  }
+
+  .activity-band-edge.activity-band-gain {
+    stroke: var(--goal-gain);
+  }
+
+  &.medal-yellow {
+    --activity-medal-face: var(--activity-medal-face-yellow);
+    --activity-medal-ribbon: var(--activity-medal-edge-yellow);
+    --activity-medal-edge: var(--activity-medal-edge-yellow);
+
+    .activity-bar-goal-icon {
+      color: var(--activity-medal-edge-yellow);
+    }
+  }
 }
 
 html.dark-mode .activity-bar-chart-container {
@@ -56,8 +117,6 @@ html.dark-mode .activity-bar-chart-container {
   --activity-goal-line: color-mix(in srgb, white 88%, transparent);
   --activity-marker: white;
   --activity-marker-fill: var(--canvas-color);
-  --activity-medal: white;
-  --activity-medal-edge: #5c6570;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -17,7 +17,6 @@ import { HealthActivity } from '../HealthActivity/HealthActivity'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import type { ActivityMetric } from '../../types/health/Activity'
 import {
-  CaloriesMedalIcon,
   StepsMedalIcon,
 } from '../../CustomMui/CustomIcon/medal-icons'
 
@@ -188,6 +187,8 @@ export function HealthStats({
 }
 
 function activityGoalIcon(metric: ActivityMetric): ReactNode {
-  const Icon = metric === 'steps' ? StepsMedalIcon : CaloriesMedalIcon
-  return <Icon sx={{ color: 'var(--accent)' }} />
+  if (metric === 'steps') {
+    return <StepsMedalIcon sx={{ color: 'var(--accent)' }} />
+  }
+  return <BurnedCaloriesGlyph sx={{ color: 'var(--accent)' }} />
 }

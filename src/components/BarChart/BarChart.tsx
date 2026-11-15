@@ -10,13 +10,16 @@ import {
   YAxis,
 } from 'recharts'
 import { useLineChartScrub } from '../../hooks/useLineChartScrub'
-import type { ActivityFrame } from '../../types/health/Activity'
+import type { ActivityFrame, GoalTarget } from '../../types/health/Activity'
 
 export type ActivityChartBar = {
   label: string
   value: number
   goalHit: boolean
   active: boolean
+  rangeLow?: number
+  rangeHigh?: number
+  target?: GoalTarget | null
 }
 
 interface ActivityBarChartProps {
@@ -30,6 +33,7 @@ interface ActivityBarChartProps {
   goalIcon?: ReactNode
   goalMedallion?: boolean
   goalLogo?: boolean
+  yellowMedal?: boolean
 }
 
 const BAR_GAP: Record<ActivityFrame, string> = {
@@ -51,6 +55,7 @@ export function ActivityBarChart({
   goalIcon,
   goalMedallion = true,
   goalLogo = true,
+  yellowMedal = false,
 }: ActivityBarChartProps) {
   const [width, setWidth] = useState(0)
   const reduceMotion = usePrefersReducedMotion()
@@ -58,7 +63,11 @@ export function ActivityBarChart({
     ? goalIcon ?? <CheckRoundedIcon fontSize='small' />
     : null
   const top = Math.max(axisHeight, 1) * 1.15
+  const hasRange = bars.some(
+    (bar) => bar.rangeLow != null && bar.rangeHigh != null && bar.target
+  )
   const orderedBars = rtl ? [...bars].reverse() : bars
+  const bandSlots: { x: number; width: number }[] = []
   const labels = thinLabels(orderedBars, frame, width)
   const dataIndex = (index: number) =>
     rtl ? bars.length - 1 - index : index
@@ -93,7 +102,7 @@ export function ActivityBarChart({
       ref={containerRef}
       className={`activity-bar-chart-container ${frame} ${
         isScrubbing ? 'is-scrubbing' : ''
-      }`}
+      } ${yellowMedal ? 'medal-yellow' : ''}`}
       {...pointer}
     >
       <ResponsiveContainer width='100%' height={268}>
@@ -129,7 +138,7 @@ export function ActivityBarChart({
               />
             )}
           />
-          {goal > 0 && (
+          {!hasRange && goal > 0 && (
             <ReferenceLine
               y={goal}
               stroke='var(--activity-goal-line)'
@@ -140,12 +149,16 @@ export function ActivityBarChart({
           )}
           <Bar
             dataKey='value'
+            background={{ fill: 'transparent' }}
             zIndex={400}
             isAnimationActive={!reduceMotion}
             animationDuration={320}
             shape={(props) => (
               <ActivityBarShape
                 {...props}
+                top={top}
+                bars={orderedBars}
+                bandSlots={bandSlots}
                 icon={icon}
                 showMedallion={goalMedallion}
                 selected={dataIndex(props.index) === selectedIndex}
@@ -180,14 +193,14 @@ function ActivityMedal({
     <g>
       <path
         d={medalRibbons(cx, cy, radius)}
-        fill='var(--activity-medal)'
+        fill='var(--activity-medal-ribbon)'
         stroke='var(--activity-medal-edge)'
         strokeWidth={stroke}
         strokeLinejoin='round'
       />
       <path
         d={medalSeal(cx, cy, radius)}
-        fill='var(--activity-medal)'
+        fill='var(--activity-medal-ribbon)'
         stroke='var(--activity-medal-edge)'
         strokeWidth={stroke}
         strokeLinejoin='round'
@@ -196,7 +209,7 @@ function ActivityMedal({
         cx={cx}
         cy={cy}
         r={radius * 0.68}
-        fill='var(--activity-medal)'
+        fill='var(--activity-medal-face)'
         stroke='var(--activity-medal-edge)'
         strokeWidth={stroke}
       />
@@ -254,6 +267,38 @@ function ribbonSide(
   )
 }
 
+function sameBand(a?: ActivityChartBar, b?: ActivityChartBar) {
+  if (!a?.target || !b?.target) return false
+  return (
+    a.target === b.target &&
+    a.rangeLow === b.rangeLow &&
+    a.rangeHigh === b.rangeHigh
+  )
+}
+
+function bandBox(
+  bar: ActivityChartBar | undefined,
+  x: number,
+  width: number,
+  background: { y?: number | null; height?: number | null } | undefined,
+  top: number
+) {
+  if (!bar?.target || bar.rangeLow == null || bar.rangeHigh == null) return null
+  const plotY = background?.y
+  const plotH = background?.height
+  if (plotY == null || plotH == null || plotH <= 0 || top <= 0) return null
+  const high = yFor(bar.rangeHigh, plotY, plotH, top)
+  const low = yFor(bar.rangeLow, plotY, plotH, top)
+  const y = Math.min(high, low)
+  const height = Math.max(2, Math.abs(low - high))
+  return { x, y, width, height, target: bar.target }
+}
+
+function yFor(value: number, plotY: number, plotH: number, top: number) {
+  const ratio = Math.min(1, Math.max(0, value / top))
+  return plotY + plotH * (1 - ratio)
+}
+
 function barFill(active: boolean) {
   if (active) return 'var(--activity-bar-active)'
   return 'var(--activity-bar)'
@@ -268,9 +313,12 @@ function ActivityBarShape(props: {
   index?: number
   background?: { y?: number | null; height?: number | null }
   payload?: ActivityChartBar
+  bars: ActivityChartBar[]
+  bandSlots: { x: number; width: number }[]
   icon: ReactNode
   showMedallion: boolean
   selected: boolean
+  top: number
 }) {
   const {
     x = 0,
@@ -278,11 +326,15 @@ function ActivityBarShape(props: {
     width = 0,
     height = 0,
     fill,
+    index = 0,
     background,
     payload,
+    bars,
+    bandSlots,
     icon,
     showMedallion,
     selected,
+    top,
   } = props
   if (width <= 0) return <g />
   const corner = width > 18 ? 8 : 3
@@ -298,10 +350,29 @@ function ActivityBarShape(props: {
     seal >= 18
   const medalY = y + 2 + medalRadius
 
+  const prevSlot = bandSlots[index - 1]
+  bandSlots[index] = { x, width }
+  const band = bandBox(payload, x, width, background, top)
+  if (band && prevSlot && sameBand(bars[index - 1], payload)) {
+    const start = prevSlot.x + prevSlot.width
+    band.x = start
+    band.width = x + width - start
+  }
+
   return (
     <g>
+      {band && (
+        <rect
+          className={`activity-band activity-band-${band.target}`}
+          x={band.x}
+          y={band.y}
+          width={band.width}
+          height={band.height}
+        />
+      )}
       {height > 0 && (
         <rect
+          className='activity-bar-value'
           x={x}
           y={y}
           width={width}
@@ -311,6 +382,27 @@ function ActivityBarShape(props: {
           stroke='none'
           style={{ outline: 'none' }}
         />
+      )}
+      {band && (
+        <g
+          className={`activity-band-edge activity-band-${band.target}`}
+          pointerEvents='none'
+        >
+          <line
+            x1={band.x}
+            x2={band.x + band.width}
+            y1={band.y}
+            y2={band.y}
+            strokeDasharray='6 5'
+          />
+          <line
+            x1={band.x}
+            x2={band.x + band.width}
+            y1={band.y + band.height}
+            y2={band.y + band.height}
+            strokeDasharray='6 5'
+          />
+        </g>
       )}
       {selected && height > 0 && (
         <g
@@ -393,7 +485,9 @@ function indexFromBars(
 ) {
   const placed = [...element.querySelectorAll('.recharts-bar-rectangle')].flatMap(
     (group, index) => {
-      const box = group.querySelector('rect')?.getBoundingClientRect()
+      const box = (
+        group.querySelector('.activity-bar-value') ?? group.querySelector('rect')
+      )?.getBoundingClientRect()
       if (!box || box.width <= 0) return []
       return [{ index, center: box.left + box.width / 2 }]
     }

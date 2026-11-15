@@ -1,0 +1,41 @@
+.goal-tag-container {
+  height: 1.6rem;
+  border-width: 1px;
+  border-style: solid;
+  font-weight: 600;
+
+  .MuiChip-label {
+    color: inherit;
+    font-weight: 600;
+  }
+
+  &.lose {
+    color: var(--goal-lose);
+    border-color: var(--goal-lose);
+    background: color-mix(
+      in srgb,
+      var(--goal-lose) var(--goal-band-mix),
+      var(--canvas-color)
+    );
+  }
+
+  &.maintain {
+    color: var(--goal-maintain);
+    border-color: var(--goal-maintain);
+    background: color-mix(
+      in srgb,
+      var(--goal-maintain) var(--goal-band-mix),
+      var(--canvas-color)
+    );
+  }
+
+  &.gain {
+    color: var(--goal-gain);
+    border-color: var(--goal-gain);
+    background: color-mix(
+      in srgb,
+      var(--goal-gain) var(--goal-band-mix),
+      var(--canvas-color)
+    );
+  }
+}
