@@ -19,6 +19,12 @@ interface CircularProgressProps {
   isLoading?: boolean
 }
 
+function shownAfter(value: string) {
+  const amount = Number(value)
+  if (Number.isFinite(amount)) return formatNumberWithCommas(amount)
+  return value
+}
+
 const colorMap: Record<string, string> = {
   primary: 'var(--primary-color)',
   blue: 'var(--picker-color-blue)',
@@ -115,7 +121,7 @@ export function CircularProgress({
             // isGoal={false}
             // />
             <span className='after-text bold-header'>
-              {t('macros.outOf')} {formatNumberWithCommas(+afterText)}
+              {t('macros.outOf')} {shownAfter(afterText)}
             </span>
           )}
         </>

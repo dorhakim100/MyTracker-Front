@@ -179,7 +179,19 @@ export function HealthActivity({
   const anchorGoal = selected
     ? selected.goal ?? page?.goal ?? 0
     : page?.goal ?? 0
-  const anchorTarget = selected ? selected.target ?? null : page?.target ?? null
+  const metricTag = metric === 'steps' ? 'steps' : 'burned'
+  const anchorTarget =
+    source === 'intake'
+      ? selected
+        ? selected.target ?? null
+        : page?.target ?? null
+      : anchorGoal > 0
+        ? metricTag
+        : null
+  const goalLabel =
+    anchorTarget === 'steps' || anchorTarget === 'burned'
+      ? compactGoal(anchorGoal)
+      : undefined
   const percent =
     anchorGoal > 0 ? Math.min(100, (displayValue / anchorGoal) * 100) : 0
   const summary = selected
@@ -211,6 +223,7 @@ export function HealthActivity({
         }
         liveStreak={page?.liveStreak}
         target={anchorTarget}
+        goalLabel={goalLabel}
       />
 
       <SlideAnimation
@@ -222,7 +235,9 @@ export function HealthActivity({
           <CircularProgress
             value={percent}
             text={String(displayValue)}
-            afterText={anchorGoal > 0 ? String(anchorGoal) : undefined}
+            afterText={
+              anchorGoal > 0 ? goalLabel ?? String(anchorGoal) : undefined
+            }
             isLoading={loading && !page}
           />
           {loading && !page ? (
@@ -273,6 +288,7 @@ export function HealthActivity({
             goalLogo
             goalIcon={hitIcon}
             yellowMedal={prefs.favoriteColor === 'yellow'}
+            goalTone={goalLabel ? metricTag : undefined}
           />
         )}
 
@@ -431,6 +447,12 @@ function rangeLabel(start: string, end: string, language: string) {
   })
   if (start === end) return format.format(keyToDate(start))
   return `${format.format(keyToDate(start))} – ${format.format(keyToDate(end))}`
+}
+
+function compactGoal(value: number) {
+  if (value < 1000) return String(Math.round(value))
+  const compact = Math.round(value / 100) / 10
+  return `${compact}k`
 }
 
 function keyToDate(key: string) {

@@ -38,4 +38,24 @@
       var(--canvas-color)
     );
   }
+
+  &.steps {
+    color: var(--goal-steps);
+    border-color: var(--goal-steps);
+    background: color-mix(
+      in srgb,
+      var(--goal-steps) var(--goal-band-mix),
+      var(--canvas-color)
+    );
+  }
+
+  &.burned {
+    color: var(--goal-burned);
+    border-color: var(--goal-burned);
+    background: color-mix(
+      in srgb,
+      var(--goal-burned) var(--goal-band-mix),
+      var(--canvas-color)
+    );
+  }
 }

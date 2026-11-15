@@ -4,7 +4,7 @@ import Lottie from 'lottie-react'
 import { CustomButton } from '../../../CustomMui/CustomButton/CustomButton'
 import { Chevron } from '../../../CustomMui/Chevron/Chevron'
 import { GoalTag } from '../../../CustomMui/GoalTag/GoalTag'
-import type { ActivityFrame, GoalTarget } from '../../../types/health/Activity'
+import type { ActivityFrame, ActivityTag } from '../../../types/health/Activity'
 import streakFlame from '../../../../public/streak-flame.json'
 import { activityFilterNs } from './locals'
 import './locals'
@@ -23,7 +23,8 @@ interface ActivityFilterProps {
   onToday: () => void
   period: string
   liveStreak?: number
-  target?: GoalTarget | null
+  target?: ActivityTag | null
+  goalLabel?: string
 }
 
 export function ActivityFilter({
@@ -39,6 +40,7 @@ export function ActivityFilter({
   period,
   liveStreak,
   target,
+  goalLabel,
 }: ActivityFilterProps) {
   const { t } = useTranslation(activityFilterNs)
   const reduceMotion =
@@ -83,7 +85,10 @@ export function ActivityFilter({
         </p>{' '}
         {target && (
           <div className='activity-goal-tag'>
-            <GoalTag target={target} />
+            <GoalTag
+              target={target}
+              label={goalLabel}
+            />
           </div>
         )}
         <div className='activity-paging-actions'>

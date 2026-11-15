@@ -34,6 +34,7 @@ interface ActivityBarChartProps {
   goalMedallion?: boolean
   goalLogo?: boolean
   yellowMedal?: boolean
+  goalTone?: 'steps' | 'burned'
 }
 
 const BAR_GAP: Record<ActivityFrame, string> = {
@@ -42,7 +43,7 @@ const BAR_GAP: Record<ActivityFrame, string> = {
   quarter: '8%',
   year: '10%',
 }
-const Y_AXIS_WIDTH = 36
+const Y_AXIS_WIDTH = 44
 
 export function ActivityBarChart({
   bars,
@@ -56,6 +57,7 @@ export function ActivityBarChart({
   goalMedallion = true,
   goalLogo = true,
   yellowMedal = false,
+  goalTone,
 }: ActivityBarChartProps) {
   const [width, setWidth] = useState(0)
   const reduceMotion = usePrefersReducedMotion()
@@ -63,6 +65,9 @@ export function ActivityBarChart({
     ? goalIcon ?? <CheckRoundedIcon fontSize='small' />
     : null
   const top = Math.max(axisHeight, 1) * 1.15
+  const goalStroke = goalTone
+    ? `var(--goal-${goalTone})`
+    : 'var(--activity-goal-line)'
   const hasRange = bars.some(
     (bar) => bar.rangeLow != null && bar.rangeHigh != null && bar.target
   )
@@ -134,6 +139,7 @@ export function ActivityBarChart({
               <ActivityAxisTick
                 {...tickProps}
                 goal={goal}
+                goalFill={goalTone ? goalStroke : 'var(--accent)'}
                 rtl={rtl}
               />
             )}
@@ -141,7 +147,7 @@ export function ActivityBarChart({
           {!hasRange && goal > 0 && (
             <ReferenceLine
               y={goal}
-              stroke='var(--activity-goal-line)'
+              stroke={goalStroke}
               strokeWidth={2.5}
               strokeDasharray='6 5'
               zIndex={200}
@@ -521,12 +527,14 @@ function ActivityAxisTick({
   y = 0,
   payload,
   goal,
+  goalFill = 'var(--accent)',
   rtl = false,
 }: {
   x?: string | number
   y?: string | number
   payload?: { value?: number | string }
   goal: number
+  goalFill?: string
   rtl?: boolean
 }) {
   const value = Number(payload?.value) || 0
@@ -539,7 +547,7 @@ function ActivityAxisTick({
       direction='ltr'
       textAnchor={rtl ? 'start' : 'end'}
       dominantBaseline='middle'
-      fill={isGoal ? 'var(--accent)' : 'var(--ink-on-canvas)'}
+      fill={isGoal ? goalFill : 'var(--ink-on-canvas)'}
       fontSize={11}
       fontWeight={isGoal ? 700 : 400}
     >

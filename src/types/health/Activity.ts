@@ -2,6 +2,7 @@ export type ActivityMetric = 'steps' | 'calories'
 export type ActivityFrame = 'week' | 'month' | 'quarter' | 'year'
 export type ActivityVendor = 'google' | 'native'
 export type GoalTarget = 'lose' | 'maintain' | 'gain'
+export type ActivityTag = GoalTarget | 'steps' | 'burned'
 
 export type ActivityBar = {
   start: string

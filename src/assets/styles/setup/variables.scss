@@ -124,6 +124,8 @@
   --goal-lose: #0891b2;
   --goal-maintain: #1d4ed8;
   --goal-gain: #6d28d9;
+  --goal-steps: #15803d;
+  --goal-burned: #ea580c;
   --goal-band-mix: 16%;
 
   --activity-medal-face: #f8e7b0;
@@ -139,10 +141,12 @@
   --chrome-ring: 40%;
 }
 
-html.dark-mode {
+body.dark-mode {
   --goal-lose: #86d6ea;
   --goal-maintain: #93c5fd;
   --goal-gain: #c4b5fd;
+  --goal-steps: #86efac;
+  --goal-burned: #fdba74;
   --goal-band-mix: 28%;
 }
 

@@ -1,18 +1,19 @@
 import { Chip } from '@mui/material'
 import { useTranslation } from 'react-i18next'
-import type { GoalTarget } from '../../types/health/Activity'
+import type { ActivityTag } from '../../types/health/Activity'
 
 interface GoalTagProps {
-  target: GoalTarget
+  target: ActivityTag
+  label?: string
 }
 
-export function GoalTag({ target }: GoalTagProps) {
+export function GoalTag({ target, label }: GoalTagProps) {
   const { t } = useTranslation()
 
   return (
     <Chip
       className={`goal-tag-container ${target}`}
-      label={t(`goal.${target}`)}
+      label={label ?? t(`goal.${target}`)}
       size='small'
     />
   )
