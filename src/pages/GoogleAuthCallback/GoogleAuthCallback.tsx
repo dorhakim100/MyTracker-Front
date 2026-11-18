@@ -97,7 +97,6 @@ export function GoogleAuthCallback() {
         if (userRes && userRes?._id) {
           await loadGoogleHealthConnection(userRes?._id)
           await setHealthData()
-          await setGoogleHealthConnected(true)
         }
         showSuccessMsg(t('auth.loginSuccess'))
         setActiveRoute(safeReturnTo)

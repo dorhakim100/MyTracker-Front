@@ -33,7 +33,6 @@ import {
 import { startGoogleAuth } from '../../services/auth/google-auth.service'
 import {
   loadGoogleHealthConnection,
-  setGoogleHealthConnected,
   setHealthData,
 } from '../../store/actions/health.actions'
 import { setActiveRoute } from '../../store/actions/system.actions'
@@ -264,7 +263,6 @@ export function SignIn(props: { disableCustomTheme?: boolean }) {
       if (user._id) {
         await loadGoogleHealthConnection(user._id)
         await setHealthData()
-        await setGoogleHealthConnected(true)
       }
 
       showSuccessMsg(t('auth.loginSuccess'))

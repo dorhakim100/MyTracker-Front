@@ -36,7 +36,22 @@ export function setGoogleHealthFlag(connected: boolean) {
   })
 }
 
+type ShownHealth = {
+  day: string
+  provider: 'google' | 'native'
+  steps: number
+  burnedCalories: number
+  distance: number
+  flightsClimbed: number
+}
+
+let healthReadId = 0
+let shownHealth: ShownHealth | null = null
+
 export function clearHealthSnapshot() {
+  healthReadId += 1
+  shownHealth = null
+  setHealthLoading(false)
   store.dispatch({
     type: SET_HEALTH_SNAPSHOT,
     steps: 0,
@@ -59,19 +74,13 @@ export async function loadGoogleHealthConnection(userId: string) {
 export async function reloadHealthForCurrentProvider(userId?: string) {
   if (!userId) return
 
-  if (healthService.isGoogleHealthPlatform()) {
-    const connected = await loadGoogleHealthConnection(userId)
+  const connected = await loadGoogleHealthConnection(userId)
+  if (healthService.activeHealthSource() === 'google') {
     if (connected) {
       await setHealthData()
     } else {
       await setGoogleHealthConnected(false)
     }
-    return
-  }
-
-  const connected = await loadGoogleHealthConnection(userId)
-  if (connected) {
-    await setHealthData()
     return
   }
 
@@ -83,10 +92,12 @@ export async function reloadHealthForCurrentProvider(userId?: string) {
 }
 
 export async function setHealthData() {
+  const readId = ++healthReadId
   const userId = store.getState().userModule.user?._id
   setHealthLoading(true)
   try {
     const data = await healthService.getTodayActivitySummary(userId)
+    if (readId !== healthReadId) return
     if (data.status === 'ok') {
       await applyHealthSnapshot(data)
     }
@@ -97,21 +108,66 @@ export async function setHealthData() {
       // throw new Error(data.message)
     }
   } catch (err) {
+    if (readId !== healthReadId) return
     throw err
   } finally {
-    setHealthLoading(false)
+    if (readId === healthReadId) setHealthLoading(false)
   }
 }
 
 export async function applyHealthSnapshot(payload: HealthSocketPayload) {
+  const day = new Date().toDateString()
+  const provider = healthService.activeHealthSource()
+  const previous =
+    shownHealth && shownHealth.day === day && shownHealth.provider === provider
+      ? shownHealth
+      : null
+
+  const steps = Math.max(previous?.steps ?? 0, payload.steps)
+  const burnedCalories = Math.max(
+    previous?.burnedCalories ?? 0,
+    payload.activeCaloriesKcal
+  )
+  const distance = Math.max(previous?.distance ?? 0, payload.distance)
+  const flightsClimbed = Math.max(
+    previous?.flightsClimbed ?? 0,
+    payload.flightsClimbed
+  )
+
+  if (
+    previous &&
+    previous.steps === steps &&
+    previous.burnedCalories === burnedCalories &&
+    previous.distance === distance &&
+    previous.flightsClimbed === flightsClimbed
+  ) {
+    return
+  }
+
+  shownHealth = {
+    day,
+    provider,
+    steps,
+    burnedCalories,
+    distance,
+    flightsClimbed,
+  }
+
   store.dispatch({
     type: SET_HEALTH_SNAPSHOT,
-    steps: payload.steps,
-    burnedCalories: payload.activeCaloriesKcal,
-    distance: payload.distance,
-    flightsClimbed: payload.flightsClimbed,
+    steps,
+    burnedCalories,
+    distance,
+    flightsClimbed,
   })
-  await syncStepsWidget(toStepsWidgetHealthOverrides(payload))
+  await syncStepsWidget(
+    toStepsWidgetHealthOverrides({
+      steps,
+      activeCaloriesKcal: burnedCalories,
+      distance,
+      flightsClimbed,
+    })
+  )
 }
 
 export async function setSteps(steps: number) {

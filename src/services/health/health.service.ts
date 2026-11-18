@@ -35,6 +35,7 @@ export const healthService = {
   readDailyTotals,
   saveWeight,
   isGoogleHealthPlatform,
+  activeHealthSource,
   isPhoneHealthAuthorized,
   getPhoneHealthPermission,
   requestPhoneHealthPermission,
@@ -49,6 +50,12 @@ function isGoogleHealthPlatform() {
   const healthProvider =
     store.getState().systemModule.prefs.healthProvider ?? 'native'
   return healthProvider === 'google'
+}
+
+function activeHealthSource(): 'google' | 'native' {
+  if (!Capacitor.isNativePlatform()) return 'google'
+  if (store.getState().healthModule.googleHealthConnected) return 'google'
+  return 'native'
 }
 
 async function getAvailability(
@@ -102,7 +109,7 @@ async function requestReadAuthorization(
 async function getTodayActivitySummary(
   userId?: string
 ): Promise<TodayActivitySummary> {
-  if (await readsGoogleHealth(userId)) {
+  if (readsGoogleHealth(userId)) {
     return getGoogleTodayActivitySummary(userId as string)
   }
 
@@ -113,16 +120,9 @@ async function getTodayActivitySummary(
   return getNativeTodayActivitySummary()
 }
 
-async function readsGoogleHealth(userId?: string) {
+function readsGoogleHealth(userId?: string) {
   if (!userId) return false
-  if (!Capacitor.isNativePlatform() || isGoogleHealthPlatform()) return true
-
-  try {
-    const status = await googleHealthService.getStatus(userId)
-    return status.connected
-  } catch {
-    return store.getState().healthModule.googleHealthConnected
-  }
+  return activeHealthSource() === 'google'
 }
 
 async function getGoogleTodayActivitySummary(

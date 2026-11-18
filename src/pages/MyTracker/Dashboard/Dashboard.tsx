@@ -226,10 +226,9 @@ const DashboardHealth = memo(() => {
   const { shouldTrigger } = useOnDayChange()
   const [phoneGranted, setPhoneGranted] = useState<boolean | null>(null)
   const phoneGrantedRef = useRef<boolean | null>(null)
-  const usesGoogleHealth = healthService.isGoogleHealthPlatform()
 
   useEffect(() => {
-    if (!isNative || googleHealthConnected) return
+    if (!isNative) return
 
     let cancelled = false
 
@@ -258,7 +257,7 @@ const DashboardHealth = memo(() => {
       cancelled = true
       listener.then((handle) => handle.remove())
     }
-  }, [isNative, googleHealthConnected])
+  }, [isNative])
 
   useEffect(() => {
     if (shouldTrigger) {
@@ -266,7 +265,11 @@ const DashboardHealth = memo(() => {
     }
   }, [shouldTrigger])
 
-  if (isNative && !googleHealthConnected && !phoneGranted) {
+  if (!isNative && !googleHealthConnected) {
+    return <HealthConnect />
+  }
+
+  if (isNative && !googleHealthConnected && phoneGranted === false) {
     return (
       <AllowPhoneHealth
         onAllowed={() => {
@@ -277,11 +280,11 @@ const DashboardHealth = memo(() => {
     )
   }
 
-  if (usesGoogleHealth) {
-    if (!googleHealthConnected) {
-      return <HealthConnect />
-    }
+  if (isNative && !googleHealthConnected && phoneGranted !== true) {
+    return null
+  }
 
+  if (!isNative) {
     return (
       <HealthStats
         steps={steps || 0}

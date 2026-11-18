@@ -10,7 +10,7 @@ const HEALTH_UPDATE_EVENT = 'health:update'
 const HEALTH_SNAPSHOT_EVENT = 'health:snapshot'
 
 async function handleHealthPayload(payload: unknown) {
-  if (!healthService.isGoogleHealthPlatform()) {
+  if (healthService.activeHealthSource() !== 'google') {
     return
   }
 
