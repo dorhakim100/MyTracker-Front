@@ -194,8 +194,8 @@ export function HealthActivity({
         ? selected.target ?? null
         : page?.target ?? null
       : anchorGoal > 0
-        ? metricTag
-        : null
+      ? metricTag
+      : null
   const goalLabel =
     anchorTarget === 'steps' || anchorTarget === 'burned'
       ? compactGoal(anchorGoal)
@@ -272,7 +272,10 @@ export function HealthActivity({
 
         {loading && !page ? (
           <div className='activity-chart-loading'>
-            <ChartSpinner className={prefs.favoriteColor} />
+            <ChartSpinner
+              className={prefs.favoriteColor}
+              size={100}
+            />
           </div>
         ) : (
           <ActivityBarChart
