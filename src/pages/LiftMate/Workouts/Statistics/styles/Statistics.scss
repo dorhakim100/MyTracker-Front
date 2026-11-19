@@ -38,6 +38,12 @@
   width: 220px;
   height: 220px;
 
+  .workout-medal {
+    position: absolute;
+    top: 0;
+    inset-inline-end: -30px;
+  }
+
   .MuiCircularProgress-root {
     grid-area: 1 / 1;
   }

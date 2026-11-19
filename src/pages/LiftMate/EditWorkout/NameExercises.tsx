@@ -88,7 +88,7 @@ export function NameExercises({
   isLoading = false,
 }: NameExercisesProps) {
   const { t } = useTranslation()
-  const sessionChatRole = useChatRole()
+  const sessionChatRole = useChatRole(true)
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )

@@ -518,7 +518,7 @@ export function Dashboard() {
           <div className='header-container'>
             <div
               className={`icon-container ${
-                justChangedIcon ? 'just-done' : ''
+                justChangedIcon && !allExercisesDone ? 'just-done' : ''
               }`}
               onAnimationEnd={(event) => {
                 if (event.currentTarget !== event.target) return

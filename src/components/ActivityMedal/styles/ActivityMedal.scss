@@ -4,6 +4,8 @@
   flex-shrink: 0;
   line-height: 0;
   vertical-align: middle;
+  transform-origin: center;
+  animation: set-done-pop 180ms ease-out;
 
   > svg {
     display: block;
@@ -36,5 +38,11 @@
     .activity-medal-icon {
       color: var(--activity-medal-edge-yellow);
     }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .activity-medal-container {
+    animation: none;
   }
 }

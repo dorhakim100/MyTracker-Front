@@ -42,10 +42,18 @@
     align-self: start;
     justify-content: flex-end;
 
-    .MuiIconButton-root {
+    .MuiIconButton-root,
+    .options-menu-trigger-content {
       width: 30px;
       height: 30px;
       padding: 3px;
+      justify-content: center;
+
+      .options-menu-trigger-loading {
+        width: 20px !important;
+        height: 20px !important;
+        padding: 0px !important;
+      }
     }
   }
   .muscles-container {

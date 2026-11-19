@@ -31,6 +31,8 @@ import {
   getArrayOfNumbers,
 } from '../../../../services/util.service'
 import { Typography } from '@mui/material'
+import { ActivityMedal } from '../../../../components/ActivityMedal/ActivityMedal'
+import FitnessCenterRoundedIcon from '@mui/icons-material/FitnessCenterRounded'
 
 interface StatisticsProps {
   forUserId: string
@@ -209,6 +211,13 @@ export function Statistics({ forUserId }: StatisticsProps) {
       </div>
 
       <div className='week-ring'>
+        {percent === 100 && (
+          <ActivityMedal
+            icon={<FitnessCenterRoundedIcon />}
+            yellow={prefs.favoriteColor === 'yellow'}
+            className='workout-medal'
+          />
+        )}
         <CircularProgress
           value={percent}
           text={`${summary?.done}`}
