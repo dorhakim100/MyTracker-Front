@@ -67,7 +67,6 @@ export function RoutineDetails({ workout }: RoutineDetailsProps) {
   const forUserId = traineeUser?._id || user?._id || ''
   const displayUser = traineeUser || user
   const chatRole = useChatRole()
-  const sessionChatRole = useChatRole(true)
   const { getExerciseCount, hasExerciseMessages } = useUnreadSummary(chatRole)
   const traineeName =
     chatRole === 'trainer' && traineeUser && traineeUser._id !== user?._id
@@ -373,7 +372,7 @@ export function RoutineDetails({ workout }: RoutineDetailsProps) {
               <SessionChatButton
                 workoutId={workout._id}
                 workoutName={workout.name}
-                role={sessionChatRole}
+                role={chatRole}
               />
             </div>
           )}
