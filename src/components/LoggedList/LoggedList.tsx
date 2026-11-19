@@ -201,7 +201,7 @@ export function LoggedList({
       <CustomSkeleton
         variant='text'
         width='100%'
-        height={20}
+        height={17}
         isDarkMode={prefs.isDarkMode}
       />
     )
@@ -230,7 +230,7 @@ export function LoggedList({
       <CustomSkeleton
         variant='text'
         width='25%'
-        height={20}
+        height={17}
         isDarkMode={prefs.isDarkMode}
       />
     )
