@@ -15,6 +15,7 @@ import {
   REMOVE_TODAY_SESSION_DAY,
   SET_TODAY_SESSION_DAY,
   SET_CURR_UPDATED_EXERCISE_SETTINGS,
+  SET_ALL_EXERCISES_DONE,
 } from '../reducers/workout.reducer'
 import { Workout } from '../../types/workout/Workout'
 import { WorkoutFilter } from '../../types/workoutFilter/WorkoutFilter'
@@ -28,10 +29,7 @@ import { Timer } from '../../types/timer/Timer'
 import { DEFAULT_RESTING_TIME } from '../../assets/config/times'
 import { instructionsService } from '../../services/instructions/instructions.service'
 import { Instructions } from '../../types/instructions/Instructions'
-import {
-  optimisticUpdateUser,
-  setTraineeUser,
-} from './user.actions'
+import { optimisticUpdateUser, setTraineeUser } from './user.actions'
 import { getDateFromISO } from '../../services/util.service'
 
 function syncActiveWorkoutsCountFromStore(forUserId?: string) {
@@ -146,7 +144,8 @@ export async function duplicateWorkout(
 
     let timesPerWeek: number | undefined
     if (workout._id) {
-      const weekNumberDoneStatuses = await instructionsService.getWeekNumberDone(workout._id)
+      const weekNumberDoneStatuses =
+        await instructionsService.getWeekNumberDone(workout._id)
       const reversedWeekNumberDoneStatuses = weekNumberDoneStatuses.reverse()
       const latestWeekNumberDone = reversedWeekNumberDoneStatuses[0]?.weekNumber
       const weekNumberToSet = latestWeekNumberDone || 1
@@ -243,9 +242,7 @@ export function setSelectedSessionDay(sessionDay: SessionDay) {
   })
 
   const today = getDateFromISO(new Date().toISOString())
-  const sessionDate = sessionDay?.date
-    ? getDateFromISO(sessionDay.date)
-    : null
+  const sessionDate = sessionDay?.date ? getDateFromISO(sessionDay.date) : null
 
   if (sessionDate === today) {
     store.dispatch({
@@ -346,4 +343,8 @@ export function setCurrUpdatedExerciseSettings(
     type: SET_CURR_UPDATED_EXERCISE_SETTINGS,
     currUpdatedExerciseSettings,
   })
+}
+
+export function setAllExercisesDone(allExercisesDone: boolean) {
+  store.dispatch({ type: SET_ALL_EXERCISES_DONE, allExercisesDone })
 }

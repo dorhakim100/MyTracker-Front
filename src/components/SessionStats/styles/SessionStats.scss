@@ -28,6 +28,13 @@
     // grid-template-columns: 110px 1fr;
     gap: 0.75rem;
     align-items: center;
+    position: relative;
+
+    .workout-medal {
+      position: absolute;
+      top: 0;
+      inset-inline-end: 15px;
+    }
   }
 
   .duration-block {

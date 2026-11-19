@@ -1,0 +1,40 @@
+.activity-medal-container {
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+  line-height: 0;
+  vertical-align: middle;
+
+  > svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .activity-medal-icon {
+    position: absolute;
+    display: flex;
+    aspect-ratio: 1;
+    transform: translate(-50%, -50%);
+    color: var(--accent);
+    pointer-events: none;
+
+    .MuiSvgIcon-root,
+    svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+  }
+
+  &.medal-yellow {
+    --activity-medal-face: var(--activity-medal-face-yellow);
+    --activity-medal-ribbon: var(--activity-medal-edge-yellow);
+    --activity-medal-edge: var(--activity-medal-edge-yellow);
+
+    .activity-medal-icon {
+      color: var(--activity-medal-edge-yellow);
+    }
+  }
+}

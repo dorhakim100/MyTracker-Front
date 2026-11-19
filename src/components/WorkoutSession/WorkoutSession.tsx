@@ -21,6 +21,7 @@ import {
   setTimer,
   saveWorkout,
   setCurrUpdatedExerciseSettings,
+  setAllExercisesDone,
 } from '../../store/actions/workout.action'
 
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
@@ -64,6 +65,7 @@ import { invalidateSets } from '../../lib/react-query/queryKey'
 import { smoothScroll } from '../../services/util.service'
 import { FillProgress } from '../../CustomMui/FillProgress/FillProgress'
 import { RoutineDetails } from '../RoutineDetails/RoutineDetails'
+
 interface WorkoutSessionProps {
   sessionDay: SessionDay
   updateSessionDay: () => void
@@ -106,7 +108,11 @@ export function WorkoutSession({
     // if (sessionDay.instructions.isFinished) return true
     if (!sessionDay.instructions.exercises) return false
 
-    return sessionDay.instructions.exercises.every((e) => isExerciseDone(e))
+    const areAllDone = sessionDay.instructions.exercises.every((e) =>
+      isExerciseDone(e)
+    )
+    setAllExercisesDone(areAllDone)
+    return areAllDone
   }, [sessionDay.instructions.exercises]) //, sessionDay.instructions.isFinished])
 
   const totalSets = useMemo(() => {
@@ -905,6 +911,7 @@ export function WorkoutSession({
         handleOpenChange(exercise.exerciseId, false)
       }
       if (isAllExercisesDone) {
+        setAllExercisesDone(true)
         await handleAllExercisesCompleted(savedInstructions || newInstructions)
         setTimeout(() => {
           smoothScroll()
@@ -1146,6 +1153,18 @@ export function WorkoutSession({
               className='actions-container'
               onClick={(e) => e.stopPropagation()}
             >
+              {' '}
+              <CustomOptionsMenu
+                options={sessionMenuOptions}
+                isLoading={isLoadingRecap}
+                triggerElement={
+                  <CustomButton
+                    isIcon={true}
+                    icon={<MoreHorizIcon />}
+                    variant='flat'
+                  />
+                }
+              />
               <CustomButton
                 icon={
                   hasOpenExercises ? <ExpandLessIcon /> : <ExpandMoreIcon />
@@ -1158,17 +1177,6 @@ export function WorkoutSession({
                     : t('workout.expandAll')
                 }
                 variant='flat'
-              />
-              <CustomOptionsMenu
-                options={sessionMenuOptions}
-                isLoading={isLoadingRecap}
-                triggerElement={
-                  <CustomButton
-                    isIcon={true}
-                    icon={<MoreHorizIcon />}
-                    variant='flat'
-                  />
-                }
               />
             </div>
             <div className='muscles-container'>

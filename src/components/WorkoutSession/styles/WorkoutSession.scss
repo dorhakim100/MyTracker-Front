@@ -13,7 +13,7 @@
   display: grid;
   gap: 1rem 0;
   grid-template-columns: 1fr auto;
-  // grid-template-rows: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
   align-items: center;
   justify-content: space-between;
   // margin-top: 1rem;
@@ -27,15 +27,27 @@
   border-radius: 4px;
 
   .workout-name-container {
+    // align-self: start;
     display: flex;
     align-items: center;
     gap: 0.5rem;
   }
 
   .actions-container {
+    grid-row: 1/-1;
+    grid-column: 2/3;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    // gap: 0.5rem;
+    align-self: start;
+    justify-content: flex-end;
+
+    // span,
+    .options-menu-trigger-content {
+      // height: 30px !important;
+      // width: 30px !important;
+      // padding: 3px !important;
+    }
   }
   .muscles-container {
     grid-row: 2;

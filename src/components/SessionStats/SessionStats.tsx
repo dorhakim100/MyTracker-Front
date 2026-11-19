@@ -25,6 +25,8 @@ import {
 import { CustomAnimatedText } from '../../CustomMui/CustomAnimatedText/CustomAnimatedText'
 import { RollingNumber } from '../RollingNumber/RollingNumber'
 import { PrBadge } from '../PrBadge/PrBadge'
+import { ActivityMedal } from '../ActivityMedal/ActivityMedal.tsx'
+import FitnessCenterRoundedIcon from '@mui/icons-material/FitnessCenterRounded'
 
 interface SessionStatsProps {
   recap: SessionStatsRecap | null
@@ -54,6 +56,10 @@ export function SessionStats({
 
   const [selectedExercise, setSelectedExercise] =
     useState<ExerciseWithDetails | null>(null)
+
+  const isAllExercisesDone = useSelector(
+    (state: RootState) => state.workoutModule.allExercisesDone
+  )
 
   const [modalSettings, setModalSettings] = useState<{
     open: boolean
@@ -125,6 +131,13 @@ export function SessionStats({
     <>
       <div className='session-stats-container'>
         <div className='hero-container'>
+          {isAllExercisesDone && (
+            <ActivityMedal
+              yellow={prefs.favoriteColor === 'yellow'}
+              icon={<FitnessCenterRoundedIcon />}
+              className='workout-medal'
+            />
+          )}
           <div className='duration-block'>
             <Typography
               variant='body2'

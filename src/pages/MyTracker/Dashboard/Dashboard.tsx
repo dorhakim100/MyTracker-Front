@@ -54,6 +54,8 @@ import { healthService } from '../../../services/health/health.service'
 import { setHealthData } from '../../../store/actions/health.actions'
 import { PullToRefreshWrapper } from '../../../components/PullToRefreshWrapper/PullToRefreshWrapper'
 import { useOnDayChange } from '../../../hooks/useOnDayChange.tsx'
+import { ActivityMedal } from '../../../components/ActivityMedal/ActivityMedal.tsx'
+import FitnessCenterRoundedIcon from '@mui/icons-material/FitnessCenterRounded'
 const WorkoutSession = lazy(() =>
   import('../../../components/WorkoutSession/WorkoutSession').then(
     (module) => ({
@@ -337,6 +339,18 @@ export function Dashboard() {
   const sessionDay = useSelector(
     (state: RootState) => state.workoutModule.sessionDay
   )
+
+  const allExercisesDone = useSelector(
+    (state: RootState) => state.workoutModule.allExercisesDone
+  )
+  const [seenDone, setSeenDone] = useState(allExercisesDone)
+  const [justChangedIcon, setJustChangedIcon] = useState(false)
+
+  if (seenDone !== allExercisesDone) {
+    setSeenDone(allExercisesDone)
+    setJustChangedIcon(true)
+  }
+
   const todaySessionDay = useSelector(
     (state: RootState) => state.workoutModule.todaySessionDay
   )
@@ -502,11 +516,30 @@ export function Dashboard() {
       return (
         <div className='dashboard-session-container'>
           <div className='header-container'>
-            <CustomIcon
-              name='workout'
-              size='m'
-              variant='medium'
-            />
+            <div
+              className={`icon-container ${
+                justChangedIcon ? 'just-done' : ''
+              }`}
+              onAnimationEnd={(event) => {
+                if (event.currentTarget !== event.target) return
+                setJustChangedIcon(false)
+              }}
+            >
+              {allExercisesDone ? (
+                <ActivityMedal
+                  yellow={prefs.favoriteColor === 'yellow'}
+                  icon={<FitnessCenterRoundedIcon />}
+                  className='workout-medal'
+                />
+              ) : (
+                <CustomIcon
+                  name='workout'
+                  size='m'
+                  variant='medium'
+                />
+              )}
+            </div>
+
             <Typography
               variant='h5'
               className='bold-header dashboard-session-title'
