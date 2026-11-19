@@ -1,11 +1,51 @@
+@property --ring-shown {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
+@mixin progress-arc-mask($wedge) {
+  -webkit-mask-image:
+    radial-gradient(
+      circle closest-side at 50% 50%,
+      transparent calc(var(--overflow-inner) - 0.5px),
+      #000 var(--overflow-inner),
+      #000 var(--overflow-outer),
+      transparent calc(var(--overflow-outer) + 0.5px)
+    ),
+    $wedge;
+  -webkit-mask-composite: source-in;
+  mask-image:
+    radial-gradient(
+      circle closest-side at 50% 50%,
+      transparent calc(var(--overflow-inner) - 0.5px),
+      #000 var(--overflow-inner),
+      #000 var(--overflow-outer),
+      transparent calc(var(--overflow-outer) + 0.5px)
+    ),
+    $wedge;
+  mask-composite: intersect;
+}
+
 .circular-progress {
   --ring-trail: color-mix(
     in srgb,
     var(--progress-accent, var(--accent)) var(--chrome-tint-medium),
     transparent
   );
+  --progress-overflow: var(--progress-accent, var(--accent));
+  --progress-overflow: #{'oklch(from var(--progress-accent, var(--accent)) min(0.94, calc(l + 0.28)) calc(c * 1.12) h)'};
+  --progress-light: var(--progress-overflow);
+  --progress-light: #{'oklch(from var(--progress-accent, var(--accent)) min(0.97, calc(l + 0.5)) calc(c * 1.55) calc(h - 24))'};
+  --seam-mix: calc(var(--blend-reveal, 0) * 50%);
+  --blend-reveal: min(max(var(--ring-shown) - 100, 0) / 15, 1);
+  --overflow-end: calc(min(max(var(--ring-shown) - 100, 0), 100) * 3.6deg);
+  --light-reveal: min(max(var(--ring-shown) - 200, 0) / 15, 1);
+  --light-end: calc(min(max(var(--ring-shown) - 200, 0), 100) * 3.6deg);
+  --light-seam-mix: calc(var(--light-reveal, 0) * 50%);
 
   position: relative;
+  overflow: visible;
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI',
     sans-serif;
 
@@ -55,6 +95,141 @@
     padding: 0.5rem;
     font-size: 0.9rem;
     opacity: 0.5;
+  }
+
+  html.dark-mode &,
+  body.dark-mode & {
+    --progress-overflow: #{'oklch(from var(--progress-accent, var(--accent)) min(0.98, calc(l + 0.4)) calc(c * 1.28) h)'};
+    --progress-light: #{'oklch(from var(--progress-accent, var(--accent)) min(0.995, calc(l + 0.62)) calc(c * 1.85) calc(h - 24))'};
+  }
+
+  // The base arc, overflow, and dot share one animated value.
+  .circular-progress-ring {
+    --ring-center: calc(100% - var(--ring-stroke) * 1%);
+    --overflow-half: calc(var(--overflow-stroke) * 1%);
+    --overflow-inner: calc(var(--ring-center) - var(--overflow-half));
+    --overflow-outer: calc(var(--ring-center) + var(--overflow-half));
+    --seam-color: #{'color-mix(in oklch, var(--progress-overflow) var(--seam-mix, 50%), var(--progress-accent, var(--accent)))'};
+    --light-seam: #{'color-mix(in oklch, var(--progress-light) var(--light-seam-mix, 50%), var(--progress-overflow))'};
+
+    position: relative;
+    width: 100%;
+
+    .CircularProgressbar {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .CircularProgressbar-path {
+      transition: none;
+      stroke-dashoffset: calc(
+          (1 - min(var(--ring-shown), 100) / 100) * var(--ring-length)
+        )
+        !important;
+    }
+  }
+
+  .circular-progress-blend,
+  .circular-progress-overflow {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: min(max(var(--ring-shown) - 100, 0) * 100, 1);
+  }
+
+  .circular-progress-blend {
+    background: conic-gradient(
+      in oklch,
+      var(--progress-accent, var(--accent)) var(--blend-from),
+      var(--seam-color) 360deg
+    );
+    @include progress-arc-mask(
+      conic-gradient(
+        from 0deg at 50% 50%,
+        transparent 0deg,
+        transparent var(--blend-from),
+        #000 var(--blend-from),
+        #000 360deg
+      )
+    );
+  }
+
+  .circular-progress-overflow {
+    background: conic-gradient(
+      in oklch,
+      var(--seam-color) 0deg,
+      var(--progress-overflow) var(--bright-at),
+      var(--progress-overflow) 360deg
+    );
+    @include progress-arc-mask(
+      conic-gradient(
+        from 0deg at 50% 50%,
+        #000 var(--overflow-end, 0deg),
+        transparent var(--overflow-end, 0deg)
+      )
+    );
+  }
+
+  .circular-progress-light-blend,
+  .circular-progress-light {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: min(max(var(--ring-shown) - 200, 0) * 100, 1);
+  }
+
+  .circular-progress-light-blend {
+    background: conic-gradient(
+      in oklch,
+      var(--progress-overflow) var(--blend-from),
+      var(--light-seam) 360deg
+    );
+    @include progress-arc-mask(
+      conic-gradient(
+        from 0deg at 50% 50%,
+        transparent 0deg,
+        transparent var(--blend-from),
+        #000 var(--blend-from),
+        #000 360deg
+      )
+    );
+  }
+
+  .circular-progress-light {
+    background: conic-gradient(
+      in oklch,
+      var(--light-seam) 0deg,
+      var(--progress-light) var(--bright-at),
+      var(--progress-light) 360deg
+    );
+    @include progress-arc-mask(
+      conic-gradient(
+        from 0deg at 50% 50%,
+        #000 var(--light-end, 0deg),
+        transparent var(--light-end, 0deg)
+      )
+    );
+  }
+
+  .progress-cursor {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    transform: rotate(calc(var(--ring-shown) * 0.01turn));
+    opacity: clamp(0, var(--ring-shown), 1);
+
+    .progress-cursor-dot {
+      position: absolute;
+      top: calc(var(--ring-stroke) * 0.5%);
+      left: 50%;
+      width: calc(var(--ring-stroke) * 0.85%);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: $white;
+      box-shadow: 0 0 0 1.5px var(--progress-accent, var(--accent));
+      transform: translate(-50%, -50%);
+    }
   }
 }
 

@@ -290,6 +290,8 @@ struct MetricSmallColumnView: View {
             StepsRingView(
                 progress: progress,
                 accentColor: theme.accentColor,
+                accentHex: theme.accentHex,
+                isDarkMode: theme.isDarkMode,
                 trailColor: theme.trailColor,
                 stepsText: value,
                 textColor: theme.ringTextColor,
@@ -472,6 +474,8 @@ private struct MetricTitleLabel: View {
 struct StepsRingView: View {
     let progress: Double
     let accentColor: Color
+    var accentHex: String = ""
+    var isDarkMode: Bool = false
     let trailColor: Color
     let stepsText: String
     let textColor: Color
@@ -482,18 +486,53 @@ struct StepsRingView: View {
     let textSize: CGFloat
     var subtitleSize: CGFloat = 11
 
+    private var shown: Double {
+        min(max(progress, 0), 300)
+    }
+
+    private var accentRGB: WidgetRGB {
+        WidgetRGB(hex: accentHex)
+    }
+
+    private var brightRGB: WidgetRGB {
+        accentRGB.brighterRing(isDarkMode: isDarkMode)
+    }
+
+    private var lightRGB: WidgetRGB {
+        accentRGB.lighterRing(isDarkMode: isDarkMode)
+    }
+
     var body: some View {
         ZStack {
             Circle()
-                .stroke(trailColor, lineWidth: lineWidth)
+                .stroke(trailColor, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
+                .padding(lineWidth / 2)
 
-            Circle()
-                .trim(from: 0, to: progress / 100)
-                .stroke(
-                    accentColor,
-                    style: StrokeStyle(lineWidth: lineWidth, lineCap: .round)
+            baseArc
+
+            if shown > 100 {
+                colorArc(from: 0.85, to: 1, width: lineWidth * 6 / 8, gradient: lapGradient(from: accentRGB, to: brightRGB))
+                colorArc(
+                    from: 0,
+                    to: min(shown - 100, 100) / 100,
+                    width: lineWidth * 6 / 8,
+                    gradient: lapGradient(from: accentRGB, to: brightRGB)
                 )
-                .rotationEffect(.degrees(-90))
+            }
+
+            if shown > 200 {
+                colorArc(from: 0.85, to: 1, width: lineWidth * 6 / 8, gradient: lapGradient(from: brightRGB, to: lightRGB))
+                colorArc(
+                    from: 0,
+                    to: min(shown - 200, 100) / 100,
+                    width: lineWidth * 6 / 8,
+                    gradient: lapGradient(from: brightRGB, to: lightRGB)
+                )
+            }
+
+            if shown > 0 {
+                cursor
+            }
 
             VStack(spacing: 2) {
                 Text(stepsText)
@@ -514,6 +553,86 @@ struct StepsRingView: View {
         }
         .frame(width: ringSize, height: ringSize)
         .stepsWidgetFullColorContent()
+    }
+
+    @ViewBuilder
+    private var baseArc: some View {
+        if shown >= 100 {
+            Circle()
+                .stroke(accentColor, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
+                .padding(lineWidth / 2)
+        } else {
+            RingArc(from: 0, to: shown / 100)
+                .stroke(accentColor, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
+                .padding(lineWidth / 2)
+        }
+    }
+
+    @ViewBuilder
+    private func colorArc(from: Double, to: Double, width: CGFloat, gradient: AngularGradient) -> some View {
+        let style = StrokeStyle(lineWidth: width, lineCap: CGLineCap.butt)
+        Group {
+            if from == 0 && to >= 0.999 {
+                Circle()
+                    .stroke(gradient, style: style)
+            } else if to > from {
+                RingArc(from: from, to: to)
+                    .stroke(gradient, style: style)
+            }
+        }
+        .padding(lineWidth / 2)
+    }
+
+    /// Smooth oklch samples from 85% to 115%, held on either side so the join at 100% is one stroke.
+    private func lapGradient(from start: WidgetRGB, to end: WidgetRGB) -> AngularGradient {
+        let amounts = [0.0, 0.25, 0.5, 0.75, 1.0]
+        var stops: [Gradient.Stop] = []
+        for amount in amounts {
+            let color = end.mixedOKLCH(with: start, amount: amount).color
+            let location = (85 + amount * 30).truncatingRemainder(dividingBy: 100) / 100
+            stops.append(.init(color: color, location: location))
+            if location == 0 {
+                stops.append(.init(color: color, location: 1))
+            }
+        }
+        stops.append(.init(color: end.color, location: 0.849))
+        stops.sort { $0.location < $1.location }
+        return AngularGradient(
+            gradient: Gradient(stops: stops),
+            center: .center,
+            startAngle: .degrees(-90),
+            endAngle: .degrees(270)
+        )
+    }
+
+    private var cursor: some View {
+        let dot = lineWidth * 0.85
+        return Circle()
+            .fill(Color.white)
+            .overlay(Circle().stroke(accentColor, lineWidth: 1.5))
+            .frame(width: dot, height: dot)
+            .offset(y: -(ringSize - lineWidth) / 2)
+            .frame(width: ringSize, height: ringSize)
+            .rotationEffect(.degrees(shown * 3.6))
+    }
+}
+
+private struct RingArc: Shape {
+    var from: Double
+    var to: Double
+
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        let center = CGPoint(x: rect.midX, y: rect.midY)
+        let radius = min(rect.width, rect.height) / 2
+        path.addArc(
+            center: center,
+            radius: radius,
+            startAngle: .degrees(-90 + from * 360),
+            endAngle: .degrees(-90 + to * 360),
+            clockwise: false
+        )
+        return path
     }
 }
 

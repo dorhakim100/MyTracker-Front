@@ -62,7 +62,7 @@ struct StepsWidgetData: Codable {
 
     private static func progress(value: Int, goal: Int) -> Double {
         guard goal > 0 else { return 0 }
-        return min(max(Double(value) / Double(goal) * 100.0, 0), 100)
+        return max(Double(value) / Double(goal) * 100.0, 0)
     }
 
     init(
@@ -573,8 +573,92 @@ struct WidgetRGB {
         )
     }
 
+    /// Brighter variation of this color, matching the web ring's oklch overflow.
+    func brighterRing(isDarkMode: Bool) -> WidgetRGB {
+        let source = oklch
+        let lightness = isDarkMode
+            ? min(0.98, source.l + 0.4)
+            : min(0.94, source.l + 0.28)
+        let chroma = source.c * (isDarkMode ? 1.28 : 1.12)
+        return WidgetRGB(l: lightness, c: chroma, h: source.h)
+    }
+
+    /// Third lap: brighter than the second, shifted a little toward yellow-green.
+    func lighterRing(isDarkMode: Bool) -> WidgetRGB {
+        let source = oklch
+        let lightness = isDarkMode
+            ? min(0.995, source.l + 0.62)
+            : min(0.97, source.l + 0.5)
+        let chroma = source.c * (isDarkMode ? 1.85 : 1.55)
+        let hue = source.h - 24 * Double.pi / 180
+        return WidgetRGB(l: lightness, c: chroma, h: hue)
+    }
+
+    func mixedOKLCH(with other: WidgetRGB, amount: Double) -> WidgetRGB {
+        let from = oklch
+        let to = other.oklch
+        return WidgetRGB(
+            l: from.l * amount + to.l * (1 - amount),
+            c: from.c * amount + to.c * (1 - amount),
+            h: from.h
+        )
+    }
+
     var color: Color {
         Color(red: r, green: g, blue: b)
+    }
+
+    private struct OKLCH {
+        let l: Double
+        let c: Double
+        let h: Double
+    }
+
+    private var oklch: OKLCH {
+        let red = Self.linear(r)
+        let green = Self.linear(g)
+        let blue = Self.linear(b)
+        let l = cbrt(0.4122214708 * red + 0.5363325363 * green + 0.0514459929 * blue)
+        let m = cbrt(0.2119034982 * red + 0.6806995451 * green + 0.1073969566 * blue)
+        let s = cbrt(0.0883024619 * red + 0.2817188376 * green + 0.6299787005 * blue)
+        let labL = 0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s
+        let labA = 1.9779984951 * l - 2.4285922050 * m + 0.4505937099 * s
+        let labB = 0.0259040371 * l + 0.7827717662 * m - 0.8086757660 * s
+        return OKLCH(l: labL, c: hypot(labA, labB), h: atan2(labB, labA))
+    }
+
+    private init(l: Double, c: Double, h: Double) {
+        let labA = c * cos(h)
+        let labB = c * sin(h)
+        let l_ = l + 0.3963377774 * labA + 0.2158037573 * labB
+        let m_ = l - 0.1055613458 * labA - 0.0638541728 * labB
+        let s_ = l - 0.0894841775 * labA - 1.2914855480 * labB
+        let linearL = l_ * l_ * l_
+        let linearM = m_ * m_ * m_
+        let linearS = s_ * s_ * s_
+        r = Self.clamp(
+            Self.encode(4.0767416621 * linearL - 3.3077115913 * linearM + 0.2309699292 * linearS)
+        )
+        g = Self.clamp(
+            Self.encode(-1.2684380046 * linearL + 2.6097574011 * linearM - 0.3413193965 * linearS)
+        )
+        b = Self.clamp(
+            Self.encode(-0.0041960863 * linearL - 0.7034186147 * linearM + 1.7076147010 * linearS)
+        )
+    }
+
+    private static func linear(_ channel: Double) -> Double {
+        if channel <= 0.04045 { return channel / 12.92 }
+        return pow((channel + 0.055) / 1.055, 2.4)
+    }
+
+    private static func encode(_ channel: Double) -> Double {
+        if channel <= 0.0031308 { return 12.92 * channel }
+        return 1.055 * pow(max(channel, 0), 1 / 2.4) - 0.055
+    }
+
+    private static func clamp(_ channel: Double) -> Double {
+        min(max(channel, 0), 1)
     }
 }
 

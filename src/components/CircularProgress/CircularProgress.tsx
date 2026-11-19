@@ -7,7 +7,7 @@ import { RollingNumber } from '../RollingNumber/RollingNumber'
 import { useCrossedGoal } from '../../hooks/useCrossedGoal'
 // import { GoalBanner } from '../GoalBanner/GoalBanner'
 import { useTranslation } from 'react-i18next'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import CustomSkeleton from '../../CustomMui/CustomSkeleton/CustomSkeleton'
 
 interface CircularProgressProps {
@@ -37,6 +37,41 @@ const colorMap: Record<string, string> = {
   pink: 'var(--picker-color-pink)',
 }
 
+const RING_STROKE = 8
+const OVERFLOW_STROKE = 6
+const RING_RADIUS = 50 - RING_STROKE / 2
+const RING_LENGTH = Math.PI * 2 * RING_RADIUS
+const RING_LIMIT = 300
+const BLEND_FROM = 85
+const BLEND_TO = 115
+
+function clampRing(value: number) {
+  if (!Number.isFinite(value) || value <= 0) return 0
+  return Math.min(value, RING_LIMIT)
+}
+
+const RING_EASE_MS = 500
+
+function easeOut(amount: number) {
+  if (amount <= 0) return 0
+  if (amount >= 1) return 1
+  const cx = 0.99
+  const bx = 0.06
+  const ax = 1 - cx - bx
+  const cy = 3
+  const by = -3
+  const ay = 1 - cy - by
+  let t = amount
+  for (let step = 0; step < 6; step++) {
+    const x = ((ax * t + bx) * t + cx) * t
+    const slope = (3 * ax * t + 2 * bx) * t + cx
+    if (Math.abs(x - amount) < 0.0001 || slope === 0) break
+    t -= (x - amount) / slope
+  }
+  const solved = Math.min(Math.max(t, 0), 1)
+  return ((ay * solved + by) * solved + cy) * solved
+}
+
 export function CircularProgress({
   value,
   text,
@@ -50,15 +85,40 @@ export function CircularProgress({
   )
   const { t } = useTranslation()
   const progressColor = color || colorMap[prefs.favoriteColor]
-
-  const [afterMountValue, setAfterMountValue] = useState(0)
+  const [ringShown, setRingShown] = useState(0)
+  const shownRef = useRef(0)
   const [textValue, setTextValue] = useState(isTextValue ? 0 : text)
   useEffect(() => {
-    setAfterMountValue(value)
+    const target = clampRing(value)
+    const from = shownRef.current
+    if (from === target) return
+
+    const reduceMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    ).matches
+    if (reduceMotion) {
+      shownRef.current = target
+      setRingShown(target)
+      return
+    }
+
+    const start = performance.now()
+    let frame = 0
+    const tick = (now: number) => {
+      const progress = Math.min((now - start) / RING_EASE_MS, 1)
+      const next = from + (target - from) * easeOut(progress)
+      shownRef.current = next
+      setRingShown(next)
+      if (progress < 1) frame = requestAnimationFrame(tick)
+    }
+    frame = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(frame)
+  }, [value])
+  useEffect(() => {
     if (isTextValue) {
       setTextValue(text)
     }
-  }, [value, text, isTextValue])
+  }, [text, isTextValue])
 
   // if color is provided, use it
   // only if dark mode
@@ -74,22 +134,56 @@ export function CircularProgress({
   return (
     <div
       className={`circular-progress${goalCrossed ? ' goal-crossed' : ''}`}
-      style={{ ['--progress-accent' as string]: progressColor }}
+      style={{
+        ['--progress-accent' as string]: progressColor,
+        ['--ring-stroke' as string]: String(RING_STROKE),
+        ['--overflow-stroke' as string]: String(OVERFLOW_STROKE),
+        ['--blend-from' as string]: `${BLEND_FROM * 3.6}deg`,
+        ['--bright-at' as string]: `${(BLEND_TO - 100) * 3.6}deg`,
+        ['--ring-shown' as string]: String(ringShown),
+        ['--ring-length' as string]: `${RING_LENGTH}px`,
+      }}
     >
-      <CircularProgressbar
-        value={afterMountValue}
-        text=''
-        styles={buildStyles({
-          pathColor: progressColor,
-          textColor: textColor,
-          trailColor: 'var(--ring-trail)',
-          textSize: '1.8rem',
+      <div className='circular-progress-ring'>
+        <CircularProgressbar
+          value={Math.min(ringShown, 100)}
+          text=''
+          strokeWidth={RING_STROKE}
+          styles={buildStyles({
+            pathColor: progressColor,
+            textColor: textColor,
+            trailColor: 'var(--ring-trail)',
+            textSize: '1.8rem',
+            pathTransitionDuration: 0,
 
-          // textStyle: {
-          //   fontWeight: 700,
-          // },
-        })}
-      />
+            // textStyle: {
+            //   fontWeight: 700,
+            // },
+          })}
+        />
+        <div
+          className='circular-progress-blend'
+          aria-hidden='true'
+        />
+        <div
+          className='circular-progress-overflow'
+          aria-hidden='true'
+        />
+        <div
+          className='circular-progress-light-blend'
+          aria-hidden='true'
+        />
+        <div
+          className='circular-progress-light'
+          aria-hidden='true'
+        />
+        <div
+          className='progress-cursor'
+          aria-hidden='true'
+        >
+          <span className='progress-cursor-dot' />
+        </div>
+      </div>
       {isLoading ? (
         <div className='loading-container'>
           <CustomSkeleton

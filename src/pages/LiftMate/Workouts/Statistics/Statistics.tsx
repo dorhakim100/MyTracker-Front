@@ -144,7 +144,7 @@ export function Statistics({ forUserId }: StatisticsProps) {
 
   const percent = useMemo(() => {
     return summary && summary.target > 0
-      ? Math.min(100, (summary.done / summary.target) * 100)
+      ? (summary.done / summary.target) * 100
       : 0
   }, [summary])
 

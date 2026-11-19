@@ -45,8 +45,16 @@ export function HealthActivity({
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
   const isRtl = prefs.lang === 'he'
   const userId = useSelector((state: RootState) => state.userModule.user?._id)
+  const googleHealthConnected = useSelector(
+    (state: RootState) => state.healthModule.googleHealthConnected
+  )
+  const isNative = useSelector(
+    (state: RootState) => state.systemModule.isNative
+  )
   const vendor: ActivityVendor =
-    prefs.healthProvider === 'google' ? 'google' : 'native'
+    !isNative || googleHealthConnected || prefs.healthProvider === 'google'
+      ? 'google'
+      : 'native'
 
   const [frame, setFrame] = useState<ActivityFrame>('week')
   const [end, setEnd] = useState<string | undefined>(undefined)
@@ -94,7 +102,7 @@ export function HealthActivity({
     return () => {
       cancelled = true
     }
-  }, [userId, vendor, source])
+  }, [userId, vendor, metric, source])
 
   useEffect(() => {
     const showPage = async () => {
@@ -192,8 +200,7 @@ export function HealthActivity({
     anchorTarget === 'steps' || anchorTarget === 'burned'
       ? compactGoal(anchorGoal)
       : undefined
-  const percent =
-    anchorGoal > 0 ? Math.min(100, (displayValue / anchorGoal) * 100) : 0
+  const percent = anchorGoal > 0 ? (displayValue / anchorGoal) * 100 : 0
   const summary = selected
     ? rangeLabel(selected.start, selected.end, i18n.language)
     : t('summary', {
