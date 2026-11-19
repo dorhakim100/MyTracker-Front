@@ -1,11 +1,24 @@
 import type { ChatMessage, ChatUser } from '@mui/x-chat-headless'
 import { Message, MessageRole } from '../../types/message/Message'
 
+const SESSION_PREFIX = 'session:'
+
 export function getConversationId(workoutId: string, exerciseId: string) {
   return `${workoutId}:${exerciseId}`
 }
 
+export function getSessionConversationId(workoutId: string) {
+  return `${SESSION_PREFIX}${workoutId}`
+}
+
 export function parseConversationId(conversationId: string) {
+  if (conversationId.startsWith(SESSION_PREFIX)) {
+    return {
+      workoutId: conversationId.slice(SESSION_PREFIX.length),
+      exerciseId: undefined,
+    }
+  }
+
   const separatorIndex = conversationId.indexOf(':')
   return {
     workoutId: conversationId.slice(0, separatorIndex),
@@ -40,7 +53,9 @@ export function toChatMessage(
 ): ChatMessage {
   return {
     id: String(message._id),
-    conversationId: getConversationId(message.workoutId, message.exerciseId),
+    conversationId: message.exerciseId
+      ? getConversationId(message.workoutId, message.exerciseId)
+      : getSessionConversationId(message.workoutId),
     role: message.role === screenRole ? 'user' : 'assistant',
     parts: [{ type: 'text', text: message.content }],
     createdAt: new Date(message.date).toISOString(),

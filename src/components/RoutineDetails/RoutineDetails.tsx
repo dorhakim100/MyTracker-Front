@@ -33,6 +33,7 @@ import { useChatRole } from '../../hooks/useChatRole'
 import { useUnreadSummary } from '../../hooks/useUnreadSummary'
 import { useScrollLastChildIntoView } from '../../hooks/useScrollLastChildIntoView'
 import { ExerciseChatDialog } from '../ExerciseChatDialog/ExerciseChatDialog'
+import { SessionChatButton } from '../SessionChatButton/SessionChatButton'
 import { RoutineExerciseCard } from './RoutineExerciseCard/RoutineExerciseCard'
 import { routineDetailsNs } from './locals'
 import {
@@ -66,6 +67,7 @@ export function RoutineDetails({ workout }: RoutineDetailsProps) {
   const forUserId = traineeUser?._id || user?._id || ''
   const displayUser = traineeUser || user
   const chatRole = useChatRole()
+  const sessionChatRole = useChatRole(true)
   const { getExerciseCount, hasExerciseMessages } = useUnreadSummary(chatRole)
   const traineeName =
     chatRole === 'trainer' && traineeUser && traineeUser._id !== user?._id
@@ -329,36 +331,50 @@ export function RoutineDetails({ workout }: RoutineDetailsProps) {
             {status === 'finished' && <CheckIcon className='week-done-icon' />}
             <span>{statusLabel}</span>
           </div>
-          {sessions.length > 0 && (
-            <div className='session-list'>
-              <span className='session-heading'>{t('sessions')}</span>
-              <Divider
-                className={`${prefs.favoriteColor} ${
-                  prefs.isDarkMode ? 'dark-mode' : ''
-                } divider`}
-                orientation='vertical'
-              />
-              <List disablePadding>
-                {sessions.map((session) => (
-                  <ListItemButton
-                    key={session._id || session.date}
-                    onClick={() => onOpenStatistics(session)}
-                  >
-                    {loadingStatisticsId === session._id ? (
-                      <CircularProgress
-                        size={20}
-                        // className={`${prefs.favoriteColor}`}
-                        color='inherit'
-                      />
-                    ) : (
-                      <BarChartIcon />
-                    )}
-                    <ListItemText
-                      primary={formatSessionDate(session.date, prefs.lang)}
+          {workout._id && (
+            <div className='sessions-messages-contianer'>
+              <div className='session-list'>
+                {sessions.length > 0 && (
+                  <>
+                    <span className='session-heading'>{t('sessions')}</span>
+                    <Divider
+                      className={`${prefs.favoriteColor} ${
+                        prefs.isDarkMode ? 'dark-mode' : ''
+                      } divider`}
+                      orientation='vertical'
                     />
-                  </ListItemButton>
-                ))}
-              </List>
+                    <List disablePadding>
+                      {sessions.map((session) => (
+                        <ListItemButton
+                          key={session._id || session.date}
+                          onClick={() => onOpenStatistics(session)}
+                        >
+                          {loadingStatisticsId === session._id ? (
+                            <CircularProgress
+                              size={20}
+                              // className={`${prefs.favoriteColor}`}
+                              color='inherit'
+                            />
+                          ) : (
+                            <BarChartIcon />
+                          )}
+                          <ListItemText
+                            primary={formatSessionDate(
+                              session.date,
+                              prefs.lang
+                            )}
+                          />
+                        </ListItemButton>
+                      ))}
+                    </List>
+                  </>
+                )}{' '}
+              </div>
+              <SessionChatButton
+                workoutId={workout._id}
+                workoutName={workout.name}
+                role={sessionChatRole}
+              />
             </div>
           )}
           {instructions.exercises?.map((instruction, index) => {

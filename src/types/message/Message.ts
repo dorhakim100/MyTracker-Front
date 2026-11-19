@@ -12,7 +12,7 @@ export interface MessageSender {
 export interface Message {
   _id: string
   date: string
-  exerciseId: string
+  exerciseId?: string
   workoutId: string
   senderId: string
   role: MessageRole
@@ -35,12 +35,14 @@ export interface UnreadHasMessages {
   trainees: Record<string, boolean>
   workouts: Record<string, boolean>
   exercises: Record<string, Record<string, boolean>>
+  sessions: Record<string, boolean>
 }
 
 export interface UnreadSummary {
   trainees: Record<string, number>
   workouts: Record<string, number>
   exercises: Record<string, Record<string, number>>
+  sessions: Record<string, number>
   hasMessages: UnreadHasMessages
 }
 
@@ -48,18 +50,20 @@ export const EMPTY_HAS_MESSAGES: UnreadHasMessages = {
   trainees: {},
   workouts: {},
   exercises: {},
+  sessions: {},
 }
 
 export const EMPTY_UNREAD_SUMMARY: UnreadSummary = {
   trainees: {},
   workouts: {},
   exercises: {},
+  sessions: {},
   hasMessages: EMPTY_HAS_MESSAGES,
 }
 
 export type UnreadSocketPayload = {
   workoutId: string
-  exerciseId: string
+  exerciseId?: string
   forUserId?: string
   senderRole: MessageRole
 }

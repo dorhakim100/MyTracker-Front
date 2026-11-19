@@ -21,12 +21,14 @@ export function getSocket() {
   return socket
 }
 
-export function joinExerciseChat(workoutId: string, exerciseId: string) {
-  socket?.emit('exercise-chat:join', { workoutId, exerciseId })
+export function joinExerciseChat(workoutId: string, exerciseId?: string) {
+  const room = exerciseId ? { workoutId, exerciseId } : { workoutId }
+  socket?.emit('exercise-chat:join', room)
 }
 
-export function leaveExerciseChat(workoutId: string, exerciseId: string) {
-  socket?.emit('exercise-chat:leave', { workoutId, exerciseId })
+export function leaveExerciseChat(workoutId: string, exerciseId?: string) {
+  const room = exerciseId ? { workoutId, exerciseId } : { workoutId }
+  socket?.emit('exercise-chat:leave', room)
 }
 
 export async function connect(userId: string) {

@@ -65,6 +65,8 @@ import { invalidateSets } from '../../lib/react-query/queryKey'
 import { smoothScroll } from '../../services/util.service'
 import { FillProgress } from '../../CustomMui/FillProgress/FillProgress'
 import { RoutineDetails } from '../RoutineDetails/RoutineDetails'
+import { SessionChatButton } from '../SessionChatButton/SessionChatButton'
+import { useChatRole } from '../../hooks/useChatRole'
 
 interface WorkoutSessionProps {
   sessionDay: SessionDay
@@ -78,6 +80,7 @@ export function WorkoutSession({
   // if (!sessionDay.instructions) return null
   const { t } = useTranslation()
   const { t: tStats } = useTranslation(sessionStatsNs)
+  const sessionChatRole = useChatRole()
 
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
 
@@ -1164,6 +1167,11 @@ export function WorkoutSession({
                     variant='flat'
                   />
                 }
+              />
+              <SessionChatButton
+                workoutId={sessionDay.workoutId || sessionDay.workout?._id}
+                workoutName={sessionDay.workout?.name || ''}
+                role={sessionChatRole}
               />
               <CustomButton
                 icon={

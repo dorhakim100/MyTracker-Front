@@ -23,10 +23,11 @@ import { showErrorMsg } from '../../../services/event-bus.service'
 
 interface ExerciseChatProps {
   workoutId: string
-  exerciseId: string
+  exerciseId?: string
   role: MessageRole
   exerciseName: string
   workoutName: string
+  variant?: 'exercise' | 'session'
 }
 
 const LONG_PRESS_MS = 420
@@ -38,12 +39,19 @@ export function ExerciseChat({
   role,
   exerciseName,
   workoutName,
+  variant = 'exercise',
 }: ExerciseChatProps) {
   const { t } = useTranslation(exerciseChatNs)
 
   const user = useSelector(
     (stateSelector: RootState) => stateSelector.userModule.user
   )
+  const traineeUser = useSelector(
+    (stateSelector: RootState) => stateSelector.userModule.traineeUser
+  )
+  const owner = traineeUser || user
+  const showSideLabels = !owner?.trainersIds?.length
+  const plannedIsSent = role === 'trainer'
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
@@ -59,7 +67,9 @@ export function ExerciseChat({
     [workoutId, exerciseId, role]
   )
 
-  const conversationId = `${workoutId}:${exerciseId}`
+  const conversationId = exerciseId
+    ? `${workoutId}:${exerciseId}`
+    : `session:${workoutId}`
 
   function clearLongPress() {
     if (longPressRef.current.timer != null) {
@@ -118,6 +128,16 @@ export function ExerciseChat({
       onPointerUpCapture={clearLongPress}
       onPointerCancelCapture={clearLongPress}
     >
+      {showSideLabels && (
+        <div className='exercise-chat-side-labels'>
+          <span className='session-label'>
+            {plannedIsSent ? t('session') : t('planned')}
+          </span>
+          <span className='planned-label'>
+            {plannedIsSent ? t('planned') : t('session')}
+          </span>
+        </div>
+      )}
       <ChatRoot
         key={conversationId}
         className='exercise-chat-root'
@@ -150,8 +170,10 @@ export function ExerciseChat({
         initialActiveConversationId={conversationId}
         localeText={{
           composerInputPlaceholder: t('placeholder'),
-          threadNoMessagesLabel: t('empty'),
-          threadNoMessagesHelperText: t('emptyHint'),
+          threadNoMessagesLabel:
+            variant === 'session' ? t('emptySession') : t('empty'),
+          threadNoMessagesHelperText:
+            variant === 'session' ? t('emptySessionHint') : t('emptyHint'),
           messageEditedLabel: t('edited'),
         }}
       >

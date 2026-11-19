@@ -17,11 +17,12 @@ interface ExerciseChatDialogProps {
   open: boolean
   onClose: () => void
   workoutId: string
-  exerciseId: string
+  exerciseId?: string
   role: MessageRole
-  exerciseName: string
+  exerciseName?: string
   workoutName: string
   traineeName?: string
+  variant?: 'exercise' | 'session'
 }
 
 export function ExerciseChatDialog({
@@ -30,35 +31,53 @@ export function ExerciseChatDialog({
   workoutId,
   exerciseId,
   role,
-  exerciseName,
+  exerciseName = '',
   workoutName,
   traineeName,
+  variant = 'exercise',
 }: ExerciseChatDialogProps) {
   const { t } = useTranslation(exerciseChatNs)
   const traineeUser = useSelector(
     (stateSelector: RootState) => stateSelector.userModule.traineeUser
   )
 
+  const isSession = variant === 'session'
+
   useEffect(() => {
-    if (!open || !workoutId || !exerciseId) {
+    if (!open || !workoutId || (!isSession && !exerciseId)) {
       setActiveChatRoom(null)
       return
     }
 
+    let cancelled = false
+
     setActiveChatRoom({
       workoutId,
-      exerciseId,
+      exerciseId: isSession ? undefined : exerciseId,
       traineeId: traineeUser?._id,
     })
-    void messageService
-      .markRead(workoutId, exerciseId)
-      .then(() => refetchUnreadSummaries())
 
-    return () => setActiveChatRoom(null)
-  }, [open, workoutId, exerciseId, traineeUser?._id])
+    const markRead = async () => {
+      try {
+        await messageService.markRead(
+          workoutId,
+          isSession ? undefined : exerciseId
+        )
+        if (!cancelled) await refetchUnreadSummaries()
+      } catch {
+        if (!cancelled) await refetchUnreadSummaries()
+      }
+    }
+    markRead()
+
+    return () => {
+      cancelled = true
+      setActiveChatRoom(null)
+    }
+  }, [open, workoutId, exerciseId, isSession, traineeUser?._id])
 
   const titleParts = [
-    capitalizeFirstLetter(exerciseName),
+    isSession ? '' : capitalizeFirstLetter(exerciseName),
     workoutName,
     traineeName,
   ].filter(Boolean)
@@ -75,10 +94,11 @@ export function ExerciseChatDialog({
         open ? (
           <ExerciseChat
             workoutId={workoutId}
-            exerciseId={exerciseId}
+            exerciseId={isSession ? undefined : exerciseId}
             role={role}
             exerciseName={capitalizeFirstLetter(exerciseName)}
             workoutName={workoutName}
+            variant={variant}
           />
         ) : (
           <></>

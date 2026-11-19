@@ -8,6 +8,7 @@ import { messageService } from './message.service'
 import {
   getChatMessageText,
   getConversationId,
+  getSessionConversationId,
   parseConversationId,
   toChatMessage,
 } from './exercise-chat.mapper'
@@ -26,12 +27,24 @@ function emptyStream(): ReadableStream<ChatMessageChunk> {
   })
 }
 
+function isThisRoom(
+  workoutId: string,
+  exerciseId: string | undefined,
+  payload: { workoutId?: string; exerciseId?: string }
+) {
+  if (payload.workoutId !== workoutId) return false
+  if (!exerciseId) return !payload.exerciseId
+  return payload.exerciseId === exerciseId
+}
+
 export function createExerciseChatAdapter(options: {
   workoutId: string
-  exerciseId: string
+  exerciseId?: string
   role: MessageRole
 }): ChatAdapter {
-  const conversationId = getConversationId(options.workoutId, options.exerciseId)
+  const conversationId = options.exerciseId
+    ? getConversationId(options.workoutId, options.exerciseId)
+    : getSessionConversationId(options.workoutId)
 
   return {
     async listMessages({ conversationId: requestedId }) {
@@ -73,29 +86,20 @@ export function createExerciseChatAdapter(options: {
       joinExerciseChat(options.workoutId, options.exerciseId)
 
       const onAdded = (payload: Message) => {
-        if (
-          payload.workoutId !== options.workoutId ||
-          payload.exerciseId !== options.exerciseId
-        ) {
-          return
-        }
+        if (!isThisRoom(options.workoutId, options.exerciseId, payload)) return
         onEvent({
           type: 'message-added',
           message: toChatMessage(payload, options.role),
         } satisfies ChatRealtimeEvent)
         if (payload.role === options.role) return
-        void messageService
+        messageService
           .markRead(options.workoutId, options.exerciseId)
           .then(() => refetchUnreadSummaries())
+          .catch(() => undefined)
       }
 
       const onUpdated = (payload: Message) => {
-        if (
-          payload.workoutId !== options.workoutId ||
-          payload.exerciseId !== options.exerciseId
-        ) {
-          return
-        }
+        if (!isThisRoom(options.workoutId, options.exerciseId, payload)) return
         onEvent({
           type: 'message-updated',
           message: toChatMessage(payload, options.role),
@@ -108,9 +112,8 @@ export function createExerciseChatAdapter(options: {
         exerciseId?: string
       }) => {
         if (
-          payload.workoutId !== options.workoutId ||
-          payload.exerciseId !== options.exerciseId ||
-          !payload.messageId
+          !payload.messageId ||
+          !isThisRoom(options.workoutId, options.exerciseId, payload)
         ) {
           return
         }

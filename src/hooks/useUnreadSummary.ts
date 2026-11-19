@@ -3,6 +3,8 @@ import { MessageRole } from '../types/message/Message'
 import {
   getExerciseHasMessages,
   getExerciseUnread,
+  getSessionHasMessages,
+  getSessionUnread,
   getSummaryForRole,
   getTraineeUnread,
   getUnreadSummaries,
@@ -34,5 +36,8 @@ export function useUnreadSummary(asRole: MessageRole) {
       getExerciseUnread(summary, workoutId, exerciseId),
     hasExerciseMessages: (workoutId?: string, exerciseId?: string) =>
       getExerciseHasMessages(summary, workoutId, exerciseId),
+    getSessionCount: (workoutId?: string) => getSessionUnread(summary, workoutId),
+    hasSessionMessages: (workoutId?: string) =>
+      getSessionHasMessages(summary, workoutId),
   }
 }

@@ -15,21 +15,27 @@ function isUnreadPayload(payload: unknown): payload is UnreadSocketPayload {
   const next = payload as UnreadSocketPayload
   return Boolean(
     next.workoutId &&
-      next.exerciseId &&
       (next.senderRole === 'trainer' || next.senderRole === 'trainee')
   )
 }
 
-async function onUnreadEvent(payload?: UnreadSocketPayload) {
+function isActiveRoom(
+  payload?: UnreadSocketPayload
+) {
   const room = getActiveChatRoom()
-  const isActiveRoom =
-    Boolean(payload) &&
-    room?.workoutId === payload?.workoutId &&
-    room?.exerciseId === payload?.exerciseId
+  if (!payload || !room || room.workoutId !== payload.workoutId) return false
+  if (!payload.exerciseId) return !room.exerciseId
+  return room.exerciseId === payload.exerciseId
+}
 
-  if (isActiveRoom && payload) {
-    await messageService.markRead(payload.workoutId, payload.exerciseId)
-    await refetchUnreadSummaries()
+async function onUnreadEvent(payload?: UnreadSocketPayload) {
+  if (isActiveRoom(payload) && payload) {
+    try {
+      await messageService.markRead(payload.workoutId, payload.exerciseId)
+      await refetchUnreadSummaries()
+    } catch {
+      await refetchUnreadSummaries()
+    }
     return
   }
 

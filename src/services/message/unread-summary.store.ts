@@ -26,7 +26,7 @@ const listeners = new Set<() => void>()
 
 type ActiveChatRoom = {
   workoutId: string
-  exerciseId: string
+  exerciseId?: string
   traineeId?: string
 }
 
@@ -49,7 +49,9 @@ export function setActiveChatRoom(room: ActiveChatRoom | null) {
 function withoutActiveRoom(summary: UnreadSummary): UnreadSummary {
   if (!activeChatRoom) return summary
   const { workoutId, exerciseId, traineeId } = activeChatRoom
-  const roomCount = summary.exercises[workoutId]?.[exerciseId] || 0
+  const roomCount = exerciseId
+    ? summary.exercises[workoutId]?.[exerciseId] || 0
+    : summary.sessions?.[workoutId] || 0
   if (!roomCount) return summary
 
   const nextTrainees = { ...summary.trainees }
@@ -60,21 +62,30 @@ function withoutActiveRoom(summary: UnreadSummary): UnreadSummary {
     )
   }
 
-  return {
+  const next: UnreadSummary = {
     trainees: nextTrainees,
     workouts: {
       ...summary.workouts,
       [workoutId]: Math.max(0, (summary.workouts[workoutId] || 0) - roomCount),
     },
-    exercises: {
-      ...summary.exercises,
-      [workoutId]: {
-        ...summary.exercises[workoutId],
-        [exerciseId]: 0,
-      },
-    },
+    exercises: summary.exercises,
+    sessions: summary.sessions || {},
     hasMessages: summary.hasMessages || EMPTY_HAS_MESSAGES,
   }
+
+  if (!exerciseId) {
+    next.sessions = { ...next.sessions, [workoutId]: 0 }
+    return next
+  }
+
+  next.exercises = {
+    ...summary.exercises,
+    [workoutId]: {
+      ...summary.exercises[workoutId],
+      [exerciseId]: 0,
+    },
+  }
+  return next
 }
 
 export function getUnreadSummaries() {
@@ -123,34 +134,59 @@ function withHasMessage(
         [exerciseId]: true,
       },
     },
+    sessions: prev.sessions || {},
   }
 }
 
+function isActivePayload(payload: UnreadSocketPayload) {
+  if (!activeChatRoom || activeChatRoom.workoutId !== payload.workoutId) {
+    return false
+  }
+  if (!payload.exerciseId) return !activeChatRoom.exerciseId
+  return activeChatRoom.exerciseId === payload.exerciseId
+}
+
+function withSessionHasMessage(
+  summary: UnreadSummary,
+  workoutId: string,
+  forUserId?: string
+): UnreadHasMessages {
+  const prev = summary.hasMessages || EMPTY_HAS_MESSAGES
+  const nextTrainees = { ...prev.trainees }
+  if (forUserId) nextTrainees[forUserId] = true
+  return {
+    trainees: nextTrainees,
+    workouts: { ...prev.workouts, [workoutId]: true },
+    exercises: prev.exercises || {},
+    sessions: { ...(prev.sessions || {}), [workoutId]: true },
+  }
+}
+
+function markHasMessages(
+  summary: UnreadSummary,
+  payload: UnreadSocketPayload
+) {
+  if (!payload.exerciseId) {
+    return withSessionHasMessage(summary, payload.workoutId, payload.forUserId)
+  }
+  return withHasMessage(
+    summary,
+    payload.workoutId,
+    payload.exerciseId,
+    payload.forUserId
+  )
+}
+
 export function applyIncomingUnread(payload: UnreadSocketPayload) {
-  if (
-    activeChatRoom &&
-    activeChatRoom.workoutId === payload.workoutId &&
-    activeChatRoom.exerciseId === payload.exerciseId
-  ) {
-    const { workoutId, exerciseId, forUserId } = payload
+  if (isActivePayload(payload)) {
     summaries = {
       trainer: {
         ...summaries.trainer,
-        hasMessages: withHasMessage(
-          summaries.trainer,
-          workoutId,
-          exerciseId,
-          forUserId
-        ),
+        hasMessages: markHasMessages(summaries.trainer, payload),
       },
       trainee: {
         ...summaries.trainee,
-        hasMessages: withHasMessage(
-          summaries.trainee,
-          workoutId,
-          exerciseId,
-          forUserId
-        ),
+        hasMessages: markHasMessages(summaries.trainee, payload),
       },
     }
     emit()
@@ -168,33 +204,41 @@ export function applyIncomingUnread(payload: UnreadSocketPayload) {
       ...summary.workouts,
       [workoutId]: (summary.workouts[workoutId] || 0) + 1,
     },
-    exercises: {
+    exercises: { ...summary.exercises },
+    sessions: { ...(summary.sessions || {}) },
+    hasMessages: summary.hasMessages || EMPTY_HAS_MESSAGES,
+  }
+
+  if (exerciseId) {
+    nextUnread.exercises = {
       ...summary.exercises,
       [workoutId]: {
         ...summary.exercises[workoutId],
         [exerciseId]: (summary.exercises[workoutId]?.[exerciseId] || 0) + 1,
       },
-    },
-    hasMessages: summary.hasMessages || EMPTY_HAS_MESSAGES,
+    }
+  } else {
+    nextUnread.sessions = {
+      ...nextUnread.sessions,
+      [workoutId]: (summary.sessions?.[workoutId] || 0) + 1,
+    }
   }
 
   if (forUserId) {
     nextUnread.trainees[forUserId] = (nextUnread.trainees[forUserId] || 0) + 1
   }
 
-  const nextTrainer =
-    asRole === 'trainer' ? nextUnread : summaries.trainer
-  const nextTrainee =
-    asRole === 'trainee' ? nextUnread : summaries.trainee
+  const nextTrainer = asRole === 'trainer' ? nextUnread : summaries.trainer
+  const nextTrainee = asRole === 'trainee' ? nextUnread : summaries.trainee
 
   summaries = {
     trainer: {
       ...nextTrainer,
-      hasMessages: withHasMessage(nextTrainer, workoutId, exerciseId, forUserId),
+      hasMessages: markHasMessages(nextTrainer, payload),
     },
     trainee: {
       ...nextTrainee,
-      hasMessages: withHasMessage(nextTrainee, workoutId, exerciseId, forUserId),
+      hasMessages: markHasMessages(nextTrainee, payload),
     },
   }
   emit()
@@ -227,6 +271,19 @@ export function getExerciseUnread(
 ) {
   if (!workoutId || !exerciseId) return 0
   return summary.exercises[workoutId]?.[exerciseId] || 0
+}
+
+export function getSessionUnread(summary: UnreadSummary, workoutId?: string) {
+  if (!workoutId) return 0
+  return summary.sessions?.[workoutId] || 0
+}
+
+export function getSessionHasMessages(
+  summary: UnreadSummary,
+  workoutId?: string
+) {
+  if (!workoutId) return false
+  return Boolean(summary.hasMessages?.sessions?.[workoutId])
 }
 
 export function getExerciseHasMessages(

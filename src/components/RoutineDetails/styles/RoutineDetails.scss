@@ -69,6 +69,15 @@
     padding: 2rem 0;
   }
 
+  .sessions-messages-contianer {
+    display: flex;
+    justify-content: space-between;
+
+    gap: 0.5rem;
+
+    padding-inline-end: 0.8rem;
+  }
+
   .session-list {
     display: flex;
     align-items: center;

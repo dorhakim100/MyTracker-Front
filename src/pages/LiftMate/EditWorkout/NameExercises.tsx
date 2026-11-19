@@ -29,6 +29,8 @@ import { CustomList } from '../../../CustomMui/CustomList/CustomList'
 import { CustomAlertDialog } from '../../../CustomMui/CustomAlertDialog/CustomAlertDialog'
 import { SaveCancel } from '../../../components/SaveCancel/SaveCancel'
 import { showErrorMsg } from '../../../services/event-bus.service'
+import { SessionChatButton } from '../../../components/SessionChatButton/SessionChatButton'
+import { useChatRole } from '../../../hooks/useChatRole'
 
 type DialogType = 'add' | 'reorder' | 'alert' | null
 
@@ -86,6 +88,7 @@ export function NameExercises({
   isLoading = false,
 }: NameExercisesProps) {
   const { t } = useTranslation()
+  const sessionChatRole = useChatRole(true)
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
@@ -381,6 +384,11 @@ export function NameExercises({
               value={instructions.timesPerWeek + ''}
               onChange={(times: string) => onEditTimes(times)}
               className={`${prefs.favoriteColor}`}
+            />
+            <SessionChatButton
+              workoutId={workout._id}
+              workoutName={workout.name}
+              role={sessionChatRole}
             />
           </div>
 

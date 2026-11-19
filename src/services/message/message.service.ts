@@ -8,13 +8,24 @@ import {
 
 const KEY = 'message'
 
+function asMessages<T>(value: unknown): T[] {
+  return Array.isArray(value) ? value : []
+}
+
 function normalizeSummary(summary?: UnreadSummary | null): UnreadSummary {
   if (!summary) return EMPTY_UNREAD_SUMMARY
+  const hasMessages = summary.hasMessages
   return {
     trainees: summary.trainees || {},
     workouts: summary.workouts || {},
     exercises: summary.exercises || {},
-    hasMessages: summary.hasMessages || EMPTY_UNREAD_SUMMARY.hasMessages,
+    sessions: summary.sessions || {},
+    hasMessages: {
+      trainees: hasMessages?.trainees || {},
+      workouts: hasMessages?.workouts || {},
+      exercises: hasMessages?.exercises || {},
+      sessions: hasMessages?.sessions || {},
+    },
   }
 }
 
@@ -29,15 +40,17 @@ export const messageService = {
 
 async function listByRoom(
   workoutId: string,
-  exerciseId: string
+  exerciseId?: string
 ): Promise<Message[]> {
-  return httpService.get(KEY, { workoutId, exerciseId })
+  const params = exerciseId ? { workoutId, exerciseId } : { workoutId }
+  const messages = await httpService.get(KEY, params)
+  return asMessages<Message>(messages)
 }
 
 async function add(payload: {
   _id?: string
   workoutId: string
-  exerciseId: string
+  exerciseId?: string
   role: MessageRole
   content: string
 }): Promise<Message> {
@@ -57,9 +70,10 @@ async function remove(messageId: string, role: MessageRole): Promise<void> {
 
 async function markRead(
   workoutId: string,
-  exerciseId: string
+  exerciseId?: string
 ): Promise<void> {
-  await httpService.put(`${KEY}/read`, { workoutId, exerciseId })
+  const body = exerciseId ? { workoutId, exerciseId } : { workoutId }
+  await httpService.put(`${KEY}/read`, body)
 }
 
 async function getUnreadSummary(asRole: MessageRole): Promise<UnreadSummary> {
