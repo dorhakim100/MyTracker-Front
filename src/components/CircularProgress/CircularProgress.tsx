@@ -178,7 +178,7 @@ export function CircularProgress({
           aria-hidden='true'
         />
         <div
-          className='progress-cursor'
+          className={`progress-cursor${ringShown > 100 ? ' over-100' : ''}`}
           aria-hidden='true'
         >
           <span className='progress-cursor-dot' />
