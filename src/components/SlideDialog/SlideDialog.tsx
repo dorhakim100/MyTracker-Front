@@ -381,6 +381,7 @@ function SlideDialogHeaderBar({
           sx={{ marginInlineStart: 2, flex: 1 }}
           variant='h6'
           component='div'
+          className='bold-header'
         >
           {title ?? t('common.edit')}
         </MarqueeText>
