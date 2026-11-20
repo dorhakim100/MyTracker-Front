@@ -38,6 +38,7 @@ import {
 import { estimateToItem } from '../../services/aiLog/aiLog.mapper'
 import type { AiLogEstimate } from '../../types/aiLog/AiLog'
 import { PressRipple } from '../PressRipple/PressRipple'
+import { BorderBeam } from 'border-beam'
 
 type ModalType = 'search' | 'ai'
 
@@ -115,11 +116,13 @@ export function FixedBottomNavigation(props: {
       icon: <AutoAwesomeIcon />,
       name: t('nav.aiLog'),
       onClick: onAiClick,
+      beam: true,
     },
     {
       icon: <SearchIcon />,
       name: t('nav.search'),
       onClick: onSearchClick,
+      beam: false,
     },
   ]
 
@@ -244,16 +247,32 @@ export function FixedBottomNavigation(props: {
             // position: 'absolute',
           }}
         >
-          {speedDialActions.map((action) => (
-            <SpeedDialAction
-              key={action.name}
-              icon={action.icon}
-              onClick={
-                action.onClick as unknown as MouseEventHandler<HTMLDivElement>
-              }
-              className={`${prefs.favoriteColor}`}
-            />
-          ))}
+          {speedDialActions.map((action) => {
+            return (
+              <SpeedDialAction
+                key={action.name}
+                icon={
+                  action.beam ? (
+                    <BorderBeam
+                      borderRadius={10}
+                      theme={prefs.isDarkMode ? 'dark' : 'light'}
+                      active={isAddModal}
+                      className='speed-dial-action-beam'
+                      style={{ position: 'absolute', inset: 0 }}
+                    >
+                      {action.icon}
+                    </BorderBeam>
+                  ) : (
+                    action.icon
+                  )
+                }
+                onClick={
+                  action.onClick as unknown as MouseEventHandler<HTMLDivElement>
+                }
+                className={`${prefs.favoriteColor}`}
+              />
+            )
+          })}
         </SpeedDial>
       </div>
     )

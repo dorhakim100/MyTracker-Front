@@ -73,8 +73,13 @@
     text-align: center;
   }
 
+  .send-button-container {
+    // border-radius: 4px;
+  }
+
   .send-button,
-  .search-button {
+  .search-button,
+  .send-button-container {
     justify-self: center;
   }
 }

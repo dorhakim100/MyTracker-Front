@@ -40,6 +40,7 @@
     "@zxing/browser": "^0.1.5",
     "@zxing/library": "^0.21.3",
     "axios": "^1.13.2",
+    "border-beam": "^1.4.1",
     "browser-image-compression": "^2.0.2",
     "chart.js": "^4.5.0",
     "date-fns": "^4.1.0",

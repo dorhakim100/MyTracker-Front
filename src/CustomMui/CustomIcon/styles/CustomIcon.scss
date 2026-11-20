@@ -117,3 +117,36 @@
     --custom-icon-tint: 32%;
   }
 }
+
+.MuiSvgIcon-root.goal-trend-icon {
+  fill: none;
+
+  &.gain {
+    --goal-trend-sign: #{$success-color};
+  }
+
+  &.lose {
+    --goal-trend-sign: #{$error-color};
+  }
+
+  .goal-trend-body {
+    fill: none;
+    stroke: currentColor;
+  }
+
+  .goal-trend-sign {
+    fill: none;
+    stroke: var(--goal-trend-sign);
+  }
+}
+
+html.dark-mode .MuiSvgIcon-root.goal-trend-icon,
+body.dark-mode .MuiSvgIcon-root.goal-trend-icon {
+  &.gain {
+    --goal-trend-sign: #{$success-color-dark-mode};
+  }
+
+  &.lose {
+    --goal-trend-sign: #{$error-color-dark-mode};
+  }
+}

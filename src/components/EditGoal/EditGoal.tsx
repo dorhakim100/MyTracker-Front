@@ -9,9 +9,11 @@ import goalAnimation from '../../../public/goal-animation.json'
 import { capitalizeFirstLetter } from '../../services/util.service'
 import { goalService } from '../../services/goal/goal.service'
 
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward'
 import BalanceIcon from '@mui/icons-material/Balance'
+import {
+  GoalTrendDownIcon,
+  GoalTrendUpIcon,
+} from '../../CustomMui/CustomIcon/goal-trend-icons'
 
 import { RootState } from '../../store/store'
 import { bmrService } from '../../services/bmr/bmr.service'
@@ -137,7 +139,7 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
   const targets = [
     {
       label: t('goal.lose'),
-      icon: <ArrowDownwardIcon />,
+      icon: <GoalTrendDownIcon />,
       suggestedCalories: maintainUserBmr - CALORIES_DIFF,
       key: 'lose',
       onClick: () => _onTargetClick('lose'),
@@ -151,7 +153,7 @@ export function EditGoal({ selectedGoal, saveGoal }: EditGoalProps) {
     },
     {
       label: t('goal.gain'),
-      icon: <ArrowUpwardIcon />,
+      icon: <GoalTrendUpIcon />,
       suggestedCalories: maintainUserBmr + CALORIES_DIFF,
       key: 'gain',
       onClick: () => _onTargetClick('gain'),

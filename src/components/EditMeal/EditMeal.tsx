@@ -33,6 +33,9 @@ import { itemService } from '../../services/item/item.service'
 import { itemNameService } from '../../services/item/item-name.service'
 import { getItemUnit } from '../../services/item/item-unit.service'
 import { servingsFromGrams, toPer100gMacros } from '../../types/aiLog/AiLog'
+import { replaceItemKeepingPortion } from '../../services/aiLog/aiLog.mapper'
+import SwapHorizIcon from '@mui/icons-material/SwapHoriz'
+import { editMealNs } from './locals'
 
 const stages = ['name', 'items']
 
@@ -43,6 +46,7 @@ interface EditMealProps {
 
 export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
   const { t, i18n } = useTranslation()
+  const { t: tMeal } = useTranslation(editMealNs)
   const stagesTitles = [t('meals.mealName'), t('meals.items')]
   const user = useSelector(
     (stateSelector: RootState) => stateSelector.userModule.user
@@ -68,6 +72,11 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
   const [modalType, setModalType] = useState<'search' | 'edit' | 'scan'>(
     'search'
   )
+  const [switchIndex, setSwitchIndex] = useState<number | null>(null)
+  const [isSwitchSearchOpen, setIsSwitchSearchOpen] = useState(false)
+  const onOpenSwitchSearch = useCallback(() => {
+    setIsSwitchSearchOpen(true)
+  }, [])
 
   const onEditMeal = (key: keyof Meal, value: string | number) => {
     const newEditMeal = { ...editMeal }
@@ -146,6 +155,7 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
           <ItemDetails
             onAddToMealClick={onAddToMealClick}
             shouldDefaultItemMacros={true}
+            onRequestSwitch={onOpenSwitchSearch}
           />
         )
       case 'scan':
@@ -241,7 +251,21 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
                 itemNameService.getItemSearchText(item.name) ||
                 makeId()
               }
-              isSwipeable={true}
+              isSwipeable={editMeal.items.length > 1}
+              renderRight={(item) => (
+                <CustomButton
+                  isIcon
+                  size='small'
+                  variant='flat'
+                  icon={<SwapHorizIcon fontSize='small' />}
+                  ariaLabel={tMeal('switchItem')}
+                  tooltipTitle={tMeal('switchItem')}
+                  onClick={(event) => {
+                    event.stopPropagation()
+                    onSwitchRow(item)
+                  }}
+                />
+              )}
               renderRightSwipeActions={(item) => (
                 <DeleteAction
                   item={item}
@@ -265,6 +289,7 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
   }
 
   const onDeleteItem = (item: MealItem) => {
+    if (editMeal.items.length <= 1) return
     const newItems = editMeal.items.filter((i) => i.searchId !== item.searchId)
     setEditMeal({ ...editMeal, items: newItems })
   }
@@ -273,9 +298,39 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
     setEditMeal({ ...editMeal, items: newItems })
   }
 
+  function onSwitchRow(item: MealItem) {
+    const index = editMeal.items.indexOf(item)
+    if (index < 0) return
+    setSwitchIndex(index)
+    setIsSwitchSearchOpen(true)
+  }
+
+  function onPickSwitchItem(picked: Item) {
+    if (switchIndex == null) return
+    const current = editMeal.items[switchIndex]
+    if (!current) return
+    const next = replaceItemKeepingPortion(current, picked)
+    const nextItems = editMeal.items.map((entry, index) =>
+      index === switchIndex ? next : entry
+    )
+    calcNewMealMacros(nextItems)
+    if (isOpenModal && modalType === 'edit') {
+      const grams =
+        (next.servingSize || 100) * (next.numberOfServings || 1) || 100
+      setItem({
+        ...next,
+        macros: toPer100gMacros(next.macros, grams),
+        servingSize: next.servingSize,
+        numberOfServings: next.numberOfServings,
+      } as Item)
+    }
+    setIsSwitchSearchOpen(false)
+  }
+
   function onSelectItem(item: MealItem) {
     const grams =
       (item.servingSize || 100) * (item.numberOfServings || 1) || 100
+    setSwitchIndex(editMeal.items.indexOf(item))
     setEditMealItem(null)
     setIsOpenModal(true)
     setModalType('edit')
@@ -445,6 +500,19 @@ export function EditMeal({ selectedMeal, saveMeal }: EditMealProps) {
         component={getModelType()}
         title={t('meals.item')}
         type={modalType === 'scan' ? 'half' : 'full'}
+      />
+      <SlideDialog
+        open={isSwitchSearchOpen}
+        onClose={() => setIsSwitchSearchOpen(false)}
+        component={
+          isSwitchSearchOpen ? (
+            <ItemSearch onPickItem={onPickSwitchItem} />
+          ) : (
+            <></>
+          )
+        }
+        title={tMeal('switchItem')}
+        type='full'
       />
     </div>
   )

@@ -161,8 +161,9 @@
   padding: 1rem !important;
   margin-bottom: 0.8rem !important;
 
-  box-shadow: rgba(0, 0, 0, 0.308) 0px 10px 20px,
-    rgba(0, 0, 0, 0.23) 0px 6px 6px;
+  outline: none;
+  box-shadow: 0 8px 20px -8px color-mix(in srgb, var(--accent) 26%, transparent),
+    0 2px 8px -4px color-mix(in srgb, #000 12%, transparent) !important;
 
   .MuiButtonBase-root {
     // background-color: $primary-color;
@@ -172,9 +173,15 @@
   }
 }
 .MuiSpeedDial-root {
+  @include favorite-accent;
+
   &.dark-mode {
     .MuiSpeedDial-actions:not(.MuiSpeedDial-actionsClosed) {
       background-color: $darker-gray;
+      outline: 1px solid color-mix(in srgb, var(--ink-on-canvas) 25%, transparent) !important;
+      box-shadow: 0 15px 24px -0px
+          color-mix(in srgb, var(--accent) 20%, transparent),
+        0 2px 10px -4px color-mix(in srgb, #000 42%, transparent) !important;
     }
   }
 }
@@ -225,10 +232,16 @@
 }
 
 .MuiSpeedDialAction-fab {
+  position: relative;
   padding: 1rem !important;
   width: 90px !important;
   height: 70px !important;
   border-radius: 10px !important;
+
+  .speed-dial-action-beam {
+    display: grid;
+    place-items: center;
+  }
   svg {
     width: 30px !important;
     height: 30px !important;

@@ -25,11 +25,11 @@ import { DeleteAction } from '../DeleteAction/DeleteAction'
 import { capitalizeFirstLetter } from '../../services/util.service'
 // import { userService } from '../../services/user/user.service'
 
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward'
-
 import BalanceIcon from '@mui/icons-material/Balance'
-
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
+import {
+  GoalTrendDownIcon,
+  GoalTrendUpIcon,
+} from '../../CustomMui/CustomIcon/goal-trend-icons'
 
 export function GoalsCard() {
   const { t } = useTranslation()
@@ -134,9 +134,9 @@ export function GoalsCard() {
   }
 
   const getTargetIcon = (target: string) => {
-    if (target === 'lose') return <ArrowDownwardIcon />
+    if (target === 'lose') return <GoalTrendDownIcon />
     if (target === 'maintain') return <BalanceIcon />
-    if (target === 'gain') return <ArrowUpwardIcon />
+    if (target === 'gain') return <GoalTrendUpIcon />
   }
 
   if (!user || !user.goals) return null

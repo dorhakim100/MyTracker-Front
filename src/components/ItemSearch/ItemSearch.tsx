@@ -72,6 +72,7 @@ import { scrollSheetToTop } from './search-sheet-scroll'
 
 interface ItemSearchProps {
   onAddToMealClick?: (item: MealItem, shouldCreateItem: boolean) => void
+  onPickItem?: (item: Item) => void
 }
 
 type UiSearchSource = 'search' | 'meal'
@@ -108,7 +109,7 @@ function mergeSearchWithFavorites(favorites: Item[], searchHits: Item[]) {
   return [...favoritesFirst, ...rest]
 }
 
-export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
+export function ItemSearch({ onAddToMealClick, onPickItem }: ItemSearchProps) {
   const { t, i18n } = useTranslation()
   const { t: tCategories } = useTranslation(itemSearchCategoriesNs)
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
@@ -346,6 +347,10 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
   }
 
   const onItemClick = (item: Item) => {
+    if (onPickItem) {
+      onPickItem(item)
+      return
+    }
     setEditMealItem(null)
     setItem(item)
     setIsItemSelected(true)
@@ -672,8 +677,8 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
           filter={filter}
           onFilterChange={onFilterChange}
           onClearQuery={onClearQuery}
-          onCustomLog={onCustomLog}
-          onScan={onScan}
+          onCustomLog={onPickItem ? undefined : onCustomLog}
+          onScan={onPickItem ? undefined : onScan}
           // onBack={browseView || filter.txt ? onBack : undefined}
           onBack={onBack}
           backDisabled={getBackDisabled()}

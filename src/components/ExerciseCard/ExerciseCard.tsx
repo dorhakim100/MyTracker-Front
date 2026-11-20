@@ -35,7 +35,7 @@ import { RestingTimerEdit } from '../RestingTimerEdit/RestingTimerEdit'
 import { DEFAULT_RESTING_TIME } from '../../assets/config/times'
 import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import AltRouteIcon from '@mui/icons-material/AltRoute'
+import SwapHorizIcon from '@mui/icons-material/SwapHoriz'
 import { useWindowDimentions } from '../../hooks/useWindowDimentions'
 import AccessAlarmIcon from '@mui/icons-material/AccessAlarm'
 import { AnimatedWrapper } from '../AnimatedWrapper/AnimatedWrapper'
@@ -245,7 +245,7 @@ export function ExerciseCard({
 
     !isExpected && {
       title: t('exercise.changeExercise'),
-      icon: <AltRouteIcon />,
+      icon: <SwapHorizIcon />,
       onClick: async () => {
         capacitorService.vibrate('Light')
         setSlideDialogOptions({
@@ -258,7 +258,7 @@ export function ExerciseCard({
     isExpected &&
       onChangeExercise && {
         title: t('exercise.changeExercise'),
-        icon: <AltRouteIcon />,
+        icon: <SwapHorizIcon />,
         onClick: async () => {
           capacitorService.vibrate('Light')
           setSlideDialogOptions({
@@ -666,61 +666,61 @@ export function ExerciseCard({
 
             {exerciseInstructions && exerciseInstructions.sets && (
               <ExerciseEditor
-                  // isInstructionsLoadingProp={isInstructionsLoading}
-                  isLoading={isLoading}
-                  isInstructionsLoadingProp={
-                    instructions._id ? isInstructionsLoading : false
-                  }
-                  isFirstWeek={
-                    instructions._id ? instructions.weekNumber === 1 : true
-                  }
-                  exerciseSets={exerciseSets}
-                  previousInstructions={previousInstructions}
-                  exercise={exerciseInstructions}
-                  isOpen={isOpen}
-                  updateExercise={
-                    isExpected
-                      ? updateExerciseInInstructions
-                      : (exerciseToUpdate, setIndex) =>
-                          updateExercise?.(
-                            {
-                              ...exerciseToUpdate,
-                              image: exercise.image,
-                            },
-                            setIndex
-                          )
-                  }
-                  addSet={
-                    isExpected
-                      ? undefined
-                      : (exerciseToUpdate, setIndex) =>
-                          addSet?.(
-                            { ...exerciseToUpdate, image: exercise.image },
-                            setIndex
-                          )
-                  }
-                  removeSet={
-                    isExpected
-                      ? undefined
-                      : (exerciseToUpdate, setIndex) =>
-                          removeSet?.(
-                            { ...exerciseToUpdate, image: exercise.image },
-                            setIndex
-                          )
-                  }
-                  markSetAsDone={
-                    isExpected
-                      ? undefined
-                      : (exerciseToUpdate, setIndex, isAll?: boolean) =>
-                          markSetAsDone?.(
-                            { ...exerciseToUpdate, image: exercise.image },
-                            setIndex,
-                            isAll
-                          )
-                  }
-                  isExpected={isExpected}
-                />
-              )}
+                // isInstructionsLoadingProp={isInstructionsLoading}
+                isLoading={isLoading}
+                isInstructionsLoadingProp={
+                  instructions._id ? isInstructionsLoading : false
+                }
+                isFirstWeek={
+                  instructions._id ? instructions.weekNumber === 1 : true
+                }
+                exerciseSets={exerciseSets}
+                previousInstructions={previousInstructions}
+                exercise={exerciseInstructions}
+                isOpen={isOpen}
+                updateExercise={
+                  isExpected
+                    ? updateExerciseInInstructions
+                    : (exerciseToUpdate, setIndex) =>
+                        updateExercise?.(
+                          {
+                            ...exerciseToUpdate,
+                            image: exercise.image,
+                          },
+                          setIndex
+                        )
+                }
+                addSet={
+                  isExpected
+                    ? undefined
+                    : (exerciseToUpdate, setIndex) =>
+                        addSet?.(
+                          { ...exerciseToUpdate, image: exercise.image },
+                          setIndex
+                        )
+                }
+                removeSet={
+                  isExpected
+                    ? undefined
+                    : (exerciseToUpdate, setIndex) =>
+                        removeSet?.(
+                          { ...exerciseToUpdate, image: exercise.image },
+                          setIndex
+                        )
+                }
+                markSetAsDone={
+                  isExpected
+                    ? undefined
+                    : (exerciseToUpdate, setIndex, isAll?: boolean) =>
+                        markSetAsDone?.(
+                          { ...exerciseToUpdate, image: exercise.image },
+                          setIndex,
+                          isAll
+                        )
+                }
+                isExpected={isExpected}
+              />
+            )}
           </Card>
         </FillProgress>
       </AnimatedWrapper>

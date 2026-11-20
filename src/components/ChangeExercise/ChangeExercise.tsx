@@ -19,7 +19,7 @@ import { EquipmentSelect } from '../ExercisesFilter/EquipmentSelect'
 import { ExerciseFilter } from '../../types/exerciseFilter/ExerciseFilter'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 
-import SwitchAccessShortcutAddIcon from '@mui/icons-material/SwitchAccessShortcutAdd'
+import SwapHorizIcon from '@mui/icons-material/SwapHoriz'
 import { exerciseImage } from '../../assets/config/exercise-image'
 // import { chatGPTService } from '../../services/chatGPT/chat.gpt.service'
 import { SkeletonList } from '../SkeletonList/SkeletonList'
@@ -285,7 +285,7 @@ export function ChangeExercise({
             onItemClick={(exercise) => onExerciseClick(exercise)}
             renderRight={(exercise) => (
               <CustomButton
-                icon={<SwitchAccessShortcutAddIcon />}
+                icon={<SwapHorizIcon />}
                 onClick={(ev) => {
                   ev.stopPropagation()
                   onChangeExercise(exercise)

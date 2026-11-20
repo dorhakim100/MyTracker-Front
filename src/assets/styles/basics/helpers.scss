@@ -621,10 +621,9 @@ body.dark-mode {
   box-shadow: none !important;
 }
 
-.dark-mode {
-  .css-1v4ozrc-MuiButtonBase-root-MuiCheckbox-root {
-    color: $white !important;
-  }
+body.dark-mode .MuiCheckbox-root:not(.Mui-checked):not(.Mui-disabled),
+.dark-mode .MuiCheckbox-root:not(.Mui-checked):not(.Mui-disabled) {
+  color: var(--ink-on-canvas);
 }
 
 .MuiCheckbox-root {

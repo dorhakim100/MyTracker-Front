@@ -120,6 +120,50 @@ export function matchAiLine(
   )
 }
 
+export function replaceItemKeepingPortion(
+  current: MealItem,
+  picked: Item
+): MealItem {
+  const grams =
+    (current.servingSize || 100) * (current.numberOfServings || 1) || 100
+  const pickedFields = { ...picked }
+  delete pickedFields.items
+
+  return {
+    ...pickedFields,
+    macros: scaleMacros(
+      picked.macros || { calories: 0, protein: 0, carbs: 0, fat: 0 },
+      grams
+    ),
+    servingSize: current.servingSize || 100,
+    numberOfServings: current.numberOfServings || 1,
+    source: picked.type || current.source,
+    unit: picked.unit || current.unit,
+  }
+}
+
+export function aiLineForPickedItem(
+  line: AiLogLine,
+  picked: Item,
+  name: string
+): AiLogLine {
+  const pickedItem = { ...picked }
+  delete pickedItem.items
+
+  return {
+    ...line,
+    name: name || line.name,
+    per100g: {
+      calories: picked.macros?.calories || 0,
+      protein: picked.macros?.protein || 0,
+      carbs: picked.macros?.carbs || 0,
+      fat: picked.macros?.fat || 0,
+    },
+    source: picked.type === 'custom' ? 'custom' : 'catalog',
+    item: pickedItem,
+  }
+}
+
 export function estimateForLine(
   estimate: AiLogEstimate | null | undefined,
   index: number

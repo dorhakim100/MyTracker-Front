@@ -19,8 +19,8 @@ interface ItemFilterProps {
   filter: Filter
   onFilterChange: (filter: Filter) => void
   onClearQuery: () => void
-  onCustomLog: () => void
-  onScan: () => void
+  onCustomLog?: () => void
+  onScan?: () => void
   onBack?: () => void
   backLabel?: string
   backDisabled?: boolean
@@ -81,12 +81,14 @@ export function ItemFilter({
           )}
           className={`${prefs.favoriteColor}`}
         />
-        <CustomButton
-          isIcon
-          icon={<QrCode2Icon />}
-          onClick={onScan}
-          ariaLabel={t('meals.scanItem')}
-        />
+        {onScan && (
+          <CustomButton
+            isIcon
+            icon={<QrCode2Icon />}
+            onClick={onScan}
+            ariaLabel={t('meals.scanItem')}
+          />
+        )}
       </div>
 
       <div className='search-toolbar'>
@@ -112,12 +114,14 @@ export function ItemFilter({
             prefs.isDarkMode ? 'dark-mode' : ''
           } item-filter-select`}
         />
-        <CustomButton
-          onClick={onCustomLog}
-          text={t('meals.custom')}
-          icon={<AddIcon />}
-          className='custom-add-button'
-        />
+        {onCustomLog && (
+          <CustomButton
+            onClick={onCustomLog}
+            text={t('meals.custom')}
+            icon={<AddIcon />}
+            className='custom-add-button'
+          />
+        )}
       </div>
     </Box>
   )

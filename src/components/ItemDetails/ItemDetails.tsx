@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useRef } from 'react'
+import { useCallback, useEffect, useState, useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 
@@ -14,6 +14,8 @@ import { getArrayOfNumbers, getCurrMeal } from '../../services/util.service'
 import { searchService } from '../../services/search/search-service'
 import Typography from '@mui/material/Typography'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
+import { useSlideDialogHeaderAction } from '../SlideDialog/slide-dialog-header-action'
+import { ItemSearch } from '../ItemSearch/ItemSearch'
 import AddIcon from '@mui/icons-material/Add'
 import CheckIcon from '@mui/icons-material/Check'
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera'
@@ -57,7 +59,12 @@ import {
   toDisplayedMacros,
   toPer100gMacros,
 } from '../../types/aiLog/AiLog'
-import { estimateForLine, matchAiLine } from '../../services/aiLog/aiLog.mapper'
+import {
+  aiLineForPickedItem,
+  estimateForLine,
+  matchAiLine,
+  replaceItemKeepingPortion,
+} from '../../services/aiLog/aiLog.mapper'
 import { AiEstimateCaption } from './AiEstimateCaption/AiEstimateCaption'
 import './AiEstimateCaption/locals'
 
@@ -92,6 +99,7 @@ import {
 } from '../../services/item/item-details-prefs.service'
 import { itemDetailsNs } from './locals'
 import AutorenewIcon from '@mui/icons-material/Autorenew'
+import SwapHorizIcon from '@mui/icons-material/SwapHoriz'
 // import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye'
 import { searchUrls } from '../../assets/config/search.urls'
 import MealImage from '../../../public/meal-upload.png'
@@ -110,6 +118,7 @@ interface ItemDetailsProps {
   shouldDefaultItemMacros?: boolean
   previewItem?: Item | Meal | Log | MealItem | null
   aiSuggestion?: AiLogEstimate | null
+  onRequestSwitch?: () => void
 }
 
 interface EditOption {
@@ -263,6 +272,7 @@ export function ItemDetails({
   shouldDefaultItemMacros = false,
   previewItem = null,
   aiSuggestion: aiSuggestionProp,
+  onRequestSwitch,
 }: ItemDetailsProps) {
   const { t, i18n } = useTranslation()
   const { t: tDetails } = useTranslation(itemDetailsNs)
@@ -319,6 +329,9 @@ export function ItemDetails({
     (item as Item).type === searchTypes.custom
 
   const canEditCustomChrome = isCustom && !noEdit
+  const isAiMealResult =
+    aiSuggestion?.mode === 'meal' && !noEdit && !previewItem
+  const canSwitchNested = isAiMealResult
   // &&
   // (!(item as Log).createdBy || (item as Log).createdBy === user?._id)
 
@@ -370,6 +383,7 @@ export function ItemDetails({
     canEditCustomChrome && !editMealItem && !item?.createdBy && !aiSuggestion
   )
   const [isUploadingImage, setIsUploadingImage] = useState(false)
+  const [loadedHeroSrc, setLoadedHeroSrc] = useState<string | null>(null)
   const imageInputRef = useRef<HTMLInputElement>(null)
   const [customSearchId, setCustomSearchId] = useState(() =>
     String((item as Item).searchId || '')
@@ -380,13 +394,38 @@ export function ItemDetails({
   const [nestedPreviewIndex, setNestedPreviewIndex] = useState<number | null>(
     null
   )
+  const [switchSearchIndex, setSwitchSearchIndex] = useState<number | null>(
+    null
+  )
+  const [isEditMealOpen, setIsEditMealOpen] = useState(false)
+  const [isScanSearchId, setIsScanSearchId] = useState(false)
+  const [isSavingItem, setIsSavingItem] = useState(false)
+  const nestedPreviewIndexRef = useRef(nestedPreviewIndex)
+  nestedPreviewIndexRef.current = nestedPreviewIndex
+  const onRequestNestedSwitch = useCallback(() => {
+    const index = nestedPreviewIndexRef.current
+    if (index == null) return
+    setSwitchSearchIndex(index)
+  }, [])
+  const switchHeaderAction = useMemo(() => {
+    if (!onRequestSwitch) return null
+    return (
+      <CustomButton
+        isIcon
+        icon={<SwapHorizIcon />}
+        variant='flat'
+        className='slide-dialog-header-action'
+        ariaLabel={tDetails('switchItem')}
+        tooltipTitle={tDetails('switchItem')}
+        onClick={onRequestSwitch}
+      />
+    )
+  }, [onRequestSwitch, tDetails])
+  useSlideDialogHeaderAction(switchHeaderAction)
   const nestedPreview =
     nestedPreviewIndex == null
       ? null
       : (item as Item).items?.[nestedPreviewIndex] || null
-  const [isEditMealOpen, setIsEditMealOpen] = useState(false)
-  const [isScanSearchId, setIsScanSearchId] = useState(false)
-  const [isSavingItem, setIsSavingItem] = useState(false)
 
   const mealValueLabels = useMemo(
     () => ({
@@ -535,7 +574,12 @@ export function ItemDetails({
           ? ''
           : itemNameService.getItemDisplayName(item?.name, i18n.language),
     })
-    setCustomImage(item?.image)
+    setCustomImage((current) => {
+      if (aiSuggestion?.mode === 'meal' && !item?.image && current) {
+        return current
+      }
+      return item?.image
+    })
     setCustomCategories(getItemCategories(item))
     setCustomSearchId(String((item as Item).searchId || ''))
     setCustomUnit(getItemUnit(item))
@@ -943,6 +987,7 @@ export function ItemDetails({
     if (aiSuggestion?.mode !== 'meal') return
 
     const currentItems = (item as Item).items || []
+    if (currentItems.length <= 1) return
     const nextItems = currentItems.filter((_, i) => i !== index)
     const nextMacros = nextItems.reduce(
       (acc, nested) => ({
@@ -966,6 +1011,49 @@ export function ItemDetails({
       ...aiSuggestion,
       items: aiSuggestion.items.filter((_, i) => i !== index),
     })
+  }
+
+  function onReplaceNestedItem(index: number, picked: Item) {
+    const currentItems = (item as Item).items || []
+    const current = currentItems[index]
+    if (!current) return
+
+    const nextItems = currentItems.map((nested, itemIndex) =>
+      itemIndex === index ? replaceItemKeepingPortion(nested, picked) : nested
+    )
+    const nextMacros = nextItems.reduce(
+      (acc, nested) => ({
+        calories: acc.calories + (nested.macros?.calories || 0),
+        protein: acc.protein + (nested.macros?.protein || 0),
+        carbs: acc.carbs + (nested.macros?.carbs || 0),
+        fat: acc.fat + (nested.macros?.fat || 0),
+      }),
+      { calories: 0, protein: 0, carbs: 0, fat: 0 }
+    )
+    const draft: Item = {
+      ...(item as Item),
+      items: nextItems,
+      macros: nextMacros,
+      type: 'meal',
+    }
+
+    setItem(draft)
+    setAiDraftItem(draft)
+    if (aiSuggestion?.mode === 'meal' && aiSuggestion.items[index]) {
+      const name = itemNameService.getItemDisplayName(picked.name, i18n.language)
+      setAiSuggestion({
+        ...aiSuggestion,
+        items: aiSuggestion.items.map((line, lineIndex) =>
+          lineIndex === index ? aiLineForPickedItem(line, picked, name) : line
+        ),
+      })
+    }
+  }
+
+  function onPickSwitchItem(picked: Item) {
+    if (switchSearchIndex == null) return
+    onReplaceNestedItem(switchSearchIndex, picked)
+    setSwitchSearchIndex(null)
   }
 
   async function onSaveEditedMeal(editMeal: Meal) {
@@ -1103,7 +1191,12 @@ export function ItemDetails({
     if (searchedItem) searchedItem.image = undefined
   }
 
-  const displayImage = isCustom ? customImage : item?.image
+  const displayImage = isCustom || isAiMealResult ? customImage : item?.image
+  const isAiMealImageLoading =
+    isAiMealResult && !!displayImage && loadedHeroSrc !== displayImage
+  const showMissingImageUpload =
+    !displayImage &&
+    (canEditCustomChrome || (isAiMealResult && !isUploadingImage))
   const displayCategories = isCustom
     ? customCategories
     : getItemCategories(item)
@@ -1338,14 +1431,26 @@ export function ItemDetails({
             className='hero-image box-shadow white-outline'
             onClick={displayImage ? openImageModal : undefined}
           >
-            {(displayImage && (
+            {isAiMealImageLoading && (
+              <CustomSkeleton
+                variant='rectangular'
+                width='100%'
+                height='100%'
+                className='hero-image-skeleton'
+                isDarkMode={prefs.isDarkMode}
+              />
+            )}
+            {displayImage ? (
               <img
                 src={displayImage}
                 alt={heroName}
+                className={isAiMealImageLoading ? 'hero-image-pending' : ''}
                 referrerPolicy='no-referrer'
+                onLoad={() => setLoadedHeroSrc(displayImage)}
                 onError={async (e) => {
-                  if (isCustom) {
+                  if (isCustom || isAiMealResult) {
                     setCustomImage(undefined)
+                    setLoadedHeroSrc(null)
                     return
                   }
                   renderErrorImage()
@@ -1353,34 +1458,35 @@ export function ItemDetails({
                   loadItems()
                 }}
               />
-            )) ||
-              (!canEditCustomChrome ? (
+            ) : showMissingImageUpload ? (
+              <div
+                className='edit-custom-log-img-placeholder'
+                onClick={(event) => {
+                  event.stopPropagation()
+                  imageInputRef.current?.click()
+                }}
+              >
+                {!item?.createdBy && !item?.image && (
+                  <Typography variant='body1'>
+                    {t('customLog.uploadImage')}
+                  </Typography>
+                )}
+                <img
+                  src={MealImage}
+                  alt='Meal image'
+                  className='edit-custom-log-img-placeholder-img'
+                />
+              </div>
+            ) : (
+              !isAiMealImageLoading && (
                 <CustomSkeleton
                   variant='rectangular'
                   width='100%'
                   height='100%'
                   isDarkMode={prefs.isDarkMode}
                 />
-              ) : (
-                <div
-                  className='edit-custom-log-img-placeholder'
-                  onClick={(event) => {
-                    event.stopPropagation()
-                    imageInputRef.current?.click()
-                  }}
-                >
-                  {!item?.createdBy && !item?.image && (
-                    <Typography variant='body1'>
-                      {t('customLog.uploadImage')}
-                    </Typography>
-                  )}
-                  <img
-                    src={MealImage}
-                    alt='Meal image'
-                    className='edit-custom-log-img-placeholder-img'
-                  />
-                </div>
-              ))}
+              )
+            )}
             {!noEdit && !isCustom && !_hasItems(item) && (
               <div
                 className='favorite-on-media'
@@ -1394,20 +1500,22 @@ export function ItemDetails({
                 />
               </div>
             )}
-            {canEditCustomChrome && (
+            {(canEditCustomChrome || (isAiMealResult && !displayImage)) && (
               <>
-                <button
-                  type='button'
-                  className='hero-edit-photo'
-                  onClick={(event) => {
-                    event.stopPropagation()
-                    imageInputRef.current?.click()
-                  }}
-                  aria-label={tDetails('uploadImage')}
-                  disabled={isUploadingImage}
-                >
-                  <PhotoCameraIcon fontSize='small' />
-                </button>
+                {canEditCustomChrome && (
+                  <button
+                    type='button'
+                    className='hero-edit-photo'
+                    onClick={(event) => {
+                      event.stopPropagation()
+                      imageInputRef.current?.click()
+                    }}
+                    aria-label={tDetails('uploadImage')}
+                    disabled={isUploadingImage}
+                  >
+                    <PhotoCameraIcon fontSize='small' />
+                  </button>
+                )}
                 <input
                   ref={imageInputRef}
                   type='file'
@@ -1653,19 +1761,35 @@ export function ItemDetails({
                         : ''}
                     </span>
                   </div>
-                  {aiSuggestion?.mode === 'meal' && !noEdit && !previewItem && (
-                    <CustomButton
-                      isIcon
-                      size='small'
-                      variant='flat'
-                      icon={<DeleteIcon fontSize='small' />}
-                      ariaLabel={tDetails('removeFromMeal')}
-                      className='nested-item-remove-button'
-                      onClick={(event) => {
-                        event.stopPropagation()
-                        onRemoveNestedItem(index)
-                      }}
-                    />
+                  {canSwitchNested && (
+                    <div className='nested-item-actions'>
+                      <CustomButton
+                        isIcon
+                        size='small'
+                        variant='flat'
+                        icon={<SwapHorizIcon fontSize='small' />}
+                        ariaLabel={tDetails('switchItem')}
+                        tooltipTitle={tDetails('switchItem')}
+                        onClick={(event) => {
+                          event.stopPropagation()
+                          setSwitchSearchIndex(index)
+                        }}
+                      />
+                      {(item.items?.length || 0) > 1 && (
+                        <CustomButton
+                          isIcon
+                          size='small'
+                          variant='flat'
+                          icon={<DeleteIcon fontSize='small' />}
+                          ariaLabel={tDetails('removeFromMeal')}
+                          className='nested-item-remove-button'
+                          onClick={(event) => {
+                            event.stopPropagation()
+                            onRemoveNestedItem(index)
+                          }}
+                        />
+                      )}
+                    </div>
                   )}
                   {/* <CustomButton
                     icon={<RemoveRedEyeIcon />}
@@ -1762,8 +1886,9 @@ export function ItemDetails({
               className={`box-shadow white-outline`}
               referrerPolicy='no-referrer'
               onError={async (e) => {
-                if (isCustom) {
+                if (isCustom || isAiMealResult) {
                   setCustomImage(undefined)
+                  setLoadedHeroSrc(null)
                   return
                 }
                 await imageService.fetchOnError(e, item as Item)
@@ -1788,6 +1913,9 @@ export function ItemDetails({
               noEdit
               previewItem={nestedPreview}
               shouldDefaultItemMacros
+              onRequestSwitch={
+                canSwitchNested ? onRequestNestedSwitch : undefined
+              }
               aiSuggestion={
                 nestedPreviewIndex != null
                   ? estimateForLine(aiSuggestion, nestedPreviewIndex)
@@ -1807,6 +1935,19 @@ export function ItemDetails({
             : ''
         }
         type='half'
+      />
+      <SlideDialog
+        open={switchSearchIndex != null}
+        onClose={() => setSwitchSearchIndex(null)}
+        component={
+          switchSearchIndex == null ? (
+            <></>
+          ) : (
+            <ItemSearch onPickItem={onPickSwitchItem} />
+          )
+        }
+        title={tDetails('switchItem')}
+        type='full'
       />
       <SlideDialog
         open={isEditMealOpen}
