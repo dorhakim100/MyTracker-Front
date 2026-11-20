@@ -46,6 +46,7 @@ import {
   withInstructionExercises,
 } from './utils'
 import { Divider } from '@mui/material'
+import CustomSkeleton from '../../CustomMui/CustomSkeleton/CustomSkeleton'
 
 interface RoutineDetailsProps {
   workout: Workout
@@ -87,7 +88,7 @@ export function RoutineDetails({ workout }: RoutineDetailsProps) {
   const [isEditOpen, setIsEditOpen] = useState(false)
   const [recap, setRecap] = useState<SessionStatsRecap | null>(null)
   const [isStatsOpen, setIsStatsOpen] = useState(false)
-
+  const [loadingSessions, setLoadingSessions] = useState(true)
   const [loadingStatisticsId, setLoadingStatisticsId] = useState<string | null>(
     null
   )
@@ -190,6 +191,7 @@ export function RoutineDetails({ workout }: RoutineDetailsProps) {
     let cancelled = false
     const load = async () => {
       try {
+        setLoadingSessions(true)
         const res = await sessionService.listByWorkoutWeek(
           forUserId,
           workoutId,
@@ -201,6 +203,8 @@ export function RoutineDetails({ workout }: RoutineDetailsProps) {
         if (cancelled) return
         setSessions([])
         showErrorMsg(tApp('messages.error.getSessionDay'))
+      } finally {
+        setLoadingSessions(false)
       }
     }
     load()
@@ -333,7 +337,15 @@ export function RoutineDetails({ workout }: RoutineDetailsProps) {
           {workout._id && (
             <div className='sessions-messages-contianer'>
               <div className='session-list'>
-                {sessions.length > 0 && (
+                {loadingSessions && (
+                  <CustomSkeleton
+                    width={200}
+                    height={25}
+                    variant='text'
+                    isDarkMode={prefs.isDarkMode}
+                  />
+                )}
+                {!loadingSessions && sessions.length > 0 && (
                   <>
                     <span className='session-heading'>{t('sessions')}</span>
                     <Divider

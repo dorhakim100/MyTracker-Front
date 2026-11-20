@@ -16,9 +16,7 @@ import { useEffect, useState, type ReactNode } from 'react'
 import { HealthActivity } from '../HealthActivity/HealthActivity'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import type { ActivityMetric } from '../../types/health/Activity'
-import {
-  StepsMedalIcon,
-} from '../../CustomMui/CustomIcon/medal-icons'
+import { StepsMedalIcon } from '../../CustomMui/CustomIcon/medal-icons'
 
 export interface HealthStatsProps {
   steps: number
@@ -62,8 +60,6 @@ export function HealthStats({
   const [activityMetric, setActivityMetric] = useState<ActivityMetric | null>(
     null
   )
-
-  console.log(activityMetric)
 
   const isDashboard = useSelector(
     (state: RootState) => state.systemModule.isDashboard

@@ -11,9 +11,9 @@
 
 .workout-header-container {
   display: grid;
-  gap: 1rem 0;
+  gap: 0.5rem;
   grid-template-columns: 1fr auto;
-  grid-template-rows: repeat(2, 1fr);
+  grid-template-rows: repeat(2, auto);
   align-items: center;
   justify-content: space-between;
   // margin-top: 1rem;
@@ -23,7 +23,8 @@
 
   // min-height: 130px;
 
-  padding-inline-start: 0.8rem;
+  padding-inline: 0.8rem;
+  padding-bottom: 0.8rem;
   border-radius: 4px;
 
   .workout-name-container {
@@ -38,9 +39,8 @@
     grid-column: 2/3;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    align-self: start;
-    justify-content: flex-end;
+    height: 100%;
+    justify-content: space-around;
 
     .MuiIconButton-root,
     .options-menu-trigger-content {

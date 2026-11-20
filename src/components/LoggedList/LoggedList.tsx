@@ -259,7 +259,6 @@ export function LoggedList({
   // }
 
   const onItemClick = async (mealItem: Log) => {
-    setIsEditOpen(true)
     const logToEdit = { ...mealItem }
     let itemToSet
 
@@ -269,6 +268,7 @@ export function LoggedList({
         ...logToEdit,
         type: searchTypes.custom,
       } as Item)
+      setIsEditOpen(true)
       return
     }
 
@@ -276,6 +276,10 @@ export function LoggedList({
       const cachedItem = cachedItems.find(
         (i) => i.searchId === logToEdit.itemId
       )
+      if (!cachedItem) {
+        return
+      }
+      setIsEditOpen(true)
 
       if (cachedItem) {
         logToEdit.name = itemNameService.getItemDisplayName(
