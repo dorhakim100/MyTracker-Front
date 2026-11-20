@@ -26,11 +26,13 @@
 // Lift the tile off the sheet canvas. Mixing against --canvas-color keeps the
 // tint of the active favorite color in every mode.
 body.dark-mode .item-category-tile.card {
-  background-color: color-mix(
-    in srgb,
-    $white 9%,
-    var(--canvas-color)
-  ) !important;
+  &:not(.primary) {
+    background-color: color-mix(
+      in srgb,
+      $white 9%,
+      var(--canvas-color)
+    ) !important;
+  }
 }
 
 .item-category-tile-art {

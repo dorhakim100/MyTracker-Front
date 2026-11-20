@@ -652,6 +652,12 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
     slideClass = isForward !== isRtl ? 'from-end' : 'from-start'
   }
 
+  const getBackDisabled = () => {
+    if (browseView) return false
+    if (filter.txt && !isLoading) return false
+    return true
+  }
+
   const viewKey = browseView || (filter.txt ? 'search' : 'home')
 
   return (
@@ -668,7 +674,9 @@ export function ItemSearch({ onAddToMealClick }: ItemSearchProps) {
           onClearQuery={onClearQuery}
           onCustomLog={onCustomLog}
           onScan={onScan}
-          onBack={browseView || filter.txt ? onBack : undefined}
+          // onBack={browseView || filter.txt ? onBack : undefined}
+          onBack={onBack}
+          backDisabled={getBackDisabled()}
           backLabel={tCategories('back')}
         />
 

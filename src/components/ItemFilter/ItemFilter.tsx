@@ -23,6 +23,7 @@ interface ItemFilterProps {
   onScan: () => void
   onBack?: () => void
   backLabel?: string
+  backDisabled?: boolean
 }
 
 export function ItemFilter({
@@ -33,6 +34,7 @@ export function ItemFilter({
   onScan,
   onBack,
   backLabel,
+  backDisabled,
 }: ItemFilterProps) {
   const { t } = useTranslation()
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
@@ -50,7 +52,7 @@ export function ItemFilter({
   ]
 
   const sortByValueLabels = {
-    'relevance': t('meals.sortRelevance'),
+    relevance: t('meals.sortRelevance'),
     'calories (high to low)': t('meals.sortCaloriesHighToLow'),
     'calories (low to high)': t('meals.sortCaloriesLowToHigh'),
     'protein (high to low)': t('meals.sortProteinHighToLow'),
@@ -70,7 +72,10 @@ export function ItemFilter({
           placeholder={t('meals.searchItems')}
           startIconFn={() => <SearchIcon />}
           endIconFn={() => (
-            <IconButton aria-label='close' onClick={onClearQuery}>
+            <IconButton
+              aria-label='close'
+              onClick={onClearQuery}
+            >
               <CloseIcon />
             </IconButton>
           )}
@@ -93,6 +98,7 @@ export function ItemFilter({
             ariaLabel={backLabel || 'Back'}
             variant='subtle'
             className='item-filter-back'
+            disabled={backDisabled}
           />
         )}
         <CustomSelect

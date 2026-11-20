@@ -1418,20 +1418,42 @@ export function ItemDetails({
               </>
             )}
           </div>
-          <div className='macros-primary'>
+          <div
+            className={`macros-primary ${
+              canEditCustomChrome ? 'has-edit-macros' : ''
+            }`}
+            onClick={openMacros}
+          >
             <MacrosDonut
               size={148}
               {...getPrimaryDonutProps()}
             />
             <span className='macros-label'>{primaryLabel}</span>
+            {canEditCustomChrome && (
+              <CustomButton
+                onClick={openMacros}
+                icon={<EditIcon />}
+                isIcon={true}
+                size='small'
+                className={`${prefs.favoriteColor} ${
+                  prefs.isDarkMode ? 'dark-mode' : ''
+                }`}
+                wrapperClassName='edit-macros-icon-button-container'
+              />
+            )}
             {!previewItem && (
-              <div className='switch-button-container'>
+              <div
+                className={`switch-button-container ${
+                  canEditCustomChrome ? 'has-edit-macros' : ''
+                }`}
+              >
                 <CustomButton
-                  onClick={() =>
+                  onClick={(ev) => {
+                    ev.stopPropagation()
                     onMacrosViewChange(
                       macrosView === 'per100g' ? 'dayProgress' : 'per100g'
                     )
-                  }
+                  }}
                   icon={<AutorenewIcon />}
                   isIcon={true}
                   size='small'
@@ -1661,7 +1683,10 @@ export function ItemDetails({
             </ul>
           </div>
         )}
-        <div className='macros-container'>
+        <div
+          className='macros-container'
+          onClick={openMacros}
+        >
           <div className='macros-small'>
             <MacrosDonut
               size={108}
