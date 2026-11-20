@@ -19,7 +19,7 @@ import { CustomList } from '../../CustomMui/CustomList/CustomList'
 import {
   setItem,
   setEditMealItem,
-  loadItems,
+  addCachedItems,
 } from '../../store/actions/item.actions'
 
 import { logService } from '../../services/log/log.service'
@@ -156,9 +156,17 @@ export function LoggedList({
           : selectedDay?.logs || user?.loggedToday?.logs || []
       if (!logsToLoad.length) return
 
-      await searchService.searchBulkIds(logsToLoad) // actual update from api
+      const missingLogs = logsToLoad.filter(
+        (log) =>
+          log.itemId &&
+          log.source !== searchTypes.custom &&
+          log.source !== searchTypes.meal &&
+          !cachedItems.some((item) => item.searchId === log.itemId)
+      )
+      if (!missingLogs.length) return
 
-      const items = await loadItems() // actual update from api
+      const items = await searchService.searchBulkIds(missingLogs)
+      addCachedItems(items)
 
       return items
     } catch (err) {

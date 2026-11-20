@@ -288,7 +288,11 @@ async function searchBulkIds(logs: Log[]) {
     const productsIds = logs
       .filter(
         (log) =>
-          log.source === sourceTypes.product || log.source === 'open-food-facts'
+          log.source === sourceTypes.product ||
+          log.source === 'open-food-facts' ||
+          log.source === searchTypes.custom ||
+          log.source === searchTypes.usda ||
+          log.source === searchTypes.meal
       )
       .map((log) => log.itemId)
       .filter((id) => id !== undefined)

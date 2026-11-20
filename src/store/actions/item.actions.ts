@@ -30,6 +30,19 @@ export async function loadItems(): Promise<Item[]> {
   }
 }
 
+export function addCachedItems(items: Item[]) {
+  const current: Item[] = store.getState().itemModule.items
+  const known = new Set(current.map((item) => item.searchId).filter(Boolean))
+  const missing = items.filter(
+    (item) => item?.searchId && !known.has(item.searchId)
+  )
+  if (!missing.length) return current
+
+  const next = [...current, ...missing]
+  store.dispatch(getCmdSetItems(next))
+  return next
+}
+
 export function setItem(item: Item | null) {
   store.dispatch(getCmdSetItem(item ?? itemService.getEmptyItem()))
 }
