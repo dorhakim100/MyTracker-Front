@@ -340,7 +340,7 @@ async function searchBulkIds(logs: Log[]) {
         : Promise.resolve([] as Meal[]),
     ])
 
-    const mealItems: Item[] = meals.map((meal) => ({
+    const mealItems: Item[] = meals.map((meal: Meal) => ({
       _id: meal._id,
       searchId: meal._id,
       name: meal.name,
