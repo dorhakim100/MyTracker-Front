@@ -39,6 +39,7 @@ import { estimateToItem } from '../../services/aiLog/aiLog.mapper'
 import type { AiLogEstimate } from '../../types/aiLog/AiLog'
 import { PressRipple } from '../PressRipple/PressRipple'
 import { BorderBeam } from 'border-beam'
+import { beamDuration } from '../CustomButton/CustomButton'
 
 type ModalType = 'search' | 'ai'
 
@@ -257,6 +258,7 @@ export function FixedBottomNavigation(props: {
                       borderRadius={10}
                       theme='dark'
                       active={isAddModal}
+                      duration={beamDuration.slow}
                       className='speed-dial-action-beam'
                       style={{ position: 'absolute', inset: 0 }}
                     >

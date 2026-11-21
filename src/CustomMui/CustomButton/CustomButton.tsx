@@ -17,6 +17,14 @@ export type CustomButtonVariant =
   | 'black'
   | 'white'
 
+export type BeamSpeed = 'slow' | 'medium' | 'fast'
+
+export const beamDuration: Record<BeamSpeed, number> = {
+  slow: 5,
+  medium: 3,
+  fast: 1.96,
+}
+
 interface CustomButtonProps {
   text?: string
   className?: string
@@ -36,6 +44,7 @@ interface CustomButtonProps {
   borderIcon?: boolean
   wrapperClassName?: string
   aiButton?: boolean
+  beamSpeed?: BeamSpeed
 }
 
 export function CustomButton({
@@ -57,6 +66,7 @@ export function CustomButton({
   borderIcon = false,
   wrapperClassName,
   aiButton = false,
+  beamSpeed = 'medium',
 }: CustomButtonProps) {
   const resolvedVariant = variant ?? (isIcon ? 'medium' : 'strong')
   const prefs = useSelector(
@@ -68,10 +78,10 @@ export function CustomButton({
     resolvedVariant === 'black'
       ? 'dark'
       : resolvedVariant === 'white'
-        ? 'light'
-        : prefs.isDarkMode
-          ? 'dark'
-          : 'light'
+      ? 'light'
+      : prefs.isDarkMode
+      ? 'dark'
+      : 'light'
 
   const isDashboard = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.isDashboard
@@ -87,6 +97,7 @@ export function CustomButton({
         borderRadius={isIcon ? 999 : 10}
         theme={beamTheme}
         active={!disabled}
+        duration={beamDuration[beamSpeed]}
         className={`custom-button-beam${fullWidth ? ' full-width' : ''}`}
       >
         {node}
