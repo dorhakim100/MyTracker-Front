@@ -778,12 +778,10 @@ export function ExerciseCard({
       <SlideDialog
         open={slideDialogOptions.open}
         onClose={() =>
-          setSlideDialogOptions({
-            ...slideDialogOptions,
+          setSlideDialogOptions((prev) => ({
+            ...prev,
             open: false,
-            type: 'exercise-details',
-            title: '',
-          })
+          }))
         }
         title={getSlideDialogTitle()}
         component={getSlideDialogComponent()}

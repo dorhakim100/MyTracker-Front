@@ -30,10 +30,12 @@
   }
 
   .set-type-rest {
-    margin-top: 0.35rem;
-    padding: 0.85rem 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.35rem;
+    padding: 0.35rem 0.25rem 0.75rem;
     font-weight: 600;
-    text-align: start;
-    cursor: pointer;
   }
 }

@@ -1,5 +1,7 @@
 import { useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
+import AccessTimeIcon from '@mui/icons-material/AccessTime'
+import { CustomButton } from '../../../CustomMui/CustomButton/CustomButton'
 import { CustomList } from '../../../CustomMui/CustomList/CustomList'
 import { RootState } from '../../../store/store'
 import { setMark } from '../../../services/set/set-type'
@@ -46,6 +48,20 @@ export function SetTypeSheet({
 
   return (
     <div className='set-type-sheet-container'>
+      {restLabel && onEditRest && (
+        <div className='set-type-rest'>
+          <span>{restLabel}</span>
+          <CustomButton
+            isIcon
+            variant='flat'
+            size='small'
+            icon={<AccessTimeIcon />}
+            onClick={onEditRest}
+            tooltipTitle={t('editRest')}
+            ariaLabel={t('editRest')}
+          />
+        </div>
+      )}
       <CustomList
         items={TYPES}
         getKey={(item) => item.type}
@@ -75,14 +91,6 @@ export function SetTypeSheet({
           )
         }
       />
-      {restLabel && onEditRest && (
-        <div
-          className='set-type-rest'
-          onClick={onEditRest}
-        >
-          {restLabel}
-        </div>
-      )}
     </div>
   )
 }

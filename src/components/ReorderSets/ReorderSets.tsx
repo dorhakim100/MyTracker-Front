@@ -37,7 +37,9 @@ export function ReorderSets({
         <img
           src={exercise.image}
           alt={exercise.name}
+          className='reorder-sets-image'
         />
+
         <Typography variant='h6'>
           {capitalizeFirstLetter(exercise.name)}
         </Typography>
@@ -94,9 +96,7 @@ export function ReorderSets({
                 key: set.rpe ? 'rpe' : 'rir',
                 type: 'number',
               }}
-              value={
-                set.rpe ? set.rpe[side] || 0 : set.rir?.[side] ?? 2
-              }
+              value={set.rpe ? set.rpe[side] || 0 : set.rir?.[side] ?? 2}
               minWidth={70}
             />
             <Checkbox
