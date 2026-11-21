@@ -196,6 +196,7 @@ export function EditMenu({ closeDialog, menuToEdit }: EditMenuProps) {
           }`}
         >
           <StatsCarousel
+            storageKey='edit-menu'
             items={[
               <CaloriesProgress
                 current={menuStats.calories}

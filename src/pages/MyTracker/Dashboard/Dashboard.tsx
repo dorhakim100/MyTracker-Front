@@ -206,6 +206,7 @@ const DashboardNutrition = memo(function DashboardNutrition() {
     <StatsCarousel
       items={statsCarouselItems}
       showSkeleton={!user}
+      storageKey='dashboard'
       // deferInactiveSlides
     />
   ) : (
