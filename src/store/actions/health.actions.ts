@@ -4,6 +4,11 @@ import {
   syncStepsWidget,
   toStepsWidgetHealthOverrides,
 } from '../../services/widget/steps-widget.service'
+import {
+  clearTodayHealthReady,
+  markTodayHealthReady,
+} from '../../services/health/today-health'
+import { syncUserStreaks } from './streak.actions'
 import type { HealthSocketPayload } from '../../services/socket/health-socket.types'
 import { store } from '../store'
 import {
@@ -51,6 +56,7 @@ let shownHealth: ShownHealth | null = null
 export function clearHealthSnapshot() {
   healthReadId += 1
   shownHealth = null
+  clearTodayHealthReady()
   setHealthLoading(false)
   store.dispatch({
     type: SET_HEALTH_SNAPSHOT,
@@ -160,6 +166,8 @@ export async function applyHealthSnapshot(payload: HealthSocketPayload) {
     distance,
     flightsClimbed,
   })
+  markTodayHealthReady()
+  syncUserStreaks()
   await syncStepsWidget(
     toStepsWidgetHealthOverrides({
       steps,

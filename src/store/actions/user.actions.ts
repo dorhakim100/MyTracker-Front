@@ -24,6 +24,7 @@ import { User } from '../../types/user/User'
 import { Item } from '../../types/item/Item'
 import { Log } from '../../types/log/Log'
 import { LoggedToday } from '../../types/loggedToday/LoggedToday'
+import { syncUserStreaks, withTodayStreaks } from './streak.actions'
 import { dayService } from '../../services/day/day.service'
 import { addFavoriteItem, removeFavoriteItem } from './item.actions'
 import { mealService } from '../../services/meal/meal.service'
@@ -126,6 +127,7 @@ function hydrateLoggedInUser(retrived: User) {
     type: SET_USER,
     user: user,
   })
+  syncUserStreaks()
 
   setSelectedDiaryDay(user.loggedToday)
   setUserToEdit(user)
@@ -191,6 +193,7 @@ export async function updateUser(userToUpdate: User) {
         type: SET_USER,
         user: saved,
       })
+      syncUserStreaks()
     }
 
     if (traineeUser?._id === userToUpdate._id) {
@@ -212,7 +215,7 @@ export async function updateUser(userToUpdate: User) {
 export function optimisticUpdateUser(userToUpdate: User) {
   store.dispatch({
     type: SET_USER,
-    user: userToUpdate,
+    user: withTodayStreaks(userToUpdate),
   })
 }
 
@@ -331,6 +334,7 @@ export async function setRemembered() {
       type: SET_USER,
       user,
     })
+    syncUserStreaks()
 
     await loadGoogleHealthConnection(user._id)
     await setHealthData()

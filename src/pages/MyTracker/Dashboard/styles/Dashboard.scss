@@ -8,45 +8,57 @@
     grid-template-rows: auto auto minmax(310px, 1fr) 1fr;
   }
 
-  .times-container {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background-color: var(--canvas-color);
-    padding: 0.5rem;
+  // .times-container {
+  //   position: sticky;
+  //   top: 0;
+  //   z-index: 100;
+  //   background-color: var(--canvas-color);
+  //   padding: 0.5rem;
 
-    &.dark-mode {
-      background-color: $dark-gray;
+  //   &.dark-mode {
+  //     background-color: $dark-gray;
 
-      &.blue {
-        background-color: $dark-gray-blue;
-      }
-      &.yellow {
-        background-color: $dark-gray-yellow;
-      }
-      &.red {
-        background-color: $dark-gray-red;
-      }
-      &.orange {
-        background-color: $dark-gray-orange;
-      }
-      &.green {
-        background-color: $dark-gray-green;
-      }
-      &.deepPurple {
-        background-color: $dark-gray-deep-purple;
-      }
-      &.purple {
-        background-color: $dark-gray-purple;
-      }
-      &.pink {
-        background-color: $dark-gray-pink;
-      }
+  //     &.blue {
+  //       background-color: $dark-gray-blue;
+  //     }
+  //     &.yellow {
+  //       background-color: $dark-gray-yellow;
+  //     }
+  //     &.red {
+  //       background-color: $dark-gray-red;
+  //     }
+  //     &.orange {
+  //       background-color: $dark-gray-orange;
+  //     }
+  //     &.green {
+  //       background-color: $dark-gray-green;
+  //     }
+  //     &.deepPurple {
+  //       background-color: $dark-gray-deep-purple;
+  //     }
+  //     &.purple {
+  //       background-color: $dark-gray-purple;
+  //     }
+  //     &.pink {
+  //       background-color: $dark-gray-pink;
+  //     }
+  //   }
+  // }
+
+  .streaks-container {
+    display: grid;
+    grid-auto-flow: column;
+    gap: 0.5rem;
+    margin-bottom: 0.8rem;
+
+    .live-streak-container {
+      justify-items: center;
+      width: 100%;
+      justify-content: space-around;
     }
-  }
-
-  .meal-card {
-    // height: 250px;
+    &.only-one {
+      justify-content: start;
+    }
   }
 }
 
@@ -59,7 +71,7 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.8rem;
     min-height: 42.6px;
 
     .bold-header {

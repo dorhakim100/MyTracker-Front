@@ -19,9 +19,10 @@ import { CustomIcon } from '../../CustomMui/CustomIcon/CustomIcon'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { HealthActivity } from '../HealthActivity/HealthActivity'
 // import { GoalBanner } from '../GoalBanner/GoalBanner'
-import { User } from '../../types/user/User'
+import { streakTypes, type User } from '../../types/user/User'
 import { roundToNearest50 } from '../../services/macros/macros.service'
 import { goalService } from '../../services/goal/goal.service'
+import { LiveStreak } from '../LiveStreak/LiveStreak'
 // import FlagIcon from '@mui/icons-material/Flag'
 
 interface CaloriesProgressProps {
@@ -46,9 +47,18 @@ export function CaloriesProgress({
   const user = useSelector(
     (stateSelector: RootState) => stateSelector.userModule.user
   )
+  console.log('user', user)
 
   const [openModal, setOpenModal] = useState(false)
   const [openHistory, setOpenHistory] = useState(false)
+
+  const { streaks } = user || {}
+
+  const activeStreaks = useMemo(() => {
+    return Object.values(streaks || {}).filter((streak) => streak.count > 0)
+  }, [streaks])
+
+  console.log('activeStreaks', activeStreaks)
 
   const currentValue = useMemo(() => {
     return +current.toFixed(0)
@@ -87,9 +97,9 @@ export function CaloriesProgress({
   return (
     <>
       <Card
-        className={`card calories-progress ${enableHistory ? 'is-history' : ''} ${prefs.isDarkMode ? 'dark' : ''} ${
-          prefs.favoriteColor
-        }`}
+        className={`card calories-progress ${
+          enableHistory ? 'is-history' : ''
+        } ${prefs.isDarkMode ? 'dark' : ''} ${prefs.favoriteColor}`}
         onClick={enableHistory ? () => setOpenHistory(true) : undefined}
       >
         <div className='title-row'>
@@ -104,6 +114,13 @@ export function CaloriesProgress({
           >
             {t('macros.calories')}
           </Typography>
+          {activeStreaks.length === 1 &&
+            activeStreaks[0].type === streakTypes.consumed && (
+              <LiveStreak
+                count={activeStreaks[0].count || 0}
+                size='large'
+              />
+            )}
         </div>
         {isEditButton && <EditIcon onClick={edit} />}
         <div className='goal-container'>

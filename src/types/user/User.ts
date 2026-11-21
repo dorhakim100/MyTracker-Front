@@ -29,6 +29,27 @@ export interface User {
 
   isFixedMenu?: boolean
   activeWorkoutsCount?: number
+  streaks?: UserStreaks
+}
+
+export const streakTypes = {
+  steps: 'steps',
+  consumed: 'consumed',
+  burned: 'burned',
+} as const
+
+export type StreakType = (typeof streakTypes)[keyof typeof streakTypes]
+
+export interface StreakStat<T extends StreakType = StreakType> {
+  type: T
+  count: number
+  countsToday: boolean
+}
+
+export interface UserStreaks {
+  steps: StreakStat<typeof streakTypes.steps>
+  consumed: StreakStat<typeof streakTypes.consumed>
+  burned: StreakStat<typeof streakTypes.burned>
 }
 
 export interface UserDetails {

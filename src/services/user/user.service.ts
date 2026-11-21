@@ -22,6 +22,7 @@ import {
 } from '../../assets/config/request-statuses'
 import { AddTraineeForm } from '../../pages/TrainerDashboard/pages/Trainees/Trainees'
 import { completeGoogleAuth } from '../auth/google-auth.service'
+import { healthService } from '../health/health.service'
 // import { getPrefs, setPrefs } from '../system/system.service'
 
 export const userService = {
@@ -59,7 +60,9 @@ async function getUsers(filter: UserFilter) {
 
 async function getById(userId: string) {
   try {
-    const user = await httpService.get(`user/${userId}`, null)
+    const user = await httpService.get(`user/${userId}`, {
+      vendor: healthService.activityVendor(),
+    })
     return user
   } catch (err) {
     throw err
@@ -67,7 +70,9 @@ async function getById(userId: string) {
 }
 async function getRememberedById(userId: string) {
   try {
-    const data = await httpService.get(`user/remember/${userId}`, null)
+    const data = await httpService.get(`user/remember/${userId}`, {
+      vendor: healthService.activityVendor(),
+    })
     const loginToken = data?.loginToken
     const user = data?.user && loginToken ? data.user : data
 
@@ -115,7 +120,10 @@ async function update(user: User) {
       goalsIds,
     }
 
-    const savedUser = await httpService.put(`user/${_id}`, userToSend)
+    const savedUser = await httpService.put(
+      `user/${_id}?vendor=${healthService.activityVendor()}`,
+      userToSend
+    )
 
     //await getLoggedinUser() // Might not work because its defined in the main service???
 
@@ -321,6 +329,7 @@ async function saveLoggedinUser(user: User) {
       trainersIds: user.trainersIds ?? [],
       isFixedMenu: user.isFixedMenu,
       activeWorkoutsCount: user.activeWorkoutsCount,
+      streaks: user.streaks,
       // weights: user.weights ?? [],
     }
     sessionStorage.setItem(STORAGE_KEY_LOGGEDIN_USER, JSON.stringify(user))

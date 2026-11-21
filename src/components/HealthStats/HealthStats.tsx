@@ -8,7 +8,6 @@ import {
   BurnedCaloriesGlyph,
   DistanceGlyph,
   FloorsGlyph,
-  StepsGlyph,
 } from '../../CustomMui/CustomIcon/glyphs'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
@@ -111,7 +110,7 @@ export function HealthStats({
           <GoalBanner
             current={steps}
             isGoal={false}
-            icon={<StepsGlyph size='m' />}
+            icon={<StepsMedalIcon size='s' />}
             afterValue={t('steps.steps')}
             loading={healthLoading}
             size='l'

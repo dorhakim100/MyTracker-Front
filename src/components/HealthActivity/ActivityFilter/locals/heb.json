@@ -5,6 +5,5 @@
   "year": "שנה",
   "previous": "הקודם",
   "next": "הבא",
-  "today": "היום",
-  "liveStreak": "רצף נוכחי, {{count}}"
+  "today": "היום"
 }

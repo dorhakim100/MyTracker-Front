@@ -21,36 +21,12 @@
     justify-content: center;
   }
 
-  .activity-live-streak {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-    flex-shrink: 0;
-    padding-block: 0.15rem;
-    padding-inline: 0.65rem 0.35rem;
-    border-radius: 0.85rem;
-    font-weight: 700;
-    line-height: 1;
-    color: var(--ink-on-canvas);
-
-    bdi {
-      margin-top: 3px;
-      direction: ltr;
-      unicode-bidi: isolate;
-    }
-
-    .streak-flame {
-      width: 2rem;
-      height: 2rem;
-    }
-  }
-
   .activity-paging {
     display: flex;
     align-items: center;
     justify-content: space-around;
-    gap: 0.75rem;
-    padding-inline-start: 0.8rem;
+    gap: 0.5rem;
+    padding-inline-start: 0.5rem;
   }
 
   .activity-period {
@@ -65,7 +41,7 @@
     display: flex;
     align-items: center;
     gap: 0.4rem;
-    margin-inline-start: auto;
+    // margin-inline-start: auto;
   }
 
   .activity-frames .custom-button.MuiButton-root.active {

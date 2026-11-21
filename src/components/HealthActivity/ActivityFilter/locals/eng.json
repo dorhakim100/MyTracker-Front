@@ -5,6 +5,5 @@
   "year": "Year",
   "previous": "Previous",
   "next": "Next",
-  "today": "Today",
-  "liveStreak": "Live streak, {{count}}"
+  "today": "Today"
 }

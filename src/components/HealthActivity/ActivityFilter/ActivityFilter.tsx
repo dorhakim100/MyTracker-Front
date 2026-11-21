@@ -1,11 +1,11 @@
+import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import TodayIcon from '@mui/icons-material/Today'
-import Lottie from 'lottie-react'
 import { CustomButton } from '../../../CustomMui/CustomButton/CustomButton'
 import { Chevron } from '../../../CustomMui/Chevron/Chevron'
 import { GoalTag } from '../../../CustomMui/GoalTag/GoalTag'
+import { LiveStreak } from '../../LiveStreak/LiveStreak'
 import type { ActivityFrame, ActivityTag } from '../../../types/health/Activity'
-import streakFlame from '../../../../public/streak-flame.json'
 import { activityFilterNs } from './locals'
 import './locals'
 
@@ -23,6 +23,7 @@ interface ActivityFilterProps {
   onToday: () => void
   period: string
   liveStreak?: number
+  icon?: ReactNode
   target?: ActivityTag | null
   goalLabel?: string
 }
@@ -39,13 +40,11 @@ export function ActivityFilter({
   onToday,
   period,
   liveStreak,
+  icon,
   target,
   goalLabel,
 }: ActivityFilterProps) {
   const { t } = useTranslation(activityFilterNs)
-  const reduceMotion =
-    typeof window !== 'undefined' &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
   return (
     <div className='activity-filter-container'>
@@ -67,18 +66,10 @@ export function ActivityFilter({
 
       <div className='activity-paging'>
         {liveStreak != null && (
-          <div
-            className='activity-live-streak'
-            aria-label={t('liveStreak', { count: liveStreak })}
-          >
-            <bdi>{liveStreak}</bdi>
-            <Lottie
-              className='streak-flame'
-              animationData={streakFlame}
-              loop={!reduceMotion}
-              autoplay={!reduceMotion}
-            />
-          </div>
+          <LiveStreak
+            count={liveStreak}
+            icon={icon}
+          />
         )}
         <p className='activity-period'>
           <bdi>{period}</bdi>

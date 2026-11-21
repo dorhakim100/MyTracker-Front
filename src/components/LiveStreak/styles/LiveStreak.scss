@@ -1,0 +1,90 @@
+.live-streak-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  flex-shrink: 0;
+  padding-block: 0.15rem;
+  padding-inline: 0.65rem 0.35rem;
+  border-radius: 0.85rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--ink-on-canvas);
+  background: color-mix(in srgb, var(--accent) 9%, var(--canvas-color));
+  border: 1px solid color-mix(in srgb, var(--accent) 18%, transparent);
+
+  &.large {
+    // gap: 0.5rem;
+  }
+
+  bdi {
+    margin-top: 3px;
+    direction: ltr;
+    unicode-bidi: isolate;
+    font-size: 1.1rem;
+  }
+  &.large {
+    bdi {
+      font-size: 1.3rem;
+    }
+  }
+
+  .live-streak-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    svg,
+    img {
+      width: 1.3rem;
+      height: 1.3rem;
+      object-fit: contain;
+    }
+  }
+
+  &.large {
+    .live-streak-icon {
+      svg,
+      img {
+        width: 1.5rem;
+        height: 1.5rem;
+      }
+    }
+  }
+
+  .live-streak-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.8rem;
+    height: 1.8rem;
+    flex-shrink: 0;
+    margin-bottom: 4px;
+
+    svg,
+    img,
+    .streak-flame {
+      width: 1.8rem;
+      height: 1.8rem;
+      object-fit: contain;
+    }
+  }
+
+  &.large {
+    .live-streak-mark {
+      width: 2rem;
+      height: 2rem;
+      svg,
+      img,
+      .streak-flame {
+        width: 2rem;
+        height: 2rem;
+      }
+    }
+  }
+
+  html.dark-mode & {
+    background: color-mix(in srgb, var(--accent) 20%, var(--canvas-color));
+    border-color: color-mix(in srgb, var(--accent) 30%, transparent);
+  }
+}

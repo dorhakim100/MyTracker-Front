@@ -10,6 +10,7 @@ import { CustomSkeleton } from '../../CustomMui/CustomSkeleton/CustomSkeleton'
 import { ActivityBarChart } from '../BarChart/BarChart'
 import { ActivityFilter } from './ActivityFilter/ActivityFilter'
 import { activityService } from '../../services/health/activity.service'
+import { activityVendorFrom } from '../../services/health/health.service'
 import { intakeService } from '../../services/day/intake.service'
 import { CaloriesMedalIcon } from '../../CustomMui/CustomIcon/medal-icons'
 import { capacitorService } from '../../services/capacitor.service'
@@ -45,16 +46,44 @@ export function HealthActivity({
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
   const isRtl = prefs.lang === 'he'
   const userId = useSelector((state: RootState) => state.userModule.user?._id)
+  const streaks = useSelector(
+    (state: RootState) => state.userModule.user?.streaks
+  )
   const googleHealthConnected = useSelector(
     (state: RootState) => state.healthModule.googleHealthConnected
   )
   const isNative = useSelector(
     (state: RootState) => state.systemModule.isNative
   )
-  const vendor: ActivityVendor =
-    !isNative || googleHealthConnected || prefs.healthProvider === 'google'
-      ? 'google'
-      : 'native'
+  const vendor: ActivityVendor = activityVendorFrom({
+    isNative,
+    googleHealthConnected,
+    healthProvider: prefs.healthProvider,
+  })
+  const intakeStreak = {
+    count: streaks?.consumed?.count,
+    icon: <CaloriesMedalIcon sx={{ color: 'var(--accent)' }} />,
+  }
+  const streakViews: Record<
+    'activity' | 'intake',
+    Record<ActivityMetric, { count?: number; icon?: ReactNode }>
+  > = {
+    intake: {
+      steps: intakeStreak,
+      calories: intakeStreak,
+    },
+    activity: {
+      steps: {
+        count: streaks?.steps?.count,
+        icon: goalIcon,
+      },
+      calories: {
+        count: streaks?.burned?.count,
+        icon: goalIcon,
+      },
+    },
+  }
+  const { count: liveStreak, icon: hitIcon } = streakViews[source][metric]
 
   const [frame, setFrame] = useState<ActivityFrame>('week')
   const [end, setEnd] = useState<string | undefined>(undefined)
@@ -67,12 +96,6 @@ export function HealthActivity({
   const queryRef = useRef({ userId, vendor, metric, frame, end, source })
   const requestRef = useRef(0)
   queryRef.current = { userId, vendor, metric, frame, end, source }
-  const hitIcon =
-    source === 'intake' ? (
-      <CaloriesMedalIcon sx={{ color: 'var(--accent)' }} />
-    ) : (
-      goalIcon
-    )
 
   useEffect(() => {
     if (source === 'intake' || !userId) return
@@ -228,7 +251,8 @@ export function HealthActivity({
             ? periodLabel(page.start, page.end, page.frame, i18n.language)
             : ''
         }
-        liveStreak={page?.liveStreak}
+        liveStreak={liveStreak ?? page?.liveStreak}
+        icon={hitIcon}
         target={anchorTarget}
         goalLabel={goalLabel}
       />

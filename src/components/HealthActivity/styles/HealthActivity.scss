@@ -77,19 +77,15 @@
     gap: 0.5rem;
   }
 
-  .activity-card,
-  .activity-live-streak {
-    border-radius: 0.85rem;
-    background: color-mix(in srgb, var(--accent) 9%, var(--canvas-color));
-    border: 1px solid color-mix(in srgb, var(--accent) 18%, transparent);
-  }
-
   .activity-card {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 0.75rem;
     padding: 0.85rem 1rem;
+    border-radius: 0.85rem;
+    background: color-mix(in srgb, var(--accent) 9%, var(--canvas-color));
+    border: 1px solid color-mix(in srgb, var(--accent) 18%, transparent);
   }
 
   .activity-card-value {
@@ -113,8 +109,7 @@
   }
 }
 
-html.dark-mode .health-activity-container .activity-card,
-html.dark-mode .health-activity-container .activity-live-streak {
+html.dark-mode .health-activity-container .activity-card {
   background: color-mix(in srgb, var(--accent) 20%, var(--canvas-color));
   border-color: color-mix(in srgb, var(--accent) 30%, transparent);
 }

@@ -36,6 +36,7 @@ export const healthService = {
   saveWeight,
   isGoogleHealthPlatform,
   activeHealthSource,
+  activityVendor,
   isPhoneHealthAuthorized,
   getPhoneHealthPermission,
   requestPhoneHealthPermission,
@@ -56,6 +57,30 @@ function activeHealthSource(): 'google' | 'native' {
   if (!Capacitor.isNativePlatform()) return 'google'
   if (store.getState().healthModule.googleHealthConnected) return 'google'
   return 'native'
+}
+
+export function activityVendorFrom(input: {
+  isNative: boolean
+  googleHealthConnected: boolean
+  healthProvider?: string
+}): 'google' | 'native' {
+  if (
+    !input.isNative ||
+    input.googleHealthConnected ||
+    input.healthProvider === 'google'
+  ) {
+    return 'google'
+  }
+  return 'native'
+}
+
+function activityVendor() {
+  const { systemModule, healthModule } = store.getState()
+  return activityVendorFrom({
+    isNative: systemModule.isNative,
+    googleHealthConnected: healthModule.googleHealthConnected,
+    healthProvider: systemModule.prefs.healthProvider,
+  })
 }
 
 async function getAvailability(

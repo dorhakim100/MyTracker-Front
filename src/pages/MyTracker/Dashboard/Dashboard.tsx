@@ -56,6 +56,13 @@ import { PullToRefreshWrapper } from '../../../components/PullToRefreshWrapper/P
 import { useOnDayChange } from '../../../hooks/useOnDayChange.tsx'
 import { ActivityMedal } from '../../../components/ActivityMedal/ActivityMedal.tsx'
 import FitnessCenterRoundedIcon from '@mui/icons-material/FitnessCenterRounded'
+import {
+  CaloriesMedalIcon,
+  StepsMedalIcon,
+} from '../../../CustomMui/CustomIcon/medal-icons'
+import { BurnedCaloriesGlyph } from '../../../CustomMui/CustomIcon/glyphs'
+import { LiveStreak } from '../../../components/LiveStreak/LiveStreak.tsx'
+import { streakTypes } from '../../../types/user/User'
 const WorkoutSession = lazy(() =>
   import('../../../components/WorkoutSession/WorkoutSession').then(
     (module) => ({
@@ -367,6 +374,10 @@ export function Dashboard() {
   const [shouldLoadAgainSession, setShouldLoadAgainSession] = useState(false)
 
   useEffect(() => {
+    console.log('userToCheck', userToCheck)
+  }, [userToCheck])
+
+  useEffect(() => {
     if (!userToCheck?._id) return
     updateSessionDay()
   }, [userToCheck?._id, shouldTrigger])
@@ -609,10 +620,51 @@ export function Dashboard() {
     )
   }
 
+  const renderStreaks = () => {
+    if (!userToCheck?.streaks) return
+
+    const streaks = Object.values(userToCheck?.streaks)
+    const streaksToShow = streaks.filter((streak) => streak.count > 0)
+
+    if (
+      streaksToShow.length === 1 &&
+      streaksToShow[0].type === streakTypes.consumed
+    )
+      return
+    if (streaksToShow.length === 0) return
+    const isOnlyOneStreak = streaksToShow.length === 1
+    const date = new Date()
+    const icons = {
+      [streakTypes.steps]: <StepsMedalIcon sx={{ color: 'var(--accent)' }} />,
+      [streakTypes.consumed]: (
+        <CaloriesMedalIcon sx={{ color: 'var(--accent)' }} />
+      ),
+      [streakTypes.burned]: (
+        <BurnedCaloriesGlyph sx={{ color: 'var(--accent)' }} />
+      ),
+    }
+    return (
+      <div className={`streaks-container ${isOnlyOneStreak ? 'only-one' : ''}`}>
+        {streaksToShow.map((streak) => {
+          const key = streak.type
+          const icon = icons[key as keyof typeof icons]
+          return (
+            <LiveStreak
+              key={`${streak.type}-${date.toISOString()}`}
+              count={streak.count}
+              icon={icon}
+              size='large'
+            />
+          )
+        })}
+      </div>
+    )
+  }
+
   return (
     <PullToRefreshWrapper
       onRefresh={handleRefreshHealthData}
-      className={`'dashboard-container' ${isDashboard ? 'page-container' : ''}`}
+      className={`dashboard-container ${isDashboard ? 'page-container' : ''}`}
       //  className={`page-container dashboard-container ${
       //     timer ? 'has-timer' : ''
       //   } ${isDashboard ? 'dashboard' : ''}`}
@@ -639,6 +691,7 @@ export function Dashboard() {
         )}
         <DashboardNutrition />
         <DashboardHealth />
+        {renderStreaks()}
         {renderNoSession()}
         {renderSession()}
       </div>

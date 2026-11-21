@@ -24,7 +24,7 @@
 
   .title-row {
     display: flex;
-    align-items: start;
+    align-items: center;
     justify-content: flex-start;
     justify-self: start;
     gap: 0.5rem;
@@ -41,6 +41,12 @@
 
     h6 {
       text-align: start;
+    }
+
+    .live-streak-container {
+      position: absolute;
+      top: 1.2rem;
+      inset-inline-end: calc(1.2rem + 1rem + 30px);
     }
   }
 
