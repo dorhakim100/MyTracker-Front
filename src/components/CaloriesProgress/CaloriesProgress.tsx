@@ -47,7 +47,6 @@ export function CaloriesProgress({
   const user = useSelector(
     (stateSelector: RootState) => stateSelector.userModule.user
   )
-  console.log('user', user)
 
   const [openModal, setOpenModal] = useState(false)
   const [openHistory, setOpenHistory] = useState(false)
@@ -57,8 +56,6 @@ export function CaloriesProgress({
   const activeStreaks = useMemo(() => {
     return Object.values(streaks || {}).filter((streak) => streak.count > 0)
   }, [streaks])
-
-  console.log('activeStreaks', activeStreaks)
 
   const currentValue = useMemo(() => {
     return +current.toFixed(0)

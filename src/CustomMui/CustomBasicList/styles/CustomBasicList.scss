@@ -31,6 +31,7 @@
       align-items: center;
       flex: none;
       cursor: grab;
+      // touch-action: none;
       padding-inline: 0.35rem;
       color: color-mix(in srgb, var(--ink-on-canvas) 55%, transparent);
     }

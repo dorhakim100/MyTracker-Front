@@ -375,10 +375,6 @@ export function Dashboard() {
   const [shouldLoadAgainSession, setShouldLoadAgainSession] = useState(false)
 
   useEffect(() => {
-    console.log('userToCheck', userToCheck)
-  }, [userToCheck])
-
-  useEffect(() => {
     if (!userToCheck?._id) return
     updateSessionDay()
   }, [userToCheck?._id, shouldTrigger])

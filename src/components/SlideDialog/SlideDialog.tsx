@@ -46,6 +46,11 @@ const HORIZONTAL_LOCK_THRESHOLD = 10
 let openSheetCount = 0
 const escapeHandlers: Array<() => void> = []
 
+function isDragHandle(start: EventTarget | null) {
+  if (!(start instanceof Element)) return false
+  return Boolean(start.closest('.drag-handle'))
+}
+
 function isPickerColumn(start: EventTarget | null) {
   if (!(start instanceof Element)) return false
   if (
@@ -299,7 +304,7 @@ function useOverscrollDismiss({
       clientY: number,
       target: EventTarget | null
     ) => {
-      if (isPickerColumn(target)) return false
+      if (isDragHandle(target) || isPickerColumn(target)) return false
       if (!isGestureFromTop(target, scroller)) return false
 
       startX = clientX

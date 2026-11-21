@@ -39,7 +39,6 @@ import {
   countsAsDone,
   restOf,
   setTypeOf,
-  withStoredType,
 } from '../../services/set/set-type'
 import { Instructions } from '../../types/instructions/Instructions'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -484,7 +483,7 @@ export function WorkoutSession({
   // Helper function to clean set (remove unused RPE/RIR field)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const cleanSet = (set: any) => {
-    const cleanedSet = withStoredType(set)
+    const cleanedSet = { ...set, type: setTypeOf(set) }
     const hasRir = cleanedSet.rir?.actual != null || cleanedSet.rir?.expected != null
     const hasRpe = cleanedSet.rpe?.actual != null || cleanedSet.rpe?.expected != null
     if (hasRir && hasRpe) return cleanedSet

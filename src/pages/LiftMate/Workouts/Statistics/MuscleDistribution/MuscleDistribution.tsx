@@ -78,7 +78,6 @@ export function MuscleDistribution({ forUserId }: MuscleDistributionProps) {
       setLoading(true)
       try {
         const next = await statsService.getDistribution(forUserId, timeframe)
-        console.log('next', next)
         if (!cancelled) setSummary(next)
       } catch (error) {
         console.log('error', error)

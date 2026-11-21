@@ -514,14 +514,21 @@ export function ExerciseCard({
   }
 
   async function onReorderSets(nextSets: Set[]) {
-    if (!exerciseInstructions || !updateExercise) return
+    if (!exerciseInstructions) return
     const ordered = nextSets.map((set, index) => ({
       ...withStoredType(set),
       setNumber: index + 1,
     }))
     const next = { ...exerciseInstructions, sets: ordered }
-    if (reorderSets) await reorderSets(next)
-    else await updateExercise(next, 0)
+    if (reorderSets) {
+      await reorderSets(next)
+      return
+    }
+    if (isExpected) {
+      updateExerciseInInstructions(next)
+      return
+    }
+    await updateExercise?.(next, 0)
   }
 
   function updateRestingTime(restingTime: number) {

@@ -104,8 +104,6 @@ export function Statistics({ forUserId }: StatisticsProps) {
   const [distributionOpen, setDistributionOpen] = useState(false)
   const [record, setRecord] = useState<ExerciseWeekRecords | null>(null)
 
-  console.log('summary', summary)
-
   useEffect(() => {
     if (!forUserId) return
     let cancelled = false

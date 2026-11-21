@@ -15,6 +15,7 @@ interface CustomBasicListProps<T> {
   onReorder?: (items: T[]) => void
   separator?: boolean
   dragHandle?: boolean
+  direction?: 'horizontal' | 'vertical'
 }
 
 export function CustomBasicList<T>({
@@ -27,6 +28,7 @@ export function CustomBasicList<T>({
   onReorder,
   separator = false,
   dragHandle = false,
+  direction,
 }: CustomBasicListProps<T>) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -72,14 +74,16 @@ export function CustomBasicList<T>({
 
   const onDragEnd = (result: DropResult) => {
     isDraggingRef.current = false
-    if (!onReorder) return
+    if (!onReorder || !result.destination) return
+    if (result.destination.index === result.source.index) return
     const newItems = [...items]
     const [moved] = newItems.splice(result.source.index, 1)
-    newItems.splice(result.destination?.index || 0, 0, moved)
+    newItems.splice(result.destination.index, 0, moved)
+
     onReorder(newItems)
   }
 
-  const isHorizontal = isDashboard
+  const isHorizontal = direction ? direction === 'horizontal' : isDashboard
   const isHorizontalRtl = isHorizontal && isRtl
 
   return (
@@ -99,11 +103,11 @@ export function CustomBasicList<T>({
             }}
             {...provided.droppableProps}
             dir={isHorizontalRtl ? 'rtl' : undefined}
-            className={`custom-basic-list-container ${separator ? 'separator' : ''} ${
-              dragHandle ? 'with-drag-handle' : ''
-            } ${containerClassName} ${prefs.isDarkMode ? 'dark-mode' : ''} ${
-              isHorizontalRtl ? 'horizontal-rtl' : ''
-            }`}
+            className={`custom-basic-list-container ${
+              separator ? 'separator' : ''
+            } ${dragHandle ? 'with-drag-handle' : ''} ${containerClassName} ${
+              prefs.isDarkMode ? 'dark-mode' : ''
+            } ${isHorizontalRtl ? 'horizontal-rtl' : ''}`}
             style={{
               ...(isDraggingRef.current && containerHeight !== null
                 ? {
@@ -118,14 +122,15 @@ export function CustomBasicList<T>({
                 key={getKey ? getKey(item, index) : index}
                 draggableId={getKey ? getKey(item, index) + '' : index + ''}
                 index={index}
-                
               >
                 {(provided, snapshot) => (
                   <div
                     ref={provided.innerRef}
                     {...provided.draggableProps}
                     {...(dragHandle ? {} : provided.dragHandleProps)}
-                    className={`draggable-item ${snapshot.isDragging ? 'dragging' : ''} ${prefs.favoriteColor}`}
+                    className={`draggable-item ${
+                      snapshot.isDragging ? 'dragging' : ''
+                    } ${prefs.favoriteColor}`}
                   >
                     {renderItem(item, index)}
                     {dragHandle && (

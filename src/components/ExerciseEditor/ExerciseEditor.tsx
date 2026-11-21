@@ -555,7 +555,19 @@ export function ExerciseEditor({
                     className='next-week-label'
                     colSpan={5}
                   >
-                    {tEditor('nextWeek')}
+                    <div className='next-week-caption-row'>
+                      <span>{tEditor('nextWeek')}</span>
+                      <span className='next-week-rest'>
+                        {tType('rest', {
+                          time: formatTime(
+                            restOf(
+                              set,
+                              exercise.restingTime || DEFAULT_RESTING_TIME
+                            )
+                          ),
+                        })}
+                      </span>
+                    </div>
                   </TableCell>
                 </TableRow>
                 <TableRow className='next-week-row'>
@@ -971,7 +983,10 @@ export function ExerciseEditor({
         title={tType('title')}
         type='half'
         open={typeSetIndex != null}
-        onClose={() => setTypeSetIndex(null)}
+        onClose={() => {
+          setTypeSetIndex(null)
+          setRestSetIndex(null)
+        }}
         component={
           <SetTypeSheet
             sets={exercise.sets}
@@ -995,11 +1010,7 @@ export function ExerciseEditor({
             }
             onEditRest={
               isExpected && typeSetIndex != null
-                ? () => {
-                    const index = typeSetIndex
-                    setTypeSetIndex(null)
-                    setRestSetIndex(index)
-                  }
+                ? () => setRestSetIndex(typeSetIndex)
                 : undefined
             }
           />

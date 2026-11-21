@@ -203,7 +203,6 @@ export function WeightDetails({
   if (confirm) shownConfirmRef.current = confirm
   const shownConfirm = confirm ?? shownConfirmRef.current
 
-  console.log('confirm', confirm)
   const [estimate, setEstimate] = useState<BodyFatResult | null>(null)
 
   const unitLabel = (unit: 'kg' | 'cm' | 'percent') => {

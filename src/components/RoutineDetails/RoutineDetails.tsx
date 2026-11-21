@@ -182,10 +182,6 @@ export function RoutineDetails({ workout }: RoutineDetailsProps) {
   }, [loadWeeks])
 
   useEffect(() => {
-    console.log('loadingSessions', loadingSessions)
-  }, [loadingSessions])
-
-  useEffect(() => {
     const doneTimes = instructions?.doneTimes ?? 0
     const workoutId = workout._id
     if (!instructions || doneTimes <= 0 || !workoutId || !forUserId) {

@@ -19,6 +19,7 @@ import { imageService } from '../image/image.service'
 
 import { itemService } from '../item/item.service'
 import { mealService } from '../meal/meal.service'
+import type { Meal } from '../../types/meal/Meal'
 import { itemNameService } from '../item/item-name.service'
 import { isBarcodeSearchId } from '../item/item-id.service'
 import { withClassifiedUnit } from '../item/item-unit.service'
@@ -283,73 +284,74 @@ async function searchFavoriteItems(
   }
 }
 
+function definedIds(ids: (string | undefined)[]) {
+  return ids.filter((id): id is string => !!id)
+}
+
 async function searchBulkIds(logs: Log[]) {
   try {
-    const productsIds = logs
-      .filter(
-        (log) =>
-          log.source === sourceTypes.product ||
-          log.source === 'open-food-facts' ||
-          log.source === searchTypes.custom ||
-          log.source === searchTypes.usda ||
-          log.source === searchTypes.meal
-      )
-      .map((log) => log.itemId)
-      .filter((id) => id !== undefined)
-    const foodsIds = logs
-      .filter((log) => log.source === sourceTypes.food)
-      .map((log) => log.itemId)
-      .filter((id) => id !== undefined)
-
-    const mealIds = logs
-      .filter((log) => log.mealId)
-      .map((log) => log.mealId)
-      .filter((id) => id !== undefined)
-
-    if (!productsIds.length && !foodsIds.length && !mealIds.length) return []
-
-    let backendRes = await itemService.getBulkBySearchIds(
-      productsIds.concat(foodsIds)
+    const productsIds = definedIds(
+      logs
+        .filter(
+          (log) =>
+            log.source === sourceTypes.product ||
+            log.source === searchTypes.openFoodFacts
+        )
+        .map((log) => log.itemId)
+    )
+    const foodsIds = definedIds(
+      logs
+        .filter(
+          (log) =>
+            log.source === sourceTypes.food || log.source === searchTypes.usda
+        )
+        .map((log) => log.itemId)
+    )
+    const customIds = definedIds(
+      logs
+        .filter((log) => log.source === searchTypes.custom)
+        .map((log) => log.itemId)
+    )
+    const mealIds = definedIds(
+      logs
+        .filter((log) => log.source === searchTypes.meal)
+        .map((log) => log.mealId || log.itemId)
     )
 
-    backendRes = filterDuplicates(backendRes)
+    const itemIds = [...productsIds, ...foodsIds, ...customIds]
+    if (!itemIds.length && !mealIds.length) return []
 
-    if (
-      backendRes.length ===
-      productsIds.length + foodsIds.length + mealIds.length
-    ) {
-      await Promise.all(
-        backendRes.map(async (item: Item) => {
-          await addToCache(item as Item, ITEMS_CACHE)
-        })
-      )
+    const backendRes: Item[] = itemIds.length
+      ? filterDuplicates(await itemService.getBulkBySearchIds(itemIds))
+      : []
+    const found = new Set(backendRes.map((item) => item.searchId))
 
-      return backendRes
-    }
-
-    const missingIds = productsIds
-      .concat(foodsIds)
-      .concat(mealIds)
-      .filter((id) => !backendRes.some((item: Item) => item.searchId === id))
-
-    const missingProducts = missingIds.filter((id) => isBarcodeSearchId(id))
-    const missingFoods = missingIds.filter(
-      (id) => !isBarcodeSearchId(id) && !mealIds.includes(id)
+    const missingProducts = productsIds.filter(
+      (id) => !found.has(id) && isBarcodeSearchId(id)
     )
-    const missingMeals = missingIds.filter((id) => mealIds.includes(id))
+    const missingFoods = foodsIds.filter((id) => !found.has(id))
+    const missingMeals = mealIds.filter((id) => !found.has(id))
 
-    const promises = [
+    const [products, foods, meals] = await Promise.all([
       getProductsByIds(missingProducts),
       getFoodsByIds(missingFoods),
-      mealService.getBulkByIds(missingMeals),
-    ]
+      missingMeals.length
+        ? mealService.getBulkByIds(missingMeals)
+        : Promise.resolve([] as Meal[]),
+    ])
 
-    const [products, foods, meals] = await Promise.all(promises)
+    const mealItems: Item[] = meals.map((meal) => ({
+      _id: meal._id,
+      searchId: meal._id,
+      name: meal.name,
+      macros: meal.macros,
+      type: 'meal',
+      items: meal.items,
+      image: meal.image,
+    }))
 
-    const res = [...backendRes, ...products, ...foods, ...meals]
-
-    // Batch cache operations
-    // await Promise.all(res.map((item) => addToCache(item as Item, ITEMS_CACHE)))
+    const res = [...backendRes, ...products, ...foods, ...mealItems]
+    await Promise.all(res.map((item) => addToCache(item, ITEMS_CACHE)))
     return res
   } catch (err) {
     throw err
