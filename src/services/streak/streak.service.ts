@@ -1,7 +1,7 @@
 import { DEFAULT_DAILY_STEPS_GOAL } from '../../constants/steps-goal.constants'
 import { israelTodayKey } from '../health/activity-dates'
 import type { Goal } from '../../types/goal/Goal'
-import type { StreakStat, User } from '../../types/user/User'
+import type { StreakStat, StreakType, User } from '../../types/user/User'
 
 export type TodayStreakHits = {
   steps: boolean
@@ -40,12 +40,18 @@ export function todayStreakHits(
   }
 }
 
-function addToday(stat: StreakStat, todayHit: boolean): StreakStat {
+function addToday<T extends StreakType>(
+  stat: StreakStat<T>,
+  todayHit: boolean
+): StreakStat<T> {
   if (!todayHit || stat.countsToday) return stat
   return { ...stat, count: stat.count + 1, countsToday: true }
 }
 
-function syncToday(stat: StreakStat, todayHit: boolean | null): StreakStat {
+function syncToday<T extends StreakType>(
+  stat: StreakStat<T>,
+  todayHit: boolean | null
+): StreakStat<T> {
   if (todayHit == null || todayHit === stat.countsToday) return stat
   return {
     ...stat,
