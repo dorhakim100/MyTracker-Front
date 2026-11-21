@@ -6,6 +6,11 @@
   overflow: hidden !important;
   transition: max-height 0.3s ease-in-out;
 
+  &.open:has(.previous-week-review) {
+    max-height: none;
+    overflow: visible !important;
+  }
+
   &.closed {
     max-height: 0;
   }
@@ -84,20 +89,21 @@
           display: grid;
           // grid-template-columns: auto minmax(0, 1fr);
           gap: 0.5rem;
-          align-items: start;
+          align-items: stretch;
           width: 100%;
+          height: auto;
         }
 
         .set-rail {
           display: grid;
-          grid-template-columns: 25px 25px auto;
+          grid-template-columns: 25px auto;
           // justify-items: center;
           align-content: start;
           gap: 0.15rem;
           padding-top: 0.15rem;
 
           .custom-button-wrapper {
-            grid-column: 4/-1;
+            grid-column: 2/-1;
             grid-row: 1/2;
             justify-self: end;
           }
@@ -120,7 +126,7 @@
           margin: 0;
           justify-self: end;
 
-          grid-column: 2/3;
+          grid-column: 1/2;
 
           .MuiCheckbox-root,
           .MuiCircularProgress-root {
@@ -134,7 +140,8 @@
 
         .previous-week-table-wrap {
           min-width: 0;
-          overflow-x: auto;
+          height: auto;
+          overflow: visible;
         }
 
         .previous-week-caption {
@@ -144,6 +151,8 @@
         }
 
         .previous-week-table {
+          height: auto;
+
           .MuiTableCell-root {
             padding: 0.3rem 0.35rem;
             font-size: 0.9rem;
@@ -165,10 +174,32 @@
           .row-label {
             font-weight: 700;
             white-space: nowrap;
+
+            &.next-week-label {
+              // display: -webkit-box !important;
+              // -webkit-line-clamp: 2 !important;
+              // line-clamp: 2 !important;
+              // -webkit-box-orient: vertical !important;
+              // overflow: hidden !important;
+              // text-overflow: ellipsis !important;
+            }
+          }
+
+          .set-mark-cell {
+            width: 1%;
+            padding-inline: 0.2rem;
+            vertical-align: middle;
           }
 
           .static-row .MuiTableCell-root {
             opacity: 0.8;
+          }
+
+          .next-week-caption .MuiTableCell-root {
+            font-weight: 700;
+            padding-block: 0.5rem 0.75rem;
+            border-bottom: 0;
+            background: var(--picker-wash);
           }
 
           .next-week-row {
@@ -178,10 +209,26 @@
               background: var(--picker-wash) !important;
             }
             td {
-              padding-block: 1rem;
+              padding: 0.55rem 0.35rem 0.7rem;
+              text-align: center;
             }
             .MuiTableCell-root {
               opacity: 1;
+              vertical-align: middle;
+            }
+            .next-week-fields {
+              display: grid;
+              grid-template-columns: auto minmax(0, 0.8fr) minmax(0, 1.2fr) minmax(
+                  0,
+                  0.8fr
+                );
+              align-items: center;
+              gap: 0.85rem;
+            }
+            .MuiFormControl-root {
+              width: 100%;
+              min-width: 0 !important;
+              margin: 0 !important;
               vertical-align: middle;
             }
           }
@@ -394,6 +441,16 @@
     gap: 1rem;
     align-items: center;
   }
+}
+
+.swipeable-list-item:has(.previous-week-review) {
+  max-height: none;
+  overflow: visible;
+}
+
+.swipeable-list-item__content:has(.previous-week-review) {
+  height: auto;
+  align-items: stretch;
 }
 
 @keyframes set-done-pop {

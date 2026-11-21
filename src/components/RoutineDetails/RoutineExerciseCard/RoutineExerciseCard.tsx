@@ -1,11 +1,17 @@
 import { Fragment, KeyboardEvent } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useSelector } from 'react-redux'
+import CheckIcon from '@mui/icons-material/Check'
+import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import { Exercise, Set } from '../../../types/exercise/Exercise'
+import { RootState } from '../../../store/store'
+import { setTypeOf } from '../../../services/set/set-type'
+import { SetMark } from '../../SetMark/SetMark'
 import { capitalizeFirstLetter } from '../../../services/util.service'
 import { ChatBubbleOutlineIcon } from '../../../CustomMui/ChatBubbleOutlineIcon/ChatBubbleOutlineIcon'
 import type { User } from '../../../types/user/User'
@@ -35,6 +41,13 @@ function formatNumber(value: number | undefined, suffix?: string) {
   return suffix ? `${value} ${suffix}` : `${value}`
 }
 
+function setsForSide(sets: Set[], side: 'expected' | 'actual') {
+  return sets.map((set) => ({
+    ...set,
+    type: setTypeOf(set, side),
+  }))
+}
+
 function exerciseMuscles(exercise: Exercise) {
   return [
     ...(exercise.mainMuscles || []),
@@ -53,10 +66,15 @@ export function RoutineExerciseCard({
   displayUser,
 }: RoutineExerciseCardProps) {
   // const prefs = useSelector((state: RootState) => state.systemModule.prefs)
+  const favoriteColor = useSelector(
+    (state: RootState) => state.systemModule.prefs.favoriteColor
+  )
   const { t } = useTranslation(routineExerciseCardNs)
   const { t: tChat } = useTranslation(exerciseChatNs)
   const usesRpe = Boolean(sets[0]?.rpe)
   const kg = t('kg')
+  const expectedSets = setsForSide(sets, 'expected')
+  const actualSets = setsForSide(sets, 'actual')
 
   const onKeyDown = (event: KeyboardEvent) => {
     if (event.target !== event.currentTarget) return
@@ -118,10 +136,12 @@ export function RoutineExerciseCard({
           <Table size='small'>
             <TableHead>
               <TableRow>
+                <TableCell />
                 <TableCell>{t('set')}</TableCell>
                 <TableCell>{t('weight')}</TableCell>
                 <TableCell>{t('reps')}</TableCell>
                 <TableCell>{usesRpe ? t('rpe') : t('rir')}</TableCell>
+                <TableCell />
               </TableRow>
             </TableHead>
             <TableBody>
@@ -131,33 +151,56 @@ export function RoutineExerciseCard({
                 return (
                   <Fragment key={set._id || `${exercise.exerciseId}-${index}`}>
                     <TableRow
-                      className={
-                        set.isDuringWorkout ? 'during-workout' : undefined
-                      }
+                      className={`${set.isDone ? 'set-done' : ''} ${
+                        set.isDuringWorkout ? 'during-workout' : ''
+                      }`}
                     >
-                      {/* <TableCell
-                        rowSpan={2}
-                        className='set-number'
-                        >
-                        {setNumber}
-                        </TableCell> */}
-                      <TableCell
-                        className={`row-label ${set.isDone ? 'done' : ''}`}
-                      >
-                        {t('expected')}
+                      <TableCell className='row-label'>{t('expected')}</TableCell>
+                      <TableCell className='set-mark-cell'>
+                        <SetMark
+                          sets={expectedSets}
+                          index={index}
+                          set={expectedSets[index]}
+                          className={favoriteColor}
+                        />
                       </TableCell>
                       <TableCell>
                         {formatNumber(set.weight?.expected, kg)}
                       </TableCell>
                       <TableCell>{formatNumber(set.reps?.expected)}</TableCell>
                       <TableCell>{formatNumber(effort?.expected)}</TableCell>
+                      <TableCell
+                        rowSpan={2}
+                        className='set-done-cell'
+                      >
+                        <span
+                          className={`set-done-mark ${
+                            set.isDone ? 'finished' : 'not-finished'
+                          }`}
+                          aria-label={set.isDone ? t('done') : t('notDone')}
+                        >
+                          {set.isDone ? (
+                            <CheckIcon />
+                          ) : (
+                            <RadioButtonUncheckedIcon />
+                          )}
+                        </span>
+                      </TableCell>
                     </TableRow>
                     <TableRow
-                      className={`actual-row ${set.isDone ? 'done' : ''} ${
+                      className={`actual-row ${set.isDone ? 'set-done' : ''} ${
                         set.isDuringWorkout ? 'during-workout' : ''
                       }`}
                     >
                       <TableCell className='row-label'>{t('actual')}</TableCell>
+                      <TableCell className='set-mark-cell'>
+                        <SetMark
+                          sets={actualSets}
+                          index={index}
+                          set={actualSets[index]}
+                          className={favoriteColor}
+                        />
+                      </TableCell>
                       <TableCell>
                         {formatNumber(set.weight?.actual, kg)}
                       </TableCell>

@@ -88,8 +88,7 @@ async function getByWorkoutId(
       `${KEY}/workout/${filter.workoutId}`,
       { forUserId: filter.forUserId, weekNumber: filter.weekNumber }
     )
-    if (!instructions?.exercises) return instructions
-    return getExercisesFromInstructions(instructions)
+    return instructions
   } catch (err) {
     throw err
   }
@@ -160,7 +159,7 @@ function getEmptyInstructions() {
 
 function getEmptySet() {
   return {
-    type: 'normal' as const,
+    type: { expected: 'normal' as const, actual: 'normal' as const },
     reps: {
       expected: 8,
       actual: 8,

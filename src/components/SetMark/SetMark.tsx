@@ -4,7 +4,7 @@ import { setMark, setTypeOf } from '../../services/set/set-type'
 import { SetType } from '../../types/exercise/SetType'
 
 interface SetMarkProps {
-  sets: { type?: string }[]
+  sets: { type?: Set['type'] }[]
   index: number
   set: Set
   className?: string

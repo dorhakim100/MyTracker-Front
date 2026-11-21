@@ -6,5 +6,7 @@
   "rir": "RIR",
   "expected": "צפי",
   "actual": "בפועל",
+  "done": "בוצע",
+  "notDone": "לא בוצע",
   "kg": "ק״ג"
 }

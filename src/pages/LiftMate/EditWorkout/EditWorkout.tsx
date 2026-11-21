@@ -22,6 +22,7 @@ import {
 } from '../../../store/actions/workout.action'
 import { Instructions } from '../../../types/instructions/Instructions'
 import { instructionsService } from '../../../services/instructions/instructions.service'
+import { setTypeOf } from '../../../services/set/set-type'
 import { WeekNumberStatus } from '../../../types/weekNumberStatus/WeekNumberStatus'
 
 import { NameExercises } from './NameExercises'
@@ -367,6 +368,10 @@ export function EditWorkout({
               expected: set.rir.actual,
             },
           }),
+          type: {
+            expected: setTypeOf(set, 'actual'),
+            actual: setTypeOf(set, 'actual'),
+          },
         }
         if (!keepDuringWorkout) delete nextSet.isDuringWorkout
         return nextSet

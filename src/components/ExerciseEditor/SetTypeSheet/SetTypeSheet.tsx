@@ -5,6 +5,7 @@ import { CustomButton } from '../../../CustomMui/CustomButton/CustomButton'
 import { CustomList } from '../../../CustomMui/CustomList/CustomList'
 import { RootState } from '../../../store/store'
 import { setMark } from '../../../services/set/set-type'
+import { Set } from '../../../types/exercise/Exercise'
 import { SetType } from '../../../types/exercise/SetType'
 import { InfoHint } from '../../InfoHint/InfoHint'
 import { setTypeSheetNs } from './locals'
@@ -25,7 +26,7 @@ const TYPE_CLASS: Record<Exclude<SetType, 'normal'>, string> = {
 }
 
 interface SetTypeSheetProps {
-  sets: { type?: string }[]
+  sets: { type?: Set['type'] }[]
   index: number
   onSelect: (type: SetType) => void
   restLabel?: string

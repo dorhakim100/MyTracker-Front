@@ -36,7 +36,7 @@ export interface Set {
   isDone?: boolean
   exerciseId?: string
   isDuringWorkout?: boolean
-  type?: SetType
+  type?: SetType | ExpectedActual<SetType>
   restingTime?: number
 
   // just for editing

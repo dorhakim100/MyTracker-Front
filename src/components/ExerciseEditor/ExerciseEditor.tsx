@@ -53,6 +53,7 @@ import { setTypeSheetNs } from './SetTypeSheet/locals'
 import {
   applyFailureEffort,
   restOf,
+  setTypeOf,
   withStoredType,
 } from '../../services/set/set-type'
 import { SetType } from '../../types/exercise/SetType'
@@ -198,7 +199,7 @@ export function ExerciseEditor({
 
     const newSet = {
       ...withStoredType(existingSet),
-      type: 'normal' as const,
+      type: { expected: 'normal' as const, actual: 'normal' as const },
       isDone: false,
       _id: undefined,
       setIndex: exercise.sets.length,
@@ -253,8 +254,13 @@ export function ExerciseEditor({
     const current = exercise.sets[index]
     const next =
       type === 'failure'
-        ? applyFailureEffort({ ...current, type }, Boolean(isExpected))
-        : { ...withStoredType(current), type }
+        ? applyFailureEffort(current, Boolean(isExpected))
+        : {
+            ...current,
+            type: isExpected
+              ? { expected: type, actual: type }
+              : { expected: setTypeOf(current, 'expected'), actual: type },
+          }
     const sets = exercise.sets.map((set, i) => (i === index ? next : set))
     const updated = { ...exercise, sets }
     setTypeSetIndex(null)
@@ -440,7 +446,16 @@ export function ExerciseEditor({
   )
 
   const renderPreviousWeek = (set: Set, index: number) => {
-    const previousSet = previousExercise?.sets[index]
+    const previousSets = previousExercise?.sets || []
+    const previousSet = previousSets[index]
+    const previousExpected = previousSets.map((item) => ({
+      ...item,
+      type: setTypeOf(item, 'expected'),
+    }))
+    const previousActual = previousSets.map((item) => ({
+      ...item,
+      type: setTypeOf(item, 'actual'),
+    }))
     const effortLabel =
       previousExercise?.sets[0]?.rpe || exercise.sets[0]?.rpe ? 'RPE' : 'RIR'
     const kg = t('weight.kg')
@@ -455,14 +470,6 @@ export function ExerciseEditor({
       >
         <div className='set-review-layout'>
           <div className='set-rail'>
-            <SetMark
-              sets={exercise.sets}
-              index={index}
-              set={set}
-              className={`${prefs.favoriteColor} ${isDashboard ? 'dashboard' : ''}`}
-              showSpinner={savingTypeIndex === index}
-              onClick={() => setTypeSetIndex(index)}
-            />
             <div className='badges-container'>
               {renderDoneControl(set, index)}
             </div>
@@ -488,6 +495,7 @@ export function ExerciseEditor({
               <TableHead>
                 <TableRow>
                   <TableCell />
+                  <TableCell />
                   <TableCell align='center'>{t('exercise.reps')}</TableCell>
                   <TableCell align='center'>{t('exercise.weight')}</TableCell>
                   <TableCell align='center'>{effortLabel}</TableCell>
@@ -497,6 +505,16 @@ export function ExerciseEditor({
                 <TableRow className='static-row'>
                   <TableCell className='row-label'>
                     {tEditor('expected')}
+                  </TableCell>
+                  <TableCell className='set-mark-cell'>
+                    {previousSet && (
+                      <SetMark
+                        sets={previousExpected}
+                        index={index}
+                        set={previousExpected[index]}
+                        className={prefs.favoriteColor}
+                      />
+                    )}
                   </TableCell>
                   <TableCell align='center'>
                     {displayMetric(previousSet?.reps?.expected)}
@@ -512,6 +530,16 @@ export function ExerciseEditor({
                   <TableCell className='row-label'>
                     {tEditor('actual')}
                   </TableCell>
+                  <TableCell className='set-mark-cell'>
+                    {previousSet && (
+                      <SetMark
+                        sets={previousActual}
+                        index={index}
+                        set={previousActual[index]}
+                        className={prefs.favoriteColor}
+                      />
+                    )}
+                  </TableCell>
                   <TableCell align='center'>
                     {displayMetric(previousSet?.reps?.actual)}
                   </TableCell>
@@ -522,74 +550,87 @@ export function ExerciseEditor({
                     {displayEffort(previousSet, 'actual')}
                   </TableCell>
                 </TableRow>
-                <TableRow className='next-week-row'>
-                  <TableCell className='row-label'>
+                <TableRow className='next-week-caption'>
+                  <TableCell
+                    className='next-week-label'
+                    colSpan={5}
+                  >
                     {tEditor('nextWeek')}
                   </TableCell>
-                  <TableCell align='center'>
-                    <PickerSelect
-                      className={`${prefs.favoriteColor}`}
-                      openClock={() => {
-                        setPickerOptions({
-                          type: 'reps',
-                          isOpen: true,
-                        })
-                        setEditSet({ ...set, index })
-                        setCurrentPickerValue(set.reps.actual || 0)
-                      }}
-                      option={{
-                        label: t('exercise.reps'),
-                        key: 'reps',
-                        type: 'number',
-                      }}
-                      value={set.reps.actual}
-                      minWidth={pickerWidth}
-                    />
-                  </TableCell>
-                  <TableCell align='center'>
-                    <PickerSelect
-                      className={`weight-picker ${prefs.favoriteColor} ${
-                        isRtl ? 'rtl' : ''
-                      }`}
-                      openClock={() => {
-                        setPickerOptions({
-                          type: 'weight',
-                          isOpen: true,
-                        })
-                        setEditSet({ ...set, index })
-                        setCurrentPickerValue(set.weight.actual || 0)
-                      }}
-                      option={{
-                        label: t('exercise.weight'),
-                        key: 'weight',
-                        type: 'number',
-                      }}
-                      value={set.weight.actual}
-                      minWidth={pickerWidth + 12}
-                      afterString={kg}
-                    />
-                  </TableCell>
-                  <TableCell align='center'>
-                    <PickerSelect
-                      className={`${prefs.favoriteColor}`}
-                      openClock={() => {
-                        setPickerOptions({
-                          type: set.rpe ? 'rpe' : 'rir',
-                          isOpen: true,
-                        })
-                        setEditSet({ ...set, index })
-                        setCurrentPickerValue(
-                          set.rpe ? set.rpe.actual : set.rir?.actual ?? 2
-                        )
-                      }}
-                      option={{
-                        label: set.rpe ? 'RPE' : 'RIR',
-                        key: set.rpe ? 'rpe' : 'rir',
-                        type: 'number',
-                      }}
-                      value={set.rpe ? set.rpe.actual : set.rir?.actual ?? 2}
-                      minWidth={pickerWidth}
-                    />
+                </TableRow>
+                <TableRow className='next-week-row'>
+                  <TableCell colSpan={5}>
+                    <div className='next-week-fields'>
+                      <SetMark
+                        sets={exercise.sets}
+                        index={index}
+                        set={set}
+                        className={`${prefs.favoriteColor} ${
+                          isDashboard ? 'dashboard' : ''
+                        }`}
+                        showSpinner={savingTypeIndex === index}
+                        onClick={() => setTypeSetIndex(index)}
+                      />
+                      <PickerSelect
+                        className={`${prefs.favoriteColor}`}
+                        openClock={() => {
+                          setPickerOptions({
+                            type: 'reps',
+                            isOpen: true,
+                          })
+                          setEditSet({ ...set, index })
+                          setCurrentPickerValue(set.reps.actual || 0)
+                        }}
+                        option={{
+                          label: t('exercise.reps'),
+                          key: 'reps',
+                          type: 'number',
+                        }}
+                        value={set.reps.actual}
+                        minWidth={pickerWidth}
+                      />
+                      <PickerSelect
+                        className={`weight-picker ${prefs.favoriteColor} ${
+                          isRtl ? 'rtl' : ''
+                        }`}
+                        openClock={() => {
+                          setPickerOptions({
+                            type: 'weight',
+                            isOpen: true,
+                          })
+                          setEditSet({ ...set, index })
+                          setCurrentPickerValue(set.weight.actual || 0)
+                        }}
+                        option={{
+                          label: t('exercise.weight'),
+                          key: 'weight',
+                          type: 'number',
+                        }}
+                        value={set.weight.actual}
+                        minWidth={pickerWidth + 12}
+                        afterString={kg}
+                      />
+                      <PickerSelect
+                        className={`${prefs.favoriteColor}`}
+                        openClock={() => {
+                          setPickerOptions({
+                            type: set.rpe ? 'rpe' : 'rir',
+                            isOpen: true,
+                          })
+                          setEditSet({ ...set, index })
+                          setCurrentPickerValue(
+                            set.rpe ? set.rpe.actual : set.rir?.actual ?? 2
+                          )
+                        }}
+                        option={{
+                          label: set.rpe ? 'RPE' : 'RIR',
+                          key: set.rpe ? 'rpe' : 'rir',
+                          type: 'number',
+                        }}
+                        value={set.rpe ? set.rpe.actual : set.rir?.actual ?? 2}
+                        minWidth={pickerWidth}
+                      />
+                    </div>
                   </TableCell>
                 </TableRow>
               </TableBody>

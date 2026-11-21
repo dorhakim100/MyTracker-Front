@@ -6,5 +6,7 @@
   "rir": "RIR",
   "expected": "Expected",
   "actual": "Actual",
+  "done": "Done",
+  "notDone": "Not done",
   "kg": "kg"
 }
