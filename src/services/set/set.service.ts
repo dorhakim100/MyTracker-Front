@@ -12,6 +12,7 @@ export const setService = {
   remove,
   saveSetBySessionIdAndExerciseId,
   removeSetBySessionIdAndExerciseId,
+  removeSetsBySessionIdAndExerciseId,
   getSetsBySessionIdAndExerciseId,
   getEmptySet,
 }
@@ -57,7 +58,7 @@ async function save(set: Set & { _id?: string }) {
   }
 }
 
-async function saveSets(sets: Set[]) {
+async function saveSets(sets: (Set & { userId?: string })[]) {
   try {
     const savedSets = await httpService.post(`${KEY}/bulk-save`, sets)
     return savedSets
@@ -93,6 +94,20 @@ async function removeSetBySessionIdAndExerciseId(
   try {
     await httpService.delete(
       `${KEY}/session/${sessionId}/exercise/${exerciseId}/${setIndex}`,
+      null
+    )
+  } catch (err) {
+    throw err
+  }
+}
+
+async function removeSetsBySessionIdAndExerciseId(
+  sessionId: string,
+  exerciseId: string
+) {
+  try {
+    await httpService.delete(
+      `${KEY}/session/${sessionId}/exercise/${exerciseId}`,
       null
     )
   } catch (err) {

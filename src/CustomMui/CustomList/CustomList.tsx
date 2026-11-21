@@ -74,6 +74,7 @@ export interface CustomListProps<T> {
   onRightClick?: (item: T) => void
   onItemClick?: (item: T) => void
   className?: string
+  separator?: boolean
   itemClassName?: string
   getItemClassName?: (item: T) => string
   isSwipeable?: boolean | ((item: T) => boolean)
@@ -101,6 +102,7 @@ export function CustomList<T>({
   onRightClick,
   onItemClick,
   className,
+  separator = false,
   itemClassName,
   getItemClassName,
   isSwipeable = false,
@@ -271,6 +273,10 @@ CustomListProps<T>) {
     console.log(result)
   }
 
+  const stopRowPress = (event: React.MouseEvent | React.TouchEvent) => {
+    event.stopPropagation()
+  }
+
   const renderList = (item: T, dragProvided: DraggableProvided) => {
     return (
       <ListItemButton
@@ -280,7 +286,13 @@ CustomListProps<T>) {
         onClick={onItemClick ? () => onItemClick(item) : undefined}
       >
         {renderLeft ? (
-          <div className='left-content'>{renderLeft(item)}</div>
+          <div
+            className='left-content'
+            onMouseDown={stopRowPress}
+            onTouchStart={stopRowPress}
+          >
+            {renderLeft(item)}
+          </div>
         ) : null}
         <ListItemText
           primary={asListMarquee(
@@ -297,6 +309,8 @@ CustomListProps<T>) {
         {renderRight ? (
           <div
             className='right-content'
+            onMouseDown={stopRowPress}
+            onTouchStart={stopRowPress}
             onClick={
               onRightClick
                 ? (event) => {
@@ -344,9 +358,9 @@ CustomListProps<T>) {
   if (isDefaultLoader && isLoading) {
     return (
       <div
-        className={`custom-list ${variant === 'card' ? 'card' : ''} ${
-          className ? className : ''
-        }`}
+        className={`custom-list ${separator ? 'separator' : ''} ${
+          variant === 'card' ? 'card' : ''
+        } ${className ? className : ''}`}
       >
         <SkeletonList />
       </div>
@@ -363,9 +377,9 @@ CustomListProps<T>) {
 
   return (
     <div
-      className={`custom-list ${variant === 'card' ? 'card' : ''} ${
-        className ? className : ''
-      }`}
+      className={`custom-list ${separator ? 'separator' : ''} ${
+        variant === 'card' ? 'card' : ''
+      } ${className ? className : ''}`}
       ref={listContainerRef}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}

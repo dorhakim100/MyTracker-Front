@@ -361,7 +361,7 @@ export const POPULAR_EXERCISES = [
     gifUrl: 'https://assets.exercisedb.dev/media/QAV2j3D.gif',
     targetMuscles: ['quads'],
     bodyParts: ['upper legs'],
-    equipments: ['leverage machine'],
+    equipments: ['machine'],
     secondaryMuscles: ['hamstrings'],
     instructions: [
       'Step:1 Adjust the seat height and backrest of the machine to fit your body.',
@@ -397,7 +397,7 @@ export const POPULAR_EXERCISES = [
     gifUrl: 'https://assets.exercisedb.dev/media/s41flaL.gif',
     targetMuscles: ['glutes'],
     bodyParts: ['upper legs'],
-    equipments: ['sled machine'],
+    equipments: ['machine'],
     secondaryMuscles: ['quadriceps', 'hamstrings', 'calves'],
     instructions: [
       'Step:1 Adjust the seat and footplate of the sled machine to a comfortable position.',
@@ -416,7 +416,7 @@ export const POPULAR_EXERCISES = [
     gifUrl: 'https://assets.exercisedb.dev/media/8XpTCDL.gif',
     targetMuscles: ['hamstrings'],
     bodyParts: ['upper legs'],
-    equipments: ['leverage machine'],
+    equipments: ['machine'],
     secondaryMuscles: ['calves'],
     instructions: [
       'Step:1 Adjust the machine to fit your body and select the desired weight.',
@@ -434,7 +434,7 @@ export const POPULAR_EXERCISES = [
     gifUrl: 'https://assets.exercisedb.dev/media/Z6hO3Uj.gif',
     targetMuscles: ['hamstrings'],
     bodyParts: ['upper legs'],
-    equipments: ['leverage machine'],
+    equipments: ['machine'],
     secondaryMuscles: ['calves'],
     instructions: [
       'Step:1 Adjust the machine to fit your body and sit on it with your back against the backrest.',

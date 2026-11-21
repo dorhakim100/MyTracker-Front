@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { DropResult } from '@hello-pangea/dnd'
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
+import DragIndicatorIcon from '@mui/icons-material/DragIndicator'
 
 interface CustomBasicListProps<T> {
   items: T[]
@@ -12,6 +13,8 @@ interface CustomBasicListProps<T> {
   containerClassName?: string
   emptyMessage?: string
   onReorder?: (items: T[]) => void
+  separator?: boolean
+  dragHandle?: boolean
 }
 
 export function CustomBasicList<T>({
@@ -22,6 +25,8 @@ export function CustomBasicList<T>({
   containerClassName = '',
   emptyMessage,
   onReorder,
+  separator = false,
+  dragHandle = false,
 }: CustomBasicListProps<T>) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -94,9 +99,11 @@ export function CustomBasicList<T>({
             }}
             {...provided.droppableProps}
             dir={isHorizontalRtl ? 'rtl' : undefined}
-            className={`custom-basic-list-container ${containerClassName} ${
-              prefs.isDarkMode ? 'dark-mode' : ''
-            } ${isHorizontalRtl ? 'horizontal-rtl' : ''}`}
+            className={`custom-basic-list-container ${separator ? 'separator' : ''} ${
+              dragHandle ? 'with-drag-handle' : ''
+            } ${containerClassName} ${prefs.isDarkMode ? 'dark-mode' : ''} ${
+              isHorizontalRtl ? 'horizontal-rtl' : ''
+            }`}
             style={{
               ...(isDraggingRef.current && containerHeight !== null
                 ? {
@@ -117,10 +124,18 @@ export function CustomBasicList<T>({
                   <div
                     ref={provided.innerRef}
                     {...provided.draggableProps}
-                    {...provided.dragHandleProps}
+                    {...(dragHandle ? {} : provided.dragHandleProps)}
                     className={`draggable-item ${snapshot.isDragging ? 'dragging' : ''} ${prefs.favoriteColor}`}
                   >
                     {renderItem(item, index)}
+                    {dragHandle && (
+                      <span
+                        className='drag-handle'
+                        {...provided.dragHandleProps}
+                      >
+                        <DragIndicatorIcon fontSize='small' />
+                      </span>
+                    )}
                   </div>
                 )}
               </Draggable>

@@ -123,6 +123,18 @@ body.dashboard {
   }
 }
 
+.picker-select.read-only {
+  pointer-events: none;
+
+  .MuiSelect-icon {
+    display: none;
+  }
+
+  .MuiSelect-select {
+    padding-inline-end: 14px !important;
+  }
+}
+
 .custom-select,
 .MuiInputBase-root,
 .picker-select {

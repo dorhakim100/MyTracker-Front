@@ -1,4 +1,5 @@
 import { ExpectedActual } from '../expectedActual/ExpectedActual'
+import { SetType } from './SetType'
 
 export interface Exercise {
   name: string
@@ -35,6 +36,8 @@ export interface Set {
   isDone?: boolean
   exerciseId?: string
   isDuringWorkout?: boolean
+  type?: SetType
+  restingTime?: number
 
   // just for editing
 }

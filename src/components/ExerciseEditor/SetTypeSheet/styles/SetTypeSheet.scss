@@ -1,0 +1,39 @@
+.set-type-sheet-container {
+  padding: 0.25rem 0.75rem 1rem;
+
+  .MuiList-root {
+    padding: 0;
+  }
+
+  .set-type-mark {
+    @include favorite-accent;
+    width: 1.5rem;
+    font-weight: 700;
+    text-align: center;
+    color: var(--accent);
+
+    &.set-type-warm-up {
+      color: var(--set-type-warm-up);
+    }
+
+    &.set-type-failure {
+      color: var(--set-type-failure);
+    }
+
+    &.set-type-drop {
+      color: var(--set-type-drop);
+    }
+
+    &.set-type-myo {
+      color: var(--set-type-myo);
+    }
+  }
+
+  .set-type-rest {
+    margin-top: 0.35rem;
+    padding: 0.85rem 0.25rem;
+    font-weight: 600;
+    text-align: start;
+    cursor: pointer;
+  }
+}

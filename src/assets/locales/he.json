@@ -208,6 +208,7 @@
     "timesPerWeek": "פעמים בשבוע",
     "addExercises": "הוספת תרגילים",
     "reorderExercises": "סדר תרגילים",
+    "reorderSets": "סדר סטים",
     "changeWeekNumber": "שנה מספר שבוע",
     "unsavedChangesWeek": "יש לך שינויים שלא נשמרו. האם ברצונך לשמור לפני שינוי מספר השבוע?",
     "noExercisesAdded": "טרם נוספו תרגילים",
@@ -284,7 +285,9 @@
     "machine": "מכונה",
     "bodyweight": "משקל גוף",
     "cable": "כבל",
-    "bands": "גומיות"
+    "bands": "גומיות",
+    "smith": "סמית'",
+    "kettlebell": "קטלבל"
   },
   "bodyFat": {
     "title": "הערכת אחוז שומן",

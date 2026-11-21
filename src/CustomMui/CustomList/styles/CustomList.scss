@@ -7,6 +7,13 @@
       color: $white;
     }
   }
+  &.separator {
+    .custom-list-item {
+      border-bottom: 1px solid
+        color-mix(in srgb, var(--ink-on-canvas) 12%, transparent);
+    }
+  }
+
   .custom-list-item {
     gap: 1em;
     text-align: start;

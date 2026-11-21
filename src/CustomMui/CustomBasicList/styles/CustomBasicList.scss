@@ -6,6 +6,36 @@
     color: $white;
   }
 
+  &.separator {
+    gap: 0;
+
+    .draggable-item {
+      @include favorite-accent;
+      border-bottom: 1px solid
+        color-mix(in srgb, var(--ink-on-canvas) 12%, transparent);
+
+      &.dragging {
+        border-bottom-color: var(--accent);
+      }
+    }
+  }
+
+  &.with-drag-handle {
+    .draggable-item {
+      display: flex;
+      align-items: center;
+    }
+
+    .drag-handle {
+      display: flex;
+      align-items: center;
+      flex: none;
+      cursor: grab;
+      padding-inline: 0.35rem;
+      color: color-mix(in srgb, var(--ink-on-canvas) 55%, transparent);
+    }
+  }
+
   .draggable-item {
     &.dragging {
       .MuiCard-root {

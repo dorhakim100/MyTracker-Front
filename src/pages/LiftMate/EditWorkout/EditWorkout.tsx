@@ -375,7 +375,7 @@ export function EditWorkout({
         ...exercise,
         withoutExpected: false,
         notes: {
-          ...exercise.notes,
+          ...(exercise.notes || { expected: '', actual: '' }),
           actual: '',
         },
         sets: newSets,

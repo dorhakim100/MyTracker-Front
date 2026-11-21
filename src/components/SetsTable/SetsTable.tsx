@@ -11,7 +11,8 @@ import Paper from '@mui/material/Paper'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import { Set } from '../../types/exercise/Exercise'
-import { Badge, Typography } from '@mui/material'
+import { Typography } from '@mui/material'
+import { SetMark } from '../SetMark/SetMark'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { ChatBubbleOutlineIcon } from '../../CustomMui/ChatBubbleOutlineIcon/ChatBubbleOutlineIcon'
@@ -30,6 +31,7 @@ import {
   getPickMetric,
   pickBestSet,
 } from '../../services/set/set.helpers'
+import { countsInVolume, setTypeOf } from '../../services/set/set-type'
 
 function Row(props: {
   sets: (Set & { exerciseId: string })[]
@@ -53,7 +55,10 @@ function Row(props: {
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
 
-  const bestSet = pickBestSet(sets, getPickMetric(mainValue))
+  const bestSet = pickBestSet(
+    sets.filter((set) => countsInVolume(setTypeOf(set))),
+    getPickMetric(mainValue)
+  )
 
   return (
     <React.Fragment>
@@ -187,18 +192,20 @@ function Row(props: {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {sets
+                  {[...sets]
                     .sort((a, b) => (a.setNumber || 0) - (b.setNumber || 0))
-                    .map((set) => (
+                    .map((set, index, ordered) => (
                       <TableRow key={set._id}>
                         <TableCell
                           align='center'
                           sx={{ width: '26%' }}
                         >
-                          <Badge
-                            badgeContent={set.setNumber}
+                          <SetMark
+                            sets={ordered}
+                            index={index}
+                            set={set}
                             className={prefs.favoriteColor}
-                          ></Badge>
+                          />
                         </TableCell>
                         <TableCell
                           align='center'

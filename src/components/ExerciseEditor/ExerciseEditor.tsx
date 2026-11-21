@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import {
-  Badge,
   Checkbox,
   CircularProgress,
   Table,
@@ -48,6 +47,18 @@ import { useDebouncedCallback } from '../../hooks/useDebouncedCallback'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { capacitorService } from '../../services/capacitor.service'
 import { exerciseEditorNs } from './locals'
+import { SetMark } from '../SetMark/SetMark'
+import { SetTypeSheet } from './SetTypeSheet/SetTypeSheet'
+import { setTypeSheetNs } from './SetTypeSheet/locals'
+import {
+  applyFailureEffort,
+  restOf,
+  withStoredType,
+} from '../../services/set/set-type'
+import { SetType } from '../../types/exercise/SetType'
+import { formatTime } from '../../services/util.service'
+import { DEFAULT_RESTING_TIME, MINUTE_IN_MS } from '../../assets/config/times'
+import { RestingTimerEdit } from '../RestingTimerEdit/RestingTimerEdit'
 
 export interface ExerciseEditorProps {
   exercise: ExerciseInstructions
@@ -56,7 +67,8 @@ export interface ExerciseEditorProps {
   isExpected?: boolean
   updateExercise: (
     exercise: ExerciseInstructions,
-    setIndex: number
+    setIndex: number,
+    showDoneSpinner?: boolean
   ) => Promise<void> | void
   addSet?: (
     exercise: ExerciseInstructions,
@@ -127,6 +139,10 @@ export function ExerciseEditor({
   const [editSet, setEditSet] = useState<EditSet | null>(null)
   const [currentPickerValue, setCurrentPickerValue] = useState<number>(0)
   const [justDoneIndex, setJustDoneIndex] = useState<number | null>(null)
+  const [typeSetIndex, setTypeSetIndex] = useState<number | null>(null)
+  const [restSetIndex, setRestSetIndex] = useState<number | null>(null)
+  const [savingTypeIndex, setSavingTypeIndex] = useState<number | null>(null)
+  const { t: tType } = useTranslation(setTypeSheetNs)
 
   const sessionDay = useSelector(
     (stateSelector: RootState) => stateSelector.workoutModule.sessionDay
@@ -180,13 +196,15 @@ export function ExerciseEditor({
       exercise.sets[exercise.sets.length - 1] ||
       instructionsService.getEmptySet()
 
-    const { isDuringWorkout, ...setWithoutFlag } = existingSet
     const newSet = {
-      ...setWithoutFlag,
+      ...withStoredType(existingSet),
+      type: 'normal' as const,
+      isDone: false,
+      _id: undefined,
       setIndex: exercise.sets.length,
-      ...(isExpected ? {} : { isDuringWorkout: true }),
+      restingTime: restOf(existingSet, exercise.restingTime),
+      isDuringWorkout: isExpected ? undefined : true,
     }
-    void isDuringWorkout
 
     const newSets = [...exercise.sets, newSet]
     const updatedExercise = {
@@ -226,6 +244,44 @@ export function ExerciseEditor({
     } catch {
       showErrorMsg(t('messages.error.deleteSet'))
     }
+  }
+
+  const onChangeSetType = async (type: SetType) => {
+    if (typeSetIndex == null) return
+    const index = typeSetIndex
+    cancelUpdate()
+    const current = exercise.sets[index]
+    const next =
+      type === 'failure'
+        ? applyFailureEffort({ ...current, type }, Boolean(isExpected))
+        : { ...withStoredType(current), type }
+    const sets = exercise.sets.map((set, i) => (i === index ? next : set))
+    const updated = { ...exercise, sets }
+    setTypeSetIndex(null)
+    if (isExpected) {
+      await updateExercise(updated, index)
+      return
+    }
+    setSavingTypeIndex(index)
+    try {
+      await updateExercise(updated, index, false)
+    } catch {
+      showErrorMsg(t('messages.error.updateSet'))
+    } finally {
+      setSavingTypeIndex(null)
+    }
+  }
+
+  const onSetRest = async (minutes: number) => {
+    if (restSetIndex == null) return
+    const index = restSetIndex
+    const sets = exercise.sets.map((set, i) =>
+      i === index
+        ? { ...withStoredType(set), restingTime: minutes * MINUTE_IN_MS }
+        : set
+    )
+    setRestSetIndex(null)
+    await updateExercise({ ...exercise, sets }, index)
   }
 
   const onClosePicker = () => {
@@ -399,12 +455,13 @@ export function ExerciseEditor({
       >
         <div className='set-review-layout'>
           <div className='set-rail'>
-            <Badge
-              badgeContent={index + 1}
-              color='primary'
-              className={`${prefs.favoriteColor} set-number ${
-                set.isDuringWorkout ? 'during-workout' : ''
-              } ${isDashboard ? 'dashboard' : ''}`}
+            <SetMark
+              sets={exercise.sets}
+              index={index}
+              set={set}
+              className={`${prefs.favoriteColor} ${isDashboard ? 'dashboard' : ''}`}
+              showSpinner={savingTypeIndex === index}
+              onClick={() => setTypeSetIndex(index)}
             />
             <div className='badges-container'>
               {renderDoneControl(set, index)}
@@ -666,12 +723,15 @@ export function ExerciseEditor({
                             isDashboard ? 'dashboard' : ''
                           }`}
                         >
-                          <Badge
-                            badgeContent={index + 1}
-                            color='primary'
-                            className={`${prefs.favoriteColor} set-number ${
-                              set.isDuringWorkout ? 'during-workout' : ''
-                            } ${isDashboard ? 'dashboard' : ''}`}
+                          <SetMark
+                            sets={exercise.sets}
+                            index={index}
+                            set={set}
+                            className={`${prefs.favoriteColor} ${
+                              isDashboard ? 'dashboard' : ''
+                            }`}
+                            showSpinner={savingTypeIndex === index}
+                            onClick={() => setTypeSetIndex(index)}
                           />
                           <div className='reps-container'>
                             <PickerSelect
@@ -863,6 +923,68 @@ export function ExerciseEditor({
               ].max
             }
             onClose={onClosePicker}
+          />
+        }
+      />
+      <SlideDialog
+        title={tType('title')}
+        type='half'
+        open={typeSetIndex != null}
+        onClose={() => setTypeSetIndex(null)}
+        component={
+          <SetTypeSheet
+            sets={exercise.sets}
+            index={typeSetIndex ?? 0}
+            onSelect={(type) => {
+              onChangeSetType(type).catch(() =>
+                showErrorMsg(t('messages.error.updateSet'))
+              )
+            }}
+            restLabel={
+              isExpected && typeSetIndex != null
+                ? tType('rest', {
+                    time: formatTime(
+                      restOf(
+                        exercise.sets[typeSetIndex] || {},
+                        exercise.restingTime || DEFAULT_RESTING_TIME
+                      ) || DEFAULT_RESTING_TIME
+                    ),
+                  })
+                : undefined
+            }
+            onEditRest={
+              isExpected && typeSetIndex != null
+                ? () => {
+                    const index = typeSetIndex
+                    setTypeSetIndex(null)
+                    setRestSetIndex(index)
+                  }
+                : undefined
+            }
+          />
+        }
+      />
+      <SlideDialog
+        title={t('exercise.editRestingTime')}
+        type='half'
+        open={restSetIndex != null}
+        onClose={() => setRestSetIndex(null)}
+        component={
+          <RestingTimerEdit
+            restingTime={
+              restSetIndex == null
+                ? DEFAULT_RESTING_TIME
+                : restOf(
+                    exercise.sets[restSetIndex] || {},
+                    exercise.restingTime || DEFAULT_RESTING_TIME
+                  ) || DEFAULT_RESTING_TIME
+            }
+            updateRestingTime={(ms) => {
+              onSetRest(ms / MINUTE_IN_MS).catch(() =>
+                showErrorMsg(t('messages.error.updateSet'))
+              )
+            }}
+            onClose={() => setRestSetIndex(null)}
           />
         }
       />

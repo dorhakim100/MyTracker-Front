@@ -17,6 +17,7 @@ import {
   removeCurrentExercise,
   setCurrentExercise,
   setSelectedSessionDay,
+  updateTimerRestMark,
   removeTimer,
   setTimer,
   saveWorkout,
@@ -33,6 +34,12 @@ import { showErrorMsg } from '../../services/event-bus.service'
 import { instructionsService } from '../../services/instructions/instructions.service'
 import { setIsLoading } from '../../store/actions/system.actions'
 import { setService } from '../../services/set/set.service'
+import {
+  exerciseIsDone as countingExerciseIsDone,
+  countsAsDone,
+  restOf,
+  setTypeOf,
+} from '../../services/set/set-type'
 import { Instructions } from '../../types/instructions/Instructions'
 import DeleteIcon from '@mui/icons-material/Delete'
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
@@ -112,7 +119,7 @@ export function WorkoutSession({
     if (!sessionDay.instructions.exercises) return false
 
     const areAllDone = sessionDay.instructions.exercises.every((e) =>
-      isExerciseDone(e)
+      countingExerciseIsDone(e.sets)
     )
     setAllExercisesDone(areAllDone)
     return areAllDone
@@ -120,8 +127,11 @@ export function WorkoutSession({
 
   const totalSets = useMemo(() => {
     if (!sessionDay.instructions.exercises) return 0
-    return sessionDay.instructions.exercises.reduce((acc, e) => {
-      return acc + e.sets.length
+    return sessionDay.instructions.exercises.reduce((acc, exercise) => {
+      return (
+        acc +
+        exercise.sets.filter((set) => countsAsDone(setTypeOf(set))).length
+      )
     }, 0)
   }, [sessionDay.instructions.exercises])
   const percentageDone = useMemo(() => {
@@ -132,8 +142,13 @@ export function WorkoutSession({
       !sessionDay.instructions.exercises
     )
       return 0
-    const doneSets = sessionDay.instructions.exercises.reduce((acc, e) => {
-      return acc + e.sets.filter((s) => s.isDone).length
+    const doneSets = sessionDay.instructions.exercises.reduce((acc, exercise) => {
+      return (
+        acc +
+        exercise.sets.filter(
+          (set) => countsAsDone(setTypeOf(set)) && set.isDone
+        ).length
+      )
     }, 0)
     if (!totalSets) return 0
     return (doneSets / totalSets) * 100
@@ -462,22 +477,18 @@ export function WorkoutSession({
 
   // Helper function to check if exercise is done
   function isExerciseDone(exercise: ExerciseInstructions) {
-    return exercise.sets.every((set) => set.isDone)
+    return countingExerciseIsDone(exercise.sets)
   }
 
   // Helper function to clean set (remove unused RPE/RIR field)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const cleanSet = (set: any) => {
-    let cleanedSet = { ...set }
-    if (cleanedSet.rir) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { rpe, ...setWithoutRpe } = cleanedSet
-      cleanedSet = setWithoutRpe
-    } else if (cleanedSet.rpe) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { rir, ...setWithoutRir } = cleanedSet
-      cleanedSet = setWithoutRir
-    }
+    const cleanedSet = { ...set, type: setTypeOf(set) }
+    const hasRir = cleanedSet.rir?.actual != null || cleanedSet.rir?.expected != null
+    const hasRpe = cleanedSet.rpe?.actual != null || cleanedSet.rpe?.expected != null
+    if (hasRir && hasRpe) return cleanedSet
+    if (hasRir) delete cleanedSet.rpe
+    else if (hasRpe) delete cleanedSet.rir
     return cleanedSet
   }
 
@@ -592,7 +603,8 @@ export function WorkoutSession({
   const updateSet = async (
     exercise: ExerciseInstructions,
     setIndex: number,
-    isAll: boolean = false
+    isAll: boolean = false,
+    clearDoneSpinner = true
   ) => {
     if (!sessionDay._id || !sessionDay.workout.forUserId) {
       showErrorMsg(t('messages.error.updateSet'))
@@ -630,6 +642,7 @@ export function WorkoutSession({
       showErrorMsg(t('messages.error.updateSet'))
       return
     } finally {
+      if (!clearDoneSpinner) return
       setCurrUpdatedExerciseSettings({
         exerciseId: '',
         setIndex: -1,
@@ -640,7 +653,8 @@ export function WorkoutSession({
   // Updates exercise values (reps, weight, RPE/RIR) and saves instructions
   const updateExercise = async (
     exercise: ExerciseInstructions,
-    setIndex: number
+    setIndex: number,
+    showDoneSpinner = true
   ) => {
     if (!sessionDay._id || !sessionDay.workout.forUserId) {
       showErrorMsg(t('messages.error.updateSet'))
@@ -656,11 +670,14 @@ export function WorkoutSession({
         instructions: { ...newInstructions },
       })
     }
+    updateTimerRestMark(exercise.exerciseId, setIndex, exercise.sets)
 
-    setCurrUpdatedExerciseSettings({
-      exerciseId: exercise.exerciseId,
-      setIndex,
-    })
+    if (showDoneSpinner) {
+      setCurrUpdatedExerciseSettings({
+        exerciseId: exercise.exerciseId,
+        setIndex,
+      })
+    }
 
     try {
       // Save instructions to backend
@@ -677,7 +694,7 @@ export function WorkoutSession({
         (e) => e.exerciseId === exercise.exerciseId
       )
       if (exerciseIndex !== -1) {
-        await updateSet(exercise, setIndex)
+        await updateSet(exercise, setIndex, false, showDoneSpinner)
 
         invalidateSets(exercise.exerciseId, sessionDay.workout.forUserId, 20)
       }
@@ -689,10 +706,51 @@ export function WorkoutSession({
       })
       showErrorMsg(t('messages.error.updateSet'))
     } finally {
-      setCurrUpdatedExerciseSettings({
-        exerciseId: '',
-        setIndex: -1,
+      if (showDoneSpinner) {
+        setCurrUpdatedExerciseSettings({
+          exerciseId: '',
+          setIndex: -1,
+        })
+      }
+    }
+  }
+
+  const reorderSets = async (exercise: ExerciseInstructions) => {
+    if (!sessionDay._id || !sessionDay.workout.forUserId) {
+      showErrorMsg(t('messages.error.updateSet'))
+      return
+    }
+
+    const originalInstructions = sessionDay.instructions
+    const newInstructions = updateExerciseInInstructions(exercise)
+    setSelectedSessionDay({
+      ...sessionDay,
+      instructions: { ...newInstructions },
+    })
+
+    try {
+      await saveNewInstructions(newInstructions)
+      await setService.removeSetsBySessionIdAndExerciseId(
+        sessionDay._id,
+        exercise.exerciseId
+      )
+      const userId = sessionDay.workout.forUserId
+      await setService.saveSets(
+        exercise.sets.map((set, index) => ({
+          ...cleanSet(set),
+          sessionId: sessionDay._id,
+          userId,
+          exerciseId: exercise.exerciseId,
+          setNumber: index + 1,
+        }))
+      )
+      invalidateSets(exercise.exerciseId, userId, 20)
+    } catch {
+      setSelectedSessionDay({
+        ...sessionDay,
+        instructions: originalInstructions,
       })
+      showErrorMsg(t('messages.error.updateSet'))
     }
   }
 
@@ -851,19 +909,33 @@ export function WorkoutSession({
           exerciseIndex,
           isLastExercise
         )
+        const rest = restOf(exercise.sets[setIndex] || {}, exercise.restingTime)
+        const restMark = {
+          restMarkSets: exercise.sets,
+          restMarkIndex: setIndex,
+          restMarkExerciseId: exercise.exerciseId,
+        }
         if (nextExercise) {
-          setCurrentExercise(nextExercise)
+          setCurrentExercise({ ...nextExercise, restingTime: rest, ...restMark })
           await setTimer({
-            currentExercise: nextExercise,
+            currentExercise: { ...nextExercise, restingTime: rest, ...restMark },
             startTime: new Date().getTime(),
           })
         }
       } else {
         // Just update timer for current exercise
-        setCurrentExercise(currentExerciseToSet)
+        const rest = restOf(exercise.sets[setIndex] || {}, exercise.restingTime)
+        const withRest = {
+          ...currentExerciseToSet,
+          restingTime: rest,
+          restMarkSets: exercise.sets,
+          restMarkIndex: setIndex,
+          restMarkExerciseId: exercise.exerciseId,
+        }
+        setCurrentExercise(withRest)
 
         await setTimer({
-          currentExercise: currentExerciseToSet,
+          currentExercise: withRest,
           startTime: new Date().getTime(),
         })
       }
@@ -1223,6 +1295,7 @@ export function WorkoutSession({
                 addSet={addSet}
                 removeSet={removeSet}
                 markSetAsDone={markSetAsDone}
+                reorderSets={reorderSets}
                 instructions={sessionDay.instructions}
                 exerciseInstructions={exercise}
                 workoutName={sessionDay.workout.name}

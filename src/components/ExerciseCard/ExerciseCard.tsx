@@ -8,6 +8,8 @@ import { capitalizeFirstLetter, formatTime } from '../../services/util.service'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import { ExerciseInstructions } from '../../types/exercise/ExerciseInstructions'
 import { ExerciseEditor } from '../ExerciseEditor/ExerciseEditor'
+import { EquipmentBadges } from '../EquipmentBadges/EquipmentBadges'
+import { ReorderSets } from '../ReorderSets/ReorderSets'
 import { CustomOptionsMenu } from '../../CustomMui/CustomOptionsMenu/CustomOptionsMenu'
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
 import { Instructions } from '../../types/instructions/Instructions'
@@ -29,6 +31,11 @@ import DragHandleIcon from '@mui/icons-material/DragHandle'
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import { instructionsService } from '../../services/instructions/instructions.service'
+import {
+  exerciseIsDone,
+  progressPercent,
+  withStoredType,
+} from '../../services/set/set-type'
 import { showErrorMsg } from '../../services/event-bus.service'
 import { setService } from '../../services/set/set.service'
 import { RestingTimerEdit } from '../RestingTimerEdit/RestingTimerEdit'
@@ -46,7 +53,11 @@ import { FillProgress } from '../../CustomMui/FillProgress/FillProgress'
 
 interface SlideDialogOptions {
   title: string
-  type: 'resting-timer' | 'exercise-details' | 'change-exercise'
+  type:
+    | 'resting-timer'
+    | 'exercise-details'
+    | 'change-exercise'
+    | 'reorder-sets'
   open: boolean
   height?: 'full' | 'half'
 }
@@ -66,7 +77,8 @@ interface ExerciseCardProps {
   setIsReorderExercisesOpen?: (isOpen: boolean) => void
   updateExercise?: (
     exercise: ExerciseInstructions,
-    setIndex: number
+    setIndex: number,
+    showDoneSpinner?: boolean
   ) => Promise<void> | void
   addSet?: (
     exercise: ExerciseInstructions,
@@ -81,6 +93,7 @@ interface ExerciseCardProps {
     setIndex: number,
     isAll?: boolean
   ) => Promise<void> | void
+  reorderSets?: (exercise: ExerciseInstructions) => Promise<void> | void
   isOpen?: boolean
   onOpenChange?: () => void
   onChangeExercise?: (
@@ -95,7 +108,6 @@ export function ExerciseCard({
   className = '',
   onDelete,
   onClick,
-  showEquipment = false,
   instructions,
   isExpected = false,
   workoutName,
@@ -107,6 +119,7 @@ export function ExerciseCard({
   addSet,
   removeSet,
   markSetAsDone,
+  reorderSets,
   isOpen = true,
   onOpenChange,
   onChangeExercise,
@@ -172,11 +185,7 @@ export function ExerciseCard({
   const percentageDone = useMemo(() => {
     if (isDone) return 100
     if (!exerciseInstructions) return 0
-    const doneSets =
-      exerciseInstructions?.sets.filter((set) => set.isDone).length || 0
-    const totalSets = exerciseInstructions?.sets.length || 0
-    if (!totalSets) return 0
-    return (doneSets / totalSets) * 100
+    return progressPercent(exerciseInstructions.sets)
   }, [isDone, exerciseInstructions])
 
   const plannedIntensity = useMemo(() => {
@@ -243,6 +252,18 @@ export function ExerciseCard({
       },
     },
 
+    {
+      title: t('workout.reorderSets'),
+      icon: <DragHandleIcon />,
+      onClick: async () => {
+        capacitorService.vibrate('Light')
+        setSlideDialogOptions({
+          title: t('workout.reorderSets'),
+          type: 'reorder-sets',
+          open: true,
+        })
+      },
+    },
     !isExpected && {
       title: t('exercise.changeExercise'),
       icon: <SwapHorizIcon />,
@@ -295,7 +316,7 @@ export function ExerciseCard({
   ].filter((option) => option) as DropdownOption[]
 
   function getIsExerciseDone(exerciseInstructions: ExerciseInstructions) {
-    return exerciseInstructions?.sets.every((set) => set.isDone)
+    return exerciseIsDone(exerciseInstructions?.sets || [])
   }
 
   async function onMarkAsDone(isDoneToSet: boolean) {
@@ -408,6 +429,8 @@ export function ExerciseCard({
         return t('exercise.editRestingTime')
       case 'change-exercise':
         return capitalizeFirstLetter(exercise.name)
+      case 'reorder-sets':
+        return t('workout.reorderSets')
       default:
         return ''
     }
@@ -435,6 +458,19 @@ export function ExerciseCard({
               setSlideDialogOptions({
                 ...slideDialogOptions,
                 open: false,
+              })
+            }}
+          />
+        )
+      case 'reorder-sets':
+        return (
+          <ReorderSets
+            exercise={exercise}
+            sets={exerciseInstructions?.sets || []}
+            isExpected={isExpected}
+            onReorder={(nextSets) => {
+              onReorderSets(nextSets).catch(() => {
+                showErrorMsg(t('messages.error.updateSet'))
               })
             }}
           />
@@ -470,9 +506,22 @@ export function ExerciseCard({
         return 'full'
       case 'resting-timer':
         return 'half'
+      case 'reorder-sets':
+        return 'half'
       default:
         return 'full'
     }
+  }
+
+  async function onReorderSets(nextSets: Set[]) {
+    if (!exerciseInstructions || !updateExercise) return
+    const ordered = nextSets.map((set, index) => ({
+      ...withStoredType(set),
+      setNumber: index + 1,
+    }))
+    const next = { ...exerciseInstructions, sets: ordered }
+    if (reorderSets) await reorderSets(next)
+    else await updateExercise(next, 0)
   }
 
   function updateRestingTime(restingTime: number) {
@@ -481,7 +530,14 @@ export function ExerciseCard({
       ...instructions,
       exercises: instructions.exercises.map((e) =>
         e.exerciseId === exercise.exerciseId
-          ? { ...e, restingTime: restingTime }
+          ? {
+              ...e,
+              restingTime,
+              sets: e.sets.map((set) => ({
+                ...withStoredType(set),
+                restingTime,
+              })),
+            }
           : e
       ),
     })
@@ -491,43 +547,37 @@ export function ExerciseCard({
 
   const exerciseInfo = (
     <div className='exercise-card-info'>
-      <Typography
-        variant='h6'
-        component='div'
-        className='exercise-card-name'
-      >
-        <MarqueeText variant='h6'>
-          {capitalizeFirstLetter(exercise.name)}
-        </MarqueeText>
-      </Typography>
-
-      {exercise.muscleGroups && exercise.muscleGroups.length > 0 && (
+      <div className='texts-container'>
         <Typography
-          variant='body2'
+          variant='h6'
           component='div'
-          className='exercise-card-muscle-groups'
+          className='exercise-card-name'
         >
-          <MarqueeText variant='body2'>
-            {capitalizeFirstLetter(
-              exercise?.mainMuscles
-                ?.concat(exercise?.secondaryMuscles || [])
-                .join(', ') || ''
-            )}
+          <MarqueeText variant='h6'>
+            {capitalizeFirstLetter(exercise.name)}
           </MarqueeText>
         </Typography>
-      )}
-      {showEquipment &&
-        exercise.equipments &&
-        exercise.equipments.length > 0 && (
+
+        {exercise.muscleGroups && exercise.muscleGroups.length > 0 && (
           <Typography
             variant='body2'
-            className='exercise-card-equipment'
+            component='div'
+            className='exercise-card-muscle-groups'
           >
-            {exercise.equipments
-              .map((eq) => capitalizeFirstLetter(eq))
-              .join(', ')}
+            <MarqueeText variant='body2'>
+              {capitalizeFirstLetter(
+                exercise?.mainMuscles
+                  ?.concat(exercise?.secondaryMuscles || [])
+                  .join(', ') || ''
+              )}
+            </MarqueeText>
           </Typography>
         )}
+      </div>
+      <EquipmentBadges
+        equipments={exercise.equipments}
+        size='m'
+      />
     </div>
   )
 
@@ -681,13 +731,14 @@ export function ExerciseCard({
                 updateExercise={
                   isExpected
                     ? updateExerciseInInstructions
-                    : (exerciseToUpdate, setIndex) =>
+                    : (exerciseToUpdate, setIndex, showDoneSpinner) =>
                         updateExercise?.(
                           {
                             ...exerciseToUpdate,
                             image: exercise.image,
                           },
-                          setIndex
+                          setIndex,
+                          showDoneSpinner
                         )
                 }
                 addSet={

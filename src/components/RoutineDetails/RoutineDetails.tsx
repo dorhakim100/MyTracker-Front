@@ -182,10 +182,15 @@ export function RoutineDetails({ workout }: RoutineDetailsProps) {
   }, [loadWeeks])
 
   useEffect(() => {
+    console.log('loadingSessions', loadingSessions)
+  }, [loadingSessions])
+
+  useEffect(() => {
     const doneTimes = instructions?.doneTimes ?? 0
     const workoutId = workout._id
     if (!instructions || doneTimes <= 0 || !workoutId || !forUserId) {
       setSessions([])
+      setLoadingSessions(false)
       return
     }
     let cancelled = false
@@ -200,7 +205,10 @@ export function RoutineDetails({ workout }: RoutineDetailsProps) {
         if (cancelled) return
         setSessions(finishedSessions(res, workoutId, instructions.weekNumber))
       } catch {
-        if (cancelled) return
+        if (cancelled) {
+          setLoadingSessions(false)
+          return
+        }
         setSessions([])
         showErrorMsg(tApp('messages.error.getSessionDay'))
       } finally {

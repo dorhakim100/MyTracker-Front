@@ -18,6 +18,8 @@ import { Exercise } from '../../types/exercise/Exercise'
 import { useTranslation } from 'react-i18next'
 import { CachedImage } from '../CachedImage/CachedImage'
 import { exerciseImage } from '../../assets/config/exercise-image'
+import { SetMark } from '../SetMark/SetMark'
+import { countsAsDone, setTypeOf } from '../../services/set/set-type'
 
 interface ExerciseDialogOptions {
   open: boolean
@@ -67,13 +69,22 @@ export function Timer() {
     return percentage
   }, [displayExercise, secondsPassedState])
 
+  const shownExercise = displayExercise
+    ? sessionDay?.instructions?.exercises?.find(
+        (item) => item.exerciseId === displayExercise.exerciseId
+      ) || displayExercise
+    : undefined
+
   const doneSets = useMemo(() => {
-    return displayExercise?.sets.filter((set) => set.isDone).length
-  }, [displayExercise])
+    return shownExercise?.sets.filter(
+      (set) => countsAsDone(setTypeOf(set)) && set.isDone
+    ).length
+  }, [shownExercise])
 
   const totalSets = useMemo(() => {
-    return displayExercise?.sets.length
-  }, [displayExercise])
+    return shownExercise?.sets.filter((set) => countsAsDone(setTypeOf(set)))
+      .length
+  }, [shownExercise])
 
   useEffect(() => {
     if (timer) {
@@ -106,12 +117,16 @@ export function Timer() {
     }
   }, [timer])
 
+  const timerKey = currentExercise
+    ? `${currentExercise.exerciseId}:${currentExercise.restMarkIndex ?? ''}:${currentExercise.restingTime ?? ''}`
+    : ''
+
   useEffect(() => {
     startSet()
     if (isLocalNotificationsPermitted && !currentExercise) {
       cancelNotification()
     }
-  }, [currentExercise])
+  }, [timerKey])
 
   async function startSet() {
     try {
@@ -179,6 +194,30 @@ export function Timer() {
       ? displayExercise.restingTime - elapsedMs + SECOND_IN_MS
       : 0
   const timeLeft = clockParts(remainingMs)
+  const restIndex = displayExercise.restMarkIndex
+  const restOwnerId =
+    displayExercise.restMarkExerciseId || displayExercise.exerciseId
+  const restOwner = sessionDay?.instructions?.exercises?.find(
+    (item) => item.exerciseId === restOwnerId
+  )
+  const restSets = restOwner?.sets ?? displayExercise.restMarkSets
+  const restSet =
+    restIndex != null && restSets ? restSets[restIndex] : undefined
+  const switchedExercise =
+    !!displayExercise.restMarkExerciseId &&
+    displayExercise.restMarkExerciseId !== displayExercise.exerciseId
+  const nextIndex =
+    shownExercise?.sets.findIndex((set) => !set.isDone) ?? -1
+  const nextSet = nextIndex >= 0 ? shownExercise?.sets[nextIndex] : undefined
+  const markSets = switchedExercise ? shownExercise?.sets : restSets
+  const markIndex = switchedExercise ? nextIndex : restIndex
+  const markSet = switchedExercise ? nextSet : restSet
+  const showSetMark =
+    !!markSet &&
+    markIndex != null &&
+    markIndex >= 0 &&
+    !!markSets &&
+    (switchedExercise || setTypeOf(markSet) !== 'normal')
 
   return (
     <>
@@ -194,12 +233,22 @@ export function Timer() {
           duration={0.25}
         >
           <div className='timer'>
-            <CachedImage
-              url={displayExercise?.image || exerciseImage.ERROR_IMAGE}
-              fallback={exerciseImage.ERROR_IMAGE}
-              alt='timer'
-              className='timer-image'
-            />
+            <div className='timer-image-wrap'>
+              <CachedImage
+                url={displayExercise?.image || exerciseImage.ERROR_IMAGE}
+                fallback={exerciseImage.ERROR_IMAGE}
+                alt='timer'
+                className='timer-image'
+              />
+              {showSetMark && markSet && markSets && markIndex != null && (
+                <SetMark
+                  sets={markSets}
+                  index={markIndex}
+                  set={markSet}
+                  className={prefs.favoriteColor}
+                />
+              )}
+            </div>
             <div className='text-container'>
               <div className='times-container'>
                 <Typography

@@ -21,6 +21,7 @@ interface PickerSelectProps {
   isAutoWidth?: boolean
   className?: string
   afterString?: string
+  readOnly?: boolean
 }
 
 export function PickerSelect({
@@ -31,6 +32,7 @@ export function PickerSelect({
   isAutoWidth = false,
   className,
   afterString,
+  readOnly = false,
 }: PickerSelectProps) {
   const { t } = useTranslation()
   const prefs = useSelector(
@@ -43,15 +45,15 @@ export function PickerSelect({
   return (
     <Tooltip
       title={t('common.editOption', { option: option.label })}
-      disableHoverListener={!isDashboard}
-      disableTouchListener={!isDashboard}
-      disableFocusListener={!isDashboard}
+      disableHoverListener={readOnly || !isDashboard}
+      disableTouchListener={readOnly || !isDashboard}
+      disableFocusListener={readOnly || !isDashboard}
     >
       <FormControl
-        sx={{ m: 1, minWidth: isAutoWidth ? 'auto' : minWidth || 150 }}
+        sx={{ m: readOnly ? 0 : 1, minWidth: isAutoWidth ? 'auto' : minWidth || 150 }}
         size='small'
-        onClick={openClock}
-        className={`picker-select ${className} ${prefs.favoriteColor} ${
+        onClick={readOnly ? undefined : openClock}
+        className={`picker-select ${readOnly ? 'read-only' : ''} ${className} ${prefs.favoriteColor} ${
           prefs.isDarkMode ? 'dark-mode' : ''
         }`}
       >
@@ -63,6 +65,8 @@ export function PickerSelect({
           value={value}
           open={false}
           onOpen={() => {}}
+          IconComponent={readOnly ? () => null : undefined}
+          inputProps={readOnly ? { readOnly: true } : undefined}
           renderValue={(selected) =>
             `${selected} ${afterString ? ` ${afterString}` : ''}`
           }

@@ -1,0 +1,13 @@
+{
+  "title": "Select set type",
+  "normal": "Normal",
+  "warmUp": "Warm up",
+  "failure": "Failure",
+  "drop": "Drop",
+  "myoReps": "Myo-reps",
+  "warmUpInfo": "Warm up sets won't be calculated as volume or as PRs.",
+  "failureInfo": "Failure sets are counted as normal sets, but are marked as failures. Going to failure is a good, but not on every set.",
+  "dropInfo": "Drop sets are performed at a lower weight and with or without a rest. They are great way to really push the set",
+  "myoRepsInfo": "A hard first set, then short rests and smaller sets at the same weight. Myo-reps are great way to add additional volume to your workout.",
+  "rest": "Rest {{time}}"
+}

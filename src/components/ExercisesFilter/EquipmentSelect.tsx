@@ -16,9 +16,11 @@ const equipmentsImgs = [
   { value: 'Barbell', src: '/equipments/barbell.webp' },
   { value: 'Dumbbell', src: '/equipments/dumbbell.webp' },
   { value: 'Machine', src: '/equipments/machine.webp' },
+  { value: 'Smith', src: '/equipments/smith.jpg' },
   { value: 'Bodyweight', src: '/equipments/body-weight.webp' },
   { value: 'Cable', src: '/equipments/cable.webp' },
   { value: 'Bands', src: '/equipments/bands.webp' },
+  { value: 'Kettlebell', src: '/equipments/kettlebell.jpg' },
 ]
 
 export function EquipmentSelect({

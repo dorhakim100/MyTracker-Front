@@ -303,6 +303,40 @@ export function setCurrentExercise(exercise: ExerciseInstructions) {
   store.dispatch({ type: SET_CURRENT_EXERCISE, exercise })
 }
 
+export function updateTimerRestMark(
+  exerciseId: string,
+  setIndex: number,
+  sets: ExerciseInstructions['sets']
+) {
+  const { currentExercise, timer } = store.getState().workoutModule
+  if (!currentExercise || currentExercise.restMarkIndex !== setIndex) return
+  const ownerId =
+    currentExercise.restMarkExerciseId || currentExercise.exerciseId
+  if (ownerId !== exerciseId) return
+
+  const nextExercise = {
+    ...currentExercise,
+    restMarkSets: sets,
+    restMarkExerciseId: exerciseId,
+  }
+  store.dispatch({ type: SET_CURRENT_EXERCISE, exercise: nextExercise })
+
+  if (!timer?.currentExercise) return
+  const nextTimer = {
+    ...timer,
+    currentExercise: {
+      ...timer.currentExercise,
+      restMarkSets: sets,
+      restMarkIndex: setIndex,
+      restMarkExerciseId: exerciseId,
+    },
+  }
+  store.dispatch({ type: SET_TIMER, timer: nextTimer })
+  if (nextTimer._id) {
+    indexedDbService.put('timer', nextTimer).catch(() => undefined)
+  }
+}
+
 export function removeCurrentExercise() {
   store.dispatch({ type: REMOVE_CURRENT_EXERCISE })
 }

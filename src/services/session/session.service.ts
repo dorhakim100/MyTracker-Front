@@ -2,6 +2,7 @@ import { httpService } from '../http.service'
 import { SessionDay } from '../../types/workout/SessionDay'
 import { workoutService } from '../workout/workout.service'
 import { ExerciseInstructions } from '../../types/exercise/ExerciseInstructions'
+import { instructionsService } from '../instructions/instructions.service'
 
 const KEY = 'session'
 
@@ -93,14 +94,15 @@ async function playWorkout(sessionDay: SessionDay, userId: string) {
       userId: userId,
     })
 
-    // const instructionsWithDetails =
-    //   await instructionsService.getExercisesFromInstructions(
-    //     session.instructions
-    //   )
+    const instructionsWithDetails = session.instructions?.exercises
+      ? await instructionsService.getExercisesFromInstructions(
+          session.instructions
+        )
+      : session.instructions
 
     const instructionsWithFreshExercises = {
-      ...session.instructions,
-      exercises: session.instructions.exercises.map(
+      ...instructionsWithDetails,
+      exercises: instructionsWithDetails.exercises.map(
         (exercise: ExerciseInstructions) => {
           return {
             ...exercise,

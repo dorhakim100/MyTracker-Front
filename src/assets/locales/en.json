@@ -237,6 +237,7 @@
     "timesPerWeek": "Times per week",
     "addExercises": "Add Exercises",
     "reorderExercises": "Reorder Exercises",
+    "reorderSets": "Reorder sets",
     "changeWeekNumber": "Change Week Number",
     "unsavedChangesWeek": "You have unsaved changes. Do you want to save before changing the week number?",
     "noExercisesAdded": "No exercises added yet",
@@ -309,7 +310,9 @@
     "machine": "Machine",
     "bodyweight": "Bodyweight",
     "cable": "Cable",
-    "bands": "Bands"
+    "bands": "Bands",
+    "smith": "Smith",
+    "kettlebell": "Kettlebell"
   },
   "bodyFat": {
     "title": "Body fat estimate",

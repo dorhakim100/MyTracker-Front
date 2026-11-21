@@ -121,8 +121,19 @@
     grid-column: 2/3;
     grid-row: 1/2;
     display: grid;
+    grid-template-rows: auto 1fr;
     gap: 0.5rem;
     min-width: 0; // Allows text truncation
+    height: 100%;
+
+    .texts-container {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 0.35rem;
+    }
+    .equipment-badges-container {
+      align-self: center;
+    }
   }
 
   .exercise-card-heading {

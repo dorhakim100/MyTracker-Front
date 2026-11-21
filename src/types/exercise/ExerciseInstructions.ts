@@ -6,6 +6,9 @@ export interface ExerciseInstructions {
 
   restingTime?: number
   setIndex?: number
+  restMarkSets?: Set[]
+  restMarkIndex?: number
+  restMarkExerciseId?: string
 
   notes: ExpectedActual<string>
   name?: string

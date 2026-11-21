@@ -11,6 +11,7 @@ import { ChatBubbleOutlineIcon } from '../../../CustomMui/ChatBubbleOutlineIcon/
 import type { User } from '../../../types/user/User'
 import { MarqueeText } from '../../MarqueeText/MarqueeText'
 import { BodyPartBadges } from '../../BodyPartBadge/BodyPartBadge'
+import { EquipmentBadges } from '../../EquipmentBadges/EquipmentBadges'
 import { CustomButton } from '../../../CustomMui/CustomButton/CustomButton'
 import { ChatUnreadBadge } from '../../../CustomMui/ChatUnreadBadge/ChatUnreadBadge'
 import { exerciseChatNs } from '../../ExerciseChatDialog/locals'
@@ -90,6 +91,7 @@ export function RoutineExerciseCard({
             muscles={exerciseMuscles(exercise)}
             size='s'
           />
+          <EquipmentBadges equipments={exercise.equipments} />
         </div>
         {onOpenChat && (
           <div className='exercise-chat'>

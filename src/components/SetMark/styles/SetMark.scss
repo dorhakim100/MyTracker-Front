@@ -1,0 +1,70 @@
+.set-mark-container {
+  @include favorite-accent;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  .set-mark-plus {
+    position: absolute;
+    top: -0.8rem;
+    inset-inline-end: -0.4rem;
+    color: var(--accent);
+    font-size: 1.2rem;
+    font-weight: 700;
+    line-height: 1;
+    pointer-events: none;
+  }
+}
+
+.set-mark-container {
+  &.set-type-warm-up {
+    --set-mark: var(--set-type-warm-up);
+  }
+
+  &.set-type-failure {
+    --set-mark: var(--set-type-failure);
+  }
+
+  &.set-type-drop {
+    --set-mark: var(--set-type-drop);
+  }
+
+  &.set-type-myo {
+    --set-mark: var(--set-type-myo);
+  }
+
+  .two-digits {
+    span {
+      font-size: 0.9rem !important;
+    }
+  }
+  &[class*='set-type-'] {
+    .MuiBadge-badge {
+      font-size: 1rem;
+
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      width: 25px;
+      height: 25px;
+      // min-width: 25px;
+      padding: 0rem;
+      line-height: 1;
+      font-weight: 700;
+      position: static;
+      top: auto;
+      right: auto;
+      left: auto;
+      transform: none;
+      border-radius: 50%;
+      background-color: transparent !important;
+      color: var(--set-mark) !important;
+      box-shadow: inset 0 0 0 1px
+        color-mix(in srgb, var(--ink-on-canvas) 45%, transparent) !important;
+    }
+  }
+}

@@ -5,6 +5,7 @@ import { POPULAR_EXERCISES } from '../../assets/config/popular-exercises'
 import { Workout } from '../../types/workout/Workout'
 import { indexedDbService } from '../indexeddb.service'
 import { ExerciseFilter } from '../../types/exerciseFilter/ExerciseFilter'
+import { equipmentMatchValues } from '../../assets/config/equipments'
 import { httpService } from '../http.service'
 import { getWorkoutBodyParts } from '../../assets/config/body-parts'
 import { store } from '../../store/store'
@@ -339,27 +340,8 @@ export function getWorkoutMuscles(workout: Workout) {
  * Based on exercisedb.dev API equipment values
  */
 export function mapEquipmentToApiFormat(equipment: string): string[] {
-  const mapping: Record<string, string[]> = {
-    All: [],
-    Barbell: ['barbell', 'ez barbell', 'olympic barbell', 'trap bar'],
-    Dumbbell: ['dumbbell'],
-    Machine: [
-      'machine',
-      'leverage machine',
-      'smith machine',
-      'stepmill machine',
-      'elliptical machine',
-      'skierg machine',
-      'sled machine',
-      'upper body ergometer',
-      'stationary bike',
-    ],
-    Cable: ['cable'],
-    Bodyweight: ['body weight', 'weighted', 'assisted'],
-    Bands: ['band', 'resistance band'],
-    Kettlebell: ['kettlebell'],
-  }
-  return mapping[equipment] || [equipment.toLowerCase()]
+  if (equipment === 'All') return []
+  return equipmentMatchValues(equipment)
 }
 
 /**
@@ -531,14 +513,12 @@ export function filterExercises(
   if (equipmentValue !== 'All') {
     const equipmentNames = mapEquipmentToApiFormat(equipmentValue)
     exercises = exercises.filter((exercise: any) => {
-      // Check if any of the exercise's equipment matches any of our mapped equipment names
-      const exerciseEquipment = exercise.equipments
-      const equipmentStr = Array.isArray(exerciseEquipment)
-        ? exerciseEquipment.join(' ').toLowerCase()
-        : exerciseEquipment.toLowerCase()
-      return equipmentNames.some((eqName) =>
-        equipmentStr.includes(eqName.toLowerCase())
-      )
+      const exerciseEquipment = exercise.equipments || exercise.equipment || []
+      const names = (Array.isArray(exerciseEquipment)
+        ? exerciseEquipment
+        : [exerciseEquipment]
+      ).map((name: string) => String(name).toLowerCase())
+      return equipmentNames.some((eqName) => names.includes(eqName))
     })
   }
 

@@ -35,6 +35,7 @@ import { showErrorMsg } from '../../services/event-bus.service'
 import { capitalizeFirstLetter } from '../../services/util.service'
 import { MarqueeText } from '../MarqueeText/MarqueeText'
 import { BodyPartBadges } from '../BodyPartBadge/BodyPartBadge'
+import { EquipmentBadges } from '../EquipmentBadges/EquipmentBadges'
 import {
   ExerciseViewBy,
   getPickMetric,
@@ -42,6 +43,7 @@ import {
   pickBestSet,
   VolumePoint,
 } from '../../services/set/set.helpers'
+import { countsInVolume, setTypeOf } from '../../services/set/set-type'
 import { exerciseDetailsNs } from './locals'
 import { getExerciseBodyParts } from '../../assets/config/body-parts'
 
@@ -156,7 +158,10 @@ export function ExerciseDetails({
       .reverse()
       .map((daySets) => {
         const createdAt = daySets[0]?.createdAt as unknown as string
-        const best = pickBestSet(daySets, pickMetric)
+        const best = pickBestSet(
+          daySets.filter((set) => countsInVolume(setTypeOf(set))),
+          pickMetric
+        )
         return {
           createdAt,
           value: best?.[pickMetric].actual,
@@ -365,6 +370,10 @@ export function ExerciseDetails({
             {muscleGroupsText}
           </MarqueeText>
         ) : null}
+        <EquipmentBadges
+          equipments={exercise?.equipments}
+          size='l'
+        />
       </div>
       <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
 

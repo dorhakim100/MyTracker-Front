@@ -1,6 +1,7 @@
 import { httpService } from '../http.service'
 import { Instructions } from '../../types/instructions/Instructions'
 import { getExerciseById } from '../exersice-search/exersice-search'
+import { restOf, withStoredType } from '../set/set-type'
 const KEY = 'instructions'
 
 export const instructionsService = {
@@ -35,7 +36,8 @@ async function query(
 async function getById(instructionId: string, filter: any) {
   try {
     const res = await httpService.get(`${KEY}/${instructionId}`, filter)
-    return res
+    if (!res?.exercises) return res
+    return getExercisesFromInstructions(res)
   } catch (err) {
     throw err
   }
@@ -48,18 +50,31 @@ async function remove(instructionId: string) {
     throw err
   }
 }
+function slimInstructions(instructions: Instructions) {
+  return {
+    ...instructions,
+    exercises: (instructions.exercises || []).map((exercise) => ({
+      exerciseId: exercise.exerciseId,
+      withoutExpected: exercise.withoutExpected,
+      sets: (exercise.sets || []).map((set) => ({
+        ...withStoredType(set),
+        restingTime: restOf(set, exercise.restingTime),
+      })),
+    })),
+  }
+}
+
 async function save(instructions: Instructions) {
   try {
-    let savedInstructions
-    if (instructions._id) {
-      savedInstructions = await httpService.put(
-        `${KEY}/${instructions._id}`,
-        instructions
-      )
-    } else {
-      savedInstructions = await httpService.post(KEY, instructions)
+    const payload = slimInstructions(instructions)
+    const savedInstructions = instructions._id
+      ? await httpService.put(`${KEY}/${instructions._id}`, payload)
+      : await httpService.post(KEY, payload)
+    return {
+      ...instructions,
+      ...savedInstructions,
+      exercises: instructions.exercises,
     }
-    return savedInstructions
   } catch (err) {
     throw err
   }
@@ -73,7 +88,8 @@ async function getByWorkoutId(
       `${KEY}/workout/${filter.workoutId}`,
       { forUserId: filter.forUserId, weekNumber: filter.weekNumber }
     )
-    return instructions
+    if (!instructions?.exercises) return instructions
+    return getExercisesFromInstructions(instructions)
   } catch (err) {
     throw err
   }
@@ -111,8 +127,16 @@ async function getExercisesFromInstructions(instructions: Instructions) {
 
     const exercisesWithDetails = await Promise.all(
       exercises.map(async (exercise) => {
-        const fullExercise = await getExerciseById(exercise.exerciseId)
-        return { ...exercise, ...fullExercise }
+        const fullExercise = await getExerciseById(exercise.exerciseId).catch(
+          () => null
+        )
+        if (!fullExercise) return exercise
+        return {
+          ...exercise,
+          ...fullExercise,
+          sets: exercise.sets,
+          withoutExpected: exercise.withoutExpected,
+        }
       })
     )
 
@@ -136,6 +160,7 @@ function getEmptyInstructions() {
 
 function getEmptySet() {
   return {
+    type: 'normal' as const,
     reps: {
       expected: 8,
       actual: 8,

@@ -1,0 +1,58 @@
+.reorder-sets {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-height: 0;
+  padding: 0.5rem;
+}
+
+.reorder-sets-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  img {
+    width: 3.5rem;
+    height: 3.5rem;
+    object-fit: cover;
+    border-radius: 0.5rem;
+  }
+}
+
+.reorder-set-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 0.35rem;
+  flex: 1;
+  min-width: 0;
+  min-height: 3.25rem;
+  padding-block: 0.8rem;
+
+  .set-number .MuiBadge-badge {
+    position: static;
+    transform: none;
+    padding: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+
+  .reorder-set-check {
+    pointer-events: none;
+    padding: 0;
+  }
+
+  .finished,
+  .not-finished {
+    border-radius: 50%;
+    color: #fff;
+  }
+
+  .not-finished {
+    background-color: var(--error-color);
+  }
+
+  .finished {
+    background-color: var(--success-color);
+  }
+}
