@@ -22,5 +22,6 @@
   "replacePhoto": "Replace photo",
   "removePhoto": "Remove photo",
   "estimate": "Estimate body fat",
+  "aiEstimate": "AI estimate",
   "apply": "Save estimate"
 }

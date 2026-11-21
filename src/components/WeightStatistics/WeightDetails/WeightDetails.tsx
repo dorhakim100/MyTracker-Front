@@ -520,6 +520,32 @@ export function WeightDetails({
               >
                 {fieldTitle(field)}
               </Typography>
+              {field.key === 'bodyFat' && record?.imageUrl && (
+                <CustomButton
+                  // isIcon
+                  // size='small'
+                  aiButton
+                  variant='black'
+                  size='small'
+                  text={tDetails('aiEstimate')}
+                  icon={
+                    isEstimating ? (
+                      <CircularProgress
+                        size={18}
+                        color='inherit'
+                      />
+                    ) : (
+                      <AutoAwesomeIcon fontSize='small' />
+                    )
+                  }
+                  ariaLabel={tDetails('estimate')}
+                  onClick={(event) => {
+                    event.stopPropagation()
+                    void onEstimate()
+                  }}
+                  disabled={isBusy}
+                />
+              )}
               <Typography
                 variant='body1'
                 className='field-value'
@@ -534,28 +560,6 @@ export function WeightDetails({
                 )}
               </Typography>
               <div className='field-actions'>
-                {field.key === 'bodyFat' && record?.imageUrl && (
-                  <CustomButton
-                    isIcon
-                    size='small'
-                    icon={
-                      isEstimating ? (
-                        <CircularProgress
-                          size={18}
-                          color='inherit'
-                        />
-                      ) : (
-                        <AutoAwesomeIcon fontSize='small' />
-                      )
-                    }
-                    ariaLabel={tDetails('estimate')}
-                    onClick={(event) => {
-                      event.stopPropagation()
-                      void onEstimate()
-                    }}
-                    disabled={isBusy}
-                  />
-                )}
                 {hasValue && (
                   <CustomButton
                     isIcon

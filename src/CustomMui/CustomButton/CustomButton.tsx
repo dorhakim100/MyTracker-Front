@@ -2,6 +2,7 @@ import { Button, IconButton, Tooltip } from '@mui/material'
 import type { SxProps, Theme } from '@mui/material/styles'
 import type { ReactNode, MouseEvent } from 'react'
 import { useSelector } from 'react-redux'
+import { BorderBeam } from 'border-beam'
 import { RootState } from '../../store/store'
 import { ClickAnimation } from '../../components/ClickAnimation/ClickAnimation'
 
@@ -13,6 +14,8 @@ export type CustomButtonVariant =
   | 'strong'
   | 'flat'
   | 'thin'
+  | 'black'
+  | 'white'
 
 interface CustomButtonProps {
   text?: string
@@ -32,6 +35,7 @@ interface CustomButtonProps {
   variant?: CustomButtonVariant
   borderIcon?: boolean
   wrapperClassName?: string
+  aiButton?: boolean
 }
 
 export function CustomButton({
@@ -52,11 +56,22 @@ export function CustomButton({
   variant,
   borderIcon = false,
   wrapperClassName,
+  aiButton = false,
 }: CustomButtonProps) {
   const resolvedVariant = variant ?? (isIcon ? 'medium' : 'strong')
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
+  const isNeutral = resolvedVariant === 'black' || resolvedVariant === 'white'
+  const colorClass = isNeutral ? '' : prefs.favoriteColor || ''
+  const beamTheme: 'dark' | 'light' =
+    resolvedVariant === 'black'
+      ? 'dark'
+      : resolvedVariant === 'white'
+        ? 'light'
+        : prefs.isDarkMode
+          ? 'dark'
+          : 'light'
 
   const isDashboard = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.isDashboard
@@ -65,6 +80,20 @@ export function CustomButton({
   // const resolvedBg = backgroundColor || prefs.favoriteColor || undefined
   const resolvedBg = backgroundColor || undefined
 
+  function withBeam(node: ReactNode) {
+    if (!aiButton) return node
+    return (
+      <BorderBeam
+        borderRadius={isIcon ? 999 : 10}
+        theme={beamTheme}
+        active={!disabled}
+        className={`custom-button-beam${fullWidth ? ' full-width' : ''}`}
+      >
+        {node}
+      </BorderBeam>
+    )
+  }
+
   return (
     <ClickAnimation
       disabled={isDashboard ? true : disabled}
@@ -72,7 +101,9 @@ export function CustomButton({
         wrapperClassName || ''
       } ${borderIcon ? 'border-icon' : ''} ${
         prefs.isDarkMode ? 'dark-mode' : ''
-      } ${disabled ? 'disabled' : ''} ${prefs.favoriteColor || ''}`}
+      } ${disabled ? 'disabled' : ''} ${colorClass} ${
+        aiButton && fullWidth ? 'full-width' : ''
+      }`}
     >
       {isIcon ? (
         <Tooltip
@@ -86,65 +117,71 @@ export function CustomButton({
           disableFocusListener={tooltipTitle && isDashboard ? false : true}
         >
           <span style={{ display: 'inline-flex' }}>
-            <IconButton
-              aria-label={
-                ariaLabel || (typeof text === 'string' ? text : 'button')
-              }
-              onClick={async (e) => {
-                onClick?.(e)
-                if (shouldVibrate) {
-                  capacitorService.vibrate('Light')
+            {withBeam(
+              <IconButton
+                aria-label={
+                  ariaLabel || (typeof text === 'string' ? text : 'button')
                 }
-              }}
-              disabled={disabled}
-              size={size}
-              className={`custom-button variant-${resolvedVariant} icon-button ${
-                className || ''
-              } ${resolvedVariant === 'flat' ? '' : prefs.favoriteColor || ''}`}
-              sx={{
-                backgroundColor: resolvedBg,
-                color: resolvedBg ? '#fff' : undefined,
-                borderRadius: 999,
-                touchAction: 'manipulation',
-                WebkitTapHighlightColor: 'transparent',
-                '&:hover': {
+                onClick={async (e) => {
+                  onClick?.(e)
+                  if (shouldVibrate) {
+                    capacitorService.vibrate('Light')
+                  }
+                }}
+                disabled={disabled}
+                size={size}
+                className={`custom-button variant-${resolvedVariant} icon-button ${
+                  className || ''
+                } ${resolvedVariant === 'flat' || isNeutral ? '' : colorClass}`}
+                sx={{
                   backgroundColor: resolvedBg,
-                  filter: resolvedBg ? 'brightness(0.95)' : undefined,
-                },
-                '&:active': {
-                  transform: 'scale(0.98)',
-                },
-                '&:focus': { outline: 'none' },
-                ...sx,
-              }}
-            >
-              {icon}
-            </IconButton>
+                  color: resolvedBg ? '#fff' : undefined,
+                  borderRadius: 999,
+                  touchAction: 'manipulation',
+                  WebkitTapHighlightColor: 'transparent',
+                  '&:hover': {
+                    backgroundColor: resolvedBg,
+                    filter: resolvedBg ? 'brightness(0.95)' : undefined,
+                  },
+                  '&:active': {
+                    transform: 'scale(0.98)',
+                  },
+                  '&:focus': { outline: 'none' },
+                  ...sx,
+                }}
+              >
+                {icon}
+              </IconButton>
+            )}
           </span>
         </Tooltip>
       ) : (
-        <Button
-          variant='contained'
-          size={size}
-          fullWidth={fullWidth}
-          aria-label={ariaLabel || (typeof text === 'string' ? text : 'button')}
-          onClick={async (e) => {
-            onClick?.(e)
-            if (shouldVibrate) {
-              capacitorService.vibrate('Light')
+        withBeam(
+          <Button
+            variant='contained'
+            size={size}
+            fullWidth={fullWidth}
+            aria-label={
+              ariaLabel || (typeof text === 'string' ? text : 'button')
             }
-          }}
-          disabled={disabled}
-          className={`custom-button variant-${resolvedVariant} ${
-            className || ''
-          } ${prefs.favoriteColor || ''} ${disabled ? 'disabled' : ''} ${
-            prefs.isDarkMode ? 'dark-mode' : ''
-          } ${isDashboard ? 'dashboard' : ''}`}
-        >
-          {icon && isIconReverse && icon}
-          {text}
-          {icon && !isIconReverse && icon}
-        </Button>
+            onClick={async (e) => {
+              onClick?.(e)
+              if (shouldVibrate) {
+                capacitorService.vibrate('Light')
+              }
+            }}
+            disabled={disabled}
+            className={`custom-button variant-${resolvedVariant} ${
+              className || ''
+            } ${colorClass} ${disabled ? 'disabled' : ''} ${
+              prefs.isDarkMode ? 'dark-mode' : ''
+            } ${isDashboard ? 'dashboard' : ''}`}
+          >
+            {icon && isIconReverse && icon}
+            {text}
+            {icon && !isIconReverse && icon}
+          </Button>
+        )
       )}
     </ClickAnimation>
   )

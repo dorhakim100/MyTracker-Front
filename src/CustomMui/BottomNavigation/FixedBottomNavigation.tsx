@@ -255,7 +255,7 @@ export function FixedBottomNavigation(props: {
                   action.beam ? (
                     <BorderBeam
                       borderRadius={10}
-                      theme={prefs.isDarkMode ? 'dark' : 'light'}
+                      theme='dark'
                       active={isAddModal}
                       className='speed-dial-action-beam'
                       style={{ position: 'absolute', inset: 0 }}
@@ -269,7 +269,11 @@ export function FixedBottomNavigation(props: {
                 onClick={
                   action.onClick as unknown as MouseEventHandler<HTMLDivElement>
                 }
-                className={`${prefs.favoriteColor}`}
+                className={`custom-button ${
+                  action.beam
+                    ? 'variant-black'
+                    : `variant-strong ${prefs.favoriteColor || ''}`
+                }`}
               />
             )
           })}

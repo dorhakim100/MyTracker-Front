@@ -12,7 +12,6 @@ import { showErrorMsg } from '../../services/event-bus.service'
 import type { AiLogEstimate } from '../../types/aiLog/AiLog'
 import { aiLogComposeNs } from './locals'
 import { CustomAnimatedText } from '../../CustomMui/CustomAnimatedText/CustomAnimatedText'
-import { BorderBeam } from 'border-beam'
 
 interface AiLogComposeProps {
   onEstimated: (estimate: AiLogEstimate) => void
@@ -159,29 +158,24 @@ export function AiLogCompose({ onEstimated, onOpenSearch }: AiLogComposeProps) {
         </Typography>
       )}
 
-      <BorderBeam
-        className='send-button-container'
-        size='line'
-        borderRadius={4}
-        active={canSend}
-      >
-        <CustomButton
-          text={isEstimating ? t('estimating') : t('send')}
-          onClick={onSend}
-          disabled={!canSend}
-          className={`send-button ${prefs.favoriteColor}`}
-          icon={
-            isEstimating ? (
-              <CircularProgress
-                size={20}
-                color='inherit'
-              />
-            ) : (
-              <AutoAwesomeIcon />
-            )
-          }
-        />
-      </BorderBeam>
+      <CustomButton
+        text={isEstimating ? t('estimating') : t('send')}
+        onClick={onSend}
+        disabled={!canSend}
+        aiButton
+        variant='black'
+        className={`send-button ${prefs.favoriteColor}`}
+        icon={
+          isEstimating ? (
+            <CircularProgress
+              size={20}
+              color='inherit'
+            />
+          ) : (
+            <AutoAwesomeIcon />
+          )
+        }
+      />
     </div>
   )
 }

@@ -152,7 +152,11 @@
 }
 
 .MuiSpeedDial-actions:not(.MuiSpeedDial-actionsClosed) {
-  transition: all 0.2s ease-in-out !important;
+  transition:
+    background-color 0.2s ease-in-out,
+    border-radius 0.2s ease-in-out,
+    padding 0.2s ease-in-out,
+    margin 0.2s ease-in-out !important;
   background-color: $white;
   border-top-left-radius: 10px !important;
   border-top-right-radius: 10px !important;
