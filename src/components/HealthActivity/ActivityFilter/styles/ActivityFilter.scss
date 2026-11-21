@@ -24,9 +24,15 @@
   .activity-paging {
     display: flex;
     align-items: center;
-    justify-content: space-around;
     gap: 0.5rem;
-    padding-inline-start: 0.5rem;
+    justify-content: space-between;
+    padding-inline-start: 0.8rem;
+  }
+
+  .activity-paging-content {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
 
   .activity-period {

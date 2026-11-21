@@ -45,6 +45,7 @@ export function ActivityFilter({
   goalLabel,
 }: ActivityFilterProps) {
   const { t } = useTranslation(activityFilterNs)
+  const hasStreak = liveStreak != null && liveStreak > 0
 
   return (
     <div className='activity-filter-container'>
@@ -64,24 +65,26 @@ export function ActivityFilter({
         </div>
       </div>
 
-      <div className='activity-paging'>
-        {liveStreak != null && (
+      <div className={`activity-paging ${hasStreak ? 'has-streak' : ''}`}>
+        {hasStreak && (
           <LiveStreak
             count={liveStreak}
             icon={icon}
           />
         )}
-        <p className='activity-period'>
-          <bdi>{period}</bdi>
-        </p>{' '}
-        {target && (
-          <div className='activity-goal-tag'>
-            <GoalTag
-              target={target}
-              label={goalLabel}
-            />
-          </div>
-        )}
+        <div className='activity-paging-content'>
+          <p className='activity-period'>
+            <bdi>{period}</bdi>
+          </p>{' '}
+          {target && (
+            <div className='activity-goal-tag'>
+              <GoalTag
+                target={target}
+                label={goalLabel}
+              />
+            </div>
+          )}
+        </div>
         <div className='activity-paging-actions'>
           <CustomButton
             isIcon
