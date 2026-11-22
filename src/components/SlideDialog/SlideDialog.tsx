@@ -21,17 +21,27 @@ import {
   pushSlideDialogZIndex,
 } from './slide-dialog-layer'
 import { capitalizeFirstLetter } from '../../services/util.service'
+import { SlideAnimation } from '../SlideAnimation/SlideAnimation'
+import {
+  CustomTabs,
+  type CustomTabsProps,
+} from '../../CustomMui/CustomTabs/CustomTabs'
+
+export type SlideDialogTabs = Omit<CustomTabsProps, 'value' | 'onChange'> & {
+  onChange?: (value: string) => void
+}
 
 interface SlideDialogProps {
   open: boolean
   onClose: () => void
-  component: React.ReactElement
+  component: React.ReactElement | React.ReactElement[]
   title?: string
   onSave?: () => void
   type?: 'half' | 'full'
   enableSwipeToClose?: boolean
   isFromAlertDialog?: boolean
   headerAction?: React.ReactNode
+  tabs?: SlideDialogTabs
 }
 
 const SHEET_BASE_Z_INDEX = 1200
@@ -110,6 +120,13 @@ function isGestureFromTop(target: EventTarget | null, boundary: HTMLElement) {
   }
 
   return boundary.scrollTop <= 1
+}
+
+function getTabIndex(options: { value: string }[] | undefined, value: string) {
+  if (!options?.length) return 0
+  const index = options.findIndex((option) => option.value === value)
+  if (index < 0) return 0
+  return index
 }
 
 function getTouchPoint(event: TouchEvent) {
@@ -414,6 +431,7 @@ function DashboardDrawer({
   isLoading,
   zIndex,
   headerAction,
+  tabBar,
 }: {
   open: boolean
   onClose: () => void
@@ -425,6 +443,7 @@ function DashboardDrawer({
   isLoading: boolean
   zIndex: number
   headerAction?: React.ReactNode
+  tabBar?: React.ReactNode
 }) {
   const isRtl = prefs.lang === 'he'
   const transitionMs = SHEET_DURATION * 1000
@@ -474,6 +493,7 @@ function DashboardDrawer({
           headerAction={headerAction}
         />
       </div>
+      {tabBar}
       <div className='slide-dialog-content'>
         <div className='slide-dialog-body-inner'>{component}</div>
       </div>
@@ -490,6 +510,7 @@ function SlideDialogSheet({
   prefs,
   isLoading,
   headerAction,
+  tabBar,
 }: {
   onClose: () => void
   component: React.ReactElement
@@ -499,6 +520,7 @@ function SlideDialogSheet({
   prefs: RootState['systemModule']['prefs']
   isLoading: boolean
   headerAction?: React.ReactNode
+  tabBar?: React.ReactNode
 }) {
   const { yProgress } = Sheet.useContext()
   const scrollerNode = React.useRef<HTMLDivElement | null>(null)
@@ -539,6 +561,7 @@ function SlideDialogSheet({
           headerAction={headerAction}
         />
       </Sheet.Header>
+      {tabBar}
       <Sheet.Content
         disableDrag
         className='slide-dialog-body'
@@ -576,6 +599,7 @@ export function SlideDialog({
   enableSwipeToClose = true,
   isFromAlertDialog = false,
   headerAction,
+  tabs,
 }: SlideDialogProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -596,6 +620,50 @@ export function SlideDialog({
   const [contentAction, setContentAction] =
     React.useState<React.ReactNode>(null)
   const resolvedHeaderAction = contentAction ?? headerAction
+  const isTabbed = Array.isArray(component)
+  const firstTab = isTabbed ? tabs?.options[0]?.value ?? '' : ''
+  const [tab, setTab] = React.useState(firstTab)
+  const [direction, setDirection] = React.useState(1)
+
+  React.useEffect(() => {
+    if (open) return
+    setTab(firstTab)
+    setDirection(1)
+  }, [open, firstTab])
+
+  function onTabChange(next: string) {
+    const nextIndex = getTabIndex(tabs?.options, next)
+    const currentIndex = getTabIndex(tabs?.options, tab || firstTab)
+    setDirection(nextIndex >= currentIndex ? 1 : -1)
+    setTab(next)
+    tabs?.onChange?.(next)
+  }
+
+  const selectedTab = tab || firstTab
+  const activeComponent = isTabbed
+    ? component[getTabIndex(tabs?.options, selectedTab)] ?? component[0]
+    : component
+  const shownComponent =
+    isTabbed && activeComponent ? (
+      <SlideAnimation
+        motionKey={selectedTab}
+        direction={direction}
+        className='slide-dialog-tab-panel'
+      >
+        {activeComponent}
+      </SlideAnimation>
+    ) : (
+      activeComponent
+    )
+  const tabBar =
+    isTabbed && tabs?.options.length ? (
+      <CustomTabs
+        {...tabs}
+        className={`slide-dialog-tabs ${tabs.className || ''}`.trim()}
+        value={selectedTab}
+        onChange={onTabChange}
+      />
+    ) : null
 
   const keyboardHeight = useKeyboardHeight()
   const sheetLift = getSheetLiftAmount(keyboardHeight)
@@ -649,12 +717,13 @@ export function SlideDialog({
               setHasOpened(false)
               setIsMounted(false)
             }}
-            component={component}
+            component={shownComponent}
             title={capitalizeFirstLetter(contentTitle ?? title ?? '')}
             prefs={prefs}
             isLoading={isLoading}
             zIndex={zIndex}
             headerAction={resolvedHeaderAction}
+            tabBar={tabBar}
           />
         </SlideDialogHeaderActionContext.Provider>
       </SlideDialogTitleContext.Provider>
@@ -699,13 +768,14 @@ export function SlideDialog({
         <SlideDialogHeaderActionContext.Provider value={setContentAction}>
           <SlideDialogSheet
             onClose={onClose}
-            component={component}
+            component={shownComponent}
             title={contentTitle ?? title}
             fadeWithSheet={hasOpened}
             enableSwipeToClose={enableSwipeToClose}
             prefs={prefs}
             isLoading={isLoading}
             headerAction={resolvedHeaderAction}
+            tabBar={tabBar}
           />
         </SlideDialogHeaderActionContext.Provider>
       </SlideDialogTitleContext.Provider>

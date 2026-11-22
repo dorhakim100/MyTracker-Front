@@ -880,7 +880,9 @@ select {
     .MuiBottomNavigationAction-root
   ):not(.disable-button):not(.save-button.alternative):not(
     .google-sign-in-button
-  ):not(.custom-date-picker-button):not(.custom-button) {
+  ):not(.custom-date-picker-button):not(.custom-button):not(.MuiTab-root):not(
+    .MuiTabs-scrollButtons
+  ) {
   @include favorite-accent;
   color: var(--accent);
   @include tinted-fill(var(--chrome-tint-primary));

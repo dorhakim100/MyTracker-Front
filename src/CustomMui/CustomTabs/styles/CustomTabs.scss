@@ -1,0 +1,38 @@
+.custom-tabs-container {
+  @include favorite-accent;
+
+  .custom-tabs {
+    min-height: 0 !important;
+    border-bottom: 1px solid
+      color-mix(in srgb, var(--ink-on-canvas) 12%, transparent);
+  }
+
+  .MuiTab-root {
+    min-height: 0 !important;
+    color: var(--ink-on-canvas) !important;
+    padding: 0.6rem 0.75rem !important;
+
+    .MuiTouchRipple-root {
+      color: var(--accent);
+    }
+  }
+
+  &.slim {
+    .MuiTab-root {
+      padding: 0.2rem 0.75rem !important;
+    }
+  }
+
+  &.fat {
+    .MuiTab-root {
+      padding: 0.8rem 0.75rem !important;
+    }
+  }
+
+  html.dark-mode &,
+  body.dark-mode & {
+    .MuiTabs-indicator {
+      background-color: var(--accent) !important;
+    }
+  }
+}

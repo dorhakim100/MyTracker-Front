@@ -57,7 +57,7 @@
 
   .exercise-body-parts-container {
     display: grid;
-    grid-template-columns: auto 1fr;
+    grid-template-columns: auto auto 1fr;
     align-items: center;
     gap: 0.5rem;
     min-width: 0;
@@ -66,16 +66,19 @@
       margin-inline-start: 0.5rem;
       font-size: 1.1rem;
       color: $medium-gray;
-    }
-
-    .equipment-badges-container {
       grid-column: 2/3;
       grid-row: 1/1;
     }
 
+    .equipment-badges-container {
+      grid-column: 1/2;
+      grid-row: 1/1;
+    }
+
     .marquee-text-container {
-      grid-column: 1/-1;
-      grid-row: 2/3;
+      grid-column: 3/4;
+      grid-row: 1/1;
+      // grid-row: 2/3;
     }
   }
 

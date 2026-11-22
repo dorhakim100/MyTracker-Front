@@ -152,6 +152,12 @@ body.native .react-modal-sheet-root.full-dialog {
   flex-shrink: 0;
   touch-action: none;
 
+  .slide-dialog-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   .MuiToolbar-root {
     gap: 0;
 
@@ -316,6 +322,10 @@ body.native .react-modal-sheet-root.full-dialog {
     height: 100%;
     display: flex;
     flex-direction: column;
+
+    &:has(.slide-dialog-tab-panel) {
+      height: auto;
+    }
   }
 
   .results,
@@ -332,6 +342,17 @@ body.native .react-modal-sheet-root.full-dialog {
   .clock-picker-column {
     touch-action: none;
   }
+}
+
+.slide-dialog-tabs {
+  flex-shrink: 0;
+}
+
+.slide-dialog-tab-panel {
+  width: 100%;
+  flex: 0 0 auto;
+  min-height: 100%;
+  overflow: visible !important;
 }
 
 .react-modal-sheet-container {
