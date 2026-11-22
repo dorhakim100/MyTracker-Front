@@ -29,10 +29,25 @@
     }
   }
 
+  .MuiTabs-indicator {
+    transition: none !important;
+  }
+
+  .MuiTabs-indicator.is-placed {
+    transition: transform 180ms ease-out !important;
+  }
+
   html.dark-mode &,
   body.dark-mode & {
     .MuiTabs-indicator {
       background-color: var(--accent) !important;
     }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .custom-tabs-container .MuiTabs-indicator,
+  .custom-tabs-container .MuiTabs-indicator.is-placed {
+    transition: none !important;
   }
 }

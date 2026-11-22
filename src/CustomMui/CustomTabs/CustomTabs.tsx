@@ -1,7 +1,10 @@
 import {
+  forwardRef,
   useEffect,
   useRef,
   useState,
+  type CSSProperties,
+  type HTMLAttributes,
   type ReactElement,
   type ReactNode,
   type SyntheticEvent,
@@ -16,7 +19,55 @@ import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
+import { capacitorService } from '../../services/capacitor.service'
 import { SlideAnimation } from '../../components/SlideAnimation/SlideAnimation'
+
+type TabMarkProps = HTMLAttributes<HTMLSpanElement> & {
+  ownerState?: unknown
+}
+
+function markOffset(style?: CSSProperties) {
+  if (!style || typeof style.width !== 'number') return null
+  if (typeof style.left === 'number') {
+    return { edge: 'left' as const, shift: style.left }
+  }
+  if (typeof style.right === 'number') {
+    return { edge: 'right' as const, shift: -style.right }
+  }
+  return null
+}
+
+const TabMark = forwardRef<HTMLSpanElement, TabMarkProps>(function TabMark(
+  { style, className, ownerState: _ownerState, ...rest },
+  ref
+) {
+  const offset = markOffset(style)
+  const [ready, setReady] = useState(false)
+  const shift = offset?.shift
+
+  useEffect(() => {
+    if (ready || shift == null) return
+    setReady(true)
+  }, [ready, shift])
+
+  const placed: CSSProperties | undefined = offset
+    ? {
+        ...style,
+        left: offset.edge === 'left' ? 0 : style?.left,
+        right: offset.edge === 'right' ? 0 : style?.right,
+        transform: `translate3d(${offset.shift}px, 0, 0)`,
+      }
+    : style
+
+  return (
+    <span
+      ref={ref}
+      {...rest}
+      className={`${className || ''} ${ready ? 'is-placed' : ''}`.trim()}
+      style={placed}
+    />
+  )
+})
 
 export interface CustomTabOption<T extends string = string> {
   value: T
@@ -86,6 +137,7 @@ export function CustomTabs<T extends string = string>({
   function onTabChange(_event: SyntheticEvent, next: T) {
     rememberTab(focusKey, next)
     onChange(next)
+    capacitorService.vibrate('Light').catch(() => {})
   }
 
   const bar = (
@@ -104,6 +156,7 @@ export function CustomTabs<T extends string = string>({
         textColor='inherit'
         scrollButtons={isScrollable ? 'auto' : false}
         allowScrollButtonsMobile={isScrollable}
+        slotProps={{ indicator: { component: TabMark } }}
         sx={{ '& .MuiTab-root': { textTransform: 'none' } }}
       >
         {options.map((option) => (
