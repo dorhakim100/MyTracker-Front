@@ -1,10 +1,13 @@
+import { useTranslation } from 'react-i18next'
 import { ClockPicker } from '../Pickers/ClockPicker'
 import { MINUTE_IN_MS } from '../../assets/config/times'
+import { restingTimerEditNs } from './locals'
 
 interface RestingTimerEditProps {
   restingTime: number
   updateRestingTime: (restingTime: number) => void
   onClose: () => void
+  forWholeExercise?: boolean
 }
 
 const restingTimeValues = [
@@ -18,9 +21,12 @@ export function RestingTimerEdit({
   restingTime,
   updateRestingTime,
   onClose,
+  forWholeExercise = false,
 }: RestingTimerEditProps) {
+  const { t } = useTranslation(restingTimerEditNs)
+
   return (
-    <div>
+    <div className='resting-timer-edit-container'>
       <ClockPicker
         value={restingTime / MINUTE_IN_MS}
         onChange={(_, newValue) => {
@@ -31,6 +37,11 @@ export function RestingTimerEdit({
         valuesToDisplay={restingTimeValues}
         isRounded={false}
         buttonsValues={values}
+        header={
+          forWholeExercise ? (
+            <p className='resting-timer-scope'>{t('allSetsNote')}</p>
+          ) : undefined
+        }
       />
     </div>
   )

@@ -58,6 +58,18 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
+
+    .resting-time-copy {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
+    }
+
+    .resting-time-scope {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: color-mix(in srgb, var(--ink-on-canvas) 62%, transparent);
+    }
   }
 
   padding: 1rem;

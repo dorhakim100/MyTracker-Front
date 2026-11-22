@@ -39,6 +39,7 @@ import {
 import { showErrorMsg } from '../../services/event-bus.service'
 import { setService } from '../../services/set/set.service'
 import { RestingTimerEdit } from '../RestingTimerEdit/RestingTimerEdit'
+import { restingTimerEditNs } from '../RestingTimerEdit/locals'
 import { DEFAULT_RESTING_TIME } from '../../assets/config/times'
 import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
@@ -127,6 +128,7 @@ export function ExerciseCard({
 }: ExerciseCardProps) {
   const { t } = useTranslation()
   const { t: tChat } = useTranslation(exerciseChatNs)
+  const { t: tTimer } = useTranslation(restingTimerEditNs)
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
@@ -450,6 +452,7 @@ export function ExerciseCard({
       case 'resting-timer':
         return (
           <RestingTimerEdit
+            forWholeExercise
             restingTime={
               exerciseInstructions?.restingTime || DEFAULT_RESTING_TIME
             }
@@ -692,12 +695,17 @@ export function ExerciseCard({
                       />
                       <div className='resting-time-container'>
                         <AccessAlarmIcon />
-                        <span>
-                          {t('exercise.restingTime')}{' '}
-                          {formatTime(
-                            exerciseInstructions.restingTime ||
-                              DEFAULT_RESTING_TIME
-                          )}
+                        <span className='resting-time-copy'>
+                          <span>
+                            {t('exercise.restingTime')}{' '}
+                            {formatTime(
+                              exerciseInstructions.restingTime ||
+                                DEFAULT_RESTING_TIME
+                            )}
+                          </span>
+                          <span className='resting-time-scope'>
+                            {tTimer('allSets')}
+                          </span>
                         </span>
                       </div>
                     </>

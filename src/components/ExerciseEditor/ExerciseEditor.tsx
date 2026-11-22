@@ -112,6 +112,23 @@ function displayEffort(set: Set | undefined, key: 'expected' | 'actual') {
   return 'N/A'
 }
 
+function isLaterSameType(set: Set, index: number, edited: EditSet) {
+  return (
+    index > edited.index &&
+    setTypeOf(set, 'expected') === setTypeOf(edited, 'expected')
+  )
+}
+
+function withEditedLoad(set: Set, edited: Set): Set {
+  return {
+    ...set,
+    reps: edited.reps,
+    weight: edited.weight,
+    rpe: edited.rpe,
+    rir: edited.rir,
+  }
+}
+
 export function ExerciseEditor({
   exercise,
   exerciseSets,
@@ -281,11 +298,16 @@ export function ExerciseEditor({
   const onSetRest = async (minutes: number) => {
     if (restSetIndex == null) return
     const index = restSetIndex
-    const sets = exercise.sets.map((set, i) =>
-      i === index
-        ? { ...withStoredType(set), restingTime: minutes * MINUTE_IN_MS }
-        : set
-    )
+    const restingTime = minutes * MINUTE_IN_MS
+    const source = exercise.sets[index]
+    const sets = exercise.sets.map((set, i) => {
+      const follows =
+        isExpected &&
+        i > index &&
+        setTypeOf(set, 'expected') === setTypeOf(source, 'expected')
+      if (i !== index && !follows) return set
+      return { ...withStoredType(set), restingTime }
+    })
     setRestSetIndex(null)
     await updateExercise({ ...exercise, sets }, index)
   }
@@ -332,7 +354,9 @@ export function ExerciseEditor({
     if (!newExercise || !editSet) return
     newExercise.sets = newExercise.sets.map((set, index) => {
       if (editSet.index === index) return editSet
-      if (editSet.index < index && isExpected) return editSet
+      if (isExpected && isLaterSameType(set, index, editSet)) {
+        return withEditedLoad(set, editSet)
+      }
       return set
     })
 
