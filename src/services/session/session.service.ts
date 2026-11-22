@@ -100,14 +100,36 @@ function detailsByExerciseId(session: SessionDay) {
   )
 }
 
+type PlayDetails = {
+  name: string
+  image?: string
+  muscleGroups?: string[]
+  equipments?: string[]
+  mainMuscles?: string[]
+  secondaryMuscles?: string[]
+}
+
+function playDetails(value: unknown): PlayDetails | null {
+  if (!value || typeof value !== 'object' || !('name' in value)) return null
+  if (typeof value.name !== 'string' || !value.name) return null
+  const exercise = value as PlayDetails
+  return {
+    name: exercise.name,
+    image: exercise.image,
+    muscleGroups: exercise.muscleGroups,
+    equipments: exercise.equipments,
+    mainMuscles: exercise.mainMuscles,
+    secondaryMuscles: exercise.secondaryMuscles,
+  }
+}
+
 async function exerciseForPlay(
   exercise: ExerciseInstructions,
   known: Map<string, Exercise>
 ) {
-  const fromWorkout = known.get(exercise.exerciseId)
-  const details = fromWorkout?.name
-    ? fromWorkout
-    : await getExerciseById(exercise.exerciseId).catch(() => null)
+  const details =
+    playDetails(known.get(exercise.exerciseId)) ||
+    playDetails(await getExerciseById(exercise.exerciseId).catch(() => null))
 
   return {
     ...exercise,
@@ -115,8 +137,8 @@ async function exerciseForPlay(
     image: details?.image || exercise.image,
     muscleGroups: details?.muscleGroups || exercise.muscleGroups,
     equipments: details?.equipments || exercise.equipments,
-    mainMuscles: details?.mainMuscles || exercise.mainMuscles,
-    secondaryMuscles: details?.secondaryMuscles || exercise.secondaryMuscles,
+    mainMuscles: details?.mainMuscles,
+    secondaryMuscles: details?.secondaryMuscles,
     sets: (exercise.sets || []).map((set) => ({ ...set, isDone: false })),
     withoutExpected: exercise.withoutExpected,
   }
