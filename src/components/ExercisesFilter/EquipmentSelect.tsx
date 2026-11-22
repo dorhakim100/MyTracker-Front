@@ -9,7 +9,7 @@ import WidgetsIcon from '@mui/icons-material/Widgets'
 interface EquipmentSelectProps {
   exerciseFilter: ExerciseFilter
   onExerciseFilterChange: (exerciseFilter: ExerciseFilter) => void
-  variant?: 'full' | 'thin'
+  variant?: 'thin' | undefined
 }
 
 const equipmentsImgs = [
@@ -27,7 +27,7 @@ const equipmentsImgs = [
 export function EquipmentSelect({
   exerciseFilter,
   onExerciseFilterChange,
-  variant = 'full',
+  variant = undefined,
 }: EquipmentSelectProps) {
   const { t } = useTranslation()
   const prefs = useSelector(
