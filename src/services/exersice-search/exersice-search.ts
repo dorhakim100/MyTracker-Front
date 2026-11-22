@@ -200,6 +200,7 @@ export const getExerciseById = async (exerciseId: string) => {
     } = data
 
     const exerciseToSend = {
+      _id: exerciseId,
       name,
       image,
       muscleGroups,

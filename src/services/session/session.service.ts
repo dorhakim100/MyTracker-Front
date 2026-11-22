@@ -2,7 +2,8 @@ import { httpService } from '../http.service'
 import { SessionDay } from '../../types/workout/SessionDay'
 import { workoutService } from '../workout/workout.service'
 import { ExerciseInstructions } from '../../types/exercise/ExerciseInstructions'
-import { instructionsService } from '../instructions/instructions.service'
+import { Exercise } from '../../types/exercise/Exercise'
+import { getExerciseById } from '../exersice-search/exersice-search'
 
 const KEY = 'session'
 
@@ -87,6 +88,40 @@ async function save(sessionDay: SessionDay) {
   }
 }
 
+function detailsByExerciseId(session: SessionDay) {
+  const listed = [
+    ...(session.workout?.exercises || []),
+    ...(session.workout?.instructionExercises || []),
+  ]
+  return new Map(
+    listed
+      .filter((exercise) => exercise.exerciseId)
+      .map((exercise) => [exercise.exerciseId, exercise])
+  )
+}
+
+async function exerciseForPlay(
+  exercise: ExerciseInstructions,
+  known: Map<string, Exercise>
+) {
+  const fromWorkout = known.get(exercise.exerciseId)
+  const details = fromWorkout?.name
+    ? fromWorkout
+    : await getExerciseById(exercise.exerciseId).catch(() => null)
+
+  return {
+    ...exercise,
+    name: details?.name || exercise.name,
+    image: details?.image || exercise.image,
+    muscleGroups: details?.muscleGroups || exercise.muscleGroups,
+    equipments: details?.equipments || exercise.equipments,
+    mainMuscles: details?.mainMuscles || exercise.mainMuscles,
+    secondaryMuscles: details?.secondaryMuscles || exercise.secondaryMuscles,
+    sets: (exercise.sets || []).map((set) => ({ ...set, isDone: false })),
+    withoutExpected: exercise.withoutExpected,
+  }
+}
+
 async function playWorkout(sessionDay: SessionDay, userId: string) {
   try {
     const session = await httpService.put(`${KEY}/play/${sessionDay._id}`, {
@@ -94,32 +129,21 @@ async function playWorkout(sessionDay: SessionDay, userId: string) {
       userId: userId,
     })
 
-    const instructionsWithDetails = session.instructions?.exercises
-      ? await instructionsService.getExercisesFromInstructions(
-          session.instructions
-        )
-      : session.instructions
+    if (!session?.instructions?.exercises) return session
 
-    const instructionsWithFreshExercises = {
-      ...instructionsWithDetails,
-      exercises: instructionsWithDetails.exercises.map(
-        (exercise: ExerciseInstructions) => {
-          return {
-            ...exercise,
-            sets: exercise.sets.map((set) => {
-              return {
-                ...set,
-                isDone: false,
-              }
-            }),
-          }
-        }
-      ),
-    }
+    const known = detailsByExerciseId(session)
+    const exercises = await Promise.all(
+      session.instructions.exercises.map((exercise: ExerciseInstructions) =>
+        exerciseForPlay(exercise, known)
+      )
+    )
 
     return {
       ...session,
-      instructions: instructionsWithFreshExercises,
+      instructions: {
+        ...session.instructions,
+        exercises,
+      },
     }
   } catch (err) {
     throw err
