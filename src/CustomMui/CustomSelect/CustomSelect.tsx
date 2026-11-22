@@ -7,7 +7,6 @@ import { RootState } from '../../store/store'
 import { capitalizeFirstLetter } from '../../services/util.service'
 import { Tooltip } from '@mui/material'
 
-
 interface CustomSelectProps {
   label: string
   values: string[]
@@ -20,6 +19,7 @@ interface CustomSelectProps {
   valueLabels?: Record<string, string>
   width?: number
   renderOption?: (value: string) => React.ReactNode
+  variant?: 'thin'
 }
 
 export function CustomSelect({
@@ -34,6 +34,7 @@ export function CustomSelect({
   valueLabels,
   width,
   renderOption,
+  variant,
 }: CustomSelectProps) {
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
@@ -41,6 +42,8 @@ export function CustomSelect({
   const isDashboard = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.isDashboard
   )
+
+  const isThin = variant === 'thin'
 
   const handleChange = (event: SelectChangeEvent) => {
     onChange(event.target.value)
@@ -85,21 +88,28 @@ export function CustomSelect({
       disableFocusListener={isDashboard && tooltipTitle ? false : true}
     >
       <FormControl
-        sx={{ m: 1, minWidth: width ?? 140, width }}
+        sx={
+          isThin
+            ? { m: 0, width: width ?? 168 }
+            : { m: 1, minWidth: width ?? 140, width }
+        }
         size='small'
-        className={`custom-select ${className} ${
+        className={`custom-select ${isThin ? 'variant-thin' : ''} ${className} ${
           prefs.isDarkMode ? 'dark-mode' : ''
         } ${isDashboard ? 'dashboard' : ''}`}
       >
-        <InputLabel id={`${label}-select-label`}>{label}</InputLabel>
+        {!isThin && (
+          <InputLabel id={`${label}-select-label`}>{label}</InputLabel>
+        )}
         <Select
-          labelId={`${label}-select-label`}
+          labelId={isThin ? undefined : `${label}-select-label`}
           id={`${label}-select`}
           value={value}
           className={`${imgs ? 'with-imgs' : ''} ${
-            isDashboard ? 'dashboard' : ''
-          }`}
-          label={label}
+            isThin ? 'variant-thin' : ''
+          } ${isDashboard ? 'dashboard' : ''}`}
+          label={isThin ? undefined : label}
+          inputProps={{ 'aria-label': label }}
           onChange={handleChange}
           renderValue={
             renderOption
@@ -110,7 +120,7 @@ export function CustomSelect({
             PaperProps: {
               className: `${
                 prefs.isDarkMode ? 'dark-mode' : ''
-              } ${className} select-paper`,
+              } ${className} select-paper ${isThin ? 'variant-thin' : ''}`,
             },
           }}
         >
@@ -127,8 +137,10 @@ export function CustomSelect({
               ) : (
                 <>
                   {getImg(option)}
-                  {valueLabels?.[option] ?? capitalizeFirstLetter(option)}{' '}
-                  {extra}
+                  <span className='custom-select-label'>
+                    {valueLabels?.[option] ?? capitalizeFirstLetter(option)}{' '}
+                    {extra}
+                  </span>
                 </>
               )}
             </MenuItem>

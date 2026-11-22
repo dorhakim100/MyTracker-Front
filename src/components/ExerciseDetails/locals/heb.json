@@ -3,5 +3,10 @@
   "noSetsYetHint": "יופיע כאן אחרי האימון הראשון.",
   "dailyVolume": "נפח יומי",
   "weeklyVolume": "נפח שבועי",
-  "sets": "סטים"
+  "sets": "סטים",
+  "details": "פרטים",
+  "progress": "התקדמות",
+  "instructions": "הוראות",
+  "similarExercises": "תרגילים דומים",
+  "noSimilarExercises": "אין תרגילים דומים"
 }

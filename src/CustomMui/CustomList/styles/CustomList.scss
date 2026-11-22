@@ -18,6 +18,14 @@
     gap: 1em;
     text-align: start;
 
+    .custom-list-text {
+      min-width: 0;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
     .MuiListItemText-root {
       min-width: 0;
     }
@@ -125,6 +133,10 @@
     align-self: stretch;
   }
 
+  .MuiListItemText-secondary {
+    margin-top: 0.25rem;
+  }
+
   .MuiList-root > div {
     display: flex;
     flex-direction: column;
@@ -159,6 +171,33 @@
     padding: 0;
     display: flex;
     align-items: center;
+    padding-inline-end: 0.5rem;
+  }
+
+  .list-item-render-under-text {
+    min-width: 0;
+    margin-top: 0.35rem;
+  }
+
+  .custom-list-card-skeletons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+
+  html.dark-mode &,
+  &.dark-mode {
+    .MuiListItemText-secondary,
+    .MuiListItemText-secondary .MuiTypography-root,
+    .secondary-text {
+      color: $white;
+      opacity: 0.7;
+    }
+
+    .MuiListItemText-secondary .MuiTypography-root,
+    .secondary-text {
+      opacity: 1;
+    }
   }
 }
 

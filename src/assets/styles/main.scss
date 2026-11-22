@@ -103,6 +103,9 @@
 @import '../../components/WeightChart/styles/WeightChartSettings.scss';
 @import '../../components/ClickAnimation/styles/ClickAnimation.scss';
 @import '../../components/ExerciseDetails/styles/ExerciseDetails.scss';
+@import '../../components/ExerciseDetails/Details/styles/Details.scss';
+@import '../../components/ExerciseDetails/Instructions/styles/Instructions.scss';
+@import '../../components/ExerciseDetails/Progress/styles/Progress.scss';
 @import '../../components/ExerciseEditor/styles/ExerciseEditor.scss';
 @import '../../components/ExerciseEditor/SetTypeSheet/styles/SetTypeSheet.scss';
 @import '../../components/SetMark/styles/SetMark.scss';
@@ -121,6 +124,7 @@
 @import '../../components/RestingTimerEdit/styles/RestingTimerEdit.scss';
 @import '../../components/ItemFilter/styles/ItemFilter.scss';
 @import '../../components/ChangeExercise/styles/ChangeExercise.scss';
+@import '../../components/NoResults/styles/NoResults.scss';
 @import '../../components/LiftMate/MuscleGroupCard/styles/MuscleGroupCard.scss';
 @import '../../components/MealCard/styles/MealCard.scss';
 @import '../../components/EditMenu/styles/EditMenu.scss';

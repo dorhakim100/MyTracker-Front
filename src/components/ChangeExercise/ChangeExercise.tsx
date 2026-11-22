@@ -7,10 +7,8 @@ import { RootState } from '../../store/store'
 import { useEffect, useMemo, useState } from 'react'
 import { showErrorMsg } from '../../services/event-bus.service'
 
-import {
-  filterExercises,
-  getAlternateExercises,
-} from '../../services/exersice-search/exersice-search'
+import { filterExercises } from '../../services/exersice-search/exersice-search'
+import { useAlternateExercises } from '../../hooks/useAlternateExercises'
 import { CustomList } from '../../CustomMui/CustomList/CustomList'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { ExerciseDetails } from '../ExerciseDetails/ExerciseDetails'
@@ -22,7 +20,7 @@ import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz'
 import { exerciseImage } from '../../assets/config/exercise-image'
 // import { chatGPTService } from '../../services/chatGPT/chat.gpt.service'
-import { SkeletonList } from '../SkeletonList/SkeletonList'
+import { BottomReachIndicator } from '../BottomReachIndicator/BottomReachIndicator'
 import { instructionsService } from '../../services/instructions/instructions.service'
 import { setSelectedSessionDay } from '../../store/actions/workout.action'
 import { setService } from '../../services/set/set.service'
@@ -31,6 +29,7 @@ import { useTranslation } from 'react-i18next'
 import { CustomInput } from '../../CustomMui/CustomInput/CustomInput'
 import CloseIcon from '@mui/icons-material/Close'
 import { matchesExerciseSearch } from '../../services/search/search.utils'
+import { NoResults } from '../NoResults/NoResults'
 interface ChangeExerciseProps {
   exerciseToChange: Exercise
   instructionExercises?: ExerciseInstructions[]
@@ -61,12 +60,6 @@ export function ChangeExercise({
     (stateSelector: RootState) => stateSelector.workoutModule.sessionDay
   )
 
-  const isLoading = useSelector(
-    (stateSelector: RootState) => stateSelector.systemModule.isLoading
-  )
-
-  const [suggestedExercises, setSuggestedExercises] = useState<Exercise[]>([])
-  const [isListLoading, setIsListLoading] = useState(false)
   const [dialogOptions, setDialogOptions] = useState<SlideDialogOptions>({
     open: false,
 
@@ -80,42 +73,50 @@ export function ChangeExercise({
     searchValue: '',
     muscleGroupValue: 'All',
   })
+  const [listSearch, setListSearch] = useState('')
+
+  const {
+    items: suggestedExercises,
+    isError,
+    hasNextPage,
+    isFetching,
+    isFetchingNextPage,
+    isPlaceholderData,
+    fetchNextPage,
+  } = useAlternateExercises({
+    exercise: exerciseToChange,
+    equipment: exerciseFilter.equipmentValue,
+    search: listSearch,
+  })
 
   const currentInstructionExercises =
     instructionExercises ?? sessionDay?.instructions.exercises
 
   const filteredSuggestedExercises = useMemo(() => {
-    const search = exerciseFilter.searchValue
-
     return filterExercises(exerciseFilter, suggestedExercises)
       .filter((exercise) => !isInInstructions(exercise))
-      .filter((exercise) => matchesExerciseSearch(exercise.name, search))
-  }, [
-    suggestedExercises,
-    exerciseFilter.equipmentValue,
-    exerciseFilter.searchValue,
-    currentInstructionExercises,
-  ])
+      .filter((exercise) =>
+        matchesExerciseSearch(exercise.name, exerciseFilter.searchValue)
+      )
+  }, [suggestedExercises, exerciseFilter, currentInstructionExercises])
+
+  const isFilterLoading =
+    listSearch !== exerciseFilter.searchValue ||
+    isPlaceholderData ||
+    (isFetching && !isFetchingNextPage)
+  const showLoading = isFilterLoading && filteredSuggestedExercises.length === 0
 
   useEffect(() => {
-    getExercises()
-  }, [exerciseToChange.exerciseId])
+    const timeout = window.setTimeout(() => {
+      setListSearch(exerciseFilter.searchValue)
+    }, 300)
+    return () => window.clearTimeout(timeout)
+  }, [exerciseFilter.searchValue])
 
-  async function getExercises() {
-    try {
-      setIsListLoading(true)
-      setIsLoading(true)
-
-      const exercises = await getAlternateExercises(exerciseToChange)
-
-      setSuggestedExercises(exercises)
-    } catch {
-      showErrorMsg(t('messages.error.getExercises'))
-    } finally {
-      setIsListLoading(false)
-      setIsLoading(false)
-    }
-  }
+  useEffect(() => {
+    if (!isError) return
+    showErrorMsg(t('messages.error.getExercises'))
+  }, [isError, t])
 
   const onExerciseClick = (exercise: Exercise) => {
     setDialogOptions({
@@ -259,9 +260,14 @@ export function ChangeExercise({
         >
           Change to:
         </Typography>
-        {isListLoading && isLoading ? (
-          <SkeletonList />
-        ) : (
+        {showLoading ? (
+          <CustomList
+            isLoading
+            skeletonCount={8}
+            items={[]}
+            className={`exercise-list ${prefs.isDarkMode ? 'dark-mode' : ''}`}
+          />
+        ) : filteredSuggestedExercises.length > 0 ? (
           <CustomList
             items={filteredSuggestedExercises}
             renderPrimaryText={(exercise) =>
@@ -295,6 +301,21 @@ export function ChangeExercise({
               />
             )}
           />
+        ) : hasNextPage ? null : (
+          <NoResults />
+        )}
+        {!showLoading &&
+          ((hasNextPage && listSearch === exerciseFilter.searchValue) ||
+            isFetchingNextPage) && (
+          <div className='alternate-exercises-more'>
+            <BottomReachIndicator
+              hasMore={Boolean(hasNextPage)}
+              isLoading={isFetchingNextPage}
+              onReachBottom={async () => {
+                await fetchNextPage()
+              }}
+            />
+          </div>
         )}
       </div>
       <SlideDialog

@@ -59,13 +59,40 @@ export const exerciseSearch = async (filter: ExerciseFilter) => {
   }
 }
 
-export async function getAlternateExercises(exercise: Exercise) {
+export interface AlternateExercisesPage {
+  items: Exercise[]
+  nextSkip?: number
+}
+
+export async function getAlternateExercises(
+  exercise: Exercise,
+  page: {
+    skip?: number
+    limit?: number
+    equipment?: string
+    search?: string
+  } = {}
+): Promise<AlternateExercisesPage> {
   try {
-    const backendRes = await httpService.get('exercise/alternate', {
-      exerciseToChange: exercise,
+    const params: Record<string, unknown> = {
+      exerciseToChange: {
+        exerciseId: exercise.exerciseId,
+        name: exercise.name,
+      },
       userId: getSetsUserId(),
-    })
-    return backendRes
+      skip: page.skip ?? 0,
+      limit: page.limit ?? 10,
+    }
+    if (page.equipment && page.equipment !== 'All') {
+      params.equipment = page.equipment
+    }
+    if (page.search?.trim()) params.q = page.search.trim()
+
+    const backendRes = await httpService.get('exercise/alternate', params)
+    if (Array.isArray(backendRes)) {
+      return { items: backendRes as Exercise[] }
+    }
+    return backendRes as AlternateExercisesPage
   } catch (err) {
     throw err
   }

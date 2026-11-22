@@ -3,4 +3,5 @@ export const cache = {
   ITEMS_CACHE: 'items_cache',
   RECENT_SEARCHES: 'recent_searches',
   ITEM_DETAILS_PREFS: 'item_details_prefs',
+  TAB_FOCUS: 'tab_focus',
 }

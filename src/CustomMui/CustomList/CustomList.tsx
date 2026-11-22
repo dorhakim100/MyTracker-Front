@@ -26,10 +26,33 @@ import { RootState } from '../../store/store'
 import { SkeletonList } from '../../components/SkeletonList/SkeletonList'
 import { AnimatedWrapper } from '../../components/AnimatedWrapper/AnimatedWrapper'
 import { MarqueeText } from '../../components/MarqueeText/MarqueeText'
+import { CustomSkeleton } from '../CustomSkeleton/CustomSkeleton'
 // import CircularProgress from '@mui/material/CircularProgress'
 import { useDragHaptics } from '../../hooks/useDragHaptics'
 
 const ITEM_HEIGHT = 65
+
+function CardSkeletons({
+  count,
+  isDarkMode,
+}: {
+  count: number
+  isDarkMode: boolean
+}) {
+  return (
+    <div className='custom-list-card-skeletons'>
+      {Array.from({ length: count }).map((_, index) => (
+        <CustomSkeleton
+          key={`card-skeleton-${index}`}
+          variant='rounded'
+          height={76}
+          width='100%'
+          isDarkMode={isDarkMode}
+        />
+      ))}
+    </div>
+  )
+}
 
 function getListText(content: React.ReactNode): string | null {
   if (typeof content === 'string' || typeof content === 'number') {
@@ -59,6 +82,7 @@ function asListMarquee(
     return <MarqueeText>{text}</MarqueeText>
 
   if (variant === 'card' && type === 'primary') {
+    if (React.isValidElement(content)) return content
     return <span className='primary-text bold-header'>{text}</span>
   }
   return content
@@ -87,9 +111,12 @@ export interface CustomListProps<T> {
   /** Optional vertical offset to apply to the dragging clone (in px). Can be negative. */
   dragOffsetY?: number
   isDefaultLoader?: boolean
+  isLoading?: boolean
+  skeletonCount?: number
   onLoadMore?: () => Promise<void>
   slideIncomingToTop?: boolean
   variant?: 'card'
+  renderUnderText?: (item: T) => React.ReactNode
 }
 
 export function CustomList<T>({
@@ -114,8 +141,11 @@ export function CustomList<T>({
   onReorder,
   dragOffsetY = 0,
   isDefaultLoader = false,
+  isLoading: isListLoading = false,
+  skeletonCount = 4,
   slideIncomingToTop = false,
   variant,
+  renderUnderText,
 }: // onDragStart,
 CustomListProps<T>) {
   const [reorderedItems, setReorderedItems] = useState<T[]>(items || [])
@@ -130,7 +160,7 @@ CustomListProps<T>) {
     typeof window !== 'undefined' &&
     window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-  const isLoading = useSelector(
+  const isAppLoading = useSelector(
     (state: RootState) => state.systemModule.isLoading
   )
 
@@ -278,6 +308,9 @@ CustomListProps<T>) {
   }
 
   const renderList = (item: T, dragProvided: DraggableProvided) => {
+    const renderUnderTextContent =
+      variant === 'card' && renderUnderText ? renderUnderText(item) : null
+
     return (
       <ListItemButton
         className={`custom-list-item ${itemClassName ? itemClassName : ''} ${
@@ -294,18 +327,27 @@ CustomListProps<T>) {
             {renderLeft(item)}
           </div>
         ) : null}
-        <ListItemText
-          primary={asListMarquee(
-            renderPrimaryText ? renderPrimaryText(item) : undefined,
-            variant,
-            'primary'
-          )}
-          secondary={asListMarquee(
-            renderSecondaryText ? renderSecondaryText(item) : undefined,
-            variant,
-            'secondary'
-          )}
-        />
+
+        <div className='custom-list-text'>
+          <ListItemText
+            primary={asListMarquee(
+              renderPrimaryText ? renderPrimaryText(item) : undefined,
+              variant,
+              'primary'
+            )}
+            secondary={asListMarquee(
+              renderSecondaryText ? renderSecondaryText(item) : undefined,
+              variant,
+              'secondary'
+            )}
+          />
+          {renderUnderTextContent ? (
+            <div className='list-item-render-under-text'>
+              {renderUnderTextContent}
+            </div>
+          ) : null}
+        </div>
+
         {renderRight ? (
           <div
             className='right-content'
@@ -355,14 +397,21 @@ CustomListProps<T>) {
     return onPointerUp()
   }
 
-  if (isDefaultLoader && isLoading) {
+  const listClassName = `custom-list ${separator ? 'separator' : ''} ${
+    variant === 'card' ? 'card' : ''
+  } ${className ? className : ''}`
+
+  if (isListLoading || (isDefaultLoader && isAppLoading)) {
     return (
-      <div
-        className={`custom-list ${separator ? 'separator' : ''} ${
-          variant === 'card' ? 'card' : ''
-        } ${className ? className : ''}`}
-      >
-        <SkeletonList />
+      <div className={listClassName}>
+        {variant === 'card' ? (
+          <CardSkeletons
+            count={skeletonCount}
+            isDarkMode={prefs.isDarkMode}
+          />
+        ) : (
+          <SkeletonList SKELETON_NUMBER={skeletonCount} />
+        )}
       </div>
     )
   }
@@ -377,9 +426,7 @@ CustomListProps<T>) {
 
   return (
     <div
-      className={`custom-list ${separator ? 'separator' : ''} ${
-        variant === 'card' ? 'card' : ''
-      } ${className ? className : ''}`}
+      className={listClassName}
       ref={listContainerRef}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
@@ -496,12 +543,18 @@ CustomListProps<T>) {
             )}
           </Droppable>
         </DragDropContext>
-        {isLoadingMoreItems && (
-          <div className='loading-more-items-container'>
-            {/* <CircularProgress /> */}
-            <SkeletonList SKELETON_NUMBER={3} />
-          </div>
-        )}
+        {isLoadingMoreItems &&
+          (variant === 'card' ? (
+            <CardSkeletons
+              count={2}
+              isDarkMode={prefs.isDarkMode}
+            />
+          ) : (
+            <div className='loading-more-items-container'>
+              {/* <CircularProgress /> */}
+              <SkeletonList SKELETON_NUMBER={3} />
+            </div>
+          ))}
       </List>
     </div>
   )

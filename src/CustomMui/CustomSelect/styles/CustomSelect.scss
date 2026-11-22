@@ -344,3 +344,136 @@ body.dashboard {
     }
   }
 }
+
+.custom-select.variant-thin {
+  .MuiOutlinedInput-root {
+    width: 100%;
+    height: 50px !important;
+    border-radius: 0.5rem;
+    outline: none !important;
+    transition: border-color 180ms ease;
+  }
+
+  .MuiOutlinedInput-notchedOutline {
+    border-color: color-mix(in srgb, var(--ink-on-canvas) 22%, transparent);
+  }
+
+  .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+    border-color: color-mix(in srgb, var(--ink-on-canvas) 40%, transparent);
+  }
+
+  .MuiSelect-select {
+    display: flex !important;
+    align-items: center;
+    gap: 0.45rem;
+    min-height: 0 !important;
+    height: 100%;
+    box-sizing: border-box;
+    padding-block: 0 !important;
+    padding-inline: 0.8rem 1.7rem !important;
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1;
+
+    .custom-select-label {
+      position: relative;
+      top: 1px;
+    }
+  }
+
+  .MuiSelect-icon {
+    font-size: 1.15rem;
+  }
+}
+
+.MuiInputBase-root.with-imgs.variant-thin {
+  .MuiSelect-select {
+    img,
+    .custom-select-icon {
+      width: 1.75rem;
+      height: 1.75rem;
+      flex: 0 0 1.75rem;
+      border-radius: 0.35rem;
+    }
+
+    img {
+      object-fit: cover;
+    }
+
+    .custom-select-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      svg {
+        width: 1.45rem;
+        height: 1.45rem;
+        font-size: 1.45rem;
+      }
+    }
+  }
+
+  &.dashboard {
+    .MuiSelect-select {
+      img,
+      .custom-select-icon {
+        width: 1.75rem;
+        height: 1.75rem;
+      }
+    }
+  }
+}
+
+.select-paper.variant-thin {
+  .MuiMenuItem-root {
+    align-items: center;
+    min-height: 48px;
+    gap: 0.65rem;
+    padding-block: 0.35rem;
+    padding-inline: 0.9rem 0.75rem;
+    font-size: 0.875rem;
+
+    .custom-select-label {
+      position: relative;
+      top: 1px;
+    }
+  }
+
+  .custom-select-img,
+  .custom-select-icon {
+    width: 1.75rem;
+    height: 1.75rem;
+    flex: 0 0 1.75rem;
+    border-radius: 0.35rem;
+  }
+
+  .custom-select-img {
+    object-fit: cover;
+  }
+
+  .custom-select-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    svg {
+      width: 1.25rem;
+      height: 1.25rem;
+      font-size: 1.25rem;
+    }
+  }
+}
+
+body.dashboard .select-paper.variant-thin {
+  .custom-select-img,
+  .custom-select-icon {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .custom-select.variant-thin .MuiOutlinedInput-root {
+    transition: none;
+  }
+}

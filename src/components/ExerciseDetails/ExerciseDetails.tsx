@@ -1,41 +1,34 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import { getExerciseSummary } from '../../services/exersice-search/exersice-search'
 import { setService } from '../../services/set/set.service'
-import { Exercise } from '../../types/exercise/Exercise'
 import { MessageRole } from '../../types/message/Message'
 
-import { Divider, Typography } from '@mui/material'
 import { RootState } from '../../store/store'
 import { ExpectedActual } from '../../types/expectedActual/ExpectedActual'
 import { exerciseImage as exerciseImageObject } from '../../assets/config/exercise-image'
-import { CustomAccordion } from '../../CustomMui/CustomAccordion/CustomAccordion'
-import { CustomAnimatedText } from '../../CustomMui/CustomAnimatedText/CustomAnimatedText'
-import { CustomIcon } from '../../CustomMui/CustomIcon/CustomIcon'
-import { Set } from '../../types/exercise/Exercise'
+import { Exercise, Set } from '../../types/exercise/Exercise'
 import {
   getDateFromLineChartRangeKey,
   getDateFromISO,
   prepareSeries,
 } from '../../services/util.service'
-import SetsTable from '../SetsTable/SetsTable'
-import LineChart, { LineChartProps } from '../LineChart/LineChart'
-import {
-  LineChartControls,
-  LineChartRangeKey,
-} from '../LineChart/LineChartControls'
+import { LineChartProps } from '../LineChart/LineChart'
+import { LineChartRangeKey } from '../LineChart/LineChartControls'
 import { colors } from '../../assets/config/colors'
-import { CustomSelect } from '../../CustomMui/CustomSelect/CustomSelect'
 import { SetFilter } from '../../types/setFilter/SetFilter'
 import { useSets } from '../../hooks/useSets'
 import { useChatRole } from '../../hooks/useChatRole'
-import { BottomReachIndicator } from '../BottomReachIndicator/BottomReachIndicator'
 import { showErrorMsg } from '../../services/event-bus.service'
 import { capitalizeFirstLetter } from '../../services/util.service'
-import { MarqueeText } from '../MarqueeText/MarqueeText'
-import { BodyPartBadges } from '../BodyPartBadge/BodyPartBadge'
-import { EquipmentBadges } from '../EquipmentBadges/EquipmentBadges'
+import { CustomTabPanel } from '../../CustomMui/CustomTabs/CustomTabs'
+import { tabToOpen } from '../../CustomMui/CustomTabs/tab-focus'
+import { SlideDialog } from '../SlideDialog/SlideDialog'
+import { useSlideDialogTabs } from '../SlideDialog/slide-dialog-tabs'
+import { Details } from './Details/Details'
+import { Instructions } from './Instructions/Instructions'
+import { Progress } from './Progress/Progress'
 import {
   ExerciseViewBy,
   getPickMetric,
@@ -53,10 +46,6 @@ const VIEW_BY_VALUES: ExerciseViewBy[] = [
   'daily_volume',
   'weekly_volume',
 ]
-
-function formatReadoutNumber(value: number) {
-  return Number.isInteger(value) ? String(value) : value.toFixed(1)
-}
 
 function formatChartDay(date: Date) {
   return `${date.getDate()}/${date.getMonth() + 1}`
@@ -76,11 +65,26 @@ export interface ExerciseWithDetails extends Exercise {
   instructions?: string[]
   sets?: ExpectedActual<number>
 }
+type ExerciseDetailsPage = 'details' | 'progress' | 'instructions'
+
+const detailTabs: { value: ExerciseDetailsPage }[] = [
+  { value: 'details' },
+  { value: 'progress' },
+  { value: 'instructions' },
+]
+
+function initialDetailsPage(): ExerciseDetailsPage {
+  const saved = tabToOpen(detailTabs)
+  const match = detailTabs.find((tab) => tab.value === saved)
+  return match?.value ?? detailTabs[0].value
+}
+
 interface ExerciseDetailsProps {
   exercise: ExerciseWithDetails | null
   workoutId?: string
   workoutName?: string
   chatRole?: MessageRole
+  disableAnimation?: boolean
 }
 
 export function ExerciseDetails({
@@ -88,6 +92,7 @@ export function ExerciseDetails({
   workoutId,
   workoutName = '',
   chatRole,
+  disableAnimation = false,
 }: ExerciseDetailsProps) {
   const { t } = useTranslation()
   const { t: tDetails } = useTranslation(exerciseDetailsNs)
@@ -117,6 +122,30 @@ export function ExerciseDetails({
   const [exerciseImage, setExerciseImage] = useState<string>(
     exercise?.image || ''
   )
+  const [page, setPage] = useState<ExerciseDetailsPage>(initialDetailsPage)
+  const [similarExercise, setSimilarExercise] = useState<Exercise | null>(null)
+  const onPageChange = useCallback((next: string) => {
+    if (next !== 'details' && next !== 'progress' && next !== 'instructions')
+      return
+    setPage(next)
+  }, [])
+
+  const dialogTabs = useMemo(
+    () => ({
+      options: [
+        { value: 'details', label: tDetails('details') },
+        { value: 'progress', label: tDetails('progress') },
+        { value: 'instructions', label: tDetails('instructions') },
+      ],
+      variant: 'fullWidth' as const,
+      value: page,
+      onChange: onPageChange,
+      disableAnimation,
+    }),
+    [disableAnimation, onPageChange, page, tDetails]
+  )
+
+  useSlideDialogTabs(dialogTabs)
 
   const [groupedSets, setGroupedSets] = useState<Record<string, Set[]>>({})
   const [volumePoints, setVolumePoints] = useState<VolumePoint[]>([])
@@ -315,6 +344,18 @@ export function ExerciseDetails({
       }, {} as Record<string, Set[]>)
   }
 
+  const onViewByChange = (val: string) => {
+    if (!VIEW_BY_VALUES.includes(val as ExerciseViewBy)) return
+    const next = val as ExerciseViewBy
+    setViewBy(next)
+    setVolumePoints([])
+    setSetsGraphFilter((prev) => {
+      if (isVolumeView(next)) return { ...prev, calculation: next }
+      const { calculation, ...rest } = prev
+      return calculation ? rest : prev
+    })
+  }
+
   const onRangeChange = (val: LineChartRangeKey) => {
     setRange(val)
     const from = getDateFromLineChartRangeKey(val)
@@ -346,209 +387,116 @@ export function ExerciseDetails({
       .join(', ') || ''
   )
 
-  return (
-    <div
-      className={`exercise-details-container ${
-        prefs.isDarkMode ? 'dark-mode' : ''
-      } ${isDashboard ? 'dashboard' : ''}`}
-    >
-      <img
-        src={exerciseImage}
-        alt={exercise?.name}
-        onError={() => setExerciseImage(exerciseImageObject.ERROR_IMAGE)}
-      />
-      <div className='exercise-body-parts-container'>
-        <BodyPartBadges
+  const instructionsText =
+    exerciseInstructions
+      ?.map((instruction) => instruction.replace(/^Step:\d+\s*/, ''))
+      .join('\n\n') || ''
+
+  function onImageError() {
+    setExerciseImage(exerciseImageObject.ERROR_IMAGE)
+  }
+
+  function renderPage() {
+    if (page === 'details') {
+      return (
+        <Details
           exercise={exercise}
-          size='l'
+          image={exerciseImage}
+          muscleGroupsText={muscleGroupsText}
+          isDarkMode={prefs.isDarkMode}
+          onImageError={onImageError}
+          onOpenExercise={setSimilarExercise}
         />
-        {muscleGroupsText ? (
-          <MarqueeText
-            variant='body2'
-            className='exercise-muscle-groups bold-header'
-          >
-            {muscleGroupsText}
-          </MarqueeText>
-        ) : null}
-        <EquipmentBadges
-          equipments={exercise?.equipments}
-          size='l'
-        />
-      </div>
-      <Divider className={`divider ${prefs.isDarkMode ? 'dark-mode' : ''}`} />
+      )
+    }
 
-      <CustomAccordion
-        title={t('exercise.instructions')}
-        cmp={
-          <CustomAnimatedText typeSpeed={8}>
-            {exerciseInstructions
-              ?.map((instruction) => instruction.replace(/^Step:\d+\s*/, ''))
-              .join('\n\n')}
-          </CustomAnimatedText>
-        }
-        icon={
-          <CustomIcon
-            name='instructions'
-            size='m'
-            variant='subtle'
-          />
-        }
-        className='instructions-accordion'
+    if (page === 'progress') {
+      return (
+        <Progress
+          isDarkMode={prefs.isDarkMode}
+          favoriteColor={prefs.favoriteColor || ''}
+          showNewSection={showNewSection}
+          hasHistory={hasHistory}
+          viewBy={viewBy}
+          onViewByChange={onViewByChange}
+          chart={chart}
+          range={range}
+          onRangeChange={onRangeChange}
+          groupedSets={
+            groupedSetsForTable as Record<
+              string,
+              (Set & { exerciseId: string })[]
+            >
+          }
+          workoutId={workoutId}
+          workoutName={workoutName}
+          exerciseName={exercise?.name || ''}
+          chatRole={role}
+          displayUser={displayUser}
+          hasMore={Boolean(setsQuery.hasNextPage)}
+          isLoadingMore={setsQuery.isFetchingNextPage}
+          onReachBottom={() => {
+            setsQuery.fetchNextPage()
+          }}
+          labels={{
+            noSetsYet: tDetails('noSetsYet'),
+            maxProgress: t('exercise.maxProgress'),
+            viewBy: t('exercise.viewBy'),
+            weight: t('exercise.weight'),
+            reps: t('exercise.reps'),
+            dailyVolume: tDetails('dailyVolume'),
+            weeklyVolume: tDetails('weeklyVolume'),
+            pastSessions: t('exercise.pastSessions'),
+            kg: t('weight.kg'),
+            sets: tDetails('sets'),
+          }}
+        />
+      )
+    }
+
+    return (
+      <Instructions
+        name={exercise?.name}
+        image={exerciseImage}
+        text={instructionsText}
+        exerciseId={exercise?.exerciseId}
+        onImageError={onImageError}
       />
-      {showNewSection && (
+    )
+  }
+
+  return (
+    <>
+      <CustomTabPanel
+        value={page}
+        options={dialogTabs.options}
+        disableAnimation={disableAnimation}
+        className='slide-dialog-tab-panel'
+      >
         <div
-          className={`new-exercise-section line-chart-paper ${
+          className={`exercise-details-container ${
             prefs.isDarkMode ? 'dark-mode' : ''
-          } ${prefs.favoriteColor || ''}`}
+          }           ${isDashboard ? 'dashboard' : ''}`}
         >
-          <CustomIcon
-            name='workout'
-            size='m'
-            variant='subtle'
-          />
-          <div className='new-exercise-copy'>
-            <Typography
-              variant='h5'
-              className='bold-header'
-            >
-              {tDetails('noSetsYet')}
-            </Typography>
-          </div>
+          {renderPage()}
         </div>
-      )}
-      {hasHistory && (
-        <div className='line-chart-container'>
-          <div className='chart-header-container'>
-            <Typography
-              variant='h5'
-              className='bold-header'
-            >
-              {t('exercise.maxProgress')}
-            </Typography>
-            <CustomSelect
-              label={t('exercise.viewBy')}
-              values={VIEW_BY_VALUES}
-              value={viewBy}
-              valueLabels={{
-                weight: t('exercise.weight'),
-                reps: t('exercise.reps'),
-                daily_volume: tDetails('dailyVolume'),
-                weekly_volume: tDetails('weeklyVolume'),
-              }}
-              onChange={(val) => {
-                if (!VIEW_BY_VALUES.includes(val as ExerciseViewBy)) return
-                const next = val as ExerciseViewBy
-                setViewBy(next)
-                setVolumePoints([])
-                setSetsGraphFilter((prev) => {
-                  if (isVolumeView(next)) return { ...prev, calculation: next }
-                  const { calculation, ...rest } = prev
-                  return calculation ? rest : prev
-                })
-              }}
-              className={`${prefs.favoriteColor}`}
+      </CustomTabPanel>
+      <SlideDialog
+        open={Boolean(similarExercise)}
+        onClose={() => setSimilarExercise(null)}
+        title={capitalizeFirstLetter(similarExercise?.name || '')}
+        type='full'
+        component={
+          similarExercise ? (
+            <ExerciseDetails
+              exercise={similarExercise}
+              disableAnimation={disableAnimation}
             />
-          </div>
-          <div
-            className={`line-chart-paper ${
-              prefs.isDarkMode ? 'dark-mode' : ''
-            } ${prefs.favoriteColor || ''}`}
-          >
-            <LineChart
-              isDisplayPoints={true}
-              data={chart.data}
-              isDarkMode={prefs.isDarkMode}
-              interpolateGaps={true}
-              spanGaps={true}
-              isDisplaySecondLine={false}
-              showReadout={true}
-              formatReadout={(index, value) => {
-                const subtitle = chart.data.labels[index] ?? ''
-                if (value == null) return { title: '—', subtitle }
-
-                if (isVolumeView(viewBy)) {
-                  const secondary = chart.secondaryData[index]
-                  const unit =
-                    viewBy === 'weekly_volume'
-                      ? tDetails('sets')
-                      : t('exercise.reps')
-                  if (secondary == null) {
-                    return {
-                      title: `${formatReadoutNumber(value)} ${t('weight.kg')}`,
-                      subtitle,
-                    }
-                  }
-                  return {
-                    title: `${formatReadoutNumber(value)} ${t(
-                      'weight.kg'
-                    )} · ${formatReadoutNumber(secondary)} ${unit}`,
-                    subtitle,
-                  }
-                }
-
-                const mainUnit =
-                  viewBy === 'weight' ? t('weight.kg') : t('exercise.reps')
-                const secondary = chart.secondaryData[index]
-                if (secondary == null) {
-                  return {
-                    title: `${formatReadoutNumber(value)} ${mainUnit}`,
-                    subtitle,
-                  }
-                }
-
-                const secondaryUnit =
-                  viewBy === 'weight' ? t('exercise.reps') : t('weight.kg')
-                return {
-                  title: `${formatReadoutNumber(
-                    value
-                  )} ${mainUnit} · ${formatReadoutNumber(
-                    secondary
-                  )} ${secondaryUnit}`,
-                  subtitle,
-                }
-              }}
-            />
-          </div>
-          <LineChartControls
-            value={range}
-            onChange={(val) => onRangeChange(val)}
-          />
-        </div>
-      )}
-      {hasHistory && (
-        <Typography
-          variant='h5'
-          className='bold-header past-sessions'
-        >
-          {t('exercise.pastSessions')}
-        </Typography>
-      )}
-      {hasHistory && (
-        <>
-          <SetsTable
-            groupedSets={
-              groupedSetsForTable as Record<
-                string,
-                (Set & { exerciseId: string })[]
-              >
-            }
-            mainValue={viewBy}
-            workoutId={workoutId}
-            workoutName={workoutName}
-            exerciseName={exercise?.name || ''}
-            chatRole={role}
-            displayUser={displayUser}
-          />
-          <BottomReachIndicator
-            hasMore={Boolean(setsQuery.hasNextPage)}
-            isLoading={setsQuery.isFetchingNextPage}
-            onReachBottom={() => {
-              setsQuery.fetchNextPage()
-            }}
-          />
-        </>
-      )}
-    </div>
-    // </div>
+          ) : (
+            <></>
+          )
+        }
+      />
+    </>
   )
 }

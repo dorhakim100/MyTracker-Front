@@ -32,7 +32,9 @@
     .sets-table,
     .past-sessions,
     .instructions-accordion,
-    .exercise-body-parts-container {
+    .exercise-body-parts-container,
+    .similar-exercises,
+    .exercise-instructions {
       grid-column: 1/-1;
     }
     .past-sessions {

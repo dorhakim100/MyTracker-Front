@@ -15,21 +15,22 @@ import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
 import { MarqueeText } from '../MarqueeText/MarqueeText'
 import { SlideDialogTitleContext } from './slide-dialog-title'
 import { SlideDialogHeaderActionContext } from './slide-dialog-header-action'
+import {
+  SlideDialogTabsContext,
+  type SlideDialogTabs,
+} from './slide-dialog-tabs'
 import { useKeyboardHeight } from '../../hooks/useKeyboardHeight'
 import {
   popSlideDialogZIndex,
   pushSlideDialogZIndex,
 } from './slide-dialog-layer'
 import { capitalizeFirstLetter } from '../../services/util.service'
-import { SlideAnimation } from '../SlideAnimation/SlideAnimation'
 import {
+  CustomTabPanel,
   CustomTabs,
-  type CustomTabsProps,
 } from '../../CustomMui/CustomTabs/CustomTabs'
 
-export type SlideDialogTabs = Omit<CustomTabsProps, 'value' | 'onChange'> & {
-  onChange?: (value: string) => void
-}
+export type { SlideDialogTabs }
 
 interface SlideDialogProps {
   open: boolean
@@ -55,6 +56,14 @@ const HORIZONTAL_LOCK_THRESHOLD = 10
 
 let openSheetCount = 0
 const escapeHandlers: Array<() => void> = []
+const dismissHandlers: Array<() => void> = []
+
+function closeAllSlideDialogs() {
+  const handlers = [...dismissHandlers]
+  for (let index = handlers.length - 1; index >= 0; index -= 1) {
+    handlers[index]()
+  }
+}
 
 function isDragHandle(start: EventTarget | null) {
   if (!(start instanceof Element)) return false
@@ -145,10 +154,16 @@ function swallowNextClick() {
   }, 400)
 }
 
-function useSlideDialogLayer(isOpen: boolean, isFromAlertDialog: boolean) {
+function useSlideDialogLayer(
+  isOpen: boolean,
+  isFromAlertDialog: boolean,
+  onClose: () => void
+) {
   const extraZIndex = isFromAlertDialog ? 101 : 0
   const [zIndex, setZIndex] = React.useState(SHEET_BASE_Z_INDEX + extraZIndex)
   const handleSaveRef = React.useRef<() => void>(() => {})
+  const onCloseRef = React.useRef(onClose)
+  onCloseRef.current = onClose
 
   const setHandleSave = React.useCallback((handler: () => void) => {
     handleSaveRef.current = handler
@@ -166,6 +181,11 @@ function useSlideDialogLayer(isOpen: boolean, isFromAlertDialog: boolean) {
       handleSaveRef.current()
     }
     escapeHandlers.push(onEscape)
+
+    const onDismiss = () => {
+      onCloseRef.current()
+    }
+    dismissHandlers.push(onDismiss)
 
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key !== 'Escape') return
@@ -185,6 +205,10 @@ function useSlideDialogLayer(isOpen: boolean, isFromAlertDialog: boolean) {
       const handlerIndex = escapeHandlers.lastIndexOf(onEscape)
       if (handlerIndex >= 0) {
         escapeHandlers.splice(handlerIndex, 1)
+      }
+      const dismissIndex = dismissHandlers.lastIndexOf(onDismiss)
+      if (dismissIndex >= 0) {
+        dismissHandlers.splice(dismissIndex, 1)
       }
       document.removeEventListener('keydown', onKeyDown)
     }
@@ -372,14 +396,12 @@ function useOverscrollDismiss({
 }
 
 function SlideDialogHeaderBar({
-  onClose,
   title,
   prefs,
   isLoading,
   showDragHandle = true,
   headerAction,
 }: {
-  onClose: () => void
   title?: string
   prefs: RootState['systemModule']['prefs']
   isLoading: boolean
@@ -394,7 +416,7 @@ function SlideDialogHeaderBar({
         <CustomButton
           isIcon={true}
           icon={<CloseIcon />}
-          onClick={onClose}
+          onClick={closeAllSlideDialogs}
           tooltipTitle={t('common.close')}
           className='slide-dialog-close'
           variant='flat'
@@ -423,7 +445,6 @@ function SlideDialogHeaderBar({
 function DashboardDrawer({
   open,
   onClose,
-  onSave,
   onExited,
   component,
   title,
@@ -435,7 +456,6 @@ function DashboardDrawer({
 }: {
   open: boolean
   onClose: () => void
-  onSave: () => void
   onExited: () => void
   component: React.ReactElement
   title?: string
@@ -454,7 +474,7 @@ function DashboardDrawer({
       open={open}
       onClose={(_, reason) => {
         if (reason === 'backdropClick') {
-          onSave()
+          closeAllSlideDialogs()
           return
         }
         onClose()
@@ -485,7 +505,6 @@ function DashboardDrawer({
     >
       <div className='slide-dialog-header'>
         <SlideDialogHeaderBar
-          onClose={onClose}
           title={title}
           prefs={prefs}
           isLoading={isLoading}
@@ -554,7 +573,6 @@ function SlideDialogSheet({
     >
       <Sheet.Header className='slide-dialog-header'>
         <SlideDialogHeaderBar
-          onClose={onClose}
           title={title}
           prefs={prefs}
           isLoading={isLoading}
@@ -613,57 +631,64 @@ export function SlideDialog({
     (stateSelector: RootState) => stateSelector.systemModule.isDashboard
   )
 
-  const { zIndex, setHandleSave } = useSlideDialogLayer(open, isFromAlertDialog)
+  const { zIndex, setHandleSave } = useSlideDialogLayer(
+    open,
+    isFromAlertDialog,
+    onClose
+  )
   const [isMounted, setIsMounted] = React.useState(open)
   const [hasOpened, setHasOpened] = React.useState(false)
   const [contentTitle, setContentTitle] = React.useState<string | null>(null)
   const [contentAction, setContentAction] =
     React.useState<React.ReactNode>(null)
   const resolvedHeaderAction = contentAction ?? headerAction
+  const [contentTabs, setContentTabs] = React.useState<SlideDialogTabs | null>(
+    null
+  )
   const isTabbed = Array.isArray(component)
-  const firstTab = isTabbed ? tabs?.options[0]?.value ?? '' : ''
+  const barTabs = contentTabs ?? (isTabbed ? tabs : undefined)
+  const firstTab = barTabs?.options[0]?.value ?? ''
   const [tab, setTab] = React.useState(firstTab)
-  const [direction, setDirection] = React.useState(1)
 
   React.useEffect(() => {
     if (open) return
     setTab(firstTab)
-    setDirection(1)
   }, [open, firstTab])
 
   function onTabChange(next: string) {
-    const nextIndex = getTabIndex(tabs?.options, next)
-    const currentIndex = getTabIndex(tabs?.options, tab || firstTab)
-    setDirection(nextIndex >= currentIndex ? 1 : -1)
+    if (contentTabs?.onChange) {
+      contentTabs.onChange(next)
+      return
+    }
     setTab(next)
     tabs?.onChange?.(next)
   }
 
-  const selectedTab = tab || firstTab
+  const selectedTab = contentTabs?.value || tab || firstTab
   const activeComponent = isTabbed
     ? component[getTabIndex(tabs?.options, selectedTab)] ?? component[0]
     : component
   const shownComponent =
-    isTabbed && activeComponent ? (
-      <SlideAnimation
-        motionKey={selectedTab}
-        direction={direction}
+    isTabbed && !contentTabs && activeComponent ? (
+      <CustomTabPanel
+        value={selectedTab}
+        options={tabs?.options ?? []}
+        disableAnimation={tabs?.disableAnimation}
         className='slide-dialog-tab-panel'
       >
         {activeComponent}
-      </SlideAnimation>
+      </CustomTabPanel>
     ) : (
       activeComponent
     )
-  const tabBar =
-    isTabbed && tabs?.options.length ? (
-      <CustomTabs
-        {...tabs}
-        className={`slide-dialog-tabs ${tabs.className || ''}`.trim()}
-        value={selectedTab}
-        onChange={onTabChange}
-      />
-    ) : null
+  const tabBar = barTabs?.options.length ? (
+    <CustomTabs
+      {...barTabs}
+      className={`slide-dialog-tabs ${barTabs.className || ''}`.trim()}
+      value={selectedTab}
+      onChange={onTabChange}
+    />
+  ) : null
 
   const keyboardHeight = useKeyboardHeight()
   const sheetLift = getSheetLiftAmount(keyboardHeight)
@@ -707,12 +732,10 @@ export function SlideDialog({
     return (
       <SlideDialogTitleContext.Provider value={setContentTitle}>
         <SlideDialogHeaderActionContext.Provider value={setContentAction}>
+          <SlideDialogTabsContext.Provider value={setContentTabs}>
           <DashboardDrawer
             open={open}
             onClose={onClose}
-            onSave={() => {
-              void handleSave()
-            }}
             onExited={() => {
               setHasOpened(false)
               setIsMounted(false)
@@ -725,6 +748,7 @@ export function SlideDialog({
             headerAction={resolvedHeaderAction}
             tabBar={tabBar}
           />
+          </SlideDialogTabsContext.Provider>
         </SlideDialogHeaderActionContext.Provider>
       </SlideDialogTitleContext.Provider>
     )
@@ -766,6 +790,7 @@ export function SlideDialog({
     >
       <SlideDialogTitleContext.Provider value={setContentTitle}>
         <SlideDialogHeaderActionContext.Provider value={setContentAction}>
+          <SlideDialogTabsContext.Provider value={setContentTabs}>
           <SlideDialogSheet
             onClose={onClose}
             component={shownComponent}
@@ -777,14 +802,13 @@ export function SlideDialog({
             headerAction={resolvedHeaderAction}
             tabBar={tabBar}
           />
+          </SlideDialogTabsContext.Provider>
         </SlideDialogHeaderActionContext.Provider>
       </SlideDialogTitleContext.Provider>
       <Sheet.Backdrop
         unstyled={false}
         className='slide-dialog-backdrop'
-        onTap={() => {
-          void handleSave()
-        }}
+        onTap={closeAllSlideDialogs}
       />
     </Sheet>
   )

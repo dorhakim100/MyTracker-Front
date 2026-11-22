@@ -3,5 +3,10 @@
   "noSetsYetHint": "Appears here after the first session.",
   "dailyVolume": "Daily volume",
   "weeklyVolume": "Weekly volume",
-  "sets": "Sets"
+  "sets": "Sets",
+  "details": "Details",
+  "progress": "Progress",
+  "instructions": "Instructions",
+  "similarExercises": "Similar exercises",
+  "noSimilarExercises": "No similar exercises"
 }

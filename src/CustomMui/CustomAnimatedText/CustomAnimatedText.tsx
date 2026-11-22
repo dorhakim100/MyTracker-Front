@@ -26,6 +26,7 @@ interface CustomAnimatedTextProps {
   children: ReactNode
   className?: string
   typeSpeed?: number
+  disableAnimation?: boolean
 }
 
 function TypedText({
@@ -55,6 +56,7 @@ export function CustomAnimatedText({
   children,
   className = '',
   typeSpeed = 35,
+  disableAnimation = true,
 }: CustomAnimatedTextProps) {
   const text = getChildText(children)
   const containerRef = useRef<HTMLSpanElement>(null)
@@ -64,7 +66,7 @@ export function CustomAnimatedText({
     window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
   useEffect(() => {
-    if (prefersReducedMotion) return
+    if (prefersReducedMotion || disableAnimation) return
 
     const el = containerRef.current
     if (!el) return
@@ -77,9 +79,9 @@ export function CustomAnimatedText({
 
     observer.observe(el)
     return () => observer.disconnect()
-  }, [prefersReducedMotion])
+  }, [prefersReducedMotion, disableAnimation])
 
-  const showFullText = prefersReducedMotion || !text
+  const showFullText = prefersReducedMotion || disableAnimation || !text
 
   return (
     <span
