@@ -20,7 +20,7 @@ import { ExerciseCard } from '../../../components/ExerciseCard/ExerciseCard'
 
 import { Instructions } from '../../../types/instructions/Instructions'
 import { CustomSelect } from '../../../CustomMui/CustomSelect/CustomSelect'
-import { CustomToggle } from '../../../CustomMui/CustomToggle/CustomToggle'
+import { CustomTabs } from '../../../CustomMui/CustomTabs/CustomTabs'
 import CloseIcon from '@mui/icons-material/Close'
 import CheckIcon from '@mui/icons-material/Check'
 import { WeekNumberStatus } from '../../../types/weekNumberStatus/WeekNumberStatus'
@@ -172,7 +172,7 @@ export function NameExercises({
       (status) => status.weekNumber === weekNumber
     )
 
-    return status?.isDone ? <CheckIcon /> : null
+    return status?.isDone ? <CheckIcon className='week-done-icon' /> : null
     return status?.isDone ? <CheckIcon /> : <CloseIcon />
   }
 
@@ -334,16 +334,8 @@ export function NameExercises({
             prefs.isDarkMode ? 'dark-mode' : ''
           } ${isDashboard ? 'dashboard' : ''} ${isNative ? 'native' : ''}`}
         >
-          <CustomInput
-            value={workout.name}
-            onChange={onNameChange}
-            placeholder={t('workout.enterWorkoutName')}
-            isRemoveIcon={true}
-            className={`${prefs.favoriteColor}`}
-          />
-
           {instructions._id && (
-            <CustomToggle
+            <CustomTabs
               value={instructionsFilter.weekNumber.toString()}
               onChange={(weekNumber: string) => {
                 if (!isSaved) {
@@ -356,23 +348,25 @@ export function NameExercises({
                   weekNumber: +weekNumber,
                 })
               }}
+              variant='scrollable'
+              size='slim'
+              ariaLabel={t('workout.week')}
+              className='week-number-toggle'
               options={getArrayOfNumbers(1, 20).map((weekNumber) => ({
-                label: t('workout.week'),
+                label: `${t('workout.week')} ${weekNumber}`,
                 value: weekNumber.toString(),
-                icon: <span>{weekNumber}</span>,
-                badgeIcon: getWeekNumberIcon(+weekNumber),
-                getDisabled: () => {
-                  // return false
-                  return getIsWeekNumberDisabled(+weekNumber)
-                },
+                disabled: getIsWeekNumberDisabled(weekNumber),
+                renderTabsIndicator: getWeekNumberIcon(weekNumber),
               }))}
-              isBadge={true}
-              isReversedIcon={true}
-              className={`week-number-toggle ${
-                prefs.isDarkMode ? 'dark-mode' : ''
-              }`}
             />
           )}
+          <CustomInput
+            value={workout.name}
+            onChange={onNameChange}
+            placeholder={t('workout.enterWorkoutName')}
+            isRemoveIcon={true}
+            className={`${prefs.favoriteColor}`}
+          />
 
           <div className='times-per-week-container'>
             <span className='bold-header'>{t('workout.timesPerWeek')}</span>

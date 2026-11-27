@@ -23,6 +23,7 @@ import type { Meal } from '../../types/meal/Meal'
 import { itemNameService } from '../item/item-name.service'
 import { isBarcodeSearchId } from '../item/item-id.service'
 import { withClassifiedUnit } from '../item/item-unit.service'
+import { foodTextMatchScore } from './search.utils'
 
 const {
   OPEN_FOOD_FACTS_API_URL,
@@ -87,64 +88,78 @@ async function search(filter: SearchFilter) {
     const safeTxt = txt ?? ''
     if (!safeTxt) return []
 
-    const backendResults = await itemService.searchByTerm(safeTxt)
-    if (backendResults.length > 0) {
-      const sorted = handleResSorting(backendResults, safeTxt, favoriteItems)
-      await Promise.all(
-        sorted.map((item) => addToCache(item as Item, ITEMS_CACHE))
-      )
-      return Promise.all(sorted.map((item) => modifyItemImage(item)))
-    }
+    const backendResults: Item[] =
+      (await itemService.searchByTerm(safeTxt)) || []
+    const similar = backendResults.filter((item) => item.matchType === 'similar')
+    const direct = backendResults.filter((item) => item.matchType !== 'similar')
+    const enough =
+      direct.length >= 5 ||
+      (direct.length >= 1 && direct.length + similar.length >= 8)
 
-    const isEnglishWord = translateService.isEnglishWord(safeTxt)
-    let englishWord = safeTxt
-    if (!isEnglishWord) {
+    let external: Item[] = []
+    let englishWord = ''
+    if (!enough) {
       try {
-        englishWord = await translateService.translate(safeTxt)
-      } catch {
-        englishWord = safeTxt
+        const fallback = await searchExternal(safeTxt)
+        external = fallback.items
+        englishWord = fallback.englishWord
+        if (external.length > 0) {
+          await itemService.saveSearchResults(safeTxt, external)
+        }
+      } catch (err) {
+        if (!direct.length) throw err
+        console.error(err)
       }
     }
 
-    const [offRes, usdaRes] = await Promise.allSettled([
-      searchOpenFoodFacts(safeTxt),
-      searchRawUSDA(englishWord),
+    const ordered = filterDuplicates([
+      ...handleResSorting(direct, safeTxt, favoriteItems),
+      ...handleResSorting(external, safeTxt, favoriteItems, englishWord),
+      ...similar,
     ])
 
-    const openFoodFacts: Item[] =
-      offRes.status === 'fulfilled'
-        ? offRes.value.slice(0, FALLBACK_OFF_LIMIT)
-        : []
-    const usda: Item[] =
-      usdaRes.status === 'fulfilled'
-        ? usdaRes.value.slice(0, FALLBACK_USDA_LIMIT)
-        : []
-
-    let res: Item[] = filterDuplicates([...openFoodFacts, ...usda]).map(
-      (item) => ({
-        ...item,
-        name: itemNameService.fromExternalName(
-          itemNameService.getItemDisplayName(item.name, 'en')
-        ),
-        popularity: item.popularity ?? 8,
-        isCurated: false,
-        categories: item.categories ?? [],
-      })
+    await Promise.all(
+      ordered.map((item) => addToCache(item as Item, ITEMS_CACHE))
     )
-
-    if (res.length > 0) {
-      await Promise.all(
-        res.map((item) => addToCache(item as Item, ITEMS_CACHE))
-      )
-      await itemService.saveSearchResults(safeTxt, res)
-    }
-
-    res = handleResSorting(res, safeTxt, favoriteItems, englishWord)
-    return Promise.all(res.map((item) => modifyItemImage(item)))
+    return Promise.all(ordered.map((item) => modifyItemImage(item)))
   } catch (err) {
     console.error(err)
     throw err
   }
+}
+
+async function searchExternal(safeTxt: string) {
+  const isEnglishWord = translateService.isEnglishWord(safeTxt)
+  let englishWord = safeTxt
+  if (!isEnglishWord) {
+    try {
+      englishWord = await translateService.translate(safeTxt)
+    } catch {
+      englishWord = safeTxt
+    }
+  }
+
+  const [offRes, usdaRes] = await Promise.allSettled([
+    searchOpenFoodFacts(safeTxt),
+    searchRawUSDA(englishWord),
+  ])
+
+  const openFoodFacts: Item[] =
+    offRes.status === 'fulfilled' ? offRes.value.slice(0, FALLBACK_OFF_LIMIT) : []
+  const usda: Item[] =
+    usdaRes.status === 'fulfilled' ? usdaRes.value.slice(0, FALLBACK_USDA_LIMIT) : []
+
+  const items = filterDuplicates([...openFoodFacts, ...usda]).map((item) => ({
+    ...item,
+    name: itemNameService.fromExternalName(
+      itemNameService.getItemDisplayName(item.name, 'en')
+    ),
+    popularity: item.popularity ?? 8,
+    isCurated: false,
+    categories: item.categories ?? [],
+  }))
+
+  return { items, englishWord }
 }
 
 function handleResSorting(
@@ -153,18 +168,23 @@ function handleResSorting(
   favoriteItems: string[] = [],
   translatedTxt: string = ''
 ) {
-  return res.sort(
+  return [...res].sort(
     (a, b) =>
       computeRelevanceScore(txt, b, favoriteItems, translatedTxt) -
       computeRelevanceScore(txt, a, favoriteItems, translatedTxt)
   )
 }
 
+function resultKey(item: Item) {
+  return item.searchId || item._id || ''
+}
+
 function filterDuplicates(res: Item[]) {
-  return res.filter(
-    (item, index, self) =>
-      index === self.findIndex((t) => t.searchId === item.searchId)
-  )
+  return res.filter((item, index, self) => {
+    const key = resultKey(item)
+    if (!key) return true
+    return index === self.findIndex((other) => resultKey(other) === key)
+  })
 }
 
 function withLocalizedName(item: Item): Item {
@@ -396,15 +416,17 @@ async function searchById(id: string, source: string) {
 }
 
 async function addToCache(item: Item, key: string) {
+  const { matchType: _matchType, ...stored } = item
+  void _matchType
   const cached = await indexedDbService.query<Item>(key)
 
-  const index = cached.findIndex((i: Item) => i.searchId === item.searchId)
+  const index = cached.findIndex((i: Item) => i.searchId === stored.searchId)
 
   if (index === -1) {
-    await indexedDbService.post(key, item)
+    await indexedDbService.post(key, stored)
   } else {
     const itemToUpdate = {
-      ...item,
+      ...stored,
       _id: cached[index]._id,
     }
     await indexedDbService.put(key, itemToUpdate)
@@ -898,16 +920,11 @@ function computeRelevanceScore(
 
   if (!q || !name) return item.popularity || 0
 
-  let score = 0
-  if (displayEng === q || displayHe === q || name === q) score += 100
-
-  if (
-    displayEng.startsWith(q) ||
-    displayHe.startsWith(q) ||
-    name.startsWith(q)
-  ) {
-    score += 50
-  }
+  let score = Math.max(
+    foodTextMatchScore(query, displayEng),
+    foodTextMatchScore(query, displayHe),
+    foodTextMatchScore(query, name)
+  )
 
   const qTokens = getTokens(q)
   const nTokens = getTokens(name)

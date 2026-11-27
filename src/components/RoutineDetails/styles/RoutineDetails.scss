@@ -22,16 +22,9 @@
   }
 
   .week-number-toggle {
-    display: flex;
     width: 100%;
     max-width: 100%;
     min-width: 0;
-    overflow-x: auto;
-
-    .MuiToggleButton-root:not(.Mui-selected) {
-      color: var(--ink-on-canvas) !important;
-      border-color: color-mix(in srgb, var(--ink-on-canvas) 28%, transparent);
-    }
   }
 
   .week-status {

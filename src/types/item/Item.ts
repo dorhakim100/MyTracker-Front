@@ -15,6 +15,7 @@ export interface Item {
   isCurated?: boolean
   searchTerms?: string[]
   categories?: string[]
+  matchType?: 'direct' | 'similar'
   createdBy?: string
   unit?: ItemUnit
 }

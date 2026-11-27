@@ -47,6 +47,7 @@ import { SkeletonList } from '../SkeletonList/SkeletonList'
 import { MealItem } from '../../types/mealItem/MealItem'
 import { itemService } from '../../services/item/item.cache.service'
 import { itemNameService } from '../../services/item/item-name.service'
+import { matchesFoodQuery } from '../../services/search/search.utils'
 
 import Lottie from 'lottie-react'
 import searchLight from '../../../public/searching.json'
@@ -180,7 +181,8 @@ export function ItemSearch({ onAddToMealClick, onPickItem }: ItemSearchProps) {
         showErrorMsg(t('messages.error.search'))
         return
       }
-      const regex = new RegExp(filter.txt, 'i')
+      const matchesQuery = (name: Item['name']) =>
+        matchesFoodQuery(itemNameService.getItemSearchText(name), filter.txt)
 
       if (isNutritionBrowseView(browseView)) {
         setIsLoading(false)
@@ -190,9 +192,7 @@ export function ItemSearch({ onAddToMealClick, onPickItem }: ItemSearchProps) {
       if (filter.source === searchTypes.meal) {
         const meals = user?.meals
           .map((meal) => itemService.convertMealToItem(meal))
-          .filter((meal) =>
-            regex.test(itemNameService.getItemSearchText(meal.name))
-          )
+          .filter((meal) => matchesQuery(meal.name))
 
         if (requestId !== searchRequestIdRef.current) return
         setResults(meals || [])
@@ -222,7 +222,7 @@ export function ItemSearch({ onAddToMealClick, onPickItem }: ItemSearchProps) {
 
       setIsLoading(true)
       const matchingFavorites = favoriteItems.filter((item) =>
-        regex.test(itemNameService.getItemSearchText(item.name))
+        matchesQuery(item.name)
       )
       setResults(matchingFavorites)
       setResultsDragable(false)
@@ -608,7 +608,6 @@ export function ItemSearch({ onAddToMealClick, onPickItem }: ItemSearchProps) {
                 </div>
               )}
               renderPrimaryText={(item) => (
-                // <div className='hide-text-overflow'>{item.name}</div>
                 <MarqueeText
                   variant='body1'
                   className='primary-text'

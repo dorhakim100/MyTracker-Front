@@ -109,7 +109,10 @@ export function RoutineExerciseCard({
             muscles={exerciseMuscles(exercise)}
             size='s'
           />
-          <EquipmentBadges equipments={exercise.equipments} />
+          <EquipmentBadges
+            equipments={exercise.equipments}
+            size='s'
+          />
         </div>
         {onOpenChat && (
           <div className='exercise-chat'>
@@ -155,7 +158,9 @@ export function RoutineExerciseCard({
                         set.isDuringWorkout ? 'during-workout' : ''
                       }`}
                     >
-                      <TableCell className='row-label'>{t('expected')}</TableCell>
+                      <TableCell className='row-label'>
+                        {t('expected')}
+                      </TableCell>
                       <TableCell className='set-mark-cell'>
                         <SetMark
                           sets={expectedSets}

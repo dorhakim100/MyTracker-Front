@@ -2,10 +2,12 @@ import InputLabel from '@mui/material/InputLabel'
 import MenuItem from '@mui/material/MenuItem'
 import FormControl from '@mui/material/FormControl'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
+import { useTheme } from '@mui/material/styles'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { capitalizeFirstLetter } from '../../services/util.service'
 import { Tooltip } from '@mui/material'
+import { getTopSlideDialogZIndex } from '../../components/SlideDialog/slide-dialog-layer'
 
 interface CustomSelectProps {
   label: string
@@ -36,11 +38,17 @@ export function CustomSelect({
   renderOption,
   variant,
 }: CustomSelectProps) {
+  const theme = useTheme()
   const prefs = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.prefs
   )
   const isDashboard = useSelector(
     (stateSelector: RootState) => stateSelector.systemModule.isDashboard
+  )
+  // A sheet opened from an alert sits above MUI's modal layer, which hides this menu.
+  const optionsZIndex = Math.max(
+    theme.zIndex.modal,
+    getTopSlideDialogZIndex() + 1
   )
 
   const isThin = variant === 'thin'
@@ -117,6 +125,7 @@ export function CustomSelect({
               : undefined
           }
           MenuProps={{
+            style: { zIndex: optionsZIndex },
             PaperProps: {
               className: `${
                 prefs.isDarkMode ? 'dark-mode' : ''

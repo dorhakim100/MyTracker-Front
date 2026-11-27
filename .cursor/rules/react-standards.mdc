@@ -1,0 +1,40 @@
+---
+description: React standards — idiomatic React, no DOM queries or workarounds
+globs: src/**/*.{ts,tsx}
+alwaysApply: false
+---
+
+# React standards
+
+The UI is a function of state and props. If a change needs a DOM hack, use the React or MUI API instead.
+
+## DOM
+
+- Do not use `document.querySelector`, `querySelectorAll`, `getElementById`, or `getElementsBy*`.
+- Do not walk `parentElement` / `closest` to find UI.
+- Touch a DOM node only through a `ref` on the element this component renders, and only when a platform API needs that node (focus, measure, scroll).
+- Clicks, keys, and scroll belong on React props (`onClick`, `onKeyDown`) or the MUI handler. A listener that must be global goes in `useEffect` and is removed in the cleanup.
+- Do not set `classList`, inline `style`, or input values on `document.body` or other nodes. Appearance comes from state, SCSS, and MUI. Theme and `dir` stay on the existing prefs / `ThemeModeSync` path.
+
+```tsx
+// BAD — find the selected tab in the DOM
+const selected = root.querySelector('.Mui-selected')
+
+// GOOD — the selected value already lives in state
+const selected = value
+```
+
+## Data and effects
+
+- Derive values during render. Do not copy props into state, and do not `useEffect` just to set state that can be computed.
+- Effects talk to something outside React (subscription, timer, focus). They are not a way to fix render timing.
+- No `setTimeout`, `requestAnimationFrame`, or `flushSync` to wait until the DOM is ready. Render from the data the layout depends on.
+- Do not remount with a random `key`, or stash callbacks in a ref, to dodge state, props, or a dependency list. Fix the data flow.
+- List `key`s are stable ids. An index key is only for a list that never reorders, filters, or inserts.
+- Inputs are controlled: `value` + `onChange`. Do not read `.value` off the DOM on submit.
+- One component, one job. Extract a child or a `useSomething` hook instead of flag branches that patch around the real model.
+
+## Hooks
+
+- Rules of Hooks: no conditional hooks, no hooks after an early return.
+- Custom hooks are `useSomething`. Side effects stay inside the hook's effect, not in the function body.

@@ -1,10 +1,27 @@
 .custom-tabs-container {
   @include favorite-accent;
+  min-width: 0;
+  max-width: 100%;
 
   .custom-tabs {
     min-height: 0 !important;
     border-bottom: 1px solid
       color-mix(in srgb, var(--ink-on-canvas) 12%, transparent);
+  }
+
+  .custom-tab-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .tabs-indicator {
+    display: inline-flex;
+    align-items: center;
+
+    svg {
+      font-size: 1rem;
+    }
   }
 
   .MuiTab-root {

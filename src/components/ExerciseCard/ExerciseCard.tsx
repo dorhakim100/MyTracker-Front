@@ -586,7 +586,7 @@ export function ExerciseCard({
       </div>
       <EquipmentBadges
         equipments={exercise.equipments}
-        size='m'
+        size='s'
       />
     </div>
   )

@@ -21,7 +21,7 @@ import { statsService } from '../../services/stats/stats.service'
 import { showErrorMsg } from '../../services/event-bus.service'
 import { capacitorService } from '../../services/capacitor.service'
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
-import { CustomToggle } from '../../CustomMui/CustomToggle/CustomToggle'
+import { CustomTabs } from '../../CustomMui/CustomTabs/CustomTabs'
 import { CustomAlertDialog } from '../../CustomMui/CustomAlertDialog/CustomAlertDialog'
 import { SlideDialog } from '../SlideDialog/SlideDialog'
 import { useSlideDialogHeaderAction } from '../SlideDialog/slide-dialog-header-action'
@@ -31,7 +31,6 @@ import { sessionStatsNs } from '../SessionStats/locals'
 import { EditWorkout } from '../../pages/LiftMate/EditWorkout/EditWorkout'
 import { useChatRole } from '../../hooks/useChatRole'
 import { useUnreadSummary } from '../../hooks/useUnreadSummary'
-import { useScrollLastChildIntoView } from '../../hooks/useScrollLastChildIntoView'
 import { ExerciseChatDialog } from '../ExerciseChatDialog/ExerciseChatDialog'
 import { SessionChatButton } from '../SessionChatButton/SessionChatButton'
 import { RoutineExerciseCard } from './RoutineExerciseCard/RoutineExerciseCard'
@@ -95,10 +94,6 @@ export function RoutineDetails({ workout }: RoutineDetailsProps) {
   const editOpenRef = useRef(false)
   const weekNumberRef = useRef<number | null>(null)
   const requestRef = useRef(0)
-  const weekToggleRef = useScrollLastChildIntoView(
-    'MuiToggleButtonGroup-grouped',
-    weeksStatus
-  )
   weekNumberRef.current = weekNumber
 
   const loadInstructions = useCallback(
@@ -287,29 +282,24 @@ export function RoutineDetails({ workout }: RoutineDetailsProps) {
 
   return (
     <div className='routine-details-container'>
-      {weeksStatus.length > 0 && (
-        <div
-          ref={weekToggleRef}
-          className='week-toggle'
-        >
-          <CustomToggle
-            value={String(weekNumber || '')}
+      {weeksStatus.length > 0 && weekNumber != null && (
+        <div className='week-toggle'>
+          <CustomTabs
+            value={String(weekNumber)}
             onChange={(value) => {
               loadInstructions(Number(value))
             }}
+            variant='scrollable'
+            size='slim'
+            ariaLabel={tApp('workout.week')}
+            className='week-number-toggle'
             options={weeksStatus.map((statusWeek) => ({
-              label: tApp('workout.week'),
+              label: `${tApp('workout.week')} ${statusWeek.weekNumber}`,
               value: String(statusWeek.weekNumber),
-              icon: <span>{statusWeek.weekNumber}</span>,
-              badgeIcon: isWeekMarkedDone(statusWeek) ? (
+              renderTabsIndicator: isWeekMarkedDone(statusWeek) ? (
                 <CheckIcon className='week-done-icon' />
-              ) : undefined,
+              ) : null,
             }))}
-            isBadge={true}
-            isReversedIcon={true}
-            className={`week-number-toggle ${prefs.favoriteColor} ${
-              prefs.isDarkMode ? 'dark-mode' : ''
-            }`}
           />
         </div>
       )}

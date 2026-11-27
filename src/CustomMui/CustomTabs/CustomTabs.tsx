@@ -1,5 +1,7 @@
 import {
+  createContext,
   forwardRef,
+  useContext,
   useEffect,
   useRef,
   useState,
@@ -17,6 +19,10 @@ import {
 } from './tab-focus'
 import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
+import TabScrollButton, {
+  type TabScrollButtonProps,
+} from '@mui/material/TabScrollButton'
+import { useRtl } from '@mui/system/RtlProvider'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { capacitorService } from '../../services/capacitor.service'
@@ -36,6 +42,58 @@ function markOffset(style?: CSSProperties) {
   }
   return null
 }
+
+function focusSelectedTab(root: HTMLElement) {
+  const scroller = root.querySelector('.MuiTabs-scroller')
+  const selected = root.querySelector('.Mui-selected')
+  if (!(scroller instanceof HTMLElement) || !(selected instanceof HTMLElement))
+    return
+  if (scroller.clientWidth === 0) return
+
+  const tabs = scroller.querySelectorAll('.MuiTab-root')
+  const index = Array.prototype.indexOf.call(tabs, selected)
+  const rtl = getComputedStyle(scroller).direction === 'rtl'
+  const scrollerBox = scroller.getBoundingClientRect()
+  const tabBox = selected.getBoundingClientRect()
+  const isLast = index === tabs.length - 1
+  const isFirst = index === 0
+
+  let delta =
+    tabBox.left + tabBox.width / 2 - (scrollerBox.left + scrollerBox.width / 2)
+  if (isLast) {
+    delta = rtl
+      ? tabBox.left - scrollerBox.left
+      : tabBox.right - scrollerBox.right
+  } else if (isFirst) {
+    delta = rtl
+      ? tabBox.right - scrollerBox.right
+      : tabBox.left - scrollerBox.left
+  }
+
+  if (Math.abs(delta) >= 1) scroller.scrollLeft += delta
+}
+
+const ScrollEdgeContext = createContext({ isFirst: false, isLast: false })
+
+const ScrollButton = forwardRef<HTMLDivElement, TabScrollButtonProps>(
+  function ScrollButton({ disabled, direction, className, ...props }, ref) {
+    const isRtl = useRtl()
+    const { isFirst, isLast } = useContext(ScrollEdgeContext)
+    const isNext = direction === (isRtl ? 'left' : 'right')
+    const atEdge = isNext ? isLast : isFirst
+    const isDisabled = Boolean(disabled) || atEdge
+
+    return (
+      <TabScrollButton
+        {...props}
+        ref={ref}
+        direction={direction}
+        className={`${className || ''} ${isDisabled ? 'Mui-disabled' : ''}`.trim()}
+        disabled={isDisabled}
+      />
+    )
+  }
+)
 
 const TabMark = forwardRef<HTMLSpanElement, TabMarkProps>(function TabMark(
   { style, className, ownerState: _ownerState, ...rest },
@@ -75,6 +133,7 @@ export interface CustomTabOption<T extends string = string> {
   icon?: ReactElement | string
   disabled?: boolean
   ariaLabel?: string
+  renderTabsIndicator?: ReactElement | null
 }
 
 export interface CustomTabsProps<T extends string = string> {
@@ -109,6 +168,7 @@ export function CustomTabs<T extends string = string>({
   )
   const isScrollable = variant === 'scrollable'
   const focusKey = tabFocusKey(options)
+  const barRef = useRef<HTMLDivElement>(null)
   const onChangeRef = useRef(onChange)
   onChangeRef.current = onChange
 
@@ -134,18 +194,54 @@ export function CustomTabs<T extends string = string>({
     [focusKey, options, value]
   )
 
+  useEffect(() => {
+    if (!isScrollable) return
+    const root = barRef.current
+    if (!root) return
+
+    let frame = 0
+    const focus = () => {
+      cancelAnimationFrame(frame)
+      frame = requestAnimationFrame(() => focusSelectedTab(root))
+    }
+
+    focus()
+    const timer = window.setTimeout(focus, 400)
+    const scroller = root.querySelector('.MuiTabs-scroller')
+    const resizeObserver =
+      typeof ResizeObserver === 'undefined' ||
+      !(scroller instanceof HTMLElement)
+        ? null
+        : new ResizeObserver(focus)
+    if (scroller instanceof HTMLElement) resizeObserver?.observe(scroller)
+
+    return () => {
+      cancelAnimationFrame(frame)
+      window.clearTimeout(timer)
+      resizeObserver?.disconnect()
+    }
+  }, [isScrollable, value, focusKey])
+
   function onTabChange(_event: SyntheticEvent, next: T) {
     rememberTab(focusKey, next)
     onChange(next)
     capacitorService.vibrate('Light').catch(() => {})
   }
 
+  const selectedIndex = options.findIndex((option) => option.value === value)
+  const scrollEdge = {
+    isFirst: selectedIndex === 0,
+    isLast: selectedIndex > -1 && selectedIndex === options.length - 1,
+  }
+
   const bar = (
     <div
+      ref={barRef}
       className={`custom-tabs-container ${prefs.favoriteColor || ''} ${
         size || ''
       } ${className || ''}`}
     >
+      <ScrollEdgeContext.Provider value={scrollEdge}>
       <Tabs
         className='custom-tabs'
         value={value}
@@ -156,6 +252,7 @@ export function CustomTabs<T extends string = string>({
         textColor='inherit'
         scrollButtons={isScrollable ? 'auto' : false}
         allowScrollButtonsMobile={isScrollable}
+        slots={{ scrollButtons: ScrollButton }}
         slotProps={{ indicator: { component: TabMark } }}
         sx={{ '& .MuiTab-root': { textTransform: 'none' } }}
       >
@@ -164,7 +261,21 @@ export function CustomTabs<T extends string = string>({
             key={option.value}
             className='press-ripple bold-header'
             value={option.value}
-            label={option.label}
+            label={
+              option.renderTabsIndicator ? (
+                <span className='custom-tab-label'>
+                  {option.label}
+                  <span
+                    className='tabs-indicator'
+                    aria-hidden='true'
+                  >
+                    {option.renderTabsIndicator}
+                  </span>
+                </span>
+              ) : (
+                option.label
+              )
+            }
             icon={option.icon}
             iconPosition={option.icon ? 'start' : 'top'}
             disabled={option.disabled}
@@ -172,6 +283,7 @@ export function CustomTabs<T extends string = string>({
           />
         ))}
       </Tabs>
+      </ScrollEdgeContext.Provider>
     </div>
   )
 
