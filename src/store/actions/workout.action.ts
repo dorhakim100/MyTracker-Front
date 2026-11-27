@@ -15,7 +15,6 @@ import {
   REMOVE_TODAY_SESSION_DAY,
   SET_TODAY_SESSION_DAY,
   SET_CURR_UPDATED_EXERCISE_SETTINGS,
-  SET_ALL_EXERCISES_DONE,
 } from '../reducers/workout.reducer'
 import { Workout } from '../../types/workout/Workout'
 import { WorkoutFilter } from '../../types/workoutFilter/WorkoutFilter'
@@ -377,8 +376,4 @@ export function setCurrUpdatedExerciseSettings(
     type: SET_CURR_UPDATED_EXERCISE_SETTINGS,
     currUpdatedExerciseSettings,
   })
-}
-
-export function setAllExercisesDone(allExercisesDone: boolean) {
-  store.dispatch({ type: SET_ALL_EXERCISES_DONE, allExercisesDone })
 }

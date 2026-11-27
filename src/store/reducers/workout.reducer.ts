@@ -19,7 +19,6 @@ export const SET_TODAY_SESSION_DAY = 'SET_TODAY_SESSION_DAY'
 export const REMOVE_TODAY_SESSION_DAY = 'REMOVE_TODAY_SESSION_DAY'
 export const SET_CURR_UPDATED_EXERCISE_SETTINGS =
   'SET_CURR_UPDATED_EXERCISE_SETTINGS'
-export const SET_ALL_EXERCISES_DONE = 'SET_ALL_EXERCISES_DONE'
 export interface WorkoutState {
   workouts: Workout[]
   workout: Workout
@@ -29,7 +28,6 @@ export interface WorkoutState {
   timer: any | null
   todaySessionDay: SessionDay | null
   currUpdatedExerciseSettings: CurrUpdatedExerciseSettings
-  allExercisesDone: boolean
 }
 
 const initialCurrUpdatedExerciseSettings: CurrUpdatedExerciseSettings = {
@@ -45,7 +43,6 @@ const initialState: WorkoutState = {
   timer: null,
   todaySessionDay: null,
   currUpdatedExerciseSettings: initialCurrUpdatedExerciseSettings,
-  allExercisesDone: false,
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -106,9 +103,6 @@ export function workoutReducer(state = initialState, action: any) {
         ...state,
         currUpdatedExerciseSettings: action.currUpdatedExerciseSettings,
       }
-      break
-    case SET_ALL_EXERCISES_DONE:
-      newState = { ...state, allExercisesDone: action.allExercisesDone }
       break
     default:
   }

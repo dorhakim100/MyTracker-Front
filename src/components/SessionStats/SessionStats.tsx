@@ -57,10 +57,6 @@ export function SessionStats({
   const [selectedExercise, setSelectedExercise] =
     useState<ExerciseWithDetails | null>(null)
 
-  const isAllExercisesDone = useSelector(
-    (state: RootState) => state.workoutModule.allExercisesDone
-  )
-
   const [modalSettings, setModalSettings] = useState<{
     open: boolean
   }>({
@@ -116,6 +112,8 @@ export function SessionStats({
     )
   }
 
+  const isAllExercisesDone =
+    recap.setsPlanned > 0 && recap.setsDone === recap.setsPlanned
   const volumeActual = Math.round(recap.volumeActual)
   const volumePlanned = Math.round(recap.volumePlanned)
   const vsLast =

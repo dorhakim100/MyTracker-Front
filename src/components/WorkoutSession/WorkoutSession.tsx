@@ -22,7 +22,6 @@ import {
   setTimer,
   saveWorkout,
   setCurrUpdatedExerciseSettings,
-  setAllExercisesDone,
 } from '../../store/actions/workout.action'
 
 import { CustomButton } from '../../CustomMui/CustomButton/CustomButton'
@@ -36,6 +35,7 @@ import { setIsLoading } from '../../store/actions/system.actions'
 import { setService } from '../../services/set/set.service'
 import {
   exerciseIsDone as countingExerciseIsDone,
+  allExercisesAreDone,
   countsAsDone,
   restOf,
   setTypeOf,
@@ -118,11 +118,7 @@ export function WorkoutSession({
     // if (sessionDay.instructions.isFinished) return true
     if (!sessionDay.instructions.exercises) return false
 
-    const areAllDone = sessionDay.instructions.exercises.every((e) =>
-      countingExerciseIsDone(e.sets)
-    )
-    setAllExercisesDone(areAllDone)
-    return areAllDone
+    return allExercisesAreDone(sessionDay.instructions.exercises)
   }, [sessionDay.instructions.exercises]) //, sessionDay.instructions.isFinished])
 
   const totalSets = useMemo(() => {
@@ -986,7 +982,6 @@ export function WorkoutSession({
         handleOpenChange(exercise.exerciseId, false)
       }
       if (isAllExercisesDone) {
-        setAllExercisesDone(true)
         await handleAllExercisesCompleted(savedInstructions || newInstructions)
         setTimeout(() => {
           smoothScroll()

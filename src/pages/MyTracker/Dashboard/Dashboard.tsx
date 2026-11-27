@@ -63,6 +63,7 @@ import {
 import { BurnedCaloriesGlyph } from '../../../CustomMui/CustomIcon/glyphs'
 import { LiveStreak } from '../../../components/LiveStreak/LiveStreak.tsx'
 import { streakTypes } from '../../../types/user/User'
+import { allExercisesAreDone } from '../../../services/set/set-type'
 const WorkoutSession = lazy(() =>
   import('../../../components/WorkoutSession/WorkoutSession').then(
     (module) => ({
@@ -348,8 +349,8 @@ export function Dashboard() {
     (state: RootState) => state.workoutModule.sessionDay
   )
 
-  const allExercisesDone = useSelector(
-    (state: RootState) => state.workoutModule.allExercisesDone
+  const allExercisesDone = allExercisesAreDone(
+    sessionDay?.instructions?.exercises || []
   )
   const [seenDone, setSeenDone] = useState(allExercisesDone)
   const [justChangedIcon, setJustChangedIcon] = useState(false)

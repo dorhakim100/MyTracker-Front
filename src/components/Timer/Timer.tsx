@@ -20,6 +20,8 @@ import { CachedImage } from '../CachedImage/CachedImage'
 import { exerciseImage } from '../../assets/config/exercise-image'
 import { SetMark } from '../SetMark/SetMark'
 import { countsAsDone, setTypeOf } from '../../services/set/set-type'
+import { ExpectedActual } from '../../types/expectedActual/ExpectedActual'
+import { SetType } from '../../types/exercise/SetType'
 
 interface ExerciseDialogOptions {
   open: boolean
@@ -118,7 +120,9 @@ export function Timer() {
   }, [timer])
 
   const timerKey = currentExercise
-    ? `${currentExercise.exerciseId}:${currentExercise.restMarkIndex ?? ''}:${currentExercise.restingTime ?? ''}`
+    ? `${currentExercise.exerciseId}:${currentExercise.restMarkIndex ?? ''}:${
+        currentExercise.restingTime ?? ''
+      }`
     : ''
 
   useEffect(() => {
@@ -206,8 +210,7 @@ export function Timer() {
   const switchedExercise =
     !!displayExercise.restMarkExerciseId &&
     displayExercise.restMarkExerciseId !== displayExercise.exerciseId
-  const nextIndex =
-    shownExercise?.sets.findIndex((set) => !set.isDone) ?? -1
+  const nextIndex = shownExercise?.sets.findIndex((set) => !set.isDone) ?? -1
   const nextSet = nextIndex >= 0 ? shownExercise?.sets[nextIndex] : undefined
   const markSets = switchedExercise ? shownExercise?.sets : restSets
   const markIndex = switchedExercise ? nextIndex : restIndex
@@ -218,6 +221,10 @@ export function Timer() {
     markIndex >= 0 &&
     !!markSets &&
     (switchedExercise || setTypeOf(markSet) !== 'normal')
+
+  const isNormalSet =
+    markSet?.type === 'normal' ||
+    (markSet?.type as ExpectedActual<SetType>).actual === 'normal'
 
   return (
     <>
@@ -240,14 +247,18 @@ export function Timer() {
                 alt='timer'
                 className='timer-image'
               />
-              {showSetMark && markSet && markSets && markIndex != null && (
-                <SetMark
-                  sets={markSets}
-                  index={markIndex}
-                  set={markSet}
-                  className={prefs.favoriteColor}
-                />
-              )}
+              {showSetMark &&
+                markSet &&
+                markSets &&
+                markIndex != null &&
+                !isNormalSet && (
+                  <SetMark
+                    sets={markSets}
+                    index={markIndex}
+                    set={markSet}
+                    className={prefs.favoriteColor}
+                  />
+                )}
             </div>
             <div className='text-container'>
               <div className='times-container'>

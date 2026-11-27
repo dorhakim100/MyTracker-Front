@@ -58,21 +58,34 @@ export function setMark(sets: { type?: Set['type'] }[], index: number) {
   return String(number)
 }
 
+function setsToCount<T extends { type?: Set['type'] }>(sets: T[]) {
+  const counting = sets.filter((set) => countsAsDone(setTypeOf(set)))
+  return counting.length ? counting : sets
+}
+
 export function exerciseIsDone(
   sets: { type?: Set['type']; isDone?: boolean }[]
 ) {
-  const counting = sets.filter((set) => countsAsDone(setTypeOf(set)))
-  if (!counting.length) return true
-  return counting.every((set) => set.isDone)
+  const toCount = setsToCount(sets)
+  return toCount.length > 0 && toCount.every((set) => set.isDone)
+}
+
+export function allExercisesAreDone(
+  exercises: { sets: { type?: Set['type']; isDone?: boolean }[] }[]
+) {
+  return (
+    exercises.length > 0 &&
+    exercises.every((exercise) => exerciseIsDone(exercise.sets))
+  )
 }
 
 export function progressPercent(
   sets: { type?: Set['type']; isDone?: boolean }[]
 ) {
-  const counting = sets.filter((set) => countsAsDone(setTypeOf(set)))
-  if (!counting.length) return 100
-  const done = counting.filter((set) => set.isDone).length
-  return (done / counting.length) * 100
+  const toCount = setsToCount(sets)
+  if (!toCount.length) return 0
+  const done = toCount.filter((set) => set.isDone).length
+  return (done / toCount.length) * 100
 }
 
 export function applyFailureEffort(set: Set, isPlanning: boolean): Set {

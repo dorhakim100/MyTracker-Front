@@ -147,18 +147,12 @@ export function FixedBottomNavigation(props: {
   }, [activeRoute, filteredRoutes])
 
   async function onAiClick() {
-    if (isNative) {
-      capacitorService.vibrate('Light')
-    }
     setModalType(modalTypes.ai)
     setSearchModalOpen(true)
     setIsAddModal(false)
   }
 
   async function onSearchClick(ev: React.MouseEvent<HTMLButtonElement>) {
-    if (isNative) {
-      capacitorService.vibrate('Light')
-    }
     ev.stopPropagation()
     ev.preventDefault()
 
@@ -303,6 +297,7 @@ export function FixedBottomNavigation(props: {
               insetInline: 0,
               zIndex: 1000,
               height: 'calc(100px)',
+              borderRadius: 0,
 
               // paddingBottom: '1.5em',
             }}
