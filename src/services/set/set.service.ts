@@ -1,11 +1,13 @@
 import { httpService } from '../http.service'
 import { Set } from '../../types/exercise/Exercise'
 import { SetFilter } from '../../types/setFilter/SetFilter'
+import { SetChartFilter, SetChartSeries } from '../../types/chart/ChartSeries'
 
 const KEY = 'set'
 
 export const setService = {
   query,
+  getChart,
   getById,
   save,
   saveSets,
@@ -21,6 +23,14 @@ async function query(filterBy: SetFilter = {}) {
   try {
     const sets = await httpService.get(KEY, filterBy)
     return sets
+  } catch (err) {
+    throw err
+  }
+}
+
+async function getChart(filterBy: SetChartFilter): Promise<SetChartSeries> {
+  try {
+    return await httpService.get(`${KEY}/chart`, filterBy)
   } catch (err) {
     throw err
   }

@@ -10,14 +10,10 @@ import { colors } from '../../assets/config/colors'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { weightService } from '../../services/weight/weight.service'
-import { Weight } from '../../types/weight/Weight'
+import { WeightChartSeries } from '../../types/chart/ChartSeries'
 
 import { TimesContainer } from '../TimesContainer/TimesContainer'
-import {
-  getFullDate,
-  getColor,
-  prepareSeries,
-} from '../../services/util.service'
+import { getFullDate, getColor } from '../../services/util.service'
 import { Card, LinearProgress, Typography } from '@mui/material'
 
 import ScaleIcon from '@mui/icons-material/Scale'
@@ -54,6 +50,13 @@ const GOAL_WEIGHT = 94
 
 const DEFAULT_MOVING_AVERAGE_PERIOD = 7
 
+const EMPTY_CHART: WeightChartSeries = {
+  labels: [],
+  data: [],
+  movingAverage: [],
+  previousAverage: null,
+}
+
 export function WeightChart({
   className = '',
   setSelectedDate,
@@ -73,11 +76,7 @@ export function WeightChart({
 
   const [range, setRange] = useState<LineChartRangeKey>('1M')
 
-  const [weights, setWeights] = useState<Weight[]>([])
-  const [previousWeights, setPreviousWeights] = useState<Weight[]>([])
-  const [previous2WeeksWeights, setPrevious2WeeksWeights] = useState<Weight[]>(
-    []
-  )
+  const [chart, setChart] = useState<WeightChartSeries>(EMPTY_CHART)
   const [stats, setStats] = useState<Stats>({
     selectedDate: new Date(),
     selectedWeight: 0,
@@ -89,25 +88,12 @@ export function WeightChart({
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
 
   const data = useMemo(() => {
-    setChartLoading(true)
-    const series = prepareSeries(
-      range,
-      weights.map((weight) => ({
-        createdAt: new Date(weight.createdAt),
-        value: weight.kg,
-      })) as (Weight & { createdAt: string; value: number })[],
-      false,
-      range
-    )
-    const labelsToShow = series?.labels
-    const kgs = series?.data ?? []
-    setChartLoading(false)
     return {
-      labels: labelsToShow,
+      labels: chart.labels,
       datasets: [
         {
           label: t('weight.weight'),
-          data: kgs,
+          data: chart.data,
           borderColor:
             colors[prefs.favoriteColor as keyof typeof colors] ||
             colors.primary,
@@ -115,111 +101,17 @@ export function WeightChart({
         },
       ],
     }
-  }, [weights, t])
+  }, [chart, t])
 
-  const movingAverageData = useMemo(() => {
-    setChartLoading(true)
-    const series = prepareSeries(
-      range,
-      weights.map((weight) => ({
-        createdAt: new Date(weight.createdAt),
-        value: weight.kg,
-      })) as (Weight & { createdAt: string; value: number })[],
-      false,
-      range
-    )
-    const data = series?.data ?? []
-
-    const previousWeightsToSend = previousWeights.map((weight) => {
-      const weightToSend = {
-        createdAt: new Date(weight.createdAt),
-        value: weight.kg,
-      }
-
-      return weightToSend
-    })
-
-    const previousSeries = prepareSeries(
-      '7D',
-      previousWeightsToSend as (Weight & {
-        createdAt: string
-        value: number
-      })[],
-      true,
-      range
-    )
-
-    const previousData = previousSeries?.data ?? []
-
-    const combinedData = [...previousData, ...data]
-
-    const calcPeriod = (array: (number | null)[]) => {
-      return +(
-        array.reduce((acc: number, curr: number | null) => {
-          if (curr === null) return acc
-          return acc + curr
-        }, 0) / DEFAULT_MOVING_AVERAGE_PERIOD
-      ).toFixed(1)
-    }
-
-    const handleNullValues = (array: (number | null)[]) => {
-      const filteredArray = array.filter((v) => v)
-
-      const filteredSum = filteredArray.reduce(
-        (acc: number, curr: number | null) => {
-          if (curr === null) return acc
-          return +(acc + curr).toFixed(1)
-        },
-        0
-      )
-      const average = filteredSum / filteredArray.length
-      return array.map((value) => {
-        if (!value) {
-          return +average.toFixed(1)
-        }
-        return value
-      })
-    }
-
-    const res = data.map((_, index) => {
-      const period = combinedData.slice(
-        index,
-        index + DEFAULT_MOVING_AVERAGE_PERIOD
-      )
-
-      const hasNulls = period.includes(null)
-      const isNotFullArray =
-        hasNulls || period.length !== DEFAULT_MOVING_AVERAGE_PERIOD
-
-      if (isNotFullArray && range === 'ALL') {
-        return null
-      } else if (isNotFullArray) {
-        return calcPeriod(handleNullValues(period) as (number | null)[])
-      } else {
-        return calcPeriod(period)
-      }
-    })
-
-    setChartLoading(false)
-
-    return res
-  }, [weights, previousWeights, range])
+  const movingAverageData = chart.movingAverage
 
   const weeklyChange = useMemo(() => {
     if (selectedIndex == null) return 0
     const currAverage = movingAverageData[selectedIndex]
-    let prevAverage =
-      movingAverageData[selectedIndex - DEFAULT_MOVING_AVERAGE_PERIOD]
+    const prevAverage =
+      movingAverageData[selectedIndex - DEFAULT_MOVING_AVERAGE_PERIOD] ||
+      chart.previousAverage
 
-    if (!prevAverage) {
-      const calcPrevAverage = +(
-        previous2WeeksWeights.reduce((acc, curr) => {
-          return acc + (curr.kg ?? 0)
-        }, 0) / previous2WeeksWeights.length
-      ).toFixed(1)
-
-      prevAverage = calcPrevAverage
-    }
     if (!currAverage || !prevAverage) {
       return 0
     }
@@ -227,7 +119,7 @@ export function WeightChart({
     const diff = +(currAverage - prevAverage).toFixed(1)
 
     return diff
-  }, [movingAverageData, selectedIndex])
+  }, [chart, movingAverageData, selectedIndex])
 
   const rangeChange = useMemo(() => {
     const firstAverage = movingAverageData.find((average) => average !== null)
@@ -246,86 +138,24 @@ export function WeightChart({
     selectedIndex != null ? movingAverageData[selectedIndex] : null
 
   useEffect(() => {
-    const fetchWeights = async () => {
+    const fetchChart = async () => {
       setChartLoading(true)
-      let fromDate
-      let toDate
-      let limit = 0
-      switch (range) {
-        case '1M':
-          limit = 30
-          break
-        case '3M':
-          limit = 90
-          break
-        case '6M':
-          limit = 180
-          break
-        case '1Y':
-          limit = 365
-          break
-        case 'ALL':
-          limit = 0
-          break
-      }
-      if (range !== 'ALL') {
-        fromDate = new Date()
-        toDate = new Date()
-        fromDate.setDate(fromDate.getDate() - limit)
-        toDate.setDate(toDate.getDate() + 1)
-      } else {
-        fromDate = null
-        toDate = null
-      }
-
-      const weights = await weightService.query({
+      const nextChart = await weightService.getChart({
         userId: sentUser?._id || user?._id,
-        fromDate: fromDate ? fromDate.toISOString() : null,
-        toDate: toDate ? toDate.toISOString() : null,
+        range,
       })
+      const latestKg = [...nextChart.data].reverse().find((kg) => kg != null)
 
-      const fromDateMinusTwoWeeks = fromDate
-        ? new Date(fromDate.getTime() - 86400000 * 13).toISOString()
-        : null
-
-      const toDateMinusTwoWeeks = fromDate
-        ? new Date(fromDate.getTime() - 86400000 * 6).toISOString()
-        : null
-      const fromDateMinusWeek = fromDate
-        ? new Date(fromDate.getTime() - 86400000 * 7).toISOString()
-        : null
-      const toDateMinusWeek = fromDate
-        ? new Date(fromDate.getTime()).toISOString()
-        : null
-
-      const previousWeight = await weightService.query({
-        userId: sentUser?._id || user?._id,
-        fromDate: fromDateMinusWeek,
-        toDate: toDateMinusWeek,
-      })
-
-      const previous2WeeksWeight = await weightService.query({
-        userId: sentUser?._id || user?._id,
-        fromDate: fromDateMinusTwoWeeks,
-        toDate: toDateMinusTwoWeeks,
-      })
-
-      const withKg = (list: Weight[]) =>
-        (list || []).filter((item) => typeof item?.kg === 'number')
-      const loggedWeights = withKg(weights)
-
-      setWeights(loggedWeights)
-      setPreviousWeights(withKg(previousWeight))
-      setPrevious2WeeksWeights(withKg(previous2WeeksWeight))
+      setChart(nextChart)
       setStats({
         selectedDate: new Date(),
-        selectedWeight: loggedWeights[loggedWeights.length - 1]?.kg || 0,
+        selectedWeight: latestKg || 0,
         message: '',
         isGoal: false,
       })
       setChartLoading(false)
     }
-    fetchWeights()
+    fetchChart()
   }, [sentUser?._id, user?._id, range, user?.lastWeight])
 
   const handleLineClick = (

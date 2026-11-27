@@ -1,10 +1,15 @@
 import { httpService } from '../http.service'
 import type { Weight, WeightFilter, WeightWrite } from '../../types/weight/Weight'
+import type {
+  WeightChartFilter,
+  WeightChartSeries,
+} from '../../types/chart/ChartSeries'
 
 const KEY = 'weight'
 
 export const weightService = {
   query,
+  getChart,
   getById,
   save,
   remove,
@@ -15,6 +20,16 @@ export const weightService = {
 async function query(filterBy: WeightFilter = {}) {
   try {
     return await httpService.get(KEY, filterBy)
+  } catch (err) {
+    throw err
+  }
+}
+
+async function getChart(
+  filterBy: WeightChartFilter
+): Promise<WeightChartSeries> {
+  try {
+    return await httpService.get(`${KEY}/chart`, filterBy)
   } catch (err) {
     throw err
   }

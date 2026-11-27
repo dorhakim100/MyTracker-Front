@@ -355,8 +355,8 @@ export function NameExercises({
               options={getArrayOfNumbers(1, 20).map((weekNumber) => ({
                 label: `${t('workout.week')} ${weekNumber}`,
                 value: weekNumber.toString(),
-                disabled: getIsWeekNumberDisabled(weekNumber),
-                renderTabsIndicator: getWeekNumberIcon(weekNumber),
+                disabled: getIsWeekNumberDisabled(+weekNumber),
+                renderTabsIndicator: getWeekNumberIcon(+weekNumber),
               }))}
             />
           )}

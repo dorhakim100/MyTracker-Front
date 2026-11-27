@@ -75,7 +75,7 @@ function focusSelectedTab(root: HTMLElement) {
 
 const ScrollEdgeContext = createContext({ isFirst: false, isLast: false })
 
-const ScrollButton = forwardRef<HTMLDivElement, TabScrollButtonProps>(
+const ScrollButton = forwardRef<HTMLButtonElement, TabScrollButtonProps>(
   function ScrollButton({ disabled, direction, className, ...props }, ref) {
     const isRtl = useRtl()
     const { isFirst, isLast } = useContext(ScrollEdgeContext)
