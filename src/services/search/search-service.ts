@@ -15,7 +15,6 @@ import { cache } from '../../assets/config/cache'
 import { Log } from '../../types/log/Log'
 import { sourceTypes } from '../../assets/config/source.types'
 import { translateService } from '../translate/translate.service'
-import { imageService } from '../image/image.service'
 
 import { itemService } from '../item/item.service'
 import { mealService } from '../meal/meal.service'
@@ -31,10 +30,9 @@ const {
   OPEN_FOOD_FACTS_BATCH_URL,
   USDA_API_URL,
   USDA_FOODS_URL,
-  DEFAULT_IMAGE,
 } = searchUrls
 const { PAGE, SIZE, FIELDS, LC, CC } = openFoodFactsQueryingParams
-const { FAVORITE_CACHE, ITEMS_CACHE } = cache
+const { ITEMS_CACHE } = cache
 const USDA_API_KEY = import.meta.env.VITE_USDA_API_KEY
 
 export const searchService = {
@@ -49,29 +47,11 @@ export const searchService = {
   removeFromCache,
   searchFavoriteItems,
   handleResSorting,
-  handleImageError,
   getSortedResults,
 }
 
-const MAX_CONCURRENT_OPERATIONS = 3 // Limit concurrent async operations
 const FALLBACK_OFF_LIMIT = 8
 const FALLBACK_USDA_LIMIT = 3
-
-// Utility function to process items with concurrency limit
-async function processWithConcurrencyLimit<T, R>(
-  items: T[],
-  processor: (item: T) => Promise<R>,
-  limit: number = MAX_CONCURRENT_OPERATIONS
-): Promise<R[]> {
-  const results: R[] = []
-  if (!items || !items.length) return results
-  for (let i = 0; i < items.length; i += limit) {
-    const batch = items.slice(i, i + limit)
-    const batchResults = await Promise.all(batch.map(processor))
-    results.push(...batchResults)
-  }
-  return results
-}
 
 // await Promise.all(
 //   Object.values(cache).map((storeName) => indexedDbService.clear(storeName))
@@ -121,7 +101,7 @@ async function search(filter: SearchFilter) {
     await Promise.all(
       ordered.map((item) => addToCache(item as Item, ITEMS_CACHE))
     )
-    return Promise.all(ordered.map((item) => modifyItemImage(item)))
+    return ordered
   } catch (err) {
     console.error(err)
     throw err
@@ -395,20 +375,6 @@ async function searchById(id: string, source: string) {
       await addToCache(res as Item, ITEMS_CACHE)
     }
 
-    if (!res?.image) {
-      const isEnglishWord = translateService.isEnglishWord(
-        itemNameService.getItemDisplayName(res?.name, 'en')
-      )
-      let translatedTxt = itemNameService.getItemDisplayName(res?.name, 'en')
-      if (!isEnglishWord) {
-        translatedTxt = await translateService.translate(translatedTxt)
-      }
-
-      const image =
-        (await imageService.getSingleImage(translatedTxt)) || DEFAULT_IMAGE
-      res.image = image
-    }
-
     return res
   } catch (err) {
     throw err
@@ -431,13 +397,6 @@ async function addToCache(item: Item, key: string) {
     }
     await indexedDbService.put(key, itemToUpdate)
   }
-}
-
-async function handleImageError(newItem: Item) {
-  await Promise.all([
-    addToCache(newItem, ITEMS_CACHE),
-    addToCache(newItem, FAVORITE_CACHE),
-  ])
 }
 
 async function removeFromCache(item: Item, key: string) {
@@ -475,10 +434,8 @@ async function searchOpenFoodFacts(query: string) {
       // headers: { 'User-Agent': 'MyTracker/1.0 (you@example.com)' },
     })
 
-    // Process products with concurrency limit to avoid too many parallel async operations
-    const res = await processWithConcurrencyLimit(
-      data.products,
-      async (product: OFFProduct): Promise<Item | null> => {
+    const res = (data.products as OFFProduct[]).map(
+      (product): Item | null => {
         const proteins = +Math.floor(+(product.nutriments?.proteins_100g ?? 0))
         const carbs = +Math.floor(
           +(product.nutriments?.carbohydrates_100g ?? 0)
@@ -493,20 +450,6 @@ async function searchOpenFoodFacts(query: string) {
 
         if (!product.nutriments?.['energy-kcal_100g']) return null
 
-        let image = product.image_small_url
-
-        if (!image) {
-          const isEnglishWord = translateService.isEnglishWord(
-            product.product_name
-          )
-          let translatedTxt = product.product_name
-          if (!isEnglishWord) {
-            translatedTxt = await translateService.translate(translatedTxt)
-          }
-          image =
-            (await imageService.getSingleImage(translatedTxt)) || DEFAULT_IMAGE
-        }
-
         return withClassifiedUnit({
           searchId: product.code,
           name: itemNameService.fromExternalName(
@@ -515,7 +458,7 @@ async function searchOpenFoodFacts(query: string) {
               : product.product_name
           ),
           macros: { calories, protein: proteins, carbs, fat: fats },
-          image: image,
+          image: product.image_small_url,
           type: 'product' as const,
           popularity: 8,
           isCurated: false,
@@ -552,16 +495,6 @@ async function getProductById(id: string) {
     const product: OFFProduct = data.product
 
     const image = product.image_small_url || null
-    // if (!image) {
-    //   const isEnglishWord = translateService.isEnglishWord(product.product_name)
-    //   let translatedTxt = product.product_name
-    //   if (!isEnglishWord) {
-    //     translatedTxt = await translateService.translate(translatedTxt)
-    //   }
-
-    //   image =
-    //     (await imageService.getSingleImage(translatedTxt)) || DEFAULT_IMAGE
-    // }
 
     const modifiedItem = withClassifiedUnit({
       searchId: product.code,
@@ -608,19 +541,7 @@ async function getProductsByIds(ids: string[]) {
       backendRes.map((item: Item) => addToCache(item as Item, ITEMS_CACHE))
     )
 
-    if (backendRes.length === filteredIds.length) {
-      return Promise.all(
-        backendRes.map(async (item: Item) => ({
-          ...item,
-          image:
-            item.image ||
-            (await imageService.getSingleImage(
-              itemNameService.getItemDisplayName(item.name, 'en')
-            )) ||
-            DEFAULT_IMAGE,
-        }))
-      )
-    }
+    if (backendRes.length === filteredIds.length) return backendRes
 
     const { data } = await axios.get(OPEN_FOOD_FACTS_BATCH_URL, {
       params: {
@@ -666,18 +587,7 @@ async function getProductsByIds(ids: string[]) {
       })
     )
 
-    return Promise.all(
-      modifiedProducts.map(async (product: any) => {
-        return {
-          ...product,
-          image:
-            product.image ||
-            (await imageService.getSingleImage(
-              itemNameService.getItemDisplayName(product.name, 'en')
-            )),
-        }
-      })
-    )
+    return modifiedProducts
   } catch (err) {
     throw err
   }
@@ -689,8 +599,6 @@ async function getProductsByIds(ids: string[]) {
 async function searchRawUSDA(query: string) {
   if (!query || query === '') return []
   try {
-    const images = await imageService.getImage(query)
-    let currImageIdx = 0
     const { data } = await axios.get(USDA_API_URL, {
       params: {
         api_key: USDA_API_KEY,
@@ -705,14 +613,10 @@ async function searchRawUSDA(query: string) {
     return foods.map((food: FDCFood) => {
       const macros = _getMacrosFromUSDA(food)
 
-      const image = images[currImageIdx].webformatURL || DEFAULT_IMAGE
-      currImageIdx++
-
       return withClassifiedUnit({
         searchId: food.fdcId + '',
         name: itemNameService.fromExternalName(food.description),
         macros,
-        image: image,
         type: 'food' as const,
         popularity: 8,
         isCurated: false,
@@ -746,20 +650,14 @@ async function getFoodById(id: string) {
 
     if (!data.foods[0]) return null
 
-    const images = await imageService.getImage(data.foods[0].description)
-    let currImageIdx = 0
     const food: FDCFood = Array.isArray(data) ? data[0] : data.foods[0]
 
     const macros = _getMacrosFromUSDA(food)
-
-    const image = images[currImageIdx].webformatURL || DEFAULT_IMAGE
-    currImageIdx++
 
     const modifiedItem = withClassifiedUnit({
       searchId: food.fdcId + '',
       name: itemNameService.fromExternalName(food.description),
       macros,
-      image: image,
       type: 'food' as const,
       popularity: 8,
       isCurated: false,
@@ -819,19 +717,7 @@ async function getFoodsByIds(ids: string[]) {
       backendRes.map((item: Item) => addToCache(item as Item, ITEMS_CACHE))
     )
 
-    if (backendRes.length === filteredIds.length) {
-      return Promise.all(
-        backendRes.map(async (item: Item) => ({
-          ...item,
-          image:
-            item.image ||
-            (await imageService.getSingleImage(
-              itemNameService.getItemDisplayName(item.name, 'en')
-            )) ||
-            DEFAULT_IMAGE,
-        }))
-      )
-    }
+    if (backendRes.length === filteredIds.length) return backendRes
 
     const { data } = await axios.get(USDA_FOODS_URL, {
       params: {
@@ -846,22 +732,12 @@ async function getFoodsByIds(ids: string[]) {
 
     if (!data || !foods || !foods.length) return []
 
-    // Process images with concurrency limit to avoid too many parallel API calls
-    const images = await processWithConcurrencyLimit(
-      foods,
-      async (food: FDCFood) => {
-        const image = await imageService.getSingleImage(food.description)
-        return image || DEFAULT_IMAGE
-      }
-    )
-
-    return foods.map((food: FDCFood, idx: number) => {
+    return foods.map((food: FDCFood) => {
       const macros = _getMacrosFromUSDA(food)
       return withClassifiedUnit({
         searchId: food.fdcId + '',
         name: itemNameService.fromExternalName(food.description),
         macros,
-        image: images[idx] || DEFAULT_IMAGE,
         type: 'food' as const,
         popularity: 8,
         isCurated: false,
@@ -942,24 +818,6 @@ function computeRelevanceScore(
   score += Math.min(item.popularity || 0, 120)
 
   return score
-}
-
-async function modifyItemImage(item: Item) {
-  if (item.image) return item
-  const image = await getImageFromQuery(
-    itemNameService.getItemDisplayName(item.name, 'en')
-  )
-  return { ...item, image: image }
-}
-
-async function getImageFromQuery(query: string) {
-  try {
-    const image = await imageService.getSingleImage(query)
-    return image || searchUrls.DEFAULT_IMAGE
-  } catch (err) {
-    console.error('Error getting image from query:', err)
-    return searchUrls.DEFAULT_IMAGE
-  }
 }
 
 function getSortedResults(results: Item[], sortBy: string): Item[] {

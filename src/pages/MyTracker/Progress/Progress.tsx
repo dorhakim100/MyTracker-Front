@@ -29,7 +29,6 @@ import { MacrosDonut } from '../../../components/MacrosDonut/MacrosDonut'
 import { searchTypes } from '../../../assets/config/search-types'
 import { searchUrls } from '../../../assets/config/search.urls'
 import { imageService } from '../../../services/image/image.service'
-import { Item } from '../../../types/item/Item'
 import { useTranslation } from 'react-i18next'
 import { itemNameService } from '../../../services/item/item-name.service'
 
@@ -211,10 +210,7 @@ function LogsList({
                   src={img}
                   alt={i.name}
                   referrerPolicy='no-referrer'
-                  onError={async (e) => {
-                    await imageService.fetchOnError(e, item as Item)
-                    loadItems()
-                  }}
+                  onError={imageService.showDefaultImage}
                 />
               </ListItemIcon>
               <MacrosDonut

@@ -23,7 +23,6 @@ import { MacrosDonut } from '../MacrosDonut/MacrosDonut'
 import { CustomList } from '../../CustomMui/CustomList/CustomList'
 import { Item } from '../../types/item/Item'
 import {
-  loadItems,
   setItem,
   setSelectedMeal,
   setEditMealItem,
@@ -41,6 +40,7 @@ import {
 import { SearchFilter } from '../../types/searchFilter/SearchFilter'
 import { Typography } from '@mui/material'
 import debounce from 'lodash/debounce'
+import { useQueryClient } from '@tanstack/react-query'
 
 import { User } from '../../types/user/User'
 import { SkeletonList } from '../SkeletonList/SkeletonList'
@@ -54,15 +54,15 @@ import searchLight from '../../../public/searching.json'
 import searchDark from '../../../public/searching-dark.json'
 
 import { imageService } from '../../services/image/image.service'
-import CustomSkeleton from '../../CustomMui/CustomSkeleton/CustomSkeleton'
+import { searchUrls } from '../../assets/config/search.urls'
 import { MarqueeText } from '../MarqueeText/MarqueeText'
 import { CategoryHome } from './CategoryHome/CategoryHome'
 import { CategoryBrowse } from './CategoryBrowse/CategoryBrowse'
 import { RecentSearchChips } from './RecentSearchChips/RecentSearchChips'
 import { EmptyState } from './EmptyState/EmptyState'
 import { useCategoryCounts } from '../../hooks/useItemsByCategory'
+import { SearchResults } from './SearchResults/SearchResults'
 import { recentSearchService } from '../../services/recent-search/recent-search.service'
-import { itemService as itemHttpService } from '../../services/item/item.service'
 import {
   BrowseView,
   isNutritionBrowseView,
@@ -83,17 +83,12 @@ export interface Filter {
   sortBy: string
 }
 
-function getSearchItemKey(item: Item) {
-  return item.searchId || item._id || ''
+function getSearchQueryKey(txt: string) {
+  return ['item-search', txt] as const
 }
 
-function mergeUniqueItems(primary: Item[], extra: Item[]) {
-  const ids = new Set(primary.map(getSearchItemKey).filter(Boolean))
-  const incoming = extra.filter((item) => {
-    const key = getSearchItemKey(item)
-    return key && !ids.has(key)
-  })
-  return [...primary, ...incoming]
+function getSearchItemKey(item: Item) {
+  return item.searchId || item._id || ''
 }
 
 function mergeSearchWithFavorites(favorites: Item[], searchHits: Item[]) {
@@ -114,6 +109,7 @@ export function ItemSearch({ onAddToMealClick, onPickItem }: ItemSearchProps) {
   const { t, i18n } = useTranslation()
   const { t: tCategories } = useTranslation(itemSearchCategoriesNs)
   const prefs = useSelector((state: RootState) => state.systemModule.prefs)
+  const queryClient = useQueryClient()
 
   const user = useSelector((state: RootState) => state.userModule.user)
 
@@ -156,6 +152,8 @@ export function ItemSearch({ onAddToMealClick, onPickItem }: ItemSearchProps) {
 
     const resCopy = [...results]
     const sorted = searchService.getSortedResults(resCopy, filter.sortBy)
+
+    console.log('sorted', sorted)
 
     return [...sorted]
   }, [results, filter.sortBy])
@@ -220,35 +218,24 @@ export function ItemSearch({ onAddToMealClick, onPickItem }: ItemSearchProps) {
         return
       }
 
-      setIsLoading(true)
+      const searchQueryKey = getSearchQueryKey(filter.txt)
+      if (!queryClient.getQueryData(searchQueryKey)) setIsLoading(true)
       const matchingFavorites = favoriteItems.filter((item) =>
         matchesQuery(item.name)
       )
-      setResults(matchingFavorites)
-      setResultsDragable(false)
 
       const searchQuery: SearchFilter = {
         txt: filter.txt,
         favoriteItems: user?.favoriteItems,
       }
 
-      const res = await searchService.search(searchQuery)
+      const res = await queryClient.fetchQuery({
+        queryKey: searchQueryKey,
+        queryFn: () => searchService.search(searchQuery),
+      })
       if (requestId !== searchRequestIdRef.current) return
 
-      const matchedCategory = matchItemCategoryLabel(filter.txt)
-      let extra: Item[] = []
-      if (matchedCategory) {
-        const page = await itemHttpService.queryByCategory({
-          category: matchedCategory,
-          limit: 40,
-          skip: 0,
-        })
-        extra = page.items || []
-      }
-
-      const withFavorites = mergeSearchWithFavorites(matchingFavorites, res)
-      const merged = mergeUniqueItems(withFavorites, extra)
-      setResults(merged)
+      setResults(mergeSearchWithFavorites(matchingFavorites, res))
       setResultsDragable(false)
       if (user?._id) {
         const next = await recentSearchService.add(user._id, filter.txt)
@@ -262,7 +249,15 @@ export function ItemSearch({ onAddToMealClick, onPickItem }: ItemSearchProps) {
         setSearchedTxt(filter.txt)
       }
     }
-  }, [filter.txt, filter.source, user, favoriteItems, browseView, t])
+  }, [
+    filter.txt,
+    filter.source,
+    user,
+    favoriteItems,
+    browseView,
+    t,
+    queryClient,
+  ])
 
   const latestHandleSearchRef = useRef(handleSearch)
   useEffect(() => {
@@ -278,8 +273,14 @@ export function ItemSearch({ onAddToMealClick, onPickItem }: ItemSearchProps) {
   )
 
   useEffect(() => {
+    // A query already in the cache doesn't need to wait out the typing debounce.
+    if (filter.txt && queryClient.getQueryData(getSearchQueryKey(filter.txt))) {
+      debouncedRunSearch.cancel()
+      latestHandleSearchRef.current()
+      return
+    }
     debouncedRunSearch()
-  }, [filter.txt, user, browseView, debouncedRunSearch])
+  }, [filter.txt, user, browseView, debouncedRunSearch, queryClient])
 
   useLayoutEffect(() => {
     if (isFirstFilterLayout.current) {
@@ -447,6 +448,20 @@ export function ItemSearch({ onAddToMealClick, onPickItem }: ItemSearchProps) {
     const isShowMeals = !filter.txt && browseView === 'meals'
     const isShowFavorites = !filter.txt && browseView === 'favorites'
 
+    if (filter.txt) {
+      return (
+        <SearchResults
+          key={searchedTxt}
+          items={sortedResults}
+          isLoading={isLoading || isSearchPending}
+          matchedCategory={matchItemCategoryLabel(searchedTxt)}
+          sortBy={filter.sortBy}
+          onItemClick={onItemClick}
+          onFavoriteClick={onFavoriteClick}
+        />
+      )
+    }
+
     if (!results.length && (isLoading || isSearchPending)) {
       return <SkeletonList />
     } else if (!results.length && filter.txt) {
@@ -465,14 +480,6 @@ export function ItemSearch({ onAddToMealClick, onPickItem }: ItemSearchProps) {
       )
     } else if (!results.length && !filter.txt && !isShowMeals) {
       return renderSearchFirst()
-    }
-
-    const renderErrorImage = (item: Item) => {
-      item.image = undefined
-      const newResults = results.map((i) =>
-        i.searchId === item.searchId ? { ...i, image: undefined } : i
-      )
-      setResults(newResults)
     }
 
     return (
@@ -504,29 +511,16 @@ export function ItemSearch({ onAddToMealClick, onPickItem }: ItemSearchProps) {
                     fats={item.macros?.fat}
                   />
                   <ListItemIcon className='item-image-container'>
-                    {(item.image && (
-                      <img
-                        src={item.image}
-                        alt={itemNameService.getItemDisplayName(
-                          item.name,
-                          i18n.language
-                        )}
-                        className='item-image'
-                        referrerPolicy='no-referrer'
-                        onError={async (e) => {
-                          renderErrorImage(item)
-                          await imageService.fetchOnError(e, item)
-                          loadItems()
-                        }}
-                      />
-                    )) || (
-                      <CustomSkeleton
-                        variant='circular'
-                        width={40}
-                        height={40}
-                        isDarkMode={prefs.isDarkMode}
-                      />
-                    )}
+                    <img
+                      src={item.image || searchUrls.DEFAULT_IMAGE}
+                      alt={itemNameService.getItemDisplayName(
+                        item.name,
+                        i18n.language
+                      )}
+                      className='item-image'
+                      referrerPolicy='no-referrer'
+                      onError={imageService.showDefaultImage}
+                    />
                   </ListItemIcon>
                 </div>
               )}
@@ -581,29 +575,16 @@ export function ItemSearch({ onAddToMealClick, onPickItem }: ItemSearchProps) {
                     fats={item.macros?.fat}
                   />
                   <ListItemIcon className='item-image-container'>
-                    {(item.image && (
-                      <img
-                        src={item.image}
-                        alt={itemNameService.getItemDisplayName(
-                          item.name,
-                          i18n.language
-                        )}
-                        className='item-image'
-                        referrerPolicy='no-referrer'
-                        onError={async (e) => {
-                          renderErrorImage(item)
-                          await imageService.fetchOnError(e, item)
-                          loadItems()
-                        }}
-                      />
-                    )) || (
-                      <CustomSkeleton
-                        variant='circular'
-                        width={40}
-                        height={40}
-                        isDarkMode={prefs.isDarkMode}
-                      />
-                    )}
+                    <img
+                      src={item.image || searchUrls.DEFAULT_IMAGE}
+                      alt={itemNameService.getItemDisplayName(
+                        item.name,
+                        i18n.language
+                      )}
+                      className='item-image'
+                      referrerPolicy='no-referrer'
+                      onError={imageService.showDefaultImage}
+                    />
                   </ListItemIcon>
                 </div>
               )}

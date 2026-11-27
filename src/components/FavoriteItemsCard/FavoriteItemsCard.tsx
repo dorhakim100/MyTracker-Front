@@ -19,6 +19,8 @@ import { ItemDetails } from '../../components/ItemDetails/ItemDetails'
 import { MacrosDonut } from '../../components/MacrosDonut/MacrosDonut'
 import { itemNameService } from '../../services/item/item-name.service'
 import { MarqueeText } from '../MarqueeText/MarqueeText'
+import { searchUrls } from '../../assets/config/search.urls'
+import { imageService } from '../../services/image/image.service'
 
 export function FavoriteItemsCard() {
   const { t, i18n } = useTranslation()
@@ -91,12 +93,13 @@ export function FavoriteItemsCard() {
             />
             <ListItemIcon className='item-image-container'>
               <img
-                src={item.image}
+                src={item.image || searchUrls.DEFAULT_IMAGE}
                 alt={itemNameService.getItemDisplayName(
                   item.name,
                   i18n.language
                 )}
                 className='item-image'
+                onError={imageService.showDefaultImage}
               />
             </ListItemIcon>
           </div>

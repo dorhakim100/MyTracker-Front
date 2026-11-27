@@ -330,6 +330,9 @@ CustomListProps<T>) {
 
         <div className='custom-list-text'>
           <ListItemText
+            slotProps={{
+              secondary: { component: 'div' },
+            }}
             primary={asListMarquee(
               renderPrimaryText ? renderPrimaryText(item) : undefined,
               variant,

@@ -1191,7 +1191,10 @@ export function ItemDetails({
     if (searchedItem) searchedItem.image = undefined
   }
 
-  const displayImage = isCustom || isAiMealResult ? customImage : item?.image
+  const displayImage =
+    isCustom || isAiMealResult
+      ? customImage
+      : item?.image || searchUrls.DEFAULT_IMAGE
   const isAiMealImageLoading =
     isAiMealResult && !!displayImage && loadedHeroSrc !== displayImage
   const showMissingImageUpload =
@@ -1454,8 +1457,7 @@ export function ItemDetails({
                     return
                   }
                   renderErrorImage()
-                  await imageService.fetchOnError(e, item as Item)
-                  loadItems()
+                  imageService.showDefaultImage(e)
                 }}
               />
             ) : showMissingImageUpload ? (
@@ -1891,8 +1893,7 @@ export function ItemDetails({
                   setLoadedHeroSrc(null)
                   return
                 }
-                await imageService.fetchOnError(e, item as Item)
-                loadItems()
+                imageService.showDefaultImage(e)
               }}
             />
           </div>

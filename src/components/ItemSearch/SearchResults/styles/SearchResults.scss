@@ -1,0 +1,8 @@
+.search-results-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0 1rem 1.5rem;
+  min-width: 0;
+  max-width: 100%;
+}

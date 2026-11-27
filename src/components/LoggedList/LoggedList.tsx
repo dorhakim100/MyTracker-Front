@@ -29,7 +29,6 @@ import { MealPeriod } from '../../types/mealPeriod/MealPeriod'
 import { CustomSkeleton } from '../../CustomMui/CustomSkeleton/CustomSkeleton'
 import { AddItemButton } from '../AddItemButton/AddItemButton'
 import { DeleteAction } from '../DeleteAction/DeleteAction'
-import { imageService } from '../../services/image/image.service'
 import { mealService } from '../../services/meal/meal.service'
 import { Menu } from '../../types/menu/Menu'
 import { getTimeFromISO } from '../../services/util.service'
@@ -322,14 +321,6 @@ export function LoggedList({
         itemToSet = meal
       }
       logToEdit.searchId = logToEdit.itemId
-
-      if (!itemToSet.image) {
-        const image = await imageService.getSingleImage(
-          itemNameService.getItemDisplayName(itemToSet.name, i18n.language)
-        )
-        itemToSet.image = image
-        logToEdit.image = image
-      }
 
       if (!itemToSet) {
         showErrorMsg(t('messages.error.editMeal'))
